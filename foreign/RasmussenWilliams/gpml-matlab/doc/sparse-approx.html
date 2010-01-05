@@ -1,0 +1,208 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Approximation Methods for Gaussian Process Regression</title>
+    <link type="text/css" rel="stylesheet" href="style.css">
+  </head>
+
+  <body>
+
+<h2>Approximation Methods for Gaussian Process Regression</h2>
+
+The theory for approximation methods for GPR when faced with
+large datasets is given in section 8.3. We provide implementations
+of three methods:
+<ul>
+<li> subset of datapoints (SD),</li>
+<li> subset of regressors (SR),</li>
+<li> projected process (PP).</li>
+</ul>
+The SD method is implemented by simply calling the function
+<a href="regression.html#desc">gpr.m</a> with a subset of the 
+training data. The SR and PP methods are implemented by the 
+function <a href="../gpml/gprSRPP.m">gprSRPP.m</a>. In the example the 
+subsets are selected randomly, although they can also 
+be selected by greedy algorithms, as discussed in section 8.3.
+</p>
+
+<!--
+Code for the Bayesian committee machine (BCM) method 
+is given at FIX!!. 
+-->
+
+This page contains 2 topics
+<ol>
+<li> <a href="#desc">Description</a> of the function gprSRPP.m
+</li>
+<li> <a href="#boston">A demonstration</a> using the gprSRPP.m 
+function</li>
+</ol>
+
+<h3 is="desc"> 1. Description of the function gprSRPP.m</h3>
+
+<p>The function gprSRPP.m is based on the function <a
+href="regression.html#desc">gpr.m</a>.  The specification of the covariance
+function is the same as in gpr.m, except that the covariance function is
+assumed to be specified as a cell array with the first entry being
+<tt>covSum</tt> and the last entry being <tt>covNoise</tt>.</p>
+
+<pre>
+  [mu, S2SR, S2PP] = gprSRPP(logtheta, covfunc, x, INDEX, y, xstar)
+</pre>
+
+<table border=0 cols=2 width="100%">
+<tr><td><b>inputs</b></td><td></td></tr>
+<tr><td width="10%"><tt>logtheta</tt></td><td>a (column) vector 
+containing the logarithm of the hyperparameters of the covariance
+function</td></tr>
+<tr><td><tt>covfunc</tt></td><td>the covariance function, which is assumed to
+be a covSum, and the last entry of the sum is covNoise</td></tr>
+<tr><td><tt>x</tt></td><td>a <tt>n</tt> by <tt>D</tt> matrix of training
+inputs</td></tr>
+<tr><td><tt>INDEX</tt></td><td>a row vector of 
+length <tt>m</tt> (with m<= n) used to specify which 
+inputs are used in the active set 
+<tr><td><tt>y</tt></td><td>a (column) vector of training set
+targets (of length <tt>n</tt>)</td></tr>
+<tr><td><tt>xstar</tt></td><td>a <tt>nstar</tt> by <tt>D</tt> matrix of test
+inputs</td></tr>
+<tr><td><b>outputs</b></td><td></td></tr>
+<tr><td><tt>mu</tt></td><td>(column) vector (of length <tt>nstar</tt>) of
+predictive means</td></tr>
+<tr><td><tt>S2SR</tt></td><td>(column) vector (of length <tt>nstar</tt>) of
+predictive variances from the SR algorithm (incl noise variance)</td></tr>
+<tr><td><tt>S2PP</tt></td><td>(column) vector (of length <tt>nstar</tt>) of
+predictive variances from the PP algorithm (incl noise variance)</td></tr>
+</table><br></p>
+
+The SR method is implemented by equations 8.14 (for mu) and 8.15 for
+S2SR (but also adding on the noise variance). 
+The PP method has the same predictive mean, but a different predictive
+variance (S2PP) given by equation 8.27 (but also adding on the noise variance).
+
+<h3 id="boston"> 2. A demonstration using the gprSRPP.m function</h3>
+
+We use the Boston housing data of D. Harrison and D. L. Rubinfeld, "Hedonic
+housing prices and the demand for clean air", Journal of Environmental
+Economics and Management 5, 81-102 (1978).  This dataset has 13 input variables
+and one output target. A split of 455 training points and 51 test points is
+used.  We use Gaussian process regression with a squared exponential covariance
+function, and allow a separate lengthscale for each input dimension, as in
+eqs. 5.1 and 5.2.</p>
+
+Run the script <a href="../gpml-demo/demo_gprsparse.m">demo_gprsparse.m</a>
+to produce the results shown below.</p>
+
+The training and test data is contained in the file <a
+href="../gpml-demo/data_boston.mat">data_boston.mat</a>. The data has
+been scaled so that each variable has approximately zero mean and unit
+variance.  Assuming that the current directory is gpml-demo we need to
+add the path of the code, and load the data:
+
+<pre>
+  addpath('../gpml');    % add path for the code
+  load data_boston
+</pre>
+
+As usual the training inputs are stored in <tt>X</tt>, the 
+training targets in <tt>y</tt>, the test inputs in <tt>Xstar</tt>
+and the test targets in <tt>ystar</tt>.</p>
+
+A random subset of the training data points are selected
+using the randperm function. This set is of size <em>m</em>= 200.
+
+<pre>
+  m = 200;
+  perm = randperm(n);
+  INDEX = perm(1:m);
+  Xm = X(INDEX,:);
+  ym = y(INDEX);
+</pre>
+
+We use a covariance function made up of the sum of a squared
+exponential (SE) covariance term with ARD, and independent noise.
+Thus, the covariance function is specified as:
+
+<pre>
+  covfunc = {'covSum', {'covSEard','covNoise'}};
+</pre>
+
+The hyperparameters are initialized to <tt>logtheta0=[0; 0; ... 0; 0;
+-1.15]</tt>
+
+<pre>
+  logtheta0 = zeros(D+2,1); 
+  logtheta0(D+2) = -1.15; % starting value for log(noise std dev)
+</pre>
+
+Note that the noise standard deviation is set to exp(-1.15) corresponding to a
+noise variance of 0.1.</p>
+
+The hyperparameters are trained by maximizing the approximate marginal
+likelihood of the SD method given in eq. 8.31. This simply computes the
+marginal likelihood of the subset of size <em>m</em>.
+
+<pre>
+  [logtheta, fvals, iter] = minimize(logtheta0, 'gpr', covfunc, -100, Xm, ym);
+</pre>
+
+Predictions can now be made using the 3 methods. SD is implemented simply by
+calling gpr on the reduced training set,
+
+<pre>
+  [fstarSD S2SD] = gpr(logtheta, Xm, ym, Xstar);
+</pre>
+
+The outputs are the mean predictions <tt>fstarSD</tt> and the predictive
+(noise-free) variances <tt>S2SD</tt>.  The SR and PP methods are called using
+the function gprSRPP; note that the INDEX vector is passed:
+
+<pre>
+  [fstarSRPP S2SR S2PP] = gprSRPP(logtheta, X, INDEX, y, Xstar); 
+</pre>
+
+gprSRPP returns the predictive mean <tt>fstarSRPP</tt> (which is identical for
+both methods), and the predictive (noise-free) variances <tt>S2SR</tt> and
+<tt>S2PP</tt>.  For comparison we also make predictions using gpr.m on the full
+training dataset, and a dumb predictor that just predicts the mean and variance
+of the training data.</p>
+
+We compute the residuals, the mean squared error (mse) and the predictive log
+likelihood (pll) for all methods.  Note that the predictive variance for ystar
+includes the noise variance, as explained on p. 18.  Thus for example we have
+
+<pre>
+  resSR = fstarSRPP-ystar;
+  mseSR = sum(resSR.^2)/nstar;
+  pllSR = -0.5*mean(log(2*pi*S2SR)+resSR.^2./S2SR);
+</pre>
+
+The test results are:
+
+<pre>
+  mse_full 0.118924	 pll_full -0.414019
+  mse_SD   0.179692	 pll_SD   -0.54915
+  mse_SR   0.138302	 pll_SR   -0.658645
+  mse_PP   0.138302	 pll_PP   -0.395815
+  mse_dumb 1.11464	 pll_dumb -1.4769
+</pre>
+
+where mse denotes mean squared error and pll denotes predictive log
+likelihood. A higher (less negative) pll is more desirable. Note that the mse
+for the SR and PP methods is identical as expected.  The SR and PP methods
+outperform SD on mse, and are close to the full mse. On pll, the PP method does
+slightly better than the full predictor, followed by the SD and SR methods.</p>
+
+You can experiment further by varying the value of the subset size <em>m</em>
+in the script <a href="../gpml-demo/demo_gprsparse.m">demo_gprsparse.m</a>.</p>
+
+Go back to the <a href="http://www.gaussianprocess.org/gpml">web page</a> for
+Gaussian Processes for Machine Learning.
+
+    <hr>
+<!-- Created: Mon Nov  7 09:52:03 CET 2005 -->
+<!-- hhmts start -->
+Last modified: Wed Mar 29 12:19:25 CEST 2006
+<!-- hhmts end -->
+  </body>
+</html>

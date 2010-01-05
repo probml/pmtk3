@@ -1,0 +1,7 @@
+fromJava(toJava(7))
+fromJava(toJava(7:10))
+fromJava(toJava('hello'))
+fromJava(toJava([]))
+fromJava(toJava({'hello' 7}))
+fromJava(toJava({}))
+fromJava(toJava(struct('x',3,'y',4)))

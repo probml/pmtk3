@@ -1,0 +1,12 @@
+randomseed(0);
+x = randgamma(repmat(3,1,3));
+randomseed(0);
+x2 = randgamma(repmat(3,1,3));
+assert(all(x == x2));
+seed = randomseed;
+x = randgamma(repmat(3,1,3));
+randomseed([4 5 6]);
+randomseed(seed);
+x2 = randgamma(repmat(3,1,3));
+assert(all(x == x2));
+fprintf('randomseed test passed.\n');

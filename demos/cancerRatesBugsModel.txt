@@ -1,0 +1,14 @@
+# Bugs model for cancer-cities
+# David Duvenaud
+# Modified from School Demo
+
+model {
+  for (j in 1:J){                     # J = the number of cities
+    x[j] ~ dbin ( theta[j], n[j] )      # data model:  the likelihood
+  }
+  for (j in 1:J){
+    theta[j] ~ dbeta (a, b) # hierarchical model for theta
+  }
+  a ~ dgamma (1, 0.01 )
+  b ~ dgamma (1, 0.01 )
+}
