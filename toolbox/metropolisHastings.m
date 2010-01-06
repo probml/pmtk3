@@ -1,23 +1,25 @@
-function [X, acceptRatio] = metropolisHastings(target, proposal, xinit, varargin)
+function [X, acceptRatio] = metropolisHastings(target, proposal, xinit, Nsamples, Nburnin, thin)
 % Metropolis Hastings algorithm
 %
 % target - logp = target(x)
 % proposal -  xprime = proposal(x) or  [xprime, probOldToNew, probNewToOld]= proposal(x)
 % xinit - a dx1 row vector
-%
+% Nsamples
 % Optional arguments
-% thin [1]
-% symmetric - [true] set to false if need Hastings correction
-% Nsamples [1000]
-% Nburnin [100]
-%
+% Nburnin [0]
+% thin - take every n'th sample [n=1]
 %
 % OUTPUT
 % X(s,:) = samples at step s
+%
+% If the proposal is not symmetric, it should be of the form
+% [ xprime, probOldToNew, probNewToOld]= proposal(x)
+% so  we use the Hastings correction
 
-[symmetric, Nsamples, Nburnin, thin] = ...
-  process_options(varargin, 'symmetric', true,  ...
-  'Nsamples', 1000, 'Nburnin', 100, 'thin', 1);
+if nargin < 5, Nburnin = 0; end
+if nargin < 6, thin = false; end
+symmetric = (nargout(proposal)==1);
+
 
 keep = 1;
 x = xinit;

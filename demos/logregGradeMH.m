@@ -1,26 +1,31 @@
-function [X, y, bs, perm] = logregGradeMH();
+function [X, y, bs, perm] = logregGradeMH()
 % Example from Johnson and Albert p87
 
+stat = load('satData.txt'); % Johnson and Albert p77 table 3.1
+% stat=[pass(0/1), 1, 1, sat_score, grade in prereq]
+% where the grade in prereq is encoded as A=5,B=4,C=3,D=2,F=1
+y = stat(:,1);
+N = length(y);
+X = stat(:,4);
+X1 = [ones(N,1) X];
 
-
-[X,y] = satDataLoad;
-N =size(X,1);
-
-[beta, C] = logregFitFminunc(y, X, 0)
-sqrt(diag(C))
-
-[beta, C] = logregFitIRLS(y, X, 0)
+lambda = 1e-10;
+[beta1] = logregL2Fit(X, y, lambda)
+[beta, C] = logregL2FitIrls(X,y,  lambda)
 sqrt(diag(C))
 
 % MH
-seed = 1; randn('state', seed); rand('state', seed);
+setSeed(1);
 xinit = beta;
 Nsamples = 5000;
 lambda = 0;
-targetArgs = {X,y,lambda};
 sigmaMH = 1.5;
-proposalArgs = {sigmaMH*C};
-[bs, naccept] = metrop(@logpost, @proposal, xinit, Nsamples,  targetArgs, proposalArgs);
+%targetArgs = {X,y,lambda};
+%proposalArgs = {sigmaMH*C};
+target = @(b) logpost(b, X1, y, lambda);
+prop = @(b) proposal(b, sigmaMH*C);
+[bs, acceptRatio] = metropolisHastings(target, prop, xinit, Nsamples);
+%[bs, naccept] = metrop(@logpost, @proposal, xinit, Nsamples,  targetArgs, proposalArgs);
 
 % trace plots
 figure(1); clf
@@ -47,22 +52,22 @@ postMedian = median(bs,1)
   
 % visualize model fit for each training point
 figure(3);clf
-[junk,perm] = sort(X(:,2),'ascend');
+[junk,perm] = sort(X,'ascend');
 N = length(perm);
 for ii=1:N
   i = perm(ii);
-  ps = 1 ./ (1+exp(-X(i,:)*bs')); % ps(s) = p(y=1|x(i,:), bs(s,:)) row vec
+  ps = 1 ./ (1+exp(-X1(i,:)*bs')); % ps(s) = p(y=1|x(i,:), bs(s,:)) row vec
 
-  plot(X(i,2), median(ps), 'o');
+  plot(X(i,1), median(ps), 'o');
   hold on
-  h=plot(X(i,2), y(i), 'ko');
+  h=plot(X(i,1), y(i), 'ko');
   set(h,'markerfacecolor', 'k');
   
   % prediction interval
   tmp = sort(ps, 'ascend');
   Q5 = tmp(floor(0.05*Nsamples));
   Q95 = tmp(floor(0.95*Nsamples));
-  line([X(i,2) X(i,2)], [Q5 Q95]);
+  line([X(i) X(i)], [Q5 Q95]);
 end
 
 
@@ -72,4 +77,6 @@ bnew = b + mvnrnd(zeros(1, length(b)), Sigma);
 
 function p = logpost(b, X, y, lambda)
 logprior = 0;  % log(1)
-p = -logregNLLgradHess(b(:), X, y, lambda) + logprior;
+offsetAdded = true;
+p = -logregL2NLLgradHess(b(:), X, y, lambda, offsetAdded) + logprior;
+
