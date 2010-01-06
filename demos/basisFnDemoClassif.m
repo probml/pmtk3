@@ -42,7 +42,8 @@ w = logregL2Fit(Gtrain,y, lambda);
 
 % Plot decision boundary in original space
 figure(figOrig);
-[x1,x2] = meshgrid(linspace(-1.5,1.5,100), linspace(-1.5,1.5,100));
+%[x1,x2] = meshgrid(linspace(-1.5,1.5,100), linspace(-1.5,1.5,100));
+[x1,x2] = meshgrid(linspace(-2,2,100), linspace(-2,2,100));
 [m,n]=size(x1);
 Xtest = [reshape(x1, n*m, 1) reshape(x2, n*m, 1)];
 Gtest = rbfKernel(Xtest, centres, sigmaRbf);

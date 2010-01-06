@@ -14,7 +14,7 @@ hparams.am = 0.01;
 hparams.bm = 9.99; % JA p25 says 9.9, but then prior precision is not 10
 
 xinit = 0.1*randn(1,2); % initial state
-%map = fminunc(@target, xinit);
+%map = fminunc(@target, xinit)
 
 %{
 %% Exact inference on a grid
@@ -28,6 +28,7 @@ p = logp;
 p = reshape(p, size(xs));
 h = max(p(:));
 %vals = [0.1*h 0.01*h 0.001*h];
+%}
 
 figContour = figure; contour(xs(1,:), ys(:,1), p);
 xlabel('logit(m)'); ylabel('log(K)')
@@ -36,7 +37,7 @@ figImagesc = figure; imagesc(p); colorbar
 set(gca, 'xticklabel', xrange(get(gca,'xtick')))
 set(gca, 'yticklabel', yrange(get(gca,'ytick')))
 axis xy; xlabel('logit(m)'); ylabel('log(K)')
-%}
+
 
 
 %% MCMC 
