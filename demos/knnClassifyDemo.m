@@ -1,19 +1,16 @@
 function knnClassifyDemo()
 
-K = 1;
 
-% from knnClassifyMakeData
-C = 3; % num classes
+%% load data
 tmp = dlmread('knnClassify3CTrain.txt',  ' ');
 Xtrain = tmp(:,1:2); ytrain = tmp(:,3);
 tmp = dlmread('knnClassify3CTest.txt',  ' ');
 Xtest = tmp(:,1:2); ytest = tmp(:,3);
-
 Ntest = size(Xtest,1);
 Ntrain = size(Xtrain,1)
 
-range = [min(Xtrain(:,1)) max(Xtrain(:,1)) min(Xtrain(:,2)) max(Xtrain(:,2))];
 
+%% Plot data
 figure;
 plotLabeledData(Xtrain, ytrain)
 title('train')
@@ -26,10 +23,10 @@ title('test - truth')
 axis(range)
 printPmtkFigure('knnClassifyTestData'); 
 
-
-
+%% Classify and plot predictions on test data
 Ks = [1 5];
-for K=Ks(:)'
+for ki=1:length(Ks)
+  K = Ks(ki);
   [ypred] = knnClassify(Xtrain, ytrain, Xtest, K);
   figure;
   plotLabeledData(Xtest, ypred);
@@ -46,11 +43,12 @@ end
 
 
 
-% Plot  predicted class  across a grid of points
+%% Plot  predicted class  across a grid of points
 % cf HTF fig 2.2
 
 XtestGrid = makeGrid2d(Xtrain);
 Ks = [1 5];
+range = [min(Xtrain(:,1)) max(Xtrain(:,1)) min(Xtrain(:,2)) max(Xtrain(:,2))];
 for K=Ks(:)'
   ypredGrid = knnClassify(Xtrain, ytrain, XtestGrid, K);
   figure;
@@ -63,8 +61,10 @@ for K=Ks(:)'
 end
 
 
+end
 
-%%%%%%
+%%%%%%%%%%%%%
+
 function plotLabeledData(X, y)
 
 markers = {'r+', 'b*', 'gx'};
@@ -74,4 +74,6 @@ for c=1:C
   h=plot(X(ndx,1), X(ndx,2), markers{c});
   set(h,'markersize',12)
   hold on
+end
+
 end
