@@ -11,6 +11,7 @@ Ntrain = size(Xtrain,1)
 
 
 %% Plot data
+range = [min(Xtrain(:,1)) max(Xtrain(:,1)) min(Xtrain(:,2)) max(Xtrain(:,2))];
 figure;
 plotLabeledData(Xtrain, ytrain)
 title('train')
@@ -48,7 +49,6 @@ end
 
 XtestGrid = makeGrid2d(Xtrain);
 Ks = [1 5];
-range = [min(Xtrain(:,1)) max(Xtrain(:,1)) min(Xtrain(:,2)) max(Xtrain(:,2))];
 for K=Ks(:)'
   ypredGrid = knnClassify(Xtrain, ytrain, XtestGrid, K);
   figure;
