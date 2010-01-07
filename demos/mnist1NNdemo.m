@@ -18,7 +18,7 @@ ntest = length(testndx);
 Xtrain = double(reshape(mnist.train_images(:,:,trainndx),28*28,ntrain)');
 Xtest  = double(reshape(mnist.test_images(:,:,testndx),28*28,ntest)');
 
-if 1 
+if 0 
   % matrix is real-valued but has many zeros due to black boundary
   % so we make it sparse to save space
   Xtrain = sparse(Xtrain);
@@ -43,16 +43,16 @@ if ntest > 1000
 end
 batches = mat2cell(1:ntest,1,(ntest/nbatches)*ones(1,nbatches));
 ypred = zeros(ntest,1);
-wbar = waitbar(0,sprintf('%d of %d classified',0,ntest));
+%wbar = waitbar(0,sprintf('%d of %d classified',0,ntest)); % waitbar only works in Matlab
 %% Classify
 for i=1:nbatches
-    t = toc; waitbar(i/nbatches,wbar,sprintf('%d of %d Classified\nElapsed Time: %.2f seconds',(i-1)*(ntest/nbatches),ntest,t));
+    t = toc; %waitbar(i/nbatches,wbar,sprintf('%d of %d Classified\nElapsed Time: %.2f seconds',(i-1)*(ntest/nbatches),ntest,t));
     dst = sqDistance(Xtest(batches{i},:),Xtrain,XtestSOS(batches{i},:),XtrainSOS);
     [junk,closest] = min(dst,[],2);
     ypred(batches{i}) = ytrain(closest);
 end
 %% Report
-close(wbar);
+%close(wbar);
 errorRate = mean(ypred ~= ytest);
 fprintf('Error Rate: %.2f%%\n',100*errorRate);
 t = toc; fprintf('Total Time: %.2f seconds\n',t);
