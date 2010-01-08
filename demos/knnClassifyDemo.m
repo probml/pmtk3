@@ -25,7 +25,7 @@ axis(range)
 printPmtkFigure('knnClassifyTestData'); 
 
 %% Classify and plot predictions on test data
-Ks = [1 5];
+Ks = [1 5 ];
 for ki=1:length(Ks)
   K = Ks(ki);
   [ypred] = knnClassify(Xtrain, ytrain, Xtest, K);
@@ -44,11 +44,11 @@ end
 
 
 
+
 %% Plot  predicted class  across a grid of points
 % cf HTF fig 2.2
 
 XtestGrid = makeGrid2d(Xtrain);
-Ks = [1 5];
 for K=Ks(:)'
   ypredGrid = knnClassify(Xtrain, ytrain, XtestGrid, K);
   figure;
@@ -60,7 +60,6 @@ for K=Ks(:)'
   C = 3;
   printPmtkFigure(sprintf('knnClassifyGridC%dK%d.eps', 3, K))
 end
-
 
 end
 

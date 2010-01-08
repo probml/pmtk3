@@ -5,7 +5,7 @@
 
 clear all
 load mnistALL;
-if 1
+if 0
   % test on all data- 255 seconds, 3.09% error
   trainndx = 1:60000; testndx =  1:10000;
 else
