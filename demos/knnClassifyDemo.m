@@ -32,7 +32,7 @@ for ki=1:length(Ks)
   figure;
   plotLabeledData(Xtest, ypred);
   err = find(ypred(:) ~= ytest(:));
-  nerrors = sum(ypred(:) ~= ytest(:));
+  nerrors = length(err);
   title(sprintf('K=%d, error rate = %d/%d = %5.3f', ...
 		K, nerrors, Ntest, nerrors/Ntest))
   axis(range)
