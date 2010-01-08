@@ -57,7 +57,8 @@ for K=Ks(:)'
   axis(range)
   %title(sprintf('mode of predictive density, K=%d', K))
   title(sprintf('predicted label,  K=%d', K))
-  %printPmtkFigure(sprintf('knnClassifyGridC%dK%d.eps', C, K))
+  C = 3;
+  printPmtkFigure(sprintf('knnClassifyGridC%dK%d.eps', 3, K))
 end
 
 
