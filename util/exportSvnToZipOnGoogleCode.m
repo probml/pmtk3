@@ -1,4 +1,4 @@
-function cutrelease(username, passwd, summary)
+function exportSvnToZipOnGoogleCode(username, passwd, summary)
 % Cut a new release of PMTK3, uploading the zip to the google code
 % repository. 
 %
@@ -9,15 +9,19 @@ function cutrelease(username, passwd, summary)
 % SUMMARY  - A summary of the version, to be displayed on the site. 
 
   error(nargchk(3, 3, nargin));
-  cd([fileparts(mfilename('fullpath')),filesep,'..']); % move to pmtk3 root
+  %pmtkRoot = [fileparts(mfilename('fullpath')),filesep,'..']
+  cd(pmtkRoot()); % move to pmtk3 root
   d = date(); d = d(d~='-');
   fname = ['pmtk3-',d,'.zip'];
-  fpath = fullfile(tempdir, fname);
+  fpath = fullfile(tempdir, fname)
   fprintf('Root directory is %s\n',pwd)
   fprintf('Exporting code to %s...\n', fname);
   exportsvn(pwd, fpath);
+  
   fprintf('Uploading file...\n');
-  systemf('python %s -s "%s" -p "pmtk3" -u %s -w %s "%s"', fullfile(pwd, 'util', 'googlecode_upload.py' ), summary, username, passwd, fpath)
+  uploadFn = fullfile(pwd, 'util', 'googlecode_upload.py');
+  fprintf('python %s -s "%s" -p "pmtk3" -u %s -w %s "%s"', uploadFn, summary, username, passwd, fpath)
+  result = systemf('python %s -s "%s" -p "pmtk3" -u %s -w %s "%s"', uploadFn, summary, username, passwd, fpath)
   fprintf('Cleaning up...\n');  
   delete(fpath)  
   fprintf('Done\n\n')

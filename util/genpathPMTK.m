@@ -1,5 +1,6 @@
 function p = genpathPMTK(d)
-% genpathPMTK Like built-in genpath, but omits directories whose name is 'Old', 'old' or 'CVS'
+% genpathPMTK Like built-in genpath, but omits directories whose name is
+% 'Old',  'CVS', etc
 % function p = genpathPMTK(d)
 
 if nargin==0,
