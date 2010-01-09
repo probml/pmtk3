@@ -3,7 +3,7 @@ function printPmtkFigure(filename)
 
 if false% set to false to turn off printing
    %printFolder = 'C:\kmurphy\PML\Figures\pdfFigures';
-   printFolder = 'C:\kmurphy\My Dropbox\PML\Figures\pdfFigures';
+   printFolder = 'C:\kmurphy\dropbox\PML\Figures\pdfFigures';
   %pdfcrop;
   %opts = struct('Color', 'rgb', 'Resolution', 1200);
   try
