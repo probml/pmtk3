@@ -1,7 +1,7 @@
-function [w,b] = perceptronTraining(X, y)
+function [w,b] = perceptronFit(X, y)
 % X(i,:) for case i
 % y(i) = -1 or +1
-% Based on code by Thomas Hoffman
+%#author Thomas Hoffman
 
 labels = y; features = X';
 [n d] = size(X);
@@ -19,7 +19,7 @@ for iter=1:max_iter
     end
   end
   fprintf('Iteration %d, errors = %d\n', iter, errors);
-  if (errors=0)
+  if (errors==0)
     break;
   end
 end

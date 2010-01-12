@@ -13,7 +13,7 @@ for ki=1:length(Ks)
   figure;
   for c=1:K
     ndx = find(Z==c);
-    h=scatter(X(ndx,1), X(ndx,2), 100, marker{c}); 
+    h=scatter(X(ndx,1), X(ndx,2), 100, marker{c}, 'linewidth', 2); 
     hold on;
   end
   xlabel('height'); ylabel('weight')

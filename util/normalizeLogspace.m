@@ -6,7 +6,7 @@ function [y,L] = normalizeLogspace(x)
 % eg [post, L] = exp(normalizeLogspace(logprior + loglik))
 
 L = logsumexp(x, 2);
-%y = x - repmat(L, 1, size(x,2));
-y = bsxfun(@minus, x, L);
+y = x - repmat(L, 1, size(x,2));
+%y = bsxfun(@minus, x, L);
  
 end

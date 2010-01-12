@@ -52,7 +52,7 @@ ptest = reshape(ptest, [m n]);
 [cc,hh]=contour(x1,x2,ptest,[0.5 0.5], '-k');
 set(hh,'linewidth',3);
 axis equal
-printPmtkFigure('basisFnTransformed')
+printPmtkFigure('basisFnOriginal')
 
 % Plot decision boundary in original space
 figure(figTransformed);
@@ -60,5 +60,6 @@ G1 = reshape(Gtest(:,1), [m n]);
 G2 = reshape(Gtest(:,2), [m n]);
 [cc,hh]=contour(G1, G2, ptest,[0.5 0.5], '-k');
 set(hh,'linewidth',3);
-printPmtkFigure('basisFnOriginal')
+printPmtkFigure('basisFnTransformed')
+
 
