@@ -13,22 +13,32 @@ if K>Ntrain
   fprintf('reducing K = %d to Ntrain = %d\n', K, Ntrain-1);
   K = Ntrain-1;
 end
-dst = sqdist(Xtrain', Xtest'); % dst(n,m) = || Xtrain(n) - Xtest(m) || ^2
+dst = sqdist(Xtrain', Xtest'); % dst(n,m) = || Xtrain(n,:) - Xtest(m,:) || ^2
 if K==1
-  % we vectorize over test cases
+
   [junk, closest] = min(dst,[],1); %#ok
   ypred = ytrain(closest);
   ypredProb = oneOfK(ypred, Nclasses); %# delta function
+
 else
-  % we vectorize over K, but loop over test cases
-  ypredProb = zeros(Ntest, Nclasses);
-  ypred = zeros(Ntest, 1);
-  for m=1:Ntest
-    [vals, closest] = sort(dst(:,m)); %#ok
-    labels = ytrain(closest(1:K));
-    votes = hist(labels, 1:Nclasses);
-    ypredProb(m,:) = normalize(votes);
-    [prob, ypred(m)] = max(ypredProb(m,:)); %#ok
+  
+  if 0
+    % loop over test cases
+    for m=1:Ntest
+      [vals, closest] = sort(dst(:,m));
+      labels = ytrain(closest(1:K));
+      votes = hist(labels, 1:Nclasses);
+      ypredProb(m,:) = normalize(votes);
+      [prob, ypred(m)] = max(ypredProb(m,:));
+    end
   end
+  
+  % vectorize over test cases
+  % for column m, the first K rows are the distances to closest training points
+  [vals, closest] = sort(dst); %#ok
+  labels = ytrain(closest(1:K, :)); % K*M
+  votes = hist(labels, 1:Nclasses); % hist over columns, C*M
+  ypredProb = normalize(votes, 1)'; % M*C
+  [prob, ypred] = max(ypredProb, [], 2); %#ok
 end
 

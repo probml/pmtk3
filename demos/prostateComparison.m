@@ -11,11 +11,11 @@ ndxTest = setdiff(1:n, ndxTrain);
 
 % %%% exercise - implement prostateLS and prostateRidge
 [mseTestLS, wLS] = prostateLS(X, y, ndxTrain, ndxTest);
-[mseTestRidge, wRidge] = prostateRidge(X, y, ndxTrain, ndxTest);;
+[mseTestRidge, wRidge] = prostateRidge(X, y, ndxTrain, ndxTest);
 %%% 
 
-[mseTestSS, wSS] = prostateSubsets(X, y, ndxTrain, ndxTest);;
-[mseTestLasso, wLasso] = prostateLasso(X, y, ndxTrain, ndxTest);;
+[mseTestSS, wSS] = prostateSubsets(X, y, ndxTrain, ndxTest);
+[mseTestLasso, wLasso] = prostateLasso(X, y, ndxTrain, ndxTest);
 %[mseTestElastic, wElastic] = prostateElastic(X, y, ndxTrain, ndxTest);;
 
 if 1

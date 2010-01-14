@@ -25,7 +25,7 @@ axis(range)
 printPmtkFigure('knnClassifyTestData'); 
 
 %% Classify and plot predictions on test data
-Ks = [1 5 ];
+Ks = [1];
 for ki=1:length(Ks)
   K = Ks(ki);
   [ypred] = knnClassify(Xtrain, ytrain, Xtest, K);
