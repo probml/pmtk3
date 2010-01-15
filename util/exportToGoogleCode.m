@@ -26,5 +26,5 @@ function exportToGoogleCode(package, username, passwd, summary)
   fprintf('Cleaning up...\n');  
   delete(fpath)  
   fprintf('Done\n\n')
-  web(sprintf('http://code.google.com/p/%s/downloads/list',package), '-browser')
+  web(sprintf('http://code.google.com/p/%s/downloads/list',lower(package)), '-browser')
 end
