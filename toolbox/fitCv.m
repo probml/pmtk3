@@ -5,7 +5,7 @@ function [model, Kstar, mu, se] = fitCv(Ks, fitFn, predictFn, lossFn, X, y,  Nfo
 % Inputs:
 % Ks is a vector of tuning parameters (e.g., lambdas for ridge regression)
 %    *** We assume models are ordered from least complex to most complex
-% model = fitFn(Xtrain, ytrain, K)
+% model = fitFn(Xtrain, ytrain, K), K = tuning parameter
 % yhat = predictFn(model, Xtest)
 % L = lossFn(yhat, ytest), should return a vector of errors
 % X is N*D design matrix

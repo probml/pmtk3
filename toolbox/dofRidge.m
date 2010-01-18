@@ -17,6 +17,7 @@ assert(approxeq(D2,D22))
 D2 = D22;
 nlambdas = length(lambdas);
 df = zeros(nlambdas,1);
+lambdas  = lambdas+eps;
 for i=1:nlambdas
   df(i) = sum(D2./(D2+lambdas(i)));
 end
