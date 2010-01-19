@@ -56,7 +56,7 @@ function biasVarModelComplexity
 
     function h = setupFig
         h = figure;
-        axis([-0.1,1.1,-1.3,1.3]);
+        axis([0,1,-1.3,1.3]);
         xlabel('x','FontSize',16); ylabel('y','FontSize',16);
         set(gca,'XTick',[0,1],'YTick',[-1,0,1],'box','on','LineWidth',2,'FontSize',16);
         maximizeFigure;

@@ -29,4 +29,4 @@ end
 
 legend(hh, '95% CI', '95% HPD');
 
-printPmtkFigure('betaHPD');
+printPmtkFigure betaHPD;
