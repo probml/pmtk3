@@ -27,7 +27,11 @@ h(1)=plot(xs,wLS(1) + wLS(2)*xs, styles{1},'linewidth',2, 'markersize', 10);
 
 wLP = linregRobustLaplaceLinprog1dFit(x, y);
 h(2) = plot(xs, wLP(1) + wLP(2)*xs, styles{2}, 'linewidth',2, 'markersize', 10);
-legend(h, {'least squares', 'laplace'}, 'location', 'northwest')
+if isOctave()
+    legend({'data', 'least squares', 'laplace'}, 'location', 'northwest')
+else
+    legend(h, {'least squares', 'laplace'}, 'location', 'northwest')
+end
 set(gca,'ylim',[-6 4])
 printPmtkFigure('linregRobust')
 
@@ -47,7 +51,13 @@ for i=1:length(deltas)
    h(1+i) = plot(xs, wHuber(1) + wHuber(2)*xs, styles{i+1}, 'linewidth', 2, 'markersize', 10);
    legendStr{1+i} = sprintf('Huber loss %3.1f', delta);
 end
-legend(h, legendStr, 'location', 'east');
+
+if isOctave()
+    legendStr = [{'Data'}, legendStr];
+    legend(legendStr, 'location', 'east');
+else
+    legend(h, legendStr, 'location', 'east');
+end
 %axis_pct
 set(gca,'ylim',[-6 4])
 printPmtkFigure('linregRobustHuber')
