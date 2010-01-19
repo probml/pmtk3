@@ -51,7 +51,7 @@ for i=1:5
   end
 end
 figure(1)
-if doPrintPmtk, printPmtkFigures('fht14-23images'); end;
+printPmtkFigure fht14-23images
 figure(2)
-if doPrintPmtk, printPmtkFigures('fht14-23dots'); end;
+printPmtkFigure fht14-23dots
 % figure(3);imagesc(reshape(X(73,:),16,16));colormap(gray)

@@ -11,7 +11,7 @@ for i=1:length(methods)
   helper(methods{i});
 end
 
-if doPrintPmtk, printPmtkFigures('minfuncRosen2d'); end;
+printPmtkFigure minfuncRosen2d
 
 end
 

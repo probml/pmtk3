@@ -26,5 +26,5 @@ s  = 5;
 h=line([mu(1)-s*wPCA(1) mu(1)+s*wPCA(1)], [mu(2)-s*wPCA(2) mu(2)+s*wPCA(2)]);
 set(h, 'color', 'g', 'linewidth', 3, 'linestyle', '--')
 
-%if doPrintPmtk, printPmtkFigures('heightWeightPCA'); end;
-if doPrintPmtk, printPmtkFigures('heightWeightPCAstnd'); end;
+%printPmtkFigure heightWeightPCA
+printPmtkFigure heightWeightPCAstnd

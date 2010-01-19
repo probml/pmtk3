@@ -21,7 +21,7 @@ title('Elastic net on prostate data')
 legend(names(1:8), 'location', 'northwest')
 set(gca,'ylim',[-1 8])
 xlabel(sprintf('shrinkage factor s(%s)', '\lambda_1'))
-if doPrintPmtk, printPmtkFigures('elasticNetProstate'); end;
+printPmtkFigure elasticNetProstate
 
 
 lambda1s = [logspace(3, 0, 50) 0];

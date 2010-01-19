@@ -28,7 +28,7 @@ function biasVarModelComplexity
         plot(domain,mean(yhat,2),'-r','LineWidth',2.5);
         title(['ln(\lambda) = ',num2str(log(lambdas(lam)))]);
         legend({'y = sin(2\pix)','y_{avg}'},'Location','NorthEast');
-        if doPrintPmtk, printPmtkFigures(sprintf('biasVarModelComplexity%d', lam)); end;
+        printPmtkFigure(sprintf('biasVarModelComplexity%d', lam));
     end
     
     

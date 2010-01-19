@@ -25,7 +25,7 @@ set(h,'color','r','linewidth',3);
 w=W(:,2);sf=5;h=line([-sf*w(1) sf*w(1)], [-sf*w(2) sf*w(2)],[-sf*w(3) sf*w(3)]);
 set(h,'color','k','linewidth',3,'linestyle',':');
 axis equal
-if doPrintPmtk, printPmtkFigures('pca3dData'); end;
+printPmtkFigure pca3dData
 
 figure;
 plot3(X(:,1), X(:,2), X(:,3), 'o'); grid on; hold on
@@ -40,9 +40,9 @@ axis equal
 figure;
 plot3(Xrecon1(:,1), Xrecon1(:,2), Xrecon1(:,3), '*'); grid on
 axis equal
-if doPrintPmtk, printPmtkFigures('pca3dProj1d'); end;
+printPmtkFigure pca3dProj1d
 
 figure;
 plot3(Xrecon2(:,1), Xrecon2(:,2), Xrecon2(:,3), '*'); grid on
 axis equal
-if doPrintPmtk, printPmtkFigures('pca3dProj2d'); end;
+printPmtkFigure pca3dProj2d

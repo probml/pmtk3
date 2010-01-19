@@ -67,5 +67,5 @@ for mod = 1:length(fittedModel)
   suptitle(sprintf('imputation using %s data', fitMethodNames{mod}));
 end
 
-if doPrintPmtk, printPmtkFigures('pima-realvsimputed'); end;
+printPmtkFigure pima-realvsimputed
 

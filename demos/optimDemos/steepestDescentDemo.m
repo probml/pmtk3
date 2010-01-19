@@ -26,7 +26,7 @@ end
   
 hold on;
 plot(xhist(1,:), xhist(2,:), 'ro-');
-%if doPrintPmtk, printPmtkFigures('aokiSteepestExact'); end;
+printPmtkFigure aokiSteepestExact
 %title(sprintf('exact line searching %d', exactLineSearch))
 %title(sprintf('step size %3.1f', stepSize))
 
