@@ -58,7 +58,12 @@ function plotPDFs(data,useNormMLE)
     h(2) = plot(x,sT(x),'r-','LineWidth',3);
     axis([-5,10,0,0.5]);
     set(gca,'YTick',0:0.1:0.5);
-    legend(h, 'gaussian', 'student T')
+    if isOctave(),
+        legend('gaussian', 'student T')
+        
+    else
+        legend(h, 'gaussian', 'student T')
+    end
 end
 
 
