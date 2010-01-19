@@ -45,8 +45,9 @@ function plotPDFs(data,useNormMLE)
     if(useNormMLE)
         sT = @(X) studentPdf(X,Xbar,sigma,100); 
     else
-        %MLEs = mle(data,'distribution','tlocationscale');
+        %MLEs = mle(data,'distribution','tlocationscale'); %stats toolbox
         %mu = MLEs(1); sigma = MLEs(2); dof = MLEs(3)
+        % use pmtk's EM algorithm
         [mu, sigma2, dof] = mvtFitEcme(data);
         sigma = sqrt(sigma2);
         sT = @(X)exp(studentLogpdf(X,mu, sigma, dof));

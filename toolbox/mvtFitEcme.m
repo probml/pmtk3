@@ -58,11 +58,11 @@ for trial=1:ntrials
       % in most recent params. 
       nllfn = @(v) -sum(mvtLogpdf(X, mu, Sigma, v));
       tic; 
-      dof = fminbnd(nllfn, dofMin, dofMax)
+      dof = fminbnd(nllfn, dofMin, dofMax);
       t=toc;
       timeFminbnd = timeFminbnd + t;
       
-      
+      if 0
       % or use gradient based method
       % eqn 30 from Liu and Rubin 1995 is the gradient of the observed data loglik
       % using the most recent values of mu and Sigma
@@ -83,7 +83,7 @@ for trial=1:ntrials
       t=toc;
       timeMinconf = timeMinconf + t;
       assert(approxeq(dof, dof2))
-      
+      end
       
       % Assess convergence
       oldll = ll;
