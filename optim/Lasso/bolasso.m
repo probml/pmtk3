@@ -1,5 +1,4 @@
 function [selectedVars,Wlsq,varargout] = bolasso(X,y,varargin)
-
 % Use the Bolasso (bootstrap-enhanced least absolute shrinkage operator) to
 % perform model selection, i.e. to select relevant variables. Once
 % selected, fit a model using unregularized least squares regression
