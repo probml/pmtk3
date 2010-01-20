@@ -12,13 +12,10 @@ perm = sortidx(X, 'ascend');
 X = X(perm);
 y = y(perm);
 
-[Xnew, mu] = center(X);
-[Xnew, sigma] = mkUnitVariance(Xnew);
-
 lambda = 0;
 addOnes = true;
-w = logregL2Fit(Xnew, y,  lambda, addOnes);
-[yhat, prob] = logregPredict(Xnew, w, addOnes);
+w = logregL2Fit(X, y,  lambda, addOnes);
+[yhat, prob] = logregPredict(X, w, addOnes);
 
 % visualize model fit for each training point
 figure;

@@ -24,4 +24,6 @@ end
 funObj = @(w)LogisticLossSimple(w,X,y);
 %funObj = @(w)LogisticLoss(w,X,y);
 options.Display = 'none';
+options.TolFun = 1e-10;
+
 [wMAP] = minFunc(@penalizedL2, winit, options, funObj, lambda);
