@@ -28,7 +28,7 @@ p = logp;
 p = reshape(p, size(xs));
 h = max(p(:));
 %vals = [0.1*h 0.01*h 0.001*h];
-%}
+
 
 figContour = figure; contour(xs(1,:), ys(:,1), p);
 xlabel('logit(m)'); ylabel('log(K)')
@@ -37,7 +37,7 @@ figImagesc = figure; imagesc(p); colorbar
 set(gca, 'xticklabel', xrange(get(gca,'xtick')))
 set(gca, 'yticklabel', yrange(get(gca,'ytick')))
 axis xy; xlabel('logit(m)'); ylabel('log(K)')
-
+%}
 
 
 %% MCMC 
@@ -48,8 +48,7 @@ setSeed(1);
 
 proposal = @(x) (x + mvnrnd(zeros(1,2), SigmaProp));
 
-[x, acceptRatio] = metropolisHastings(@target, proposal, xinit, ...
-   'Nsamples', Nsamples, 'Nburnin', burnin);
+[x, acceptRatio] = metropolisHastings(@target, proposal, xinit, Nsamples, burnin);
 
 %% Diagnostics
 % trace plot
@@ -69,8 +68,8 @@ figure;plot(samples.logitm, samples.logK, '.');
 xlabel('logit(m)'); ylabel('log(K)')
 %axis ij
 
-figure(figContour); hold on;
-%plot(samples.logitm, samples.logK, 'k.', 'markersize', 12);
+%figure(figContour); hold on;
+plot(samples.logitm, samples.logK, 'k.', 'markersize', 12);
 line(samples.logitm(1:10:end), samples.logK(1:10:end), 'marker','o','linestyle','none');
 
 

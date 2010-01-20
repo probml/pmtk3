@@ -18,7 +18,7 @@ function [X, acceptRatio] = metropolisHastings(target, proposal, xinit, Nsamples
 
 if nargin < 5, Nburnin = 0; end
 if nargin < 6, thin = false; end
-symmetric = (nargout(proposal)==1);
+symmetric = (nargout(proposal)==1 || nargout(proposal) == -1); % -1 indicates variable output args or anonymous function
 
 
 keep = 1;
