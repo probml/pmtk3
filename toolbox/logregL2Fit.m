@@ -22,5 +22,6 @@ else
   winit = zeros(nVars,1);
 end
 funObj = @(w)LogisticLossSimple(w,X,y);
+%funObj = @(w)LogisticLoss(w,X,y);
 options.Display = 'none';
 [wMAP] = minFunc(@penalizedL2, winit, options, funObj, lambda);

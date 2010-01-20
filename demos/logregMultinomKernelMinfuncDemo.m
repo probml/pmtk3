@@ -1,4 +1,6 @@
-% From http://people.cs.ubc.ca/~schmidtm/Software/minFunc/minFunc.html
+%#author Mark Schmidt
+%#modified Kevin Murphy
+%#url http://people.cs.ubc.ca/~schmidtm/Software/minFunc/minFunc.html#7
 % It is modified by replacing penalizedKernelL2_matrix,
 % which uses sum_c w(:,c)' K w(:,c) as the regularizer,
 % with the simpler penalizedL2, which uses w' w as the regularizer.
@@ -9,7 +11,8 @@
 options.Display = 'none';
 rand('state',0); randn('state', 0);
 nClasses = 5;
-nInstances = 1000;
+%nInstances = 1000;
+nInstances = 100;
 nVars = 2;
 
 [X,y] = makeData('multinomialNonlinear',nInstances,nVars,nClasses);
@@ -55,6 +58,10 @@ uRBF = minFunc(@penalizedL2,randn(nInstances*(nClasses-1),1),options,funObj,lamb
 uRBF = reshape(uRBF,[nInstances nClasses-1]);
 uRBF = [uRBF zeros(nInstances,1)];
 
+addOnes = false;
+wRBF = logregMultiL2Fit(Krbf, y, lambda, addOnes, nClasses);
+assert(approxeq(wRBF, uRBF, 1e-1))
+
 % Compute training errors
 [junk yhat] = max(X*wLinear,[],2);
 trainErr_linear = sum(y~=yhat)/length(y)
@@ -62,6 +69,9 @@ trainErr_linear = sum(y~=yhat)/length(y)
 trainErr_poly = sum(y~=yhat)/length(y)
 [junk yhat] = max(Krbf*uRBF,[],2);
 trainErr_rbf = sum(y~=yhat)/length(y)
+
+[yhat2, prob] = logregMultiPredict(Krbf, wRBF, addOnes);
+assert(isequal(yhat, yhat2))
 
 figure;
 plotClassifier(X,y,wLinear,'Linear Multinomial Logistic Regression');

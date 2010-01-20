@@ -1,3 +1,7 @@
 function mu = softmax(eta)
 
-mu = exp(eta)./sum(exp(eta));
+tmp = exp(eta);
+denom = sum(tmp, 2);
+[D, C] = size(eta); %#ok
+mu = tmp ./ repmat(denom, 1, C);
+
