@@ -1,22 +1,26 @@
-
 % Example from Johnson and Albert p87
 
-stat = load('satData.txt'); % Johnson and Albert p77 table 3.1
+stat = load('satData.txt'); 
+% Johnson and Albert p77 table 3.1
 % stat=[pass(0/1), 1, 1, sat_score, grade in prereq]
 % where the grade in prereq is encoded as A=5,B=4,C=3,D=2,F=1
+
 y = stat(:,1);
 N = length(y);
 X = stat(:,4);
+perm = sortidx(X, 'ascend');
+X = X(perm);
+y = y(perm);
+
+[Xnew, mu] = center(X);
+[Xnew, sigma] = mkUnitVariance(Xnew);
 
 lambda = 0;
 addOnes = true;
-w = logregL2Fit(X, y,  lambda, addOnes);
+w = logregL2Fit(Xnew, y,  lambda, addOnes);
+[yhat, prob] = logregPredict(Xnew, w, addOnes);
 
 % visualize model fit for each training point
-[junk,perm] = sort(X,'ascend');
-X = X(perm);
-y = y(perm);
-[yhat, prob] = logregPredict(X, w, addOnes);
 figure;
 plot(X, y, 'ko', 'linewidth', 2);
 hold on
