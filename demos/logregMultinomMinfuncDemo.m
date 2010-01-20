@@ -1,4 +1,5 @@
-% From http://people.cs.ubc.ca/~schmidtm/Software/minFunc/minFunc.html
+%#author Mark Schmidt
+%#url  http://people.cs.ubc.ca/~schmidtm/Software/minFunc/minFunc.html
 
 options.Display = 'none';
 rand('state',0); randn('state', 0);

@@ -1,4 +1,4 @@
-% RBF demo based on Bishop fig 4.12
+% logistic regression with RBF basis,  based on Bishop fig 4.12
 
 % Generate some data from a mixture of 3 2d spherical Gaussians
 setSeed(0);
@@ -38,23 +38,22 @@ axis_pct
 
 % Fit in transformed space
 y = labels; lambda = 0; % 1e-3;
-w = logregL2Fit(Gtrain,y, lambda);
+addOnes = true;
+w = logregL2Fit(Gtrain,y, lambda, addOnes);
 
-% Plot decision boundary in original space
 figure(figOrig);
 %[x1,x2] = meshgrid(linspace(-1.5,1.5,100), linspace(-1.5,1.5,100));
 [x1,x2] = meshgrid(linspace(-2,2,100), linspace(-2,2,100));
 [m,n]=size(x1);
 Xtest = [reshape(x1, n*m, 1) reshape(x2, n*m, 1)];
 Gtest = rbfKernel(Xtest, centres, sigmaRbf);
-ptest = logregPredict(Gtest, w);
+[yhat, ptest] = logregPredict(Gtest, w, addOnes);
 ptest = reshape(ptest, [m n]);
 [cc,hh]=contour(x1,x2,ptest,[0.5 0.5], '-k');
 set(hh,'linewidth',3);
 axis equal
 printPmtkFigure('basisFnOriginal')
 
-% Plot decision boundary in original space
 figure(figTransformed);
 G1 = reshape(Gtest(:,1), [m n]);
 G2 = reshape(Gtest(:,2), [m n]);

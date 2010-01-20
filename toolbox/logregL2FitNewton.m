@@ -1,4 +1,4 @@
-function [w, C] = logregL2IRLS(X, y, lambda)
+function [w, C] = logregL2FitIrls(X, y, lambda)
 % Iteratively reweighted least squares for logistic regression
 %
 % Rows of X contain data. Do not add a column of 1s.
@@ -11,6 +11,9 @@ function [w, C] = logregL2IRLS(X, y, lambda)
 % Based on code by David Martin, modified by Kevin Murphy
 
 if nargin < 3, lambda = 0; end
+y = y(:);
+y = canonizeLabels(y); % ensure 1,2
+y = 2*(y-1)-1; % map to -1,+1
 n = size(X,1);
 X = [ones(n,1) X];
 d = size(X,2);
@@ -22,13 +25,13 @@ nll = inf;
 done = false;
 lambdaVec = lambda*ones(d,1);
 lambdaVec(1) = 0; % Don't penalize bias
-funObj = @(w) penalizedL2(w, @LogisticLoss, lambdaVec, X, y);
+funObj = @(w) penalizedL2(w, @LogisticLossSimple, lambdaVec, X, y);
 while ~done
    iter = iter + 1;
    nll_prev = nll;
    [nll, g, H] = funObj(w);
    w = w - H\g; % Newton step
-   if abs((nll-nll_prev)/(nll+nll_prev)) < tol, done = true; end;
+   if convergenceTest(nll, nll_prev, tol), done = true; end
    if iter > maxIter
       warning('did not converge'); done = true;
    end

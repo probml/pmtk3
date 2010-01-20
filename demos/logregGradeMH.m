@@ -10,9 +10,7 @@ X = stat(:,4);
 X1 = [ones(N,1) X];
 
 lambda = 1e-10;
-[beta1] = logregL2Fit(X, y, lambda)
-[beta, C] = logregL2FitIrls(X,y,  lambda)
-sqrt(diag(C))
+[beta, C] = logregL2FitIrls(X,y,  lambda);
 
 % MH
 setSeed(1);
