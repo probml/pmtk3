@@ -1,68 +1,46 @@
-
-% Multi class logistic regression with basis function expansion
-% This is a simplification of logregMultinomKernelMinfuncDemo
-
-%setSeed(0);
-rand('state',0); randn('state', 0);
+%% Multi-class Logistic Regression 
+% with basis function expansion. This is a simplification of
+% logregMultinomKernelMinfuncDemo
+%% Setup Data
+rand('state', 0); randn('state', 0); %#ok
 nClasses = 5;
-%nInstances = 1000;
 nInstances = 100;
 nVars = 2;
-
-[X,y] = makeData('multinomialNonlinear',nInstances,nVars,nClasses);
-
-figure;
-[n,p] = size(X)
-colors = getColorsRGB;
-hold on
-for c = 1:nClasses
-   if p == 3
-      plot(X(y==c,2),X(y==c,3),'.','color',colors(c,:));
-   else
-      plot(X(y==c,1),X(y==c,2),'.','color',colors(c,:));
-   end
-end
-    
+[X, y] = makeData('multinomialNonlinear', nInstances, nVars, nClasses);
+%% Settings
 lambda = 1e-2;
 addOnes = false;
-
-
-% linear
-wLinear = logregMultiL2Fit(X, y, lambda, addOnes, nClasses);
-
-% Polynomial
 polyOrder = 2;
+rbfScale = 1;
+%% Linear
+wLinear = logregMultiL2Fit(X, y, lambda, addOnes, nClasses);
+%% Polynomial
 Kpoly = kernelPoly(X,X,polyOrder);
 wPoly = logregMultiL2Fit(Kpoly, y, lambda, addOnes, nClasses);
-
-
-% RBF
-rbfScale = 1;
+%% RBF
 Krbf = rbfKernel(X, X, rbfScale); 
-if 0
-Krbf2 = kernelRBF(X,X,rbfScale); % Mark's function is slower
-assert(approxeq(Krbf, Krbf2))
-end
 wRBF = logregMultiL2Fit(Krbf, y, lambda, addOnes, nClasses);
+%% Compute training errors
+[yhat, prob] = logregMultiPredict(X, wLinear, addOnes); %#ok
+trainErr_linear = mean(y~=yhat);
+fprintf('Training error with raw features: %2.f%%\n', trainErr_linear*100);
 
-
-% Compute training errors
-[yhat, prob] = logregMultiPredict(X, wLinear, addOnes);
-trainErr_linear = sum(y~=yhat)/length(y)
-
-[yhat, prob] = logregMultiPredict(Kpoly, wPoly, addOnes);
-trainErr_poly = sum(y~=yhat)/length(y)
+[yhat, prob] = logregMultiPredict(Kpoly, wPoly, addOnes); %#ok
+trainErr_poly = mean(y~=yhat);
+fprintf('Training error using a polynomial kernal of degree %d: %2.f%%\n', polyOrder,  trainErr_poly*100);
 
 [yhat, prob] = logregMultiPredict(Krbf, wRBF, addOnes);
-trainErr_rbf = sum(y~=yhat)/length(y)
+trainErr_rbf = mean(y~=yhat);
+fprintf('Training error using an RBF kernel with scale %d: %2.f%%\n', rbfScale, trainErr_rbf*100);
+%% Plot decision boundaries
+plotDecisionBoundary(X, y, @(X)logregMultiPredict(X, wLinear, addOnes));
+title('Linear Multinomial Logistic Regression');
 
-% Plot decision boundaries
-figure;
-plotClassifier(X,y,wLinear,'Linear Multinomial Logistic Regression');
+predictFcn = @(Xtest) logregMultiPredict(kernelPoly(Xtest, X, polyOrder), wPoly, addOnes); 
+plotDecisionBoundary(X, y, predictFcn);
+title('Kernel-Poly Multinomial Logistic Regression');
 
-figure;
-plotClassifier(X,y,wPoly,'Kernel-Poly Multinomial Logistic Regression',@kernelPoly,polyOrder);
-
-figure;
-plotClassifier(X,y,wRBF,'Kernel-RBF Multinomial Logistic Regression',@kernelRBF,rbfScale);
+predictFcn = @(Xtest) logregMultiPredict(rbfKernel(Xtest, X, rbfScale), wRBF, addOnes); 
+plotDecisionBoundary(X, y, predictFcn);
+title('Kernel-RBF Multinomial Logistic Regression');
 
