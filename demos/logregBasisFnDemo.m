@@ -39,7 +39,7 @@ axis_pct
 % Fit in transformed space
 y = labels; lambda = 0; % 1e-3;
 addOnes = true;
-w = logregL2Fit(Gtrain,y, lambda, addOnes);
+model = logregL2Fit(Gtrain,y, lambda, addOnes);
 
 figure(figOrig);
 %[x1,x2] = meshgrid(linspace(-1.5,1.5,100), linspace(-1.5,1.5,100));
@@ -47,7 +47,7 @@ figure(figOrig);
 [m,n]=size(x1);
 Xtest = [reshape(x1, n*m, 1) reshape(x2, n*m, 1)];
 Gtest = rbfKernel(Xtest, centres, sigmaRbf);
-[yhat, ptest] = logregPredict(Gtest, w, addOnes);
+[yhat, ptest] = logregPredict(model, Gtest);
 ptest = reshape(ptest, [m n]);
 [cc,hh]=contour(x1,x2,ptest,[0.5 0.5], '-k');
 set(hh,'linewidth',3);
