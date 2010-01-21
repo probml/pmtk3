@@ -10,7 +10,7 @@ function [mu, se] = cvEstimate(fitFn, predictFn, lossFn, X, y,  Nfolds)
 % se is standard error
 
 N = size(X,1);
-randomizeOrder = true;
+randomizeOrder = false;
 [trainfolds, testfolds] = Kfold(N, Nfolds, randomizeOrder);
 loss = zeros(1,N);
 for f=1:length(trainfolds)

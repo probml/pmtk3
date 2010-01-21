@@ -1,4 +1,4 @@
-function [w, C] = logregL2FitIrls(X, y, lambda)
+function model = logregL2FitNewton(X, y, lambda, includeOffset)
 % Iteratively reweighted least squares for logistic regression
 %
 % Rows of X contain data. Do not add a column of 1s.
@@ -11,21 +11,31 @@ function [w, C] = logregL2FitIrls(X, y, lambda)
 % Based on code by David Martin, modified by Kevin Murphy
 
 if nargin < 3, lambda = 0; end
+if nargin < 4, includeOffset = true; end
 y = y(:);
 y = canonizeLabels(y); % ensure 1,2
 y = 2*(y-1)-1; % map to -1,+1
-n = size(X,1);
-X = [ones(n,1) X];
+
+[N nVars] = size(X);
+if includeOffset
+  X = [ones(N,1) X];
+  lambda = lambda*ones(nVars+1,1);
+  lambda(1) = 0; % Don't penalize bias term
+  winit = zeros(nVars+1,1);
+else
+  lambda = lambda*ones(nVars,1);
+  winit = zeros(nVars,1);
+end
+
+
 d = size(X,2);
-w = zeros(d,1); 
+w = winit;
 iter = 0;
 tol = 1e-6; 
 maxIter = 100;
 nll = inf;
 done = false;
-lambdaVec = lambda*ones(d,1);
-lambdaVec(1) = 0; % Don't penalize bias
-funObj = @(w) penalizedL2(w, @LogisticLossSimple, lambdaVec, X, y);
+funObj = @(w) penalizedL2(w, @LogisticLossSimple, lambda, X, y);
 while ~done
    iter = iter + 1;
    nll_prev = nll;
@@ -38,5 +48,9 @@ while ~done
 end;
 [nll, g, H] = funObj(w); %#ok
 C = inv(H);
+
+model.w = w;
+model.C = C;
+model.includeOffset = includeOffset;
 
 

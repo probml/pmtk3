@@ -15,9 +15,9 @@ function  [trainfolds, testfolds] = Kfold(N, K, randomize)
 % (last fold gets all the left over so has different length)
 %
 
-if nargin < 3, randomize = 1; end
+if nargin < 3, randomize = 0; end
 if randomize
-  seed= 0; setSeed(seed);
+  setSeed(0);
   perm = randperm(N);
 else
   perm = 1:N;

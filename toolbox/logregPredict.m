@@ -1,13 +1,12 @@
-function [yhat01, p1] = logregPredict(X,w, addOnes)
+function [yhat01, p1] = logregPredict(model, X)
 % p1(i) = p(y=1|X(i,:), w)
-% yhat01 = 1 if p1>0.5 otherwise   0 
-% A column of 1s is added to X by default
+% yhat01 = 1 if p1>0.5 otherwise 0 
+% A column of 1s is added if this was done at training time
 
-if nargin < 3, addOnes = true; end
 N = size(X,1);
-if addOnes
+if model.includeOffset
   X = [ones(N,1) X];
 end
-p1 = sigmoid(X*w);
+p1 = sigmoid(X*model.w);
 yhat01 = p1>=0.5;
-%yhatpm = 1*(p1>=0.5) + -1*(p1<0.5);
+

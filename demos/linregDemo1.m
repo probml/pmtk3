@@ -1,37 +1,41 @@
 
-% Make data
-n = 21;
-xtrain = linspace(0,20,n)';
-xtest = [0:0.1:20]';
-sigma2 = 4;
-w = [-1.5; 1/9];
-fun = @(x) w(1)*x + w(2)*x.^2;
-ytrain = feval(fun, xtrain) + randn(size(xtrain,1),1)*sqrt(sigma2);
-ytestNoisefree = feval(fun, xtest);
+%% Make data
+[xtrain, ytrain, xtest, ytestNoisefree, ytest] = polyDataMake('sampling','thibaux');
 Xtrain = xtrain; Xtest = xtest;
 
+%% Basic fitting
+Xtrain1 = [ones(size(Xtrain,1),1) Xtrain];
+w = Xtrain1 \ ytrain;
+Xtest1 = [ones(size(Xtest,1),1) Xtest];
+ypredTest = Xtest1*w;
 
-%% Basic
-Xtrain = [ones(size(Xtrain,1),1) Xtrain];
-w = Xtrain \ ytrain;
-Xtest = [ones(size(Xtest,1),1) Xtest];
-ypredTest = Xtest*w;
+%% Use pmtk functions to do same thing
+model = linregFit(Xtrain, ytrain);
+[ypredTest2, v] = linregPredict(model, Xtest);
+assert(approxeq(w, model.w))
+assert(approxeq(ypredTest, ypredTest2))
 
+%% Plot
 figure;
-scatter(Xtrain(:,2),ytrain,'b','filled');
+scatter(xtrain,ytrain,'b','filled');
+%plot(xtrain,ytrain, 'bo', 'linewidth', 3, 'markersize', 12);
 hold on;
-plot(Xtest(:,2), ypredTest, 'k', 'linewidth', 3);
+plot(xtest, ypredTest, 'k', 'linewidth', 3);
+% plot subset of error bars
+Ntest = length(xtest);
+ndx = floor(linspace(1, Ntest, floor(0.05*Ntest)));
+errorbar(xtest(ndx), ypredTest(ndx), sqrt(v(ndx)))
+printPmtkFigure('linregDemo1')
 
+%% Repeat with standardization
+% This has no effect in this case
+% Be careful not to apply standardization to the column of 1s!
+% Note that we use xtrain not Xtrain, and xtest not Xtest
+[Xtrain, mu, sigma] = standardizeCols(xtrain);
+Xtest = standardizeCols(xtest, mu, sigma);
 
-%% With standardization
-Xtrain = xtrain; Xtest = xtest;
-
-
-% Preprocess train
-[Xtrain, mu, sigma] = standardizeCols(Xtrain);
-w = linregL2Fit(Xtrain, ytrain, 0);
-Xtest = standardizeCols(Xtest, mu, sigma);
-ypredTest = linregPredict(w, Xtest);
+model = linregFit(Xtrain, ytrain);
+ypredTest = linregPredict(model, Xtest);
 
 figure;
 scatter(Xtrain(:,1),ytrain,'b','filled');

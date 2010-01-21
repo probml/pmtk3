@@ -9,14 +9,6 @@ ypm = sign(y01-0.5);
 
 lambda = 0;
 
-[beta1] = logregL2Fit(X, y01, lambda);
-[beta2, C] = logregL2FitNewton(X, y01,  lambda);
-assert(approxeq(beta1, beta2))
-
-[beta1] = logregL2Fit(X, y12, lambda);
-[beta2, C] = logregL2FitNewton(X, y12,  lambda);
-assert(approxeq(beta1, beta2))
-
-[beta1] = logregL2Fit(X, ypm, lambda);
-[beta2, C] = logregL2FitNewton(X, ypm,  lambda);
-assert(approxeq(beta1, beta2))
+model1 = logregL2Fit(X, y01, lambda);
+model2 = logregL2FitNewton(X, y01,  lambda);
+assert(approxeq(model1.w, model2.w))
