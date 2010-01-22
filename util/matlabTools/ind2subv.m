@@ -12,11 +12,11 @@ n = length(siz);
 cum_size = cumprod(siz(:)');
 prev_cum_size = [1 cum_size(1:end-1)];
 index = index(:) - 1;
-%sub = rem(repmatC(index,1,n),repmatC(cum_size,length(index),1));
+%sub = rem(repmat(index,1,n),repmat(cum_size,length(index),1));
 remainder = @(x,y)rem(x,y);
 sub = bsxfun(remainder, index, cum_size);
 
-%sub = floor(sub ./ repmatC(prev_cum_size,length(index),1))+1;
+%sub = floor(sub ./ repmat(prev_cum_size,length(index),1))+1;
 sub = floor(sub ./ bsxfun(@times, prev_cum_size, ones(length(index),1))) + 1;
 
 

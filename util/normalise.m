@@ -17,7 +17,7 @@ elseif dim==1 % normalize each column
   z = sum(A);
   s = z + (z==0);
   %M = A ./ (d'*ones(1,size(A,1)))';
-  M = A ./ repmatC(s, size(A,1), 1);
+  M = A ./ repmat(s, size(A,1), 1);
 else
   % Keith Battocchi - v. slow because of repmat
   z=sum(A,dim);
