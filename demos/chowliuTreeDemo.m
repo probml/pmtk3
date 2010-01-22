@@ -8,7 +8,7 @@ disp('mlapa chowliu demo')
 CPDs = treeFitParams(G, X);
 ll = treeLogprob(G, CPDs, X);
 
-Graphlayout('adjMatrix', G, 'nodeLabels', wordlist);
+graphViz4Matlab('-adjMat', G, '-nodeLabels', wordlist);
 
 % Plot loglikelihood of training cases
 figure;hist(ll,100); title('log-likelihood of training cases using ChowLiu tree')

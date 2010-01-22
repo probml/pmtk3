@@ -12,7 +12,7 @@ G(f,g)=2;
 G(g,i)=6; G(g,h)=1;
 G(h,i) = 7;
 G = mkSymmetric(G);
-%figure; Graphlayout(G)
+%figure; graphViz4Matlab(G)
 
 A = G; A((A==0))=inf;
 [T, cost] =  minSpanTreeKruskal(A) % Kruskal
@@ -20,7 +20,7 @@ assert(cost==37)
 
 [T2, cost2] =  minSpanTreePrimSimple(A) % Prim
 assert(cost2==37)
-%Graphlayout(T2)
+%graphViz4Matlab(T2)
 
 
 % Example from Aho, Hopcroft Ullman p234

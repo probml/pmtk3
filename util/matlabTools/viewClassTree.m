@@ -1,7 +1,7 @@
 function  h = viewClassTree(varargin)
 % View a class inheritence hierarchy. 
 % Same args as getClasses + '-topClass'
-% Needs Graphlayout
+% Needs graphViz4Matlab
 % Classes must use classdef syntax not old style
 
 args = processArgs(varargin,'-source',pwd(),'-ignoreDirs',{'unitTests',fullfile('util','graphs','graphlayout')},'-topOnly',false,'-topClass',[]);
@@ -76,7 +76,7 @@ doubleClickFn = @dblcfun;
 
 
 %% Visualize
-h = Graphlayout('-adjMat',matrix,'-nodeLabels',shortClassNames,'-splitLabels',true,'-layout',layout,'-nodeColors',nodeColors,'-edgeColors',edgeColors,'-doubleClickFn',doubleClickFn);
+h = graphViz4Matlab('-adjMat',matrix,'-nodeLabels',shortClassNames,'-splitLabels',true,'-layout',layout,'-nodeColors',nodeColors,'-edgeColors',edgeColors,'-doubleClickFn',doubleClickFn);
 maximizeFigure();
 pause(1);
 tightenAxes(h);
