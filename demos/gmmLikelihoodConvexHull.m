@@ -8,7 +8,8 @@
 %
 % Code by Matthew Dunham
 
-rand('twister',39);
+warning('off', 'optim:fminunc:SwitchingMethod')
+setSeed(39)
 mu = [0.05:0.1:0.95;0.05:0.1:0.95];
 mu(1,:) = mu(1,randperm(10));
 mu(2,:) = mu(2,randperm(10));
@@ -30,13 +31,15 @@ z = reshape(z,nrows,ncols);
 
 figure;
 surf(x1, y1, z);
+shading interp
+view([-170, 52])
 printPmtkFigure('gmmLikelihoodSurf'); 
 
 figure;
 contour(x1,y1,z,'-r'); hold on;
 plot(mu(:,1),mu(:,2),'+k','MarkerSize',16);
 
-options = optimset('Display','off');
+options = optimset('Display', 'off');
 modes = zeros(3,2);
 for i=1:3
    modes(i,:) =  fminunc(@(x)-f(x),mu(i,:),options);
@@ -44,8 +47,7 @@ end
 plot(modes(:,1),modes(:,2),'^b','MarkerSize',12,'MarkerFaceColor','b');
 k = convhull(mu(:,1),mu(:,2));
 plot(mu(k,1),mu(k,2),'-g','LineWidth',3);
-
+view([180, 90])
 set(gca,'box','on','XTick',[],'YTick',[],'LineWidth',3);
-%maximizeFigure;
 printPmtkFigure('gmmLikelihoodConvexHull');
 
