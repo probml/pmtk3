@@ -1,3 +1,4 @@
+cls
 
 for ki=1:11
   k = ki-1;
