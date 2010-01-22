@@ -25,7 +25,11 @@ function plotDecisionBoundary(X, Y, predictFcn)
     colors = 'rgbcymkrgbcymk'; symbols = '+ovd*.xs^d><ph';
     figure; hold on;
     for c=1:nclasses
-        contourShade(X1grid, X2grid, reshape(yhat, nrows, ncols), 1:nclasses, 'LineWidth', 2, 'FaceAlpha', 0.1);
+        if isOctave()
+            contour(X1grid, X2grid, reshape(yhat, nrows, ncols), 1:nclasses, 'LineWidth', 2);
+        else
+            contourShade(X1grid, X2grid, reshape(yhat, nrows, ncols), 1:nclasses, 'LineWidth', 2, 'FaceAlpha', 0.1);
+        end
         plot(X(Y==c, 1), X(Y==c, 2), [colors(c), symbols(c)], 'LineWidth', 2, 'MarkerSize', 8);        
     end
     box on;
