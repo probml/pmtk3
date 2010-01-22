@@ -1,0 +1,191 @@
+<html xmlns:mwsh="http://www.mathworks.com/namespace/mcode/v1/syntaxhighlight.dtd">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      -->
+      <title>Connecting MATLAB to R</title>
+      <meta name="generator" content="MATLAB 7.0">
+      <meta name="date" content="2004-06-01">
+      <meta name="m-file" content="Rdemo"><style>
+body {
+  background-color: white;
+  margin:10px;
+}
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+pre.codeinput {
+  margin-left: 30px;
+}
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.showbuttons {
+  margin-left: 30px;
+  border: solid black 2px;
+  padding: 4px;
+  background: #EBEFF3;
+}
+
+pre.codeoutput {
+  color: gray;
+  font-style: italic;
+}
+pre.error {
+  color: red;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows.  On Gecko-based browsers, the shrink-to-fit doesn't work. */ 
+p,h1,h2,div {
+  /* for MATLAB's browser */
+  width: 600px;
+  /* for Mozilla, but the "width" tag overrides it anyway */
+  max-width: 600px;
+  /* for IE */
+  width:expression(document.body.clientWidth > 620 ? "600px": "auto" );
+}
+
+    </style></head>
+   <body>
+      <h1>Connecting MATLAB to R</h1>
+      <introduction>
+         <p>The statistical programming language R has a COM interface. We can use this to execute R commands from within MATLAB. The
+            connection requires a local installation of R and also of the R-(D)COM Interface (for Windows only). This can be downloaded
+            from <a href="http://lib.stat.cmu.edu/R/CRAN/other-software.html">http://lib.stat.cmu.edu/R/CRAN/other-software.html</a> or other CRAN mirror site.
+         </p>
+      </introduction>
+      <h2>Contents</h2>
+      <div>
+         <ul>
+            <li><a href="#1">Connect to an R Session</a></li>
+            <li><a href="#2">Run one of the R demos to test the connection.</a></li>
+            <li><a href="#3">Now copy the volcano data into MATLAB</a></li>
+            <li><a href="#4">Use SURF to plot the volcano</a></li>
+            <li><a href="#5">You can also copy the colormap from R</a></li>
+            <li><a href="#6">Another view</a></li>
+            <li><a href="#7">Add some lighting and turn off the edges</a></li>
+            <li><a href="#8">Now do some arithmetic in R. First push some data into R.</a></li>
+            <li><a href="#9">Run a simple R command</a></li>
+            <li><a href="#10">Run a series of commands and grab the result</a></li>
+            <li><a href="#11">Close the connection</a></li>
+         </ul>
+      </div>
+      <h2>Connect to an R Session<a name="1"></a></h2><pre class="codeinput">[status,msg] = openR;
+<span class="keyword">if</span> status ~= 1
+    disp([<span class="string">'Problem connecting to R: '</span> msg]);
+<span class="keyword">end</span>
+</pre><h2>Run one of the R demos to test the connection.<a name="2"></a></h2><pre class="codeinput">evalR(<span class="string">'demo("persp")'</span>);
+</pre><h2>Now copy the volcano data into MATLAB<a name="3"></a></h2><pre class="codeinput">volcano = getRdata(<span class="string">'volcano'</span>);
+</pre><h2>Use SURF to plot the volcano<a name="4"></a></h2><pre class="codeinput">surf(volcano);
+axis <span class="string">off</span>; view(-135,40);
+</pre><img vspace="5" hspace="5" src="Rdemo_01.png"> <h2>You can also copy the colormap from R<a name="5"></a></h2><pre class="codeinput">cols = char(evalR(<span class="string">'terrain.colors(20)'</span>));
+red = hex2dec(cols(:,[2 3]));
+green = hex2dec(cols(:,[4 5]));
+blue = hex2dec(cols(:,[6 7]));
+colormap([red,green,blue]/256);
+</pre><img vspace="5" hspace="5" src="Rdemo_02.png"> <h2>Another view<a name="6"></a></h2>
+      <p>The R variable z has edges filled in for more realistic viewing. The surface is flipped around in the R version.</p><pre class="codeinput">z = getRdata(<span class="string">'z'</span>);
+h = surf(fliplr(z));
+axis <span class="string">off</span>; view(-135,40);
+</pre><img vspace="5" hspace="5" src="Rdemo_03.png"> <h2>Add some lighting and turn off the edges<a name="7"></a></h2><pre class="codeinput">lightangle(-135,40);
+lighting <span class="string">gouraud</span>
+set(h,<span class="string">'linestyle'</span>,<span class="string">'none'</span>);
+</pre><img vspace="5" hspace="5" src="Rdemo_04.png"> <h2>Now do some arithmetic in R. First push some data into R.<a name="8"></a></h2><pre class="codeinput">a = 1:10;
+putRdata(<span class="string">'a'</span>,a)
+</pre><h2>Run a simple R command<a name="9"></a></h2><pre class="codeinput">b = evalR(<span class="string">'a^2'</span>)
+</pre><pre class="codeoutput">b =
+     1     4     9    16    25    36    49    64    81   100
+</pre><h2>Run a series of commands and grab the result<a name="10"></a></h2><pre class="codeinput">evalR(<span class="string">'b &lt;- a^2'</span>);
+evalR(<span class="string">'c &lt;- b + 1'</span>);
+c = getRdata(<span class="string">'c'</span>)
+</pre><pre class="codeoutput">c =
+     2     5    10    17    26    37    50    65    82   101
+</pre><h2>Close the connection<a name="11"></a></h2><pre class="codeinput">closeR
+</pre><p class="footer"><br>
+         Published with MATLAB&reg; 7.0<br></p>
+      <!--
+##### SOURCE BEGIN #####
+%% Connecting MATLAB to R
+% The statistical programming language R has a COM interface. We can use
+% this to execute R commands from within MATLAB. The connection requires a
+% local installation of R and also of the R-(D)COM Interface (for Windows
+% only). This can be downloaded from
+% http://lib.stat.cmu.edu/R/CRAN/other-software.html or other CRAN mirror
+% site.
+
+%% Connect to an R Session
+[status,msg] = openR;
+if status ~= 1
+    disp(['Problem connecting to R: ' msg]);
+end
+
+%% Run one of the R demos to test the connection.
+evalR('demo("persp")');
+
+%% Now copy the volcano data into MATLAB
+volcano = getRdata('volcano');
+
+%% Use SURF to plot the volcano
+surf(volcano);
+axis off; view(-135,40);
+
+%% You can also copy the colormap from R
+cols = char(evalR('terrain.colors(20)'));
+red = hex2dec(cols(:,[2 3]));
+green = hex2dec(cols(:,[4 5]));
+blue = hex2dec(cols(:,[6 7]));
+colormap([red,green,blue]/256);
+
+%% Another view
+% The R variable z has edges filled in for more realistic viewing. The
+% surface is flipped around in the R version.
+z = getRdata('z');
+h = surf(fliplr(z));
+axis off; view(-135,40);
+
+%% Add some lighting and turn off the edges
+lightangle(-135,40);
+lighting gouraud
+set(h,'linestyle','none');
+
+
+%% Now do some arithmetic in R. First push some data into R.
+a = 1:10;
+putRdata('a',a)
+
+%% Run a simple R command
+b = evalR('a^2')
+
+%% Run a series of commands and grab the result
+evalR('b <- a^2');
+evalR('c <- b + 1');
+c = getRdata('c')
+
+%% Close the connection
+closeR
+
+##### SOURCE END #####
+-->
+   </body>
+</html>
