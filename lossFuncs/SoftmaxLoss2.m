@@ -17,7 +17,7 @@ if nargout > 1
     g = zeros(p,k-1);
 
     for c = 1:k-1
-        g(:,c) = -sum(X.*repmatC((y==c) - exp(X*w(:,c))./Z,[1 p]));
+        g(:,c) = -sum(X.*repmat((y==c) - exp(X*w(:,c))./Z,[1 p]));
     end
     g = reshape(g,[p*(k-1) 1]);
 end
