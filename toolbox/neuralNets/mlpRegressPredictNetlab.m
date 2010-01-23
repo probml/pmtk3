@@ -1,4 +1,4 @@
-function [mu, sigma2] = mlpRegressPredict(model, X)
+function [mu, sigma2] = mlpRegressPredictNetlab(model, X)
 % Prediction for multi-layer perceptron for  regression
 % mu(i,:) is the posteiror mean
 % sigma2(i,:) is the posterior variance (plugin approximation)

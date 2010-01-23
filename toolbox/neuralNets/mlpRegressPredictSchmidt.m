@@ -1,4 +1,4 @@
-function [mu, sigma2] = mlpRegressPredict(model, X)
+function [mu, sigma2] = mlpRegressPredictSchmidt(model, X)
 % Multi-layer perceptron for regression
 
 [N,D] = size(X);

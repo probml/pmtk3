@@ -1,4 +1,4 @@
-function [model, output] = mlpFit(X, y, type, H, lambda, options)
+function [model, output] = mlpGenericFitNetlab(X, y, H, lambda, options, type)
 % Train a multi-layer perceptron; needs netlab and minFunc
 % X is an N*D matrix of inputs
 % y should be a N*K matrix contain reals or 0,1
@@ -31,7 +31,7 @@ model.net = net;
       sigma2 = mean((y(:) - yhat(:)).^2);
       net.beta = 1/sigma2;
       % must specify beta before calling mlperr (which calls errbayes)
-      % mlperr also calls mlpfwd which is inefficient
+      % mlperr also calls mlpfwd again, which is redundany
     end
     [e] = mlperr(net, X, y);
     [g] = mlpgrad(net, X, y);
