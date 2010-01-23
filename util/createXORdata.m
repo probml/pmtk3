@@ -1,6 +1,7 @@
 function [X, y] =  createXORdata(doplot)
     
     if nargin < 1, doplot = false; end
+    setSeed(0);
     off1 = gaussSample([1, 1], 0.5*eye(2), 20);
     off2 = gaussSample([5, 5], 0.5*eye(2), 20);
     on1  = gaussSample([1, 5], 0.5*eye(2), 20);
