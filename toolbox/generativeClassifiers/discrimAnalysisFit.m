@@ -17,7 +17,7 @@ for c=1:Nclasses
   ndx = find(y == c);
   dat = X(ndx, :);
   params.mu(:,c) = mean(dat);
-  params.Sigma(:,:,c) = cov(dat);
+  params.Sigma(:,:,c) = covmat(dat);
   params.classPrior(c) = length(ndx)/n;
 end
 params.SigmaPooled = cov(X);

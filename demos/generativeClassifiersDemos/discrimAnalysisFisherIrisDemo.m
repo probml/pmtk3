@@ -6,7 +6,8 @@ labels = species(51:end);
 model = discrimAnalysisFit(X, y, 'quadratic');
 h = plotDecisionBoundary(X, y, @(Xtest)discrimAnalysisPredict(model, Xtest));
 title('Fisher Iris Data Classification');
-legend(h, support, 'Location', 'NorthWest');
-set(gca, 'Xtick', 5:8, 'Ytick', 2:0.5:4);
+if ~isOctave
+    legend(h, support, 'Location', 'NorthWest');
+    set(gca, 'Xtick', 5:8, 'Ytick', 2:0.5:4);
+end
 xlabel('X_1'); ylabel('X_2');
-

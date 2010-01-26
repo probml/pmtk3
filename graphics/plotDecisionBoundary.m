@@ -19,16 +19,8 @@ function h = plotDecisionBoundary(X, Y, predictFcn, stipple)
     resolution = 300;          % set higher for smoother contours, lower for speed/mem
     nclasses = numel(unique(Y));
     range = dataWindow(X);
-    
-    function [X1, X2, yhat] = gridPredict(resolution)
-       X1range = linspace(range(1), range(2), resolution);
-       X2range = linspace(range(3), range(4), resolution);
-       [X1, X2] = meshgrid(X1range, X2range);
-       yhat = predictFcn([X1(:), X2(:)]);
-    end
-    
-    [X1grid, X2grid, yhat] = gridPredict(resolution);
-    [X1sparse, X2sparse, yhatSparse] = gridPredict(resolution / 2.5);
+    [X1grid, X2grid, yhat] = gridPredict(range, resolution, predictFcn);
+    [X1sparse, X2sparse, yhatSparse] = gridPredict(range, resolution / 2.5, predictFcn);
     [nrows, ncols] = size(X1grid);
     Y = canonizeLabels(Y);
     colors = pmtkColors(); symbols = '+ovd*.xs^d><ph';
@@ -48,3 +40,11 @@ function h = plotDecisionBoundary(X, Y, predictFcn, stipple)
     box on;
     axis tight
 end
+
+
+function [X1, X2, yhat] = gridPredict(range, resolution, predictFcn)
+       X1range = linspace(range(1), range(2), resolution);
+       X2range = linspace(range(3), range(4), resolution);
+       [X1, X2] = meshgrid(X1range, X2range);
+       yhat = predictFcn([X1(:), X2(:)]);
+end    
