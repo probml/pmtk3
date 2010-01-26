@@ -1,10 +1,12 @@
-function h = plotDecisionBoundary(X, Y, predictFcn)
+function h = plotDecisionBoundary(X, Y, predictFcn, stipple)
 % Plot data and the classification boundaries induced by the specified 
 % predictFcn. 
 %
 % X          - an n-by-2 data matrix
 % Y          - an n-by-1 matrix of class labels
 % predictFcn - a handle to a function of the form yhat = predictFcn(Xtest)
+% stipple    - [true] If true, use stippling, else use pastel translucent
+%              shading
 %
 % Maximum 14 classes - although this is easy to change
 %
@@ -12,29 +14,37 @@ function h = plotDecisionBoundary(X, Y, predictFcn)
 % plotDecisionBoundary(X, y, @(Xtest)logregPredict(model, Xtest));
 % predictFcn = @(Xtest) logregPredict(model, rbfKernel(Xtest, X, rbfScale)); 
 % plotDecisionBoundary(X, y, predictFcn);
-
-    resolution = 200;   % set higher for smoother contours, lower for speed/mem
+    if nargin < 4, stipple = true; end
+    
+    resolution = 300;          % set higher for smoother contours, lower for speed/mem
     nclasses = numel(unique(Y));
     range = dataWindow(X);
-    X1range = linspace(range(1), range(2), resolution);
-    X2range = linspace(range(3), range(4), resolution);
-    [X1grid, X2grid] = meshgrid(X1range, X2range);
+    
+    function [X1, X2, yhat] = gridPredict(resolution)
+       X1range = linspace(range(1), range(2), resolution);
+       X2range = linspace(range(3), range(4), resolution);
+       [X1, X2] = meshgrid(X1range, X2range);
+       yhat = predictFcn([X1(:), X2(:)]);
+    end
+    
+    [X1grid, X2grid, yhat] = gridPredict(resolution);
+    [X1sparse, X2sparse, yhatSparse] = gridPredict(resolution / 2.5);
     [nrows, ncols] = size(X1grid);
-    yhat = predictFcn([X1grid(:), X2grid(:)]);
     Y = canonizeLabels(Y);
-    colors = 'rgbcymkrgbcymk'; symbols = '+ovd*.xs^d><ph';
+    colors = pmtkColors(); symbols = '+ovd*.xs^d><ph';
     figure; hold on;
     h = zeros(nclasses, 1);
     for c=1:nclasses
-        if isOctave()
-            contour(X1grid, X2grid, reshape(yhat, nrows, ncols), 1:nclasses, 'LineWidth', 2);
-        else
+        if ~stipple && ~isOctave
             contourShade(X1grid, X2grid, reshape(yhat, nrows, ncols), 1:nclasses, 'LineWidth', 2, 'FaceAlpha', 0.1);
+        else
+            X1sparse = X1sparse(:); X2sparse = X2sparse(:);
+            plot(X1sparse(yhatSparse==c), X2sparse(yhatSparse==c), '.', 'Color', colors{c}, 'MarkerSize', 0.05);
+            contour(X1grid, X2grid, reshape(yhat, nrows, ncols), 1:nclasses, 'LineWidth', 2, 'Color', 'k');
         end
-        h(c) = plot(X(Y==c, 1), X(Y==c, 2), [colors(c), symbols(c)], 'LineWidth', 2, 'MarkerSize', 8);        
+        h(c) = plot(X(Y==c, 1), X(Y==c, 2), symbols(c), 'Color', colors{c}, 'LineWidth', 2, 'MarkerSize', 8);        
     end
     axis(range);
     box on;
     axis tight
-    
 end
