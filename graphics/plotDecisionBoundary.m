@@ -1,4 +1,4 @@
-function plotDecisionBoundary(X, Y, predictFcn)
+function h = plotDecisionBoundary(X, Y, predictFcn)
 % Plot data and the classification boundaries induced by the specified 
 % predictFcn. 
 %
@@ -24,15 +24,17 @@ function plotDecisionBoundary(X, Y, predictFcn)
     Y = canonizeLabels(Y);
     colors = 'rgbcymkrgbcymk'; symbols = '+ovd*.xs^d><ph';
     figure; hold on;
+    h = zeros(nclasses, 1);
     for c=1:nclasses
         if isOctave()
             contour(X1grid, X2grid, reshape(yhat, nrows, ncols), 1:nclasses, 'LineWidth', 2);
         else
             contourShade(X1grid, X2grid, reshape(yhat, nrows, ncols), 1:nclasses, 'LineWidth', 2, 'FaceAlpha', 0.1);
         end
-        plot(X(Y==c, 1), X(Y==c, 2), [colors(c), symbols(c)], 'LineWidth', 2, 'MarkerSize', 8);        
+        h(c) = plot(X(Y==c, 1), X(Y==c, 2), [colors(c), symbols(c)], 'LineWidth', 2, 'MarkerSize', 8);        
     end
-    box on;
-    set(gca, 'LineWidth', 2)
     axis(range);
+    box on;
+    axis tight
+    
 end

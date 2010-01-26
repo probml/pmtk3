@@ -48,8 +48,10 @@ end
 
 if(ischar(labels))
   [s,j,canonized] = unique(labels,'rows');
-else
+elseif(issparse(labels))
   labels = double(full(labels));
+  [s,j,canonized] = unique(labels);
+else
   [s,j,canonized] = unique(labels);
 end
 
