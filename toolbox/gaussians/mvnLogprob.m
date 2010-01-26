@@ -1,4 +1,4 @@
-function logp = mvnLogpdf(X, mu, Sigma)
+function logp = mvnLogprob(X, mu, Sigma)
 % Multivariate Gaussian distribution, log pdf
 % X(i,:) is i'th case
 d = size(X,2);
