@@ -1,10 +1,13 @@
-function [mu, Sigma, mixweight, loglikHist] = mixGaussFitEmSimple(data, K, varargin)
+function [model, loglikHist] = gmmFitEm(data, K, varargin)
 % EM for fitting mixture of K gaussians
 % data(i,:) is i'th case
-% mu(:,) is k'th centroid
-% Sigma(:,:,k)
-% mixweight(k)
-% loglikHist(t)
+% model is a structure containing these fields:
+%   mu(:,) is k'th centroid
+%   Sigma(:,:,k)
+%   mixweight(k)
+%
+% loglikHist(t) for plotting
+
 
 [maxIter, thresh, plotfn, verbose, mu, Sigma, mixweight] = process_options(...
     varargin, 'maxIter', 100, 'thresh', 1e-3, 'plotfn', [], ...
@@ -87,4 +90,8 @@ while ~done
   if verbose, fprintf(1, 'iteration %d, loglik = %f\n', iter, loglikHist(iter)); end
   iter = iter + 1;
 end 
+
+
+model.mu  = mu; model.Sigma = Sigma; model.mixweight = mixweight; model.K = K;
+
 
