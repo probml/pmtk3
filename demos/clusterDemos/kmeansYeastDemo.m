@@ -21,8 +21,9 @@ set(gca,'xlim',[0 max(times)])
 printPmtkFigure('yeastTimeSeries'); 
 
 
-[cidx, ctrs] = kmeans(X, 16, 'dist','corr', 'rep',5, 'disp','final');
-
+%[cidx, ctrs] = kmeans(X, 16, 'dist','corr', 'rep',5, 'disp','final');
+[ctrs, cidx] = kmeansSimple(X, 16);
+ctrs = ctrs';
 figure;
 for c = 1:16
     subplot(4,4,c);
