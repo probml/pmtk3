@@ -46,5 +46,5 @@ function [X1, X2, yhat] = gridPredict(range, resolution, predictFcn)
        X1range = linspace(range(1), range(2), resolution);
        X2range = linspace(range(3), range(4), resolution);
        [X1, X2] = meshgrid(X1range, X2range);
-       yhat = predictFcn([X1(:), X2(:)]);
+       yhat = canonizeLabels(predictFcn([X1(:), X2(:)]));
 end    
