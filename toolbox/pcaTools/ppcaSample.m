@@ -5,5 +5,5 @@ U = evecs(:,1:K);
 Lam = diag(evals(1:K));
 C = U*(Lam-sigma2*eye(K))*U' + sigma2*eye(d);
 %assert(approxeq(C, W*W' + sigma2*eye(d)))
-X = mvnrnd(mu, C, N);
+X = gaussSample(mu, C, N);
 

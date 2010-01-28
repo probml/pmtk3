@@ -1,11 +1,11 @@
 %% Demo of pca used to reduce 3d data to 2d
 % Based on an example by Hamid Bolouri
-seed = 0; randn('state', seed);
+setSeed(0)
 
 n = 100; d = 3;
 %Sigma = diag(sqrt([10,2,0.5]));
 Sigma = diag([10,2,0.1]);
-X = mvnrnd(zeros(1,d), Sigma, n);
+X = gaussSample(zeros(1,d), Sigma, n);
 
 % rotate the data 
 alpha = 30*pi/180;
@@ -15,7 +15,7 @@ R = [cos(alpha) -sin(alpha) 0;...
 X  = X*R';
 X = center(X);
 
-[W, Z, evals, Xrecon2, mu] = pcaPmtk(X, 2);
+[W, Z, evals, Xrecon2, mu] = pcaFast(X, 2);
 Xrecon1 = Z(:,1)*W(:,1)' +  repmat(mu, n, 1);
     
 figure;

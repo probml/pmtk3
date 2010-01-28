@@ -35,7 +35,7 @@ function biasVarModelComplexity
     function [X,y] = synthesizeData
         sigma = 0.1; mu = 0; 
         X = rand(n,d);
-        y = f(X) + mvnrnd(mu,sigma,n);
+        y = f(X) + gaussSample(mu,sigma,n);
     end
 
 

@@ -10,7 +10,7 @@ keep = find(w ~= 0);
 %X = randn(N,D);
 Sigma = randpd(D);
 mu = randn(D,1);
-X = mvnrnd(mu,Sigma,N);
+X = gaussSample(mu,Sigma,N);
 sigma = 0.1;
 y = X*w + sigma*randn(N,1);
 

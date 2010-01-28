@@ -75,7 +75,7 @@ end
 
 i=0;
 while i<nDataSets
-    X = mvnrnd(mu,Sigma,n);          %now sample rows of X
+    X = gaussSample(mu,Sigma,n);          %now sample rows of X
     %C = (X'*X)./n;
     %Check if sign consistency w.r.t. the empirical cov matrix matches
     %request as well.

@@ -47,7 +47,7 @@ function [Xfull, Xmiss, Xhid, missing] = mkData(mu, Sigma, n, rnd, pcMissing)
 
 
 d = length(mu);
-Xfull = mvnrnd(mu, Sigma, n);
+Xfull = gaussSample(mu, Sigma, n);
 
 if rnd
    % Random missing pattern

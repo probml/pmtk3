@@ -115,7 +115,7 @@ printPmtkFigure bayesLinRegPlot2d
 % blue circles. 
 function plotSampleLines(mu, sigma, numberOfLines,dataPoints)
 for i = 1:numberOfLines
-    w = mvnrnd(mu,sigma,1);
+    w = gaussSample(mu,sigma,1);
     func = @(x) w(1) + w(2)*x;
     fplot(func,[-1,1,-1,1],'r');
     hold on;

@@ -1,4 +1,4 @@
-function [muSamples, SigmaSamples, dataSamples, LL] = mvnFitGibbs(data, varargin)
+function [muSamples, SigmaSamples, dataSamples, LL] = mvnMissingFitGibbs(data, varargin)
 % Perform gibbs sampling for the missing values of a data matrix
 % Algorithm consists of a stochastic imputation stage (sampling from conditional given known)
 % and then sampling from the resulting posterior for mu and Sigma given the current state of the samples
@@ -46,7 +46,7 @@ for i=imputeRows
   xCurr(i,o) = data(i,o);
 end
 
-SigmaCurr = iwishrnd(Lambda0, dof); muCurr = mvnrnd(mu0, SigmaCurr / k0);
+SigmaCurr = iwishrnd(Lambda0, dof); muCurr = gaussSample(mu0, SigmaCurr / k0);
 if(length(missingRows) > 0)
   for s=1:nSamples
     if(s > nburnin)
@@ -61,10 +61,10 @@ if(length(missingRows) > 0)
       varCond = SigmaCurr(u,u) - SigmaCurr(u,o) * SooCurrinv * SigmaCurr(o,u);
   
       try
-      xSample = mvnrnd(muCond, varCond); % Sample the unobserved
+      xSample = gaussSample(muCond, varCond); % Sample the unobserved
       catch ME
       varCond = round2(varCond, sqrt(eps));
-      xSample = mvnrnd(muCond, varCond);
+      xSample = gaussSample(muCond, varCond);
       end
       xCurr(i,u) = xSample;
     end
@@ -77,7 +77,7 @@ if(length(missingRows) > 0)
     muPost = (n*xbar + k0*mu0) / (n + k0);
     LambdaPost = Lambda0 + n*cov(xCurr,1) + n*k0/(n+k0) * (xbar - mu0)*(xbar - mu0)';
     SigmaCurr = iwishrnd(LambdaPost, k0 + n);
-    muCurr = mvnrnd(muPost, SigmaCurr / (k0 + n));
+    muCurr = gaussSample(muPost, SigmaCurr / (k0 + n));
     if(s > nburnin)
       muSamples(s - nburnin,:) = muCurr;
       SigmaSamples(:,:,s - nburnin) = SigmaCurr;

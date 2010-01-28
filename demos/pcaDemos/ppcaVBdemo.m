@@ -15,7 +15,7 @@ mu = zeros(1,d);
 k = 4;
 W = zeros(d,d);
 for i=1:k
-   W(:,i) = mvnrnd(mu, sigma(i)*eye(d));
+   W(:,i) = gaussSample(mu, sigma(i)*eye(d));
 end
 Z = randn(d,n);
 X = W*Z + randn(d,n);

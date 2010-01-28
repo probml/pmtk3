@@ -1,5 +1,5 @@
-function [x,y] = sample_lds(F, H, Q, R, init_state, T, models, G, u)
-% SAMPLE_LDS Simulate a run of a (switching) stochastic linear dynamical system.
+function [x,y] = kalmanSample(F, H, Q, R, init_state, T, models, G, u)
+% Simulate a run of a (switching) stochastic linear dynamical system.
 % [x,y] = switching_lds_draw(F, H, Q, R, init_state, models, G, u)
 % 
 %   x(t+1) = F*x(t) + G*u(t) + w(t),  w ~ N(0, Q),  x(0) = init_state
@@ -47,8 +47,8 @@ obs_noise_samples = cell(1,M);
 for i=1:M
   %state_noise_samples{i} = sample_gaussian(zeros(length(Q{i}),1), Q{i}, T)';
   %obs_noise_samples{i} = sample_gaussian(zeros(length(R{i}),1), R{i}, T)';
-  state_noise_samples{i} = mvnrnd(zeros(length(Q{i}),1), Q{i}, T)';
-  obs_noise_samples{i} = mvnrnd(zeros(length(R{i}),1), R{i}, T)';
+  state_noise_samples{i} = gaussSample(zeros(length(Q{i}),1), Q{i}, T)';
+  obs_noise_samples{i} = gaussSample(zeros(length(R{i}),1), R{i}, T)';
 end
 
 x = zeros(ss, T);

@@ -4,7 +4,7 @@ setSeed(1);
 N = 100; D = 2;
 mu = randn(1,D);
 Sigma = randpd(D);
-X = mvnrnd(mu, Sigma, N);
+X = gaussSample(mu, Sigma, N);
 
 [muHat, SigmaHat, niter] = mvtFixedDofFitEm(X, 10, false);
 

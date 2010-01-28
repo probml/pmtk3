@@ -13,7 +13,7 @@ Kfn = @(x,z) 1*exp(-sq_dist(x'/L,z'/L)/2);
 % plot sampled functions from the prior
 figure; hold on
 for i=1:3
-  fs = mvnrnd(muFn(xs), Kfn(xs,xs));
+  fs = gaussSample(muFn(xs), Kfn(xs,xs) + 1e-15*eye(size(xs,1)));
   plot(xs, fs, 'k-', 'linewidth', 2)
 end
 printPmtkFigure('gprDemoNoiseFreePrior')
@@ -40,7 +40,7 @@ fill([xs; flipdim(xs,1)], f, [7 7 7]/8, 'EdgeColor', [7 7 7]/8);
 
 % plot samples from posterior predictive
 for i=1:3
-  fs = mvnrnd(postMu(:)', postCov);
+  fs = gaussSample(postMu(:)', postCov);
   plot(xs, fs, 'k-', 'linewidth', 2)
   h=plot(Xtrain, ftrain, 'kx', 'markersize', 12, 'linewidth', 3);
 end

@@ -6,7 +6,7 @@ d = 10; n = 100;
 mu = randn(d,1); Sigma = randpd(d);
 
 pcMissing = 0.2;
-Xfull = mvnrnd(mu, Sigma, n);
+Xfull = gaussSample(mu, Sigma, n);
 missing = rand(n,d) < pcMissing;
 
 Xmiss = Xfull;

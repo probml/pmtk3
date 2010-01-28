@@ -71,7 +71,7 @@ end
 
 %%%%%%%%%
 function bnew = proposal(b, Sigma)
-bnew = b + mvnrnd(zeros(1, length(b)), Sigma);
+bnew = b + gaussSample(zeros(1, length(b)), Sigma);
 
 function p = logpost(b, X, y, lambda)
 logprior = 0;  % log(1)
