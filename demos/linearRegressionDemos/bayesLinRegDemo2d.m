@@ -16,7 +16,7 @@ likelihoodPrecision = 1/(likelihoodSD)^2;
 
 %Generate the training points
 xtrain = -1 + 2*rand(trainingPoints,1);
-noise = normrnd(0,noiseSD,trainingPoints,1);
+noise = gaussSample(0,noiseSD,trainingPoints);
 ytrain = a0 + a1*xtrain + noise;
 
 % Number of successive data points for which likelihood distributions will

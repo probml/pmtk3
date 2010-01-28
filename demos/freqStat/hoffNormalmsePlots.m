@@ -23,10 +23,10 @@ ylabel('relative MSE');
 % Sampling distribution - Bootstrap
 nSamples = 10; nBootSamples = 1000;
 thetaBoot = zeros(nBootSamples, length(k0));
-%X = normrnd(thetaTrue, sigmaTrue);
+%X = gaussSample(thetaTrue, sigmaTrue);
 for k=k0
   for b=1:nBootSamples
-    X = normrnd(thetaTrue, sigmaTrue, nSamples, 1);
+    X = gaussSample(thetaTrue, sigmaTrue, nSamples);
     thetaBoot(b,k+1) = (mean(X)*nSamples + theta0*k)/(nSamples + k);
   end
 end

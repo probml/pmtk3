@@ -46,7 +46,7 @@ function [report,errors] = deptoolbox(toolboxname,isroot,visualize)
 % Code by Matthew Dunham
 
 if(nargin < 3)
-    visualize = false;
+    visualize = true;
 end
 
 currentDirectory = '.'; 

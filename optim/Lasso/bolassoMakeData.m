@@ -83,7 +83,7 @@ while i<nDataSets
     %if(consistent == (check < 1)); 
         y = X*W;                          %use only the relevant features to generate y
         sigma = noise * sqrt(mean(y.^2));   %noise std
-        y = y + normrnd(0,sigma,n,1);     %add noise
+        y = y + gaussSample(0,sigma,n);     %add noise
         i = i+1;
         Xdata{i} = X; ydata{i} = y;  
     %end

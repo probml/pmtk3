@@ -328,8 +328,8 @@ while ~done
 end
 
 
-x = .9*(x-min(x))/range(x)+.05;  % normalise and push off margins 
-if range(y) == 0, y = .5*ones(size(y)); else, y = .9*(y-min(y))/range(y)+.05; end
+x = .9*(x-min(x))/drange(x)+.05;  % normalise and push off margins 
+if drange(y) == 0, y = .5*ones(size(y)); else, y = .9*(y-min(y))/drange(y)+.05; end
 
 
 %%%%%%%%%%%%
@@ -435,8 +435,8 @@ end
 if (isempty(find(x)) & (nargout > 2))   % If coordinates were requested, but not found in 'filename'.
     warning('File does not contain node coordinates.');
 else
-    x = .9*(x-min(x))/range(x)+.05;  % normalise and push off margins 
-    if range(y) == 0, y = .5*ones(size(y)); else, y = .9*(y-min(y))/range(y)+.05; end
+    x = .9*(x-min(x))/drange(x)+.05;  % normalise and push off margins 
+    if drange(y) == 0, y = .5*ones(size(y)); else, y = .9*(y-min(y))/drange(y)+.05; end
 end;
 if ~(size(Adj,1)==size(Adj,2))           % Make sure Adj is a square matrix. ? 
     Adj = eye(max(size(Adj)),size(Adj,1))*Adj*eye(size(Adj,2),max(size(Adj)));
@@ -628,7 +628,7 @@ o         = 1;     % expand single-column arguments
 ax        = gca;
 % set up the UserData data (here so not corrupted by log10's and such)
 ud = [start stop len baseangle tipangle wid page crossdir ends];
-% Get axes limits, range, min; correct for aspect ratio and log scale
+% Get axes limits, drange, min; correct for aspect ratio and log scale
 axm  = zeros(3,1);   axr = axm;   axrev = axm;  ap  = zeros(2,1);
 xyzlog = axm; limmin    = ap;  limrange  = ap;  oldaxlims = zeros(1,7);
 oneax = 1;      % all(ax==ax(1));  LPM
@@ -702,7 +702,7 @@ while (any(axnotdone)),
 	if ~isempty(ii),
 		axl(ii,[1 2])=-axl(ii,[2 1]);
 	end;
-	% compute the range of 2-D values
+	% compute the drange of 2-D values
 	curT = get(curax,'Xform');
 	lim = curT*[0 1 0 1 0 1 0 1;0 0 1 1 0 0 1 1;0 0 0 0 1 1 1 1;1 1 1 1 1 1 1 1];
 	lim = lim(1:2,:)./([1;1]*lim(4,:));

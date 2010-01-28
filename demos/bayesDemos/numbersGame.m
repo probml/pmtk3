@@ -466,7 +466,7 @@ end
         range = first:last;
         logicalNDX = predicate(range);
         size = sum(logicalNDX);
-        hyp = range(logicalNDX);
+        hyp = drange(logicalNDX);
         hypothesis = [{hyp} {name} {size}];
     end
     
