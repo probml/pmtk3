@@ -14,7 +14,7 @@ function logp = studentTlogprob(X, mu, Sigma, dof)
     logZ = -gammaln(v/2 + d/2) + gammaln(v/2) + 0.5*logdet(Sigma) + (d/2)*log(v) + (d/2)*log(pi);
     logp = -0.5*(v+d)*log(1+(1/v)*mahal) - logZ;
     
-    test = true;
+    test = false;
     if test % make sure multivar equations give same results as scalar equations in the scalar case
         s2 = Sigma;
         logZ = -gammaln(v/2 + 1/2) + gammaln(v/2) + 0.5 * log(v .* pi .* s2);
