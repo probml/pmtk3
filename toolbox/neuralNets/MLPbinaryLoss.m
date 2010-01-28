@@ -1,4 +1,4 @@
-function [f,g] = MLPregressionLoss(w,X,y,nHidden)
+function [f,g] = MLPbinaryLoss(w,X,y,nHidden)
 
 [nInstances,nVars] = size(X);
 
