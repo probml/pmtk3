@@ -30,12 +30,12 @@ Xtest = logical(Xtest);
 
 
 %trainSize = [1000 5000 10000 30000 60000];
-trainSize = [1000 5000 10000];
+trainSize = [1000 5000]; % 10000];
 Ntest = 10000;
 for trial=1:length(trainSize)
    Ntrain = trainSize(trial);
-   [theta, classPrior] = naiveBayesBerFit(Xtrain(1:Ntrain,:), ytrain(1:Ntrain)+1);
-   yhat = naiveBayesBerPredict(Xtest(1:Ntest,:), theta, classPrior)-1; % 0..9
+   model = naiveBayesBerFit(Xtrain(1:Ntrain,:), ytrain(1:Ntrain)+1);
+   yhat = naiveBayesBerPredict(model, Xtest(1:Ntest,:))-1; % 0..9
    ndxError = find(yhat ~= ytest(1:Ntest));
    nerr = length(ndxError)
    errorRate(trial) = nerr/Ntest %#ok
