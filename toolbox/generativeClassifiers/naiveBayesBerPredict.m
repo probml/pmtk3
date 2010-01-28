@@ -1,9 +1,10 @@
 
-function [yhat, py] = naiveBayesBerPredict(Xtest, theta, classPrior) 
+function [yhat, py] = naiveBayesBerPredict(model, Xtest) 
 % Apply a Naive Bayes classifier with Bernoulli features
 % yhat(i) = argmax_c p(y=c|Xtest(i,:), theta(c,:)), in 1:C
 % py(i,c) = p(y=c|xi, params)
 
+theta = model.theta; classPrior = model.classPrior;
 computeProb = (nargout >= 2);
 [Ntest,D] = size(Xtest);
 C  = size(theta,1);
