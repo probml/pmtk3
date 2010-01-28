@@ -1,4 +1,4 @@
-function NBCbayesGaussDemo()
+function naiveBayesBayesianDemo()
 % Illustrate benefit of using T distribution instead of plugin
 % for a naive Bayes classifier with 2 Gaussian features
 
@@ -50,8 +50,8 @@ ndims = 2;
 for c=1:C
    for j=1:ndims
       sf = (1+post.kappa(c))/post.kappa(c);
-      logprobBayesC(:,c,j) = studentTlogpdf(Xtest(:,j), ...
-         post.nu(c), post.mu(c,j), sf*post.s2(c,j));
+      logprobBayesC(:,c,j) = studentTlogprob(Xtest(:,j), ...
+         post.mu(c,j), sf*post.s2(c,j), post.nu(c));
       logprobPluginC(:,c,j) = log(normpdf(Xtest(:,j), ...
          mle.mu(c,j), sqrt(mle.s2(c,j))));
    end
