@@ -43,12 +43,12 @@ function plotPDFs(data,useNormMLE)
     sigma = std(data);
     gauss = @(X)normpdf(X,Xbar,sigma);
     if(useNormMLE)
-        sT = @(X) studentPdf(X,Xbar,sigma,100); 
+        sT = @(X) exp(studentLogpdf(X,Xbar,sigma,100)); 
     else
         %MLEs = mle(data,'distribution','tlocationscale'); %stats toolbox
         %mu = MLEs(1); sigma = MLEs(2); dof = MLEs(3)
         % use pmtk's EM algorithm
-        [mu, sigma2, dof] = mvtFitEcme(data);
+        [mu, sigma2, dof] = studentFitEcme(data);
         sigma = sqrt(sigma2);
         sT = @(X)exp(studentLogpdf(X,mu, sigma, dof));
     end
@@ -60,7 +60,6 @@ function plotPDFs(data,useNormMLE)
     set(gca,'YTick',0:0.1:0.5);
     if isOctave(),
         legend('gaussian', 'student T')
-        
     else
         legend(h, 'gaussian', 'student T')
     end

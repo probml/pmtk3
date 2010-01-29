@@ -6,7 +6,7 @@ function [mu, Sigma, dof, iter] = mvtFitEm(X, useSpeedup, verbose)
 % If useSpeedup = true, we use the data augmentation trick
 %   of Meng and van Dyk
 
-disp('warning: EM is very slow, use ECME instead')
+%disp('warning: EM is very slow, use ECME instead')
 
 if nargin < 2, useSpeedup = false; end
 if nargin < 3, verbose = false; end
@@ -72,7 +72,7 @@ for trial=1:ntrials
       fn = @(v) fnjoin(v, negQfn, gradfn);
       options.verbose = 0; 
       options.numDiff = 0;
-      [dof] = minConF_TMP(fn,dof,dofMin,dofMax,options)
+      [dof] = minConF_TMP(fn,dof,dofMin,dofMax,options);
        
       %options.display = 'off';
       %options.derivCheck = 1;
@@ -81,11 +81,11 @@ for trial=1:ntrials
       
       % Assess convergence
       oldll = ll;
-      ll = sum(mvtLogpdf(X, mu, Sigma, dof));
+      ll = sum(studentLogpdf(X, mu, Sigma, dof));
       done = convergenceTest(ll, oldll, tol) || iter>maxIter;
       iter = iter + 1;
    end
-   loglik(trial) = sum(mvtLogpdf(X, mu, Sigma, dof));
+   loglik(trial) = sum(studentLogpdf(X, mu, Sigma, dof));
    saveMu(:,trial) = mu(:);
    saveSigma(:,:,trial) = Sigma;
    saveDof(trial) = dof;

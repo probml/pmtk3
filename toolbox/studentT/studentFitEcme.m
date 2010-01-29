@@ -6,7 +6,7 @@ function [mu, Sigma, dof, iter] = mvtFitEcme(X, useSpeedup, verbose)
 % If useSpeedup = true, we use the data augmentation trick
 %   of Meng and van Dyk
 
-if nargin < 2, useSpeedup = false; end
+if nargin < 2, useSpeedup = true; end
 if nargin < 3, verbose = false; end
 [N D] = size(X);
 ntrials = 10;
@@ -35,7 +35,7 @@ for trial=1:ntrials
       % E step
       SigmaInv = inv(Sigma);
       XC = bsxfun(@minus,X,rowvec(mu));
-      delta =  sum(XC*SigmaInv.*XC,2); % mahalanobis distance
+      delta =  sum(XC*SigmaInv.*XC,2); %# ok
       w = (dof+D) ./ (dof+delta); % E[tau(i)]
       if useSpeedup
          aopt = 1/(dof+D);
@@ -56,7 +56,7 @@ for trial=1:ntrials
       % Estimate dof
       % compute neg log likelihood of observed data by plugging
       % in most recent params. 
-      nllfn = @(v) -sum(mvtLogpdf(X, mu, Sigma, v));
+      nllfn = @(v) -sum(studentLogpdf(X, mu, Sigma, v));
       tic; 
       dof = fminbnd(nllfn, dofMin, dofMax);
       t=toc;
@@ -87,11 +87,11 @@ for trial=1:ntrials
       
       % Assess convergence
       oldll = ll;
-      ll = sum(mvtLogpdf(X, mu, Sigma, dof));
+      ll = sum(studentLogpdf(X, mu, Sigma, dof));
       done = convergenceTest(ll, oldll, tol) || iter>maxIter;
       iter = iter + 1;
    end
-   loglik(trial) = sum(mvtLogpdf(X, mu, Sigma, dof));
+   loglik(trial) = sum(studentLogpdf(X, mu, Sigma, dof));
    saveMu(:,trial) = mu(:);
    saveSigma(:,:,trial) = Sigma;
    saveDof(trial) = dof;
