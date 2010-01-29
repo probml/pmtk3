@@ -1,5 +1,28 @@
-function logp = studentLogpdf(x, mu, sigma, nu)
-s2 = sigma^2;
-logc = gammaln(nu/2 + 0.5) - gammaln(nu/2) - 0.5*log(nu*pi*s2);
-logp = logc  -(nu+1)/2*log1p((1/nu)*((x-mu)/s2).^2);
+function logp = studentLogpdf(X, mu, Sigma, nu)
+% Multivariate student T distribution, log pdf
+% X(i,:) is i'th case
+[N d] = size(X);
+M = repmat(mu(:)', N, 1); % replicate the mean across rows
+X = X-M;
+mahal = sum((X*inv(Sigma)).*X,2); %#ok
+logc = gammaln(nu/2 + d/2) - gammaln(nu/2) - 0.5*logdet(Sigma) ...
+   - (d/2)*log(nu) - (d/2)*log(pi);
+logp = logc  -(nu+d)/2*log1p(mahal/nu);
+
+if 1 % check that scalar case works
+  if length(mu)==1
+    s2 = Sigma^2;
+    logc = gammaln(nu/2 + 0.5) - gammaln(nu/2) - 0.5*log(nu*pi*s2);
+    logp2 = logc  -(nu+1)/2*log1p((1/nu)*((x-mu)/s2).^2);
+    assert(approxeq(logp, logp2))
+  end
 end
+
+if 0
+  % compare to stats toolbox
+   % this check only works if Sigma is a correlation matrix
+  logp2 = log(mvtpdf(X, Sigma, nu));
+  assert(approxeq(logp, logp2))
+end
+
+

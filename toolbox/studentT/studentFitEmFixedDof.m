@@ -38,7 +38,7 @@ while ~done
    
    % Assess convergence
    oldll = ll;
-   ll = sum(mvtLogpdf(X, mu, Sigma, dof));
+   ll = sum(studentLogpdf(X, mu, Sigma, dof));
    done = convergenceTest(ll, oldll, tol) || iter>maxIter;
    iter = iter + 1;
 end
