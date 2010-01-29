@@ -24,7 +24,7 @@ logp = -0.5*mahal - (d/2)*log(2*pi) -0.5*logdetC;
 
 if  nargout >= 2 % debugging - O(d^3) time
    C = W*W' + sigma2*eye(d);
-   p = mvnpdf(X, mu, C);
+   p = exp(gaussLogpdf(X, mu, C));
    ll = log(p);
    %assert(approxeq(logp, ll))
 end

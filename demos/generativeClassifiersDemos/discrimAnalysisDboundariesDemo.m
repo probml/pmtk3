@@ -47,9 +47,9 @@ function h = plotgaussians3(p1,mu1,S1,p2,mu2,S2,p3,mu3,S3)
 [x,y] = meshgrid(linspace(-10,10,100), linspace(-10,10,100));
 [m,n]=size(x);
 X = [reshape(x, n*m, 1) reshape(y, n*m, 1)];
-g1 = reshape(mvnpdf(X, mu1(:)', S1), [m n]);
-g2 = reshape(mvnpdf(X, mu2(:)', S2), [m n]);
-g3 = reshape(mvnpdf(X, mu3(:)', S3), [m n]);
+g1 = reshape(exp(gaussLogpdf(X, mu1(:)', S1)), [m n]);
+g2 = reshape(exp(gaussLogpdf(X, mu2(:)', S2)), [m n]);
+g3 = reshape(exp(gaussLogpdf(X, mu3(:)', S3)), [m n]);
 hold on;
 contour(x,y,g1, 'r:');
 contour(x,y,g2, 'b--');
@@ -64,8 +64,8 @@ function h = plotgaussians2(p1,mu1,S1,p2,mu2,S2)
 [x,y] = meshgrid(linspace(-10,10,100), linspace(-10,10,100));
 [m,n]=size(x);
 X = [reshape(x, n*m, 1) reshape(y, n*m, 1)];
-g1 = reshape(mvnpdf(X, mu1(:)', S1), [m n]);
-g2 = reshape(mvnpdf(X, mu2(:)', S2), [m n]);
+g1 = reshape(exp(gaussLogpdf(X, mu1(:)', S1)), [m n]);
+g2 = reshape(exp(gaussLogpdf(X, mu2(:)', S2)), [m n]);
 hold;
 contour(x,y,g1, 'r:');
 contour(x,y,g2, 'b--');

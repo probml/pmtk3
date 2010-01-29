@@ -2,7 +2,7 @@ function gaussPlot2dDemo()
 
 doSave = 0;
 seed = 0; randn('state', seed); rand('state', seed);
-mu = [1 0]';        % mean (must be row vector for mvnpdf)
+mu = [1 0]';        % mean 
 S  = [2 1.5; 1.5 4]    % covariance
 %S = randpd(2)*3;
 %figure(1); clf
@@ -36,7 +36,7 @@ stepSize = 0.5; % 0.1 is better for contours, 0.1 for surfc
 
 % data(k,:) = [x(k) y(k)] for pixel k
 data = [x(:) y(:)];
-p = mvnpdf(data, mu', S);
+p = exp(gaussLogpdf(data, mu', S));
 p = reshape(p, r, c);
 
 % scale density so it sums to 1 

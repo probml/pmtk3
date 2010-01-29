@@ -15,7 +15,7 @@ opts = struct(...
     'temp', @(T,iter) (0.995*T), ...
     'verbose', 0);
 
-[xopt, fval, samples, energies, acceptRate] =  SA(@target, xinit, opts);
+[xopt, fval, samples, energies, acceptRate] =  simAnneal(@target, xinit, opts);
 xopt
 fval
 
@@ -51,7 +51,7 @@ K = length(mixWeights);
 N = length(x);
 p = zeros(N,1);
 for k=1:K
-  p = p + mixWeights(k)*mvnpdf(x(:), mu(k), sigma(k));
+  p = p + mixWeights(k)*exp(gaussLogpdf(x(:), mu(k), sigma(k)));
 end
 
 function  E = target(x)

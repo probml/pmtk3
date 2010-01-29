@@ -28,7 +28,7 @@ iter = 2;
 subplot2(iter+2,3,1,2);
 priorMean = [0;0];
 priorSigma = eye(2)./priorPrecision; %Covariance Matrix
-priorPDF = @(W)mvnpdf(W,priorMean',priorSigma);
+priorPDF = @(W)exp(gaussLogpdf(W,priorMean',priorSigma));
 contourPlot(priorPDF,[]);
 
 %Plot sample lines whose parameters are drawn from the prior distribution.
@@ -169,4 +169,4 @@ function [postW,postMu,postSigma] = update(xtrain,ytrain,likelihoodPrecision,pri
 
 postSigma  = inv(inv(priorSigma) + likelihoodPrecision*xtrain'*xtrain); 
 postMu = postSigma*inv(priorSigma)*priorMu + likelihoodPrecision*postSigma*xtrain'*ytrain; 
-postW = @(W)mvnpdf(W,postMu',postSigma);
+postW = @(W)exp(gaussLogpdf(W,postMu',postSigma));
