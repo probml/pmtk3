@@ -31,19 +31,17 @@ f2 = figure; hold on;
 for i=1:nellipsoids
     contour(D(i).Z, D(i).Y, D(i).X, 'LineWidth', 2.5, 'LevelStep', 10, 'Color', colors{i})
 end
-%set(gca, 'Projection', 'perspective')
 view([-145, -88])
 grid on
 axis(ax(1:4))
 axis off
-%set(gca, 'Parent', f1, 'Position', [0.57, 0.07, 0.47, 0.8])
 set(gca, 'Parent', f1, 'Position', [0.61, 0.07, 0.4, 0.8])
 close(f2)
-
+set(gcf, 'Position', [159 115 1142 623]);
 
 xlabel('X', 'FontSize', 14)
 ylabel('Y', 'FontSize', 14)
 zlabel('Z', 'FontSize', 14)
-%set(gca, 'Projection', 'perspective')
+
 
 
