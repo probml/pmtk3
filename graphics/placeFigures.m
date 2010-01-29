@@ -129,8 +129,8 @@ diffV = -figureHeight - intergapV;
 
 counter = 1;
 for d=1:depth
-    for row=1:nrows
-        for col=1:ncols
+    for col=1:ncols
+        for row=1:nrows
             position = [startH+(col-1)*diffH,startV+(row-1)*diffV,figureWidth,figureHeight];
             figure(handles(counter));
             set(gcf,'Units','pixels','Position',position,'toolbar','none');
