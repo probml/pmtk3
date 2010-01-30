@@ -6,8 +6,8 @@ ymin = 0;ymax = 0.3;
 res = 0.01;
 domain = xmin:res:xmax;
 sigma = 1.5;
-f1 = @(x)normpdf(x,0,sigma);
-f2 = @(x)normpdf(x,4,sigma);
+f1 = @(x)exp(gaussLogpdf(x,0,sigma^2))';
+f2 = @(x)exp(gaussLogpdf(x,4,sigma^2))';
 
 linesize = {'LineWidth',2.5};
 plot(domain,f1(domain),'-b',linesize{:});

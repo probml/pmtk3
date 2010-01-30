@@ -4,8 +4,8 @@
 %
 % Code by Matthew Dunham
 
-    f1 = @(x) normpdf(x,0.5,0.12);
-    f2 = @(x) normpdf(x,0.88,0.03)/2;
+    f1 = @(x) exp(gaussLogpdf(x,0.5,0.12));
+    f2 = @(x) exp(gaussLogpdf(x,0.88,0.03))/2;
     f3 = @(x) f1(x) + f2(x);
     domain = 0:0.001:1;
    

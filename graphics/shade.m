@@ -5,7 +5,7 @@ function shade(func,lower,left,right,color,resolution)
     hold on;
     res = left:resolution:right;
     x = repmat(res,2,1);
-    y = [lower*ones(1,length(res)) ; func(res)];
+    y = [lower*ones(1,length(res)) ; rowvec(func(res))];
     line(x,y,'Color',color);
 
 end

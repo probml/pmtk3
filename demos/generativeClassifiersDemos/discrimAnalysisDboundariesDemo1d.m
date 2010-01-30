@@ -12,8 +12,8 @@ printPmtkFigure dboundaries1dDisconnected
 function plotgaussians1d(mu1, mu2, s1, s2, pi1)
 pi2 = 1-pi1;
 xs = -5:0.1:5;
-p1 = normpdf(xs, mu1, s1);
-p2 = normpdf(xs, mu2, s2);
+p1 = exp(gaussLogpdf(xs, mu1, s1));
+p2 = exp(gaussLogpdf(xs, mu2, s2));
 plot(xs, pi1*p1, 'r-', 'linewidth', 3);
 hold on
 plot(xs, pi2*p2, 'g-', 'linewidth', 3);

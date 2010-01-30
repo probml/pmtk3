@@ -77,34 +77,7 @@ title('prior/posterior');
 subplot2(2+iter,3,1,3);
 title('data space');
 
-if 0
-%% Plot OLS vs MAP
 
-% Plot the line y(x) = -0.3 + 0.5x and the training points
-figure(2)
-actual = @(x) a0 + a1*x;
-fplot(actual,[-1,1,-1,1],'--b');
-hold on;
-plot(xtrain,ytrain,'ob');
-% Plot the Ordinary Least Squares Solution in red
-OLSw1 = xtrain \ ytrain;
-OLSw0 = mean(ytrain) - OLSw1*mean(xtrain);
-OLS = @(x) OLSw0 + OLSw1*x;
-fplot(OLS,[-1,1,-1,1],'r');
-% Plot the MAP estimate line in black
-map = @(x) mu(1) + mu(2)*x;
-fplot(map,[-1,1,-1,1],'k');
-
-axis square;
-set(gca,'XTick',[-1,0,1]);
-set(gca,'YTick',[-1,0,1]);
-title('OLS vs MAP Point Estimates of w0,w1');
-xlabel(' x ');
-ylabel(' y ','Rotation',0);
-figure(2);
-legend('Underlying Model','Data Points','OLS','MAP','Location','NorthWest');
-
-end
 printPmtkFigure bayesLinRegPlot2d
 
 %%%%%%%%%%%
