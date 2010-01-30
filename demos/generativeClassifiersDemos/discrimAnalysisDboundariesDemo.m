@@ -1,74 +1,40 @@
-function decisionBoundariesDemo
-
-% Decision boundaries induced by a mixture of two or three 2D Gaussians
+%% Plot Decision boundaries induced by a mixture of two or three 2D Gaussians
 % Based on code by Tommi Jaakkola
 
-% 2 class
-% linear decision boundary, with means on opposite sides
-figure;
-p1 = 0.5; p2 = 1-p1;
-mu1 = [1 1]'; mu2 = [-1 -1]';
-S1 = eye(2); S2 = eye(2);
-plotgaussians2(p1, mu1, S1, p2, mu2, S2);
-title('linear boundary')
-printPmtkFigure('dboundaries2classLinear'); 
-
-
-% parabolic decision boundary
-figure;
-p1 = 0.5; p2 = 1-p1;
-mu1 = [1 1]'; mu2 = [-1 -1]';
-S1 = [2 0; 0 1]; S2 = eye(2);
-plotgaussians2(p1, mu1, S1, p2, mu2, S2);
-title('parabolic boundary')
-printPmtkFigure('dboundaries2classParabolic'); 
-
-
-% 3 class
-p1 = 1/3; p2 = 1/3; p3 = 1/3;
-mu1 = [0 0]'; mu2 = [0 5]'; mu3 = [5 5]';
-
-figure;
-S1 = eye(2); S2 = eye(2); S3 = eye(2); 
-plotgaussians3(p1, mu1, S1, p2, mu2, S2, p3, mu3, S3);
-title('All boundaries are linear')
-printPmtkFigure('dboundaries3classLinear'); 
-
-figure;
-S1 = [4 0; 0 1]; S2 = eye(2); S3 = eye(2); 
-plotgaussians3(p1, mu1, S1, p2, mu2, S2, p3, mu3, S3);
-title('Some linear, some quadratic')
-printPmtkFigure('dboundaries3classParabolic');
-
-%%%
-
-function h = plotgaussians3(p1,mu1,S1,p2,mu2,S2,p3,mu3,S3)
-
-[x,y] = meshgrid(linspace(-10,10,100), linspace(-10,10,100));
-[m,n]=size(x);
-X = [reshape(x, n*m, 1) reshape(y, n*m, 1)];
-g1 = reshape(exp(gaussLogpdf(X, mu1(:)', S1)), [m n]);
-g2 = reshape(exp(gaussLogpdf(X, mu2(:)', S2)), [m n]);
-g3 = reshape(exp(gaussLogpdf(X, mu3(:)', S3)), [m n]);
-hold on;
-contour(x,y,g1, 'r:');
-contour(x,y,g2, 'b--');
-contour(x,y,g3, 'g-.');
-% decision boundaries
-[cc,hh]=contour(x,y,g1*p1-max(g2*p2, g3*p3),[0 0],'-k');  set(hh,'linewidth',3);
-[cc,hh]=contour(x,y,g2*p2-max(g1*p1, g3*p3),[0 0],'-k');  set(hh,'linewidth',3);
-[cc,hh]=contour(x,y,g3*p3-max(g2*p2, g1*p1),[0 0],'-k');  set(hh,'linewidth',3);
-
-function h = plotgaussians2(p1,mu1,S1,p2,mu2,S2)
-
-[x,y] = meshgrid(linspace(-10,10,100), linspace(-10,10,100));
-[m,n]=size(x);
-X = [reshape(x, n*m, 1) reshape(y, n*m, 1)];
-g1 = reshape(exp(gaussLogpdf(X, mu1(:)', S1)), [m n]);
-g2 = reshape(exp(gaussLogpdf(X, mu2(:)', S2)), [m n]);
-hold;
-contour(x,y,g1, 'r:');
-contour(x,y,g2, 'b--');
-[cc,hh]=contour(x,y,p1*g1-p2*g2,[0 0], '-k');
-set(hh,'linewidth',3);
-axis equal
+%% Two class linear
+model(1).classPrior  = [1 1]/2;
+model(1).mu          = [1 1 ; -1 -1]';
+model(1).Sigma       = repmat(eye(2), [1 1 2]);
+model(1).SigmaPooled = eye(2);
+model(1).type        = 'linear';
+%% Two class quadratic
+model(2).classPrior  = [1 1]/2;
+model(2).mu          = [1 1 ; -1 -1]';
+model(2).Sigma       = cat(3, [2 0; 0 1], eye(2));
+model(2).type        = 'quadratic';
+%% Three class linear
+model(3).classPrior  = [1 1 1] /3;
+model(3).mu          = [0 0; 0 5; 5 5]';
+model(3).Sigma       = repmat(eye(2), [1 1 3]);
+model(3).SigmaPooled = eye(2);
+model(3).type        = 'linear';
+%% Three class mixed
+model(4).classPrior  = [1 1 1] /3;
+model(4).mu          = [0 0; 0 5; 5 5]';
+model(4).Sigma       = cat(3, [4 0; 0 1], eye(2), eye(2));
+model(4).type        = 'quadratic'; % i.e. not tied
+%%
+titles = {'Linear Boundary', 'Parabolic Boundary', 'All Linear Boundaries ', 'Some Linear, Some Quadratic'};
+fnames = {'dboundaries2classLinear', 'dboundaries2classParabolic', 'dboundaries3classLinear', 'dboundaries3classParabolic'};
+setSeed(0); nsamples = 30; 
+colors = pmtkColors();
+for i = 1:numel(model)
+    [X, y] = mixGaussSample(model(i).mu, model(i).Sigma, model(i).classPrior, nsamples); 
+    plotDecisionBoundary(X, y, @(Xtest)discrimAnalysisPredict(model(i), Xtest));
+    for j = 1:size(model(i).Sigma, 3)
+       plotDistribution(@(x)gaussLogpdf(x, model(i).mu(:, j), model(i).Sigma(:, :, j)), '-plotArgs', {'color', colors{j}});
+    end
+    set(gca, 'XTick', -10:2:10, 'YTick', -10:2:10);
+    title(titles{i});
+    printPmtkFigure(fnames{i});
+end

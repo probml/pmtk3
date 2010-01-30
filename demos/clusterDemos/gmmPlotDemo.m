@@ -54,11 +54,7 @@ function gaussMixPlot()
     printPmtkFigure('mixgauss3Surf');
 %%    
     nsamples = 1000;
-    H = sampleDiscrete(mixmat, nsamples, 1);
-    X = zeros(nsamples, 2);
-    for j=1:nsamples
-       X(j, :) = rowvec(gaussSample(mu{H(j)}, Sigma{H(j)})) ;
-    end 
+    X = mixGaussSample(mu, Sigma, mixmat, nsamples);
     figure;
     plotDistribution(@(X)mixLogprobFn(X), '-useLog', false, '-useContour', true, '-npoints', 200, '-xrange', xrangeMix);
     hold on
