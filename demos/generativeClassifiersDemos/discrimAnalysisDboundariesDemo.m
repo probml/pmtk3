@@ -32,7 +32,7 @@ for i = 1:numel(model)
     [X, y] = mixGaussSample(model(i).mu, model(i).Sigma, model(i).classPrior, nsamples); 
     plotDecisionBoundary(X, y, @(Xtest)discrimAnalysisPredict(model(i), Xtest));
     for j = 1:size(model(i).Sigma, 3)
-        plotDistribution(@(x)gaussLogpdf(x, model(i).mu(:, j), model(i).Sigma(:, :, j)), '-plotArgs', {'color', colors{j}});
+        plotDistribution(@(x)gaussLogpdf(x, model(i).mu(:, j), model(i).Sigma(:, :, j)), '-plotArgs', {'LineColor', colors{j}});
     end
     set(gca, 'XTick', -10:2:10, 'YTick', -10:2:10);
     title(titles{i});
