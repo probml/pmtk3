@@ -22,7 +22,7 @@ if strcmpi(type, 'linear')
   net.beta = 1/sigma2;
 end
 model.net = net;
-
+model.type = type;
 
   function [e,g] = funAndGrad(w)
     net = mlpunpak(net, w);

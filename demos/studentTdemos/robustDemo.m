@@ -1,9 +1,7 @@
-% Illustrate the robustness of the t-distribution compared to the Gaussian.
-% Written by Matthew Dunham
-function gaussVsStudentOutlierDemo()
+% Illustrate the robustness of the student and laplace distributions compared to the Gaussian.
 
+function robustDemo()
 
-warning('off','stats:tlsfit:IterOrEvalLimit');
 
 n = 30;
 seed = 8; randn('state',seed);
@@ -15,13 +13,13 @@ nbins = 7;
 figure;
 plotHist(data,nbins,n);
 plotPDFs(data);
-printPmtkFigure('gaussVsT')
+printPmtkFigure('robustDemoNoOutliers')
 
 figure;
 plotHist(data,nbins,n+nn);
 plotHist(outliers,nn,n+nn);
 plotPDFs([data ; outliers]);
-printPmtkFigure('gaussVsToutlier')
+printPmtkFigure('robustDemoOutliers')
 
 %%
 % Bucket the data into nbins, divide the size of each bin by norm and plot
@@ -32,29 +30,30 @@ function plotHist(data,nbins,norm)
     sCounts = counts ./ norm;
     bar(locations,sCounts);
 end
-%%
- 
+%% 
 function plotPDFs(data)
     Xbar = mean(data);
     sigma = std(data);
-    gauss = @(X)normpdf(X,Xbar,sigma);
+    gauss = @(X) normpdf(X,Xbar,sigma);
     
-    %MLEs = mle(data,'distribution','tlocationscale'); %stats toolbox
-    %mu = MLEs(1); sigma = MLEs(2); dof = MLEs(3)
-    % use pmtk's EM algorithm
     model = studentFitEm(data);
     sT = @(X)exp(studentLogpdf(model, X));
+
+    model = laplaceFitEm(data);
+    lap = @(X)exp(laplaceLogpdf(model, X));
     
     hold on;
     x = (-5:0.01:10)';
     h(1) = plot(x,gauss(x),'k:','LineWidth',3);
     h(2) = plot(x,sT(x),'r-','LineWidth',3);
+    h(3) = plot(x,lap(x),'b.-','LineWidth',3);
     axis([-5,10,0,0.5]);
     set(gca,'YTick',0:0.1:0.5);
+    legendStr = {'gaussian', 'student T', 'laplace'};
     if isOctave(),
-        legend('gaussian', 'student T')
+        legend(legendStr{:})
     else
-        legend(h, 'gaussian', 'student T')
+        legend(h, legendStr{:})
     end
 end
 

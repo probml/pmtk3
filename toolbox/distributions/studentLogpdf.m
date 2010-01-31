@@ -1,6 +1,8 @@
-function logp = studentLogpdf(X, mu, Sigma, nu)
+function logp = studentLogpdf(model, X)
 % Multivariate student T distribution, log pdf
+% % model  is a structure containing fields: mu, Sigma, dof
 % X(i,:) is i'th case
+mu = model.mu; Sigma = model.Sigma; nu = model.dof;
 if length(mu)==1, X = X(:); end
 [N d] = size(X);
 M = repmat(mu(:)', N, 1); % replicate the mean across rows
