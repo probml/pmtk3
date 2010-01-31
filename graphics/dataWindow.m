@@ -7,7 +7,7 @@ function window = dataWindow(X)
     maxX1 = max(X(:, 1));
     minX2 = min(X(:, 2));
     maxX2 = max(X(:, 2));
-    dx1 = 0.1*(maxX1 - minX1);
-    dx2 = 0.1*(maxX2 - minX2);
+    dx1 = 0.15*(maxX1 - minX1);
+    dx2 = 0.15*(maxX2 - minX2);
     window = [minX1 - dx1, maxX1 + dx1, minX2 - dx2, maxX2 + dx2];
 end
