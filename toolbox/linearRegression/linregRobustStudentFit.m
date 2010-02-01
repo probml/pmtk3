@@ -9,8 +9,8 @@ function model = linregRobustStudentFit(X, y, dof, sigma2, includeOffset)
 %#author Hannes Bretschneider
 %#modified Kevin Murphy
 
-if nargin < 3 || (dof<=0), dof = []; end
-if nargin < 4 || (sigma2==0), sigma2 = []; end
+if nargin < 3 || isempty(dof) || (dof==0), dof = []; end
+if nargin < 4 || isempty(sigma2) || (sigma2==0), sigma2 = []; end
 if nargin < 5, includeOffset = true; end
 [N,D] = size(X);
 if includeOffset
@@ -41,7 +41,7 @@ elseif isempty(dof) && isempty(sigma2)
     model = struct('w', w(1:D1), 'sigma2', w(D1+1), 'dof', w(D1+2));
 elseif isempty(sigma2) && ~isempty(dof)
   % constrained opt of w and sigma2 with dof fixed
-  options = optimset('GradObj', 'on', 'display', 'final');
+  options = optimset('GradObj', 'on', 'display', 'off');
   objFun = @(w)StudentLoss(w, X, y, dof);
   w0 = X\y;
   sigma2_0 = var(y-X*w0);

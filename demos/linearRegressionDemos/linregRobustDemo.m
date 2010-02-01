@@ -16,9 +16,13 @@ xs = 0:0.1:1;
 Xtest = xs(:);
 yhatLS = linregPredict(modelLS, Xtest);
 
+plotLaplace = true;
+plotStudent = true;
+plotHuber = true;
 
-if 0
+
 %% Laplace loss
+if plotLaplace
 modelLP = linregRobustLaplaceLinprogFit(Xtrain, y);
 yhatLaplace = linregPredict(modelLP, Xtest);
 legendStr ={'least squares', 'laplace'};
@@ -27,7 +31,7 @@ printPmtkFigure('linregRobustLaplace')
 end
 
 %% Student loss 
-
+if plotStudent
 % Estimate everything
 modelStudent = linregRobustStudentFit(Xtrain, y);
 yhatStudent = linregPredict(modelStudent, Xtest);
@@ -57,17 +61,17 @@ for i=1:length(dofs)
 end
 doPlot(x, y, {yhatLS, yhatStudent, yhatStudentDof2{:}}, legendStr);
 printPmtkFigure('linregRobustStudentFixedDofSigma')
+end
 
-
-if 0
+if plotLaplace && plotStudent
 %% Laplace and student on same plot
 legendStr ={'least squares', 'laplace', sprintf('student, dof=%5.3f', modelStudent.dof)};
 doPlot(x, y,  {yhatLS, yhatLaplace, yhatStudent}, legendStr)
 printPmtkFigure('linregRobustLaplaceStudent')
-
+end
 
 %% Huber loss
-if 1
+if plotHuber
   legendStr = {'Least Squares'};
   deltas = [1 5];
   for i=1:length(deltas)
@@ -79,7 +83,7 @@ if 1
   doPlot(x, y, {yhatLS, yhatHuber{:}}, legendStr);
   printPmtkFigure('linregRobustHuber')
 end
-end
+
 end
 
 %%%

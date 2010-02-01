@@ -60,7 +60,7 @@ Sigma = saveSigma(:,:,best);
 if estimateDof, dof = saveDof(best); end
 iter = niter(best);
 
-model.mu = mu; model.Sigma = Sigma; model.dof = dof;
+model = studentDist(mu, Sigma, dof);
 end
 
 
