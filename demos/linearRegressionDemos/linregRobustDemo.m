@@ -17,28 +17,47 @@ Xtest = xs(:);
 yhatLS = linregPredict(modelLS, Xtest);
 
 
+if 0
 %% Laplace loss
 modelLP = linregRobustLaplaceLinprogFit(Xtrain, y);
 yhatLaplace = linregPredict(modelLP, Xtest);
 legendStr ={'least squares', 'laplace'};
 doPlot(x, y, {yhatLS, yhatLaplace}, legendStr);
 printPmtkFigure('linregRobustLaplace')
+end
 
-%% Student loss
+%% Student loss 
+
+% Estimate everything
 modelStudent = linregRobustStudentFit(Xtrain, y);
 yhatStudent = linregPredict(modelStudent, Xtest);
 fprintf('student sigma2=%5.3f\n', modelStudent.sigma2)
 fprintf('student dof=%5.3f\n', modelStudent.dof)
 legendStr ={'least squares', ...
   sprintf('student, mle dof=%5.3f', modelStudent.dof)};
-dofs = [1,3,4,5];
+
+% Estimate w and s2, fix dof
+dofs = [1,5,10];
 for i=1:length(dofs)
   modelStudentDof{i} = linregRobustStudentFit(Xtrain, y, dofs(i));
   yhatStudentDof{i} = linregPredict(modelStudentDof{i}, Xtest);
   legendStr{i+2} = sprintf('student dof = %5.3f', dofs(i));
 end
 doPlot(x, y, {yhatLS, yhatStudent, yhatStudentDof{:}}, legendStr);
-printPmtkFigure('linregRobustStudent')
+printPmtkFigure('linregRobustStudentFixedDof')
+
+% Estimate w, fix s2 and dof
+X1 =  [ones(n,1) Xtrain];
+wLS = X1 \ y;
+sigma2  = var(y - X1*wLS);
+for i=1:length(dofs)
+  modelStudentDof2{i} = linregRobustStudentFit(Xtrain, y, dofs(i), sigma2);
+  yhatStudentDof2{i} = linregPredict(modelStudentDof2{i}, Xtest);
+  legendStr{i+2} = sprintf('student fixed s2, dof = %5.3f', dofs(i));
+end
+doPlot(x, y, {yhatLS, yhatStudent, yhatStudentDof2{:}}, legendStr);
+printPmtkFigure('linregRobustStudentFixedDofSigma')
+
 
 if 0
 %% Laplace and student on same plot
