@@ -1,6 +1,5 @@
-
 %% robust linear regression
-
+function linregRobustDemo()
 
 seed = 0; setSeed(seed);
 x = sort(rand(10,1));
@@ -10,59 +9,83 @@ x = [x' 0.1 0.5 0.9]';
 k =  -5;
 y = [y' k  k k]';
 
-figure;
-plot(x,y,'ko','linewidth',2)
-title 'Linear data with noise and outliers'
-
-[styles, colors, symbols] =  plotColors;
-styles = {'r-o', 'b:s', 'g-.*', 'g-.+'};
-
 n = length(x);
 Xtrain = x(:);
 modelLS = linregFit(Xtrain, y);% least squares soln
-hold on
 xs = 0:0.1:1;
 Xtest = xs(:);
-h = [];
 yhatLS = linregPredict(modelLS, Xtest);
-h(1)=plot(xs, yhatLS, styles{1},'linewidth',2, 'markersize', 10);
 
-modelLP = linregRobustLaplaceLinprog1dFit(Xtrain, y);
-yhatLP = linregPredict(modelLP, Xtest);
-h(2) = plot(xs, yhatLP, styles{2}, 'linewidth',2, 'markersize', 10);
-if isOctave()
-    legend({'data', 'least squares', 'laplace'}, 'location', 'northwest')
-else
-    legend(h, {'least squares', 'laplace'}, 'location', 'northwest')
+
+%% Laplace loss
+modelLP = linregRobustLaplaceLinprogFit(Xtrain, y);
+yhatLaplace = linregPredict(modelLP, Xtest);
+legendStr ={'least squares', 'laplace'};
+doPlot(x, y, {yhatLS, yhatLaplace}, legendStr);
+printPmtkFigure('linregRobustLaplace')
+
+%% Student loss
+modelStudent = linregRobustStudentFit(Xtrain, y);
+yhatStudent = linregPredict(modelStudent, Xtest);
+fprintf('student sigma2=%5.3f\n', modelStudent.sigma2)
+fprintf('student dof=%5.3f\n', modelStudent.dof)
+legendStr ={'least squares', ...
+  sprintf('student, mle dof=%5.3f', modelStudent.dof)};
+dofs = [1,3,4,5];
+for i=1:length(dofs)
+  modelStudentDof{i} = linregRobustStudentFit(Xtrain, y, dofs(i));
+  yhatStudentDof{i} = linregPredict(modelStudentDof{i}, Xtest);
+  legendStr{i+2} = sprintf('student dof = %5.3f', dofs(i));
 end
-set(gca,'ylim',[-6 4])
-printPmtkFigure('linregRobust')
+doPlot(x, y, {yhatLS, yhatStudent, yhatStudentDof{:}}, legendStr);
+printPmtkFigure('linregRobustStudent')
+
+if 0
+%% Laplace and student on same plot
+legendStr ={'least squares', 'laplace', sprintf('student, dof=%5.3f', modelStudent.dof)};
+doPlot(x, y,  {yhatLS, yhatLaplace, yhatStudent}, legendStr)
+printPmtkFigure('linregRobustLaplaceStudent')
+
 
 %% Huber loss
+if 1
+  legendStr = {'Least Squares'};
+  deltas = [1 5];
+  for i=1:length(deltas)
+    delta = deltas(i);
+    modelHuber = linregRobustHuberFit(Xtrain, y, delta);
+    yhatHuber{i} = linregPredict(modelHuber, Xtest); %#ok
+    legendStr{1+i} = sprintf('Huber loss %3.1f', delta);
+  end
+  doPlot(x, y, {yhatLS, yhatHuber{:}}, legendStr);
+  printPmtkFigure('linregRobustHuber')
+end
+end
+end
 
+%%%
+
+function doPlot(x, y, yhat, legendStr)
+if ~iscell(yhat), yhat = {yhat}; end
+K = length(yhat);
+xs = 0:0.1:1;
+styles = {'r-o', 'b:s', 'g-.*', 'k-.+', 'c--v', 'y-^'};
 figure; hold on;
 plot(x,y,'ko','linewidth',2)
 h = [];
-h(1) = plot(xs,yhatLS, styles{1},'linewidth',2, 'markersize', 10);
-legendStr = {'Least Squares'};
-
-deltas = [1 5];
-for i=1:length(deltas)
-   delta = deltas(i);
-   modelHuber = linregRobustHuberFit(Xtrain, y, delta);
-   yhatHuber = linregPredict(modelHuber, Xtest);
-   str = sprintf('%s.-', colors(i+1));
-   h(1+i) = plot(xs, yhatHuber, styles{i+1}, 'linewidth', 2, 'markersize', 10);
-   legendStr{1+i} = sprintf('Huber loss %3.1f', delta);
+for i=1:K
+  h(i) = plot(xs, yhat{i}, styles{i}, 'linewidth', 2, 'markersize', 10);
 end
-
-if isOctave()
-    legendStr = [{'Data'}, legendStr];
-    legend(legendStr, 'location', 'east');
-else
-    legend(h, legendStr, 'location', 'east');
-end
+plotLegend(legendStr, h)
 %axis_pct
 set(gca,'ylim',[-6 4])
-printPmtkFigure('linregRobustHuber')
+end
 
+function plotLegend(legendStr, h)
+if isOctave()
+  legendStr = [{'Data'}, legendStr];
+  legend(legendStr, 'location', 'east');
+else
+  legend(h, legendStr, 'location', 'east');
+end
+end

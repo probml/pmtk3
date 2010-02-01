@@ -36,17 +36,17 @@ function plotPDFs(data)
     sigma = std(data);
     gauss = @(X) normpdf(X,Xbar,sigma);
     
-    model = studentFitEm(data);
+    model = studentFit(data);
     sT = @(X)exp(studentLogpdf(model, X));
 
-    model = laplaceFitEm(data);
+    model = laplaceFit(data);
     lap = @(X)exp(laplaceLogpdf(model, X));
     
     hold on;
     x = (-5:0.01:10)';
     h(1) = plot(x,gauss(x),'k:','LineWidth',3);
     h(2) = plot(x,sT(x),'r-','LineWidth',3);
-    h(3) = plot(x,lap(x),'b.-','LineWidth',3);
+    h(3) = plot(x,lap(x),'b--','LineWidth',3);
     axis([-5,10,0,0.5]);
     set(gca,'YTick',0:0.1:0.5);
     legendStr = {'gaussian', 'student T', 'laplace'};
