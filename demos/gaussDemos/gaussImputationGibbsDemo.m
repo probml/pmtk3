@@ -13,14 +13,14 @@ mu = randn(d,1); Sigma = randpd(d);
 
 for useFull = [false]
   if useFull
-    [muSamples, SigmaSamples, dataSamples, LLtrace] = mvnFitGibbs(XfullTrain, 'verbose', false, 'mu0', nanmean(XfullTrain), 'Lambda0', diag(nanvar(XfullTrain)), 'k0', 0.01, 'dof', d + 2);
+    [muSamples, SigmaSamples, dataSamples, LLtrace] = gaussMissingFitGibbs(XfullTrain, 'verbose', false, 'mu0', nanmean(XfullTrain), 'Lambda0', diag(nanvar(XfullTrain)), 'k0', 0.01, 'dof', d + 2);
     muHat = mean(muSamples);
     SigmaHat = mean(SigmaSamples,3);
     [Ximpute, V] = gaussImpute(muHat', SigmaHat, Xmiss);
     Xtrain = XfullTrain;
     fname = 'mvnImputeFull';
   else
-    [muSamples, SigmaSamples, dataSamples, LLtrace] = mvnFitGibbs(XmissTrain, 'verbose', false, 'mu0', nanmean(XmissTrain), 'Lambda0', diag(nanvar(XmissTrain)), 'k0', 0.01, 'dof', d + 2);
+    [muSamples, SigmaSamples, dataSamples, LLtrace] = gaussMissingFitGibbs(XmissTrain, 'verbose', false, 'mu0', nanmean(XmissTrain), 'Lambda0', diag(nanvar(XmissTrain)), 'k0', 0.01, 'dof', d + 2);
     muHat = mean(muSamples);
     SigmaHat = mean(SigmaSamples,3);
     figure; plot(LLtrace); title('EM loglik vs iteration')

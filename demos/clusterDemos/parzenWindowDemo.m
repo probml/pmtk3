@@ -11,7 +11,7 @@ function parzenWindowDemo
     n = 50;
     
     %The true function, we are trying to recover
-    f = @(x)mix(1)*exp(gaussLogpdf(x,mu(1),sigma(1)) + mix(2)*mvnpdf(x,mu(2),sigma(2)));
+    f = @(x)mix(1)*exp(gaussLogpdf(x, mu(1), sigma(1)) + mix(2)*gaussLogpdf(x, mu(2), sigma(2)));
     
     data = generateData;
     domain = 0:0.001:1;

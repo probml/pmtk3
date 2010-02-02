@@ -17,15 +17,15 @@ verb = true;
 
 % first EM
 fprintf('EM First\n')
-[muHat{1}, SigmaHat{1}, LLtrace{1}] = mvnFitEm(Xmiss, 'verbose', verb, 'maxIter', 500);
+[muHat{1}, SigmaHat{1}, LLtrace{1}] = gaussMissingFitEm(Xmiss, 'verbose', verb, 'maxIter', 500);
 
 % second ICM
 fprintf('Now ICM\n')
-[muHat{2}, SigmaHat{2}, LLtrace{2}] = mvnFitICM(Xmiss, 'verbose', verb);
+[muHat{2}, SigmaHat{2}, LLtrace{2}] = gaussMissingFitICM(Xmiss, 'verbose', verb);
 
 % third Gibbs
 fprintf('Now Gibbs\n')
-[muSamples, SigmaSamples, dataSamples, LLtrace{3}] = mvnFitGibbs(Xmiss, 'verbose', false, 'mu0', nanmean(Xmiss), 'Lambda0', diag(nanvar(Xmiss)), 'k0', 0.01, 'dof', d + 2, 'verbose', verb);
+[muSamples, SigmaSamples, dataSamples, LLtrace{3}] = gaussMissingFitGibbs(Xmiss, 'verbose', false, 'mu0', nanmean(Xmiss), 'Lambda0', diag(nanvar(Xmiss)), 'k0', 0.01, 'dof', d + 2, 'verbose', verb);
 muHat{3} = mean(muSamples);
 SigmaHat{3} = mean(SigmaSamples,3);
 
