@@ -40,7 +40,7 @@ function plotPDFs(data)
     sT = @(X)exp(studentLogprob(model, X));
 
     model = laplaceFit(data);
-    lap = @(X)exp(laplaceLogpdf(model, X));
+    lap = @(X)exp(laplaceLogprob(model, X));
     
     hold on;
     x = (-5:0.01:10)';

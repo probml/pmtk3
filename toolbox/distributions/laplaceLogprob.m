@@ -1,4 +1,4 @@
-function L = laplaceLogpdf(model, X)
+function L = laplaceLogprob(model, X)
 % L(i) = log p(X(i)|model)
 
 mu = model.mu; b = model.b;
