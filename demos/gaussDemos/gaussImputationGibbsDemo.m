@@ -1,4 +1,4 @@
-function mvnImputationGibbsDemo()
+function gaussImputationGibbsDemo()
 
 
 setSeed(0);
