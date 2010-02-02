@@ -1,4 +1,4 @@
-function mvnBayesUnequalCov()
+function gaussBayesUnequalCov()
 
 Sigmas = {0.01*eye(2), 0.01*eye(2)};
 helper(Sigmas, 'Equal')
