@@ -6,7 +6,7 @@ N = size(X,1);
 logPost = zeros(N, K);
 for k=1:K
   logPost(:, k) = log(model.mixweights(k)+eps) + ...
-    gaussLogpdf(X, model.mu(:,k), model.Sigma(:,:,k));
+    gaussLogprob(X, model.mu(:,k), model.Sigma(:,:,k));
 end
 logp = logsumexp(logPost, 2);
 

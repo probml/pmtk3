@@ -32,12 +32,12 @@ end
 
 
 figure;
-p = exp(gaussLogpdf(X,[0 0],C));
+p = gausspdf(X, [0 0], C);
 surf(X1,X2,reshape(p,n,n));
 title(sprintf('Gaussian'))
 
 figure;
-logp = gaussLogpdf(X,[0 0],C);
+logp = gaussLogprob(X,[0 0],C);
 surf(X1,X2,reshape(logp,n,n));
 title(sprintf('log Gaussian'))
 

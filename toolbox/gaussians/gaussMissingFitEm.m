@@ -65,7 +65,7 @@ while ~done
    end
    
    % Convergence check
-   loglikTrace(iter) = sum(gaussLogpdf(data, mu, Sigma));
+   loglikTrace(iter) = sum(gaussLogprob(data, mu, Sigma));
    if iter > 1 && loglikTrace(iter) < loglikTrace(iter-1)
       warning('warning: EM did not increase objective.  Exiting with last reasonable parameters \n')
       mu = muOld;

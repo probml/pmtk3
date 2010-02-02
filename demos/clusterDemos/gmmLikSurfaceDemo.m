@@ -30,8 +30,8 @@ n_mu2_bins = length(mu2_bins);
 lik_bins = zeros(n_mu1_bins, n_mu2_bins);
 for b1 = 1:n_mu1_bins
   for b2 = 1:n_mu2_bins
-    p1 = true_pi * exp(gaussLogpdf(obs, mu1_bins(b1), true_sigma));
-    p2 = (1-true_pi) * exp(gaussLogpdf(obs, mu2_bins(b2), true_sigma));
+    p1 = true_pi * gausspdf(obs, mu1_bins(b1), true_sigma);
+    p2 = (1-true_pi) * gausspdf(obs, mu2_bins(b2), true_sigma);
     lik_bins(b1, b2) = sum(log(p1 + p2));
   end
 end

@@ -22,7 +22,7 @@ theta
 postVar = 1/(nx*lamx + ny*lamy)
 figure;
 gridTheta = -2:0.1:6;
-plot(gridTheta, exp(gaussLogpdf(gridTheta, theta, sqrt(postVar))));
+plot(gridTheta, gausspdf(gridTheta, theta, sqrt(postVar)));
 
 
 % Bayesian analysis

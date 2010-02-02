@@ -38,7 +38,7 @@ while ~done
   logpost = zeros(N,K);
   logprior = log(mixweight);
   for c=1:K
-    logpost(:,c) = gaussLogpdf(data, mu(:,c), Sigma(:,:,c)) + logprior(c);
+    logpost(:,c) = gaussLogprob(data, mu(:,c), Sigma(:,:,c)) + logprior(c);
   end
   [logpost, ll] = normalizeLogspace(logpost);
   loglikHist(iter) = sum(ll)/N;

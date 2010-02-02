@@ -11,7 +11,7 @@ function parzenWindowDemo
     n = 50;
     
     %The true function, we are trying to recover
-    f = @(x)mix(1)*exp(gaussLogpdf(x, mu(1), sigma(1)) + mix(2)*gaussLogpdf(x, mu(2), sigma(2)));
+    f = @(x)mix(1)*gausspdf(x, mu(1), sigma(1)) + mix(2)*gaussLogprob(x, mu(2), sigma(2));
     
     data = generateData;
     domain = 0:0.001:1;
@@ -50,7 +50,7 @@ function parzenWindowDemo
         g = @(x)0;
         for i=1:n
           switch kernel
-            case 'gauss', g = @(x)g(x) + (1/n)*exp(gaussLogpdf(x,data(i),h^2));
+            case 'gauss', g = @(x)g(x) + (1/n)*gausspdf(x,data(i),h^2);
             case 'cube', g = @(x)g(x) + (1/n)*unifpdf(x,data(i)-h/2, data(i)+h/2);
           end
         end
