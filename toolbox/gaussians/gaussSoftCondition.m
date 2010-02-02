@@ -6,5 +6,5 @@ Smuinv = inv(pmu.Sigma);
 post.Sigma = inv(Smuinv + A'*Syinv*A);
 post.mu = post.Sigma*(A'*Syinv*(y-py.mu) + Smuinv*pmu.mu);
 if nargout > 1
-  logevidence = mvnLogpdf(y(:)', A*pmu.mu + py.mu, py.Sigma + A*pmu.Sigma*A');
+  logevidence = gaussLogpdf(y(:)', A*pmu.mu + py.mu, py.Sigma + A*pmu.Sigma*A');
 end
