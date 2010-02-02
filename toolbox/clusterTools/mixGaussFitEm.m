@@ -1,4 +1,4 @@
-function [model, loglikHist] = gmmFitEm(data, K, varargin)
+function [model, loglikHist] = mixGaussFitEm(data, K, varargin)
 % EM for fitting mixture of K gaussians
 % data(i,:) is i'th case
 % model is a structure containing these fields:
