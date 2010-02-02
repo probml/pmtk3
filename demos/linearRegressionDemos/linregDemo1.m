@@ -28,7 +28,7 @@ errorbar(xtest(ndx), ypredTest(ndx), sqrt(v(ndx)))
 printPmtkFigure('linregDemo1')
 
 %% Repeat with standardization
-% This has no effect in this case
+% This has no effect on the predictions in this case
 % Be careful not to apply standardization to the column of 1s!
 % Note that we use xtrain not Xtrain, and xtest not Xtest
 [Xtrain, mu, sigma] = standardizeCols(xtrain);

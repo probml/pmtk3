@@ -28,7 +28,7 @@ if ~isempty(dof) && ~isempty(sigma2)
     w = minFunc(objFun, w0, options);
     model = struct('w', w(1:D1), 'sigma2', sigma2, 'dof', dof);
 elseif isempty(dof) && isempty(sigma2)
-  % constrained opt of w, sigma2 and dof
+  % constrained opt of all params
     options = optimset('GradObj', 'on', 'display', 'off');
     objFun = @(w)StudentLoss(w, X, y);
     w0 = X\y;
