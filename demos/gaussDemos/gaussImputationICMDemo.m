@@ -1,4 +1,4 @@
-function mvnImputationICMDemo()
+function gaussImputationICMDemo()
 
 
 setSeed(0);
