@@ -1,7 +1,10 @@
-function logp = gaussLogprob(X, mu, Sigma)
+function logp = gaussLogprob(model, X)
 % Multivariate Gaussian distribution, log pdf
+% model is a struct with fields mu and Sigma
 % X(i,:) is i'th case
 
+mu = model.mu;
+Sigma = model.Sigma;
 d = size(Sigma, 2);
 X = reshape(X, [], d);
 X = bsxfun(@minus, X, rowvec(mu));

@@ -11,9 +11,11 @@ loglik = zeros(N, Nclasses);
 for c=1:Nclasses
   switch model.type
     case 'linear'
-      loglik(:,c) = gaussLogprob(Xtest, model.mu(:, c)', model.SigmaPooled);
+      modelC.mu = model.mu(:, c)'; modelC.Sigma = SigmaPooled;
+      loglik(:,c) = gaussLogprob(model, Xtest);
     case 'quadratic'
-      loglik(:,c) = gaussLogprob(Xtest, model.mu(:, c)', model.Sigma(:, :, c));
+      modelC.mu = model.mu(:, c)'; modelC.Sigma = model.Sigma(:, :, c);
+      loglik(:, c) = gaussLogprob(model, Xtest);
     otherwise
       error(['unrecognized type ' model.type])
   end

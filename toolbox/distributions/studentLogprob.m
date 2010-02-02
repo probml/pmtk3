@@ -3,7 +3,7 @@ function logp = studentLogprob(model, X)
 % % model  is a structure containing fields: mu, Sigma, dof
 % logp(i) = logp(X(i,:)|model)  
 
-assert(strcmp(model.type, 'student'))
+
 mu = model.mu; Sigma = model.Sigma; nu = model.dof;
 if length(mu)==1, X = X(:); end
 [N d] = size(X);

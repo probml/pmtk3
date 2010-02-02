@@ -17,7 +17,8 @@ function gaussMixPlot()
     xrange = zeros(length(mixmat), 4);
     for k=1:3
         xrange(k, :) = gaussPlotRange(mu{k}, Sigma{k});
-        h = plotDistribution(@(X)gaussLogprob(X, mu{k}, Sigma{k}),...
+        model.mu = mu{k}; model.Sigma = Sigma{k};
+        h = plotDistribution(@(X)gaussLogprob(model, X),...
            '-useContour'    , true     ,...
            '-npoints'       , 200      ,...
            '-scaleFactor'   , mixmat(k),...
@@ -31,7 +32,8 @@ function gaussMixPlot()
     function logp = mixLogprobFn(X)
         logRik = zeros(size(X, 1), length(mixmat));
         for i=1:length(mixmat)
-            logRik(:, i) = log(mixmat(i)+eps) + gaussLogprob(X, mu{i}, Sigma{i});
+            model.mu = mu{i}; model.Sigma = Sigma{i};
+            logRik(:, i) = log(mixmat(i)+eps) + gaussLogprob(model, X);
         end
         logp = logsumexp(logRik, 2);
     end

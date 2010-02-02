@@ -8,12 +8,13 @@ C = [1 .4; .4 1];
 df = 0.1;
 
 figure;
-p = exp(studentLogprob(X,[0 0], C,df));
+model.mu = [0 0]; model.Sigma = C; model.dof = df;
+p = exp(studentLogprob(model, X));
 surf(X1,X2,reshape(p,n,n));
 title(sprintf('T distribution, dof %3.1f', df))
 
 figure;
-logp = studentLogprob(X,[0 0], C,df);
+logp = studentLogprob(model, X);
 surf(X1,X2,reshape(logp,n,n));
 title(sprintf('log T distribution, dof %3.1f', df))
 
@@ -37,7 +38,9 @@ surf(X1,X2,reshape(p,n,n));
 title(sprintf('Gaussian'))
 
 figure;
-logp = gaussLogprob(X,[0 0],C);
+model.mu = [0 0];
+model.Sigma = C;
+logp = gaussLogprob(model, X);
 surf(X1,X2,reshape(logp,n,n));
 title(sprintf('log Gaussian'))
 

@@ -38,7 +38,8 @@ while ~done
   logpost = zeros(N,K);
   logprior = log(mixweight);
   for c=1:K
-    logpost(:,c) = gaussLogprob(data, mu(:,c), Sigma(:,:,c)) + logprior(c);
+    model.mu = mu(:, c); model.Sigma = Sigma(:, :, C);
+    logpost(:,c) = gaussLogprob(model, data) + logprior(c);
   end
   [logpost, ll] = normalizeLogspace(logpost);
   loglikHist(iter) = sum(ll)/N;

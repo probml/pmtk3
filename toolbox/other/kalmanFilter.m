@@ -145,7 +145,8 @@ S = C*Vpred*C' + R;
 Sinv = inv(S);
 ss = length(V);
 %loglik  = logprob(MvnDist(zeros(1,length(e)),S),e');
-loglik = gaussLogprob(e(:)', zeros(1,length(e)), S);
+model.mu = zeros(1, length(e)); model.Sigma = S;
+loglik = gaussLogprob(model, e(:)');
 K = Vpred*C'*Sinv; % Kalman gain matrix
 % If there is no observation vector, set K = zeros(ss).
 xnew = xpred + K*e;
