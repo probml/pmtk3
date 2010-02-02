@@ -30,7 +30,7 @@ stepsize = 0.1;
 [x1,y1] = meshgrid(xrange(1):stepsize:xrange(2), xrange(3):stepsize:xrange(4));
 [nrows,ncols] = size(x1);
 xx = x1(:); yy = y1(:);
-z = exp(gmmLogprob(model, [xx,yy]));
+z = exp(mixGaussLogprob(model, [xx,yy]));
 z = reshape(z,nrows,ncols);
 
 figure;
@@ -39,7 +39,7 @@ shading interp
 view([33, 54])
 xlabel('x1'); ylabel('x2');
 
-%plotDistribution(@(X)gmmLogprob(model, X), ...
+%plotDistribution(@(X)mixGaussLogprob(model, X), ...
 %  '-useLog', false, '-useContour', false, '-npoints', 500, '-xrange', xrange);
 
 printPmtkFigure(sprintf('gmmMultiModes%d', M))
