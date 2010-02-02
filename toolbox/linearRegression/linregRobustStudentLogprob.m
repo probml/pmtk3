@@ -1,4 +1,4 @@
-function ll = linregRobustStudentLogpdf(model, X, y)
+function ll = linregRobustStudentLogprob(model, X, y)
 % ll(i) = log p(y(i)|X(i,:), model)
 
 N = size(X,1);

@@ -12,7 +12,7 @@ fprintf('%5s \t %8s \t %8s \t %8s  \t %8s \t %8s \n', ...
 for i=1:length(dofs)
   model = linregRobustStudentFit(X, y, dofs(i));
   w = model.w;
-  ll(i) = sum(linregRobustStudentLogpdf(model, X, y));
+  ll(i) = sum(linregRobustStudentLogprob(model, X, y));
   fprintf('%5.3f \t %5.3f \t %5.3f \t %5.3f \t %5.3f \t %5.3f \n', ...
    model.dof, ll(i), w(1), w(2), w(3), w(4));
 end
