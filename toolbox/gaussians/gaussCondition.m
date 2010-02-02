@@ -1,5 +1,5 @@
 
-function [muHgivenV, SigmaHgivenV] = mvnCondition(mu, Sigma, v, visValues)
+function [muHgivenV, SigmaHgivenV] = gaussCondition(mu, Sigma, v, visValues)
 % p(xh|xv=visValues) 
 d = length(mu);
 h = setdiff(1:d, v);  

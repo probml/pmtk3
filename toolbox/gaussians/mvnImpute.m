@@ -11,7 +11,7 @@ for i=1:n
   if isempty(hidNodes), continue, end;
   visNodes = find(~isnan(X(i,:)));
   visValues = X(i,visNodes);
-  [muHgivenV, SigmaHgivenV] = mvnCondition(mu, Sigma, visNodes, visValues);
+  [muHgivenV, SigmaHgivenV] = gaussCondition(mu, Sigma, visNodes, visValues);
   Xc(i,hidNodes) = rowvec(muHgivenV);
   V(i,hidNodes) = rowvec(diag(SigmaHgivenV));
 end
