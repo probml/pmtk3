@@ -37,7 +37,7 @@ function plotPDFs(data)
     gauss = @(X) normpdf(X,Xbar,sigma);
     
     model = studentFit(data);
-    sT = @(X)exp(studentLogpdf(model, X));
+    sT = @(X)exp(studentLogprob(model, X));
 
     model = laplaceFit(data);
     lap = @(X)exp(laplaceLogpdf(model, X));

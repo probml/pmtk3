@@ -43,7 +43,7 @@ function plotPDFs(data)
     %mu = MLEs(1); sigma = MLEs(2); dof = MLEs(3)
     % use pmtk's EM algorithm
     model = studentFitEm(data);
-    sT = @(X)exp(studentLogpdf(model, X));
+    sT = @(X)exp(studentLogprob(model, X));
     
     hold on;
     x = (-5:0.01:10)';

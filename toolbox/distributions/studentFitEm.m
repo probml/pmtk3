@@ -107,7 +107,7 @@ while ~done
   
   % Assess convergence
   oldll = ll;
-  ll = sum(studentLogpdf(studentDist(mu, Sigma, dof), X));
+  ll = sum(studentLogprob(studentDist(mu, Sigma, dof), X));
   done = convergenceTest(ll, oldll, tol) || iter>maxIter;
   iter = iter + 1;
 end % endwhile
@@ -161,7 +161,7 @@ function dof = estimateDofNLL(X, mu, Sigma, dofOld) %#ok
 [N,D] = size(X);
 % plug in most recent params to compute NLL
 %nllfn = @(v) -sum(studentLogpdf(X, mu, Sigma, v));
-nllfn = @(v) -sum(studentLogpdf(studentDist(mu, Sigma, v), X));
+nllfn = @(v) -sum(studentLogprob(studentDist(mu, Sigma, v), X));
 dofMax = 1000; dofMin = 0.1;
 dof = fminbnd(nllfn, dofMin, dofMax);
 

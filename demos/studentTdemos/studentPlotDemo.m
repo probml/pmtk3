@@ -8,12 +8,12 @@ C = [1 .4; .4 1];
 df = 0.1;
 
 figure;
-p = exp(studentLogpdf(X,[0 0], C,df));
+p = exp(studentLogprob(X,[0 0], C,df));
 surf(X1,X2,reshape(p,n,n));
 title(sprintf('T distribution, dof %3.1f', df))
 
 figure;
-logp = studentLogpdf(X,[0 0], C,df);
+logp = studentLogprob(X,[0 0], C,df);
 surf(X1,X2,reshape(logp,n,n));
 title(sprintf('log T distribution, dof %3.1f', df))
 
