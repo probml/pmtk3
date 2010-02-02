@@ -14,12 +14,12 @@ pcMissing = 0.3;
 
 
 [muHat, SigmaHat, LLtrace] = mvnMissingFitEm(XmissTrain, 'verbose', false);
-[XimputeEM, V] = mvnImpute(muHat, SigmaHat, Xmiss);
+[XimputeEM, V] = gaussImpute(muHat, SigmaHat, Xmiss);
 conf = 1./V;
 conf(isinf(conf))=0;
 confEM = conf;
  
-[XimputeTruth, V] = mvnImpute(mu, Sigma, Xmiss);
+[XimputeTruth, V] = gaussImpute(mu, Sigma, Xmiss);
 conf = 1./V;
 conf(isinf(conf))=0;
 confTruth = conf;

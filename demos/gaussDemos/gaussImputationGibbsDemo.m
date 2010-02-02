@@ -16,7 +16,7 @@ for useFull = [false]
     [muSamples, SigmaSamples, dataSamples, LLtrace] = mvnFitGibbs(XfullTrain, 'verbose', false, 'mu0', nanmean(XfullTrain), 'Lambda0', diag(nanvar(XfullTrain)), 'k0', 0.01, 'dof', d + 2);
     muHat = mean(muSamples);
     SigmaHat = mean(SigmaSamples,3);
-    [Ximpute, V] = mvnImpute(muHat', SigmaHat, Xmiss);
+    [Ximpute, V] = gaussImpute(muHat', SigmaHat, Xmiss);
     Xtrain = XfullTrain;
     fname = 'mvnImputeFull';
   else
@@ -24,7 +24,7 @@ for useFull = [false]
     muHat = mean(muSamples);
     SigmaHat = mean(SigmaSamples,3);
     figure; plot(LLtrace); title('EM loglik vs iteration')
-    [Ximpute, V] = mvnImpute(muHat', SigmaHat, Xmiss);
+    [Ximpute, V] = gaussImpute(muHat', SigmaHat, Xmiss);
     Xtrain = XmissTrain;
     fname = 'mvnImputeEm';
   end

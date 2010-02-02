@@ -18,14 +18,14 @@ for useFull = [true]
     [muHat, SigmaHat] = mvnMissingFitEm(XfullTrain, 'verbose', false);
     assert(approxeq(rowvec(muHat), mean(XfullTrain)))
     assert(approxeq(SigmaHat, cov(XfullTrain,1)))
-    [Ximpute, V] = mvnImpute(muHat, SigmaHat, Xmiss);
-    %Ximpute, V] = mvnImpute(mu, Sigma, Xmiss);
+    [Ximpute, V] = gaussImpute(muHat, SigmaHat, Xmiss);
+    %Ximpute, V] = gaussImpute(mu, Sigma, Xmiss);
     Xtrain = XfullTrain;
     fname = 'mvnImputeFull';
   else
     [muHat, SigmaHat, LLtrace] = mvnMissingFitEm(XmissTrain, 'verbose', false);
     figure; plot(LLtrace); title('EM loglik vs iteration')
-    [Ximpute, V] = mvnImpute(muHat, SigmaHat, Xmiss);
+    [Ximpute, V] = gaussImpute(muHat, SigmaHat, Xmiss);
     Xtrain = XmissTrain;
     fname = 'mvnImputeEm';
   end

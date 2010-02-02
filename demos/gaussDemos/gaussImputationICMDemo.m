@@ -16,13 +16,13 @@ verb = true;
 for useFull = [false]
   if useFull
     [muHat, SigmaHat] = mvnFitICM(XfullTrain, 'verbose', verb);
-    [Ximpute, V] = mvnImpute(muHat', SigmaHat', Xmiss);
+    [Ximpute, V] = gaussImpute(muHat', SigmaHat', Xmiss);
     Xtrain = XfullTrain;
     fname = 'mvnImputeFull';
   else
     [muHat, SigmaHat, LLtrace] = mvnFitICM(XmissTrain, 'verbose', verb);
     figure; plot(LLtrace); title('EM loglik vs iteration')
-    [Ximpute, V] = mvnImpute(muHat', SigmaHat', Xmiss);
+    [Ximpute, V] = gaussImpute(muHat', SigmaHat', Xmiss);
     Xtrain = XmissTrain;
     fname = 'mvnImputeEm';
   end

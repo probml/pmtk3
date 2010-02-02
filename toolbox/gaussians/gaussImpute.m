@@ -1,5 +1,5 @@
 
-function [Xc, V] = mvnImpute(mu, Sigma, X)
+function [Xc, V] = gaussImpute(mu, Sigma, X)
 % Fill in NaN entries of X using posterior mode on each row
 % Xc(i,j) = E[X(i,j) | D]
 % V(i,j) = Variance
