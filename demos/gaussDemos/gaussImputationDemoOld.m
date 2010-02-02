@@ -15,7 +15,7 @@ pcMissing = 0.5;
 % we either train on fully observed data (useFull) or partially observed
 for useFull = [true]
   if useFull
-    [muHat, SigmaHat] = mvnMissingFitEm(XfullTrain, 'verbose', false);
+    [muHat, SigmaHat] = gaussMissingFitEm(XfullTrain, 'verbose', false);
     assert(approxeq(rowvec(muHat), mean(XfullTrain)))
     assert(approxeq(SigmaHat, cov(XfullTrain,1)))
     [Ximpute, V] = gaussImpute(muHat, SigmaHat, Xmiss);
@@ -23,7 +23,7 @@ for useFull = [true]
     Xtrain = XfullTrain;
     fname = 'mvnImputeFull';
   else
-    [muHat, SigmaHat, LLtrace] = mvnMissingFitEm(XmissTrain, 'verbose', false);
+    [muHat, SigmaHat, LLtrace] = gaussMissingFitEm(XmissTrain, 'verbose', false);
     figure; plot(LLtrace); title('EM loglik vs iteration')
     [Ximpute, V] = gaussImpute(muHat, SigmaHat, Xmiss);
     Xtrain = XmissTrain;

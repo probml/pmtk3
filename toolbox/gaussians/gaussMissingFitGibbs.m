@@ -1,4 +1,4 @@
-function [muSamples, SigmaSamples, dataSamples, LL] = mvnMissingFitGibbs(data, varargin)
+function [muSamples, SigmaSamples, dataSamples, LL] = gaussMissingFitGibbs(data, varargin)
 % Perform gibbs sampling for the missing values of a data matrix
 % Algorithm consists of a stochastic imputation stage (sampling from conditional given known)
 % and then sampling from the resulting posterior for mu and Sigma given the current state of the samples

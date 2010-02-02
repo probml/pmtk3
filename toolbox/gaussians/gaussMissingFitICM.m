@@ -1,4 +1,4 @@
-function [mu, Sigma, loglikTrace] = mvnFitICM(data, varargin)
+function [mu, Sigma, loglikTrace] = gaussMissingFitICM(data, varargin)
 % Perform imputation using the ICM algorithm -- plugging in posterior mode
 % data is an n*d design matrix with NaN values
 % Optional arguments and their defaults:

@@ -13,7 +13,7 @@ pcMissing = 0.3;
 [Xfull, Xmiss, Xhid] = mkData(mu, Sigma, 5, false, pcMissing);
 
 
-[muHat, SigmaHat, LLtrace] = mvnMissingFitEm(XmissTrain, 'verbose', false);
+[muHat, SigmaHat, LLtrace] = gaussMissingFitEm(XmissTrain, 'verbose', false);
 [XimputeEM, V] = gaussImpute(muHat, SigmaHat, Xmiss);
 conf = 1./V;
 conf(isinf(conf))=0;

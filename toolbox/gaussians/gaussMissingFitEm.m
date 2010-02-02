@@ -1,4 +1,4 @@
-function [mu, Sigma, loglikTrace] = mvnMissingFitEm(data, varargin)
+function [mu, Sigma, loglikTrace] = gaussMissingFitEm(data, varargin)
 % Find MLE of MVN when X has missing values, using EM algorithm
 % data is an n*d design matrix with NaN values
 % Optional arguments and their defaults:
