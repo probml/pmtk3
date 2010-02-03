@@ -5,7 +5,7 @@
 
 %%%%%% Data generation
 
-clear all
+
 
 seed = 0; rand('state', seed); randn('state', seed); 
 Nseq = 10;
