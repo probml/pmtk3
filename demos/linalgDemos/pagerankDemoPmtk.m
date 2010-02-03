@@ -19,7 +19,7 @@ pi = normalize((I - p*G*D)\e);
 fprintf('exact pi\n');  disp(pi(:)')
 
 figure; bar(pi);printPmtkFigure('smallwebPagerank'); 
-keyboard
+
 
 % Power method
 fprintf('pi over time using power method\n');

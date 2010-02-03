@@ -49,7 +49,7 @@ pcclusters = clusterdata(Z(:,1:2),K);
 gscatter(Z(:,1), Z(:,2), pcclusters)
 title('clusering of the first 2 PCs')
 end
-keyboard
+
 % Click on some points in R2 (fig 3)
 % and visualize the corrsponding raw data in R7 (fig 4)
 

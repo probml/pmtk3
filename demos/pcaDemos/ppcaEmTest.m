@@ -1,4 +1,4 @@
-clear all; seed =  0; rand('state', seed);
+seed =  0; rand('state', seed);
 n = 100; d = 5;
 X = randn(n,d);
 k = 2;

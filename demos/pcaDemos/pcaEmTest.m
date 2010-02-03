@@ -1,4 +1,4 @@
-clear all;
+
 %setSeed(1);
 n = 100; d = 5;
 X = randn(n,d);

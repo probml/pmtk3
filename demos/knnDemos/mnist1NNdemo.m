@@ -1,9 +1,8 @@
 % Classify the MNIST digits using a one nearest neighbour classifier
 % and Euclidean distance.
-%
-% Code by Matthew Dunham
+%#slow
 
-clear all
+
 load mnistALL;
 if 0
   % test on all data- 255 seconds, 3.09% error

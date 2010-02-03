@@ -1,7 +1,7 @@
 % Sparse linear regression with EM on synthetic data
 
 close all
-clear all
+
 setSeed(0);
 
 D=200; % Number of coefficients to estimate

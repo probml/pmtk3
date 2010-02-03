@@ -1,5 +1,5 @@
 function demoMinfuncHighdim()
-
+%#slow
 %methods = {'sd', 'cg',  'bb'};
 methods = {'sd', 'cg',  'bb', 'newton', 'newtoncg', 'bfgs', 'lbfgs'};
 %methods = {'sd', 'cg',  'bb', 'newton', 'newtoncg', 'bfgs', 'lbfgs', 'newton0', 'newton0lbfgs'};
@@ -51,7 +51,7 @@ for j=1:length(dims)
   title(sprintf('time d=%d', d))
 end
 printPmtkFigure minfuncRosenBar
-%keyboard
+
 end
 %%%%%%%%
 

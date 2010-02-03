@@ -1,7 +1,7 @@
 % pcaFaceDemo
 % Based on code by Mark Girolami
 
-clear
+
 %load('olivettifaces.mat'); %64x64 
 %X = faces';
 load('facesOlivetti_trainTest.mat');

@@ -1,5 +1,5 @@
 function [] = biclusterDemo()
-cls; dbstop if error;
+%#slow    
 setSeed(0);
 nRow = 100;
 nCol = 30;

@@ -2,7 +2,7 @@
 % Demo of logistic regression in 2D
 % Based on code by Mark Girolami
 
-clear all
+
 
 X=load('rip_dat_tr.txt'); % train X(i,:) is sample i
 Xt=load('rip_dat_te.txt'); % test

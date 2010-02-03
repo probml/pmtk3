@@ -1,5 +1,5 @@
 
-clear all
+
 seed = 0; rand('state', seed); randn('state', seed); 
 Nseq = 10;
 Nlocn = 15;

@@ -1,7 +1,7 @@
 % Sparse linear regression with EM on biscuits data
 
 close all
-clear all
+
 
 load biscuits.mat
 ings = [1:4]; % fat, sucrose, flour, water

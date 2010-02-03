@@ -1,4 +1,4 @@
-clear all
+
 seed =  0; rand('state', seed);
 %Ns = 1*[10 50 100];
 %Ds = [10 50 100];

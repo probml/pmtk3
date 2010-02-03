@@ -46,7 +46,7 @@ for k=1:nmetrics
   xlabel('d')
 end
 
-keyboard
+
 
 end
 

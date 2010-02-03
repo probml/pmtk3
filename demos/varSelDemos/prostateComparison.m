@@ -1,4 +1,4 @@
-clear all
+
 close all
 
 load('prostate.mat') % from prostateDataMake

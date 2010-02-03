@@ -2,7 +2,7 @@
 % Compare effect of regularizer strength
 
 %% Make the data
-clear all
+
 ns = [21 100];
 for ni=1:length(ns)
    n = ns(ni);

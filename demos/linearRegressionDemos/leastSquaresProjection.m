@@ -29,7 +29,7 @@ xlabel('x1'); ylabel('x2'); zlabel('x3');
 plotLines;
 plotPoints;
 labelPoints;
-%keyboard
+
 
 printPmtkFigure leastSquaresProj
   function plotLines

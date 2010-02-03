@@ -1,6 +1,6 @@
 % boxplot of the Michelson-Morley data
 % Based on http://en.wikipedia.org/wiki/File:Michelsonmorley-boxplot.svg
-cls
+
 load morley.mat
 for notched = [false true]
 %notched = true;

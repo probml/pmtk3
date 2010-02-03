@@ -2,7 +2,7 @@
 % This illustartes that if we have more data, Bayes picks a more complex
 % model
 
-clear all
+
 Ns = [8 32];
 for ni=1:length(Ns)
   ndata = Ns(ni);
