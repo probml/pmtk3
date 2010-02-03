@@ -36,12 +36,14 @@ function text = processExamples(includeTags, excludeTags, pauseTime, doformat)
     % text = processExamples({'#testPMTK'},{'#inprogress','#slow','#broken'})  % used to make testPMTK
     % text = processExamples({},{'#inprogress','#broken'})                     % used to make runDemos
     
+    if nargin < 1, includeTags = {}; end
+    if nargin < 2, excludeTags = {}; end
     if nargin < 3, pauseTime = 0; end
     if nargin < 4, doformat = true; end
-    cd(fullfile(pmtk3Root(),'demos'));                                   % change directory to /pmtk/examples/
+    cd(fullfile(pmtk3Root(),'demos'));                                     % change directory to /pmtk/examples/
     [info,mfiles] = mfilelist();                                           % grab the names of all the mfiles there - including subdirectories if any
     tags = cellfuncell(@tagfinder,mfiles)';                                % get all of the tags in each of these mfiles
-    if nargin == 0 || isempty(includeTags)
+    if isempty(includeTags)
         include = true(numel(mfiles),1);                                    % if no includeTags, include every file
     else
         include = cellfun(@(c)~isempty(intersect(c,includeTags)),tags);     % determine which mfiles to include based on their tags
@@ -57,7 +59,7 @@ function text = processExamples(includeTags, excludeTags, pauseTime, doformat)
     mfiles = mfiles(include);                                              % keep only included mfiles
     text = cellfuncell(@(c)sprintf('%s;%spclear(%d);',c(1:end-2),...       % format each example name by removing .m adding ';', spaces, and 'pclear('pauseTime');'
         blanks(max(5,42 - length(c))),pauseTime),mfiles)';
-    if nargin > 1 && ~isempty(excludeTags)                                 % if there are exclude tags
+    if ~isempty(excludeTags)                                               % if there are exclude tags
         comments = cellfuncell(@(c)catString(cellfuncell(@(s)regexprep...  % construct comments for mfiles with excludeTags from the tags themselves
             (s,'#',''),intersect(c,excludeTags)),' & '),tags(include));
         ndx = find((cellfun(@(c)~isempty(c),comments)));                   % indices into mfiles(include) of files with excludeTags and thus non-empty comments

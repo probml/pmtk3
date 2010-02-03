@@ -3,7 +3,7 @@ function errors = debugDemos()
 % a list of those which fail. 
 
 hideFigures
-demos = sort(processExamples({}, {'#slow'}, 0, false));
+demos = processExamples({}, {'#slow'}, 0, false);
 demos = cellfuncell(@(s)s(1:end-2), demos);
 errors = struct();
 for dm=1:numel(demos)

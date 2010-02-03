@@ -1,14 +1,6 @@
-%% Run Fast Demos
+%% Run Every Demo
 
 
-%biclusterDemo;                          pclear(2); % slow
-%demoMinfuncHighdim;                     pclear(2); % slow
-%demoRosenHighDim;                       pclear(2); % slow
-%gibbsDemoDenoising;                     pclear(2); % slow
-%gibbsDemoNoBlindspot;                   pclear(2); % slow
-%mnist1NNdemo;                           pclear(2); % slow
-%naiveBayesMnistDemo;                    pclear(2); % slow
-%pagerankDemoGui;                        pclear(2); % slow
 agglomDemo;                              pclear(2);
 aokiFn;                                  pclear(2);
 basisFnDemoRegr;                         pclear(2);
@@ -22,6 +14,7 @@ betaHPD;                                 pclear(2);
 betaMCdemo;                              pclear(2);
 betaPlotDemo;                            pclear(2);
 biasVarModelComplexity;                  pclear(2);
+biclusterDemo;                           pclear(2);
 bigO;                                    pclear(2);
 bimodalDemo;                             pclear(2);
 binomDistPlot;                           pclear(2);
@@ -48,10 +41,12 @@ decisionBoundaryLinearVSwiggly;          pclear(2);
 deflationDemo;                           pclear(2);
 demoLagrange;                            pclear(2);
 demoMinfunc;                             pclear(2);
+demoMinfuncHighdim;                      pclear(2);
 demoPeaksTraj;                           pclear(2);
 demoQuadBowl;                            pclear(2);
 demoRosen2d;                             pclear(2);
 demoRosenConstrained;                    pclear(2);
+demoRosenHighDim;                        pclear(2);
 demoSteepestDescent;                     pclear(2);
 demoSteepestDescentRosen;                pclear(2);
 derivComplexTrick;                       pclear(2);
@@ -83,6 +78,8 @@ gaussPlot2Ddemo;                         pclear(2);
 gaussPlotDemo;                           pclear(2);
 gaussVsStudentOutlierDemo;               pclear(2);
 ggmLassoDemo;                            pclear(2);
+gibbsDemoDenoising;                      pclear(2);
+gibbsDemoNoBlindspot;                    pclear(2);
 gprDemoChangeHparams;                    pclear(2);
 gprDemoNoiseFree;                        pclear(2);
 hclustYeastDemo;                         pclear(2);
@@ -154,10 +151,12 @@ mlpRegHmcDemo;                           pclear(2);
 mlpRegressDemo;                          pclear(2);
 mlpRegressDemoBishop;                    pclear(2);
 mlpRegressDemoSchmidt;                   pclear(2);
+mnist1NNdemo;                            pclear(2);
 mstDemo;                                 pclear(2);
 multinomIndepLogBF;                      pclear(2);
 multinomSamplePlotDemo;                  pclear(2);
 naiveBayesBayesianDemo;                  pclear(2);
+naiveBayesMnistDemo;                     pclear(2);
 naiveBayesMnistSample;                   pclear(2);
 newsgroupsProcessData;                   pclear(2);
 newsgroupsVisualize;                     pclear(2);
@@ -165,6 +164,7 @@ neymanPearson2;                          pclear(2);
 neymanPearson;                           pclear(2);
 nonConvexFn;                             pclear(2);
 numbersGame;                             pclear(2);
+pagerankDemoGui;                         pclear(2);
 pagerankDemoMoler;                       pclear(2);
 pagerankDemoPmtk;                        pclear(2);
 pagerankpow;                             pclear(2);
