@@ -2,9 +2,9 @@ function logp = gaussLogprob(model, X)
 % Multivariate Gaussian distribution, log pdf
 % model is a struct with fields mu and Sigma
 % X(i,:) is i'th case
+% In the univariate case, Sigma is the variance, not the SD. 
 
-mu = model.mu;
-Sigma = model.Sigma;
+[mu, Sigma] = structvals(model);
 d = size(Sigma, 2);
 X = reshape(X, [], d);
 X = bsxfun(@minus, X, rowvec(mu));
