@@ -1,10 +1,9 @@
 
 setSeed(0);
 muTrue = [0.5 0.5]'; Ctrue = 0.1*[2 1; 1 1];
-mtrue = MvnDist(muTrue, Ctrue);
 xrange = [-1 1 -1 1];
 n = 50;
-X = sample(mtrue, n);
+X = gaussSample(muTrue, Ctrue, n);
 ns = [1 5 10 50];
 figure;
 nr = 2; nc = 3;
@@ -15,21 +14,23 @@ plot(muTrue(1), muTrue(2), 'kx', 'markersize', 15, 'linewidth',3 );
 axis square
 title('data')
 
-prior = MvnDist([0 0]', 0.1*eye(2));
+prior.mu = [0 0]';
+prior.Sigma = 0.1*eye(2);
+
 subplot(nr, nc,2);
-gaussPlot2d(prior.params.mu, prior.params.Sigma, '-plotMarker', true);
-%plotPdf(prior);
+gaussPlot2d(prior.mu, prior.Sigma, '-plotMarker', true);
+
 axis(xrange);axis square
 title('prior')
 
 for i=1:length(ns)
   n = ns(i);
-  py = MvnDist(zeros(2,1), Ctrue/n);
+  py.mu = zeros(2, 1);
+  py.Sigma = Ctrue/n;
   A = eye(2); y = mean(X(1:n,:))';
-  post = softCondition(prior, py, A, y);
+  post = gaussSoftCondition(prior, py, A, y);
   subplot(nr, nc,i+2);
-  gaussPlot2d(post.params.mu, post.params.Sigma, '-plotMarker', true);
-  %plotPdf(post);
+  gaussPlot2d(post.mu, post.Sigma, '-plotMarker', true);
   axis(xrange);
   axis square
   title(sprintf('n=%d',n))
