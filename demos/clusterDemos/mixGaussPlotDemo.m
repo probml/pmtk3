@@ -1,4 +1,4 @@
-function gaussMixPlot()
+function mixGaussPlotDemo()
 %% Plot a Mixture of Gaussians
 
 %%
