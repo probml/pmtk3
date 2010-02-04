@@ -1,6 +1,6 @@
-function [h, p] = plotContour(fn, xyRange, varargin)
-% Plot contours of the function evalatuated at xyRange = [xmin xmax ymin ymax]
-% All other args (varargin) are passed directly to the contour function. 
+function [h, p] = plotSurface(fn, xyRange, varargin)
+% Plot the surface of the function evalatuated at xyRange = [xmin xmax ymin ymax]
+% All other args (varargin) are passed directly to the surf function. 
 % Returns, the plot handle h. 
 
     if nargin < 2
@@ -12,5 +12,5 @@ function [h, p] = plotContour(fn, xyRange, varargin)
     nr = size(X1, 1);  nc = size(X2, 1);
     p = reshape(fn([X1(:) X2(:)]), nr, nc);
     figure
-    [c, h] = contour(X1, X2, p, varargin{:});    
+    h = surf(X1, X2, p, varargin{:});    
 end
