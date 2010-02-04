@@ -1,4 +1,4 @@
-function text = processExamples(includeTags, excludeTags, pauseTime, doformat)
+function [text, excluded] = processExamples(includeTags, excludeTags, pauseTime, doformat)
     % Examine all of the PMTK demos and return a cell array of formatted names
     % corresponding to examples consistent with the specified include and
     % exclude tags. The semantics of includeTags and excludeTags are as
@@ -48,6 +48,9 @@ function text = processExamples(includeTags, excludeTags, pauseTime, doformat)
     else
         include = cellfun(@(c)~isempty(intersect(c,includeTags)),tags);     % determine which mfiles to include based on their tags
     end
+    
+    excluded = mfiles(cellfun(@(c)~isempty(intersect(c,excludeTags)),tags));
+    excluded = cellfuncell(@(c)c(1:end-2), excluded);
     if not(doformat)
         % when asked not to format, the semantics of excludeTags are
         % different - we actually exclude demos with any of these tags from

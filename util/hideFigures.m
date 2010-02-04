@@ -1,5 +1,7 @@
 function hideFigures()
-    
+% Hide all future generated figures until the showFigures() function is
+% run. The figures are still created and can be programmatically saved
+% but are not displayed. 
     
     set(0, 'defaultFigureVisible', 'off');
     set(0, 'defaultAxesVisible', 'off');

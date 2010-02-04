@@ -1,6 +1,6 @@
 %% Demonstrate the use of a Hopfield network for associative memory.
 %Demo written by Matthew Dunham using the Neural Network Toolbox.
-
+%#slow
 load binaryImages;     % 7 binary images, each 150x150
 newsize   = 30;          % new size 30x30
 nimages   = 7;

@@ -3,23 +3,45 @@ function errors = debugDemos()
 % a list of those which fail. 
 
 hideFigures
-demos = processExamples({}, {'#slow'}, 0, false);
+[demos, excluded] = processExamples({}, {'#slow'}, 0, false);
+ndemos = numel(demos);
 demos = cellfuncell(@(s)s(1:end-2), demos);
 errors = struct();
-for dm=1:numel(demos)
+htmlData = cell(ndemos+numel(excluded), 5);
+htmlTableColors   = repmat({'lightgreen'}, ndemos, 5);
+for dm=1:ndemos
     try
+       htmlData{dm, 1} = demos{dm}; 
+       tic;
        evalc(demos{dm});
+       t = toc;
        fprintf('%d:PASS\t%s\n', dm, demos{dm});
+       htmlData{dm, 2} = 'PASS';
+       htmlData{dm, 5} = sprintf('%.1f seconds', t);
     catch ME
        errors.(demos{dm}) = ME;
        fprintf('%d:FAIL\t%s\n', dm, demos{dm});
+       htmlData{dm, 2} = 'FAIL';
+       htmlData{dm, 3} = ME.identifier;
+       htmlData{dm, 4} = ME.message;
+       htmlTableColors(dm, :) = {'red'};
     end
-    clearvars -except demos errors dm
+    clearvars -except demos errors dm htmlData htmlTableColors excluded ndemos
     close all
 end
 fprintf('%d out of %d failed\n', numel(fieldnames(errors)), numel(demos));
 showFigures
+for i = 1:numel(excluded)
+    htmlData(ndemos+i, 1) = excluded(i);
+    htmlData(ndemos+i, 2) = {'SKIP'};
+    htmlTableColors(ndemos+i, :) = {'yellow'};
+end
+perm = sortidx(htmlData(:, 1));
+htmlData = htmlData(perm, :);
+htmlTableColors = htmlTableColors(perm, :);
 
+
+htmlTable('-data', htmlData, '-colNames', {'Name', 'Status', 'Error Identifier', 'Error Message', 'Time'}, '-dataColors', htmlTableColors);
 
     
 end

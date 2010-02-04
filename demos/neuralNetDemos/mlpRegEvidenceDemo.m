@@ -3,7 +3,7 @@
 % and got rid of the annoying pause statements, so the script can be run
 % without user intervention
 
-clc;
+
 disp('This demonstration illustrates the application of Bayesian')
 disp('re-estimation to determine the hyperparameters in a simple regression')
 disp('problem. It is based on a local quadratic approximation to a mode of')
