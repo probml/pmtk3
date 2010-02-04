@@ -22,7 +22,9 @@ ps = gausspdf(xs(:), marg.mu, marg.Sigma);
 ps = 50*normalize(ps);
 plot(xs, 0+ps, 'bx:', 'linewidth',2 );
 %% conditional marginals
-[muHgivenV, SigmaHgivenV] = gaussCondition(mu, S, 2, x2);
+model = struct('mu', mu, 'Sigma', S);
+modelHgivenV = gaussCondition(model, 2, x2);
+[muHgivenV, SigmaHgivenV] = structvals(modelHgivenV);
 ps = gausspdf(xs(:), muHgivenV, SigmaHgivenV);
 ps = 50*normalize(ps);
 plot(xs, 1+ps, 'ko-.', 'linewidth',2 );

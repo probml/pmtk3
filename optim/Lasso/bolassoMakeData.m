@@ -51,7 +51,7 @@ while(~done) %keep looping until we find a distribution that matches the consist
     mu = zeros(1,d);
     G = randn(d,d);                 
     Q = G*G';                        %make posdef
-    Q = corrcov(Q);                  %rescale to unit diagonal
+    Q = cov2cor(Q);                  %rescale to unit diagonal
     Sigma = Q;
     
     W = randn(r,1);                  %loading vector
