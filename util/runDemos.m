@@ -2,10 +2,13 @@
 
 
 %biclusterDemo;                          pclear(2); % slow
+%bootstrapDemoBer;                       pclear(2); % slow
 %demoMinfuncHighdim;                     pclear(2); % slow
 %demoRosenHighDim;                       pclear(2); % slow
 %gibbsDemoDenoising;                     pclear(2); % slow
 %gibbsDemoNoBlindspot;                   pclear(2); % slow
+%hopfieldDemo;                           pclear(2); % slow
+%mlpClassifDemoSchmidt;                  pclear(2); % slow
 %mnist1NNdemo;                           pclear(2); % slow
 %naiveBayesMnistDemo;                    pclear(2); % slow
 %pagerankDemoGui;                        pclear(2); % slow
@@ -26,7 +29,6 @@ bigO;                                    pclear(2);
 bimodalDemo;                             pclear(2);
 binomDistPlot;                           pclear(2);
 binomial_betaPosteriorDemo;              pclear(2);
-bootstrapDemoBer;                        pclear(2);
 boxplotMorley;                           pclear(2);
 cancerRatesBugsScript;                   pclear(2);
 cancerRatesEb;                           pclear(2);
@@ -88,7 +90,6 @@ gprDemoNoiseFree;                        pclear(2);
 hclustYeastDemo;                         pclear(2);
 hmmSelfLoopDist;                         pclear(2);
 hoffNormalmsePlots;                      pclear(2);
-hopfieldDemo;                            pclear(2);
 huberLossDemo;                           pclear(2);
 kalmanSample;                            pclear(2);
 kalmanTrackingDemo;                      pclear(2);
@@ -147,7 +148,6 @@ mixGaussMultiModesPlot;                  pclear(2);
 mixGaussPlotDemo;                        pclear(2);
 mixGaussSingularity;                     pclear(2);
 mixPpcaDemoNetlab;                       pclear(2);
-mlpClassifDemoSchmidt;                   pclear(2);
 mlpPriorsDemo;                           pclear(2);
 mlpRegEvidenceDemo;                      pclear(2);
 mlpRegHmcDemo;                           pclear(2);

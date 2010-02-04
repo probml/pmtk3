@@ -1,19 +1,21 @@
 function logp = studentLogprob(model, X)
 % Multivariate student T distribution, log pdf
-% % model  is a structure containing fields: mu, Sigma, dof
-% logp(i) = logp(X(i,:)|model)  
+% 
+% -  model is a structure containing fields mu, Sigma, dof
+% -  logp(i) = logp(X(i, :) | model)  
 
-
-mu = model.mu; Sigma = model.Sigma; nu = model.dof;
-if length(mu)==1, X = X(:); end
-[N d] = size(X);
-M = repmat(mu(:)', N, 1); % replicate the mean across rows
-%XX = X;
-X = X-M;
+[nu, mu, Sigma] = structvals(model);
+d = size(Sigma, 1);
+X = reshape(X, [], d);
+X = bsxfun(@minus, X, rowvec(mu));
 mahal = sum((X*inv(Sigma)).*X,2);
 logc = gammaln(nu/2 + d/2) - gammaln(nu/2) - 0.5*logdet(Sigma) ...
    - (d/2)*log(nu) - (d/2)*log(pi);
 logp = logc  -(nu+d)/2*log1p(mahal/nu);
+
+
+
+
 
 if 0 % check that scalar case works
   if length(mu)==1
