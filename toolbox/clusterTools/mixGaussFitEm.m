@@ -38,7 +38,7 @@ while ~done
   logpost = zeros(N,K);
   logprior = log(mixweight);
   for c=1:K
-    model.mu = mu(:, c); model.Sigma = Sigma(:, :, C);
+    model.mu = mu(:, c); model.Sigma = Sigma(:, :, c);
     logpost(:,c) = gaussLogprob(model, data) + logprior(c);
   end
   [logpost, ll] = normalizeLogspace(logpost);

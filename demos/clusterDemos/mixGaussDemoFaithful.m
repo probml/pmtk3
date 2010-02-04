@@ -11,9 +11,9 @@ X = standardizeCols(X);
 mu = [-1.5 1.5; 1.5 -1.5]' + 1*randn(2,2);
 Sigma = repmat(0.1*eye(2),[1 1 K]);
 mixweight = normalize(ones(1,K));
-[mu, Sigma, mixweight, loglikHist] = mixGaussFitEmSimple(X, K, ...
+[model, loglikHist] = mixGaussFitEm(X, K, ...
    'maxIter', 10, 'plotfn', @plotfn,...
-   'mu', mu, 'Sigma', Sigma, 'mixweight', mixweight); %#ok
+   'mu', mu, 'Sigma', Sigma, 'mixweight', mixweight);
 figure;
 plot(loglikHist, 'o-', 'linewidth', 3)
 xlabel('iter')
