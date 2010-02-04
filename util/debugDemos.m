@@ -1,10 +1,9 @@
-function errors = debugDemos(exclusions, subFolder)
+function errors = debugDemos(subFolder, exclusions)
 % Debug the PMTK demos, by attempting to run them all, saving 
 % a list of those which fail. 
 
-if nargin < 1, exclusions = {'#slow'}; end
-if nargin < 2, subFolder = ''; end
-
+if nargin < 1, subFolder = ''; end
+if nargin < 2, exclusions = {'#slow'}; end
 hideFigures
 [demos, excluded] = processExamples({}, exclusions, 0, false, subFolder);
 ndemos = numel(demos);
@@ -30,7 +29,7 @@ for dm=1:ndemos
        htmlTableColors(dm, :) = {'red'};
     end
     clearvars -except demos errors dm htmlData htmlTableColors excluded ndemos
-    close all
+    close all hidden
 end
 fprintf('%d out of %d failed\n', numel(fieldnames(errors)), numel(demos));
 showFigures
