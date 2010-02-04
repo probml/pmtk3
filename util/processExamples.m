@@ -1,4 +1,4 @@
-function [text, excluded] = processExamples(includeTags, excludeTags, pauseTime, doformat)
+function [text, excluded] = processExamples(includeTags, excludeTags, pauseTime, doformat, subFolder)
     % Examine all of the PMTK demos and return a cell array of formatted names
     % corresponding to examples consistent with the specified include and
     % exclude tags. The semantics of includeTags and excludeTags are as
@@ -41,6 +41,9 @@ function [text, excluded] = processExamples(includeTags, excludeTags, pauseTime,
     if nargin < 3, pauseTime = 0; end
     if nargin < 4, doformat = true; end
     cd(fullfile(pmtk3Root(),'demos'));                                     % change directory to /pmtk/examples/
+    if nargin == 5 && ~isempty(subFolder)
+        cd(subFolder)
+    end
     [info,mfiles] = mfilelist();                                           % grab the names of all the mfiles there - including subdirectories if any
     tags = cellfuncell(@tagfinder,mfiles)';                                % get all of the tags in each of these mfiles
     if isempty(includeTags)

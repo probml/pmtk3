@@ -1,7 +1,6 @@
 function hideFigures()
 % Hide all future generated figures until the showFigures() function is
-% run. The figures are still created and can be programmatically saved
-% but are not displayed. 
+% run. 
     
     set(0, 'defaultFigureVisible', 'off');
     set(0, 'defaultAxesVisible', 'off');
@@ -12,13 +11,25 @@ function hideFigures()
         mkdir(fullpath);
     end
     
-    figfile = {'function h = figure(varargin)';   
-            'h = builtin(''figure'', varargin{:}, ''visible'', ''off'');';
-            'end'};
+    figfile = { 'function h = figure(varargin)'
+                'if nargin ==1 && isa(varargin{1}, ''double'')'
+                '    builtin(''figure'', varargin{1});'
+                '    set(gcf, ''visible'', ''off'');'
+                '    h = varargin{1};'
+                'else'
+                '    h = builtin(''figure'', varargin{:}, ''visible'', ''off'');'
+                'end'
+              };
         
-    axesfile = {'function h = axes(varargin)';   
-            'h = builtin(''axes'', varargin{:}, ''visible'', ''off'');';
-            'end'};    
+    axesfile = { 'function h = axes(varargin)'
+                 'if nargin ==1 && isa(varargin{1}, ''double'')'
+                 '    builtin(''axes'', varargin{1});'
+                 '    set(gca, ''visible'', ''off'');'
+                 '    h = varargin{1};'
+                 'else'
+                 '    h = builtin(''axes'', varargin{:}, ''visible'', ''off'');'
+                 'end'
+               };    
     
     writeText(figfile, fullfile(fullpath, 'figure.m'));
     writeText(axesfile, fullfile(fullpath, 'axes.m'));

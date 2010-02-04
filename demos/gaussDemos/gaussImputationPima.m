@@ -36,15 +36,19 @@ end
 end
 
 
+fittedModel{1} = struct('mu', mean(pima), 'Sigma', cov(pima));
+fittedModel{2} = gaussMissingFitEm(pimaNan, '-verbose', true);
+
+
 % For comparison we also consider the 'best' model -- the model fitted given that we have access to all the data
-fittedModel{1} = fit(model,'data',pima,'prior','none');
-fittedModel{2} = fit(model,'data',pimaNan,'prior','none','fitArgs', {'verbose', true});
+%fittedModel{1} = fit(model,'data',pima,'prior','none');
+%fittedModel{2} = fit(model,'data',pimaNan,'prior','none','fitArgs', {'verbose', true});
 
 
 % Impute the missing data and compute mse for each fitted model
 for i = 1:length(fittedModel)
-	pimaImputed{i} = impute(fittedModel{i},pimaNan);
-	mse(i) = sum(sum(pimaImputed{i} - pima).^2)/prod(size(pimaImputed));
+	pimaImputed{i} = gaussImpute(fittedModel{i}, pimaNan);
+	mse(i) = sum(sum(pimaImputed{i} - pima).^2)/numel(pimaImputed);
 end
 
 

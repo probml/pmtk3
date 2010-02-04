@@ -16,15 +16,17 @@ for useFull = [false]
     [muSamples, SigmaSamples, dataSamples, LLtrace] = gaussMissingFitGibbs(XfullTrain, 'verbose', false, 'mu0', nanmean(XfullTrain), 'Lambda0', diag(nanvar(XfullTrain)), 'k0', 0.01, 'dof', d + 2);
     muHat = mean(muSamples);
     SigmaHat = mean(SigmaSamples,3);
-    [Ximpute, V] = gaussImpute(muHat', SigmaHat, Xmiss);
+    model = struct('mu', muHat', 'Sigma', SigmaHat);
+    [Ximpute, V] = gaussImpute(model, Xmiss);
     Xtrain = XfullTrain;
     fname = 'mvnImputeFull';
   else
     [muSamples, SigmaSamples, dataSamples, LLtrace] = gaussMissingFitGibbs(XmissTrain, 'verbose', false, 'mu0', nanmean(XmissTrain), 'Lambda0', diag(nanvar(XmissTrain)), 'k0', 0.01, 'dof', d + 2);
     muHat = mean(muSamples);
     SigmaHat = mean(SigmaSamples,3);
+    model = struct('mu', muHat, 'Sigma', SigmaHat);
     figure; plot(LLtrace); title('EM loglik vs iteration')
-    [Ximpute, V] = gaussImpute(muHat', SigmaHat, Xmiss);
+    [Ximpute, V] = gaussImpute(model, Xmiss);
     Xtrain = XmissTrain;
     fname = 'mvnImputeEm';
   end

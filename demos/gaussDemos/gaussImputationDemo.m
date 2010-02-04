@@ -13,13 +13,14 @@ pcMissing = 0.3;
 [Xfull, Xmiss, Xhid] = mkData(mu, Sigma, 5, false, pcMissing);
 
 
-[muHat, SigmaHat, LLtrace] = gaussMissingFitEm(XmissTrain, 'verbose', false);
-[XimputeEM, V] = gaussImpute(muHat, SigmaHat, Xmiss);
+[model, LLtrace] = gaussMissingFitEm(XmissTrain, 'verbose', false);
+[XimputeEM, V] = gaussImpute(model, Xmiss);
 conf = 1./V;
 conf(isinf(conf))=0;
 confEM = conf;
- 
-[XimputeTruth, V] = gaussImpute(mu, Sigma, Xmiss);
+
+trueModel = struct('mu', mu, 'Sigma', Sigma);
+[XimputeTruth, V] = gaussImpute(trueModel, Xmiss);
 conf = 1./V;
 conf(isinf(conf))=0;
 confTruth = conf;

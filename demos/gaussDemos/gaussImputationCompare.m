@@ -17,8 +17,8 @@ verb = true;
 
 % first EM
 fprintf('EM First\n')
-[muHat{1}, SigmaHat{1}, LLtrace{1}] = gaussMissingFitEm(Xmiss, 'verbose', verb, 'maxIter', 500);
-
+[model, LLtrace{1}] = gaussMissingFitEm(Xmiss, 'verbose', verb, 'maxIter', 500);
+[muHat{1}, SigmaHat{1}] = structvals(model);
 % second ICM
 fprintf('Now ICM\n')
 [muHat{2}, SigmaHat{2}, LLtrace{2}] = gaussMissingFitICM(Xmiss, 'verbose', verb);

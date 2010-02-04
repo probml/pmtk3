@@ -1,4 +1,4 @@
-function [mu, Sigma, loglikTrace] = gaussMissingFitEm(data, varargin)
+function [model, loglikTrace] = gaussMissingFitEm(data, varargin)
 % Find MLE of MVN when X has missing values, using EM algorithm
 % data is an n*d design matrix with NaN values
 % Optional arguments and their defaults:
@@ -58,7 +58,7 @@ while ~done
    Sigma = ESS/n;
    
    if(det(Sigma) <= 0)
-      warning('Warning: Obtained Nonsingular Sigma.  Exiting with last reasonable parameters \n')
+      warning('Warning: Obtained Nonsingular Sigma.  Exiting with last reasonable parameters')
       mu = muOld;
       Sigma = SigmaOld;
       return;
@@ -68,7 +68,7 @@ while ~done
    model.mu = mu; model.Sigma = Sigma;
    loglikTrace(iter) = sum(gaussLogprobMissingData(model, data));
    if iter > 1 && loglikTrace(iter) < loglikTrace(iter-1)
-      warning('warning: EM did not increase objective.  Exiting with last reasonable parameters \n')
+      warning('warning: EM did not increase objective.  Exiting with last reasonable parameters')
       mu = muOld;
       Sigma = SigmaOld;
    end
@@ -82,4 +82,6 @@ while ~done
    iter = iter + 1;
 end
 
+model.mu = mu;
+model.Sigma = Sigma;
 

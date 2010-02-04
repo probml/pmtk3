@@ -1,9 +1,12 @@
-function errors = debugDemos()
+function errors = debugDemos(exclusions, subFolder)
 % Debug the PMTK demos, by attempting to run them all, saving 
 % a list of those which fail. 
 
+if nargin < 1, exclusions = {'#slow'}; end
+if nargin < 2, subFolder = ''; end
+
 hideFigures
-[demos, excluded] = processExamples({}, {'#slow'}, 0, false);
+[demos, excluded] = processExamples({}, exclusions, 0, false, subFolder);
 ndemos = numel(demos);
 demos = cellfuncell(@(s)s(1:end-2), demos);
 errors = struct();

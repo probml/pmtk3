@@ -1,8 +1,8 @@
-
-function [Xc, V] = gaussImpute(mu, Sigma, X)
+function [Xc, V] = gaussImpute(model, X)
 % Fill in NaN entries of X using posterior mode on each row
 % Xc(i,j) = E[X(i,j) | D]
 % V(i,j) = Variance
+[mu, Sigma] = structvals(model);
 [n,d] = size(X);
 Xc = X;
 V = zeros(n,d);
