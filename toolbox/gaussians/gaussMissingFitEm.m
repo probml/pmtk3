@@ -66,7 +66,7 @@ while ~done
    
    % Convergence check
    model.mu = mu; model.Sigma = Sigma;
-   loglikTrace(iter) = sum(gaussLogprob(model, data);
+   loglikTrace(iter) = sum(gaussLogprobMissingData(model, data));
    if iter > 1 && loglikTrace(iter) < loglikTrace(iter-1)
       warning('warning: EM did not increase objective.  Exiting with last reasonable parameters \n')
       mu = muOld;
