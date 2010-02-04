@@ -39,8 +39,8 @@ while ~done
       u = dataMissing(i,:); % unobserved entries
       o = ~u; % observed entries
       Sooinv = inv(Sigma(o,o));
-      Si = Sigma(u,u) - Sigma(u,o) * Sooinv * Sigma(o,u); %#ok
-      expVals(u,i) = mu(u) + Sigma(u,o)*Sooinv*(X(o,i)-mu(o)); %#ok
+      Si = Sigma(u,u) - Sigma(u,o) * Sooinv * Sigma(o,u); 
+      expVals(u,i) = mu(u) + Sigma(u,o)*Sooinv*(X(o,i)-mu(o)); 
       expVals(o,i) = X(o,i);
       expProd(u,u,i) = expVals(u,i) * expVals(u,i)' + Si;
       expProd(o,o,i) = expVals(o,i) * expVals(o,i)';

@@ -1,7 +1,7 @@
 %% Compare the results of imputation on a MVN using three imputation methods: EM, ICM, and Gibbs
 %author Cody Severinski
 
-setSeed(0);
+setSeed(1);
 d = 10; n = 100;
 mu = randn(d,1); Sigma = randpd(d);
 
