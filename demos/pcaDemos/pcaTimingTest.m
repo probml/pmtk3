@@ -21,7 +21,7 @@ for ni=1:length(Ns)
       tic
       for trials=1:ntrials
         [B{method}, Xproj{method}, evals{method}, Xrecon{method}, mu{method}] = ...
-	    pcaFast(X, K, method);
+	    pcaPmtk(X, K, method);
       end      
       tim(ni, di, method)  = toc;
       switch method
@@ -49,7 +49,7 @@ end
 predictedBestMethod
 actualBestMethod
 
-folder = 'C:/kmurphy/PML/Figures';
+
 m = max(tim(:));
 for method=1:nmethods
   figure(method);clf
@@ -57,6 +57,6 @@ for method=1:nmethods
   set(gca, 'zlim', [0 m])
   xlabel('d'); set(gca, 'xticklabel', Ds); ylabel('n'); set(gca,'yticklabel',Ns)
   title(methodNames{method})
-  fname = sprintf('%s/pcaKPMtestMethod%d.eps', folder, method)
-  %print(gcf, '-depsc',fname);
+  fname = sprintf('pcaKPMtestMethod%d.eps', method);
+  printPmtk(fname); 
 end

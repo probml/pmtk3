@@ -16,7 +16,7 @@ R = [cos(alpha) -sin(alpha) 0;...
 X  = X*R';
 X = center(X);
 
-[W, Z, evals, Xrecon2, mu] = pcaFast(X, 2);
+[W, Z, evals, Xrecon2, mu] = pcaPmtk(X, 2);
 Xrecon1 = Z(:,1)*W(:,1)' +  repmat(mu, n, 1);
     
 figure;

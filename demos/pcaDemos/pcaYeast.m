@@ -10,7 +10,7 @@
 
 load 'yeastData310.mat';
 
-[B, Z, evals, Xrecon, mu] = pcaFast(X);
+[B, Z, evals, Xrecon, mu] = pcaPmtk(X);
 
 figure;
 cumsum(evals./sum(evals) * 100)

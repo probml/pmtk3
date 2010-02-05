@@ -5,7 +5,7 @@ function [W,mu,sigma2,evals,evecs,Xproj,Xrecon]  = ppcaFit(X,K)
 % We also return the evecs and evals of the covariance matrix
 % which are useful for efficient evaluation of ppcaLoglik
 
-[evecs, Xproj, evals, Xrecon, mu] = pcaFast(X,K); %#ok
+[evecs, Xproj, evals, Xrecon, mu] = pcaPmtk(X,K); 
 [n,d] = size(X);
 sigma2 = mean(evals(K+1:end));
 W = evecs(:,1:K) * sqrt(diag(evals(1:K))-sigma2*eye(K));

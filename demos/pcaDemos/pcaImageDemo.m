@@ -83,7 +83,7 @@ XC = X-repmat(mu,size(X,1),1);
 sprintf('Performing PCA.... stay tuned\n');
 %[U,S,V] = svd(XC,0);
 %evals = (1/n)*diag(S).^2;
-[V, Z, evals] = pcaFast(X);
+[V, Z, evals] = pcaPmtk(X);
 
 % visualize basis functions (eigenfaces)
 figure(2);clf

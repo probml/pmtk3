@@ -3,7 +3,7 @@ n = 5;
 X=[randn(n,2)+2.*ones(n,2);2.*randn(n,2)-2.*ones(n,2)];
 
 [n d] = size(X);
-[W, Z, evals, Xrecon, mu] = pcaFast(X, 1);
+[W, Z, evals, Xrecon, mu] = pcaPmtk(X, 1);
 
 figure(1);clf;
 plot(mu(1), mu(2), '*', 'markersize', 15, 'color', 'r');

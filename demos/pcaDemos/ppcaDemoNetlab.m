@@ -6,7 +6,7 @@ d = 10;
 X = rand(n,d);
 K = 2;
 
-%[W, Z, evals, Xrecon, mu] = pcaFast(X, K);
+%[W, Z, evals, Xrecon, mu] = pcaPmtk(X, K);
 %[var, U, lambda] = ppca(X'*X/n, 1);
 
 [W, mu, sigma2, evals, evecs] = ppcaFit(X, K);

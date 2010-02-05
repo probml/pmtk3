@@ -12,7 +12,9 @@ N = length(x);
 t = mean(x)./(std(x)/sqrt(N));
 dof = N-1;
 sigmaD = 1;
-BF = studentpdf(t, 0, 1, dof)/studentpdf(t, 0, 1+sigmaD^2*N, dof)
+model1.mu = 0; model1.Sigma = 1; model1.dof = dof; 
+model2 = model1; model2.Sigma = 1+sigmaD^2*N; 
+BF = exp(studentLogprob(model1, t) - studentLogprob(model2, t));
 
 % Sanity check
 exponent = -(dof+1)/2;
@@ -32,7 +34,10 @@ Ndelta = 1/(1/Nx + 1/Ny)
 t = (xbar-ybar)/(sp / sqrt(Ndelta))
 dof = Nx+Ny-2;
 sigmaD = 1/3
-BF = studentpdf(t, 0, 1, dof)/studentpdf(t, 0, 1+sigmaD^2*Ndelta, dof)
+model1.mu = 0; model1.Sigma = 1; model1.dof = dof; 
+model2 = model1; model2.Sigma =  1+sigmaD^2*Ndelta; 
+BF = exp(studentLogprob(model1, t) - studentLogprob(model2, t))
+
 postH0 = 1/(1 + 1/BF)
 
 

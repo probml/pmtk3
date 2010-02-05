@@ -4,7 +4,7 @@ X = data(:,2:3);
 X = standardize(X);
 Y = data(:,1);
 [n d] = size(X);
-[W, Z, evals, Xrecon, mu] = pcaFast(X, 1);
+[W, Z, evals, Xrecon, mu] = pcaPmtk(X, 1);
 
 maleNdx = find(Y == 1);
 femaleNdx = find(Y == 2);

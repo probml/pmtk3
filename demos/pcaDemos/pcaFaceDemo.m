@@ -31,8 +31,8 @@ mean_face = mean(X);
 %X = X - repmat(mean_face,N,1);
 fprintf('Performing PCA.... stay tuned\n');
 K = 100; 
-[B, mu, Xproj, Xrecon] = pcaKPM(X, K);
-%tic; [B] = pcaFast(X,K); toc
+[B, mu, Xproj, Xrecon] = pcaPmtk(X, K);
+%tic; [B] = pcaPmtk(X,K); toc
 %Xproj = X*B;
 
 % visualize basis functions (eigenfaces)

@@ -12,7 +12,7 @@ n = size(X,1);
 
 % concatenate noise dimensions to convert from 2d to 10d
 Y = [X 0.01*randn(n,8)];
-[B, Z, evals, Xrecon, mu] = pcaFast(Y);
+[B, Z, evals, Xrecon, mu] = pcaPmtk(Y);
 
 figure;
 bar(evals)
@@ -30,7 +30,7 @@ printPmtkFigure('pcaDemo2dto10dEmbedScree')
 A=randn(10,2);
 Y=X*A';
 Y=Y+randn(n,10).*0.2;
-[B, Z, evals, Xrecon, mu] = pcaFast(Y);
+[B, Z, evals, Xrecon, mu] = pcaPmtk(Y);
 
 figure;
 bar(evals)

@@ -5,7 +5,7 @@ X = randn(n,d);
 k = 2;
 
 tic;
-[W, Xproj, evals, Xrecon, mu] = pcaFast(X,k);
+[W, Xproj, evals, Xrecon, mu] = pcaPmtk(X,k);
 toc
 
 tic;

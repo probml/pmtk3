@@ -1,4 +1,4 @@
-function [B, Z, evals, Xrecon, mu] = pcaFast(X, K, method)
+function [B, Z, evals, Xrecon, mu] = pcaPmtk(X, K, method)
 % X is n*d - rows are examples, columns are features
 % If K is not specified, we use the maximum possible value (min(n,d))
 % B is d*K (the basis vectors)
