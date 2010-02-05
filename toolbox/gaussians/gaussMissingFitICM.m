@@ -1,4 +1,4 @@
-function [mu, Sigma, loglikTrace] = gaussMissingFitICM(data, varargin)
+function [model, loglikTrace] = gaussMissingFitICM(data, varargin)
 % Perform imputation using the ICM algorithm -- plugging in posterior mode
 % data is an n*d design matrix with NaN values
 % Optional arguments and their defaults:
@@ -45,8 +45,7 @@ while(~converged)
     
 		if(det(Sigma) <= 0)
 			warning('Warning: Obtained Nonsingular Sigma.  Exiting with last reasonable parameters \n')
-			mu = muOld;
-			Sigma = SigmaOld;
+            model.mu = muOld; model.Sigma = SigmaOld; 
 			return;
 		end
     
@@ -64,5 +63,7 @@ while(~converged)
     iter = iter + 1;
     converged = iter >=maxIter || (abs(currentLL - prevLL) / (abs(currentLL) + abs(prevLL) + eps)/2) < opttol;
 end
+model = struct('mu', mu, 'Sigma', Sigma); 
 
+end
  

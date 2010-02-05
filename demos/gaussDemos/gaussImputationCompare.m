@@ -22,11 +22,14 @@ fprintf('EM First\n')
 [muHat{1}, SigmaHat{1}] = structvals(model);
 % second ICM
 fprintf('Now ICM\n')
-[muHat{2}, SigmaHat{2}, LLtrace{2}] = gaussMissingFitICM(Xmiss, 'verbose', verb);
+[model, LLtrace{2}] = gaussMissingFitICM(Xmiss, 'verbose', verb);
+muHat{2} = model.mu;
+SigmaHat{2} = model.Sigma; 
 
 % third Gibbs
 fprintf('Now Gibbs\n')
-[muSamples, SigmaSamples, dataSamples, LLtrace{3}] = gaussMissingFitGibbs(Xmiss, 'verbose', false, 'mu0', nanmean(Xmiss), 'Lambda0', diag(nanvar(Xmiss)), 'k0', 0.01, 'dof', d + 2, 'verbose', verb);
+[model, dataSamples, LLtrace{3}] = gaussMissingFitGibbs(Xmiss, 'verbose', false, 'mu0', nanmean(Xmiss), 'Lambda0', diag(nanvar(Xmiss)), 'k0', 0.01, 'dof', d + 2, 'verbose', verb);
+muSamples = model.mu; SigmaSamples = model.Sigma; 
 muHat{3} = mean(muSamples);
 SigmaHat{3} = mean(SigmaSamples,3);
 

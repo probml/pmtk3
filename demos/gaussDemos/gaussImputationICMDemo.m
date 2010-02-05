@@ -13,18 +13,16 @@ mu = randn(d,1); Sigma = randpd(d);
 
 verb = true;
 %for useFull = [true false]
-for useFull = [false]
+for useFull = false
   if useFull
-    [muHat, SigmaHat] = gaussMissingFitICM(XfullTrain, 'verbose', verb);
-    model = struct('mu', muHat', 'Sigma', SigmaHat');
-    [Ximpute, V] = gaussImpute(model, Xmiss);
+    modelHat = gaussMissingFitICM(XfullTrain, 'verbose', verb);
+    [Ximpute, V] = gaussImpute(modelHat, Xmiss);
     Xtrain = XfullTrain;
     fname = 'mvnImputeFull';
   else
-    [muHat, SigmaHat, LLtrace] = gaussMissingFitICM(XmissTrain, 'verbose', verb);
+    [modelHat, LLtrace] = gaussMissingFitICM(XmissTrain, 'verbose', verb);
     figure; plot(LLtrace); title('EM loglik vs iteration')
-    model = struct('mu', muHat', 'Sigma', SigmaHat);
-    [Ximpute, V] = gaussImpute(model, Xmiss);
+    [Ximpute, V] = gaussImpute(modelHat, Xmiss);
     Xtrain = XmissTrain;
     fname = 'mvnImputeEm';
   end
