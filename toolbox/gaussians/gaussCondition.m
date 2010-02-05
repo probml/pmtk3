@@ -1,6 +1,6 @@
 function modelHgivenV = gaussCondition(model, v, visValues)
 % p(xh|xv=visValues)
-    [mu, Sigma] = structvals(model);
+    mu = model.mu; Sigma = model.Sigma; 
     d = length(mu);
     h = setdiff(1:d, v);
     if isempty(h)

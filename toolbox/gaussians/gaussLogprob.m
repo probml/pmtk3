@@ -4,7 +4,7 @@ function logp = gaussLogprob(model, X)
 % X(i,:) is i'th case
 % In the univariate case, Sigma is the variance, not the SD. 
 
-[mu, Sigma] = structvals(model);
+mu = model.mu; Sigma = model.Sigma; 
 d = size(Sigma, 2);
 X = reshape(X, [], d);
 X = bsxfun(@minus, X, rowvec(mu));

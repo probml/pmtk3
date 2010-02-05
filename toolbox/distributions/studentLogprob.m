@@ -4,7 +4,8 @@ function logp = studentLogprob(model, X)
 % -  model is a structure containing fields mu, Sigma, dof
 % -  logp(i) = logp(X(i, :) | model)  
 
-[nu, mu, Sigma] = structvals(model);
+
+mu = model.mu; Sigma = model.Sigma; nu = model.dof; 
 d = size(Sigma, 1);
 X = reshape(X, [], d);
 X = bsxfun(@minus, X, rowvec(mu));

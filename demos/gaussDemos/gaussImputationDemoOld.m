@@ -25,7 +25,6 @@ for useFull = [true]
     fname = 'mvnImputeFull';
   else
     [model, LLtrace] = gaussMissingFitEm(XmissTrain, 'verbose', false);
-    [muHat, SigmaHat] = structvals(model);
     figure; plot(LLtrace); title('EM loglik vs iteration')
     [Ximpute, V] = gaussImpute(model, Xmiss);
     Xtrain = XmissTrain;
