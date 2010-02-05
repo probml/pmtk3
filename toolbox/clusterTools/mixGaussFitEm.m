@@ -20,7 +20,7 @@ if isempty(mu)
    [mu, assign] = kmeansSimple(data, K);
    % Now fit Gaussians using hard assignments
    Sigma = zeros(D,D,K);
-   counts = zeros(1,K);
+   counts = zeros(1,K); 
    for c=1:K
       ndx = find(assign==c);
       counts(c) = length(ndx);

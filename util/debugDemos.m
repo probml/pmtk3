@@ -14,7 +14,7 @@ htmlTableColors   = repmat({'lightgreen'}, ndemos, 5);
 for dm=1:ndemos
     try
        htmlData{dm, 1} = demos{dm}; 
-       tic;
+       tic;   
        evalc(demos{dm});
        t = toc;
        fprintf('%d:PASS\t%s\n', dm, demos{dm});
