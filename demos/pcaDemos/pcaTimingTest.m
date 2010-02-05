@@ -58,5 +58,5 @@ for method=1:nmethods
   xlabel('d'); set(gca, 'xticklabel', Ds); ylabel('n'); set(gca,'yticklabel',Ns)
   title(methodNames{method})
   fname = sprintf('pcaKPMtestMethod%d.eps', method);
-  printPmtk(fname); 
+  printPmtkFigure(fname); 
 end
