@@ -3,7 +3,7 @@ function errors = debugDemos(subFolder, exclusions)
 % a list of those which fail. 
 
 if nargin < 1, subFolder = ''; end
-if nargin < 2, exclusions = {'#slow'}; end
+if nargin < 2, exclusions = {'#slow', '#interactive'}; end
 hideFigures
 [demos, excluded] = processExamples({}, exclusions, 0, false, subFolder);
 ndemos = numel(demos);

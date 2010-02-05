@@ -7,7 +7,7 @@
 % We filtered the 6400 genes down to 310 using the steps described here:
 %http://www.mathworks.com/access/helpdesk/help/toolbox/bioinfo/index.html?/access/helpdesk/help/toolbox/bioinfo/ug/a1060813239b1.html
 % See microarrayDemoMathworks
-
+%#interactive
 load 'yeastData310.mat';
 
 [B, Z, evals, Xrecon, mu] = pcaPmtk(X);
