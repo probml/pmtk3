@@ -30,7 +30,8 @@ setSeed(3); nsamples = 30;
 colors = pmtkColors();
 xyRange = [-10 10 -10 10];
 for i = 1:numel(model)
-    [X, y] = mixGaussSample(model(i).mu, model(i).Sigma, model(i).classPrior, nsamples); 
+    m = struct('mus', model(i).mu, 'Sigmas', model(i).Sigma, 'mix', model(i).classPrior);
+    [X, y] = mixGaussSample(m, nsamples); 
     plotDecisionBoundary(X, y, @(Xtest)discrimAnalysisPredict(model(i), Xtest));
     for j = 1:size(model(i).Sigma, 3)
         fn = @(x)gausspdf(x, model(i).mu(:, j), model(i).Sigma(:, :, j));

@@ -15,7 +15,8 @@ X = [ones(n,1),x];
 d = 2;
 condnumber = 20; a = randn(d,1);
 [Sigma] = covcond(condnumber,a);
-X = gaussSample(zeros(d,1), Sigma, n);
+model = struct('mu', zeros(d, 1), 'Sigma', Sigma);
+X = gaussSample(model, n);
 y = wtrue(1)*X(:,1) + wtrue(2)*X(:,2) + sigma*randn(n,1);
 
   function [f,g] = rssObj(W)

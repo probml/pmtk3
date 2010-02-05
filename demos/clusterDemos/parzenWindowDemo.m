@@ -38,9 +38,11 @@ function parzenWindowDemo
 
     
     function data = generateData
-    %Generate data from a mixture of gaussians. 
-        pdf1 = @(n)gaussSample(mu(1),sigma(1),n);
-        pdf2 = @(n)gaussSample(mu(2),sigma(2),n);
+    %Generate data from a mixture of gaussians.
+        model1 = struct('mu', mu(1), 'Sigma', sigma(1));
+        model2 = struct('mu', mu(1), 'Sigma', sigma(2));
+        pdf1 = @(n)gaussSample(model1, n);
+        pdf2 = @(n)gaussSample(model2, n);
         data = rand(n,1);
         nmix1 = data <= mix(1);
         data(nmix1) = pdf1(sum(nmix1));

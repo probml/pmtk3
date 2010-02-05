@@ -11,6 +11,5 @@ function [h, p] = plotSurface(fn, xyRange, varargin)
                          linspace(xyRange(3), xyRange(4), npoints)'  );
     nr = size(X1, 1);  nc = size(X2, 1);
     p = reshape(fn([X1(:) X2(:)]), nr, nc);
-    figure
     h = surf(X1, X2, p, varargin{:});    
 end

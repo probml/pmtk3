@@ -74,8 +74,9 @@ if iter > maxIter
 end
 
 i=0;
+model = struct('mu', mu, 'Sigma', Sigma);
 while i<nDataSets
-    X = gaussSample(mu,Sigma,n);          %now sample rows of X
+    X = gaussSample(model, n);          %now sample rows of X
     %C = (X'*X)./n;
     %Check if sign consistency w.r.t. the empirical cov matrix matches
     %request as well.
@@ -83,7 +84,8 @@ while i<nDataSets
     %if(consistent == (check < 1)); 
         y = X*W;                          %use only the relevant features to generate y
         sigma = noise * sqrt(mean(y.^2));   %noise std
-        y = y + gaussSample(0,sigma,n);     %add noise
+        mm = struct('mu', 0, 'Sigma', sigma);
+        y = y + gaussSample(mm, n);     %add noise
         i = i+1;
         Xdata{i} = X; ydata{i} = y;  
     %end

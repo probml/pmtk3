@@ -4,7 +4,8 @@ setSeed(1);
 N = 100; D = 2;
 mu = randn(1,D);
 Sigma = randpd(D);
-X = gaussSample(mu, Sigma, N);
+model = struct('mu', mu, 'Sigma', Sigma);
+X = gaussSample(model, N);
 
 
 %[muHat1d, SigmaHat1d, dofHat1d, niter1d] = ...

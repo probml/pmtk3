@@ -16,7 +16,8 @@ likelihoodPrecision = 1/(likelihoodSD)^2;
 
 %Generate the training points
 xtrain = -1 + 2*rand(trainingPoints,1);
-noise = gaussSample(0,noiseSD,trainingPoints);
+model = struct('mu', 0, 'Sigma', noiseSD);
+noise = gaussSample(model, trainingPoints);
 ytrain = a0 + a1*xtrain + noise;
 
 % Number of successive data points for which likelihood distributions will
@@ -88,7 +89,8 @@ printPmtkFigure bayesLinRegPlot2d
 % blue circles. 
 function plotSampleLines(mu, sigma, numberOfLines,dataPoints)
 for i = 1:numberOfLines
-    w = gaussSample(mu,sigma,1);
+    model = struct('mu', mu, 'Sigma', sigma);
+    w = gaussSample(model);
     func = @(x) w(1) + w(2)*x;
     fplot(func,[-1,1,-1,1],'r');
     hold on;

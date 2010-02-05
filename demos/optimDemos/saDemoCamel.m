@@ -9,7 +9,7 @@
 camel = @(x,y)(4-2.1*x.^2+x.^4/3).*x.^2+x.*y+4*(y.^2-1).*y.^2;
 energy = @(p) camel(p(1),p(2));
 
-seed = 1; rand('state', seed); randn('state', seed);
+setSeed(1);
 
 % Proposal perturbs a single random component by gauss(0,sigma=0.01)
 if 0
@@ -20,7 +20,7 @@ if 0
       'convWindow', 20);
 else
   opts = struct(...
-      'proposal', @(x) (x+gaussSample([0 0], 0.01*eye(2))), ...
+      'proposal', @(x) (x+gaussSample(struct('mu', [0 0],'Sigma', 0.01*eye(2)))), ...
       'maxIter', 5000, ...
       'temp', @(T,iter) (0.8*T), ...
       'convWindow', 20);

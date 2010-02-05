@@ -2,20 +2,20 @@
 
 %%  
 model = struct('mu', [0 0]', 'Sigma', [2 1.8; 1.8 2]);
-plotContour(@(x)gausspdf(x, model.mu, model.Sigma), [-5 5 -10 10]);
+figure; plotContour(@(x)gausspdf(x, model.mu, model.Sigma), [-5 5 -10 10]);
 title('full');
 printPmtkFigure gaussPlot2dDemoContourFull
-plotSurface(@(x)gausspdf(x, model.mu, model.Sigma));
+figure; plotSurface(@(x)gausspdf(x, model.mu, model.Sigma));
 title('full');
 printPmtkFigure gaussPlot2dDemoSurfFull
 %% Decorrelate
 [U, D] = eig(model.Sigma);
 S1 = U'*model.Sigma*U;
 
-plotContour(@(x)gausspdf(x, model.mu, S1), [-5 5 -10 10]);
+figure; plotContour(@(x)gausspdf(x, model.mu, S1), [-5 5 -10 10]);
 title('diagonal');
 printPmtkFigure gaussPlot2dDemoSurfDiag
-plotSurface(@(x)gausspdf(x, model.mu, S1), [-5 5 -10 10]);
+figure; plotSurface(@(x)gausspdf(x, model.mu, S1), [-5 5 -10 10]);
 title('diagonal');
 printPmtkFigure gaussPlot2dDemoContourDiag
 %% Whiten
@@ -27,10 +27,10 @@ S2 = eye(2); % to ensure picture is pretty
 
 % we plot centered on original mu, not shifted mu
 
-plotContour(@(x)gausspdf(x, model.mu, S2), [-5 5 -5 5]);
+figure; plotContour(@(x)gausspdf(x, model.mu, S2), [-5 5 -5 5]);
 title spherical 
 axis equal
 printPmtkFigure gaussPlot2dDemoContourSpherical
-plotSurface(@(x)gausspdf(x, model.mu, S2), [-5 5 -5 5]);
+figure; plotSurface(@(x)gausspdf(x, model.mu, S2), [-5 5 -5 5]);
 title spherical;
 printPmtkFigure gaussPlot2dDemoSurfSpherical

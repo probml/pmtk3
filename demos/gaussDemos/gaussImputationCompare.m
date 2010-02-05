@@ -6,7 +6,8 @@ d = 10; n = 100;
 mu = randn(d,1); Sigma = randpd(d);
 
 pcMissing = 0.2;
-Xfull = gaussSample(mu, Sigma, n);
+model = struct('mu', mu, 'Sigma', Sigma);
+Xfull = gaussSample(model, n);
 missing = rand(n,d) < pcMissing;
 
 Xmiss = Xfull;

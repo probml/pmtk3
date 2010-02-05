@@ -12,7 +12,8 @@ f = [2 1 1/2]; % fraction of d
 condNumMLE = zeros(1,3); condNumShrink = zeros(1,3);
 for i=1:length(f)
   n = f(i)*d;
-  X = gaussSample(mu,Sigma,n);
+  model = struct('mu', mu, 'Sigma', Sigma);
+  X = gaussSample(model, n);
   Smle = cov(X);
   evalsMle = sort(eig(Smle),'descend');
   Sshrink = shrinkcov(X);

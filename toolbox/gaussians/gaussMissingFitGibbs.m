@@ -46,8 +46,10 @@ for i=imputeRows
   xCurr(i,o) = data(i,o);
 end
 
-SigmaCurr = iwishrnd(Lambda0, dof); muCurr = gaussSample(mu0, SigmaCurr / k0);
-if(length(missingRows) > 0)
+SigmaCurr = iwishrnd(Lambda0, dof); 
+model.mu = mu0; model.Sigma = SigmaCurr / k0;
+muCurr = gaussSample(model);
+if(~isempty(missingRows))
   for s=1:nSamples
     if(s > nburnin)
       dataSamples(allFine,:,s - nburnin) = data(allFine,:);
@@ -61,7 +63,8 @@ if(length(missingRows) > 0)
       varCond = SigmaCurr(u,u) - SigmaCurr(u,o) * SooCurrinv * SigmaCurr(o,u);
   
       try
-      xSample = gaussSample(muCond, varCond); % Sample the unobserved
+        model.mu = muCond; model.Sigma = varCond; 
+        xSample = gaussSample(model); % Sample the unobserved
       catch ME
       varCond = round2(varCond, sqrt(eps));
       xSample = gaussSample(muCond, varCond);
@@ -77,7 +80,8 @@ if(length(missingRows) > 0)
     muPost = (n*xbar + k0*mu0) / (n + k0);
     LambdaPost = Lambda0 + n*cov(xCurr,1) + n*k0/(n+k0) * (xbar - mu0)*(xbar - mu0)';
     SigmaCurr = iwishrnd(LambdaPost, k0 + n);
-    muCurr = gaussSample(muPost, SigmaCurr / (k0 + n));
+    model.mu = muPost; model.Sigma = SigmaCurr/ (k0 + n);
+    muCurr = gaussSample(model);
     if(s > nburnin)
       muSamples(s - nburnin,:) = muCurr;
       SigmaSamples(:,:,s - nburnin) = SigmaCurr;

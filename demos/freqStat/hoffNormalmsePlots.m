@@ -23,10 +23,10 @@ ylabel('relative MSE');
 % Sampling distribution - Bootstrap
 nSamples = 10; nBootSamples = 1000;
 thetaBoot = zeros(nBootSamples, length(k0));
-%X = gaussSample(thetaTrue, sigmaTrue);
+model = struct('mu', thetaTrue, 'Sigma', sigmaTrue);
 for k=k0
   for b=1:nBootSamples
-    X = gaussSample(thetaTrue, sigmaTrue, nSamples);
+    X = gaussSample(model, nSamples);
     thetaBoot(b,k+1) = (mean(X)*nSamples + theta0*k)/(nSamples + k);
   end
 end

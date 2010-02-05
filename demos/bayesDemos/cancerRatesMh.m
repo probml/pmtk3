@@ -45,8 +45,8 @@ Nsamples = 5000;
 burnin = 500;
 SigmaProp = 0.3*eye(2); % if smaller, accept rate gets too high     
 setSeed(1); 
-
-proposal = @(x) (x + gaussSample(zeros(1,2), SigmaProp));
+model = struct('mu', zeros(1, 2), 'Sigma', SigmaProp);
+proposal = @(x) (x + gaussSample(model));
 
 [x, acceptRatio] = metropolisHastings(@target, proposal, xinit, Nsamples, burnin);
 

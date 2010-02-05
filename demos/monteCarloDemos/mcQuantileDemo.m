@@ -1,7 +1,8 @@
 mu = 0; sigma = 1; % standard normal
 S = 1000; % number of samples
-randn('state', 1); % set the seed for the random number generator
-xs = gaussSample(mu, sigma, S); % sample from a Gaussian
+setSeed(1); % set the seed for the random number generator
+model = struct('mu', mu, 'Sigma', sigma);
+xs = gaussSample(model, S); % sample from a Gaussian
 qs = [0.025 0.5 0.975]; % desired quantiles
 qexact = norminv(qs, mu, sigma) % exact quantiles using inverse cdf
 %qexact =

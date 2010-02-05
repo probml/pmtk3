@@ -47,8 +47,10 @@ obs_noise_samples = cell(1,M);
 for i=1:M
   %state_noise_samples{i} = sample_gaussian(zeros(length(Q{i}),1), Q{i}, T)';
   %obs_noise_samples{i} = sample_gaussian(zeros(length(R{i}),1), R{i}, T)';
-  state_noise_samples{i} = gaussSample(zeros(length(Q{i}),1), Q{i}, T)';
-  obs_noise_samples{i} = gaussSample(zeros(length(R{i}),1), R{i}, T)';
+  stateModel = struct('mu', zeros(length(Q{i}),1), 'Sigma', Q{i});
+  state_noise_samples{i} = gaussSample(stateModel, T)';
+  obsModel = struct('mu', zeros(length(R{i}),1), 'Sigma',  R{i});
+  obs_noise_samples{i} = gaussSample(obsModel, T)';
 end
 
 x = zeros(ss, T);

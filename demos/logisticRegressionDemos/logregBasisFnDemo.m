@@ -14,7 +14,8 @@ setSeed(0);
 X = zeros(N, 2);
 z = sampleDiscrete(pi, 1, N);
 for c=1:3
-    X(z==c, :) = gaussSample(mus(c, :), sigma*eye(2), sum(z==c));
+    model = struct('mu', mus(c, :), 'Sigma', sigma*eye(2));
+    X(z==c, :) = gaussSample(model, sum(z==c));
 end
 labels = z;
 labels(labels==3) = 2; % merge 2 and 3

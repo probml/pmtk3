@@ -10,7 +10,8 @@ keep = find(w ~= 0);
 %X = randn(N,D);
 Sigma = randpd(D);
 mu = randn(D,1);
-X = gaussSample(mu,Sigma,N);
+model = struct('mu', mu, 'Sigma', Sigma);
+X = gaussSample(model, N);
 sigma = 0.1;
 y = X*w + sigma*randn(N,1);
 

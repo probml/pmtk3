@@ -2,10 +2,10 @@ function [X, y] =  createXORdata(doplot)
     
     if nargin < 1, doplot = false; end
     setSeed(0);
-    off1 = gaussSample([1, 1], 0.5*eye(2), 20);
-    off2 = gaussSample([5, 5], 0.5*eye(2), 20);
-    on1  = gaussSample([1, 5], 0.5*eye(2), 20);
-    on2  = gaussSample([5, 1], 0.5*eye(2), 20);
+    off1 = gaussSample(struct('mu', [1, 1], 'Sigma', 0.5*eye(2), 20));
+    off2 = gaussSample(struct('mu', [5, 5], 0.5*eye(2), 'Sigma', 20));
+    on1  = gaussSample(struct('mu', [1, 5], 0.5*eye(2), 'Sigma', 20));
+    on2  = gaussSample(struct('mu', [5, 1], 0.5*eye(2), 'Sigma', 20));
     X    = [off1; off2; on1; on2];
     y    = [zeros(size(off1, 1) + size(off2, 1), 1); ones(size(on1, 1) + size(on2, 1), 1)];
     if doplot

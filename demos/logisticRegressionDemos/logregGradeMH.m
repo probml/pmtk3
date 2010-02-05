@@ -71,7 +71,8 @@ end
 
 %%%%%%%%%
 function bnew = proposal(b, Sigma)
-bnew = b + gaussSample(zeros(1, length(b)), Sigma);
+    model = struct('mu', zeros(1, length(b)), 'Sigma', Sigma);
+    bnew = b + gaussSample(model);
 
 function p = logpost(b, X, y, lambda)
 logprior = 0;  % log(1)

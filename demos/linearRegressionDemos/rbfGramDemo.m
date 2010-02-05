@@ -13,7 +13,8 @@ z = [1 1 1 2 2 2 3 3 3];
 for c=1:3
    ndx = find(z==c);
    Nc = length(ndx);
-   X(ndx,:) = gaussSample(mu(c,:), sigma*eye(2), Nc);
+   model = struct('mu', mu(c, :), 'Sigma', sigma*eye(2));
+   X(ndx,:) = gaussSample(model, Nc);
 end
 
 figure;
