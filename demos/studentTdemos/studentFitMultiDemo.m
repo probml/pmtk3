@@ -11,7 +11,7 @@ X = gaussSample(model, N);
 %[muHat1d, SigmaHat1d, dofHat1d, niter1d] = ...
 %  studentFitEm(X, dof,  useECME, useSpeedup, verbose);
 
-[muHat, SigmaHat, niter] = studentFitEm(X, 10, true)
+[model1, niter] = studentFitEm(X, 10, true)
 
-[muHat2, SigmaHat2, niter2] = studentFitEm(X, [],  true)
+[model2, niter2] = studentFitEm(X, [],  true)
 
