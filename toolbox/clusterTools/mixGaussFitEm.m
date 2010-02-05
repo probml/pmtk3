@@ -28,8 +28,24 @@ if isempty(mu)
    end
    mixweight = normalize(counts);
 end
-if ~isempty(plotfn), feval(plotfn, data,  mu, Sigma, mixweight, [], -inf, 0); end
+
+  
  
+%% Plot
+if ~isempty(plotfn)
+    % do an initial E step for plotting purposes. 
+    logpost = zeros(N, K);
+    logprior = log(mixweight);
+    for c=1:K
+        model.mu = mu(:, c); model.Sigma = Sigma(:, :, c);
+        logpost(:, c) = gaussLogprob(model, data) + logprior(c);
+    end
+    post = exp(normalizeLogspace(logpost))';
+    plotfn(data,  mu, Sigma, mixweight, post, -inf, 0); 
+end
+%% 
+
+
 iter = 1;
 done = false;
 Y = data'; % Y(:,i) is i'th case
