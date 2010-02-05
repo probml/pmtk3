@@ -5,7 +5,6 @@ d = 50;
 %Sigma = randpd(d);
 condnumber = 10; a = randn(d,1);
 [Sigma] = covcond(condnumber,a);
-cond(Sigma)
 evalsTrue = sort(eig(Sigma),'descend');
 mu = zeros(1,d);
 f = [2 1 1/2]; % fraction of d
@@ -16,7 +15,9 @@ for i=1:length(f)
   X = gaussSample(model, n);
   Smle = cov(X);
   evalsMle = sort(eig(Smle),'descend');
-  Sshrink = shrinkcov(X);
+  %[Sshrink, lambda(i)] = shrinkcov(X);
+  lambda = 1; 
+  Sshrink = lambda*diag(diag(Smle)) + (1-lambda)*Smle;
   evalsShrink = sort(eig(Sshrink),'descend');
   figure(i);clf; hold on
   %ndx = 2:2:min(30,d);
@@ -36,18 +37,15 @@ for i=1:length(f)
     ylabel('log(eigenvalue)')
     fname = sprintf('covshrinkDemoLogN%d', n);
   end
-  legend('true', 'mle', 'shrinkage')
-  %title(sprintf('n=%d, d=%d',	n, d))
-  %title(sprintf('n=%d, d=%d, cond(MLE)=%4.2f, cond(shrink)=%4.2f', ...
-  %   n, d, cond(Smle), cond(Sshrink)))
-  condNumMLE(i)  =  cond(Smle);
-  condNumShrink(i) = cond(Sshrink);
-  pdMLE(i) = isposdef(Smle);
-  pdShrink(i) = isposdef(Sshrink);
+  %legend('true', 'mle', 'shrinkage')
+  legendStr{1} = sprintf('true, k=%4.2f', cond(Sigma));
+  legendStr{2} = sprintf('MLE, k=%4.2g', cond(Smle));
+  legendStr{3} = sprintf('shrinkage, k=%4.2f', cond(Sshrink));
+  legend(legendStr)
+  title(sprintf('N=%d, D=%d', n, d))
+  
+  axis_pct
   printPmtkFigure(fname); 
 end
   
-disp(condNumMLE)
-disp(condNumShrink)
-
 
