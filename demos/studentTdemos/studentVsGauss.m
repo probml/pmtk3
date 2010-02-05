@@ -10,7 +10,8 @@ N = length(dofs);
 for i=1:N
     dof = dofs(i);
     %ps = tpdf(xs, dof);  
-    ps = exp(studentLogprob(xs, 0, 1, dof));  
+    model.mu = 0; model.Sigma = 1; model.dof = dof; 
+    ps = exp(studentLogprob(model, xs));  
     if useLog
       plot(xs, log(ps), styles{i}, 'linewidth', 2, 'markersize', 12);
     else
