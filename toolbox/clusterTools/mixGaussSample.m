@@ -4,9 +4,15 @@ function [X, y] = mixGaussSample(model, nsamples)
 %
 % model is a struct with the fields mus, Sigmas, and mix.  
 % mus        - a cell array of mu (mean) vectors, one per component
-% Sigmas     - a cell array of cov matricies, one per component
-% mix        - a stochastic matrix specifying the mixture components
-
+%              or a d-by-C matrix, with mu(:, c) = the mean of component c.
+%
+% Sigmas     - a cell array of cov matricies, one per component or
+%              a d-by-d-by-C matrix with Sigmas(:, :, c) = the cov of
+%              component c. 
+% 
+% mix        - a stochastic matrix specifying the mixture components, (must
+%              sum to one)
+%
 % nsamples   - the number of samples to generate
 % X          - an nsamples-by-d matrix 
 % y          - an nsamples-by-1 vector, the component labels in 1:C
