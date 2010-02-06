@@ -27,7 +27,7 @@ pemp = normalize(hist(Xtrain, bins));
 figure(3);clf
 for i=1:length(Ks)
   K = Ks(i);
-  mu = kmeansSimple(Xtrain, K)';
+  mu = kmeansFit(Xtrain, K)';
   Xhat = kmeansDecode(kmeansEncode(Xtest, mu), mu);
   mse(i) = mean(sum((Xhat - Xtest).^2,2));
   

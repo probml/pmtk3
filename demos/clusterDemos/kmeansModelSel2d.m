@@ -15,7 +15,7 @@ figure;
 Ks = [2 3 4 5  10 15 20 25 30];
 for i=1:length(Ks)
   K = Ks(i);
-  mu = kmeansSimple(Xtrain, K)';
+  mu = kmeansFit(Xtrain, K)';
   Xhat = kmeansDecode(kmeansEncode(Xtest, mu), mu);
   mse(i) = mean(sum((Xhat - Xtest).^2,2));
   
