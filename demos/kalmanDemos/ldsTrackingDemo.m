@@ -1,37 +1,54 @@
-%% Tracking a point in 2D using the LinearDynamicalSystemDist
-%#testPMTK
-%% Create 'Ground Truth'
-stateSize = 4;  % Hidden states are 4D, position and velocity
-obsSize   = 2;  % 2D observations
-sysMatrix = [1 0 1 0; 0 1 0 1; 0 0 1 0; 0 0 0 1];
-obsMatrix = [1 0 0 0; 0 1 0 0];
-sysNoise  = MvnDist(zeros(stateSize,1),0.1*eye(stateSize));
-obsNoise  = MvnDist(zeros(stateSize,1),eye(obsSize));
-startDist = MvnDist([10;10;1;0],10*eye(stateSize));
+% Make a point move in the 2D plane
+% State = (x y xdot ydot). We only observe (x y).
 
-groundTruth = LinearDynamicalSystem(...
-    'sysMatrix' ,sysMatrix  ,...
-    'obsMatrix' ,obsMatrix  ,...
-    'sysNoise'  ,sysNoise   ,...
-    'obsNoise'  ,obsNoise   ,...
-    'startDist' ,startDist  );
+% This code was used to generate Figure 15.9 of "Artificial Intelligence: a Modern Approach",
+% Russell and Norvig, 2nd edition, Prentice Hall, 2003.
 
-%% Sample from 'Ground Truth'
-setSeed(8);
-nTimeSteps = 15;
-[Z,Y] = sample(groundTruth,nTimeSteps);
-%% Decode
-[ZhatDist,ZZhatDist,loglik] = marginal(groundTruth,'Z','Y',Y);
-Zhat    = mean(ZhatDist);
-ZhatCov = cov(ZhatDist);
-mse_smooth = sqrt(sum(sum((Z([1,2],:) - Zhat([1,2],:)).^2)))  %#ok
-%% Plot Results
-figure 
-hold on; box on; 
-set(gca,'XTick',[],'YTick',[]);
-plot(Z(1,:), Z(2,:), 'ks-','LineWidth',2);
-plot(Y(1,:), Y(2,:), 'g*','LineWidth',2.5);
-plot(Zhat(1,:), Zhat(2,:), 'rx:','LineWidth',2.5,'MarkerSize',10);
-for t=1:nTimeSteps, gaussPlot2d(Zhat(1:2,t), ZhatCov(1:2, 1:2, t),'b'); end
-hold off
+% X(t+1) = F X(t) + noise(Q)
+% Y(t) = H X(t) + noise(R)
+
+ss = 4; % state size
+os = 2; % observation size
+F = [1 0 1 0; 0 1 0 1; 0 0 1 0; 0 0 0 1]; 
+H = [1 0 0 0; 0 1 0 0];
+Q = 0.1*eye(ss);
+R = 1*eye(os);
+initx = [10 10 1 0]';
+initV = 10*eye(ss);
+
+setSeed(9);
+T = 15;
+[x,y] = kalmanSample(F, H, Q, R, initx, T);
+
+[xfilt, Vfilt, VVfilt, loglik] = kalmanFilter(y, F, H, Q, R, initx, initV);
+[xsmooth, Vsmooth] = kalmanSmoother(y, F, H, Q, R, initx, initV);
+
+dfilt = x([1 2],:) - xfilt([1 2],:);
+mse_filt = sqrt(sum(sum(dfilt.^2)))
+
+dsmooth = x([1 2],:) - xsmooth([1 2],:);
+mse_smooth = sqrt(sum(sum(dsmooth.^2)))
+
+
+figure; hold on
+plotArgs = {'LineWidth', 2.5, 'MarkerSize', 8};
+
+plot(x(1,:), x(2,:), 'ks-', plotArgs{:});
+plot(y(1,:), y(2,:), 'bo', plotArgs{:});
+plot(xfilt(1,:), xfilt(2,:), 'rx:', plotArgs{:});
+for t=1:T
+    gaussPlot2d(xfilt(1:2,t), Vfilt(1:2, 1:2, t), '-color', 'y'); 
+end
+legend('true', 'observed', 'filtered', 3)
+xlabel('x'); ylabel('y'); box on;
+
+figure; hold on
+plot(x(1,:), x(2,:), 'ks-', plotArgs{:});
+plot(y(1,:), y(2,:), 'bo', plotArgs{:});
+plot(xsmooth(1,:), xsmooth(2,:), 'rx:', plotArgs{:});
+for t=1:T, 
+    gaussPlot2d(xsmooth(1:2,t), Vsmooth(1:2, 1:2, t), '-color', 'y'); end
 legend('true', 'observed', 'smoothed', 3)
+xlabel('x'); ylabel('y'); box on;
+
+
