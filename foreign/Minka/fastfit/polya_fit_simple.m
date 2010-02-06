@@ -9,7 +9,7 @@ show_progress = 0;
 if nargin < 2
   a = polya_moment_match(data);
 end
-sdata = row_sum(data);
+sdata = sum(data, 2);
 
 % fixed-point iteration
 [N,K] = size(data);
