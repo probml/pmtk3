@@ -11,7 +11,6 @@ x = rand(nVars,1).*(rand(nVars,1) > .5);
 b = A*x + randn;
 funObj = @(x)SquaredError(x,A,b);
 
-
 % Initial Value
 x_init = zeros(nVars,1);
 
