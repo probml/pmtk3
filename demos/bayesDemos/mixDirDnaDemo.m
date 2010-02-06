@@ -7,7 +7,7 @@
 
 
 
-seed = 0; rand('state', seed); randn('state', seed); 
+setSeed(0);
 Nseq = 10;
 Nlocn = 15;
 Nletters = 4;
