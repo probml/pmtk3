@@ -16,7 +16,7 @@ for i=1:length(f)
   Smle = cov(X);
   evalsMle = sort(eig(Smle),'descend');
   %[Sshrink, lambda(i)] = shrinkcov(X);
-  lambda = 1; 
+  lambda = 0.9; 
   Sshrink = lambda*diag(diag(Smle)) + (1-lambda)*Smle;
   evalsShrink = sort(eig(Sshrink),'descend');
   figure(i);clf; hold on
