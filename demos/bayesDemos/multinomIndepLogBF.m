@@ -5,12 +5,12 @@ counts = [...
    46 83 56];
 
 
-[logBF, logBFMI, logBFchi2] = helper(counts)
+[logBF] = helper(counts)
 pIndepOverDep = exp(logBF)
 end
 
 
-function [logBF, logBFMI, logBFchi2] = helper(counts)
+function [logBF] = helper(counts)
 
 Njk = counts;
 Nj = sum(counts,2);
