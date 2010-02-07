@@ -7,6 +7,6 @@ sigma2 = model.sigma2;
 dof = model.dof;
 ll = zeros(1,N);
 for i=1:N
-  [ll(i)] = studentLogpdf(studentDist(mu(i), sigma2, dof), y(i));
+  [ll(i)] = studentLogprob(studentDist(mu(i), sigma2, dof), y(i));
 end
 
