@@ -1,17 +1,19 @@
-% robust linear regression on 'stack loss' data
-% see Lange et al, "Robus statistical modeling using the T
-% distribution", JASA 1989
+
+% Reproduce table 1 from "Robust statistical modeling using the T
+% distribution", Lange et al, JASA 1989
+% The estimated coefficients are similar
+% However, this does *not* reproduce the log likelihoods correctly
 
 %#author Hannes Bretschneider
 
-clear Xtrain k n seed x y;
 load stackloss;
 
 %% fit model
-dof = [100, 8, 4, 3, 2, 1.1, 1, 0.5];
-relTol = 10^-10;
+% dof=0 means estimate from data
+% dof=100 means effectively use Gaussian model
+dof = [100, 8, 4, 3, 2, 1.1, 1, 0.5, 0];
 for i = 1:length(dof)
-    modelEM{i} = linregRobustStudentFitEm(X, y, dof(i), relTol);
+    modelEM{i} = linregRobustStudentFitEm(X, y, dof(i));
     loglikEM(i) = sum(linregRobustStudentLogprob(modelEM{i}, X, y));
     
     modelConstr{i} = linregRobustStudentFitConstr(X, y, dof(i));
@@ -19,6 +21,9 @@ for i = 1:length(dof)
 end
 
 %% format output
+
+fprintf('estimated dof, EM %5.3f, constr %5.3f\n', ...
+  modelEM{end}.dof, modelConstr{end}.dof);
 ndof = length(dof);
 table = NaN(ndof,6);
 table(:,1) = dof';

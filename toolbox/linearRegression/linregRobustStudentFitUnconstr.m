@@ -18,7 +18,7 @@ options.Display = 'none';
 params = minFunc(@StudentLoss, par_init, options, X, y);
 
 model.w             = params(1:D);
-model.nu            = params(D + 1);
+model.dof            = params(D + 1);
 model.sigma2        = params(D + 2);
 model.includeOffset = includeOffset;
 end

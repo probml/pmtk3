@@ -1,31 +1,24 @@
-function model = linregRobustStudentFitEm( x, y, dof, relTol )
-%LINREGROBUSTEMSTUDENTFIT Summary of this function goes here
-%   Detailed explanation goes here
+function model = linregRobustStudentFit(X, y, dof, sigma2, includeOffset) 
 
-if nargin < 4
-    relTol = 10^-6;
+if nargin < 3, dof = []; end
+if nargin < 4, sigma2 = []; end
+if nargin < 5, includeOffset = true; end
+
+if dof==0, dof = []; end
+
+if isempty(sigma2) && isempty(dof)
+  % estimate everything
+  model = linregRobustStudentFitEm(X, y, [], includeOffset);
+  %model = linregRobustStudentFitConstr(X, y, [], [], includeOffset);
+  %model = linregRobustStudentFitUnconstr(X, y, includeOffset);
+elseif ~isempty(dof) && isempty(sigma2)
+  % fixed dof
+  model = linregRobustStudentFitEm(X, y, dof, includeOffset);
+  %model = linregRobustStudentFitConstr(X, y, dof, [], includeOffset);
+elseif  ~isempty(dof) && ~isempty(sigma2)
+  % only estimate w - not recommended
+  model = linregRobustStudentFitConstr(X, y, dof, sigma2, includeOffset);
+else
+  error('cannot handle fixed sigma2 but variable dof')
 end
 
-n = length(y);
-x = [ones(n,1) x];
-w = x\y;
-sigma2 = 1/n*sum((y - x*w).^2);
-w_diff = inf;
-iter = 0;
-
-while w_diff > relTol
-    iter = iter+1;
-    w_old = w;
-    delta = 1/sigma2*(y - x*w).^2;
-    s = (dof+1)./(dof+delta);
-    x_weighted = diag(s)*x;
-    y_weighted = diag(s)*y;
-    w = x_weighted\y_weighted;
-    sigma2 = 1/(n-1)*sum(s.*(y - x*w).^2);
-    w_diff = max(abs(w_old./w-1));
-end
-
-model = struct('w', w, 'sigma2', sigma2, 'dof', dof,...
-    'relTol', relTol, 'iterations', iter, 'includeOffset', 1);
-
-end
