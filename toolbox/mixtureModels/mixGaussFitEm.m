@@ -17,7 +17,7 @@ function [model, loglikHist] = mixGaussFitEm(data, K, varargin)
 
 if isempty(mu)
    % initialize with Kmeans
-   [mu, assign] = kmeansSimple(data, K);
+   [mu, assign] = kmeansFit(data, K);
    % Now fit Gaussians using hard assignments
    Sigma = zeros(D,D,K);
    counts = zeros(1,K); 
