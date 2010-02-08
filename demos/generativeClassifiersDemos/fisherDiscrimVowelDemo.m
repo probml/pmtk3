@@ -1,7 +1,5 @@
 % Reproduce fig 4.11 of "Elements of statistical learning" 2e
 
-%#author Hannes Bretschneider
-
 load vowel_train; % from http://www-stat.stanford.edu/~tibs/ElemStatLearn/datasets/vowel.train
 [N,D] = size(Xtrain);
 C = max(ytrain);
@@ -13,7 +11,6 @@ for c=1:C
   muC(c,:) = mean(Xtrain(ytrain==c,:),1);
 end
 [Bmu, muC2d] = pcaPmtk(muC, 2);
-
 
 
 %colors = pmtkColors;
@@ -36,38 +33,32 @@ colors = {black, blue, brown, magenta, orange, cyan, gray, yellow, black, red, g
 %muC2d = -muC2d;
 %Z  = -Z;
 figure; hold on
+symbols = '+ovd*.xs^d><ph';
 for c=1:C
   ndx = ytrain==c;
-  plot(Z(ndx,1), Z(ndx,2), 'o', 'color', colors{c},...
-    'linewidth', 1, 'markersize', 4);
+  plot(Z(ndx,1), Z(ndx,2), symbols(c), 'color', colors{c},...
+    'linewidth', 2, 'markersize', 8);
   plot(muC2d(c,1), muC2d(c,2),  'o', 'color', colors{c},...
-    'linewidth', 3, 'markersize', 10);
-  text(muC2d(c,1), muC2d(c,2), sprintf('%d', c), 'fontsize', 20);
+    'linewidth', 5, 'markersize', 15);
+  %text(muC2d(c,1), muC2d(c,2), sprintf('%d', c), 'fontsize', 20);
 end
 printPmtkFigure('fisherDiscrimVowelPCA')
 
 % Fisher projection to 2d
-Sw = (Xtrain  - muC(ytrain,:))'*(Xtrain  - muC(ytrain,:));
-muOverall = mean(Xtrain, 1);
-Sb = (ones(C,1)*muOverall-muC)'*(ones(C,1)*muOverall-muC);
-[W,D] = eig(inv(Sw)*Sb);
-W(:,1) = -W(:,1); % make it more similar to Hastie figure
-Xlda = [Xtrain*W(:,1) Xtrain*W(:,2)];
+[W, Xlda] = fisherLDA(Xtrain, ytrain, 2);
 model = discrimAnalysisFit(Xlda, ytrain, 'linear');
 
 % Plot
 stipple = true;
-symbols = repmat('o', 1, C);
-markersize = 6;
 plotDecisionBoundary(Xlda, ytrain, @(X) discrimAnalysisPredict(model,X), ...
-  stipple, colors, symbols, markersize);
+  stipple, colors); 
 hold on
-muC2dlda = [muC*W(:,1) muC*W(:,2)];
+muC2dlda =  muC*W;
 for c=1:C
   ndx = ytrain==c;
   plot(muC2dlda(c,1), muC2dlda(c,2),  'o', 'color', colors{c},...
-    'linewidth', 6, 'markersize', 12);
-  text(muC2dlda(c,1), muC2dlda(c,2), sprintf('%d', c), 'fontsize', 20);
+    'linewidth', 5, 'markersize', 15);
+  %text(muC2dlda(c,1), muC2dlda(c,2), sprintf('%d', c), 'fontsize', 20);
 end
 printPmtkFigure('fisherDiscrimVowelLDA')
 

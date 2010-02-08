@@ -73,7 +73,7 @@ end
 sigma = sqrt(sigma2);
 theta = y - x*w;
 
-nll = sum(1/2*log(dof) + log(gamma(dof/2)) - log(gamma((dof+1)/2)) + ...
+nll = sum(1/2*log(dof*pi) + log(gamma(dof/2)) - log(gamma((dof+1)/2)) + ...
     log(sigma) + (dof+1)/2*log(1+theta.^2 / (sigma2*dof)));
 g_w = -x'*((dof+1)*theta./(sigma2*dof + theta.^2));
 
