@@ -18,3 +18,4 @@ xlabel('lambda value');
 %% Assess performance on the test set
 yhat = linregPredict(model, Xtest); 
 title(sprintf('lasso, mseTest = %5.3f', lossFn(yhat, ytest)));
+printPmtkFigure prostateLassoCV
