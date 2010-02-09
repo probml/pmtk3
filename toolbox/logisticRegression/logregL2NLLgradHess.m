@@ -1,4 +1,3 @@
-
 function [f,g,H] = logregL2NLLgradHess(w, X, y, alpha, offsetAdded)
 % gradient and hessian of negative log posterior for logistic regression
 % w should be d x 1  vector
