@@ -23,6 +23,6 @@ funObj = @(w)SoftmaxLoss2(w,X,y,nClasses);
 options.Display = 'none';
 [wSoftmax] = minFunc(@penalizedL2, winit(:), options, funObj, lambda(:));
 wSoftmax = reshape(wSoftmax,[D nClasses-1]);
-wSoftmax = [wSoftmax zeros(D,1)]; %#ok
+wSoftmax = [wSoftmax zeros(D,1)]; 
 
 
