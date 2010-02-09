@@ -45,7 +45,9 @@ end
 printPmtkFigure('fisherDiscrimVowelPCA')
 
 % Fisher projection to 2d
-[W, Xlda] = fisherLDA(Xtrain, ytrain, 2);
+[W] = fisherLDA(Xtrain, ytrain, 2);
+W(:,1) = -W(:,1); % make it look like the Hastie figure
+Xlda = Xtrain*W;
 model = discrimAnalysisFit(Xlda, ytrain, 'linear');
 
 % Plot
