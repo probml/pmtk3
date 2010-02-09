@@ -15,22 +15,28 @@ if useLogScale
 end
 colors = pmtkColors(); 
 
+if isOctave()
+    he = errorbar(lambdas, cvMeanErrors, cvStdErrors); 
+else
+    hold on;
+    he = errorbar(lambdas, cvMeanErrors, cvStdErrors, 'Color', colors{1});
+    h = plot(lambdas, cvMeanErrors, '-o', ...
+        'Color',            colors{1}, ...
+        'LineWidth',        2,         ...
+        'MarkerFaceColor',  colors{2}, ...
+        'MarkerEdgeColor',  'k',       ...
+        'MarkerSize',       8          );
 
-hold on;
-he = errorbar(lambdas, cvMeanErrors, cvStdErrors, 'Color', colors{1});
-h = plot(lambdas, cvMeanErrors, '-o', 'Color', colors{1}, ...
-    'LineWidth', 2,'MarkerFaceColor', colors{2}, 'MarkerEdgeColor', 'k', 'MarkerSize', 8);
-xlabel('parameter value'); 
-ylabel('CV error'); 
-box on; 
-axis tight;
-hline = verticalLine(lambdaBest, 'Color', colors{3}, 'LineWidth', 2, 'LineStyle', '--');
-uistack(hline, 'bottom')
-set(gca, 'XTick', sort([lambdaBest, get(gca, 'XTick')]));
-    
-    
-    
 
-    
-    
+    xlabel('parameter value'); 
+    ylabel('CV error'); 
+    box on; 
+    axis tight;
+    hline = verticalLine(lambdaBest, 'Color', colors{3},...
+        'LineWidth', 2, 'LineStyle', '--');
+    uistack(hline, 'bottom')
+    set(gca, 'XTick', sort([lambdaBest, get(gca, 'XTick')]));
+end
+
+
 end
