@@ -1,4 +1,3 @@
-
 function model = linregFit(X, y, includeOffset)
 % simple linear regression
 % Will add a column of 1s and return w=[w0 w1:D] by default

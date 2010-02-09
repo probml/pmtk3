@@ -1,4 +1,3 @@
-
 function model = linregL2FitMinfunc(X, y, lambda, includeOffset)
 % Ridge regression
 % adds a column of 1s by default
