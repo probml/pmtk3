@@ -5,16 +5,15 @@ includeOffset = true;
 fitFn     = @(X, y, lambda)linregL1Fit(X, y, lambda, includeOffset);
 predictFn = @linregPredict;
 lossFn    = @(yhat, ytest)mean((yhat - ytest).^2);
-lambdas = [logspace(2, 0, 30) 0];
+lambdas   = [logspace(2, 0, 30) 0];
+%% Cross validation
 nfolds = 10; 
-%%
 [model, lambdaStar, mu, se] = ...
     fitCv(lambdas, fitFn, predictFn, lossFn, Xtrain, ytrain, nfolds);
-%%
+%% Plot the CV Curve
 useLogScale = true; 
 h = plotCVcurve(lambdas(end:-1:1), mu, se, lambdaStar, useLogScale); 
 xlabel('lambda value');
-%%
+%% Assess performance on the test set
 yhat = linregPredict(model, Xtest); 
 title(sprintf('lasso, mseTest = %5.3f', lossFn(yhat, ytest)));
-
