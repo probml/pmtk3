@@ -12,6 +12,7 @@ nfolds = 10;
     fitCv(lambdas, fitFn, predictFn, lossFn, Xtrain, ytrain, nfolds);
 %% Plot the CV Curve
 useLogScale = true; 
+figure;
 h = plotCVcurve(lambdas(end:-1:1), mu, se, lambdaStar, useLogScale); 
 xlabel('lambda value');
 %% Assess performance on the test set
