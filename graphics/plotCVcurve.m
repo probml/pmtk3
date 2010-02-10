@@ -35,7 +35,7 @@ else
     hline = verticalLine(lambdaBest, 'Color', colors{3},...
         'LineWidth', 2, 'LineStyle', '--');
     uistack(hline, 'bottom')
-    set(gca, 'XTick', sort([lambdaBest, get(gca, 'XTick')]));
+    legend(hline, sprintf('%.2f', lambdaBest), 'Location', 'best');
 end
 
 
