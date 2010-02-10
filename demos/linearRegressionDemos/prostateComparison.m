@@ -1,7 +1,7 @@
 function prostateComparison() 
 %% Compare L1, L2, allSubsets, and OLS linear regression on the prostate data set
  
-saveLatex = true;
+saveLatex = false;
 
 mse = zeros(4, 1); 
 weights = zeros(9, 4);
