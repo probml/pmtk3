@@ -131,11 +131,31 @@ w = (dofOld+D) ./ (dofOld+delta); % E[u(i)]
 
 dofMax = 1000; dofMin = 0.1;
 
+% use gradient free optimizatin
 Qfn = @(v) -N*gammaln(v/2)+N*v*0.5*log(v/2) ...
   + (N*v/2)*((1/N)*sum(log(w)-w)  + ...
   psi((dofOld+D)/2)-log((dofOld+D)/2));
 negQfn = @(v) -Qfn(v);
 dof = fminbnd(negQfn, dofMin, dofMax);
+
+
+if 1
+  % use gradient based optomization
+  utilde = w;
+  stilde = log(utilde) + psi((dofOld+D)/2) - log((dofOld+D)/2);
+  gradQfn = @(v) (N/2)*(-psi(v/2)+log(v/2)+1)+...
+    0.5*sum(stilde - utilde);
+  gradNegQfn = @(v) -gradQfn(v);
+  % find zero of the gradient by doing a constrained 1d line search
+  fn = @(v) fnjoin(v, negQfn, gradNegQfn);
+  options.verbose = 0;
+  options.numDiff = 0;
+  [dof2] = minConF_TMP(fn,dofOld,dofMin,dofMax,options);
+  assert(approxeq(dof, dof2, 1e-1))
+  %options.display = 'off';
+  %options.derivCheck = 1;
+  %[dof] = minFunc(fn,dof,options)
+end
 
 
 end
@@ -146,6 +166,8 @@ function dof = estimateDofNLL(X, mu, Sigma, dofOld) %#ok
 % using gradient free optimizer.
 
 [N,D] = size(X);
+
+% use unconstrained optimization
 % plug in most recent params to compute NLL
 %nllfn = @(v) -sum(studentLogpdf(X, mu, Sigma, v));
 nllfn = @(v) -sum(studentLogprob(studentDist(mu, Sigma, v), X));
