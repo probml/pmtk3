@@ -1,26 +1,35 @@
 % compare EM to  matlab stats toolbox
-% The results are quite different... Is this a bug?
 
 if ~statsToolboxInstalled
   error('requires stats toolbox')
 end
 
-setSeed(1);
 
 % same data as gaussVsStudentOutlierDemo
 n = 30;
-seed = 8; randn('state',seed);
+setSeed(8);
 data = randn(n,1);
 outliers = [8 ; 8.75 ; 9.5];
 X = [data; outliers];
-MLEs = mle(X,'distribution','tlocationscale')
+MLEs = mle(X,'distribution','tlocationscale');
 mu1d = MLEs(1); sigma1d = MLEs(2); dof1d = MLEs(3);
 
 dof =[];
 %dof = dof1d;
-useECME = true; useSpeedup =false; verbose = true;
+useSpeedup =false; % seems to have no affect
+verbose = false;
+
+useECME = false;
 [model, niter1d] = studentFitEm(X, dof,  useECME, useSpeedup, verbose);
 muHat1d = model.mu; SigmaHat1d = model.Sigma; dofHat1d = model.dof;
-fprintf('dof: matlab %3.2f, em %3.2f\n', dof1d, dofHat1d);
-fprintf('mu: matlab %3.2f, em %3.2f\n', mu1d, muHat1d);
-fprintf('sigma: matlab %3.2f, em %3.2f\n', sigma1d, sqrt(SigmaHat1d));
+
+useECME = true;
+[model, niter1dECME] = studentFitEm(X, dof,  useECME, useSpeedup, verbose);
+muHat1dECME = model.mu; SigmaHat1dECME = model.Sigma; dofHat1dECME = model.dof;
+
+fprintf('dof: matlab %5.3f, em %5.3f, ecme %5.3f\n', ...
+  dof1d, dofHat1d, dofHat1dECME);
+fprintf('mu: matlab %5.3f, em %5.3f, ecme %5.3f\n', ...
+  mu1d, muHat1d, muHat1dECME);
+fprintf('sigma: matlab %5.3f, em %5.3f, ecme %5.3f\n', ...
+  sigma1d, sqrt(SigmaHat1d), sqrt(SigmaHat1dECME));

@@ -26,7 +26,7 @@ if isvector(X)
   X = X(:);
 end
 D = size(X,2);
-ntrials = 3;
+ntrials = 1;
 saveMu = zeros(D, ntrials);
 saveSigma = zeros(D,D,ntrials);
 saveDof = zeros(1,ntrials);
@@ -121,35 +121,22 @@ function dof = estimateDofQ(X, mu, Sigma, dofOld)
 % optimize expected neg log likelihood of complete data
 % using constrained gradient optimizer.
 
-fprintf('warning: studentFitEm with ECME=false seems to be buggy\n')
 
 [N,D] = size(X);
 % re-do E step to get multicycle ECM algorithm
 SigmaInv = inv(Sigma);
 XC = bsxfun(@minus,X,rowvec(mu));
 delta =  sum(XC*SigmaInv.*XC,2); %#ok
-w = (dofOld+D) ./ (dofOld+delta); % E[tau(i)]
+w = (dofOld+D) ./ (dofOld+delta); % E[u(i)]
 
 dofMax = 1000; dofMin = 0.1;
 
-negQfn = @(v) -(-N*psi(v/2)+N*v*0.5*log(v/2) ...
-  + (v/2)*sum(log(w)-w)  + (N*v*0.5)*...
-  (psi((dofOld+D)/2)-log((dofOld+D)/2)));
+Qfn = @(v) -N*gammaln(v/2)+N*v*0.5*log(v/2) ...
+  + (N*v/2)*((1/N)*sum(log(w)-w)  + ...
+  psi((dofOld+D)/2)-log((dofOld+D)/2));
+negQfn = @(v) -Qfn(v);
 dof = fminbnd(negQfn, dofMin, dofMax);
 
-if 0
-gradfn = @(v) -(N/2)*(-psi(v/2)+log(v/2)+2+sum(log(w)-w)/N  ...
-  + psi((dofOld+D)/2)-log((dofOld+D)/2));
-% find zero of the gradient by doing a constrained 1d line search
-fn = @(v) fnjoin(v, negQfn, gradfn);
-options.verbose = 0;
-options.numDiff = 0;
-dofMax = 1000; dofMin = 0.1;
-[dof] = minConF_TMP(fn,dofOld,dofMin,dofMax,options);
-%options.display = 'off';
-%options.derivCheck = 1;
-%[dof] = minFunc(fn,dof,options)
-end
 
 end
 
