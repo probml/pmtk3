@@ -1,5 +1,5 @@
 function tf = endswith(str, suffix)
-% return true if the string ens in the specified suffix. 
+% return true if the string ends in the specified suffix. 
 
 n = length(suffix);
 if length(str) < n
