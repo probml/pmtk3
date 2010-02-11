@@ -4,6 +4,14 @@ function exportsvn(source, dest)
 %   DEST:    path to destination including zip file name
 %   EXAMPLE: exportsvn C:\pmtk3 C:\users\matt\Desktop\pmtk3.zip
     
+    destpath = fileparts(dest); 
+   
+    system(sprintf('svn export %s %s', source, fullfile(destpath, 'tmp')));
+    zip(dest, fullfile(destpath, 'tmp', '*'));
+    system(sprintf('rmdir /Q /S %s', fullfile(destpath, 'tmp')));
+   
+    
+    %{
     tmpfile = tempname();
     writeText({'.svn'}, tmpfile);
     tmpfolder = tempname();
@@ -12,5 +20,6 @@ function exportsvn(source, dest)
     zip(dest, [tmpfolder,'\*'])
     systemf('rmdir /Q /S %s', tmpfolder); 
     delete(tmpfile)
-    
+    %}    
+
 end
