@@ -22,7 +22,7 @@ function exportToGoogleCode(package, username, passwd, summary)
   %uploadFn = fullfile(pwd, 'util', 'googlecode_upload.py');
   uploadFn = fullfile(matlabToolsRoot(),'googlecode_upload.py');
   fprintf('python %s -s "%s" -p "%s" -u %s -w %s "%s"', uploadFn, summary, package, username, passwd, fpath)
-  result = systemf('python %s -s "%s" -p "%s" -u %s -w %s "%s"', uploadFn, summary, package, username, passwd, fpath)
+  result = systemf('python %s -s "%s" -p "%s" -u %s -w %s "%s"', uploadFn, summary, package, username, passwd, fpath);
   fprintf('Cleaning up...\n');  
   delete(fpath)  
   fprintf('Done\n\n')

@@ -28,7 +28,7 @@ xlabel('subset size')
 ylabel('CV error');
 title('all subsets on prostate cancer')
 set(gca, 'YLim', [0.6, 2]); 
-    
+box on;    
     
     
 end
