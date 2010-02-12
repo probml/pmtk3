@@ -5,7 +5,7 @@ function [yhat, p] = logregPredict(model, X)
 
     n = size(X, 1); 
     if model.includeOffset
-      X = [ones(n, 1) X];
+        X = [ones(n, 1) X];
     end
 
     if isfield(model, 'kernelType')
@@ -15,10 +15,13 @@ function [yhat, p] = logregPredict(model, X)
 
     if model.binary
         p = sigmoid(X*model.w);
-        yhat = setSupport(p > 0.5, model.ySupport, [0 1]);
+        yhat = p > 0.5;
+        yhat = setSupport(yhat, model.ySupport, [0 1]);
     else
         p = softmax(X*model.w);
-        yhat = setSupport(maxidx(p, [], 2), model.ySupport, 1:size(p, 2));
+        yhat = maxidx(p, [], 2);
+        C = size(p, 2); 
+        yhat = setSupport(yhat, model.ySupport, 1:C);
     end
    
 end
