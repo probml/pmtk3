@@ -2,7 +2,7 @@ function model = logregBinaryFitL2IRLS(X, y, lambda, includeOffset)
 % Iteratively reweighted least squares for logistic regression
 %
 % Rows of X contain data. Do not add a column of 1s.
-% y must be binary and will be transformed to [-1 1]
+% y must be binary and will be transformed into [-1 1]
 % lambda is optional strength of L2 regularizer
 %
 % model.C is the asymptotic covariance matrix
@@ -18,7 +18,7 @@ if includeOffset
   X = [ones(N, 1) X];
   lambda = lambda*ones(nVars + 1, 1);
   lambda(1) = 0; % Don't penalize bias term
-  winit = zeros(nVars+1,1);
+  winit = zeros(nVars+1, 1);
 else
   lambda = lambda*ones(nVars, 1);
   winit = zeros(nVars, 1);
