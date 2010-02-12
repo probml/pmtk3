@@ -20,7 +20,14 @@ function [y, initSupport] = setSupport(labels, newSupport, initSupport)
 %   'yes'    'no'    'maybe'    'maybe'    'no'
 %
 
-    
+    if nargin > 2 && isequal(newSupport, initSupport)
+        y = labels;
+        return;
+    end
+
+    if nargin < 3 && numel(unique(labels)) < numel(newSupport)
+        error('Too few unique labels for given support'); 
+    end
 
     if nargin > 2, opt = {initSupport}; else opt={}; end
     [yC, initSupport] = canonizeLabels(labels, opt{:});
