@@ -26,10 +26,18 @@ function model = logregFitCore(X, y, lambda, includeOffset, regularizerFn, Nclas
     end
     
     if binary
-       if nargin < 6, [y, model.ySupport] = setSupport(y, [-1 1]); end
+       if nargin < 6
+           [y, model.ySupport] = setSupport(y, [-1 1]); 
+       else
+           model.ySupport = [-1, 1];
+       end
        objective = @(w)LogisticLossSimple(w, X, y); 
     else            
-       if nargin < 6, [y, model.ySupport] = setSupport(y, 1:Nclasses); end
+       if nargin < 6
+           [y, model.ySupport] = setSupport(y, 1:Nclasses);
+       else
+          model.ySupport = 1:Nclasses; 
+       end
        objective = @(w)SoftmaxLoss2(w, X, y, Nclasses);
     end
     

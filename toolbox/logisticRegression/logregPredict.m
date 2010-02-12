@@ -15,9 +15,12 @@ function [yhat, p] = logregPredict(model, X)
 
     if model.binary
         p = sigmoid(X*model.w);
+        yhat = setSupport(p > 0.5, model.ySupport);
     else
         p = softmax(X*model.w);
+        yhat = setSupport(maxidx(p, [], 2), model.ySupport);
     end
-    yhat = setSupport(maxidx(p, [], 2), model.ySupport);
+    
+    
 
 end
