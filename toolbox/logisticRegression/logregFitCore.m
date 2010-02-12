@@ -1,4 +1,4 @@
-function model = logregFitCore(X, y, lambda, includeOffset, regularizerFn)
+function model = logregFitCore(X, y, lambda, includeOffset, regularizerFn, Nclasses)
 % Core fitting function for logistic regression 
 % X(i, :) is the ith case
 % y(i) is the ith label, (supports both binary and multinomial labels.
@@ -11,8 +11,8 @@ function model = logregFitCore(X, y, lambda, includeOffset, regularizerFn)
     if nargin < 3, lambda        = 0;            end
     if nargin < 4, includeOffset = true;         end
     if nargin < 5, regularizerFn = @penalizedL2; end
-
-    Nclasses = numel(unique(y));
+    if nargin < 6, Nclasses = numel(unique(y));  end
+    
     binary = Nclasses < 3;
     [n, d]   = size(X); 
     lambda   = lambda*ones(d, Nclasses-1);
@@ -26,11 +26,11 @@ function model = logregFitCore(X, y, lambda, includeOffset, regularizerFn)
     end
     
     if binary
-       [y, model.ySupport] = setSupport(y, [-1 1]);
+       if nargin < 6, [y, model.ySupport] = setSupport(y, [-1 1]); end
        objective = @(w)LogisticLossSimple(w, X, y); 
     else            
-       [y, model.ySupport] = setSupport(y, 1:Nclasses);
-        objective = @(w)SoftmaxLoss2(w, X, y, Nclasses);
+       if nargin < 6, [y, model.ySupport] = setSupport(y, 1:Nclasses); end
+       objective = @(w)SoftmaxLoss2(w, X, y, Nclasses);
     end
     
     options.Display     = 'none'; options.TolFun = 1e-12;
