@@ -13,7 +13,15 @@ function [y, initSupport] = setSupport(labels, newSupport, initSupport)
 % setSupport([1 2 1 1 1 2 1 2 2 2 2 1], [-1, 1])
 % ans =
 %    -1     1    -1    -1    -1     1    -1     1     1     1     1    -1
+%
+%
+% setSupport([1 2 3 3 2], {'yes', 'no', 'maybe'})
+%ans = 
+%   'yes'    'no'    'maybe'    'maybe'    'no'
+%
+
     
+
     if nargin > 2, opt = {initSupport}; else opt={}; end
     [yC, initSupport] = canonizeLabels(labels, opt{:});
     y = reshape(newSupport(yC), size(labels));
