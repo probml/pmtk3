@@ -1,4 +1,4 @@
-function [model, lambdaStar, mu, se] = logregFitL1CV(X, y, lambdaRange, includeOffset, nfolds)
+function [model, lambdaStar, mu, se] = logregFitL2CV(X, y, lambdaRange, includeOffset, nfolds)
     
     switch nargin
         case 2, args = {};
@@ -6,5 +6,5 @@ function [model, lambdaStar, mu, se] = logregFitL1CV(X, y, lambdaRange, includeO
         case 4, args = {lambdaRange, includeOffset};
         case 5, args = {lambdaRange, includeOffset, nfolds};    
     end
-    [model, lambdaStar, mu, se] = logregFitCV(X, y, args{:}, @penalizedL1);
+    [model, lambdaStar, mu, se] = logregFitCV(X, y, args{:}, @penalizedL2);
 end
