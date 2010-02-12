@@ -1,5 +1,7 @@
 function model = logregFitCore(X, y, lambda, includeOffset, regularizerFn, Nclasses)
-% Core fitting function for logistic regression 
+% Core fitting function for logistic regression - end users should not
+% use this function directly. 
+%
 % X(i, :) is the ith case
 % y(i) is the ith label, (supports both binary and multinomial labels.
 %                         Labels are automatically transformed into [-1 1]

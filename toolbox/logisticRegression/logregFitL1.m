@@ -1,4 +1,9 @@
-function model = logregFigL1(X, y, lambda, includeOffset)
-    if nargin < 4, includeOffset = true; end
-    model = logregFitCore(X, y, lambda, includeOffset, @penalizedL1);
+function model = logregFitL1(X, y, lambda, includeOffset)
+    
+    switch nargin
+        case 2, args = {};
+        case 3, args = {lambda};
+        case 4, args = {lambda, includeOffset};
+    end
+    model = logregFitCore(X, y, args{:}, @penalizedL1);
 end

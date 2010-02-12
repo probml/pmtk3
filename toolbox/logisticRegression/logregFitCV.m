@@ -17,7 +17,8 @@ function [model, lambdaStar, mu, se] = logregFitCV(X, y, lambdaRange, includeOff
     if nargin < 5, nfolds = 5; end
     if nargin < 6, regularizerFn = @penalizedL2; end
     
-    fitFn = @(X, y, lambda)logregFitCore(X, y, lambda, includeOffset, regularizerFn, Nclasses);
+    fitFn = @(X, y, lambda)logregFitCore(X, y, lambda, ...
+                           includeOffset, regularizerFn, Nclasses);
     lossFn = @(yhat, ytest)mean(yhat ~= ytest); 
     
     [model, lambdaStar, mu, se] = ...
