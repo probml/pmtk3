@@ -10,12 +10,12 @@ function model = logregFitCore(X, y, lambda, includeOffset, regularizerFn, Nclas
 % includeOffset - if true, a column of ones is added to X
 % regularizerFn - @penalizedL1 or @penalizedL2
 
-    if nargin < 3, lambda        = 0;            end
-    if nargin < 4, includeOffset = true;         end
-    if nargin < 5, regularizerFn = @penalizedL2; end
-    if nargin < 6, Nclasses = numel(unique(y));  end
+    if nargin < 3, lambda        = 0;                end
+    if nargin < 4, includeOffset = true;             end
+    if nargin < 5, regularizerFn = @penalizedL2;     end
+    if nargin < 6, Nclasses      = numel(unique(y)); end
     
-    binary = Nclasses < 3;
+    binary   = Nclasses < 3;
     [n, d]   = size(X); 
     lambda   = lambda*ones(d, Nclasses-1);
     winit    = zeros(d, Nclasses-1);
@@ -28,18 +28,10 @@ function model = logregFitCore(X, y, lambda, includeOffset, regularizerFn, Nclas
     end
     
     if binary
-       %if nargin < 6
-           [y, model.ySupport] = setSupport(y, [-1 1]); 
-       %else
-       %    model.ySupport = [-1, 1];
-       %end
+      [y, model.ySupport] = setSupport(y, [-1 1]); 
        objective = @(w)LogisticLossSimple(w, X, y); 
     else            
-       %if nargin < 6
-           [y, model.ySupport] = setSupport(y, 1:Nclasses);
-       %else
-       %   model.ySupport = 1:Nclasses; 
-       %end
+       [y, model.ySupport] = setSupport(y, 1:Nclasses);
        objective = @(w)SoftmaxLoss2(w, X, y, Nclasses);
     end
     
@@ -48,10 +40,10 @@ function model = logregFitCore(X, y, lambda, includeOffset, regularizerFn, Nclas
     options.MaxFunEvals = 10000;  options.TolX   = 1e-12;
     
     wMAP = minFunc(regularizerFn, winit(:), options, objective, lambda(:));
-    if ~binary
-        wMAP = [reshape(wMAP,[d Nclasses-1]) zeros(d, 1)];
+    if not(binary), 
+        wMAP = [reshape(wMAP, [d Nclasses-1]) zeros(d, 1)];
     end
-    model.w = wMAP;
+    model.w             = wMAP;
     model.includeOffset = includeOffset;
-    model.binary = binary; 
+    model.binary        = binary; 
 end
