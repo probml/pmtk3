@@ -6,5 +6,5 @@ function [model, lambdaStar, mu, se] = logregFitL2CV(X, y, lambdaRange, includeO
         case 4, args = {lambdaRange, includeOffset};
         case 5, args = {lambdaRange, includeOffset, nfolds};    
     end
-    [model, lambdaStar, mu, se] = logregFitCV(X, y, args{:}, @penalizedL2);
+    [model, lambdaStar, mu, se] = logregFitCV(X, y, @penalizedL2, args{:});
 end

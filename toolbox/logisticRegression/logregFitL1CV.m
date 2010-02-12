@@ -6,5 +6,5 @@ function [model, lambdaStar, mu, se] = logregFitL1CV(X, y, lambdaRange, includeO
         case 4, args = {lambdaRange, includeOffset};
         case 5, args = {lambdaRange, includeOffset, nfolds};    
     end
-    [model, lambdaStar, mu, se] = logregFitCV(X, y, args{:}, @penalizedL1);
+    [model, lambdaStar, mu, se] = logregFitCV(X, y, @penalizedL1, args{:});
 end
