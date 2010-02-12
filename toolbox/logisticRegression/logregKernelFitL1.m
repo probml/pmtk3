@@ -6,6 +6,6 @@ function model = logregKernelFitL1(X, y, lambda, kernelParam, kernelType)
         case 4, args = {lambda, kernelParam};
         case 5, args = {lambda, kernelParam, kernelType};
     end
-    model = logregKernelFit(X, y, args{:}, @logregFitL1);
+    model = logregKernelFit(X, y, @logregFitL1, args{:});
     
 end
