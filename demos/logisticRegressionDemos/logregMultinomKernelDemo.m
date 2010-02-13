@@ -13,34 +13,34 @@ addOnes = false;
 polyOrder = 2;
 rbfScale = 1;
 %% Linear
-wLinear = logregMultiL2Fit(X, y, lambda, addOnes, nClasses);
+modelLinear = logregFitL2(X, y, lambda, addOnes);
 %% Polynomial
 Kpoly = kernelPoly(X,X,polyOrder);
-wPoly = logregMultiL2Fit(Kpoly, y, lambda, addOnes, nClasses);
+modelPoly = logregFitL2(Kpoly, y, lambda, addOnes);
 %% RBF
 Krbf = rbfKernel(X, X, rbfScale); 
-wRBF = logregMultiL2Fit(Krbf, y, lambda, addOnes, nClasses);
+modelRBF = logregFitL2(Krbf, y, lambda, addOnes);
 %% Compute training errors
-[yhat, prob] = logregMultiPredict(X, wLinear, addOnes); %#ok
+[yhat, prob] = logregPredict(modelLinear, X); %#ok
 trainErr_linear = mean(y~=yhat);
 fprintf('Training error with raw features: %2.f%%\n', trainErr_linear*100);
 
-[yhat, prob] = logregMultiPredict(Kpoly, wPoly, addOnes); %#ok
+[yhat, prob] = logregPredict(modelPoly, Kpoly); %#ok
 trainErr_poly = mean(y~=yhat);
 fprintf('Training error using a polynomial kernal of degree %d: %2.f%%\n', polyOrder,  trainErr_poly*100);
 
-[yhat, prob] = logregMultiPredict(Krbf, wRBF, addOnes);
+[yhat, prob] = logregPredict(modelRBF, Krbf);
 trainErr_rbf = mean(y~=yhat);
 fprintf('Training error using an RBF kernel with scale %d: %2.f%%\n', rbfScale, trainErr_rbf*100);
 %% Plot decision boundaries
-plotDecisionBoundary(X, y, @(X)logregMultiPredict(X, wLinear, addOnes));
+plotDecisionBoundary(X, y, @(X)logregPredict(modelLinear, X));
 title('Linear Multinomial Logistic Regression');
 
-predictFcn = @(Xtest) logregMultiPredict(kernelPoly(Xtest, X, polyOrder), wPoly, addOnes); 
+predictFcn = @(Xtest) logregPredict(modelPoly, kernelPoly(Xtest, X, polyOrder)); 
 plotDecisionBoundary(X, y, predictFcn);
 title('Kernel-Poly Multinomial Logistic Regression');
 
-predictFcn = @(Xtest) logregMultiPredict(rbfKernel(Xtest, X, rbfScale), wRBF, addOnes); 
+predictFcn = @(Xtest) logregPredict(modelRBF, rbfKernel(Xtest, X, rbfScale)); 
 plotDecisionBoundary(X, y, predictFcn);
 title('Kernel-RBF Multinomial Logistic Regression');
 

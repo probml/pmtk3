@@ -8,7 +8,7 @@ function logregXorDemo()
     lambda = 1e-2;
     addOnes = true;
     %% Linear Features
-    model = logregL2Fit(X, Y1tok, lambda, addOnes);
+    model = logregFitL2(X, Y1tok, lambda, addOnes);
     yhat = logregPredict(model, X);
     errorRate = mean(yhat ~= y);
     fprintf('Error rate using raw features: %2.f%%\n', 100*errorRate);
@@ -18,7 +18,7 @@ function logregXorDemo()
     %% RBF Features
     rbfScale = 1;
     Krbf = rbfKernel(X, X, rbfScale); 
-    model = logregL2Fit(Krbf, y, lambda, addOnes);
+    model = logregFitL2(Krbf, y, lambda, addOnes);
     yhat = logregPredict(model, Krbf);
     errorRate = mean(yhat ~= y);
     fprintf('Error rate using RBF features: %2.f%%\n', 100*errorRate);

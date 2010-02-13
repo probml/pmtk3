@@ -9,6 +9,6 @@ ypm = sign(y01-0.5);
 
 lambda = 0;
 
-model1 = logregL2Fit(X, y01, lambda);
-model2 = logregL2FitNewton(X, y01,  lambda);
+model1 = logregFitL2(X, y01, lambda);
+model2 = logregBinaryFitL2IRLS(X, y01,lambda);
 assert(approxeq(model1.w, model2.w))
