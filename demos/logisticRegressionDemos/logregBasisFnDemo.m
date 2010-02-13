@@ -23,7 +23,7 @@ labels(labels==3) = 2; % merge 2 and 3
 Gtrain = rbfKernel(X, centres, sigmaRbf); % gram matrix
 %% Fit in transformed space
 y = labels; 
-model = logregL2Fit(Gtrain, y, lambda, addOnes);
+model = logregFitL2(Gtrain, y, lambda, addOnes);
 %% Plot in the original space
 plotDecisionBoundary(X, y, @(Xtest)logregPredict(model, rbfKernel(Xtest, centres, sigmaRbf)));
 hold on; axis square
