@@ -14,6 +14,7 @@ function model = logregFitCore(X, y, lambda, includeOffset, regularizerFn, Nclas
     if nargin < 4, includeOffset = true;             end
     if nargin < 5, regularizerFn = @penalizedL2;     end
     if nargin < 6, Nclasses      = numel(unique(y)); end
+    y = colvec(y);
     
     binary   = Nclasses < 3;
     [n, d]   = size(X); 
