@@ -22,12 +22,17 @@ function [model, lambdaStar, mu, se] = logregKernelFitCV(X, y, regularizerFn, la
     
     parameterSpace = makeModelSpace(lambdaRange, kernelParamRange);
     
-    coreFitFn = @(X, y, lambda, includeOffset)logregFitCore(X, y, lambda, includeOffset, regularizerFn, Nclasses);    
-    fitFn = @(X, y, params)logregKernelFit(X, y, coreFitFn, params{1}{1}, params{1}{2}, kernelType);
+    coreFitFn = @(X, y, lambda, includeOffset)...
+       logregFitCore(X, y, lambda, includeOffset, regularizerFn, Nclasses);    
+    
+    fitFn = @(X, y, params)logregKernelFit...
+       (X, y, coreFitFn, params{1}{1}, params{1}{2}, kernelType);
+    
     lossFn = @(yhat, ytest)mean(yhat ~= ytest); 
     
     [model, lambdaStar, mu, se] = ...
         fitCv(parameterSpace, fitFn, @logregPredict, lossFn, X, y, nfolds);
+    
     model.ySupport = support; 
 end
 
@@ -35,7 +40,7 @@ end
 
 % #test
 % load crabs
-% [model, lambdaStar, mu, se] = logregKernelFitCV(Xtrain, ytrain)
+% [model, paramStar, mu, se] = logregKernelFitCV(Xtrain, ytrain)
 % yhat = logregPredict(model, Xtest)
 % nerrors = sum(yhat ~= ytest)
 % assert(nerrors == 1)
