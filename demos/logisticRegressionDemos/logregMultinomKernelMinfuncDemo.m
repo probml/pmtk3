@@ -59,7 +59,8 @@ uRBF = reshape(uRBF,[nInstances nClasses-1]);
 uRBF = [uRBF zeros(nInstances,1)];
 
 addOnes = false;
-wRBF = logregMultiL2Fit(Krbf, y, lambda, addOnes, nClasses);
+modelRBF = logregFitL2(Krbf, y, lambda, addOnes);
+wRBF = modelRBF.w;
 assert(approxeq(wRBF, uRBF, 1e-1))
 
 % Compute training errors
@@ -70,7 +71,7 @@ trainErr_poly = sum(y~=yhat)/length(y)
 [junk yhat] = max(Krbf*uRBF,[],2);
 trainErr_rbf = sum(y~=yhat)/length(y)
 
-[yhat2, prob] = logregMultiPredict(Krbf, wRBF, addOnes);
+[yhat2, prob] = logregPredict(modelRBF, Krbf);
 assert(isequal(yhat, yhat2))
 
 figure;
