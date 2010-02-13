@@ -30,3 +30,13 @@ function [model, lambdaStar, mu, se] = logregKernelFitCV(X, y, regularizerFn, la
         fitCv(parameterSpace, fitFn, @logregPredict, lossFn, X, y, nfolds);
     model.ySupport = support; 
 end
+
+
+
+% #test
+% load crabs
+% [model, lambdaStar, mu, se] = logregKernelFitCV(Xtrain, ytrain)
+% yhat = logregPredict(model, Xtest)
+% nerrors = sum(yhat ~= ytest)
+% assert(nerrors == 1)
+
