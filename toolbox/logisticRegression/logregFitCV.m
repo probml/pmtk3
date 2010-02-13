@@ -9,7 +9,7 @@ function [model, lambdaStar, mu, se] = logregFitCV(X, y, regularizerFn, lambdaRa
     end
     
     Nclasses = numel(unique(y)); 
-    if Nclasses < 4
+    if Nclasses < 3
        [y, support] = setSupport(y, [-1, 1]); 
     else
        [y, support] = setSupport(y, 1:Nclasses); 

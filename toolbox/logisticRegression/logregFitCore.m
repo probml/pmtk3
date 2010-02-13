@@ -40,6 +40,7 @@ function model = logregFitCore(X, y, lambda, includeOffset, regularizerFn, Nclas
     options.MaxFunEvals = 10000;  options.TolX   = 1e-12;
     
     wMAP = minFunc(regularizerFn, winit(:), options, objective, lambda(:));
+    
     if not(binary), 
         wMAP = [reshape(wMAP, [d Nclasses-1]) zeros(d, 1)];
     end
