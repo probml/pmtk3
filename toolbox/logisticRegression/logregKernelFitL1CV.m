@@ -1,4 +1,5 @@
-function [model, lambdaStar, mu, se] = logregKernelFitL1CV(X, y, lambdaRange, kernelParamRange, kernelType, nfolds)
+function [model, lambdaStar, mu, se] = logregKernelFitL1CV...
+        (X, y, lambdaRange, kernelParamRange, kernelType, nfolds)
     
     switch nargin 
         case 2, args = {};
