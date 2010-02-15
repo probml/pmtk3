@@ -1,8 +1,9 @@
-function model = linregFit(X, y, includeOffset)
+function model = linregFit(X, y)
 % simple linear regression
-% Will add a column of 1s and return w=[w0 w1:D] by default
-if nargin < 3, includeOffset = true; end
-model = linregL2Fit(X, y, 0, includeOffset);
+% model.w is D*1
+% model.w0 contains the offset
+% model.sigma2 is the noise variance
+model = linregFitL2(X, y, 0);
 end
 
 

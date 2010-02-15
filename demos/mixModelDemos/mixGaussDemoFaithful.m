@@ -41,6 +41,6 @@ function plotfn(X, mu, Sigma, mixweight, post, loglik, iter)
     axis square
     box on
     set(gca, 'YTick', -2:2);
-    pause(1)
+    %pause(1)
     
 end

@@ -1,15 +1,18 @@
 function prostateComparison() 
 %% Compare L1, L2, allSubsets, and OLS linear regression on the prostate data set
- 
+% Reproduced table 3.3 on p63 of "Elements of statistical learning" 2e
+% (Also want fig 3.5 on p58)
+
 saveLatex = false;
 
 mse = zeros(4, 1); 
 weights = zeros(9, 4);
 
 data = load('prostate.mat');
-includeOffset = true;
-fitFns        = {@(X, y, lambda)linregL1Fit(X, y, lambda, includeOffset) 
-                 @(X, y, lambda)linregL2Fit(X, y, lambda, includeOffset)};
+               
+fitFns        = {@(X, y, lambda)linregFitL1(X, y, lambda), ...
+                 @(X, y, lambda)linregFitL2(X, y, lambda)};
+                
 predictFn     =  @linregPredict;
 lossFn        =  @(yhat, ytest)mean((yhat - ytest).^2);
 lambdas       = [logspace(2, 0, 30) 0];
@@ -28,18 +31,28 @@ for i=1:numel(fitFns);
     mse(i) = lossFn(yhat, data.ytest);
     title(sprintf('%s, mseTest = %5.3f', titlePrefixes{i}, mse(i)));
     printPmtkFigure(figureNames{i});
-    weights(:, i) = colvec(model.w); 
+    weights(:, i) = [model.w0; colvec(model.w)]; 
 end
 %% All subsets
     function model = fitFn(X, y, ndx)    
-        model = linregFit(X(:, ndx{:}), y, true);
-        w = zeros(size(X, 2) + 1, 1); 
-        w([1, ndx{:}+1]) = model.w; % +1 for offset   
-        model.w = w;  % make sure w is correct size by using 0's for excluded dims. 
+       [N,D] = size(X);
+       include = ndx{:};
+       exclude = setdiff(1:D, include);
+       X(:, exclude) = 0;
+       model = linregFit(X, y);
     end
 %%    
 d = size(data.Xtrain, 2); 
 ss = powerset(1:d); % 256 models
+
+if 0
+for i=1:length(ss)
+  model = fitFn(data.Xtrain, data.ytrain, ss(i));
+  yhat = predictFn(model, data.Xtest);
+  loss(i) = lossFn(yhat, data.ytest)
+end
+end
+
 [modelFull, ssStarFull] = ...
         fitCv(ss, @fitFn, predictFn, lossFn, data.Xtrain, data.ytrain, nfolds);
 
@@ -59,11 +72,10 @@ t = {  sprintf('%s, mseTest = %5.3f', 'all subsets', mse(3));
        ['best subset = ', mat2str(ssStarFull{:})]
     };
 title(t);
-weights(:, 3) = colvec(modelFull.w);
+weights(:, 3) = [modelFull.w0; colvec(modelFull.w)];
 %% OLS
-includeOffset = true;
-model = linregFit(data.Xtrain, data.ytrain, includeOffset);
-weights(:, 4) = colvec(model.w);
+model = linregFit(data.Xtrain, data.ytrain);
+weights(:, 4) = [model.w0; colvec(model.w)];
 yhat = linregPredict(model, data.Xtest);
 mse(4) = lossFn(yhat, data.ytest); 
 %%

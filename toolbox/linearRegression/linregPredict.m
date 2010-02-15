@@ -1,15 +1,22 @@
 function [yhat, v] = linregPredict(model, X)
 % Linear regression
-% adds a column of 1s if this was done at training time
 % yhat(i) = E[y|X(i,:), model]
 % v(i) = Var[y|X(i,:), model]
 
-[N,D] = size(X);
-if model.includeOffset
-   X = [ones(N,1) X];
+% Transform the test data in the same way as the training data
+if isfield(model, 'Xmu')
+  [X] = center(X, model.Xmu);
 end
+if isfield(model, 'Xstnd')
+  [X] = mkUnitVariance(X, model.Xstnd);
+end
+
 yhat = X*model.w;
-if isfield(model, 'ymu')
-    yhat = yhat + model.ymu;
+% apply offset term
+if isfield(model, 'w0')
+    yhat = yhat + model.w0;
 end
-v = model.sigma2*ones(N,1);
+if nargout >= 2
+  [N] = size(X,1);
+  v = model.sigma2*ones(N,1);
+end

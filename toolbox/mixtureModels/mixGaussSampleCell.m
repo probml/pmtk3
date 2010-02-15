@@ -17,6 +17,8 @@ function [X, y] = mixGaussSample(model, nsamples)
 % X          - an nsamples-by-d matrix 
 % y          - an nsamples-by-1 vector, the component labels in 1:C
 
+error('deprecated')
+
 mus = model.mus; Sigmas = model.Sigmas; mix = model.mix; 
 
     if iscell(mus)

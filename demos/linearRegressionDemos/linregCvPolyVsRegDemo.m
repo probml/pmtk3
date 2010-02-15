@@ -33,12 +33,12 @@ NL = length(lambdas);
 logev = zeros(1,NL); testMse = zeros(1,NL); trainMse = zeros(1,NL);
 for k=1:NL
     lambda = lambdas(k);
-    fitFn = @(Xtr,ytr) linregL2Fit(Xtr, ytr, lambda);
+    fitFn = @(Xtr,ytr) linregFitL2(Xtr, ytr, lambda);
     predFn = @(w, Xte) linregPredict(w, Xte);
     lossFn = @(yhat, yte)  (yhat - yte).^2;
     [mu(k), se(k)] = cvEstimate(fitFn, predFn, lossFn, Xtrain, ytrain, 5);
     
-    w = linregL2Fit(Xtrain, ytrain, lambda);
+    w = linregFitL2(Xtrain, ytrain, lambda);
     ypredTest = linregPredict(w, Xtest);
     ypredTrain = linregPredict(w, Xtrain);
     testMse(k) = mean((ypredTest - ytest).^2); 
