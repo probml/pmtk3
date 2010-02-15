@@ -17,6 +17,14 @@ end
 switch lower(method)
   case 'shooting'
     w = linregFitL1Shooting(X, y, lambda);
+  case 'em'
+    % EM maximizes -1/(2 sigma^2) ||y-Xw||^2 - lambda||w||_1
+    % whereas the other methods minimize ||y-Xw||^2 + lambda ||w||_1
+    % so the regulairzation constant differs
+    sigma = 1;
+    gamma  = lambda/(2*sigma);
+    w = linregFitSparseEm(X, y, 'laplace', gamma, 1, sigma);
+   % (X, y,  prior, scale, shape, sigma, varargin)
   case 'lars'
     w = linregFitL1LarsSingleLambda(X, y, lambda);
   case 'interiorpoint'

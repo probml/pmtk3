@@ -1,25 +1,24 @@
-function [w, sigma, logpostTrace]=linregSparseEmFit(X, y, param, varargin)
-% Use EM to fit linear or probit regression  with sparsity promoting prior
+function [w, sigma, logpostTrace]=linregFitSparseEm(X, y,  prior, scale, shape, sigma, varargin)
+% Use EM to fit linear  regression  with sparsity promoting prior
 % See the paper "Sparse Bayesian nonparametric regression"
 % by F. Caron and A. Doucet, ICML2008.
+% See also "Alternative prior distributions for variable selection
+% with very many more variables than observations", Griffin and Brown, 2005
 %
-%#author Francois Caron
+% The prior on each regresson weight is 
+% p(w) = int N(w|0,tau) Gamma(tau | shape, scale) dtau
+% This is a Normal-Gamma distribution.
+% If shape=1, this induces a Laplace distribuiton
+% If shape=scale=0, this induces Normal-Jeffreys distribution
 %
-% -- INPUTS --
 %
-% X: N*D design matrix (add your own column of 1s)
-% y:        data (vector of size N*1), -1/+1 for probit
-% param:    structure of hyperparameters
-%   param.model     Prior type: one of
-%                   'normalgamma','laplace','normaljeffreys',
-%                   'normalinversegaussian','normalexponentialgamma'
-%   param.sigma     sigma bound of the Gaussian noise if positive value (known variance)
-%                   negative of the initialization value if negative value
-%                   (unknown variance)
-%   param.alpha     Shape parameters for normalgamma, normalinversegaussian
-%                   and normalexponentialgamma priors
-%   param.c         Scale parameter for normalgamma, laplace,
-%                   normalinversegaussian and normalexponentialgamma priors
+% X: N*D design matrix 
+% y:        data (vector of size N*1),
+% sigma: if +ve, it is fixed at this value, if 0 it will be estimated
+% prior: one of 'normalgamma','laplace','normaljeffreys'
+% scale of Gamma, or rate of Laplace (NJ sets this to 0)
+% shape (NJ sets this to 0, Laplace sets it to 1)
+%   
 %
 % Optional args
 % maxIter - [300]
@@ -34,62 +33,63 @@ function [w, sigma, logpostTrace]=linregSparseEmFit(X, y, param, varargin)
 % Author: Francois Caron
 % University of British Columbia
 % Jan 30, 2008
-% Modified by Kevin Murphy, 12 Nov 2009
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%#author Francois Caron
+% modified Kevin Murphy, 12 Nov 2009
+
 
 warning off MATLAB:log:logOfZero
 warning off MATLAB:divideByZero
 
-[maxIter, verbose] = process_options(varargin, ...
-   'maxIter', 300, 'verbose', false);
+[maxIter, verbose, convTol] = process_options(varargin, ...
+   'maxIter', 300, 'verbose', false, 'convTol', 1e-5);
 
-A=X; clear X
-[N K]=size(A);
-param.K=K;
-model=param.model;
-if param.sigma<0
+ if nargin <5, shape = 1; end
+ if nargin < 6, sigma = -1; end
+ 
+[N D]=size(X);
+if sigma<0
    % sigma estimated
    computeSigma=1;
-   sigma=-param.sigma;
+   sigma=-sigma;
 else % sigma known
    computeSigma=0;
-   sigma=param.sigma;
 end
 
-switch(param.model)
-   case 'ridge'
-      % no EM required
-      w = linregL2Fit(A, y, param.c, false);
-      sigma = mean((A*w - y).^2);
-      logpostTrace = [];
-      return;
-   case 'normalgamma'
-       pen=@pen_normalgamma;
-       diffpen=@diffpen_normalgamma;
-   case 'laplace'
-       pen=@pen_laplace;
-       diffpen=@diffpen_laplace;
-   case 'normaljeffreys'
-       pen=@pen_normaljeffreys;
-       diffpen=@diffpen_normaljeffreys;
-   case 'normalinversegaussian'
-       pen=@pen_normalinversegaussian;
-       diffpen=@diffpen_normalinversegaussian;
-   case 'normalexponentialgamma'
-       diffpen=@diffpen_normalexponentialgamma;
-       pen=@pen_normalexponentialgamma;
+switch(prior)
+  case 'normalgamma'
+    pen=@pen_normalgamma;
+    diffpen=@diffpen_normalgamma;
+  case 'laplace'
+    pen=@pen_laplace;
+    diffpen=@diffpen_laplace;
+    shape = 1;
+    gamma = scale;
+    scale = gamma^2/2;
+  case 'normaljeffreys'
+    pen=@pen_normaljeffreys;
+    diffpen=@diffpen_normaljeffreys;
+    shape = 0;
+    scale = 0;
+  otherwise
+    error(['unrecognized prior ' prior])
 end
 
-% Singular value decomposition to fasten code
+param.prior = prior;
+param.D = D;
+param.shape =shape;
+param.scale = scale;
+
+% Singular value decomposition to speed code
 % - see Griffin and Brown, 2005, for details
-[U S W]=svd(A);
+[U S V]=svd(X);
 ind=find(diag(S)>10^-10);
 S=S(ind,ind);
 U=U(:,ind);
-W=W(:,ind);
-alpha_hat=S^-1*U'*y;
+V=V(:,ind);
+alpha_hat=inv(S)*U'*y;
 
-if 1 % strcmp(model,'laplace') || strcmp(model,'normalexponentialgamma') || strcmp(model,'normalinversegaussian')
+if 1 % strcmp(model,'laplace') 
    computeLogpost = true;
 else
    % cannot do it for normal gamma because prior is improper?
@@ -97,118 +97,91 @@ else
 end
 
 logpdf=[];
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Initialization
-z(1,:)=pinv(A)*y; % z(iter,:) is weight vector 
-
-if computeLogpost
-   logpdf(1)=N/2*log(sigma^2)+(y-A*z(1,:)')'*(y-A*z(1,:)')/2/sigma^2+sum(pen(z(1,:),param));
-end
-if verbose
-   fprintf('\n\nstarting EM\n');
-   param
-end
+w=pinv(X)*y;  % initialize from ridge
 done = false;
-i = 2; % iter
+iter = 1; 
 while ~done
-   psi=diag(abs(z(i-1,:))./diffpen(z(i-1,:),param));
-   z(i,:)=psi*W*(W'*psi*W+sigma^2*S^-2)^-1*alpha_hat;
-
-   if computeSigma
-       sigma=sqrt((y-A*z(i,:)')'*(y-A*z(i,:)')/N);
-   end
-
-   if computeLogpost
-       logpdf(i)=N/2*log(sigma^2)+(y-A*z(i,:)')'*(y-A*z(i,:)')/2/sigma^2+sum(pen(z(i,:),param));
-   end
-   if verbose && (mod(i,50)==0)
-      if computeLogpost
-         fprintf('iter %d, logpost = %5.3f\n', i, logpdf(i))
-      else
-         fprintf('iter %d\n', i)
-      end
-   end
-   
-   converged = isequal(z(i,:),z(i-1,:)) || convergenceTest(logpdf(i), logpdf(i-1));
-   if converged || (i > maxIter)
-      done = true;
-   end
-   i = i+1;
+  wOld = w;
+  % E step
+  if 0
+     % debug - hard code laplace case
+    psi=diag(abs(wOld)./gamma); 
+  else
+    psi=diag(abs(wOld)./diffpen(wOld,param));
+  end
+  % M step
+  w = psi*V*inv((V'*psi*V+sigma^2*S^-2))*alpha_hat;
+  yhat = X*w;
+  se = (y-yhat).^2;
+  if computeSigma
+    sigma = sqrt(mean(var(se)));
+  end
+  
+  if computeLogpost
+    logpdf(iter)=N/2*log(sigma^2)+ sum(se)/(2*sigma^2) + sum(pen(w,param));
+  end
+  if verbose% && (mod(iter,50)==0)
+    if computeLogpost
+      fprintf('iter %d, logpost = %5.3f\n', iter, -logpdf(iter))
+    else
+      fprintf('iter %d\n', iter)
+    end
+  end
+  
+  if iter>1
+    converged = convergenceTest(logpdf(iter), logpdf(iter-1), convTol);
+  else
+    converged = false;
+  end
+  if isequal(w, wOld) || converged || (iter > maxIter)
+    done = true;
+  end
+  iter = iter + 1;
 end
 
-w=z(end,:)'; % Final value 
-logpostTrace = logpdf;
+logpostTrace = -logpdf;
 
 warning on MATLAB:log:logOfZero
 warning on MATLAB:divideByZero
 
+end
 
+ 
 %%%%%%%%%%
 % Sub-functions: penalizations and their derivatives
 
 % Normal gamma
-function out=pen_normalgamma(z,hyper)
-alpha=hyper.alpha;
-K=hyper.K;
-c=hyper.c;
-out=(.5-alpha/K)*log(abs(z))-log(besselk(alpha/K-.5,sqrt(2*c)*abs(z)));
+function out=pen_normalgamma(w,hyper)
+lambda = hyper.shape;
+gamma = sqrt(2*hyper.scale);
+out=(0.5-lambda)*log(abs(w))-log(besselk(lambda-0.5,gamma*abs(w)));
+end
 
-function out=diffpen_normalgamma(z,hyper)
-alpha=hyper.alpha;
-K=hyper.K;
-c=hyper.c;
-out=sqrt(2*c)*besselk(alpha/K-3/2,abs(z)*sqrt(2*c),1)./besselk(alpha/K-1/2,abs(z)*sqrt(2*c),1);
+function out=diffpen_normalgamma(w,hyper)
+  lambda = hyper.shape;
+gamma = sqrt(2*hyper.scale);
+out=gamma*besselk(lambda-3/2,gamma*abs(w),1)./besselk(lambda-1/2,gamma*abs(w),1);
 out(isnan(out))=inf;
+end
 
 % Laplace
-function out=pen_laplace(z,hyper)
-c=hyper.c;
-out=abs(z)*sqrt(2*c);
+function out=pen_laplace(w,hyper)
+gamma = sqrt(2*hyper.scale);
+out=abs(w)*gamma;
+end
 
-function out=diffpen_laplace(z,hyper)
-out=sqrt(2*hyper.c);
+function out=diffpen_laplace(w,hyper)
+  gamma = sqrt(2*hyper.scale);
+out=gamma;
+end
 
 % Normal Jeffreys
-function out=diffpen_normaljeffreys(z,hyper)
-out=1./abs(z);
-
-function out=pen_normaljeffreys(z,hyper)
-out=log(abs(z));
-
-% Normal inverse Gaussian
-function out=pen_normalinversegaussian(z,hyper)
-alpha=hyper.alpha;
-K=hyper.K;
-c=hyper.c;
-out=.5*log(alpha^2/K^2+z.^2)-log(besselk(1,c*sqrt(alpha^2/K^2+z.^2)));
-
-function out=diffpen_normalinversegaussian(z,hyper)
-alpha=hyper.alpha;
-K=hyper.K;
-c=hyper.c;
-out=2*abs(z)./(alpha^2/K^2+z.^2)...
-   +c*abs(z)./sqrt(alpha^2/K^2+z.^2).*besselk(0,c*sqrt(alpha^2/K^2+z.^2),1)...
-   ./besselk(1,c*sqrt(alpha^2/K^2+z.^2),1);
-
-% Normal exponential gamma
-function out=pen_normalexponentialgamma(z,hyper)
-alpha=hyper.alpha;
-K=hyper.K;
-c=hyper.c;
-out=zeros(length(z),1);
-for k=1:length(z)
- out(k)=-z(k)^2/4/c...
-     -log(mpbdv(-2*(alpha/K+1/2),abs(z(k))/sqrt(c)));
+function out=pen_normaljeffreys(w,hyper)
+out=log(abs(w));
 end
 
-function out=diffpen_normalexponentialgamma(z,hyper)
-alpha=hyper.alpha;
-K=hyper.K;
-c=hyper.c;
-out=zeros(length(z),1);
-for k=1:length(z)
- out(k)=(2*alpha/K+1)/sqrt(c)...
-     *mpbdv(-2*(alpha/K+1),abs(z(k))/sqrt(c))...
-     /mpbdv(-2*(alpha/K+1/2),abs(z(k))/sqrt(c));
+function out=diffpen_normaljeffreys(w,hyper)
+out=1./abs(w);
 end
-close all
-clear all
+
+

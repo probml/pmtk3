@@ -4,7 +4,7 @@ function linregFitL1Test()
 
 %% Make some data
 setSeed(0);
-N=50;
+N=100;
 %N=20;
 D=50; % dinensionality
 rho=.5;
@@ -20,18 +20,18 @@ w_true=[3 1.5 0 0 2 0 0 0 zeros(1,D-8)]';
 sigma = 1;
 y=X*w_true+1*sigma*randn(N,1);
 
-figure; nr = 2; nc = 2;
+figure; nr = 3; nc = 2;
 subplot(nr, nc, 1)
 doPlot(w_true, w_true, 'true')
 
 %% Fit
 lambda = 10;
-methods = {'shooting', 'lars', 'interiorPoint'};
+methods = {'shooting', 'em', 'lars', 'interiorPoint'};
 for i=1:length(methods)
   method = methods{i};
   model{i} = linregFitL1(X, y, lambda, method);
   if i > 1
-    assert(approxeq(model{i}.w, model{1}.w))
+    assert(approxeq(model{i}.w, model{1}.w, 1e-1))
   end
   subplot(nr, nc, i+1)
   doPlot(model{i}.w, w_true, method)
