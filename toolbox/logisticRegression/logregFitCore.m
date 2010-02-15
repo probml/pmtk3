@@ -1,7 +1,6 @@
 function model = logregFitCore(X, y, lambda, includeOffset, regularizerFn, Nclasses)
-% Core fitting function for logistic regression - end users should not
-% use this function directly. 
-%
+% Core fitting function for logistic regression 
+
 % X(i, :) is the ith case
 % y(i) is the ith label, (supports both binary and multinomial labels.
 %                         Labels are automatically transformed into [-1 1]
@@ -16,10 +15,10 @@ function model = logregFitCore(X, y, lambda, includeOffset, regularizerFn, Nclas
     if nargin < 6, Nclasses      = numel(unique(y)); end
     y = colvec(y);
     
-    binary   = Nclasses < 3;
-    [n, d]   = size(X); 
-    lambda   = lambda*ones(d, Nclasses-1);
-    winit    = zeros(d, Nclasses-1);
+    binary = Nclasses < 3;
+    [n, d] = size(X); 
+    lambda = lambda*ones(d, Nclasses-1);
+    winit  = zeros(d, Nclasses-1);
     
     if includeOffset
        X = [ones(n, 1), X];

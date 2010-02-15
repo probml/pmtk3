@@ -1,28 +1,33 @@
-function [model, lambdaStar, mu, se] = logregFitCV(X, y, regularizerFn, lambdaRange, includeOffset, nfolds)
-    
+function [model, lambdaStar, mu, se] = logregFitCV...
+        (X, y, regularizerFn, lambdaRange, includeOffset, nfolds)
+% Fit a binary or multiclass logistic regression model using cross 
+% validation to select the regularizer - see logregFitL1CV and 
+% logregFitL2CV. 
+%
+% X(i, :)       - is the ith case
+% y             - the labels - these will be automatically transformed into
+%                 the right spcae.
+% regularizerFn - @penalizedL1, or @penalizedL2
+% lambdaRange   - optional range to cross validate over
+% inclueOffset  - if true, (default) a column of ones is added to X
+% nfolds       - the number of cross validation folds, (defualt = 5)
     if nargin < 3, regularizerFn = @penalizedL2; end
-    
     if nargin < 4, 
-        lambdaRange = [0, logspace(-2.5, 0, 5), ...
-                          logspace(0.1, 1.5, 10), ...
-                          logspace(1.6, 2.5, 4)];
+        lambdaRange = [0, logspace(-2.5, 0  , 5  ), ...
+                          logspace( 0.1, 1.5, 10 ), ...
+                          logspace( 1.6, 2.5, 4) ];
     end
-    
     Nclasses = numel(unique(y)); 
-    if Nclasses < 3
-       [y, support] = setSupport(y, [-1, 1]); 
-    else
-       [y, support] = setSupport(y, 1:Nclasses); 
+    if Nclasses < 3,   newSupport = [-1, 1];
+    else               newSupport = 1:Nclasses; 
     end
-    
+    [y, support] = setSupport(y, newSupport); 
     if nargin < 5, includeOffset = true; end
     if nargin < 6, nfolds = 5; end
     
-    
-    fitFn = @(X, y, lambda)logregFitCore(X, y, lambda, ...
-                           includeOffset, regularizerFn, Nclasses);
+    fitFn = @(X, y, lambda)...
+       logregFitCore(X, y, lambda, includeOffset, regularizerFn, Nclasses);
     lossFn = @(yhat, ytest)mean(yhat ~= ytest); 
-    
     [model, lambdaStar, mu, se] = ...
         fitCv(lambdaRange, fitFn, @logregPredict, lossFn, X, y, nfolds);
     model.ySupport = support; 
