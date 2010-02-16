@@ -6,7 +6,6 @@ N = size(X,1);
 logPz = zeros(N, K);
 for k=1:K
   modelK.mu = model.mu(:, k); modelK.Sigma = model.Sigma(:, :, k);
-  logPz(:, k) = log(model.mixweight(k)+eps) + ...
-    gaussLogprob(modelK, X);
+  logPz(:, k) = log(model.mixweight(k)+eps) +  gaussLogprob(modelK, X);
 end
 logp = logsumexp(logPz, 2);
