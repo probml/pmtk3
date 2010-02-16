@@ -97,15 +97,19 @@ else
 end
 
 logpdf=[];
-w=pinv(X)*y;  % initialize from ridge
+w = pinv(X)*y;  % initialize from ridge
+yhat = X*w;  se = (y-yhat).^2;
+if computeSigma, sigma = sqrt(mean(var(se))); end
 done = false;
 iter = 1; 
 while ~done
   wOld = w;
+  sigmaOld = sigma;
   % E step
   if 0
      % debug - hard code laplace case
-    psi=diag(abs(wOld)./gamma); 
+   % psi=diag(abs(wOld)./gamma); 
+   psi=diag(abs(wOld)./(gamma * sigmaOld)); % Park and Cassella '08
   else
     psi=diag(abs(wOld)./diffpen(wOld,param));
   end

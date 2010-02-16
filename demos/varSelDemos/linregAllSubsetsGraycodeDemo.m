@@ -44,6 +44,7 @@ end
 
 figure
 imagesc(Models');
+colormap gray
 printPmtkFigure('grayCodeModels')
 
 figure
