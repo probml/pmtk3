@@ -10,6 +10,6 @@ yhat = svmPredict(SVMmodel, Xtest);
 svmNerrors = sum(yhat ~= ytest)
 %% LR
 % Cross validates over both lambda and 'rbf' Sigma
-[LRmodel, lambdaStar, LRmu, LRse] = logregKernelFitL1CV(Xtrain, ytrain);
+[LRmodel, lambdaStar, LRmu, LRse] = logregKernelFitL2CV(Xtrain, ytrain);
 yhat = logregPredict(LRmodel, Xtest);
 lrNerrors = sum(yhat ~= ytest)
