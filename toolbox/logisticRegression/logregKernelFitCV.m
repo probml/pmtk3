@@ -15,7 +15,7 @@ function [model, lambdaStar, mu, se] = logregKernelFitCV...
     if Nclasses < 3, newSupport = [-1, 1]; 
     else             newSupport = 1:Nclasses; 
     end
-    [y, support] = setSupport(newSupport); 
+    [y, support] = setSupport(y, newSupport); 
     parameterSpace = makeModelSpace(lambdaRange, kernelParamRange);
     %%    
     coreFitFn = @(X, y, lambda, includeOffset)...
@@ -31,6 +31,8 @@ function [model, lambdaStar, mu, se] = logregKernelFitCV...
     %%
     model.ySupport = support; 
 end
+
+
 
 
 

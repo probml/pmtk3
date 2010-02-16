@@ -16,11 +16,9 @@ function yhat = svmPredict(model, X)
     logFile     = fullfile(tmp, 'testLog.svm');
     resultsFile = fullfile(tmp, 'results.svm');
     svmWriteData(X, zeros(size(X, 1), 1), testFile);
-    systemf('svm_classify %s %s %s %s > %s', testOptions, testFile, modelFile, resultsFile, logFile);
-    yhat = sign(dlmread(resultsFile));
-    if 1
-       delete(testFile);
-       delete(resultsFile);
-       delete(logFile);
+    if systemf('svm_classify %s %s %s %s > %s', testOptions, testFile, modelFile, resultsFile, logFile);
+       error('There was a problem executing svm_classify.exe - please make sure its on the system path');
     end
+        
+    yhat = sign(dlmread(resultsFile));
 end

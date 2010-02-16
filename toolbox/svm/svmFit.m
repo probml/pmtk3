@@ -14,8 +14,7 @@ function model = svmFit(X, y, sigma, options)
     
     tmp = tempdir();
     trainFile = fullfile(tmp, 'train.svm');
-    d = datestr(now); d(d ==':') = '_'; d(d == ' ') = '_'; d(d=='-') = [];
-    modelFile = fullfile(tmp, sprintf('model%s.svm', d)); 
+    modelFile = fullfile(tmp, sprintf('model%s.svm', datestring())); 
     logFile   = fullfile(tmp, 'trainLog.svm');
     
     %-z c       classification
