@@ -4,18 +4,21 @@ function prostateComparison()
 % (Also want fig 3.5 on p58)
 
 saveLatex = false;
-
+setSeed(1);
 mse = zeros(4, 1); 
 weights = zeros(9, 4);
 
 data = load('prostate.mat');
-               
-fitFns        = {@(X, y, lambda)linregFitL1(X, y, lambda), ...
-                 @(X, y, lambda)linregFitL2(X, y, lambda)};
+data.X = mkUnitVariance(center(data.X));
+data.Xtrain = data.X(data.istrain, :); 
+data.Xtest  = data.X(~data.istrain, :);
+
+fitFns        = {@(X, y, lambda)linregFitL1(X, y, lambda, 'lars', false), ...
+                 @(X, y, lambda)linregFitL2(X, y, lambda, 'QR', false)};
                 
 predictFn     =  @linregPredict;
 lossFn        =  @(yhat, ytest)mean((yhat - ytest).^2);
-lambdas       = [logspace(2, 0, 30) 0];
+lambdas       =  logspace(2, 0, 30);
 figureNames   = {'prostateLassoCV', 'prostateRidgeCV'};
 titlePrefixes = {'lasso', 'ridge'};
 nfolds = 10;
@@ -39,20 +42,11 @@ end
        include = ndx{:};
        exclude = setdiff(1:D, include);
        X(:, exclude) = 0;
-       model = linregFit(X, y);
+       model = linregFit(X, y); 
     end
 %%    
 d = size(data.Xtrain, 2); 
 ss = powerset(1:d); % 256 models
-
-if 0
-for i=1:length(ss)
-  model = fitFn(data.Xtrain, data.ytrain, ss(i));
-  yhat = predictFn(model, data.Xtest);
-  loss(i) = lossFn(yhat, data.ytest)
-end
-end
-
 [modelFull, ssStarFull] = ...
         fitCv(ss, @fitFn, predictFn, lossFn, data.Xtrain, data.ytrain, nfolds);
 
@@ -79,17 +73,19 @@ weights(:, 4) = [model.w0; colvec(model.w)];
 yhat = linregPredict(model, data.Xtest);
 mse(4) = lossFn(yhat, data.ytest); 
 %%
-fprintf('| L1 | L2 | SS | OLS |\n');
-display(mse);
-display(weights);
+fprintf('| OLS | SS | L2 | L1 |\n');
+fprintf('weights: \n');
+display(roundto(weights(:, end:-1:1), 0.001));
+fprintf('mse: \n'); 
+display(roundto(mse(end:-1:1), 0.001));
 %%
 if saveLatex
    weights = weights(:, end:-1:1); 
    mse = mse(end:-1:1);
-   headers = {'', 'LS', 'Subset', 'Ridge', 'Lasso'};
-   terms = [{'Intercept'; 'Weights'}; cell(7, 1); {'MSE'}];
+   headers = {'Term', 'LS', 'Best Subset', 'Ridge', 'Lasso'};
+   terms = [{'Intercept'}, data.names(1:8), {'Test Error'}]';
    table = [cell(10, 1), num2cell([weights; rowvec(mse)])];
-   latextable(table, 'Horiz', headers, 'Vert', terms, 'format', '%.2f', 'Hline', [1, 10]); 
+   latextable(table, 'Horiz', headers, 'Vert', terms, 'format', '%.3f', 'Hline', [1, 10]); 
 end
 
 end
