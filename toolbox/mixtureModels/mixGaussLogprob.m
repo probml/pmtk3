@@ -1,14 +1,12 @@
-function [logp] = mixGaussLogprob(model, X)
+function [logp, logPz] = mixGaussLogprob(model, X)
 % logp(i) = log p(X(i,:) | model)
-
+% logPz(i,k) = log p(z=k, X(i,:), model) unnormalized
 K = model.K;
 N = size(X,1);
-logPost = zeros(N, K);
+logPz = zeros(N, K);
 for k=1:K
   modelK.mu = model.mu(:, k); modelK.Sigma = model.Sigma(:, :, k);
-  logPost(:, k) = log(model.mixweights(k)+eps) + ...
+  logPz(:, k) = log(model.mixweight(k)+eps) + ...
     gaussLogprob(modelK, X);
 end
-logp = logsumexp(logPost, 2);
-
-  
+logp = logsumexp(logPz, 2);
