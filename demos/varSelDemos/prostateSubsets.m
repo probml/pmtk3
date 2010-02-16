@@ -17,14 +17,12 @@ ss = powerset(1:d); % 256 models
 ss(1) = []; % remove empty set
 [model, ssStar, mu, se] = ...
         fitCv(ss, @fitFn, predictFn, lossFn, data.Xtrain, data.ytrain, nfolds);
-
 %% 
-% don't use any features
+% cv estimate using no features
 fitFn0 = @(X, y)linregFitL2(X, y, 0, 'QR', false);
 [mu0, se0] = cvEstimate(fitFn0, predictFn, lossFn, ones(n, 1), data.ytrain,  nfolds);
 %%
-mu = [mu0, mu]; 
-se = [se0, se];
+mu = [mu0, mu];  
 sz = [0; cellfun(@numel, ss)]; % sizes of each subset. 
 figure; hold on;
 plot(sz, mu, '.');
