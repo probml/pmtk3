@@ -11,3 +11,5 @@ end
 n = size(X,1);
 %X = X./repmat(s, [n 1]);
 X = bsxfun(@rdivide,X,s);
+
+end
