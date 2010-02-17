@@ -4,10 +4,14 @@ function [cfiles,info] = cfilelist(directory,cfiles)
     if(nargin < 1);
         directory = '.';
     end
+    if endswith(directory, '.svn')
+        info = [];
+        return
+    end
     if(nargin < 2)
         cfiles = {};
     end
-    cf = dir([directory,'\*.c']);
+    cf = dir(fullfile(directory, '*.c'));
     cfiles = {cf.name};
     info = what(directory);
     flist = dir(directory);
@@ -15,9 +19,9 @@ function [cfiles,info] = cfilelist(directory,cfiles)
     for i=1:numel(dlist)
         dirname = dlist{i};
         if(~strcmp(dirname,'.') && ~strcmp(dirname,'..'))
-            [newCfiles,newInfo] = cfilelist([directory,'\',dirname],cfiles);
+            [newCfiles,newInfo] = cfilelist(fullfile(directory,dirname),cfiles);
             info = [info, newInfo];
-            cfiles = [cfiles,newCfiles];
+            cfiles = [cfiles, newCfiles];
         end
     end
     
