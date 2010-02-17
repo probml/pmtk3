@@ -17,6 +17,7 @@ wLS = X \ y; % initialize with least squares
 options.Display = 'none';
 w = minFunc(@HuberLoss,wLS,options,X,y,delta);
 
-model.w = w;
+model.w = w(2:end);
+model.w0 = w(1);
 model.includeOffset = includeOffset;
 model.sigma2 = var((X*w - y).^2); % MLE of noise variance

@@ -1,4 +1,4 @@
-function model = linregRobustLaplaceLinprogFit(X, y)
+function model = linregRobustLaplaceFitLinprog(X, y)
 % minimize the L1 norm of the residuals using linear programming 
 % We assume X is an N*D  matrix, with no column of 1s
 % model.w = [w0 w1 ... wD], where w0 is the bias
@@ -20,8 +20,8 @@ else
     w = linprog(f,[],[],Aeq,beq,LB,UB);
 end
 w  = w(1:D1);
-
-model.w   = w;
+model.w0 = w(1);
+model.w   = w(2:end);
 model.includeOffset = true;
 X1 = [ones(N,1) X];
 model.sigma2 = var((X1*w - y).^2); % MLE of noise variance

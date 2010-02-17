@@ -44,7 +44,7 @@ while ~converged
     % optimize neg log likelihood of observed data (ECME)
     % using gradient free optimizer.
     nllfn = @(v) -sum(linregRobustStudentLogprob(...
-      struct('w', w, 'sigma2', sigma2, 'dof', v, 'includeOffset', includeOffset),...
+      struct('w0', w(1), 'w', w(2:end), 'sigma2', sigma2, 'dof', v, 'includeOffset', includeOffset),...
       Xtrain, y));
     dofMax = 100; dofMin = 0.1;
     dof = fminbnd(nllfn, dofMin, dofMax); 
@@ -54,5 +54,8 @@ end
 
 model = struct('w', w, 'sigma2', sigma2, 'dof', dof,...
   'relTol', relTol, 'iterations', iter, 'includeOffset', includeOffset);
+
+model.w0 = model.w(1);
+model.w = model.w(2:end);
 
 end
