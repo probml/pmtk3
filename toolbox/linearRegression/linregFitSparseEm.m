@@ -15,7 +15,7 @@ function [w, sigma, logpostTrace]=linregFitSparseEm(X, y,  prior, scale, shape, 
 % X: N*D design matrix 
 % y:        data (vector of size N*1),
 % sigma: if +ve, it is fixed at this value, if 0 it will be estimated
-% prior: one of 'normalgamma','laplace','normaljeffreys','neg'
+% prior: one of 'ng','laplace','nj','neg'
 %
 % Optional args
 % maxIter - [300]
@@ -54,7 +54,7 @@ else % sigma known
 end
 
 switch(prior)
-  case 'normalgamma'
+  case 'ng'
     pen=@normalGammaNeglogpdf;
     diffpen=@normalGammaNeglogpdfDeriv;
     params = {shape, scale};
@@ -62,7 +62,7 @@ switch(prior)
     pen=@laplaceNeglogpdf;
     diffpen=@laplaceNeglogpdfDeriv;
     params = {scale^2/2}; % user specifies gamma
-  case 'normaljeffreys'
+  case 'nj'
     pen=@normalJeffreysNeglogpdf;
     diffpen=@normalJeffreysNeglogpdfDeriv;
     params = {};
@@ -114,18 +114,23 @@ while ~done
   end
   
   if computeLogpost
-    logpdf(iter)=N/2*log(sigma^2)+ sum(se)/(2*sigma^2) + sum(pen(w,params{:}));
+    NLL(iter)=N/2*log(sigma^2)+ sum(se)/(2*sigma^2) + sum(pen(w,params{:}));
+    if iter>1
+      if NLL(iter) > NLL(iter-1)
+        error('EM did not decrease NLL')
+      end
+    end
   end
   if verbose% && (mod(iter,50)==0)
     if computeLogpost
-      fprintf('iter %d, logpost = %5.3f\n', iter, -logpdf(iter))
+      fprintf('iter %d, pen NLL = %5.3f\n', iter, NLL(iter))
     else
       fprintf('iter %d\n', iter)
     end
   end
   
   if iter>1
-    converged = convergenceTest(logpdf(iter), logpdf(iter-1), convTol);
+    converged = convergenceTest(NLL(iter), NLL(iter-1), convTol);
   else
     converged = false;
   end
@@ -135,7 +140,7 @@ while ~done
   iter = iter + 1;
 end
 
-logpostTrace = -logpdf;
+logpostTrace = -NLL;
 
 warning on MATLAB:log:logOfZero
 warning on MATLAB:divideByZero

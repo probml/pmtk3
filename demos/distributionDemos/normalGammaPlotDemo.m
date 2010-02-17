@@ -4,7 +4,7 @@ xs = -1:0.01:1;
 %deltas = [1 1 0.1, 0.1];
 %cs = [1 0.1 1 0.1];
 
-deltas = [0.01 0.75 1]; % 2];
+deltas = [0.01 0.75 1 2];
 cs = ones(1,4);
 [styles, colors, symbols] =  plotColors;
 
@@ -22,8 +22,10 @@ title('-log pdf of normalGamma distribution')
 printPmtkFigure('normalGammaLog')
 end
 
+if 1
 figure; hold on
 xs = -10:0.1:10;
+deltas = [0.01 0.75 1];
 for i=1:length(deltas)
   delta = deltas(i);
   c = cs(i);
@@ -34,6 +36,7 @@ end
 legend(str,'location','southeast')
 title('-log pdf of NEG distribution')
 printPmtkFigure('NEGLog')
+end
 
 if 0
 % LLA approx

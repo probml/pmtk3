@@ -3,7 +3,7 @@ function scadPlot()
 z = -10:0.01:10;
 a = 3.7; lambda = 2;
 
-if 1
+if 0
 % Reproduce fig 1c of Fan & Li 2001
 p = penalty(z, a, lambda);
 figure;
@@ -12,16 +12,19 @@ title(sprintf('scad penalty rule, %s=%5.3f, a=%5.3f', '\lambda', lambda, a))
 printPmtkFigure('scadPenalty')
 end
 
-% LLA approximation - fig 1 ofr Zou & Li 2008
+% LLA and LQA approximation - fig 1 of Zou & Li 2008
 p = penalty(z, a, lambda);
 figure; hold on
 plot(z, p, 'k-', 'linewidth', 3);
-p = LLA(z, a, lambda, 4);
-plot(z, p, 'r:', 'linewidth', 3);
+pl = LLA(z, a, lambda, 4);
+plot(z, pl, 'r--', 'linewidth', 3);
+pq = LQA(z, a, lambda, 4);
+plot(z, pq, 'b:', 'linewidth', 3);
 title(sprintf('scad penalty rule, %s=%5.3f, a=%5.3f', '\lambda', lambda, a))
+legend('SCAD', 'LLA', 'LQA')
 printPmtkFigure('scadLLA')
 
-if 1
+if 0
 % Reproduce fig 2c of Fan & Li 2001
 z=-10:0.01:10;
 theta = estimator(z, a, lambda);
@@ -83,3 +86,9 @@ function out = LLA(z, a, lambda, bstar)
 out = penalty(bstar, a, lambda) + ...
   derivPenalty(bstar, a, lambda)*(abs(z)-abs(bstar));
 end
+
+function out = LQA(z, a, lambda, bstar)
+out = penalty(bstar, a, lambda) + ...
+  0.5*derivPenalty(bstar, a, lambda)/abs(bstar)*(z.^2-bstar^2);
+end
+
