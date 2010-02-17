@@ -64,12 +64,12 @@ function pdf = paracylFast(v, x)
             end
             nk = fix(-v2);
             f1 = dvsa(v2, x);
-            v1 = v2+1.0d0;
+            v1 = v2+1;
             f0 = dvsa(v1, x);
             dv(nk+1) = f1;
             dv(nk-1+1) = f0;
             for  k = nk-2:-1:0;
-                f = x.*f0+(k-v0+1.0d0).*f1;
+                f = x.*f0+(k-v0+1).*f1;
                 dv(k+1) = f;
                 f1 = f0;
                 f0 = f;
@@ -83,7 +83,7 @@ function pdf = paracylFast(v, x)
             end
             dv(1) = pd0;
             m = 100+na;
-            f1 = 0.0d0;
+            f1 = 0;
             f0 = 1.0d-30;
             for  k = m:-1:0;
                 f = x.*f0+(k-v0+1).*f1;
@@ -101,7 +101,7 @@ function pdf = paracylFast(v, x)
     end
     for  k = 0:na-1;
         v1 = abs(v0)+k;
-        if (v >= 0.0d0) ;
+        if (v >= 0) ;
             dp(k+1) = 0.5.*x.*dv(k+1)-dv(k+1+1);
         else
             dp(k+1) = -0.5.*x.*dv(k+1)-v1.*dv(k+1+1);
@@ -112,13 +112,13 @@ end
    
 function pd = dvsa(va, x) 
     
-    sq2 = sqrt(2.0d0);
-    ep  = exp(-.25d0.*x.*x);
-    va0 = 0.5d0*(1.0d0-va);
-    if (va == 0) ;
+    sq2 = sqrt(2);
+    ep  = exp(-.25.*x.*x);
+    va0 = 0.5*(1-va);
+    if (va == 0) 
         pd = ep;
     else
-        if (x == 0) ;
+        if (x == 0) 
             if (va0 <= 0 && va0 == fix(va0)) 
                 pd = 0;
             else
@@ -127,8 +127,8 @@ function pd = dvsa(va, x)
             end;
         else
             g1 = gamma(-va);
-            a0 = 2.0d0.^(-0.5.*va-1).*ep./g1;
-            vt = -.5d0.*va;
+            a0 = 2.^(-0.5.*va-1).*ep./g1;
+            vt = -.5.*va;
             g0 = gamma(vt);
             pd = g0;
             r  = 1;
@@ -170,9 +170,9 @@ end
    
 function pv = vvla(va, x) 
     qe=exp(0.25.*x.*x);
-    a0=abs(x).^(-va-1.0d0).*sqrt(2.0d0./pi).*qe;
-    r=1.0d0;
-    pv=1.0d0;
+    a0=abs(x).^(-va-1).*sqrt(2./pi).*qe;
+    r=1;
+    pv=1;
     for  k=1:18;
         r=0.5.*r.*(2.*k+va-1.0).*(2.*k+va)./(k.*x.*x);
         pv=pv+r;
