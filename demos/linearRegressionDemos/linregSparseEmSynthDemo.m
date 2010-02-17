@@ -16,15 +16,16 @@ for i=1:D
    end
 end
 C  = chol(correl);
-sparsities = [0.02 0.05];
+sparsities = [0.05];
 for sparsityNdx=1:length(sparsities)
    sparsity = sparsities(sparsityNdx);
    
-for trial=1:3
+for trial=1:5
    nnz = ceil(D*sparsity);
    ndx = unidrnd(D,1,nnz);
    w_true = zeros(D,1);
    w_true(ndx) = 1*randn(nnz,1);
+   weightsTrue{trial} = w_true;
    
    Ntrain = 100;
    Ntest = 10000;
@@ -40,7 +41,7 @@ for trial=1:3
    [Xtrain, mu] = center(Xtrain);
    Xtest = center(Xtest, mu);
    
-   priors = {'ridge',  'NG', 'NJ', 'laplace'}; % neg too slow
+   priors = {'NG', 'NJ', 'laplace', 'ridge'}; % neg too slow
    for m=1:length(priors)
       prior = priors{m};
       switch lower(prior)
@@ -69,6 +70,9 @@ for trial=1:3
       [w, sigmaHat, logpostTrace] = linregFitSparseEm(Xtrain, ytrain,  prior, scale, shape, sigmaTrue, options{:});
       mse(m) = mean((ytest-Xtest*w).^2);
       mseTrial(trial,m) = mse(m);
+      nnzTrial(trial,m) = sum(abs(w) > 1e-3);
+      nnzTrue(trial) = nnz;
+      weights{trial,m} = w;
       
       if ~strcmpi(prior, 'ridge')
         figure(m); clf; plot(logpostTrace, 'o-');
@@ -79,9 +83,31 @@ for trial=1:3
    
 end % for trial
 
+
 figure;
 boxplot(mseTrial, 'labels', priors)
 title(sprintf('mse on test for D=%d, Ntrain=%d, sparsity=%3.2f', D, Ntrain, sparsity))
-printPmtkFigure(sprintf('linregSparseEm2SynthBoxplot%d', sparsityNdx))
+printPmtkFigure(sprintf('linregSparseEmSynthMseBoxplot%d', sparsity*100))
 
+figure;
+boxplot(nnzTrial(:, 1:end-1), 'labels', priors(1:end-1))
+title(sprintf('nnz  for D=%d, Ntrain=%d, sparsity=%3.2f', D, Ntrain, sparsity))
+printPmtkFigure(sprintf('linregSparseEmSynthNnzBoxplot%d', sparsity*100))
+
+figure; nr = 2; nc = 2;
+subplot(nr, nc, 1);
+trial = 1;
+stem(weightsTrue{trial}, 'marker', 'none'); box off
+title('true');
+for m=1:length(priors)-1
+  w = weights{trial,m};
+  subplot(nr, nc, m+1);
+  stem(w, 'marker','none')
+  box off
+  title(priors{m})
+end
+printPmtkFigure(sprintf('linregSparseEmSynthWeights%d',  sparsity*100))
+ 
+
+   
 end % sparsityNdx
