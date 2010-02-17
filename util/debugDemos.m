@@ -2,8 +2,10 @@ function errors = debugDemos(subFolder, exclusions)
 % Debug the PMTK demos, by attempting to run them all, saving 
 % a list of those which fail. 
 
+dbclear if error
+dbclear if warning
 if nargin < 1, subFolder = ''; end
-if nargin < 2, exclusions = {'PMTKslow', '#interactive'}; end
+if nargin < 2, exclusions = {'%#slow', 'PMTKslow', '#interactive'}; end
 hideFigures
 [demos, excluded] = processExamples({}, exclusions, 0, false, subFolder);
 ndemos = numel(demos);
