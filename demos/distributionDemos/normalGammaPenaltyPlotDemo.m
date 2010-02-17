@@ -4,6 +4,7 @@ function normalGammaPenaltyPlotDemo()
 % and p(w) = normalGamma(w | delta, c)
 
 %#author Francois Caron
+%#modified Kevin Murphy
 
 c = 1;
 pas=.002;
@@ -15,8 +16,8 @@ if 1
 figure; hold on
 for i=1:length(deltas)
   delta = deltas(i);
-  Z=pen_normalgamma(X,delta,c)+pen_normalgamma(Y,delta,c)...
-    -pen_normalgamma(1,delta,c)-pen_normalgamma(pas,delta,c);
+   pen = @(X) normalGammaNeglogpdf(X, delta, c);
+  Z=pen(X) + pen(Y) - pen(1) - pen(pas);
   contour(X,Y,Z,[0 0], styles{i}, 'linewidth', 2);
   str{i} = sprintf('%s=%3.2f, c=1', '\delta', delta);
 end
@@ -30,8 +31,8 @@ if 0
 figure; hold on
 for i=1:length(deltas)
   delta = deltas(i);
-  Z=pen_neg(X,delta,c)+pen_neg(Y,delta,c)...
-    -pen_neg(1,delta,c)-pen_neg(pas,delta,c);
+  pen = @(X) normalExpGammaNeglogpdf(X, delta, c);
+  Z=pen(X) + pen(Y) - pen(1) - pen(pas);
   contour(X,Y,Z,[0 0], styles{i}, 'linewidth', 2);
   str{i} = sprintf('%s=%3.2f, c=1', '\delta', delta);
 end
@@ -42,24 +43,3 @@ end
   
 end
 
-function out=pen_normalgamma(w, delta, c)
-gamma = sqrt(2*c);
-warning off
-out=(.5-delta)*log(abs(w))-log(besselk(delta-.5,gamma*abs(w)));
-warning on
-end
-
-function out=pen_neg(z,shape,scale)
-% gamma^2 = c = scale
-sz = size(z);
-z = z(:);
-lambda = shape;
-gamma = sqrt(scale);
-warning off
-for k=1:length(z)
-  out(k)=-z(k)^2/(4*gamma^2)...
-      -log(mpbdv(-2*(lambda+1/2),abs(z(k))/gamma));
-end
-warning on
-out = reshape(out, sz);
-end

@@ -11,7 +11,7 @@ for k=1:length(z)
   [temp outLap(k)]=min(.5*(z(k)-x).^2+c*abs(x));
   
   % NG
-  deltas = [0.01 0.75 1 2];
+  deltas = [0.01 0.75 1];
   for i=1:length(deltas)
     delta = deltas(i);
     [temp outNG{i}(k)]=min(.5*(z(k)-x).^2+normalGammaNeglogpdf(x, delta, 1));
