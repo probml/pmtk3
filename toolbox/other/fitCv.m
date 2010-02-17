@@ -24,6 +24,9 @@ function [model, Kstar, mu, se] = fitCv(Ks, fitFn, predictFn, lossFn, X, y,  Nfo
 % se(i) - standard error for mu(i)
 
 if nargin < 8, useSErule = false; end
+% if params is 1 row vector, it is a probbaly a set of
+% single tuning params
+if isvector(Ks), Ks = Ks(:); end
 NK = size(Ks,1);
 mu = zeros(1,NK);
 se = zeros(1,NK);
