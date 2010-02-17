@@ -13,7 +13,7 @@ y = [y' k  k k]';
 
   
 NUs = [1:2:9 0];
-table = zeros(length(NUs), 8);
+table = zeros(length(NUs), 7);
 for i = 1:length(NUs)
     nu = NUs(i);
     % Using gradient descent
@@ -24,8 +24,8 @@ for i = 1:length(NUs)
     tic;
     modelEM = linregRobustStudentFitEm(x, y, nu);
     tEM = toc;
-    table(i,:) = [tGradDesc sqrt(modelGradDesc.sigma2) modelGradDesc.w(:)' ...
-      tEM sqrt(modelEM.sigma2) modelEM.w(:)'];
+    table(i,:) = [tGradDesc sqrt(modelGradDesc.sigma2) rowvec(modelGradDesc.w) ...
+      tEM sqrt(modelEM.sigma2) rowvec(modelEM.w)];
 end
 table
 
