@@ -13,7 +13,7 @@ for i=1:D
        correl(i,j)=rho^(abs(i-j));
    end
 end
-X=randn(N,D*chol(correl);
+X=randn(N,D)*chol(correl);
 D_true=3;
 % true weight vector has 3 non zero components
 z_true=[3 1.5 0 0 2 0 0 0 zeros(1,D-8)]';
