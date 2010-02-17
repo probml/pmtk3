@@ -5,14 +5,14 @@ lambda = 0.001; % just for numerical stability
 sigmas = [0.5 1 50];
 K = 10;
 centers = linspace(min(xtrain), max(xtrain), K)';
-addOffset = false;
+
 
 figure; hold on
 for i=1:length(sigmas)
     sigma = sigmas(i);
     Xtrain = rbfKernel(xtrain(:), centers, sigma);
     Xtest = rbfKernel(xtest(:), centers, sigma);
-    model = linregL2Fit(Xtrain, ytrain, lambda, addOffset);
+    model = linregFitL2(Xtrain, ytrain, lambda, 'QR', false);
     ypred = linregPredict(model, Xtest);
     
     subplot2(3,3,i,1)
