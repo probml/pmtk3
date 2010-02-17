@@ -1,4 +1,4 @@
-function [w, sigma, logpostTrace]=linregSparseEmFit(X, y, param, varargin)
+function [w, sigma, logpostTrace]=linregFitSparseEmFrancois(X, y, param, varargin)
 % Use EM to fit linear or probit regression  with sparsity promoting prior
 % See the paper "Sparse Bayesian nonparametric regression"
 % by F. Caron and A. Doucet, ICML2008.
@@ -59,7 +59,8 @@ end
 switch(param.model)
    case 'ridge'
       % no EM required
-      w = linregL2Fit(A, y, param.c, false);
+      model = linregFitL2(A, y, param.c,'qr', false);
+      w = model.w;
       sigma = mean((A*w - y).^2);
       logpostTrace = [];
       return;

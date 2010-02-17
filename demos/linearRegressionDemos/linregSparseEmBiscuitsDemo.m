@@ -1,6 +1,6 @@
 % Sparse linear regression with EM on biscuits data
 
-close all
+
 
 
 load biscuits.mat
@@ -52,7 +52,7 @@ for m=1:length(models)
             param.alpha = alpha_trial(ndx2);
             param.sigma = -sigma_trial(ndx3);
             tmpOptions = {'maxIter', 30, 'verbose', false};
-            fitFn = @(X,y) linregSparseEmFit(X,y, param, tmpOptions{:});
+            fitFn = @(X,y) linregFitSparseEmFrancois(X,y, param, tmpOptions{:});
             predictFn = @(w, X) X*w;
             lossFn = @(yhat, y)  sum((yhat-y).^2);
             [errMean(ndx1,ndx2,ndx3), se] = cvEstimate(fitFn, predictFn, lossFn, Xtrain, ytrain,  Nfolds);
@@ -68,7 +68,7 @@ for m=1:length(models)
    param.sigma = -sigma_trial(ndx3);
    fprintf('CV %s best c=%5.3f, alpha=%5.3f, sigma = %5.3f\n', ...
       param.model, param.c, param.alpha, param.sigma);
-   [param.w] =  linregSparseEmFit(Xtrain, ytrain, param, options{:});
+   [param.w] =  linregFitSparseEmFrancois(Xtrain, ytrain, param, options{:});
    params{m} = param;
    errSurface{m} = errMean;
    w = param.w;
