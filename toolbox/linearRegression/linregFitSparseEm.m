@@ -31,7 +31,7 @@ function [w, sigma, logpostTrace]=linregFitSparseEm(X, y,  prior, scale, shape, 
 % University of British Columbia
 % Jan 30, 2008
 
-%#author Francois Caron
+%PMTKauthor Francois Caron
 % modified Kevin Murphy, 12 Nov 2009
 
 
@@ -39,7 +39,7 @@ warning off MATLAB:log:logOfZero
 warning off MATLAB:divideByZero
 
 [maxIter, verbose, convTol] = process_options(varargin, ...
-   'maxIter', 300, 'verbose', false, 'convTol', 1e-5);
+   'maxIter', 100, 'verbose', false, 'convTol', 1e-2);
 
  if nargin <5, shape = 1; end
  if nargin < 6, sigma = -1; end
@@ -53,7 +53,14 @@ else % sigma known
    computeSigma=0;
 end
 
-switch(prior)
+switch(lower(prior))
+  case 'ridge'
+    % no EM required - this is provided to simplify
+    % comparisons with the other methods (see linregSparseEmSynthDemo)
+    w = linregFitL2QR(X, y, scale);
+    sigma = mean((X*w - y).^2);
+    logpostTrace = [];
+    return;
   case 'ng'
     pen=@normalGammaNeglogpdf;
     diffpen=@normalGammaNeglogpdfDeriv;
@@ -61,7 +68,7 @@ switch(prior)
   case 'laplace'
     pen=@laplaceNeglogpdf;
     diffpen=@laplaceNeglogpdfDeriv;
-    params = {scale^2/2}; % user specifies gamma
+    params = {scale^2/2}; % user specifies laplace param, not gamma param
   case 'nj'
     pen=@normalJeffreysNeglogpdf;
     diffpen=@normalJeffreysNeglogpdfDeriv;
@@ -92,12 +99,22 @@ else
    computeLogpost = false;
 end
 
-logpdf=[];
+
 w = pinv(X)*y;  % initialize from ridge
 yhat = X*w;  se = (y-yhat).^2;
-if computeSigma, sigma = sqrt(mean(var(se))); end
+if computeSigma,
+  fprintf('initializing sigma\n');
+  sigma = sqrt(mean(var(se))) % this will overfit because we use 
+  % the pinv to initialize w
+  sigma = 1;
+end
 done = false;
 iter = 1; 
+if verbose
+  str = sprintf('EM with %s, scale %5.3f, shape %5.3f\n', ...
+    prior, scale, shape);
+  disp(str);
+end
 while ~done
   wOld = w;
   sigmaOld = sigma;
@@ -110,18 +127,20 @@ while ~done
   yhat = X*w;
   se = (y-yhat).^2;
   if computeSigma
-    sigma = sqrt(mean(var(se)));
+    sigma = sqrt(mean(var(se)))
   end
   
   if computeLogpost
     NLL(iter)=N/2*log(sigma^2)+ sum(se)/(2*sigma^2) + sum(pen(w,params{:}));
     if iter>1
-      if NLL(iter) > NLL(iter-1)
-        error('EM did not decrease NLL')
+      delta = NLL(iter) - NLL(iter-1);
+      if delta > 0 && ~approxeq(NLL(iter), NLL(iter-1))
+        fprintf('warning:  NLL went from %8.5f to %8.5f (should decrease)\n', ...
+          NLL(iter-1), NLL(iter))
       end
     end
   end
-  if verbose% && (mod(iter,50)==0)
+  if verbose &&(mod(iter,50)==0)
     if computeLogpost
       fprintf('iter %d, pen NLL = %5.3f\n', iter, NLL(iter))
     else
@@ -134,13 +153,20 @@ while ~done
   else
     converged = false;
   end
-  if isequal(w, wOld) || converged || (iter > maxIter)
+  if isequal(w, wOld) || converged || (iter > maxIter) || isinf(NLL(iter))
     done = true;
+    if isinf(NLL(iter))
+      w = wOld; % backtrack to previous stable value
+      if verbose, fprintf('backtracking from -inf\n'); end
+    end
   end
   iter = iter + 1;
 end
 
 logpostTrace = -NLL;
+if 0 % verbose
+  figure; plot(logpostTrace, 'o-'); title(str)
+end
 
 warning on MATLAB:log:logOfZero
 warning on MATLAB:divideByZero

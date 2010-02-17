@@ -3,6 +3,7 @@ function out=diffpen_normalexponentialgamma(z,shape,scale)
 lambda = shape;
 gamma = sqrt(scale);
 warning off
+out = zeros(size(z));
 for k=1:length(z)
   out(k)=(lambda+0.5)/gamma...
       *paracyl(-2*(lambda+1),abs(z(k))/gamma)...

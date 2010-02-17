@@ -1,4 +1,4 @@
-function [model, Kstar, mu, se] = fitCv(Ks, fitFn, predictFn, lossFn, X, y,  Nfolds, useSErule)
+function [model, bestNdx, mu, se] = fitCv(Ks, fitFn, predictFn, lossFn, X, y,  Nfolds, useSErule)
 % Fit a set of models of different complexity and use cross validation to pick the best
 %
 % Inputs:
@@ -19,14 +19,17 @@ function [model, Kstar, mu, se] = fitCv(Ks, fitFn, predictFn, lossFn, X, y,  Nfo
 %
 % Outputs
 % model  - best model
-% Kstar - best tuning parameter
-% mu(i) - mean loss for Ks(i)
-% se(i) - standard error for mu(i)
+% bestNdx - index of best model
+% mu(i) - mean loss for Ks(i,:)
+% se(i) - standard error for mu(i,:)
 
 if nargin < 8, useSErule = false; end
 % if params is 1 row vector, it is a probbaly a set of
 % single tuning params
-if isvector(Ks), Ks = Ks(:); end
+if size(Ks,1)==1
+  %warning('fitCV expects each *row* of Ks to containg tuning params')
+  % Ks = Ks(:);
+end
 NK = size(Ks,1);
 mu = zeros(1,NK);
 se = zeros(1,NK);
@@ -35,9 +38,9 @@ for ki=1:NK
   [mu(ki), se(ki)] =  cvEstimate(@(X,y) fitFn(X,y,K), predictFn, lossFn, X, y,  Nfolds);
 end    
 if useSErule
-  kstar = oneStdErrorRule(mu, se);
+  bestNdx = oneStdErrorRule(mu, se);
 else
-  kstar = argmin(mu);
+  bestNdx = argmin(mu);
 end
-Kstar = Ks(kstar,:);
+Kstar = Ks(bestNdx,:);
 model = fitFn(X, y, Kstar);
