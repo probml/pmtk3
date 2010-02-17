@@ -13,7 +13,7 @@ lambdas = [0 0.00001 0.001];
 NL = length(lambdas);
 for k=1:NL
     lambda = lambdas(k);
-    [model] = linregL2Fit(Xtrain, ytrain, lambda);
+    [model] = linregFitL2(Xtrain, ytrain, lambda, 'QR', false);
     [ypredTest, s2] = linregPredict(model, Xtest);
     sig = sqrt(s2);
     
@@ -23,7 +23,7 @@ for k=1:NL
     plot(xtest, ypredTest, 'k', 'linewidth', 3);
     plot(xtest, ypredTest + sig, 'b:');
     plot(xtest, ypredTest - sig, 'b:');
-    title(sprintf('ln lambda %5.3f', log(lambda)))
+    title(sprintf('ln lambda %5.3f', log(lambda + eps)))
 end
 
 %% Now compare logev with train/test error on a dense grid of lambdas
@@ -32,7 +32,7 @@ NL = length(lambdas);
  testMse = zeros(1,NL); trainMse = zeros(1,NL);
 for k=1:NL
     lambda = lambdas(k);
-    [model] = linregL2Fit(Xtrain, ytrain, lambda);
+    [model] = linregFitL2(Xtrain, ytrain, lambda, 'QR', false);
     ypredTest = linregPredict(model, Xtest);
     ypredTrain = linregPredict(model, Xtrain);
 

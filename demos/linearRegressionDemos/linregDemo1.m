@@ -12,7 +12,6 @@ ypredTest = Xtest1*w;
 %% Use pmtk functions to do same thing
 model = linregFit(Xtrain, ytrain);
 [ypredTest2, v] = linregPredict(model, Xtest);
-assert(approxeq(w, model.w))
 assert(approxeq(ypredTest, ypredTest2))
 
 %% Plot
