@@ -15,10 +15,7 @@ function [w, sigma, logpostTrace]=linregFitSparseEm(X, y,  prior, scale, shape, 
 % X: N*D design matrix 
 % y:        data (vector of size N*1),
 % sigma: if +ve, it is fixed at this value, if 0 it will be estimated
-% prior: one of 'normalgamma','laplace','normaljeffreys'
-% scale of Gamma, or rate of Laplace (NJ sets this to 0)
-% shape (NJ sets this to 0, Laplace sets it to 1)
-%   
+% prior: one of 'normalgamma','laplace','normaljeffreys','neg'
 %
 % Optional args
 % maxIter - [300]
@@ -58,27 +55,24 @@ end
 
 switch(prior)
   case 'normalgamma'
-    pen=@pen_normalgamma;
-    diffpen=@diffpen_normalgamma;
+    pen=@normalGammaNeglogpdf;
+    diffpen=@normalGammaNeglogpdfDeriv;
+    params = {shape, scale};
   case 'laplace'
-    pen=@pen_laplace;
-    diffpen=@diffpen_laplace;
-    shape = 1;
-    gamma = scale;
-    scale = gamma^2/2;
+    pen=@laplaceNeglogpdf;
+    diffpen=@laplaceNeglogpdfDeriv;
+    params = {scale^2/2}; % user specifies gamma
   case 'normaljeffreys'
-    pen=@pen_normaljeffreys;
-    diffpen=@diffpen_normaljeffreys;
-    shape = 0;
-    scale = 0;
+    pen=@normalJeffreysNeglogpdf;
+    diffpen=@normalJeffreysNeglogpdfDeriv;
+    params = {};
+  case 'neg'
+    pen=@normalExpGammaNeglogpdf;
+    diffpen=@normalExpGammaNeglogpdfDeriv;
+    params = {shape, scale};
   otherwise
     error(['unrecognized prior ' prior])
 end
-
-param.prior = prior;
-param.D = D;
-param.shape =shape;
-param.scale = scale;
 
 % Singular value decomposition to speed code
 % - see Griffin and Brown, 2005, for details
@@ -87,7 +81,9 @@ ind=find(diag(S)>10^-10);
 S=S(ind,ind);
 U=U(:,ind);
 V=V(:,ind);
-alpha_hat=inv(S)*U'*y;
+Sinv = inv(S);
+alpha_hat = Sinv*U'*y;
+Si2 = S^-2;
 
 if 1 % strcmp(model,'laplace') 
    computeLogpost = true;
@@ -106,15 +102,11 @@ while ~done
   wOld = w;
   sigmaOld = sigma;
   % E step
-  if 0
-     % debug - hard code laplace case
    % psi=diag(abs(wOld)./gamma); 
-   psi=diag(abs(wOld)./(gamma * sigmaOld)); % Park and Cassella '08
-  else
-    psi=diag(abs(wOld)./diffpen(wOld,param));
-  end
+   %psi=diag(abs(wOld)./(gamma * sigmaOld)); % Park and Cassella '08
+    psi=diag(abs(wOld)./diffpen(wOld,params{:}));
   % M step
-  w = psi*V*inv((V'*psi*V+sigma^2*S^-2))*alpha_hat;
+  w = psi*V*inv((V'*psi*V+sigma^2*Si2))*alpha_hat;
   yhat = X*w;
   se = (y-yhat).^2;
   if computeSigma
@@ -122,7 +114,7 @@ while ~done
   end
   
   if computeLogpost
-    logpdf(iter)=N/2*log(sigma^2)+ sum(se)/(2*sigma^2) + sum(pen(w,param));
+    logpdf(iter)=N/2*log(sigma^2)+ sum(se)/(2*sigma^2) + sum(pen(w,params{:}));
   end
   if verbose% && (mod(iter,50)==0)
     if computeLogpost
@@ -151,41 +143,8 @@ warning on MATLAB:divideByZero
 end
 
  
-%%%%%%%%%%
-% Sub-functions: penalizations and their derivatives
 
-% Normal gamma
-function out=pen_normalgamma(w,hyper)
-lambda = hyper.shape;
-gamma = sqrt(2*hyper.scale);
-out=(0.5-lambda)*log(abs(w))-log(besselk(lambda-0.5,gamma*abs(w)));
-end
 
-function out=diffpen_normalgamma(w,hyper)
-  lambda = hyper.shape;
-gamma = sqrt(2*hyper.scale);
-out=gamma*besselk(lambda-3/2,gamma*abs(w),1)./besselk(lambda-1/2,gamma*abs(w),1);
-out(isnan(out))=inf;
-end
 
-% Laplace
-function out=pen_laplace(w,hyper)
-gamma = sqrt(2*hyper.scale);
-out=abs(w)*gamma;
-end
-
-function out=diffpen_laplace(w,hyper)
-  gamma = sqrt(2*hyper.scale);
-out=gamma;
-end
-
-% Normal Jeffreys
-function out=pen_normaljeffreys(w,hyper)
-out=log(abs(w));
-end
-
-function out=diffpen_normaljeffreys(w,hyper)
-out=1./abs(w);
-end
 
 

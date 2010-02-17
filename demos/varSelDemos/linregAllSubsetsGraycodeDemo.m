@@ -45,7 +45,7 @@ end
 figure
 imagesc(Models');
 colormap gray
-printPmtkFigure('grayCodeModels')
+printPmtkFigure('grayCodeModelsGray')
 
 figure
 plot(scoreSS);
