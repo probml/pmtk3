@@ -13,6 +13,7 @@ data.X = mkUnitVariance(center(data.X));
 data.Xtrain = data.X(data.istrain, :); 
 data.Xtest  = data.X(~data.istrain, :);
 
+
 fitFns        = {@(X, y, lambda)linregFitL1(X, y, lambda, 'lars', false), ...
                  @(X, y, lambda)linregFitL2(X, y, lambda, 'QR', false)};
                 
@@ -42,7 +43,8 @@ end
        include = ndx{:};
        exclude = setdiff(1:D, include);
        X(:, exclude) = 0;
-       model = linregFit(X, y); 
+       lambda = eps; % needed to avoid numerical issues caused by 0 entries in X
+       model = linregFitL2(X, y, lambda, 'QR', false); 
     end
 %%    
 d = size(data.Xtrain, 2); 
