@@ -1,7 +1,24 @@
 function pdf = paracylFast(v, x) 
 % Parabolic cylinder function
-    
-    dv = zeros(101, 1);
+% Input:   x --- Argument of Dv(x)
+%          v --- Order of Dv(x)
+%
+%                PDF --- Dv(x)
+%
+% This program is a direct conversion of the corresponding Fortran program in
+% S. Zhang & J. Jin "Computation of Special Functions" (Wiley, 1996).
+% online: http://iris-lee3.ece.uiuc.edu/~jjin/routines/routines.html
+%
+% Converted by f2matlab open source project:
+% online: https://sourceforge.net/projects/f2matlab/
+% written by Ben Barrowes (barrowes@alum.mit.edu)
+%
+% Slightly modified by Mahieddine. M. ICHIR
+%
+% Modified for use in PMTK
+
+
+    dv = zeros(101, 1);  
     dp = zeros(101, 1); 
     xa  = abs(x);
     v   = v + sign(v);
@@ -132,11 +149,12 @@ function pd = dvsa(va, x)
             g0 = gamma(vt);
             pd = g0;
             r  = 1;
-            for  m = 1:250;
-                vm = .5.*(m-va);
-                gm = gamma(vm);
+            gm = gamma(0.5*((1:250)-va));
+            for  m = 1:250
+                %vm = .5.*(m-va);
+                %gm = gamma(vm);
                 r  = -r.*sq2.*x./m;
-                r1 = gm.*r;
+                r1 = gm(m).*r;
                 pd = pd+r1;
                 if (abs(r1) < abs(pd)*eps) 
                     break
