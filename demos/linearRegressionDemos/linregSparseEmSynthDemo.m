@@ -46,7 +46,11 @@ for trial=1:5
       prior = priors{m};
       switch lower(prior)
         case 'nj'
-          scales = 1; shapes = 1; % dummy values
+          scales = [1 1];
+          shapes = [1 1];
+          % these are dummy values, since NJ has no params
+         % Also, we use 2 values since fitCV converts
+         % a matrix of 1 row  to a column vector
         case {'laplace','ridge'}
           scales = [0.001 0.01 0.1 1 10];
           shapes = 1;

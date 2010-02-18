@@ -56,8 +56,8 @@
 % with options; all options can be passed to the outer function and
 % its unprocessed arguments can be passed to the inner function.
 
-%#author Mark Paskin
-%#url http://ai.stanford.edu/~paskin/software.html
+%PMTKauthor Mark Paskin
+%PMTKurl http://ai.stanford.edu/~paskin/software.html
 
 
 % Copyright (C) 2002 Mark A. Paskin

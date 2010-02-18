@@ -28,7 +28,7 @@ if nargin < 8, useSErule = false; end
 % single tuning params
 if size(Ks,1)==1
   %warning('fitCV expects each *row* of Ks to containg tuning params')
-  % Ks = Ks(:);
+  Ks = Ks(:);
 end
 NK = size(Ks,1);
 mu = zeros(1,NK);
