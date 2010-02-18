@@ -149,10 +149,22 @@ function pd = dvsa(va, x)
             g0 = gamma(vt);
             pd = g0;
             r  = 1;
+            batchSize = 250;
+            m = 1;
+            gm = gamma(0.5*((1:batchSize)-va));
+            while true
+                r  = -r.*sq2.*x./m;
+                r1 = gm(m).*r;
+                pd = pd+r1;
+                if (abs(r1) < abs(pd)*eps) || m > 250; 
+                    break
+                end
+                m = m+1;
+            end
+            
+            %{
             gm = gamma(0.5*((1:250)-va));
             for  m = 1:250
-                %vm = .5.*(m-va);
-                %gm = gamma(vm);
                 r  = -r.*sq2.*x./m;
                 r1 = gm(m).*r;
                 pd = pd+r1;
@@ -160,6 +172,7 @@ function pd = dvsa(va, x)
                     break
                 end
             end
+            %}
             pd = a0.*pd;
         end
     end
