@@ -1,5 +1,11 @@
-function [list, g, map] = whoCallsMe(fname)
-
+function [list, m, g, map] = whoCallsMe(fname)
+% Return a list of all of the mfiles on the current path that call
+% the specified fname. 
+%
+% m is a list of all of the (non-built-in) matlab files on your path
+% g is an adjacency matrix s.t. g(i, j) = true iff m{i} calls m{j}.
+% map is a struct mapping mfile names to indices in m and g. 
+%
 w = which(fname);
 if isempty(w)
     list = []; g = []; map = struct();  
