@@ -12,6 +12,11 @@ if isempty(w)
     fprintf('%s is not on your path!\n', fname);
     return
 end
+if startswith(w, matlabroot)
+    list = []; g = []; map = struct();  
+    fprintf('%s is a built-in matlab function.\n', fname);
+    return 
+end
 
 warning off %#ok
 if endswith(fname, '.m'), fname = fname(1:end-2); end
