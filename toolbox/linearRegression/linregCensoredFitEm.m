@@ -7,7 +7,7 @@ function [ model, yhat ] = linregCensoredFitEm( x, y, censored, relTol )
 % 
 % yhat(i) = E[z(i)] computed during EM
 
-%#author Hannes Bretschneider
+%author Hannes Bretschneider
 
 if nargin < 4
     relTol = 10^-6;

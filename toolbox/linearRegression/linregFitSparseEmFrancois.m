@@ -3,7 +3,7 @@ function [w, sigma, logpostTrace]=linregFitSparseEmFrancois(X, y, param, varargi
 % See the paper "Sparse Bayesian nonparametric regression"
 % by F. Caron and A. Doucet, ICML2008.
 %
-%#author Francois Caron
+%PMTKauthor Francois Caron
 %
 % -- INPUTS --
 %

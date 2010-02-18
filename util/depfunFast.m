@@ -19,8 +19,8 @@ function filelist = depfunFast(fn,recursive)
 % e.g.
 %     filelist = mydepfun('myfunction')
 %     filelist = mydepfun('C:\files\myfunction.m',true) 
-%#author Malcolm Wood
-%#url http://www.mathworks.com/matlabcentral/fileexchange/10702
+%PMTKauthor Malcolm Wood
+%PMTKurl http://www.mathworks.com/matlabcentral/fileexchange/10702
 
 if ~ischar(fn)
     error('First argument must be a string');

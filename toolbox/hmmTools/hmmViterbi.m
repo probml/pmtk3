@@ -9,10 +9,10 @@ function [path,junk1,junk2] = hmmViterbi(logPrior, logTransmat, logObslik)
 
 % delta(j,t) = prob. of the best seq of length t-1 and then going to state j, and O(1:t)
 % psi(j,t) = the best predecessor state, given that we ended up in state j at t
-%#PMTKmex
+%PMTKmex
 % Matlab Version by Kevin Murphy - C version by Guillaume Alain
-%#author Guillaume Alain 
-%#url http://www.cs.ubc.ca/~gyomalin/
+%PMTKauthor Guillaume Alain 
+%PMTKurl http://www.cs.ubc.ca/~gyomalin/
 
 %%
 % For compatability with the C version, which should be used when possible. 
