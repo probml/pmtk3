@@ -1,7 +1,7 @@
 
 % compare speed and accuracy of different linregStudent methods
 
-%#author Yi Huang
+%PMTKauthor Yi Huang
 
 seed = 0; setSeed(seed);
 x = sort(rand(10,1));

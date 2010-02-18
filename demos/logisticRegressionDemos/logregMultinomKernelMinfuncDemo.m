@@ -1,6 +1,6 @@
-%#author Mark Schmidt
-%#modified Kevin Murphy
-%#url http://people.cs.ubc.ca/~schmidtm/Software/minFunc/minFunc.html#7
+%PMTKauthor Mark Schmidt
+%PMTKmodified Kevin Murphy
+%PMTKurl http://people.cs.ubc.ca/~schmidtm/Software/minFunc/minFunc.html#7
 % It is modified by replacing penalizedKernelL2_matrix,
 % which uses sum_c w(:,c)' K w(:,c) as the regularizer,
 % with the simpler penalizedL2, which uses w' w as the regularizer.

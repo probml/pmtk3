@@ -1,5 +1,5 @@
 %% bootstrap demo for MLE for Bernoulli
-%#slow
+%PMTKslow
 theta = 0.7;
 Ns = [10 100];
 for Ni=1:length(Ns)

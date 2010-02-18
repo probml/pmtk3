@@ -1,7 +1,8 @@
 % Figure 1 from Figueiredo'07,  "Gradient projection for sparse reconstruction"
-%#author Figueiredo
-%#url http://www.lx.it.pt/~mtf/GPSR/
-% KPM modified the code to only use l1ls, not the GPSR code
+%PMTKauthor Figueiredo
+%PMTKurl http://www.lx.it.pt/~mtf/GPSR/
+%PMTKmodified Kevin Murphy 
+% the code to only use l1ls, not the GPSR code
 
 setSeed(0);
 % n is the original signal length

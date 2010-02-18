@@ -1,5 +1,5 @@
 %% Compare kernalized L1 logistic regession to an svm. 
-%#slow
+%PMTKslow
 load crabs
 %% SVM
 Sigmas = logspace(-1, 0.5, 20);

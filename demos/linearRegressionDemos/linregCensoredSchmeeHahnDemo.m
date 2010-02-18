@@ -1,5 +1,5 @@
 
-%#author Hannes Bretschneider
+%PMTKauthor Hannes Bretschneider
 
 %% Load
 load failuretime;

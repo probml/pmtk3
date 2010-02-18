@@ -5,8 +5,8 @@ function [x,cnt] = pagerankpow(G)
 % There are no matrix operations.  Only the link structure
 % of G is used with the power method.
 
-%#author Cleve Moler
-%#url http://www.mathworks.com/moler/ncm/pagerankpow.m
+%PMTKauthor Cleve Moler
+%PMTKurl http://www.mathworks.com/moler/ncm/pagerankpow.m
 
 % Link structure
 

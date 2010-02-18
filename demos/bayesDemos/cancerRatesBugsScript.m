@@ -1,5 +1,5 @@
 
-%#author Xuekui Zhang
+%PMTKauthor Xuekui Zhang
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
 %Data set and initial values

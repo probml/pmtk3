@@ -1,4 +1,4 @@
-function x = pagerank(U,G,p)
+function x = pagerankDemoMoler(U,G,p)
 % PAGERANK  Google's PageRank
 % pagerank(U,G,p) uses the URLs and adjacency matrix produced by SURFER,
 % together with a damping factory p, (default is .85), to compute and plot
@@ -6,8 +6,8 @@ function x = pagerank(U,G,p)
 % x = pagerank(U,G,p) returns the page ranks instead of printing.
 % See also SURFER, SPY.
 
-%#author Cleve Moler
-%#url http://www.mathworks.com/moler/ncm/pagerank.m
+%PMTKauthor Cleve Moler
+%PMTKurl http://www.mathworks.com/moler/ncm/pagerank.m
 
 if nargin < 3, p = .85; end
 

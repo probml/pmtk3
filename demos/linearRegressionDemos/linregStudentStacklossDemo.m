@@ -6,7 +6,7 @@
 % The reason for this is not clear - is Lange evaluating the expected
 % complete data loglik instead?
 
-%#author Hannes Bretschneider
+%PMTKauthor Hannes Bretschneider
 
 load stackloss;
 n = size(X,1);

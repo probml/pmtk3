@@ -1,4 +1,4 @@
-%#slow
+%PMTKslow
 % naive Bayes classifier for binary MNIST digits
 %Ntrain=5000, 83 errors in 500, rate = 0.166
 

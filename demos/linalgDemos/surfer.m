@@ -16,8 +16,8 @@ function [U,G] = surfer(root,n)
 %    it may be necessary to have the operating system terminate MATLAB.
 %    Key words from such URLs can be added to the skip list in surfer.m.
 
-%#author Cleve Moler
-%#url http://www.mathworks.com/moler/ncm/surfer.m
+%PMTKauthor Cleve Moler
+%PMTKurl http://www.mathworks.com/moler/ncm/surfer.m
 
 % Initialize
 
