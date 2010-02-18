@@ -1,9 +1,9 @@
 function [bestModel, postMean, condMean, postModelProb, supports, out, condCov] = ...
   fbmpCore(A, y, varargin)      
 % Fast Bayesian Matching Pursuit
-%#author Schniter and Ziniel
-%#url http://www.ece.osu.edu/~zinielj/fbmp/pubs.html
-%#modified Kevin Murphy
+%PMTKauthor Schniter and Ziniel
+%PMTKurl http://www.ece.osu.edu/~zinielj/fbmp/pubs.html
+%PMTKmodified Kevin Murphy
 
 %
 % [bestModel, postMean, condMean, postModelProb, supports, out, condCov] = ...

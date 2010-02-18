@@ -11,9 +11,9 @@ function [gamma, alpha, beta, loglik] = hmmFwdBack(initDist, transmat, obslik)
 % loglik = log p(y(1:T))
 % Matlab Version by Kevin Murphy
 % C Version by Guillaume Alain 
-%#author Guillaume Alain 
-%#url http://www.cs.ubc.ca/~gyomalin/
-%#PMTKmex
+%PMTKauthor Guillaume Alain 
+%PMTKurl http://www.cs.ubc.ca/~gyomalin/
+%PMTKPMTKmex
 
 
 %[alpha, loglik] = hmmFilter(initDist, transmat, obslik);

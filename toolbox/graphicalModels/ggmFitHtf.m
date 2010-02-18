@@ -5,7 +5,7 @@ function [precMat, iter] = ggmFitHtf(S, G, maxIter)
 % We use the algorithm due to 
 % Hastie, Tibshirani & Friedman ("Elements" book, 2nd Ed, 2008, p633)
 
-%#author Baback Moghaddam
+%PMTKauthor Baback Moghaddam
 
 p = length(S); 
 if nargin < 3, maxIter = 30; end

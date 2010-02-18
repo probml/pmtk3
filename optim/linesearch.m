@@ -65,8 +65,8 @@ function  [xn,Fn,gn,info,perf] = ...
 %
 % In both cases  info(2) = U'(am)/U'(0) .
 
-%#author Hans Bruun Nielsen
-%#url http://www2.imm.dtu.dk/~hbn/immoptibox/
+%PMTKauthor Hans Bruun Nielsen
+%PMTKurl http://www2.imm.dtu.dk/~hbn/immoptibox/
 
 % Version 04.02.02.  hbn(a)imm.dtu.dk
 

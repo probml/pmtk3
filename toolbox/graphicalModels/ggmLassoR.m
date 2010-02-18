@@ -4,9 +4,9 @@ function [precMat, covMat] = ggmLassoR(C, rho, varargin)
 
 
 
-%#author Rob Tibshirani 
-%#url  http://www-stat.stanford.edu/~tibs/glasso/
-%#modified Kevin Murphy
+%PMTKauthor Rob Tibshirani 
+%PMTKurl  http://www-stat.stanford.edu/~tibs/glasso/
+%PMTKmodified Kevin Murphy
 
 [useMBapprox, junk] = process_options(varargin, 'useMB', 0);
 %C = cov(X);

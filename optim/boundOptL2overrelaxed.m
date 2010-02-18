@@ -23,8 +23,8 @@ function [W, output]  = boundOptL2overrelaxed(X, Y, lambda)
 
 
 
-%#author Balaji Krishnapuram
-%#modified Kevin Murphy, Matt Dunham
+%PMTKauthor Balaji Krishnapuram
+%PMTKmodified Kevin Murphy, Matt Dunham
 
 
     [nexamples ndimensions]= size(X);

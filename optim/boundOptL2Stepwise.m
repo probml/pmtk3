@@ -23,10 +23,10 @@ function [w, output] = boundOptL2Stepwise(X,Y,lambda)
 %               maximum number of iterations was reached
 
 
-%#author Balaji Krishnapuram
-%#modified Kevin Murphy, Matt Dunham
+%PMTKauthor Balaji Krishnapuram
+%PMTKmodified Kevin Murphy, Matt Dunham
 
-    [nexamples,nclasses]    =size(Y); %#ok
+    [nexamples,nclasses]    =size(Y);
     [nexamples,ndimensions] =size(X);
     convergence_tol=1e-5;
     % Stepwise requires quite a small convergence tol to produce the same

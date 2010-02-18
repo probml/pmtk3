@@ -15,8 +15,9 @@ function [P,W,m,nmax] = ggmLassoHtf(S, lambda, varargin)
 % Nouter is # of outer loop iterations used (based on 1e-4 tolerance)
 % MaxInner is the max # of inner cycle iteratios (pathwise cood descent) 
 
-%#author Baback Moghaddam    
-% baback@jpl.nasa.gov     03/07/09
+%PMTKauthor Baback Moghaddam    
+%PMTKemail baback@jpl.nasa.gov
+%PMTKdate 03/07/09
 
 % graph has p nodes
 p = length(S); 

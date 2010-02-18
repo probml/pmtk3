@@ -1,2 +1,2 @@
-%#url http://www.gaussianprocess.org/gpml/code/matlab/doc/
-%#author Carl Rasmussen and Chris Williams
+%PMTKurl http://www.gaussianprocess.org/gpml/code/matlab/doc/
+%PMTKauthor Carl Rasmussen and Chris Williams
