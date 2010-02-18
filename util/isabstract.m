@@ -1,7 +1,7 @@
 function tf = isabstract(className)
 % Return true iff the class is abstract    
     
-    if tagsearch(which(className),'%#abstract')
+    if hasTag(which(className),'%PMTKabstract')
         tf = true; return;
     end
 

@@ -9,7 +9,7 @@ function mfiles = findAllFilesWithTag(tag)
     for i=1:numel(allfiles)
         fpath = which(allfiles{i});
         if isempty(fpath), continue; end
-        if(tagsearch(fpath, tag))
+        if(hasTag(fpath, tag))
            mfiles = [mfiles,allfiles{i}]; 
         end
     end
