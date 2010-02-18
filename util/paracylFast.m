@@ -19,6 +19,7 @@ function pdf = paracylFast(V, X)
 %
 % PDF is of size length(V)-by-length(X)
 
+
 pdf = zeros(numel(V), numel(X));
 for i=1:numel(V)
     for j =1:numel(X)
@@ -115,7 +116,7 @@ for i=1:numel(V)
                 dv(na:-1:1) = s0*fFull(na:-1:1);
             end
         end
-        pdf(i, j) = dv(na);
+        pdf(i, j) = dv(max(na, 1));
     end
 end
 end
@@ -136,10 +137,8 @@ else
             pd = sqrt(pi)/(2^(-.5*va)*ga0);
         end
     else
-        
         a0 = 2^(-0.5*va-1)*ep/gamma(-va);
         pd = gamma( -.5*va);
-        
         r  = 1;
         maxsize = 250;
         m = 1;
