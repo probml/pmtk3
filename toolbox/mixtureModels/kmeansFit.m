@@ -1,4 +1,4 @@
-function [mu, assign, errHist] = kmeansSimple(data, K, varargin)
+function [mu, assign, errHist] = kmeansFit(data, K, varargin)
 % data(i,:) is i'th case
 % mu(:,k) is k'th centroid
 % assign(i) = cluster to which data point i is assigned

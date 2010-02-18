@@ -18,7 +18,7 @@ function exportToGoogleCode(package, username, passwd, summary)
   fprintf('Exporting code to %s...\n', fname);
   exportsvn(pwd, fpath);
   
-  if 0
+  if 1
   fprintf('Uploading file...\n');
   %uploadFn = fullfile(pwd, 'util', 'googlecode_upload.py');
   uploadFn = fullfile(matlabToolsRoot(),'googlecode_upload.py');
