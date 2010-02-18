@@ -1,11 +1,15 @@
+function linregGroupLassoDemo()
+
 % Demo of group lasso
 %PMTKauthor Mark Schmidt
 
-setSeed(0);
+setSeed(1);
 
 % Generate categorical features
-nInstances = 500;
-nStates = [3 3 2 3 3 5 4 5 5 6 10 3 3 4 5 2 2 6 8 9 2 7]; % Number of discrete states for each categorical feature
+nInstances = 100;
+%nStates = [3 3 2 3 3 5 4 5 5 6 10 3 3 4 5 2 2 6 8 9 2 7];
+nStates = [10 5 10 5 20 5 10 5 20 5 10 20 10];
+% Number of discrete states for each categorical feature
 X = zeros(nInstances,length(nStates));
 offset = 0;
 for i = 1:nInstances
@@ -36,9 +40,12 @@ for s = 1:length(nStates)
 end
 
 % Make data
-y = X_ind*wTrue + randn(nInstances,1);
+y = X_ind*wTrue + 1*randn(nInstances,1);
 Xtrain = X_ind;
 ytrain = y;
+
+[Xtrain, mu, s] = standardizeCols(Xtrain);
+ytrain = center(ytrain);
 
 if 0
 Xtrain = X_ind(1:floor(nInstances/2),:);
@@ -56,18 +63,51 @@ for s = 1:length(nStates)
 end
 nGroups = max(groups);
 
-% Solve
-maxLambda = groupLassoMaxLambda(groups, Xtrain, ytrain);
-lambdas = linspace(maxLambda, 0, 100);
-fitFn = @(X,y,lambda) linregFitGroupLassoProj(X,y, groups, lambda);
+% setup CV
 predictFn = @(w, X) X*w;
 lossFn = @(yhat, y)  sum((yhat-y).^2);
 useSErule = false;
-Nfolds = 2;
-[wHat, kstar, mu, se] = fitCv(lambdas, fitFn, predictFn, lossFn, Xtrain, ytrain,  Nfolds, useSErule);
+Nfolds = 3;
+
+% Fit with regular lasso
+maxLambda = lassoMaxLambda(Xtrain, ytrain);
+lambdas = linspace(maxLambda, 1e-2, 100);
+fitFn = @(X,y,lambda) linregFitL1InteriorPoint(X,y,  lambda); %5sec
+%fitFn = @(X,y,lambda) linregFitL1Shooting(X,y,  lambda); %30sec
+%fitFn = @(X,y,lambda) linregFitL1LarsSingleLambda(X,y,  lambda);
+tic
+[wHatLasso, kstar, mu, se] = fitCv(lambdas, fitFn, predictFn, lossFn, Xtrain, ytrain,  Nfolds, useSErule);
+toc
+
+% Fit with group lasso
+maxLambda = groupLassoMaxLambda(groups, Xtrain, ytrain);
+lambdas = linspace(maxLambda, 0, 100);
+fitFn = @(X,y,lambda) linregFitGroupLassoProj(X,y, groups, lambda);
+tic
+[wHatGroup, kstar, mu, se] = fitCv(lambdas, fitFn, predictFn, lossFn, Xtrain, ytrain,  Nfolds, useSErule);
+toc
+
 
 % Plot
-figure; stem(wTrue); title('truth');
-figure; stem(wHat); title('group lasso')
+figure; stem(wTrue); title('truth');  drawGroups(nStates, wTrue);
+printPmtkFigure('groupLassoTruth')
+
+figure; stem(wHatGroup); title('group lasso'); drawGroups(nStates, wTrue);
+printPmtkFigure('groupLassoGroup')
+
+figure; stem(wHatLasso); title('lasso'); drawGroups(nStates, wTrue);
+printPmtkFigure('groupLassoVanilla')
+
+placeFigures
+end
+
+function drawGroups(nStates, wTrue)
+hold on
+for i=1:length(nStates)
+  j = sum(nStates(1:i));
+  h=line([j j], [min(wTrue(:)) max(wTrue(:))]);
+  set(h,'color','r','linewidth',1);
+end
+end
 
 

@@ -2,6 +2,8 @@ function w = linregFitL1Shooting(X, y, lambda)
 %% min_w ||Xw-y||_2^2 + lambda ||w||_1
 % Coordinate descent method  ("Shooting"), [Fu, 1998]
     
+if lambda==0, w = X\y; return; end
+
  % initialize with ridge estimate
 initModel = linregFitL2(X, y, lambda);
 w = initModel.w;

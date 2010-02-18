@@ -56,8 +56,8 @@ function [x,status,history] = l1_ls(A,varargin)
 %
 % COPYRIGHT 2008 Kwangmoo Koh, Seung-Jean Kim, and Stephen Boyd
 
-%#author Kwangmoo Koh
-%#url http://stanford.edu/~boyd/l1_ls
+%PMTKauthor Kwangmoo Koh
+%PMTKurl http://stanford.edu/~boyd/l1_ls
 
 %------------------------------------------------------------
 %       INITIALIZE
