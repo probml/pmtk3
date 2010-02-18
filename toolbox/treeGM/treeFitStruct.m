@@ -10,8 +10,8 @@ function [G, treeAdjMat, wij, pi, pij] = treeFitStruct(X, values, weights)
 % O(d^2 K^2) tome to compute MI, K=#states
 % O(d^2) time to find MWST
 
-%#author Sam Roweis
-%#modified Kevin Murphy
+%PMTKauthor Sam Roweis
+%PMTKmodified Kevin Murphy
 
 % This implementation is efficient since it only ever uses
 % for loops over the states K, which are often binary.

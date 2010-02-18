@@ -6,8 +6,8 @@ function model = linregRobustStudentFitConstr(X, y, dof, sigma2, includeOffset)
 % model is a structure containing fields: w, dof, sigma2
 % where w = [w0 w1 ... wD] is a column vector, where w0 is the bias
 
-%#author Hannes Bretschneider
-%#modified Kevin Murphy
+%PMTKauthor Hannes Bretschneider
+%PMTKmodified Kevin Murphy
 
 if nargin < 3 || isempty(dof) || (dof==0), dof = []; end
 if nargin < 4 || isempty(sigma2) || (sigma2==0), sigma2 = []; end

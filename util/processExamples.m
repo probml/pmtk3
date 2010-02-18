@@ -33,8 +33,8 @@ function [text, excluded] = processExamples(includeTags, excludeTags, pauseTime,
     %
     % EXAMPLES:
     %
-    % text = processExamples({'#testPMTK'},{'#inprogress','#slow','#broken'})  % used to make testPMTK
-    % text = processExamples({},{'#inprogress','#broken'})                     % used to make runDemos
+    % text = processExamples({},{'PMTKinprogress','PMTKslow','PMTKbroken'})  % used to make testPMTK
+    % text = processExamples({},{'PMTKinprogress','PMTKbroken'})                     % used to make runDemos
     
     if nargin < 1, includeTags = {}; end
     if nargin < 2, excludeTags = {}; end

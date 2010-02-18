@@ -10,8 +10,8 @@ function q = dblquadvec(f, varargin)
 %   See also
 %     DBLQUAD
 
-%#author Aki Vehtari 
-%#url http://www.lce.hut.fi/teaching/S-114.2601/ex/dblquadvec.m
+%PMTKauthor Aki Vehtari 
+%PMTKurl http://www.lce.hut.fi/teaching/S-114.2601/ex/dblquadvec.m
 
 % Based on quadvec by Loren Shure
 % http://www.mathworks.com/matlabcentral/fileexchange/loadFile.do?objectId=10667&objectType=file

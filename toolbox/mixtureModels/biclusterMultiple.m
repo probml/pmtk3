@@ -10,7 +10,7 @@ function [biclusterRows, biclusterCols, rowPostProb, colPostProb, traceRow, trac
 %  year={2003},
 %  publisher={Oxford Univ Press}
 %}
-%#author Cody Severinski
+%PMTKauthor Cody Severinski
 
 [allRowThres, allColThres, nSamples, nBurnin, nRestarts, plot, verbose, trace, alpha, xiRow, xiCol, beta] = processArgs(varargin, ...
       '-allRowThres', [], ...

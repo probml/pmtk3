@@ -1,6 +1,6 @@
 function [model] = linregRobustStudentFitUnconstr(X, y, includeOffset)
 % Unconstrained optimization of linear regression with student noise model
-%#author Yi Huang
+%PMTKauthor Yi Huang
 
 if nargin < 4
     includeOffset = 1;

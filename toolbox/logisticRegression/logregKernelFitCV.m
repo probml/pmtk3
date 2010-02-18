@@ -36,7 +36,7 @@ end
 
 
 
-% #test
+% PMTKtest
 % load crabs
 % [model, paramStar, mu, se] = logregKernelFitCV(Xtrain, ytrain)
 % yhat = logregPredict(model, Xtest)

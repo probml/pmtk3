@@ -1,8 +1,9 @@
 function out = htmlTable(varargin)
 %HTMLTABLE Display a Matlab cell array or numeric matrix in html. 
 %
-%#author Gus Brown
-%#url http://www.mathworks.com/matlabcentral/fileexchange/18329
+%PMTKauthor Gus Brown
+%PMTKurl http://www.mathworks.com/matlabcentral/fileexchange/18329
+%PMTKmodified Matthew Dunham
 %
 %
 % Modified by Matthew Dunham to use processArgs for arg management - also

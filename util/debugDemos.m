@@ -5,7 +5,7 @@ function errors = debugDemos(subFolder, exclusions)
 dbclear if error
 dbclear if warning
 if nargin < 1, subFolder = ''; end
-if nargin < 2, exclusions = {'%#slow', 'PMTKslow', '#interactive'}; end
+if nargin < 2, exclusions = {'PMTKslow', 'PMTKinteractive'}; end
 hideFigures
 [demos, excluded] = processExamples({}, exclusions, 0, false, subFolder);
 ndemos = numel(demos);

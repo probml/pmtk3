@@ -3,9 +3,9 @@ function model = linregRobustLaplaceFitLinprog(X, y)
 % We assume X is an N*D  matrix, with no column of 1s
 % model.w = [w0 w1 ... wD], where w0 is the bias
 
-%#author John D'Errico
-%#modified Kevin Murphy
-%#url http://www.mathworks.com/matlabcentral/fileexchange/loadFile.do?objectId=8553&objectType=FILE
+%PMTKauthor John D'Errico
+%PMTKmodified Kevin Murphy
+%PMTKurl http://www.mathworks.com/matlabcentral/fileexchange/loadFile.do?objectId=8553&objectType=FILE
 
 [N,D] = size(X);
 D1 = D+1;

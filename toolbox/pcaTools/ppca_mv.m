@@ -17,9 +17,9 @@ function [C, ss, M, X,Ye] = ppca_mv(Ye,d,dia)
 % X   (N by d)  expected states
 % Ye  (N by D)  expected complete observations (interesting if some data is missing)
 %
-%#author Jakob Verbeek
-%#url http://lear.inrialpes.fr/~verbeek
-%#date 2006
+%PMTKauthor Jakob Verbeek
+%PMTKurl http://lear.inrialpes.fr/~verbeek
+%PMTKdate 2006
 
 
 [N D]       = size(Ye); % N observations in D dimensions

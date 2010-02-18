@@ -1,7 +1,7 @@
 function [w,b] = perceptronFit(X, y)
 % X(i,:) for case i
 % y(i) = -1 or +1
-%#author Thomas Hoffman
+%PMTKauthor Thomas Hoffman
 
 labels = y; features = X';
 [n d] = size(X);

@@ -13,18 +13,10 @@ function out=wwhich(s1,s2)
 %
 %    See WHICH for more info 
 
-%#author Lucio Andrade
-%#url http://www.mathworks.com/matlabcentral/files/1266/wwhich.m
+%PMTKauthor Lucio Andrade
+%PMTKurl http://www.mathworks.com/matlabcentral/files/1266/wwhich.m
 
-if length(strmatch(strvcat('PCWIN'),computer))
-   pathseparator=';';
-elseif length(strmatch(strvcat('SUN4','SOL2','LNX86'),computer))
-   pathseparator=':';
-else
-   warning('I''m not sure of the path separator for this machine.')
-   pathseparator=':';
-   disp('I''ll use '':'' as a path separator') 
-end
+pathseparator = pathsep;
 
 if nargin<1
   error('Not enough input arguments.')
@@ -62,7 +54,7 @@ end
 out(unique(todel))=[];
 
 %change to string when needed
-if (nargin==1) & (length(out)==1)
+if (nargin==1) && (length(out)==1)
  out=out{1};
 end
 

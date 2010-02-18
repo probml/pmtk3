@@ -13,7 +13,7 @@ end
 
 
 
-%#test
+%PMTKtest
 % load crabs
 % model = logregKernelFitL2CV(Xtrain, ytrain)
 % yhat = logregPredict(model, Xtest)

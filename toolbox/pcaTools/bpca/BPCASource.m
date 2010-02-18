@@ -1,3 +1,3 @@
 % Variational Bayes for PCA, handles missing data
-%#url  http://hawaii.sys.i.kyoto-u.ac.jp/~oba/tools/
-%#author Shigeyuki Oba
+%PMTKurl  http://hawaii.sys.i.kyoto-u.ac.jp/~oba/tools/
+%PMTKauthor Shigeyuki Oba

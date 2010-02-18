@@ -1,8 +1,8 @@
 function model = linregRobustStudentFitEm(X, y, dof,  includeOffset)
 % Fit linear regression with Student noise model by EM
 
-%#author Hannes Bretschneider
-%#modified Kevin Murphy
+%PMTKauthor Hannes Bretschneider
+%PMTKmodified Kevin Murphy
 
 if nargin < 4, includeOffset = true; end
 if nargin < 5, relTol = 10^-6; end
