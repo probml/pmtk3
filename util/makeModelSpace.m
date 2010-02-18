@@ -8,9 +8,9 @@ function models = makeModelSpace(varargin)
 % lambdaRange = logspace(0, 100, 10); 
 % sigmaRange  = linspace(0, 10, 10);
 %
-% allCombinations = makeModelSpace(lambdaRange, sigmaRange
+% allCombinations = makeModelSpace(lambdaRange, sigmaRange)
 %
-%
+% Supports more than 2 dimensions, i.e. makeModelSpace(1:3, 2:4, 7:9, 2:3)
 
     if(nargin == 1)
         space = varargin{1}';
