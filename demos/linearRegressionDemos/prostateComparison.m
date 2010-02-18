@@ -1,7 +1,7 @@
 function prostateComparison() 
 %% Compare L1, L2, allSubsets, and OLS linear regression on the prostate data set
-% Reproduced table 3.3 on p63 of "Elements of statistical learning" 2e
-% (Also want fig 3.5 on p58)
+% Reproduced table 3.3 and fig 3.7 on p63 of "Elements of statistical learning" 2e
+
 
 saveLatex = false;
 setSeed(1);
@@ -10,12 +10,13 @@ weights = zeros(9, 4);
 
 data = load('prostate.mat');
 data.X = mkUnitVariance(center(data.X));
+%data.y = center(data.y);
 data.Xtrain = data.X(data.istrain, :); 
 data.Xtest  = data.X(~data.istrain, :);
+standardizeData  = false; % no need to do this inside CV
 
-
-fitFns        = {@(X, y, lambda)linregFitL1(X, y, lambda, 'lars', false), ...
-                 @(X, y, lambda)linregFitL2(X, y, lambda, 'QR', false)};
+fitFns        = {@(X, y, lambda)linregFitL1(X, y, lambda, 'lars', standardizeData), ...
+                 @(X, y, lambda)linregFitL2(X, y, lambda, 'QR', standardizeData)};
                 
 predictFn     =  @linregPredict;
 lossFn        =  @(yhat, ytest)mean((yhat - ytest).^2);
@@ -49,15 +50,16 @@ end
 %%    
 d = size(data.Xtrain, 2); 
 ss = powerset(1:d); % 256 models
-[modelFull, ssStarFull] = ...
+[modelFull, bestNdx] = ...
         fitCv(ss, @fitFn, predictFn, lossFn, data.Xtrain, data.ytrain, nfolds);
+ssStarFull = ss{bestNdx};
 
 %% for plotting purposes, look at fewer subsets
 ssSmall = {[], 1, 1:2, 1:3, 1:4, 1:5, 1:6, 1:7, 1:8};
-[model, ssStar, mu, se] = ...
+[model, ssStarNdx, mu, se] = ...
         fitCv(ssSmall, @fitFn, predictFn, lossFn, data.Xtrain, data.ytrain, nfolds);
-    
-ssStarNdx = cellfind(ssSmall, ssStar) - 1; % -1 since we are counting from size = 0
+ssStarNdx = ssStarNdx-1;    % -1 since we are counting from size = 0
+%ssStarNdx = cellfind(ssSmall, ssStar) - 1;
 useLogScale = false; 
 figure;
 plotCVcurve(0:8, mu, se, ssStarNdx, useLogScale); % plot w.r.t to subset sizes
@@ -65,9 +67,11 @@ xlabel('subset size');
 yhat = linregPredict(modelFull, data.Xtest); 
 mse(3) = lossFn(yhat, data.ytest);
 t = {  sprintf('%s, mseTest = %5.3f', 'all subsets', mse(3)); 
-       ['best subset = ', mat2str(ssStarFull{:})]
+       ['best subset = ', mat2str(ssStarFull)]
     };
 title(t);
+printPmtkFigure('prostateSubsetsCV');
+
 weights(:, 3) = [modelFull.w0; colvec(modelFull.w)];
 %% OLS
 model = linregFit(data.Xtrain, data.ytrain);

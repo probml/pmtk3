@@ -5,7 +5,7 @@ function out = normalExpGammaNeglogpdf(z, shape, scale)
 z = colvec(z);
 lambda = colvec(shape);
 gamma = colvec(sqrt(scale));
-out = -z.^2/(4*gamma^2)-colvec(log(paracylFast(-2*(lambda+1/2), abs(z)./gamma)));
+out = -z.^2/(4*gamma^2)-colvec(log(paracyl(-2*(lambda+1/2), abs(z)./gamma)));
 if isscalar(shape) && isscalar(scale)
     out = reshape(out, [nrows, ncols]);
 end
@@ -14,7 +14,7 @@ end
 if 0
     out2 = zeros(1, length(z));
     for k=1:length(z)
-      out2(k)=-z(k)^2/(4*gamma^2)-log(paracyl(-2*(lambda+1/2),abs(z(k))/gamma));
+      out2(k)=-z(k)^2/(4*gamma^2)-log(mpbdv(-2*(lambda+1/2),abs(z(k))/gamma));
     end
     assert(approxeq(out, out2));
 end

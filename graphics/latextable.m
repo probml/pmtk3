@@ -87,8 +87,8 @@ function latextable(X,varargin)
 % APPPYPREF applies the last used directory and property settings
 %__________________________________________________________________________
 
-%#url http://www.mathworks.com/matlabcentral/fileexchange/24387-latex-table-creation
-%#author Andrew E. Slaughter
+%PMTKurl http://www.mathworks.com/matlabcentral/fileexchange/24387-latex-table-creation
+%PMTKauthor Andrew E. Slaughter
 
 % 1 - INITILIZE PROGRAM
     a = subfunction_options(varargin);

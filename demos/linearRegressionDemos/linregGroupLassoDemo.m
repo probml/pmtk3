@@ -6,9 +6,9 @@ function linregGroupLassoDemo()
 setSeed(1);
 
 % Generate categorical features
-nInstances = 100;
-%nStates = [3 3 2 3 3 5 4 5 5 6 10 3 3 4 5 2 2 6 8 9 2 7];
-nStates = [10 5 10 5 20 5 10 5 20 5 10 20 10];
+nInstances = 50;
+%nStates = [10 5 10 5 20 5 10 5 20 5 10 20 10];
+nStates = [10 5 10 20 10 20 10];
 % Number of discrete states for each categorical feature
 X = zeros(nInstances,length(nStates));
 offset = 0;

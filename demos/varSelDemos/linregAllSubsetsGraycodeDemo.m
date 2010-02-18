@@ -5,14 +5,13 @@ N = 20; D = 10;
 w = randn(D,1);
 ndx = randperm(D);
 w(ndx(1:5))=0;
-w'
 keep = find(w ~= 0);
 %X = randn(N,D);
 Sigma = randpd(D);
 mu = randn(D,1);
 model = struct('mu', mu, 'Sigma', Sigma);
 X = gaussSample(model, N);
-sigma = 0.1;
+sigma = 1;
 y = X*w + sigma*randn(N,1);
 
 %{
@@ -56,7 +55,8 @@ printPmtkFigure('grayCodeLogpost')
 post = exp(normalizeLogspace(scoreSS));
 figure;
 stem(post)
-axis_pct
+%axis_pct
+axis([-5 numofmodel+5 0 0.1])
 title('p(s|y)')
 printPmtkFigure('grayCodePost')
 
@@ -66,14 +66,21 @@ bar(marg)
 title('p(s(j)|y')
 printPmtkFigure('grayCodeMarg')
 
+fprintf('top models\n');
 ndx = find(post>=0.01);
 for i=1:length(ndx)
    m = ndx(i);
-   fprintf('%5.3f: ', post(m));
+   fprintf('p(%d)=%5.3f: ', m, post(m));
    fprintf('%d ', find(Models(m,:)))
    fprintf('\n')
+   table{i,1} = m;
+   table{i,2} = post(m);
+   table{i,3} = sprintf('%d, ', find(Models(m,:)));
 end
+latextable(table, 'horiz', {'model', 'prob', 'members'}, ...
+  'hline', 1, 'name', 'graycode', 'format', '%5.3f')
 
+fprintf('true weight vector\n');
 fprintf('%4.2f, ', w); fprintf('\n')
 
 

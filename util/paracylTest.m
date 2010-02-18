@@ -1,11 +1,11 @@
-function testParacyl()
+function paracylTest()
     
     z=-10:0.5:10;
     x=-10.5:.5:10;
     
     as = [0.01 0.75 1];
     bs = ones(1,4);
-    compare = false;
+    compare = true;
     if true
     tic
     outNEG = zeros(numel(as), numel(z));
@@ -16,6 +16,7 @@ function testParacyl()
     end
     toc
     end
+    
     tic
     outNEGFast = zeros(numel(as), numel(z));
     for k=1:length(z)
@@ -39,7 +40,7 @@ function out=normalExpGammaNeglogpdf(z,shape,scale)
     gamma = sqrt(scale);
     out = zeros(1, length(z));
     for k=1:length(z)
-        out(k)=-z(k)^2/(4*gamma^2)-log(paracyl(-2*(lambda+1/2),abs(z(k))/gamma));
+        out(k)=-z(k)^2/(4*gamma^2)-log(mpbdv(-2*(lambda+1/2),abs(z(k))/gamma));
     end
 end
 
@@ -48,5 +49,5 @@ function out=normalExpGammaNeglogpdfFast(z,shape,scale)
     % gamma^2 = c = scale
     lambda = shape;
     gamma = sqrt(scale);
-    out = -z.^2/(4*gamma^2)-log(paracylFast(-2*(lambda+1/2), abs(z)./gamma));
+    out = -z.^2/(4*gamma^2)-log(paracyl(-2*(lambda+1/2), abs(z)./gamma));
 end

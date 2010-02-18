@@ -41,7 +41,7 @@ for trial=1:5
    [Xtrain, mu] = center(Xtrain);
    Xtest = center(Xtest, mu);
    
-   priors = {'NG', 'NJ', 'laplace', 'ridge'}; % neg too slow
+   priors = {'NEG', 'NG', 'NJ', 'Laplace', 'Ridge'}; % neg too slow
    for m=1:length(priors)
       prior = priors{m};
       switch lower(prior)
@@ -91,26 +91,32 @@ end % for trial
 figure;
 boxplot(mseTrial, 'labels', priors)
 title(sprintf('mse on test for D=%d, Ntrain=%d, sparsity=%3.2f', D, Ntrain, sparsity))
-printPmtkFigure(sprintf('linregSparseEmSynthMseBoxplot%d', sparsity*100))
+printPmtkFigure(sprintf('linregSparseEmSynthMseBoxplotSp%d', sparsity*100))
 
 figure;
 boxplot(nnzTrial(:, 1:end-1), 'labels', priors(1:end-1))
 title(sprintf('nnz  for D=%d, Ntrain=%d, sparsity=%3.2f', D, Ntrain, sparsity))
-printPmtkFigure(sprintf('linregSparseEmSynthNnzBoxplot%d', sparsity*100))
+printPmtkFigure(sprintf('linregSparseEmSynthNnzBoxplotSp%d', sparsity*100))
 
-figure; nr = 2; nc = 2;
-subplot(nr, nc, 1);
-trial = 1;
-stem(weightsTrue{trial}, 'marker', 'none'); box off
+%nr = 2; nc = 2;
+figure; 
+%subplot(nr, nc, 1);
+trial = 5;
+stem(weightsTrue{trial}, 'marker', 'none', 'linewidth', 2);
+box off
 title('true');
-for m=1:length(priors)-1
+printPmtkFigure(sprintf('linregSparseEmSynthWeightsTruthSp%d',  sparsity*100))
+for m=1:length(priors)
   w = weights{trial,m};
-  subplot(nr, nc, m+1);
-  stem(w, 'marker','none')
+  %subplot(nr, nc, m+1);
+  figure;
+  stem(w, 'marker', 'none', 'linewidth', 2)
   box off
   title(priors{m})
+  printPmtkFigure(sprintf('linregSparseEmSynthWeights%sSp%d',  priors{m}, sparsity*100))
 end
-printPmtkFigure(sprintf('linregSparseEmSynthWeights%d',  sparsity*100))
+
+%printPmtkFigure(sprintf('linregSparseEmSynthWeights%d',  sparsity*100))
  
 
    
