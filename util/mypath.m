@@ -4,6 +4,6 @@ function p = mypath()
 p = tokenize(path, ';'); 
 p = p(~strncmp(matlabroot, p, length(matlabroot)));
 p = filtercell(p, @(s)~issubstring('.svn', s));
-
+p = [p; pwd];
 
 end
