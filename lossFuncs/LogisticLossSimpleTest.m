@@ -1,11 +1,11 @@
-function [nll,g,H,T] = LogisticLossSimple(w,X,y)
+function [nll,g,H,T] = LogisticLossSimpleTest(w,X,y)
 % Negative log likelihood for binary logistic regression
 % w: d*1
 % X: n*d
 % y: n*1, should be -1 or 1
 
-%#author Mark Schmidt
-%#modified Kevin Murphy
+%PMTKauthor Mark Schmidt
+%PMTKmodified Kevin Murphy
 
 [n,p] = size(X);
 

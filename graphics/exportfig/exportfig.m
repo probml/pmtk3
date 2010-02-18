@@ -139,8 +139,8 @@ function varargout = exportfig(varargin)
 %  Copyright 2000 Ben Hinkle
 %  Email bug reports and comments to bhinkle@mathworks.com
 
-%#author Ben Hinkle
-%#url http://www.mathworks.com/matlabcentral/fileexchange/727
+%PMTKauthor Ben Hinkle
+%PMTKurl http://www.mathworks.com/matlabcentral/fileexchange/727
 
 if (nargin < 2)
   error('Too few input arguments');

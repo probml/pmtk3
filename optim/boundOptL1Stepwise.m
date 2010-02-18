@@ -22,8 +22,8 @@ function [w,output] = boundOptL1Stepwise(X,Y,lambda)
 %               output.converged is true iff the algorithm converged before the
 %               maximum number of iterations was reached.
 
-%#author Balaji Krishnapuram
-%#modified Kevin Murphy, Matt Dunham
+%PMTKauthor Balaji Krishnapuram
+%PMTKmodified Kevin Murphy, Matt Dunham
 
 
     [nexamples,nclasses]    =size(Y); %#ok

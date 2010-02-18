@@ -28,7 +28,7 @@ function [ax,h]=suplabel(text,whichLabel,supAxes)
 % SEE ALSO: text, title, xlabel, ylabel, zlabel, subplot,
 %           suptitle (Matlab Central)
 
-%#author: Ben Barrowes <barrowes@alum.mit.edu>
+%PMTKauthor: Ben Barrowes <barrowes@alum.mit.edu>
 
 if nargin < 3
  supAxes=[.08 .08 .84 .84];

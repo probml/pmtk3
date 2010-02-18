@@ -2,7 +2,7 @@ function [] = hintonScaleMulti(varargin)
 % Like hintonScaleSingle but plots multiple images
 % using same color scale
 % Usage: hintonScaleMulti({X1,W1}, {args1}, {X2,W2}, {args2} ...)
-%#author Cody Severinski
+%PMTKauthor Cody Severinski
 
 
 if nargin <= 2

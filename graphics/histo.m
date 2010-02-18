@@ -12,8 +12,8 @@ function histo(x,N,odd,scale)
 % RETURNS: nothing, simply plots 
 % ------------------------------------------------------------
 
-%#author Anders Holtsberg
-%#date  14-12-94
+%PMTKauthor Anders Holtsberg
+%PMTKdate  14-12-94
 
 
 if nargin < 2, N = []; end

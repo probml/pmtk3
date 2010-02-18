@@ -13,8 +13,8 @@ function f = previewfig(h,varargin)
 %  Copyright 2000 Ben Hinkle
 %  Email bug reports and comments to bhinkle@mathworks.com
 
-%#author Ben Hinkle
-%#url http://www.mathworks.com/matlabcentral/fileexchange/727
+%PMTKauthor Ben Hinkle
+%PMTKurl http://www.mathworks.com/matlabcentral/fileexchange/727
 
 filename = [tempname, '.png'];
 args = {'resolution',0,'format','png'};

@@ -1,11 +1,11 @@
-function [T, cost] =  MinimumSpanningTree (CostMatrix)
+function [T, cost] =  minSpanTreeKruskal (CostMatrix)
 % Kruskal's algorithm for MST
 % CostMatrix 
 % T is adjacency matrix
 % cost is overall cost of tree
 
-%#author Soshant Bali
-%#url http://www.ittc.ku.edu/~sbali/graphSoftware.htm
+%PMTKauthor Soshant Bali
+%PMTKurl http://www.ittc.ku.edu/~sbali/graphSoftware.htm
 
 
 % Extract the edge weights from the cost matrix

@@ -7,9 +7,10 @@ function xticklabelRot(xTickLabels, angle, fontsize, ydelta)
 % figure(1); clf; bar([1 2 3]); xticklabelRot({'foo','bar',22}, 90)
 
 
-%#author Denis Gilbert
-%#url  http://www.mathworks.com/matlabcentral/fileexchange/loadFile.do?objectId=3150&objectType=file
-% Modified by Kevin Murphy, 8 June 2006
+%PMTKauthor Denis Gilbert
+%PMTKurl  http://www.mathworks.com/matlabcentral/fileexchange/loadFile.do?objectId=3150&objectType=file
+%PMTKmodified Kevin Murphy
+
 
 if nargin < 2, angle = 90; end
 if nargin < 3, fontsize = get(gca, 'fontsize'); end

@@ -35,8 +35,8 @@
 % The idea of changing dash length with line width came from comments on
 % fex id: 5743, but the implementation is mine :)
 
-%#author Oliver Woodford
-%#url http://www.mathworks.com/matlabcentral/fileexchange/22018
+%PMTKauthor Oliver Woodford
+%PMTKurl http://www.mathworks.com/matlabcentral/fileexchange/22018
 
 % $Id: print_pdf.m,v 1.25 2008/12/15 16:52:07 ojw Exp $
 

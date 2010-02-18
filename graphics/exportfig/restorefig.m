@@ -10,8 +10,8 @@ function restorefig(h,old)
 %  Copyright 2000 Ben Hinkle
 %  Email bug reports and comments to bhinkle@mathworks.com
 
-%#author Ben Hinkle
-%#url http://www.mathworks.com/matlabcentral/fileexchange/727
+%PMTKauthor Ben Hinkle
+%PMTKurl http://www.mathworks.com/matlabcentral/fileexchange/727
 
 for n=1:length(old.objs)
   try

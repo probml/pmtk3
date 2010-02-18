@@ -33,8 +33,8 @@ function varargout = subfigure(varargin)
 % Existing figures that are overlapped by a new subfigure are not deleted. This
 % behavior is dissimilar to subplot.
 
-%# author Steve Hoelzer
-%#date  2004-5-13
+%PMTKauthor Steve Hoelzer
+%PMTKdate  2004-5-13
 
 % Process input arguments
 if nargin == 1

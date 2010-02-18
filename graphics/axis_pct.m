@@ -5,8 +5,8 @@ function ax = axis_pct(pct)
 % Works for linear or log scale.
 % Unfortunately, the axes won't change when new points are plotted.
 
-%#author Tom Minka
-%#url http://research.microsoft.com/~minka/software/lightspeed/
+%PMTKauthor Tom Minka
+%PMTKurl http://research.microsoft.com/~minka/software/lightspeed/
 
 if nargin < 1
   pct = 0.05;

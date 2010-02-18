@@ -1,5 +1,5 @@
 function [assignment, cost] = assignmentoptimal(distMatrix)
-%#PMTKmex
+%PMTKmex
 %ASSIGNMENTOPTIMAL    Compute optimal assignment by Munkres algorithm
 %		ASSIGNMENTOPTIMAL(DISTMATRIX) computes the optimal assignment (minimum
 %		overall costs) for the given rectangular distance or cost matrix, for
