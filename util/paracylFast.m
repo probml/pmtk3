@@ -17,7 +17,7 @@ function pdf = paracylFast(V, X)
 %
 %PMTKmodified Matt Dunham
 %
-% PDF is now of size length(V)-by-length(X)
+% PDF is of size length(V)-by-length(X)
 
 pdf = zeros(numel(V), numel(X));
 for i=1:numel(V)
@@ -25,27 +25,25 @@ for i=1:numel(V)
         v  = V(i);
         x  = X(j);
         dv = zeros(101, 1);
-        dp = zeros(101, 1);
         xa = abs(x);
         v  = v + sign(v);
         nv = fix(v);
         v0 = v-nv;
         na = abs(nv);
-        ep = exp(-.25.*x.*x);
+        ep = exp(-.25*x^2);
         if (na >= 1)
             ja=1;
         end
         if (v >= 0)
             if (v0 == 0)
                 pd0 = ep;
-                pd1 = x.*ep;
+                pd1 = x*ep;
             else
                 for l = 0:ja;
                     v1 = v0+l;
                     if (xa <= 5.8)
                         pd1 = dvsa(v1, x);
-                    end
-                    if (xa > 5.8)
+                    else
                         pd1 = dvla(v1, x);
                     end
                     if (l == 0)
@@ -56,7 +54,7 @@ for i=1:numel(V)
             dv(1) = pd0;
             dv(2) = pd1;
             for  k = 2:na;
-                pdf(i, j) = x.*pd1-(k+v0-1).*pd0;
+                pdf(i, j) = x*pd1-(k+v0-1)*pd0;
                 dv(k+1) = pdf(i, j);
                 pd0 = pd1;
                 pd1 = pdf(i, j);
@@ -75,7 +73,7 @@ for i=1:numel(V)
                 dv(1) = pd0;
                 dv(2) = pd1;
                 for  k = 2:na;
-                    pd = (-x.*pd1+pd0)./(k-1-v0);
+                    pd = (-x*pd1+pd0)/(k-1-v0);
                     dv(k+1) = pd;
                     pd0 = pd1;
                     pd1 = pd;
@@ -92,7 +90,7 @@ for i=1:numel(V)
                 dv(nk+1) = f1;
                 dv(nk-1+1) = f0;
                 for  k = nk-2:-1:0;
-                    f = x.*f0+(k-v0+1).*f1;
+                    f = x*f0+(k-v0+1)*f1;
                     dv(k+1) = f;
                     f1 = f0;
                     f0 = f;
@@ -109,24 +107,15 @@ for i=1:numel(V)
                 f0 = 1e-30;
                 fFull = zeros(1, m+1);
                 for  k = m:-1:0;
-                    fFull(k+1) = x.*f0+(k-v0+1).*f1;
+                    fFull(k+1) = x*f0+(k-v0+1)*f1;
                     f1 = f0;
                     f0 = fFull(k+1);
                 end
-                s0 = pd0./fFull(1);
+                s0 = pd0/fFull(1);
                 dv(na:-1:1) = s0*fFull(na:-1:1);
             end
         end
-        for  k = 0:na-1;
-            v1 = abs(v0)+k;
-            if (v >= 0) ;
-                dp(k+1) = 0.5.*x.*dv(k+1)-dv(k+1+1);
-            else
-                dp(k+1) = -0.5.*x.*dv(k+1)-v1.*dv(k+1+1);
-            end
-        end;
-        pdf(i, j) = dv(na-1+1);
-        
+        pdf(i, j) = dv(na);
     end
 end
 end
@@ -134,7 +123,7 @@ end
 function pd = dvsa(va, x)
 
 sq2 = sqrt(2);
-ep  = exp(-.25.*x.*x);
+ep  = exp(-.25*x^2);
 va0 = 0.5*(1-va);
 if (va == 0)
     pd = ep;
@@ -144,75 +133,70 @@ else
             pd = 0;
         else
             ga0 = gamma(va0);
-            pd = sqrt(pi)./(2.^(-.5.*va).*ga0);
-        end;
+            pd = sqrt(pi)/(2^(-.5*va)*ga0);
+        end
     else
-        g1 = gamma(-va);
-        a0 = 2.^(-0.5.*va-1).*ep./g1;
-        vt = -.5.*va;
-        g0 = gamma(vt);
-        pd = g0;
+        
+        a0 = 2^(-0.5*va-1)*ep/gamma(-va);
+        pd = gamma( -.5*va);
+        
         r  = 1;
         maxsize = 250;
         m = 1;
         gm = gamma(0.5*((1:maxsize)-va));
         while true
-            r  = -r.*sq2.*x./m;
-            r1 = gm(m).*r;
+            r  = -r.*sq2*x/m;
+            r1 = gm(m)*r;
             pd = pd+r1;
             if (abs(r1) < abs(pd)*1e-15) || m > maxsize;
                 break
             end
             m = m+1;
         end
-        pd = a0.*pd;
+        pd = a0*pd;
     end
 end
 end
 
 function pd = dvla(va, x)
 
-ep=exp(-.25.*x.*x);
-a0=abs(x).^va.*ep;
+ep=exp(-.25*x^2);
+a0=abs(x)^va*ep;
 r=1;
 pd=1;
 for  k=1:16;
-    r=-0.5.*r.*(2.*k-va-1.0).*(2.*k-va-2)./(k.*x.*x);
+    r=-0.5*r*(2*k-va-1)*(2*k-va-2)/(k*x^2);
     pd=pd+r;
-    if (abs(r./pd) < 1e-12)
+    if (abs(r/pd) < 1e-12)
         break
     end
 end
-pd=a0.*pd;
+pd=a0*pd;
 if (x < 0)
     x1=-x;
     vl = vvla(va, x1);
     gl=gamma(-va);
-    pd=pi.*vl./gl+cos(pi.*va).*pd;
+    pd=pi*vl/gl+cos(pi*va)*pd;
 end
 
 end
 
 function pv = vvla(va, x)
 
-qe=exp(0.25.*x.*x);
-a0=abs(x).^(-va-1).*sqrt(2./pi).*qe;
+qe=exp(0.25*x^2);
+a0=abs(x)^(-va-1)*sqrt(2/pi)*qe;
 r=1;
 pv=1;
-for  k=1:18;
-    r=0.5.*r.*(2.*k+va-1.0).*(2.*k+va)./(k.*x.*x);
+for  k=1:18
+    r=0.5*r*(2*k+va-1)*(2*k+va)/(k*x^2);
     pv=pv+r;
-    if (abs(r./pv) < 1e-12)
-        break;
+    if (abs(r/pv) < 1e-12)
+        break
     end
 end
-pv=a0.*pv;
-if (x < 0);
-    x1=-x;
-    pdl = dvla(va, x1);
-    gl=gamma(-va);
-    dsl=sin(pi.*va).*sin(pi.*va);
-    pv=dsl.*gl./pi.*pdl-cos(pi.*va).*pv;
+pv=a0*pv;
+if (x < 0)
+    pv = (sin(pi*va)^2)*gamma(-va)/pi*dvla(va, -x)-cos(pi*va)*pv;
 end
 
-end
+end 

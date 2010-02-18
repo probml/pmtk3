@@ -5,8 +5,8 @@ function testParacyl()
     
     as = [0.01 0.75 1];
     bs = ones(1,4);
-    compare = true;
-    if compare
+    compare = false;
+    if true
     tic
     outNEG = zeros(numel(as), numel(z));
     for k=1:length(z)
