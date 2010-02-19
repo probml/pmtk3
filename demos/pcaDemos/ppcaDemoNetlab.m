@@ -1,6 +1,6 @@
 
 
-seed = 1; randn('state', seed);
+setSeed(0);
 n = 50;
 d = 10;
 X = rand(n,d);

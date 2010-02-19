@@ -8,12 +8,12 @@ options.Display = 'iter';
 options.MaxIter = 50;
 [X,y] = makeData('regressionNonlinear',nInstances,nVars);
 lambda = 0;
-%model = mlpRegressFit(X, y, [10], lambda, options);
-model = mlpFit(X, y, 'linear', 10,  lambda, options);
+model = mlpRegressFitSchmidt(X, y, [10], lambda, options);
+%model = mlpFit(X, y, 'linear', 10,  lambda, options);
 
 figure;
 Xtest = [-5:.05:5]';
-[yhat, v] = mlpRegressPredict(model, Xtest);
+[yhat, v] = mlpRegressPredictSchmidt(model, Xtest);
 plot(X,y,'.');
 hold on
 h=plot(Xtest,yhat,'g-');
