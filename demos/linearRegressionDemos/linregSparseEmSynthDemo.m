@@ -3,9 +3,9 @@
 % Caron and Doucet, ICML08
 % We do not include normalInverseGaussian
 % but we do include normalExpGaussian
+%PMTKslow
 
-close all
-clear all
+
 setSeed(0);
 
 D=100; % Number of coefficients to estimate

@@ -1,20 +1,20 @@
 %% Run Fast Demos
 
 
-%biclusterDemo;                          pclear(2); % slow
-%bootstrapDemoBer;                       pclear(2); % slow
-%demoMinfuncHighdim;                     pclear(2); % slow
-%demoRosenHighDim;                       pclear(2); % slow
-%gibbsDemoDenoising;                     pclear(2); % slow
-%gibbsDemoNoBlindspot;                   pclear(2); % slow
-%hopfieldDemo;                           pclear(2); % slow
-%mlpClassifDemoSchmidt;                  pclear(2); % slow
-%mnist1NNdemo;                           pclear(2); % slow
-%naiveBayesMnistDemo;                    pclear(2); % slow
-%pagerankDemoGui;                        pclear(2); % slow
+%biclusterDemo;                          pclear(2); % PMTKslow
+%bootstrapDemoBer;                       pclear(2); % PMTKslow
+%demoMinfuncHighdim;                     pclear(2); % PMTKslow
+%demoRosenHighDim;                       pclear(2); % PMTKslow
+%gibbsDemoDenoising;                     pclear(2); % PMTKslow
+%gibbsDemoNoBlindspot;                   pclear(2); % PMTKslow
+%hopfieldDemo;                           pclear(2); % PMTKslow
+%linregSparseEmBiscuitsDemo;             pclear(2); % PMTKslow
+%mlpClassifDemoSchmidt;                  pclear(2); % PMTKslow
+%mnist1NNdemo;                           pclear(2); % PMTKslow
+%naiveBayesMnistDemo;                    pclear(2); % PMTKslow
+%pagerankDemoGui;                        pclear(2); % PMTKslow
+%svmLogregComparison;                    pclear(2); % PMTKslow
 agglomDemo;                              pclear(2);
-aokiFn;                                  pclear(2);
-basisFnDemoRegr;                         pclear(2);
 bayesLinRegDemo2d;                       pclear(2);
 bayesTtestDemo;                          pclear(2);
 bernoulli_betaSequentialUpdate;          pclear(2);
@@ -63,7 +63,9 @@ discrimAnalysisDboundariesDemo1d;        pclear(2);
 discrimAnalysisDboundariesDemo;          pclear(2);
 discrimAnalysisFisherIrisDemo;           pclear(2);
 discrimAnalysisHeightWeightDemo;         pclear(2);
+discrimAnalysisSemiTiedDemo;             pclear(2);
 emLogLikelihoodMax;                      pclear(2);
+fisherDiscrimVowelDemo;                  pclear(2);
 fisheririsDemo;                          pclear(2);
 fnJoinDemo;                              pclear(2);
 fwdBackDemo;                             pclear(2);
@@ -91,15 +93,17 @@ hclustYeastDemo;                         pclear(2);
 hmmSelfLoopDist;                         pclear(2);
 hoffNormalmsePlots;                      pclear(2);
 huberLossDemo;                           pclear(2);
-kalmanSample;                            pclear(2);
 kalmanTrackingDemo;                      pclear(2);
 kmeansDemoFaithful;                      pclear(2);
 kmeansHeightWeight;                      pclear(2);
+kmeansModelSel1d;                        pclear(2);
+kmeansModelSel2d;                        pclear(2);
 kmeansYeastDemo;                         pclear(2);
 kmedoidsDemoFaithful;                    pclear(2);
 knnClassifyDemo2;                        pclear(2);
 knnClassifyDemo;                         pclear(2);
 laplacePlotDemo;                         pclear(2);
+lassoPathProstate;                       pclear(2);
 lassoPostPlot;                           pclear(2);
 ldsTrackingDemo;                         pclear(2);
 leastSquaresProjection;                  pclear(2);
@@ -107,9 +111,12 @@ linregAllSubsetsGraycodeDemo;            pclear(2);
 linregBayesCaterpillar;                  pclear(2);
 linregBFCaterpillar;                     pclear(2);
 linregCaterpillar;                       pclear(2);
+linregCensoredSchmeeHahnDemo;            pclear(2);
 linregCvPolyVsRegDemo;                   pclear(2);
 linregDemo1;                             pclear(2);
-linregL2FitTest;                         pclear(2);
+linregFitL1Test;                         pclear(2);
+linregFitL2Test;                         pclear(2);
+linregGroupLassoDemo;                    pclear(2);
 linregNetlabPolyVsDegreeDemo;            pclear(2);
 linregNetlabPolyVsNDemo;                 pclear(2);
 linregNetlabPolyVsRegDemo;               pclear(2);
@@ -117,10 +124,11 @@ linregPolyVsDegree;                      pclear(2);
 linregPolyVsReg;                         pclear(2);
 linregRbfDemo;                           pclear(2);
 linregRobustDemo;                        pclear(2);
-linregRobustStacklossDemo;               pclear(2);
-linregSparseEmBiscuitsDemo;              pclear(2);
 linregSparseEmLassoDemo;                 pclear(2);
 linregSparseEmSynthDemo;                 pclear(2);
+linregSparseEmSynthDemoOld;              pclear(2);
+linregStudentStacklossDemo;              pclear(2);
+linregStudentTest;                       pclear(2);
 linregWedgeDemo2;                        pclear(2);
 LMSdemo;                                 pclear(2);
 localMinima1d;                           pclear(2);
@@ -164,6 +172,9 @@ newsgroupsVisualize;                     pclear(2);
 neymanPearson2;                          pclear(2);
 neymanPearson;                           pclear(2);
 nonConvexFn;                             pclear(2);
+normalGammaPenaltyPlotDemo;              pclear(2);
+normalGammaPlotDemo;                     pclear(2);
+normalGammaThresholdPlotDemo;            pclear(2);
 numbersGame;                             pclear(2);
 pagerankDemoMoler;                       pclear(2);
 pagerankDemoPmtk;                        pclear(2);
@@ -194,14 +205,14 @@ ppcaEmTest;                              pclear(2);
 ppcaEvidenceDemo;                        pclear(2);
 ppcaVBdemo;                              pclear(2);
 probitRegDemo;                           pclear(2);
-prostateAllSubsetsDemo;                  pclear(2);
 prostateComparison;                      pclear(2);
-prostateLasso;                           pclear(2);
 prostateScatterDemo;                     pclear(2);
+prostateSubsets;                         pclear(2);
 quantileDemo;                            pclear(2);
 randomWalk0_20Demo;                      pclear(2);
 rbfGramDemo;                             pclear(2);
 residualsDemo;                           pclear(2);
+ridgePathProstate;                       pclear(2);
 riskFnGauss;                             pclear(2);
 robustDemo;                              pclear(2);
 rosen2d;                                 pclear(2);
@@ -213,6 +224,7 @@ saDemoHisto;                             pclear(2);
 saDemoMOG;                               pclear(2);
 saDemoPeaks;                             pclear(2);
 samplingDistGaussShrinkage;              pclear(2);
+scadPlot;                                pclear(2);
 sensorFusion2d;                          pclear(2);
 sensorFusionUnknownPrec;                 pclear(2);
 seqlogoDemo;                             pclear(2);
@@ -237,4 +249,5 @@ svmRegrDemo;                             pclear(2);
 svmSoftRegrDemo;                         pclear(2);
 tanhPlot;                                pclear(2);
 varSelDemo;                              pclear(2);
+vqDemo;                                  pclear(2);
 
