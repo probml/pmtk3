@@ -13,7 +13,7 @@ end
 suptitle('Hierarchical Clustering of Profiles')
 printPmtkFigure clusterYeastHier16;
 
-[ctrs, cidx] = kmeansSimple(X, 16);
+[ctrs, cidx] = kmeansFit(X, 16);
 ctrs = ctrs';
 
 %[cidx, ctrs] = kmeans(X, 16,... 
