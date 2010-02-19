@@ -12,11 +12,9 @@ end
 done = false;
 i = 1;
 % initial guess 
-w(i,:) = linregL2Fit(X, y, lambda, false)';
+model = linregFitL2(X, y, lambda, 'qr', false)';
+w(i,:) = model.w;
 
-M = inv(lambda + X'*X)*X';
-wtmp = M*y;
-assert(approxeq(wtmp, w(i,:)'))
 
 logpdf(i) = ProbitLoss(w(i,:)',X,y) + (lambda)*sum(w(i,:).^2);
 i = 2; % iter
@@ -29,7 +27,8 @@ while ~done
    normcdfvect=normcdf(-vect);
    y_latent=vect+sign(y).*normpdfvect./(y01-sign(y).*normcdfvect);
    % M step
-   w(i,:) = linregL2Fit(X, y_latent, lambda, false)';
+   model = linregFitL2(X, y_latent, lambda, 'qr', false);
+   w(i,:) = rowvec(model.w);
    % Convergence test
    logpdf(i) = ProbitLoss(w(i,:)',X,y) + (lambda)*sum(w(i,:).^2);
    if verbose && (mod(i,50)==0)

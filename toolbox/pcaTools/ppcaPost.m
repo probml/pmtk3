@@ -5,7 +5,7 @@ function [postMean, postCov] = ppcaPost(X, W, mu, sigma2, evals, evecs)
 
 [d K] = size(W);
 [N d] = size(X);
-Lam = evals(1:K);
+Lam = evals(1:K)';
 U = evecs(:, 1:K);
 Minv = diag(1./Lam);
 postCov = sigma2*Minv;
