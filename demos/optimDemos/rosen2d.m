@@ -1,5 +1,10 @@
 function [f g H] = rosen2d(x)
 % 2d Rosenbrock function
+if nargin == 0;
+   [f g H] = rosen2d(randn(100, 1));
+   return
+end
+
 if isvector(x)
   f = 100*(x(2) - x(1)^2)^2 + (1-x(1))^2; % row or column vector
 else

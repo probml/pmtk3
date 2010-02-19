@@ -18,10 +18,15 @@ function [U,G] = surfer(root,n)
 
 %PMTKauthor Cleve Moler
 %PMTKurl http://www.mathworks.com/moler/ncm/surfer.m
-
+%PMTKinteractive
 % Initialize
 
-clf
+if nargin == 0; 
+    [U,G] = surfer('http://www.harvard.edu',100);
+    return
+end
+
+figure
 shg
 set(gcf,'doublebuffer','on')
 axis([0 n 0 n])

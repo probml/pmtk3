@@ -1,4 +1,4 @@
-function [f, df, ddf] = rosenbrock(x);
+function [f, df, ddf] = rosenbrock(x)
 
 % rosenbrock.m This function returns the function value, partial derivatives
 % and Hessian of the (general dimension) rosenbrock function, given by:
@@ -8,6 +8,12 @@ function [f, df, ddf] = rosenbrock(x);
 % where D is the dimension of x. The true minimum is 0 at x = (1 1 ... 1).
 %
 % Carl Edward Rasmussen, 2001-07-21.
+
+if nargin == 0
+   [f, df, ddf] = rosenbrock(randn(100,1));
+   return;
+end
+
 
 D = length(x);
 f = sum(100*(x(2:D)-x(1:D-1).^2).^2 + (1-x(1:D-1)).^2);
