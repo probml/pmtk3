@@ -32,7 +32,8 @@ for trial=1:3
          lossStr = sprintf('SVM(%s=%3.1f)', '\epsilon', epsilon);
          fname = 'SVM1';
       case 3,
-         [w, bias] = linregL2Fit(Ktrain, y, lambda);
+         model = linregFitL2(Ktrain, y, lambda);
+         w = model.w; bias = model.w0;
          lossStr = sprintf('linreg');
          fname = 'linreg';
    end
