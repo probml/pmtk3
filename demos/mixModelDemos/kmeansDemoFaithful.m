@@ -10,9 +10,9 @@ printPmtkFigure('faithful');
 
 % specify initial params to make for a pretty plot
 mu = [-1.5 1.5; 1.5 -1.5]';
-seed = 4; rand('state', seed); randn('state', seed);
+setSeed(4);
 K = 2;
-[mu, assign, errHist] = kmeansSimple(X, K, 'plotfn', @plotKmeans, ...
+[mu, assign, errHist] = kmeansFit(X, K, 'plotfn', @plotKmeans, ...
    'maxIter', 10, 'mu', mu);
 end
 

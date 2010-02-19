@@ -8,7 +8,7 @@ load('facesOlivetti_trainTest.mat');
 h = 112; w = 92;
 
 % plot the first 25 faces as a single image
-figure(1);clf
+figure;
 N = 25;
 XtrainImg = zeros(h,w,1,N);
 for i = 1:N
@@ -31,12 +31,12 @@ mean_face = mean(X);
 %X = X - repmat(mean_face,N,1);
 fprintf('Performing PCA.... stay tuned\n');
 K = 100; 
-[B, mu, Xproj, Xrecon] = pcaPmtk(X, K);
+[B, mu, Xp, Xrecon] = pcaPmtk(X, K);
 %tic; [B] = pcaPmtk(X,K); toc
-%Xproj = X*B;
+Xproj = X*B;
 
 % visualize basis functions (eigenfaces)
-figure(2);clf
+figure;
 subplot(2,2,1)
 f = reshape(mean_face, [h w]);
 imagesc(f);
@@ -50,7 +50,7 @@ end
 colormap gray
 
 % visualize reconstruction
-figure(3);clf
+figure;
 subplot(2,2,1)
 %imagesc(reshape(X(Selected_Face,:)+mean_face,h,w));
 imagesc(reshape(X(Selected_Face,:),h,w));

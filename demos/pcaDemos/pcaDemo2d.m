@@ -1,11 +1,11 @@
-seed = 0; randn('state', seed);
+setSeed(0);
 n = 5;
 X=[randn(n,2)+2.*ones(n,2);2.*randn(n,2)-2.*ones(n,2)];
 
 [n d] = size(X);
 [W, Z, evals, Xrecon, mu] = pcaPmtk(X, 1);
 
-figure(1);clf;
+figure;
 plot(mu(1), mu(2), '*', 'markersize', 15, 'color', 'r');
 hold on
 plot(X(:,1), X(:,2), 'ro');
@@ -22,4 +22,4 @@ axis equal
 printPmtkFigure('pcaDemo2'); 
 
 
-ll = ppcaLoglik(X, W, mu, sigma2, evecs, evals)
+%ll = ppcaLoglik(X, W, mu, sigma2, evecs, evals)

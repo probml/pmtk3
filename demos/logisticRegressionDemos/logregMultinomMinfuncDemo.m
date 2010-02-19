@@ -22,7 +22,7 @@ wSoftmax = minFunc(@penalizedL2,zeros((nVars+1)*(nClasses-1),1),options,funObj,l
 wSoftmax = reshape(wSoftmax,[nVars+1 nClasses-1]);
 wSoftmax = [wSoftmax zeros(nVars+1,1)];
 
-wMAP = logregMultiL2Fit(X0, y, lambda0, true, nClasses);
+wMAP = logregFitL2(X0, y, lambda0, true);
 assert(approxeq(wMAP, wSoftmax))
 
 [junk yhat] = max(X*wSoftmax,[],2);

@@ -1,6 +1,6 @@
 %% Plot Mixtures of 2, 2D Gaussians with 1,2, and 3 modes Respectively. 
 
-model.mixweights = [0.5; 0.5];
+model.mixweight = [0.5; 0.5];
 model.K = 2;
 % M = desired num. modes
 for M=1:3    

@@ -10,7 +10,7 @@ Ks = [2 3];
 for ki=1:length(Ks)
   K = Ks(ki);
   %Z = kmeans(X, K);
-  [mu, Z] = kmeansSimple(X, K);
+  [mu, Z] = kmeansFit(X, K);
   figure;
   for c=1:K
     ndx = Z==c;

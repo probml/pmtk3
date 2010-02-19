@@ -21,7 +21,7 @@ for i = 1:length(dofs)
     loglikEM(i) = sum(linregRobustStudentLogprob(modelEM{i}, X, y));
     
     % debug - use objective fn from linregRobustStudentFitConstr
-    sigma2 = modelEM{i}.sigma2; w = modelEM{i}.w; 
+    sigma2 = modelEM{i}.sigma2; w = [modelEM{i}.w0; modelEM{i}.w]; 
     sigma = sqrt(sigma2);
     theta = y - X1*w;
     nll = sum(1/2*log(dof*pi) + log(gamma(dof/2)) - log(gamma((dof+1)/2)) + ...

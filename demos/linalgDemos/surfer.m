@@ -18,11 +18,10 @@ function [U,G] = surfer(root,n)
 
 %PMTKauthor Cleve Moler
 %PMTKurl http://www.mathworks.com/moler/ncm/surfer.m
-%PMTKinteractive
 % Initialize
 
 if nargin == 0; 
-    [U,G] = surfer('http://www.harvard.edu',100);
+    [U,G] = surfer('http://www.harvard.edu',15);
     return
 end
 

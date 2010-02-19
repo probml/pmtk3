@@ -8,6 +8,12 @@ function x = pagerankDemoMoler(U,G,p)
 
 %PMTKauthor Cleve Moler
 %PMTKurl http://www.mathworks.com/moler/ncm/pagerank.m
+if nargin == 0
+   [U, G] = surfer();
+   x = pagerankDemoMoler(U, G);
+   return
+end
+
 
 if nargin < 3, p = .85; end
 

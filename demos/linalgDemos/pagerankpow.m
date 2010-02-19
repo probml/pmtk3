@@ -10,6 +10,11 @@ function [x,cnt] = pagerankpow(G)
 
 % Link structure
 
+if nargin == 0;
+   [x, cnt] = pagerankpow(rand(10) > 0.8);
+   return
+end
+
 [n,n] = size(G);
 for j = 1:n
    L{j} = find(G(:,j)); % set of links coming into node j

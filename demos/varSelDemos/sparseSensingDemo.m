@@ -31,7 +31,7 @@ R = orth(R')';
 
 % noisy observations
 sigma = 0.01;
-y = hR(f) + sigma*randn(k,1);
+y = R*f + sigma*randn(k, 1);
 
 % regularization parameter
 tau = 0.1*max(abs(R'*y));

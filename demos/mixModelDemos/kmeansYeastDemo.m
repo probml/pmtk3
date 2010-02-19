@@ -22,7 +22,7 @@ printPmtkFigure('yeastTimeSeries');
 
 
 %[cidx, ctrs] = kmeans(X, 16, 'dist','corr', 'rep',5, 'disp','final');
-[ctrs, cidx] = kmeansSimple(X, 16);
+[ctrs, cidx] = kmeansFit(X, 16);
 ctrs = ctrs';
 figure;
 for c = 1:16

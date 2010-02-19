@@ -16,7 +16,7 @@ Ks = [2 3 4 5  10 15 20 25 30];
 for i=1:length(Ks)
   K = Ks(i);
   mu = kmeansFit(Xtrain, K)';
-  Xhat = kmeansDecode(kmeansEncode(Xtest, mu), mu);
+  Xhat = kmeansDecode(kmeansEncode(Xtest, mu'), mu');
   mse(i) = mean(sum((Xhat - Xtest).^2,2));
   
   subplot(3,3,i)

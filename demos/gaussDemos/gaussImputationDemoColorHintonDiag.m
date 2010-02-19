@@ -1,4 +1,4 @@
-function gaussImputationDemo()
+function gaussImputationDemoColorHintonDiag()
 
 
 setSeed(1);
@@ -65,7 +65,7 @@ suptitle('Imputation using true parameters')
 printPmtkFigure('mvnImputeScatterTrue');
 
 placeFigures
-keyboard
+
 
 %% Old plotting
 % Here we use Hinton diagrams to illustrate the imputed mean and variance
@@ -92,7 +92,7 @@ figure(4); printPmtkFigure('mvnImputeImputeTruth');
 figure(5); printPmtkFigure('mvnImputeImputeEM');
 end
 
-keyboard
+
 
 end
 

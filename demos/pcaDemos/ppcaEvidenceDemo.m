@@ -13,7 +13,7 @@ mu = zeros(1,d);
 k = 4;
 W = zeros(d,d);
 for i=1:k
-   modeli = struct('mu', mu, 'Sigma', Sigma(i)*eye(d));
+   modeli.mu = mu; modeli.Sigma = Sigma(i,i)*eye(d);
    W(:,i) = gaussSample(modeli);
 end
 Z = randn(d,n);
