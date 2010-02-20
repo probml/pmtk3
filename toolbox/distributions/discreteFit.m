@@ -14,7 +14,6 @@ function model = discreteFit(X, alpha, weights)
 %
 %     d       - the number of distributions, i.e. size(X, 2)
 %     K       - the number of states, i.e. numel(unique(X))
-%     support - the original state space, e.g. 1:K, 0:K, etc
 %     T       - a K-by-d stochastic matrix, (each *column* represents a
 %               different distribution).
 %

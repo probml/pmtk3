@@ -1,4 +1,4 @@
-function [p, mixingWeights] = EMforDisceteMM(p, distPrior, mixingWeights, mixPrior, X, varargin)
+function [p, mixingWeights] = EMforDiscreteMM(p, distPrior, mixingWeights, mixPrior, X, varargin)
   X = canonizeLabels(X);
   [verbose, maxItr, tol, nrestarts] = processArgs(varargin, '-verbose', true, '-maxItr', 50, '-tol', 1e-03, '-nrestarts', 1);
   [nStates, d, K] = size(p); nObs = size(X,1);

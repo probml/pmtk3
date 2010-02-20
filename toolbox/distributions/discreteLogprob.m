@@ -7,7 +7,8 @@ function [L, Lij] = discreteLogprob(model, X)
 %
 % Lij = log p(X(i, j) | params(j))
 % L   = sum(Lij, 2)  % i.e. summed across distributions, (not cases).
-X = reshape(X, [], model.d); 
+d = model.d;
+X = reshape(X, [], d); 
 n = size(X, 1);
 T = model.T;
 if model.K == 2
