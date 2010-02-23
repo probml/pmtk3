@@ -2,13 +2,14 @@ function model = mixDiscreteFitEM(X, nmix, distPrior, mixPrior)
 % Fit a mixture of products of discrete distributions via EM. 
 % X must be in 1:C. 
 %
-% X(i, j) is the ith case from the jth distribution
-% nmix - the number of mixture components to use
-% distPrior - prior pseudoCounts for the component distributions.
-% mixPrior  - prior on the mixture weights. 
+% X(i, j)   - is the ith case from the jth distribution
+% nmix      - the number of mixture components to use
+% distPrior - (optional) prior pseudoCounts for the component distributions.
+% mixPrior  - (optional) prior on the mixture weights. 
 %
+% Returns a struct with fields T, mixweight, nstates, d, nmix
 % model.T is nstates-by-ndistributions-by-nmixtures
-%
+% 
 %% Setup
 [n, d]  = size(X); 
 nstates = max(X(:)); 
@@ -24,7 +25,7 @@ for k=1:nmix
     counts = histc(X(assign==k, :), 1:nstates);
     T(:, :, k) = normalize(bsxfun(@plus, counts, (distPrior-1)), 1);  
 end
-%% Loop setup
+%% Setup loop
 currentLL = -inf;
 it        = 0; 
 maxiter   = 1000; 
