@@ -6,6 +6,7 @@ function model = mixDiscreteFitEM(X, nmix, distPrior, mixPrior, varargin)
 % nmix      - the number of mixture components to use
 % distPrior - (optional) prior pseudoCounts for the component distributions.
 % mixPrior  - (optional) prior on the mixture weights.
+% varargin  - (optional) {'-maxiter', 100, '-tol', 1e-4, '-verbose', true}
 %
 % Returns a struct with fields T, mixweight, nstates, d, nmix
 % model.T is nstates-by-ndistributions-by-nmixtures
@@ -30,6 +31,7 @@ end
 currentLL = -inf;
 it        = 0;
 Lijk      = zeros(n, d, nmix);
+counts    = zeros(nstates, d, nmix);
 %% Enter EM loop
 while true
     previousLL = currentLL;
@@ -53,11 +55,10 @@ while true
     converged = convergenceTest(currentLL, previousLL, tol) || it > maxiter;
     if converged, break; end
     %% M-step
-    counts = zeros(nstates, d, nmix);
-    for k=1:nmix
-        for c=1:nstates
-            counts(c, :, k) = sum(bsxfun(@times, (X == c), Rik(:, k)), 1);
-        end
+    % we use the permute function to reshape Rik into size [n, 1, nmix] to
+    % to further vectorize using bsxfun.
+    for c=1:nstates
+        counts(c, :, :) = sum(bsxfun(@times, (X == c), permute(Rik, [1, 3, 2])), 1);
     end
     T = normalize(counts,  1);
     mixweight = normalize(sum(Rik) + mixPrior - 1);
