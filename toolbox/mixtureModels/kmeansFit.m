@@ -16,10 +16,10 @@ done = false;
 iter = 1;
 while ~done
    dist = sqdist(Y,mu);   % dist(i,k) 
-   [junk, assign] = min(dist,[],2); 
+   assign = minidx(dist,[],2); 
    err = 0;
    for k=1:K
-      members = find(assign==k);
+      members = (assign==k);
       mu(:,k) = mean(data(members,:), 1)';
       err = err + sum(dist(members,k));
    end
@@ -30,7 +30,7 @@ while ~done
    else
       converged =  convergenceTest(errHist(iter), errHist(iter-1), thresh);
    end
-   if ~isempty(plotfn), feval(plotfn, data, mu, assign, err, iter); end
+   if ~isempty(plotfn), plotfn(data, mu, assign, err, iter); end
    if verbose, fprintf(1, 'iteration %d, err = %f\n', iter, errHist(iter)); end
    done = converged || (iter > maxIter);
    iter = iter + 1;

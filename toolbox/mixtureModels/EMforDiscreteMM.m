@@ -46,7 +46,7 @@ function [p, mixingWeights] = EMforDiscreteMM(p, distPrior, mixingWeights, mixPr
     logpriormix = gammaln(sum(mixPrior)) - sum(gammaln(mixPrior)) + sum((mixPrior - 1).*log(mixingWeights));
     logprior = zeros(K,1);
     for k=1:K
-      A = repmat(distPrior(:,k) -1, 1, d);
+      A = repmat(distPrior(:,k) -1, nStates, d);
       logprior(k) = sum(gammaln(sum(distPrior(:,k))) - sum(gammaln(distPrior(:,k))) + sum(log(p(:,:,k)).*A,1));
     end
 
