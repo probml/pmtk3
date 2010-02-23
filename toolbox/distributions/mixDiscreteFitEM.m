@@ -55,12 +55,11 @@ while true
     converged = convergenceTest(currentLL, previousLL, tol) || it > maxiter;
     if converged, break; end
     %% M-step
-    % we use the permute function to reshape Rik into size [n, 1, nmix] to
-    % to further vectorize using bsxfun.
-    for c=1:nstates
-        counts(c, :, :) = sum(bsxfun(@times, (X == c), permute(Rik, [1, 3, 2])), 1);
+    RikPerm = permute(Rik, [1, 3, 2]); % insert singleton dimension for bsxfun
+    for c=1:nstates % call to bsxfun returns a matrix of size n-by-d-nmix
+        counts(c, :, :) = sum(bsxfun(@times, (X == c), RikPerm), 1);
     end
-    T = normalize(counts,  1);
+    T = normalize(counts, 1);
     mixweight = normalize(sum(Rik) + mixPrior - 1);
 end
 %% Return the model
