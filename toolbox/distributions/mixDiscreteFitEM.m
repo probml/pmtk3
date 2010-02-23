@@ -1,4 +1,4 @@
-function model = mixDiscreteFitEM(X, nmix, distPrior, mixPrior)
+function model = mixDiscreteFitEM(X, nmix, distPrior, mixPrior, varargin)
 % Fit a mixture of products of discrete distributions via EM.
 % X must be in 1:C.
 %
@@ -13,10 +13,11 @@ function model = mixDiscreteFitEM(X, nmix, distPrior, mixPrior)
 %% Setup
 [n, d]  = size(X);
 nstates = max(X(:));
-if nargin < 3, distPrior = ones(nstates, 1); end
-if nargin < 4, mixPrior  = ones(1, nmix);    end
+if nargin < 3 || isempty(distPrior), distPrior = ones(nstates, 1); end
+if nargin < 4 || isempty(mixPrior) , mixPrior  = ones(1, nmix);    end
 distPrior = colvec(distPrior);
 mixPrior  = rowvec(mixPrior);
+[maxiter, tol, verbose] = processArgs(varargin, '-maxiter', 100, '-tol', 1e-4, '-verbose', true); 
 %% Initial M-step using Kmeans
 [mu, assign] = kmeansFit(X, nmix); %#ok
 mixweight = normalize(rowvec(histc(assign, 1:nmix)) + mixPrior - 1);
@@ -28,15 +29,14 @@ end
 %% Setup loop
 currentLL = -inf;
 it        = 0;
-maxiter   = 1000;
-Lijk = zeros(n, d, nmix);
-verbose   = true;
+Lijk      = zeros(n, d, nmix);
 %% Enter EM loop
 while true
     previousLL = currentLL;
     %% E-step
+    logT = log(T + eps); 
     for j=1:d
-        Lijk(:, j, :) = log(T(X(:, j), j, :) + eps);
+        Lijk(:, j, :) = logT(X(:, j), j, :);
     end
     logRik = bsxfun(@plus, log(mixweight+eps), squeeze(sum(Lijk, 2)));
     L = logsumexp(logRik, 2);
@@ -50,7 +50,7 @@ while true
         warning('mixDiscreteFitEM:LLdecrease',   ...
             'The log likelihood has decreased!');
     end
-    converged = convergenceTest(currentLL, previousLL) || it > maxiter;
+    converged = convergenceTest(currentLL, previousLL, tol) || it > maxiter;
     if converged, break; end
     %% M-step
     counts = zeros(nstates, d, nmix);
@@ -59,7 +59,7 @@ while true
             counts(c, :, k) = sum(bsxfun(@times, (X == c), Rik(:, k)), 1);
         end
     end
-    T = normalize(T,  1);
+    T = normalize(counts,  1);
     mixweight = normalize(sum(Rik) + mixPrior - 1);
 end
 %% Return the model
