@@ -3,6 +3,7 @@ function [p, mixingWeights] = EMforDiscreteMM(p, distPrior, mixingWeights, mixPr
   [verbose, maxItr, tol, nrestarts] = processArgs(varargin, '-verbose', true, '-maxItr', 50, '-tol', 1e-03, '-nrestarts', 1);
   [nStates, d, K] = size(p); nObs = size(X,1);
 
+  error('deprecated - use mixDiscreteFitEM instead'); 
   % "p" is nStates * nDistributions * nMixingComponents
   % initialize p and mixingWeights
   perm = randperm(nObs);
