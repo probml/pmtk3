@@ -13,7 +13,7 @@ ytest = Xt(:,3);
 Xt(:,3)=[];
 Xtrain = X; Xtest = Xt; clear X Xt
 
-figure(1);clf
+figure
 
 polyOrders = [1 3];
 for trial=1:length(polyOrders)
@@ -38,13 +38,15 @@ for i = 1:Polynomial_Order
 end
 [N,D] = size(XtrainPoly);
 
-wMAP = logregL2Fit(XtrainPoly,ytrain, lambda);
-[f,g,H] = logregL2NLLgradHess(wMAP, XtrainPoly, ytrain, lambda, true);
+model = logregFitL2(XtrainPoly,ytrain, lambda, false);
+wMAP = model.w;
+fn = @(w)LogisticLossSimple(w, XtrainPoly, ytrain); 
+[f,g,H] = penalizedL2(wMAP, fn, lambda);
 C = inv(H);
 %[wMAP, C] = logregFitFminunc(ytrain, XtrainPoly, lambda);
 
-[trainPredProb, trainPredLabels] = logregPredict(XtrainPoly, wMAP);
-[testPredProb, testPredLabels] = logregPredict(XtestPoly, wMAP);
+[trainPredProb, trainPredLabels] = logregPredict(model, XtrainPoly);
+[testPredProb, testPredLabels] = logregPredict(model, XtestPoly);
 fprintf('\n\n 0-1 error using MAP Value\n');
 Train_Error = 100 - 100*sum(trainPredLabels == ytrain)/Ntrain
 Test_Error = 100 - 100*sum(testPredLabels == ytest)/Ntest
