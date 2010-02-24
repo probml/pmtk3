@@ -6,8 +6,8 @@ function [model, loglikTrace] = gaussMissingFitEm(data, varargin)
 % tol  [1e-4]
 % verbose [false]
 
-%#PMTKauthor Cody Severinski
-%#PMTKmodified Kevin Murphy
+%PMTKauthor Cody Severinski
+%PMTKmodified Kevin Murphy
 
 [maxIter, tol, verbose] = process_options(varargin, ...
   'maxIter', 100, 'tol', 1e-4, 'verbose', false); 

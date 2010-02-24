@@ -1,3 +1,5 @@
+function gaussImputationDemo()
+
 %% Make data
 setSeed(1);
 d = 10; n = 100; pcMissing = 0.5;
@@ -30,48 +32,43 @@ title('imputed - truth');
 printPmtkFigure('mvnImputeDiff');
 end
 
-if 0
-figure; hintonDiagram(XimputeEM(ndx,:)); title('imputed');
-printPmtkFigure('mvnImputeImpute');
+if 1
+figure; hintonDiagram(XimputeEM(ndx,:)); title('imputation with em');
+printPmtkFigure('mvnImputeImputeEM');
+
+figure; hintonDiagram(XimputeTruth(ndx,:));
+title('imputation with true params');
+printPmtkFigure('mvnImputeImputeTruth')
+
 figure; hintonDiagram(Xfull(ndx,:)); title('truth');
 printPmtkFigure('mvnImputeTruth');
 end
 
 % Scatter plots
+doPlot(Xmiss, Xfull, XimputeEM, 'imputation with em', 'mvnImputeScatterEm')
+doPlot(Xmiss, Xfull, XimputeTruth, 'imputation with true params', 'mvnImputeScatterTruth')
+
+end
+
+function doPlot(Xmiss, Xfull, Ximpute, ttl, fname)
+
 figure; nr = 2; nc = 2;
 for j=1:(nr*nc)
   subplot(nr, nc, j);
   miss = find(isnan(Xmiss(:,j)));
-  scatter(Xfull(miss, j), XimputeEM(miss,j))
+  scatter(Xfull(miss, j), Ximpute(miss,j))
   xlabel('truth'); ylabel('imputed');
   mini = min(Xfull(:,j)); maxi = max(Xfull(:,j));
   line([mini maxi], [mini maxi]);
   axis square
   grid on
-   stats = regstats(Xfull(miss,j), XimputeEM(miss,j));
+   stats = regstats(Xfull(miss,j), Ximpute(miss,j));
   r = stats.rsquare;
   title(sprintf('R^2 = %5.3f', r))
 end
-suptitle('Imputation using estimated parameters')
-printPmtkFigure('mvnImputeScatterEm');
-
-figure; 
-for j=1:(nr*nc)
-  subplot(nr, nc, j);
-  miss = find(isnan(Xmiss(:,j)));
-  scatter(Xfull(miss, j), XimputeTruth(miss,j))
-  xlabel('truth'); ylabel('imputed');
-  mini = min(Xfull(:,j)); maxi = max(Xfull(:,j));
-  line([mini maxi], [mini maxi]);
-  axis square
-  grid on
-   stats = regstats(Xfull(miss,j), XimputeEM(miss,j));
-  r = stats.rsquare;
-  title(sprintf('R^2 = %5.3f', r))
+suptitle(ttl)
+printPmtkFigure(fname);
 end
-suptitle('Imputation using true parameters')
-printPmtkFigure('mvnImputeScatterTrue');
-
 
 
 
