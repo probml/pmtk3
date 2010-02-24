@@ -6,13 +6,16 @@ newsize   = 30;          % new size 30x30
 nimages   = 7;
 occlusion = 0.5;
 target    = zeros(newsize*newsize,length(images));
-
+%warning('off', 'MATLAB:intConvertOverflow');
+%warning('off', 'MATLAB:intConvertNonIntVal');
 for i=1:nimages
-   image= cast(imresize(images{i},[newsize,newsize]),'double');
+   image= imresize(double(images{i}),[newsize,newsize]);
    image(image == 0) = -1;
    images{i}   = image;
    target(:,i) = image(:);
 end
+%warning('on', 'MATLAB:intConvertOverflow');
+%warning('on', 'MATLAB:intConvertNonIntVal');
 clear image
 
 net = newhop(target); % Train Hopfield network

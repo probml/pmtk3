@@ -2,7 +2,7 @@
 % Denoising of letter A using Gibbs sampling
 % with an Ising Prior and a Gaussian likelihood
 % Based on code originally written by Brani Vidakovic
-%PMTKslow
+
 setSeed(3);
 sigma = 2; % noise level
 
