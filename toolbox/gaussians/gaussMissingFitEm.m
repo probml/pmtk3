@@ -6,7 +6,8 @@ function [model, loglikTrace] = gaussMissingFitEm(data, varargin)
 % tol  [1e-4]
 % verbose [false]
 
-% Written by Cody Severinski and Kevin Murphy
+%#PMTKauthor Cody Severinski
+%#PMTKmodified Kevin Murphy
 
 [maxIter, tol, verbose] = process_options(varargin, ...
   'maxIter', 100, 'tol', 1e-4, 'verbose', false); 
@@ -74,7 +75,7 @@ while ~done
    end
    if verbose, fprintf('%d: LL = %5.3f\n', iter, loglikTrace(iter)); end
    if iter > 1
-      converged = convergenceTest(loglikTrace(iter), loglikTrace(iter)-1, tol);
+      converged = convergenceTest(loglikTrace(iter), loglikTrace(iter-1), tol);
    else 
      converged = false;
    end

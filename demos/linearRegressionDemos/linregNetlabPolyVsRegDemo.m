@@ -21,6 +21,14 @@ Xtrain = degexpand(Xtrain, deg, false);
 [Xtest] = rescaleData(xtest);
 Xtest = degexpand(Xtest, deg, false);
 
+modelLS = linregFit(Xtrain,ytrain);
+fprintf('%5.3f, ', modelLS.w); fprintf('\n');
+
+modelRidge = linregFitL2(Xtrain, ytrain, 1e-3)
+fprintf('%5.3f, ', modelRidge.w); fprintf('\n');
+
+
+
 %% Plot regularized fit for various lambdas
 lambdas = [0 0.00001 0.001];
 NL = length(lambdas);
