@@ -2,7 +2,7 @@
 %PMTKurl  http://people.cs.ubc.ca/~schmidtm/Software/minFunc/minFunc.html
 
 options.Display = 'none';
-rand('state',0); randn('state', 0);
+setSeed(1); 
 nClasses = 5;
 nInstances = 1000;
 %nInstances = 100;
@@ -13,6 +13,7 @@ nVars = 2;
 X0 = X;
 X = [ones(nInstances,1) X];
 
+
 funObj = @(W)SoftmaxLoss2(W,X,y,nClasses);
 lambda0 = 1e-4;
 lambda = lambda0*ones(nVars+1,nClasses-1);
@@ -22,13 +23,14 @@ wSoftmax = minFunc(@penalizedL2,zeros((nVars+1)*(nClasses-1),1),options,funObj,l
 wSoftmax = reshape(wSoftmax,[nVars+1 nClasses-1]);
 wSoftmax = [wSoftmax zeros(nVars+1,1)];
 
-wMAP = logregFitL2(X0, y, lambda0, true);
+model = logregFitL2(X0, y, lambda0, true);
+wMAP = model.w; 
 assert(approxeq(wMAP, wSoftmax))
 
 [junk yhat] = max(X*wSoftmax,[],2);
 trainErr = sum(yhat~=y)/length(y)
 
-[yhat2, prob] = logregMultiPredict(X0, wMAP, true);
+[yhat2, prob] = logregPredict(model, X0);
 assert(isequal(yhat, yhat2))
 
 figure;
