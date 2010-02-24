@@ -17,7 +17,7 @@ if nargin <= 2
    Smin = min(W(:))*0.95; Smax = max(W(:))*1.05;
    if(numel(varargin) > 1)
       if(numel(varargin{2}) == 2)
-         [imap, ititle] = process_options(varargin{2}, 'map', 'Jet', 'title', '');
+         [imap, ititle] = processArgs(varargin{2}, '-map', 'Jet', '-title', '');
          map{1,:} = imap; plotTitle{1,:} = ititle;
       end
       passargs = varargin{2};
@@ -33,7 +33,7 @@ if(nargin > 2)
    localMinX = zeros(nplots,1); localMaxX = zeros(nplots,1);
    localMinW = zeros(nplots,1); localMaxW = zeros(nplots,1);
    for i=1:nplots
-      [imap, ititle] = process_options(varargin{2*i}, 'map', 'Jet', 'title', '');
+      [imap, ititle] = processArgs(varargin{2*i}, '-map', 'Jet', '-title', '');
       map{i,:} = imap; plotTitle{i,:} = ititle;
       allX{i} = varargin{2*i-1}{1};
       localMinX(i) = min(min(allX{i})); localMaxX(i) = max(max(allX{i}));

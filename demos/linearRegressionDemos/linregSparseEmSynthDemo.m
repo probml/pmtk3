@@ -61,7 +61,7 @@ for trial=1:5
       params = crossProduct(scales, shapes);
       Nfolds=3;
       useSErule = false;
-      options = {'maxIter', 15, 'verbose', false};
+      options = {'-maxIter', 15, '-verbose', false};
       fitFn = @(X,y,ps) linregFitSparseEm(X,y, prior, ps(1), ps(2), sigmaTrue, options{:});
       predictFn = @(w, X) X*w;
       lossFn = @(yhat, y)  sum((yhat-y).^2);
@@ -70,7 +70,7 @@ for trial=1:5
       % refit model more carefully with best params and all the data
       scale = params(kstar, 1);
       shape = params(kstar, 2);
-      options = {'maxIter', 30, 'verbose', true};
+      options = {'-maxIter', 30, '-verbose', true};
       [w, sigmaHat, logpostTrace] = linregFitSparseEm(Xtrain, ytrain,  prior, scale, shape, sigmaTrue, options{:});
       mse(m) = mean((ytest-Xtest*w).^2);
       mseTrial(trial,m) = mse(m);

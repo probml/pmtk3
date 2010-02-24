@@ -13,7 +13,7 @@ return;
 %
 % Usage:
 %   h = plotcov2(mu, Sigma[, OPTIONS]);
-% 
+%
 % Inputs:
 %   mu    - a 2 x 1 vector giving the mean of the distribution.
 %   Sigma - a 2 x 2 symmetric positive semi-definite matrix giving
@@ -42,38 +42,37 @@ if size(Sigma) ~= [2 2], error('Sigma must be a 2 by 2 matrix'); end
 if length(mu) ~= 2, error('mu must be a 2 by 1 vector'); end
 
 [p, ...
- n, ...
- plot_opts] = process_options(varargin, 'conf', 0.95, ...
-					'num-pts', 100);
+    n, ...
+    plot_opts] = processArgs(varargin, '-conf', 0.95, 	'-num-pts', 100, '-plot_opts', {});
 h = [];
 holding = ishold;
 if (Sigma == zeros(2, 2))
-  z = mu;
+    z = mu;
 else
-  % Compute the Mahalanobis radius of the ellipsoid that encloses
-  % the desired probability mass.
-  k = conf2mahal(p, 2);
-  % The major and minor axes of the covariance ellipse are given by
-  % the eigenvectors of the covariance matrix.  Their lengths (for
-  % the ellipse with unit Mahalanobis radius) are given by the
-  % square roots of the corresponding eigenvalues.
-  if (issparse(Sigma))
-    [V, D] = eigs(Sigma);
-  else
-    [V, D] = eig(Sigma);
-  end
-  % Compute the points on the surface of the ellipse.
-  t = linspace(0, 2*pi, n);
-  u = [cos(t); sin(t)];
-  w = (k * V * sqrt(D)) * u;
-  z = repmat(mu, [1 n]) + w;
-  % Plot the major and minor axes.
-  L = k * sqrt(diag(D));
-  h = plot([mu(1); mu(1) + L(1) * V(1, 1)], ...
-	   [mu(2); mu(2) + L(1) * V(2, 1)], plot_opts{:});
-  hold on;
-  h = [h; plot([mu(1); mu(1) + L(2) * V(1, 2)], ...
-	       [mu(2); mu(2) + L(2) * V(2, 2)], plot_opts{:})];
+    % Compute the Mahalanobis radius of the ellipsoid that encloses
+    % the desired probability mass.
+    k = conf2mahal(p, 2);
+    % The major and minor axes of the covariance ellipse are given by
+    % the eigenvectors of the covariance matrix.  Their lengths (for
+    % the ellipse with unit Mahalanobis radius) are given by the
+    % square roots of the corresponding eigenvalues.
+    if (issparse(Sigma))
+        [V, D] = eigs(Sigma);
+    else
+        [V, D] = eig(Sigma);
+    end
+    % Compute the points on the surface of the ellipse.
+    t = linspace(0, 2*pi, n);
+    u = [cos(t); sin(t)];
+    w = (k * V * sqrt(D)) * u;
+    z = repmat(mu, [1 n]) + w;
+    % Plot the major and minor axes.
+    L = k * sqrt(diag(D));
+    h = plot([mu(1); mu(1) + L(1) * V(1, 1)], ...
+        [mu(2); mu(2) + L(1) * V(2, 1)], plot_opts{:});
+    hold on;
+    h = [h; plot([mu(1); mu(1) + L(2) * V(1, 2)], ...
+        [mu(2); mu(2) + L(2) * V(2, 2)], plot_opts{:})];
 end
 
 h = [h; plot(z(1, :), z(2, :), plot_opts{:})];
@@ -108,7 +107,7 @@ if (~holding) hold off; end
 %              up to the confidence value.
 %
 % Usage:
-% 
+%
 %   m = conf2mahal(c, d);
 %
 % Inputs:

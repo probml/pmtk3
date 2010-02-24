@@ -41,7 +41,7 @@ function drawGraph(adj, varargin)
 % 
 % Last updated 7 June 2006
 %
-
+warning('deprecated: please use graphViz4Matlab'); 
 if 0
 adj = zeros(5,5);
 adj(1,2)=1; adj(4,5)=1; adj(5,4)=1;

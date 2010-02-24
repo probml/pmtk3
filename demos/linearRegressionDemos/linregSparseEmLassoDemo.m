@@ -25,7 +25,7 @@ model_trial={'laplace','lasso'};
 error=zeros(length(model_trial),1);
 nb_zeros=zeros(length(model_trial),1);
 
-figure(1);clf
+figure;
 Nmodels = length(model_trial);
 subplot(Nmodels+1,1,1)
 stem(z_true)

@@ -15,13 +15,13 @@ global xhist fhist funcounthist
 xhist = [];
 if 1
   % do line search
-  x = steepestDescent(fn, x0, 'maxIter', 10, ...
-    'exactLineSearch', true, 'outputFn', @optimstore);
+  x = steepestDescent(fn, x0, '-maxIter', 10, ...
+    '-exactLineSearch', true, '-outputFn', @optimstore);
 else
   % fixed step size
   stepSize = 0.1; %0.6;
-  x = steepestDescent(fn, x0, 'maxIter', 20, ...
-    'stepSize', stepSize, 'outputFn', @optimstore);
+  x = steepestDescent(fn, x0, '-maxIter', 20, ...
+    '-stepSize', stepSize, '-outputFn', @optimstore);
 end
   
 hold on;

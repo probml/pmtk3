@@ -45,7 +45,7 @@ for trial=1:3
    [Xtrain, mu] = center(Xtrain);
    Xtest = center(Xtest, mu);
    
-   options = {'maxIter', 100, 'verbose', false};
+   options = {'-maxIter', 100, '-verbose', false};
    models = {'ridge', 'normaljeffreys', 'normalgamma', 'normalinversegaussian', 'laplace'};
    names= {'ridge', 'NJ', 'NG', 'NIG', 'Laplace'};
    for m=1:length(models)
@@ -76,7 +76,7 @@ for trial=1:3
                param.c = c_trial(ndx1);
                param.alpha = alpha_trial(ndx2);
                param.sigma = -sigma_trial(ndx3);
-               tmpOptions = {'maxIter', 30, 'verbose', false};
+               tmpOptions = {'-maxIter', 30, '-verbose', false};
                fitFn = @(X,y) linregFitSparseEmFrancois(X,y, param, tmpOptions{:});
                predictFn = @(w, X) X*w;
                lossFn = @(yhat, y)  sum((yhat-y).^2);

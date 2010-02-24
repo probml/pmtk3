@@ -12,8 +12,8 @@ function mixGaussDemoFaithful
     Sigma = repmat(0.1*eye(2),[1 1 K]);
     mixweight = normalize(ones(1,K));
     [model, loglikHist] = mixGaussFitEm(X, K, ...
-        'maxIter', 10, 'plotfn', @plotfn,...
-        'mu', mu, 'Sigma', Sigma, 'mixweight', mixweight);
+        '-maxIter', 10, '-plotfn', @plotfn,...
+        '-mu', mu, '-Sigma', Sigma, '-mixweight', mixweight);
     figure;
     plot(loglikHist, 'o-', 'linewidth', 3)
     xlabel('iter')

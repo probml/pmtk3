@@ -16,7 +16,7 @@ pcMissing = 0.3;
 pcMissing = 0.5;
 [Xfull, Xmiss, Xhid] = mkData(mu, Sigma, 50, true, pcMissing);
 
-[model, LLtrace] = gaussMissingFitEm(XmissTrain, 'verbose', false);
+[model, LLtrace] = gaussMissingFitEm(XmissTrain, '-verbose', false);
 [XimputeEM, Vem] = gaussImpute(model, Xmiss);
 
 % oracle - similar to training on a large fully observed training set

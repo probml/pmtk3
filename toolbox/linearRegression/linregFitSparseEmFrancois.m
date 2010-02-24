@@ -40,8 +40,8 @@ function [w, sigma, logpostTrace]=linregFitSparseEmFrancois(X, y, param, varargi
 warning off MATLAB:log:logOfZero
 warning off MATLAB:divideByZero
 
-[maxIter, verbose] = process_options(varargin, ...
-   'maxIter', 300, 'verbose', false);
+[maxIter, verbose] = processArgs(varargin, ...
+   '-maxIter', 300, '-verbose', false);
 
 A=X; clear X
 [N K]=size(A);

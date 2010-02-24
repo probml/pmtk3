@@ -8,7 +8,7 @@ function [precMat, covMat] = ggmLassoR(C, rho, varargin)
 %PMTKurl  http://www-stat.stanford.edu/~tibs/glasso/
 %PMTKmodified Kevin Murphy
 
-[useMBapprox, junk] = process_options(varargin, 'useMB', 0);
+useMBapprox = processArgs(varargin, '-useMB', 0);
 %C = cov(X);
 
 

@@ -20,12 +20,12 @@ global xhist fhist funcounthist
 xhist = [];
 if 1
   % do line search
-  x = coordDescent(fn, x0, 'maxIter', 100, 'outputFn', @optimstore);
+  x = coordDescent(fn, x0, '-maxIter', 100, '-outputFn', @optimstore);
 else
   % fixed step size
   stepSize = 0.1; %0.6;
-  x = coordDescent(fn, x0, 'maxIter', 20, ...
-    'stepSize', stepSize, 'outputFn', @optimstore);
+  x = coordDescent(fn, x0, '-maxIter', 20, ...
+    '-stepSize', stepSize, '-outputFn', @optimstore);
 end
   
 

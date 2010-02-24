@@ -22,7 +22,7 @@ Xmiss(missing) = NaN;
 %[XimputeTruth] = gaussImpute(trueModel, Xmiss);
 
 % Fit a single Gaussian
-[model, LLtrace] = gaussMissingFitEm(Xmiss, 'verbose', false);
+[model, LLtrace] = gaussMissingFitEm(Xmiss, '-verbose', false);
 
 % Impute using learning model
 [XimputeEM] = gaussImpute(model, Xmiss);

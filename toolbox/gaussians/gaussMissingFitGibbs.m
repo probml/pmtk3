@@ -10,8 +10,8 @@ function [model, dataSamples, LL] = gaussMissingFitGibbs(data, varargin)
 
 % Written by Cody Severinski and Kevin Murphy
 
-[mu0, Lambda0, k0, dof, nSamples, nburnin, verbose] = process_options(varargin, ...
-  'mu0', [], 'Lambda0', [], 'k0', 0.01, 'dof', [], 'nSamples', 600, 'nburnin', 100, 'verbose', false); 
+[mu0, Lambda0, k0, dof, nSamples, nburnin, verbose] = processArgs(varargin, ...
+  '-mu0', [], '-Lambda0', [], '-k0', 0.01, '-dof', [], '-nSamples', 600, '-nburnin', 100, '-verbose', false); 
 
 allMissing = find(all(isnan(data),2));
 data = data(setdiffPMTK(1:size(data,1), allMissing),:); % samples with all missing values are useless;

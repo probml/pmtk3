@@ -34,7 +34,7 @@ function parzenWindowDemo
        plot(domain,g(domain'),'-b','LineWidth',2.5);
        printPmtkFigure(sprintf('parzen%sH0p%s',strcat(upper(kernel(1)), kernel(2:end)), hvalstr((decloc+1):end)));
     end
-    placeFigures('nrows',3,'ncols',1,'square',false);
+    placeFigures('-nrows',3,'-ncols',1,'-square',false);
 
     
     function data = generateData

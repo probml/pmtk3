@@ -9,15 +9,15 @@ function [model, loglikTrace] = gaussMissingFitEm(data, varargin)
 %PMTKauthor Cody Severinski
 %PMTKmodified Kevin Murphy
 
-[maxIter, tol, verbose] = process_options(varargin, ...
-  'maxIter', 100, 'tol', 1e-4, 'verbose', false); 
+[maxIter, tol, verbose] = processArgs(varargin, ...
+  '-maxIter', 100, '-tol', 1e-4, '-verbose', false); 
 
 
 [n,d] = size(data);
 dataMissing = isnan(data);
 missingRows = any(dataMissing,2);
 missingRows = find(missingRows == 1);  
-X = data'; % it will be easier to work with column vectros
+X = data'; % it will be easier to work with column vectors
  
 % Initialize params
 mu = nanmean(data); mu = mu(:);
