@@ -4,7 +4,7 @@
 % (Lecture 2 from http://www.cs.berkeley.edu/~asimma/294-fall06/)
 
 
-[xtrain, ytrain, xtest, ytestNoisefree, ytest] = polyDataMake('sampling','thibaux');
+[xtrain, ytrain, xtest, ytestNoisefree, ytest] = polyDataMake('-sampling','thibaux');
 
 
 degs = 0:2:16;

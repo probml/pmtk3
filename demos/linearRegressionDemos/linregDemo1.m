@@ -1,6 +1,6 @@
 
 %% Make data
-[xtrain, ytrain, xtest, ytestNoisefree, ytest] = polyDataMake('sampling','thibaux');
+[xtrain, ytrain, xtest, ytestNoisefree, ytest] = polyDataMake('-sampling','thibaux');
 Xtrain = xtrain; Xtest = xtest;
 
 %% Basic fitting

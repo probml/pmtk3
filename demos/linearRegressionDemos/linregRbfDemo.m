@@ -1,5 +1,5 @@
 %%  Demo of RBF Expansion for linear regression
-[xtrain, ytrain, xtest, ytest] = polyDataMake('sampling','thibaux');
+[xtrain, ytrain, xtest, ytest] = polyDataMake('-sampling','thibaux');
 lambda = 0.001; % just for numerical stability
 %sigmas = [0.05 0.5 50];
 sigmas = [0.5 1 50];

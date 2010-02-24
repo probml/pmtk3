@@ -1,7 +1,7 @@
 %% Plot Linear Gaussian CPD p(y|x) = N(Y|a + bx, sigma) where a is
 %% the offset and b is the slope. 
 
-[xtrain, ytrain, xtest, ytestNoisefree, ytest] = polyDataMake('sampling','thibaux');
+[xtrain, ytrain, xtest, ytestNoisefree, ytest] = polyDataMake('-sampling','thibaux');
 n = size(xtrain,1);
 Xtrain = [ones(n,1) xtrain];
 w = Xtrain\ytrain;

@@ -7,7 +7,7 @@ ns = [21 100];
 for ni=1:length(ns)
    n = ns(ni);
 
-%[xtrain1d, ytrain, xtest1d, ytest] = polyDataMake('sampling','thibaux','n',n);
+%[xtrain1d, ytrain, xtest1d, ytest] = polyDataMake('-sampling','thibaux','-n',n);
 xtrain = linspace(0,20,n)';
 randn('state', 654321);
 xtest = [0:0.1:20]';

@@ -9,6 +9,8 @@
 %gibbsDemoNoBlindspot;                   pclear(2); % PMTKslow
 %hopfieldDemo;                           pclear(2); % PMTKslow
 %linregSparseEmBiscuitsDemo;             pclear(2); % PMTKslow
+%linregSparseEmSynthDemo;                pclear(2); % PMTKslow
+%linregSparseEmSynthDemoOld;             pclear(2); % PMTKslow
 %mlpClassifDemoSchmidt;                  pclear(2); % PMTKslow
 %mnist1NNdemo;                           pclear(2); % PMTKslow
 %naiveBayesMnistDemo;                    pclear(2); % PMTKslow
@@ -30,7 +32,6 @@ bimodalDemo;                             pclear(2);
 binomDistPlot;                           pclear(2);
 binomial_betaPosteriorDemo;              pclear(2);
 boxplotMorley;                           pclear(2);
-cancerRatesBugsScript;                   pclear(2);
 cancerRatesEb;                           pclear(2);
 cancerRatesMh;                           pclear(2);
 casinoDemo;                              pclear(2);
@@ -78,6 +79,7 @@ gaussHeightWeight;                       pclear(2);
 gaussianEllipsoids;                      pclear(2);
 gaussImputationCompare;                  pclear(2);
 gaussImputationDemo;                     pclear(2);
+gaussImputationDemoColorHintonDiag;      pclear(2);
 gaussImputationDemoOld;                  pclear(2);
 gaussImputationGibbsDemo;                pclear(2);
 gaussImputationICMDemo;                  pclear(2);
@@ -125,14 +127,11 @@ linregPolyVsReg;                         pclear(2);
 linregRbfDemo;                           pclear(2);
 linregRobustDemo;                        pclear(2);
 linregSparseEmLassoDemo;                 pclear(2);
-linregSparseEmSynthDemo;                 pclear(2);
-linregSparseEmSynthDemoOld;              pclear(2);
 linregStudentStacklossDemo;              pclear(2);
 linregStudentTest;                       pclear(2);
 linregWedgeDemo2;                        pclear(2);
 LMSdemo;                                 pclear(2);
 localMinima1d;                           pclear(2);
-localMinimaAutoFig;                      pclear(2);
 logregBasisFnDemo;                       pclear(2);
 logregDemoGirolami;                      pclear(2);
 logregGradeMH;                           pclear(2);
@@ -150,6 +149,7 @@ mixBerMnistEM;                           pclear(2);
 mixBetaDemo;                             pclear(2);
 mixDirDnaDemo;                           pclear(2);
 mixGaussDemoFaithful;                    pclear(2);
+mixGaussImputationDemo;                  pclear(2);
 mixGaussLikelihoodConvexHull;            pclear(2);
 mixGaussLikSurfaceDemo;                  pclear(2);
 mixGaussMultiModesPlot;                  pclear(2);
@@ -215,6 +215,7 @@ residualsDemo;                           pclear(2);
 ridgePathProstate;                       pclear(2);
 riskFnGauss;                             pclear(2);
 robustDemo;                              pclear(2);
+robustPdfPlot;                           pclear(2);
 rosen2d;                                 pclear(2);
 rosenbrock;                              pclear(2);
 rotationDemo;                            pclear(2);
