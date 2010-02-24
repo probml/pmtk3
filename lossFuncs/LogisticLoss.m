@@ -13,14 +13,14 @@ nll = sum(mylogsumexp([zeros(n,1) -yXw]));
 if nargout > 1
     if nargout > 2
         sig = 1./(1+exp(-yXw));
-        g = -X.'*(y.*(1-sig));
+        g = -X'*(y.*(1-sig));
     else
-        g = -X.'*(y./(1+exp(yXw)));
+        g = -X'*(y./(1+exp(yXw)));
     end
 end
 
 if nargout > 2
-    H = X.'*diag(sparse(sig.*(1-sig)))*X;
+    H = X'*diag(sparse(sig.*(1-sig)))*X;
 end
 
 if nargout > 3

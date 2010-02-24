@@ -128,6 +128,7 @@ while ~done
   se = (y-yhat).^2;
   if computeSigma
     sigma = sqrt(mean(var(se)))
+    sigma = max(sigma, 1e-2) % hack to prevent sigma getting too small
   end
   
   if computeLogpost
@@ -135,8 +136,8 @@ while ~done
     if iter>1
       delta = NLL(iter) - NLL(iter-1);
       if delta > 0 && ~approxeq(NLL(iter), NLL(iter-1))
-        fprintf('warning:  NLL went from %8.5f to %8.5f (should decrease)\n', ...
-          NLL(iter-1), NLL(iter))
+        warning(sprintf(' NLL went from %8.5f to %8.5f (should decrease)\n', ...
+          NLL(iter-1), NLL(iter)))
       end
     end
   end
