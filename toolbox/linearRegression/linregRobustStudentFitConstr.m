@@ -54,6 +54,10 @@ else
   error('cannot fix sigma2 but optimize dof')
 end
 model.includeOffset = includeOffset;
+if includeOffset
+    model.w0 = model.w(1);
+    model.w(1) = [];
+end
 
 end
 
