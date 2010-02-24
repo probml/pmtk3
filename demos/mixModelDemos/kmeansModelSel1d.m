@@ -8,14 +8,14 @@ mix.covars = [0.1 0.1 0.1];
 bins = -2:0.1:2;
 n = 1000; ndx = 1:n;
 Xtrain = gmmsamp(mix, n);
-figure(1);clf
+figure;
 hist(Xtrain, bins);
 title('Xtrain')
 printPmtkFigure kmeansModelSelData
 
 
 Xtest = gmmsamp(mix, n);
-figure(2);clf
+figure
 hist(Xtest, bins);
 title('Xtest')
 
@@ -24,11 +24,11 @@ title('Xtest')
 Ks = [1 2 3 4 5 6];
 
 pemp = normalize(hist(Xtrain, bins));
-figure(3);clf
+figure
 for i=1:length(Ks)
   K = Ks(i);
   mu = kmeansFit(Xtrain, K)';
-  Xhat = kmeansDecode(kmeansEncode(Xtest, mu), mu);
+  Xhat = kmeansDecode(kmeansEncode(Xtest, mu'), mu');
   mse(i) = mean(sum((Xhat - Xtest).^2,2));
   
   subplot(2,3,i);
@@ -63,12 +63,13 @@ for i=1:length(Ks)
   title(sprintf('K=%d, nll=%5.4f', K, nll(i)))
 end
 
-figure(6);clf; plot(Ks, nll, 'o-')
+figure;
+plot(Ks, nll, 'o-')
 title('NLL on test set vs K for GMM')
 
 
 finebins = -2:0.001:2;
-figure(7);clf
+figure
 K = 3;
 mix = gmm(1, K, 'spherical');
 mix = gmmem(mix, Xtrain, options);
