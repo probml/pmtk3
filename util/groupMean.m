@@ -13,7 +13,11 @@ function M = groupMean(X, y, C)
 if nargin < 3
     C = numel(unique(y));
 end
-M = bsxfun(@rdivide, bsxfun(@eq, sparse(1:C)', y')*X, histc(y, 1:C));
+
+S = bsxfun(@eq, sparse(1:C)', y');
+M = S*X;
+M = bsxfun(@rdivide, M, histc(y, 1:C)); 
+
 %toc
 
 
