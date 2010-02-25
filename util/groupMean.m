@@ -14,9 +14,9 @@ if nargin < 3
     C = numel(unique(y));
 end
 
-S = bsxfun(@eq, sparse(1:C)', y');
-M = S*X;
-M = bsxfun(@rdivide, M, histc(y, 1:C)); 
+S = bsxfun(@eq, sparse(1:C)', y');       % C-by-n logical sparse matrix, (basically a one-of-K encoding transposed)
+M = S*X;                                 % computes the sum, yielding a C-by-d matrix
+M = bsxfun(@rdivide, M, histc(y, 1:C));  % divide by counts to get mean
 
 %toc
 
