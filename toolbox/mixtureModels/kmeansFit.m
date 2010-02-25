@@ -20,13 +20,14 @@ errHist = zeros(maxIter, 1);
 while ~done
     dist = sqDistance(Y', mu');   % dist(i,k)
     assign = minidx(dist, [], 2);
-    err = 0;
-    for k=1:K
-        members = (assign==k);
-        mu(:, k) = mean(data(members, :), 1)';
-        err = err + sum(dist(members, k));
-    end
-    err  = err/N;
+    %err = 0;
+    %for k=1:K
+    %    members = (assign==k);
+    %    mu(:, k) = mean(data(members, :), 1)';
+    %    err = err + sum(dist(members, k));
+    %end
+    mu = groupMean(data, assign, K)';
+    err = sum(min(groupSum(dist, assign, K), [], 2))/N; 
     errHist(iter) = err;
     converged =  iter > 1 && convergenceTest(errHist(iter), errHist(iter-1), thresh);
     if ~isempty(plotfn), plotfn(data, mu, assign, err, iter); end
