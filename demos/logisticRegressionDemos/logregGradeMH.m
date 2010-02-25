@@ -61,6 +61,8 @@ for ii=1:N
     line([X(i,2) X(i,2)], [Q5 Q95]);
 end
 
+logregSATdemo
+
 end
 
 %%%%%%%%%
