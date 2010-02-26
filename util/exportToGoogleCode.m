@@ -16,7 +16,7 @@ function exportToGoogleCode(package, username, passwd, summary)
   fpath = fullfile(tempdir, fname)
   fprintf('Root directory is %s\n',pwd)
   fprintf('Exporting code to %s...\n', fname);
-  exportsvn(pwd, fpath);
+  exportsvn(pwd, fpath, {'docs'});
   
   if 1
   fprintf('Uploading file...\n');
