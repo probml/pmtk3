@@ -15,7 +15,7 @@ info = createStruct({'name', 'description', 'doEval', 'localLink', 'googleLink'}
 cd(dest);
 for i=1:numel(demos)
     info(i) = mfileInfo(demos{i});
-    %publishFile(demos{i}, fullfile(dest, folder), info(i).doEval);
+    publishFile(demos{i}, fullfile(dest, folder), info(i).doEval);
 end
 
 perm = sortidx(cellfuncell(@(str)lower(str),{info.name}));
