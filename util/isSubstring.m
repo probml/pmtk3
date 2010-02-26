@@ -1,4 +1,4 @@
-function tf = issubstring(a,b,ignoreCase)
+function tf = isSubstring(a,b,ignoreCase)
 % return true, iff 'a' is a substring of 'b'
     if nargin < 3, ignoreCase = false; end
     if ignoreCase
