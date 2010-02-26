@@ -19,3 +19,4 @@ for i=1:numel(d)
 end
 
 writeText(wikiText, wikiFile); 
+system(sprintf('svn ci %s -m "auto-updated by publishDemos"', wikiFile));
