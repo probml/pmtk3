@@ -1,0 +1,169 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>Sequential Bayesian Updating of a Beta-Bernoulli model.</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="bernoulli_betaSequentialUpdate"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Sequential Bayesian Updating of a Beta-Bernoulli model.</h1><!--introduction--><p>In this example we draw samples from a Bernoulli distribution and then sequentially fit a Beta-Bernoulli model, plotting the posterior of the parameters at each iteration.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Sample</a></li><li><a href="#2">Update &amp; Plot</a></li></ul></div><h2>Sample<a name="1"></a></h2><pre class="codeinput">setSeed(0);
+mu = 0.7; <span class="comment">% 70% probability of success</span>
+n = 100;  <span class="comment">% number of samples</span>
+X = sum(rand(n, 1) &lt; repmat(mu, n, 1), 2);
+</pre><h2>Update &amp; Plot<a name="2"></a></h2><pre class="codeinput">figure; hold <span class="string">on</span>;
+[styles, colors, symbols] =  plotColors();
+ns = [0 5 50 100];
+legendstr = cell(length(ns)+1,1);
+betaPrior = [0.5, 0.5]; <span class="comment">% uninformative prior</span>
+<span class="keyword">for</span> i=1:length(ns)
+    n = ns(i);
+    Xsubset = X(1:n);
+    nsucc = sum(Xsubset, 1);
+    ntrials = size(Xsubset, 1);
+    nfail = ntrials - nsucc;
+    a = betaPrior(1) + nsucc;
+    b = betaPrior(2) + nfail;
+    xs = linspace(0, 1, 50);
+    logkerna = (a-1).*log(xs);       logkerna(a==1 &amp; xs==0) = 0;
+    logkernb = (b-1).*log(1-xs);     logkernb(b==1 &amp; xs==1) = 0;
+    p = exp(logkerna + logkernb - betaln(a,b));
+    plotArgs = {<span class="string">'linewidth'</span>, 2};
+    plot(colvec(xs), colvec(p), styles{i}, <span class="string">'linewidth'</span>, 2);
+    legendstr{i} = sprintf(<span class="string">'n=%d'</span>, n);
+<span class="keyword">end</span>
+box <span class="string">on</span>;
+xbar = mean(X);
+pmax = 9.95;
+h=line([xbar xbar], [-0.2 pmax]);
+set(h, <span class="string">'linewidth'</span>, 3, <span class="string">'Color'</span>, <span class="string">'c'</span>);
+legendstr{length(ns)+1} = <span class="string">'truth'</span>;
+legend(legendstr, <span class="string">'Location'</span>, <span class="string">'NorthWest'</span>);
+axis([-0.01,1.01,-0.2,10])
+printPmtkFigure <span class="string">betaSeqUpdate</span>
+</pre><pre class="codeoutput">Warning: Log of zero. This warning will be removed in a
+future release.
+         Consider using DBSTOP IF NANINF when debugging. 
+Warning: Log of zero. This warning will be removed in a
+future release.
+         Consider using DBSTOP IF NANINF when debugging. 
+Warning: Log of zero. This warning will be removed in a
+future release.
+         Consider using DBSTOP IF NANINF when debugging. 
+Warning: Log of zero. This warning will be removed in a
+future release.
+         Consider using DBSTOP IF NANINF when debugging. 
+Warning: Log of zero. This warning will be removed in a
+future release.
+         Consider using DBSTOP IF NANINF when debugging. 
+Warning: Log of zero. This warning will be removed in a
+future release.
+         Consider using DBSTOP IF NANINF when debugging. 
+Warning: Log of zero. This warning will be removed in a
+future release.
+         Consider using DBSTOP IF NANINF when debugging. 
+Warning: Log of zero. This warning will be removed in a
+future release.
+         Consider using DBSTOP IF NANINF when debugging. 
+</pre><img vspace="5" hspace="5" src="bernoulli_betaSequentialUpdate_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.9<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Sequential Bayesian Updating of a Beta-Bernoulli model. 
+% In this example we draw samples from a Bernoulli distribution and then
+% sequentially fit a Beta-Bernoulli model, plotting the posterior of the
+% parameters at each iteration. 
+
+%% Sample
+setSeed(0);
+mu = 0.7; % 70% probability of success
+n = 100;  % number of samples 
+X = sum(rand(n, 1) < repmat(mu, n, 1), 2);
+%% Update & Plot
+figure; hold on;
+[styles, colors, symbols] =  plotColors();
+ns = [0 5 50 100];        
+legendstr = cell(length(ns)+1,1);
+betaPrior = [0.5, 0.5]; % uninformative prior
+for i=1:length(ns)
+    n = ns(i);
+    Xsubset = X(1:n);
+    nsucc = sum(Xsubset, 1);
+    ntrials = size(Xsubset, 1);
+    nfail = ntrials - nsucc;
+    a = betaPrior(1) + nsucc;
+    b = betaPrior(2) + nfail;
+    xs = linspace(0, 1, 50); 
+    logkerna = (a-1).*log(xs);       logkerna(a==1 & xs==0) = 0;
+    logkernb = (b-1).*log(1-xs);     logkernb(b==1 & xs==1) = 0;
+    p = exp(logkerna + logkernb - betaln(a,b));
+    plotArgs = {'linewidth', 2};
+    plot(colvec(xs), colvec(p), styles{i}, 'linewidth', 2);
+    legendstr{i} = sprintf('n=%d', n);
+end
+box on;
+xbar = mean(X);
+pmax = 9.95;
+h=line([xbar xbar], [-0.2 pmax]); 
+set(h, 'linewidth', 3, 'Color', 'c');
+legendstr{length(ns)+1} = 'truth';
+legend(legendstr, 'Location', 'NorthWest');
+axis([-0.01,1.01,-0.2,10])
+printPmtkFigure betaSeqUpdate
+
+##### SOURCE END #####
+--></body></html>

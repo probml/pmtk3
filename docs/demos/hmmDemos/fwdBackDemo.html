@@ -1,0 +1,142 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>fwdBackDemo</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="fwdBackDemo"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><pre class="codeinput">K = 3;
+<span class="comment">%initDist= [1 0 0]'; % start in state 1</span>
+initDist= normalize(ones(3,1)); <span class="comment">% could start anywhere</span>
+
+<span class="comment">% Left to right HMM 1-&gt;2-&gt;3 where 3 has a self-loop with prob 1</span>
+<span class="comment">% So stationary distribution of the unobserved chain is [0 0 1]</span>
+p = 0.9; q=1-p;
+transmat = [q p 0;
+	    0 q p;
+	    0 0 1];
+T = 7;
+<span class="comment">%obslik = ones(K, T); % non-informative observations</span>
+obslik = repmat([0.5 0.3 0.2]', 1, T); <span class="comment">% noisy obs</span>
+nsamples = 1000;
+
+<span class="comment">% check that samples converge to true marginals</span>
+
+samples = hmmSamplePost(initDist, transmat, obslik, nsamples);
+gamma = hmmFwdBack(initDist, transmat, obslik);
+path = hmmViterbi(initDist, transmat, obslik)
+
+<span class="keyword">for</span> t=1:T
+  belApprox(:,t) = normalize(hist(samples(t,:),1:K));
+<span class="keyword">end</span>
+gamma
+belApprox
+</pre><pre class="codeoutput">path =
+     1     2     3     3     3     3     3
+gamma =
+  Columns 1 through 4
+    0.6480    0.1619    0.0404    0.0100
+    0.2160    0.5185    0.1993    0.0603
+    0.1360    0.3196    0.7603    0.9297
+  Columns 5 through 7
+    0.0024    0.0005    0.0001
+    0.0166    0.0044    0.0011
+    0.9810    0.9951    0.9988
+belApprox =
+  Columns 1 through 4
+    0.6520    0.1610    0.0450    0.0080
+    0.2260    0.5230    0.1850    0.0630
+    0.1220    0.3160    0.7700    0.9290
+  Columns 5 through 7
+    0.0020         0         0
+    0.0130    0.0030         0
+    0.9850    0.9970    1.0000
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.9<br></p></div><!--
+##### SOURCE BEGIN #####
+K = 3;
+%initDist= [1 0 0]'; % start in state 1
+initDist= normalize(ones(3,1)); % could start anywhere
+
+% Left to right HMM 1->2->3 where 3 has a self-loop with prob 1
+% So stationary distribution of the unobserved chain is [0 0 1]
+p = 0.9; q=1-p;
+transmat = [q p 0;
+	    0 q p;
+	    0 0 1];
+T = 7;
+%obslik = ones(K, T); % non-informative observations
+obslik = repmat([0.5 0.3 0.2]', 1, T); % noisy obs
+nsamples = 1000;
+
+% check that samples converge to true marginals
+
+samples = hmmSamplePost(initDist, transmat, obslik, nsamples);
+gamma = hmmFwdBack(initDist, transmat, obslik);
+path = hmmViterbi(initDist, transmat, obslik)
+
+for t=1:T
+  belApprox(:,t) = normalize(hist(samples(t,:),1:K));
+end
+gamma
+belApprox
+
+##### SOURCE END #####
+--></body></html>

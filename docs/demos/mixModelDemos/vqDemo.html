@@ -1,0 +1,122 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>vqDemo</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="vqDemo"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% vqDemo</span>
+
+seed = 0; randn(<span class="string">'state'</span>, seed); rand(<span class="string">'state'</span>, seed);
+load <span class="string">clown</span>;
+A = X;
+figure;
+imagesc(A); colormap(gray); title(<span class="string">'original'</span>)
+printPmtkFigure(<span class="string">'vqDemoClownOrig'</span>);
+[nrows ncols ncolors] = size(A);
+data = reshape(A, [nrows*ncols ncolors]); <span class="comment">% data(i,:) = rgb value for pixel i</span>
+<span class="comment">%K = 8;</span>
+<span class="keyword">for</span> K=[2,4]
+  mu = kmeansFit(data, K);
+
+  <span class="comment">% Apply codebook to quantize test image</span>
+  B = X; <span class="comment">% test = train</span>
+  [nrows ncols ncolors] = size(B);
+  data = reshape(B, [nrows*ncols ncolors]);
+  compressed = kmeansEncode(data, mu);
+  decompressed = kmeansDecode(compressed, mu);
+  Qimg = reshape(decompressed, [nrows ncols ncolors]);
+  figure;
+  imagesc(Qimg); colormap(gray)
+  title(sprintf(<span class="string">'K=%d'</span>,K))
+  printPmtkFigure(sprintf(<span class="string">'vqDemoClown%d'</span>, K));
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="vqDemo_01.png" alt=""> <img vspace="5" hspace="5" src="vqDemo_02.png" alt=""> <img vspace="5" hspace="5" src="vqDemo_03.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.9<br></p></div><!--
+##### SOURCE BEGIN #####
+% vqDemo
+
+seed = 0; randn('state', seed); rand('state', seed);
+load clown;
+A = X;
+figure;
+imagesc(A); colormap(gray); title('original')
+printPmtkFigure('vqDemoClownOrig');
+[nrows ncols ncolors] = size(A);
+data = reshape(A, [nrows*ncols ncolors]); % data(i,:) = rgb value for pixel i
+%K = 8;
+for K=[2,4]
+  mu = kmeansFit(data, K);
+  
+  % Apply codebook to quantize test image
+  B = X; % test = train
+  [nrows ncols ncolors] = size(B);
+  data = reshape(B, [nrows*ncols ncolors]);
+  compressed = kmeansEncode(data, mu);
+  decompressed = kmeansDecode(compressed, mu);
+  Qimg = reshape(decompressed, [nrows ncols ncolors]);
+  figure;
+  imagesc(Qimg); colormap(gray)
+  title(sprintf('K=%d',K))
+  printPmtkFigure(sprintf('vqDemoClown%d', K));
+end
+
+##### SOURCE END #####
+--></body></html>
