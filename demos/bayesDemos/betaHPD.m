@@ -1,5 +1,7 @@
 %% Plot CI and HPD for beta posterior
+% Requires Stats toolbox
 %PMTKstats betainv
+
 N1      = 2; 
 N       = 10; 
 model.a = N1+1; 
