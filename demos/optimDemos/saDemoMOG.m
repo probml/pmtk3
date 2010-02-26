@@ -35,7 +35,8 @@ for i=1:4
   hold on;
   plot(x_t,y_t,'k','linewidth',2)
   axis([-10 20 0 .15])
-  text(14,.1,sprintf('iter %d', Ns(i)))
+  %text(14,.1,sprintf('iter %d', Ns(i)))
+  title(sprintf('iter %d', Ns(i)))
 end
 
 %%%%%%%%%%
