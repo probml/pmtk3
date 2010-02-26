@@ -1,22 +1,18 @@
-%Josh Tenenbaum's number game
-%Written by Kevin Murphy and Matthew Dunham
 function numbersGame
-
+%% Josh Tenenbaum's Number Game
+% Written by Kevin Murphy and Matthew Dunham
 
 %% Global Variables
 first = 1; last = 100; %Range for the hypothesis space
-
-hypFn =         @mathHypothesesSmall;
-priorFn =       @mathPriorSmall;            
+hypFn        =  @mathHypothesesSmall;
+priorFn      =  @mathPriorSmall;            
 likelihoodFn =  @likelihood;
-posteriorFn =   @posterior;     
-postPredFn =    @postPredictive;
-priorPredFn =   @priorPredictive;
-
+posteriorFn  =  @posterior;     
+postPredFn   =  @postPredictive;
+priorPredFn  =  @priorPredictive;
 
 hypSpace = hypFn();                         
 inconcept = buildExtensionTable(hypSpace); 
-
 %%
 makePlots(); 
 % Note, plots won't work if using log likelihood or a large hypothesis
