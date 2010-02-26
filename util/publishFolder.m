@@ -42,7 +42,7 @@ closeHTMLfile(fid);
             info.description = h{1};
         end
         info.doEval = globalEval && isempty(intersect(tagfinder(mfile), doNotEvalList));
-        info.localLink = fullfile('.', [info.name, '.html']);
+        info.localLink = [info.name, '.html'];
         info.googleLink = [googleRoot, mfile];
     end
 end
