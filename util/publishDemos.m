@@ -1,7 +1,9 @@
-function publishDemos()
+function publishDemos(wikiFile)
+% Publish all of the PMTK3 demos and create the wiki TOC page. 
 
-wikiFile = 'C:\pmtk3wiki\Demos.wiki';
-
+if nargin == 0
+    wikiFile = 'C:\pmtk3wiki\Demos.wiki';
+end
 cd(fullfile(pmtk3Root(), 'demos'));
 d = dirs(); 
 for i = 1:numel(d)

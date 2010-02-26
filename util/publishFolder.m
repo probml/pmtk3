@@ -1,5 +1,9 @@
 function publishFolder(folder)
-
+% Publish a single demos directory, (called by publishDemos).
+%
+% Example
+%
+% publishFolder bayesDemos
 
 doNotEvalList = {'PMTKinteractive', 'PMTKbroken'};
 globalEval    = true;
