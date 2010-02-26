@@ -1,64 +1,45 @@
-function [X, acceptRatio] = metropolisHastings(target, proposal, xinit, Nsamples, Nburnin, thin)
-% Metropolis Hastings algorithm
+function [samples, naccept] = metropolisHastings(target, proposal, xinit, Nsamples, targetArgs, proposalArgs, proposalProb)
+% Metropolis-Hastings algorithm
 %
-% target - logp = target(x)
-% proposal -  xprime = proposal(x) or  [xprime, probOldToNew, probNewToOld]= proposal(x)
-% xinit - a dx1 row vector
-% Nsamples
-% Optional arguments
-% Nburnin [0]
-% thin - take every n'th sample [n=1]
+% Inputs
+% target returns the unnormalized log posterior, called as 'p = exp(target(x, targetArgs{:}))'
+% proposal is a fn, as 'xprime = proposal(x, proposalArgs{:})' where x is a 1xd vector
+% xinit is a 1xd vector specifying the initial state
+% Nsamples - total number of samples to draw
+% targetArgs - cell array passed to target
+% proposalArgs - cell array passed to proposal
+% proposalProb  - optional fn, called as 'p = proposalProb(x,xprime, proposalArgs{:})',
+%   computes q(xprime|x). Not needed for symmetric proposals (Metropolis algorithm)
 %
-% OUTPUT
-% X(s,:) = samples at step s
-%
-% If the proposal is not symmetric, it should be of the form
-% [ xprime, probOldToNew, probNewToOld]= proposal(x)
-% so  we use the Hastings correction
+% Outputs
+% samples(s,:) is the s'th sample (of size d)
+% naccept = number of accepted moves
 
-if nargin < 5, Nburnin = 0; end
-if nargin < 6, thin = false; end
-symmetric = (nargout(proposal)==1 || nargout(proposal) == -1); % -1 indicates variable output args or anonymous function
+if nargin < 5,  targetArgs = {}; end
+if nargin < 6,  proposalArgs = {}; end
+if nargin < 7, proposalProb = []; end
 
-
-keep = 1;
-x = xinit;
-logpx = target(x);
-S = (Nsamples*thin + Nburnin);
-d = length(x);
-X = zeros(Nsamples, d);
-u = rand(S,1); % move outside main loop to speedup MH
+d = length(xinit);
+samples = zeros(Nsamples, d);
+x = xinit(:)';
 naccept = 0;
-for iter=1:S
-  [x, accept, logpx] = mhUpdate(x, logpx, u(iter), proposal, target, symmetric); 
-  if (iter > Nburnin) && (mod(iter, thin)==0)
-    X(keep,:) = x; keep = keep + 1;
-    naccept = naccept + accept;
-  end
-end
-acceptRatio = naccept/(keep-1);
+logpOld = target(x, targetArgs{:});
+for t=1:Nsamples
+    xprime = proposal(x, proposalArgs{:});
+    logpNew = target(xprime, targetArgs{:});
+    alpha = exp(logpNew - logpOld);
+    if ~isempty(proposalProb) % Hastings correction for asymmetric proposals
+        qnumer = proposalProb(x, xprime, proposalArgs{:}); % q(x|x')
+        qdenom = proposalProb(xprime, x, proposalArgs{:}); % q(x'|x)
+        alpha = alpha * (qnumer/qdenom);
+    end
+    r = min(1, alpha);
+    u = rand(1,1);
+    if u < r
+        x = xprime;
+        naccept = naccept + 1;
+        logpOld = logpNew;
+    end
+    samples(t,:) = x;
 end
 
-
-function [xnew, accept, logpNew] = mhUpdate(x, logpOld, u, proposal, target, symmetric)
-if symmetric
-  [xprime] = proposal(x);
-  probOldToNew = 1; probNewToOld = 1;
-else
-  [xprime, probOldToNew, probNewToOld] = proposal(x);
-end
-logpNew = target(xprime); 
-alpha = exp(logpNew - logpOld);
-alpha = alpha * (probNewToOld/probOldToNew);  % Hastings correction for asymmetric proposals
-r = min(1, alpha);
-%u = rand(1,1);
-if u < r
-  xnew = xprime;
-  accept = 1;
-else
-  accept = 0;
-  xnew = x;
-  logpNew = logpOld;
-end
-end
-    
