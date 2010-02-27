@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>coinsModelSelDemo</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="coinsModelSelDemo"><style type="text/css">
+      --><title>Coins Model Selection Demo</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-26"><meta name="m-file" content="coinsModelSelDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,17 +62,18 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput">theta = 0.7; N = 5; alpha = 1;
+  </style></head><body><div class="content"><h1>Coins Model Selection Demo</h1><pre class="codeinput">theta = 0.7; N = 5; alpha = 1;
 alphaH = alpha; alphaT = alpha;
 <span class="keyword">for</span> i=1:(2^N)
-  flips(i,:) = ind2subv(2*ones(1,N), i); <span class="comment">% convert i to  bit vector</span>
-  Nh(i) = length(find(flips(i,:)==1));
-  Nt(i) = length(find(flips(i,:)==2));
-  nh = Nh(i); nt = Nt(i);
-  margLik(i) = exp(betaln(alphaH+nh, alphaT+nt) - betaln(alphaH, alphaT));
-  mle = Nh(i)/N;
-  loglik(i) = Nh(i)*log10(mle) + Nt(i)*log10(1-mle);
-  logBF(i) = betaln(alphaH+nh, alphaT+nt) - betaln(alphaH, alphaH) - N*log(0.5);
+    flips(i,:) = ind2subv(2*ones(1,N), i); <span class="comment">% convert i to  bit vector</span>
+    Nh(i) = length(find(flips(i,:)==1));
+    Nt(i) = length(find(flips(i,:)==2));
+    nh = Nh(i);
+    nt = Nt(i);
+    margLik(i) = exp(betaln(alphaH+nh, alphaT+nt) - betaln(alphaH, alphaT));
+    mle = Nh(i)/N;
+    loglik(i) = Nh(i)*log10(mle + eps) + Nt(i)*log10(1-mle + eps);
+    logBF(i) = betaln(alphaH+nh, alphaT+nt) - betaln(alphaH, alphaH) - N*log(0.5);
 <span class="keyword">end</span>
 
 <span class="comment">% sort in order of number of heads</span>
@@ -80,9 +81,7 @@ alphaH = alpha; alphaT = alpha;
 margLik = margLik(ndx);
 logBF = logBF(ndx);
 loglik = loglik(ndx);
-
-
-figure;
+</pre><pre class="codeinput">figure;
 hold <span class="string">on</span>
 p0 = (1/2)^N;
 h=plot(margLik, <span class="string">'o-'</span>);
@@ -91,53 +90,44 @@ set(gca,<span class="string">'xtick'</span>, 1:2^N)
 set(gca,<span class="string">'xticklabel'</span>,Nh)
 xlabel(<span class="string">'num heads'</span>)
 title(sprintf(<span class="string">'Marginal likelihood for Beta-Bernoulli model, %s p(D|%s) Be(%s|1,1) d%s'</span>, <span class="keyword">...</span>
-	      <span class="string">'\int'</span>, <span class="string">'\theta'</span>, <span class="string">'\theta'</span>, <span class="string">'\theta'</span>))
+    <span class="string">'\int'</span>, <span class="string">'\theta'</span>, <span class="string">'\theta'</span>, <span class="string">'\theta'</span>))
 printPmtkFigure(<span class="string">'joshCoins4'</span>);
-
-figure;
+</pre><img vspace="5" hspace="5" src="coinsModelSelDemo_01.png" alt=""> <pre class="codeinput">figure;
 plot(exp(logBF), <span class="string">'o-'</span>)
 title(<span class="string">'BF(1,0)'</span>)
 set(gca,<span class="string">'xtick'</span>, 1:2^N)
 set(gca,<span class="string">'xticklabel'</span>,Nh)
 printPmtkFigure(<span class="string">'joshCoins4BF'</span>);
-
-
-BIC1 = loglik - 1;
+</pre><img vspace="5" hspace="5" src="coinsModelSelDemo_02.png" alt=""> <pre class="codeinput">BIC1 = loglik - 1;
 figure;
 plot(BIC1, <span class="string">'o-'</span>);
 title(<span class="string">'BIC approximation to log_{10} p(D|M1)'</span>)
 set(gca,<span class="string">'xtick'</span>, 1:2^N)
 set(gca,<span class="string">'xticklabel'</span>,Nh)
 printPmtkFigure(<span class="string">'joshCoins4BIC'</span>);
-
-figure;
+</pre><img vspace="5" hspace="5" src="coinsModelSelDemo_03.png" alt=""> <pre class="codeinput">figure;
 plot(log10(margLik), <span class="string">'o-'</span>);
 title(<span class="string">'log_{10} p(D|M1)'</span>)
 set(gca,<span class="string">'xtick'</span>, 1:2^N)
 set(gca,<span class="string">'xticklabel'</span>,Nh)
 printPmtkFigure(<span class="string">'joshCoins4LML'</span>);
-</pre><pre class="codeoutput">Warning: Log of zero. This warning will be removed in a
-future release.
-         Consider using DBSTOP IF NANINF when debugging. 
-Warning: Log of zero. This warning will be removed in a
-future release.
-         Consider using DBSTOP IF NANINF when debugging. 
-</pre><img vspace="5" hspace="5" src="coinsModelSelDemo_01.png" alt=""> <img vspace="5" hspace="5" src="coinsModelSelDemo_02.png" alt=""> <img vspace="5" hspace="5" src="coinsModelSelDemo_03.png" alt=""> <img vspace="5" hspace="5" src="coinsModelSelDemo_04.png" alt=""> <p class="footer"><br>
+</pre><img vspace="5" hspace="5" src="coinsModelSelDemo_04.png" alt=""> <p class="footer"><br>
       Published with MATLAB&reg; 7.9<br></p></div><!--
 ##### SOURCE BEGIN #####
-
+%% Coins Model Selection Demo
 
 theta = 0.7; N = 5; alpha = 1;
 alphaH = alpha; alphaT = alpha;
 for i=1:(2^N)
-  flips(i,:) = ind2subv(2*ones(1,N), i); % convert i to  bit vector
-  Nh(i) = length(find(flips(i,:)==1));
-  Nt(i) = length(find(flips(i,:)==2));
-  nh = Nh(i); nt = Nt(i);
-  margLik(i) = exp(betaln(alphaH+nh, alphaT+nt) - betaln(alphaH, alphaT));
-  mle = Nh(i)/N;
-  loglik(i) = Nh(i)*log10(mle) + Nt(i)*log10(1-mle);
-  logBF(i) = betaln(alphaH+nh, alphaT+nt) - betaln(alphaH, alphaH) - N*log(0.5);
+    flips(i,:) = ind2subv(2*ones(1,N), i); % convert i to  bit vector
+    Nh(i) = length(find(flips(i,:)==1));
+    Nt(i) = length(find(flips(i,:)==2));
+    nh = Nh(i);
+    nt = Nt(i);
+    margLik(i) = exp(betaln(alphaH+nh, alphaT+nt) - betaln(alphaH, alphaT));
+    mle = Nh(i)/N;
+    loglik(i) = Nh(i)*log10(mle + eps) + Nt(i)*log10(1-mle + eps);
+    logBF(i) = betaln(alphaH+nh, alphaT+nt) - betaln(alphaH, alphaH) - N*log(0.5);
 end
 
 % sort in order of number of heads
@@ -145,8 +135,7 @@ end
 margLik = margLik(ndx);
 logBF = logBF(ndx);
 loglik = loglik(ndx);
-
-
+%%
 figure;
 hold on
 p0 = (1/2)^N;
@@ -156,17 +145,16 @@ set(gca,'xtick', 1:2^N)
 set(gca,'xticklabel',Nh)
 xlabel('num heads')
 title(sprintf('Marginal likelihood for Beta-Bernoulli model, %s p(D|%s) Be(%s|1,1) d%s', ...
-	      '\int', '\theta', '\theta', '\theta'))
+    '\int', '\theta', '\theta', '\theta'))
 printPmtkFigure('joshCoins4');
-
+%%
 figure;
 plot(exp(logBF), 'o-')
 title('BF(1,0)')
 set(gca,'xtick', 1:2^N)
 set(gca,'xticklabel',Nh)
 printPmtkFigure('joshCoins4BF');
-
-
+%%
 BIC1 = loglik - 1;
 figure;
 plot(BIC1, 'o-');
@@ -174,15 +162,13 @@ title('BIC approximation to log_{10} p(D|M1)')
 set(gca,'xtick', 1:2^N)
 set(gca,'xticklabel',Nh)
 printPmtkFigure('joshCoins4BIC');
-
+%%
 figure;
 plot(log10(margLik), 'o-');
 title('log_{10} p(D|M1)')
 set(gca,'xtick', 1:2^N)
 set(gca,'xticklabel',Nh)
 printPmtkFigure('joshCoins4LML');
-
-
 
 ##### SOURCE END #####
 --></body></html>

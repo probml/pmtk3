@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>Mixture of Beta distributions</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="mixBetaDemo"><style type="text/css">
+      --><title>mixBetaDemo</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-26"><meta name="m-file" content="mixBetaDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,121 +62,91 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h1>Mixture of Beta distributions</h1><pre class="codeinput"><span class="keyword">function</span> mixBetaDemo()
-
-N = [20 10];
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Mixture of Beta distributions</a></li><li><a href="#3">Compute pbiased using just mixture component 1</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> mixBetaDemo()
+</pre><h2>Mixture of Beta distributions<a name="2"></a></h2><pre class="codeinput">N = [20 10];
 alphaPrior = [20 20 ; 30 10];
 M = 2;
 mixprior = [0.5 0.5];
 <span class="keyword">for</span> z=1:M
-  logmarglik(z) = betaln(alphaPrior(z,1) + N(1), alphaPrior(z,2) + N(2)) - <span class="keyword">...</span>
-    betaln(alphaPrior(z,1), alphaPrior(z,2));
+    logmarglik(z) = betaln(alphaPrior(z,1) + N(1), alphaPrior(z,2) + N(2)) - <span class="keyword">...</span>
+        betaln(alphaPrior(z,1), alphaPrior(z,2));
 <span class="keyword">end</span>
 mixpost = exp(normalizeLogspace(logmarglik + log(mixprior)));
 <span class="keyword">for</span> z=1:M
-  alphaPost(z,:) = alphaPrior(z,:) + N;
+    alphaPost(z,:) = alphaPrior(z,:) + N;
 <span class="keyword">end</span>
 
 
-grid = 0:0.01:1;
+grid = 0.0001:0.01:0.9999;
 post = evalpdf(grid, mixpost, alphaPost);
 prior = evalpdf(grid, mixprior, alphaPrior);
 figure; hold <span class="string">on</span>
 plot(grid, prior, <span class="string">'r:'</span>, <span class="string">'linewidth'</span>, 3)
 plot(grid, post, <span class="string">'b-'</span>, <span class="string">'linewidth'</span>, 3)
-legend(<span class="string">'prior'</span>, <span class="string">'posterior'</span>)
+legend({<span class="string">'prior'</span>, <span class="string">'posterior'</span>}, <span class="string">'Location'</span>, <span class="string">'NorthWest'</span>)
 title(<span class="string">'mixture of Beta distributions'</span>)
 printPmtkFigure(<span class="string">'mixBetaDemo'</span>)
 
 pbiased = 0;
 <span class="keyword">for</span> k=1:M
-  pbiased = pbiased + mixpost(k)*(1-betacdf(0.5, alphaPost(k,1), alphaPost(k,2)))
+    model.a = alphaPost(k, 1);
+    model.b = alphaPost(k, 2);
+    pbiased = pbiased + mixpost(k)*(1-betainc(0.5, alphaPost(k, 1), alphaPost(k, 2)));
 <span class="keyword">end</span>
-
-<span class="comment">% Now compute pbiased using just mixture component 1</span>
-pbiasedSimple = 1-betacdf(0.5, alphaPost(1,1), alphaPost(1,2))
-
-
-
-<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="mixBetaDemo_01.png" alt=""> <h2>Compute pbiased using just mixture component 1<a name="3"></a></h2><pre class="codeinput">pbiasedSimple = 1-betainc(0.5, alphaPost(1,1), alphaPost(1,2))
+</pre><pre class="codeoutput">pbiasedSimple =
+    0.8858
+</pre><pre class="codeinput"><span class="keyword">end</span>
 
 
 <span class="keyword">function</span> p = evalpdf(thetas, postZ, alphaPost)
 p = zeros(size(thetas));
 M = numel(postZ);
 <span class="keyword">for</span> k=1:M
-  p = p + postZ(k)*betapdf(thetas, alphaPost(k,1), alphaPost(k,2));
+    model.a = alphaPost(k, 1);
+    model.b = alphaPost(k, 2);
+    p = p + postZ(k)*exp(betaLogprob(model, thetas));
 <span class="keyword">end</span>
 <span class="keyword">end</span>
-</pre><pre class="codeoutput">Warning: Log of zero. This warning will be removed in a
-future release.
-         Consider using DBSTOP IF NANINF when debugging. 
-Warning: Log of zero. This warning will be removed in a
-future release.
-         Consider using DBSTOP IF NANINF when debugging. 
-Warning: Log of zero. This warning will be removed in a
-future release.
-         Consider using DBSTOP IF NANINF when debugging. 
-Warning: Log of zero. This warning will be removed in a
-future release.
-         Consider using DBSTOP IF NANINF when debugging. 
-Warning: Log of zero. This warning will be removed in a
-future release.
-         Consider using DBSTOP IF NANINF when debugging. 
-Warning: Log of zero. This warning will be removed in a
-future release.
-         Consider using DBSTOP IF NANINF when debugging. 
-Warning: Log of zero. This warning will be removed in a
-future release.
-         Consider using DBSTOP IF NANINF when debugging. 
-Warning: Log of zero. This warning will be removed in a
-future release.
-         Consider using DBSTOP IF NANINF when debugging. 
-pbiased =
-    0.3063
-pbiased =
-    0.9604
-pbiasedSimple =
-    0.8858
-</pre><img vspace="5" hspace="5" src="mixBetaDemo_01.png" alt=""> <p class="footer"><br>
+</pre><p class="footer"><br>
       Published with MATLAB&reg; 7.9<br></p></div><!--
 ##### SOURCE BEGIN #####
-%% Mixture of Beta distributions
 function mixBetaDemo()
+%% Mixture of Beta distributions
 
 N = [20 10];
 alphaPrior = [20 20 ; 30 10];
 M = 2;
 mixprior = [0.5 0.5];
 for z=1:M
-  logmarglik(z) = betaln(alphaPrior(z,1) + N(1), alphaPrior(z,2) + N(2)) - ...
-    betaln(alphaPrior(z,1), alphaPrior(z,2));
+    logmarglik(z) = betaln(alphaPrior(z,1) + N(1), alphaPrior(z,2) + N(2)) - ...
+        betaln(alphaPrior(z,1), alphaPrior(z,2));
 end
 mixpost = exp(normalizeLogspace(logmarglik + log(mixprior)));
 for z=1:M
-  alphaPost(z,:) = alphaPrior(z,:) + N;
+    alphaPost(z,:) = alphaPrior(z,:) + N;
 end
 
 
-grid = 0:0.01:1;
+grid = 0.0001:0.01:0.9999;
 post = evalpdf(grid, mixpost, alphaPost);
 prior = evalpdf(grid, mixprior, alphaPrior);
 figure; hold on
 plot(grid, prior, 'r:', 'linewidth', 3)
 plot(grid, post, 'b-', 'linewidth', 3)
-legend('prior', 'posterior')
+legend({'prior', 'posterior'}, 'Location', 'NorthWest')
 title('mixture of Beta distributions')
 printPmtkFigure('mixBetaDemo')
 
 pbiased = 0;
 for k=1:M
-  pbiased = pbiased + mixpost(k)*(1-betacdf(0.5, alphaPost(k,1), alphaPost(k,2)))
+    model.a = alphaPost(k, 1);
+    model.b = alphaPost(k, 2);
+    pbiased = pbiased + mixpost(k)*(1-betainc(0.5, alphaPost(k, 1), alphaPost(k, 2)));
 end
 
-% Now compute pbiased using just mixture component 1
-pbiasedSimple = 1-betacdf(0.5, alphaPost(1,1), alphaPost(1,2))
-
-
+%% Compute pbiased using just mixture component 1
+pbiasedSimple = 1-betainc(0.5, alphaPost(1,1), alphaPost(1,2))
 
 end
 
@@ -185,7 +155,9 @@ function p = evalpdf(thetas, postZ, alphaPost)
 p = zeros(size(thetas));
 M = numel(postZ);
 for k=1:M
-  p = p + postZ(k)*betapdf(thetas, alphaPost(k,1), alphaPost(k,2));
+    model.a = alphaPost(k, 1); 
+    model.b = alphaPost(k, 2);
+    p = p + postZ(k)*exp(betaLogprob(model, thetas)); 
 end
 end
 

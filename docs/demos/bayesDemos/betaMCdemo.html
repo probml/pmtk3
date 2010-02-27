@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>betaMCdemo</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="betaMCdemo"><style type="text/css">
+      --><title>betaMCdemo</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-26"><meta name="m-file" content="betaMCdemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,74 +62,64 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% betaMCdemo</span>
-
-
-<span class="comment">% Gelman p95 exercise 3.10.2</span>
-<span class="comment">%data = [294  307  288 332];</span>
-<span class="comment">% pgreater = 0.81</span>
-
-
-data = [6 4 5 5; 60 40 52 48];
-<span class="keyword">for</span> i=1:size(data,1)
-   H1 = data(i,1); T1 = data(i,2); H2 = data(i,3); T2 = data(i,4);
-
-   a1 = H1+1; b1 = T1+1;
-   a2 = H2+1; b2 = T2+1;
-
-   <span class="comment">% Monte Carlo integration</span>
-   S = 10000;
-   p1 = betarnd(a1,b1,S,1);
-   p2 = betarnd(a2,b2,S,1);
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Compare Monte-Carlo and Numerical Integration</a></li><li><a href="#3">Monte Carlo integration</a></li><li><a href="#4">numerical integration</a></li></ul></div><h2>Compare Monte-Carlo and Numerical Integration<a name="1"></a></h2><p>Gelman p95 exercise 3.10.2</p><pre class="codeinput">data = [6 4 5 5; 60 40 52 48];
+S = 10000;
+<span class="keyword">for</span> i=1:size(data, 1)
+</pre><pre class="codeinput">   H1 = data(i, 1);
+   T1 = data(i, 2);
+   H2 = data(i, 3);
+   T2 = data(i, 4);
+   m1.a = H1+1;
+   m1.b = T1+1;
+   m2.a = H2+1;
+   m2.b = T2+1;
+</pre><h2>Monte Carlo integration<a name="3"></a></h2><pre class="codeinput">   p1 = betaSample(m1, S);
+   p2 = betaSample(m2, S);
    dif = (p1-p2);
-   pgreater = mean(dif &gt; 0)
-
-   <span class="comment">% numerical integration</span>
-   delta = 0.0001;
-   theta1 = 0:delta:1;
-   pgreaterInt = delta*sum(theta1 .^ (a1-1) .* (1-theta1) .^ (b1-1) <span class="keyword">...</span>
-      .* betainc(theta1, a2, b2) / beta(a1, b1))
-
-<span class="keyword">end</span>
+   pgreater = mean(dif &gt; 0);
+   display(pgreater);
 </pre><pre class="codeoutput">pgreater =
-    0.6694
-pgreaterInt =
+    0.6688
+</pre><pre class="codeoutput">pgreater =
+    0.8696
+</pre><h2>numerical integration<a name="4"></a></h2><pre class="codeinput">   delta = 0.0001;
+   theta1 = 0:delta:1;
+   pgreaterInt = delta*sum(theta1.^(m1.a-1).*(1-theta1).^(m1.b-1) <span class="keyword">...</span>
+                .*betainc(theta1, m2.a, m2.b) / beta(m1.a, m1.b));
+   display(pgreaterInt);
+</pre><pre class="codeoutput">pgreaterInt =
     0.6650
-pgreater =
-    0.8727
-pgreaterInt =
+</pre><pre class="codeoutput">pgreaterInt =
     0.8716
+</pre><pre class="codeinput"><span class="keyword">end</span>
 </pre><p class="footer"><br>
       Published with MATLAB&reg; 7.9<br></p></div><!--
 ##### SOURCE BEGIN #####
-% betaMCdemo
-
-
+%% Compare Monte-Carlo and Numerical Integration
 % Gelman p95 exercise 3.10.2
-%data = [294  307  288 332];
-% pgreater = 0.81
-
-
 data = [6 4 5 5; 60 40 52 48];
-for i=1:size(data,1)
-   H1 = data(i,1); T1 = data(i,2); H2 = data(i,3); T2 = data(i,4);
-   
-   a1 = H1+1; b1 = T1+1;
-   a2 = H2+1; b2 = T2+1;
-   
-   % Monte Carlo integration
-   S = 10000;
-   p1 = betarnd(a1,b1,S,1);
-   p2 = betarnd(a2,b2,S,1);
+S = 10000;
+for i=1:size(data, 1)
+   H1 = data(i, 1);
+   T1 = data(i, 2);
+   H2 = data(i, 3); 
+   T2 = data(i, 4);
+   m1.a = H1+1;
+   m1.b = T1+1;
+   m2.a = H2+1;
+   m2.b = T2+1;
+   %% Monte Carlo integration
+   p1 = betaSample(m1, S);
+   p2 = betaSample(m2, S);
    dif = (p1-p2);
-   pgreater = mean(dif > 0)
-   
-   % numerical integration
+   pgreater = mean(dif > 0);
+   display(pgreater); 
+   %% numerical integration
    delta = 0.0001;
    theta1 = 0:delta:1;
-   pgreaterInt = delta*sum(theta1 .^ (a1-1) .* (1-theta1) .^ (b1-1) ...
-      .* betainc(theta1, a2, b2) / beta(a1, b1))
-   
+   pgreaterInt = delta*sum(theta1.^(m1.a-1).*(1-theta1).^(m1.b-1) ...
+                .*betainc(theta1, m2.a, m2.b) / beta(m1.a, m1.b));
+   display(pgreaterInt);
 end
 
 ##### SOURCE END #####

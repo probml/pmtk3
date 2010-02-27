@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>multinomIndepLogBF</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="multinomIndepLogBF"><style type="text/css">
+      --><title>multinomIndepLogBF</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-26"><meta name="m-file" content="multinomIndepLogBF"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,20 +62,19 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> multinomIndepLogBF()
-
-counts = [<span class="keyword">...</span>
-   15 29 14;
-   46 83 56];
-
-
-[logBF] = helper(counts)
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">multinomIndepLogBF</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> multinomIndepLogBF()
+</pre><h2>multinomIndepLogBF<a name="2"></a></h2><pre class="codeinput">counts = [<span class="keyword">...</span>
+    15 29 14;
+    46 83 56];
+[logBF]       = helper(counts)
 pIndepOverDep = exp(logBF)
-<span class="keyword">end</span>
-
+</pre><pre class="codeoutput">logBF =
+    3.2754
+pIndepOverDep =
+   26.4529
+</pre><pre class="codeinput"><span class="keyword">end</span>
 
 <span class="keyword">function</span> [logBF] = helper(counts)
-
 Njk = counts;
 Nj = sum(counts,2);
 Nk = sum(counts,1);
@@ -88,12 +87,12 @@ alphaj =  sum(alphajk, 2);
 alphak = sum(alphajk, 1);
 
 logBF = gammaln(sum(alphajk(:))) - gammaln(N + sum(alphajk(:))) <span class="keyword">...</span>
-   + sum(gammaln(Nj + alphaj)) - sum(gammaln(alphaj)) <span class="keyword">...</span>
-   + sum(gammaln(Nk + alphak)) - sum(gammaln(alphak)) <span class="keyword">...</span>
-   + sum(gammaln(alphajk(:))) - sum(gammaln(Njk(:) + alphajk(:)));
+    + sum(gammaln(Nj + alphaj)) - sum(gammaln(alphaj)) <span class="keyword">...</span>
+    + sum(gammaln(Nk + alphak)) - sum(gammaln(alphak)) <span class="keyword">...</span>
+    + sum(gammaln(alphajk(:))) - sum(gammaln(Njk(:) + alphajk(:)));
 
 logBF2 = logbeta(Nj+alphaj) + logbeta(Nk + alphak) + logbeta(alphajk(:))<span class="keyword">...</span>
-   - logbeta(alphaj) - logbeta(alphak) - logbeta(Njk(:) + alphajk(:));
+    - logbeta(alphaj) - logbeta(alphak) - logbeta(Njk(:) + alphajk(:));
 assert(approxeq(logBF, logBF2))
 
 
@@ -102,45 +101,37 @@ assert(approxeq(logBF, logBF2))
 <span class="keyword">function</span> L = logbeta(alpha)
 L = sum(gammaln(alpha)) - gammaln(sum(alpha));
 <span class="keyword">end</span>
-</pre><pre class="codeoutput">logBF =
-    3.2754
-pIndepOverDep =
-   26.4529
 </pre><p class="footer"><br>
       Published with MATLAB&reg; 7.9<br></p></div><!--
 ##### SOURCE BEGIN #####
 function multinomIndepLogBF()
-
+%% multinomIndepLogBF
 counts = [...
-   15 29 14;
-   46 83 56];
-
-
-[logBF] = helper(counts)
+    15 29 14;
+    46 83 56];
+[logBF]       = helper(counts)
 pIndepOverDep = exp(logBF)
 end
 
-
 function [logBF] = helper(counts)
-
 Njk = counts;
 Nj = sum(counts,2);
 Nk = sum(counts,1);
 N = sum(counts(:));
 [J,K] = size(counts);
 alphajk = ones(J,K);
-%alphaj = ones(J,1); 
-%alphak = ones(1,K); 
+%alphaj = ones(J,1);
+%alphak = ones(1,K);
 alphaj =  sum(alphajk, 2);
 alphak = sum(alphajk, 1);
 
 logBF = gammaln(sum(alphajk(:))) - gammaln(N + sum(alphajk(:))) ...
-   + sum(gammaln(Nj + alphaj)) - sum(gammaln(alphaj)) ...
-   + sum(gammaln(Nk + alphak)) - sum(gammaln(alphak)) ...
-   + sum(gammaln(alphajk(:))) - sum(gammaln(Njk(:) + alphajk(:)));
+    + sum(gammaln(Nj + alphaj)) - sum(gammaln(alphaj)) ...
+    + sum(gammaln(Nk + alphak)) - sum(gammaln(alphak)) ...
+    + sum(gammaln(alphajk(:))) - sum(gammaln(Njk(:) + alphajk(:)));
 
 logBF2 = logbeta(Nj+alphaj) + logbeta(Nk + alphak) + logbeta(alphajk(:))...
-   - logbeta(alphaj) - logbeta(alphak) - logbeta(Njk(:) + alphajk(:));
+    - logbeta(alphaj) - logbeta(alphak) - logbeta(Njk(:) + alphajk(:));
 assert(approxeq(logBF, logBF2))
 
 

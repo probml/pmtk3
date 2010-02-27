@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>numbersGame</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="numbersGame"><style type="text/css">
+      --><title>numbersGame</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-26"><meta name="m-file" content="numbersGame"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,18 +62,14 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">Global Variables</a></li><li><a href="#5">Hypothesis Spaces</a></li><li><a href="#6">Priors</a></li><li><a href="#7">Likelihoods</a></li><li><a href="#8">Posteriors</a></li><li><a href="#9">Predictive</a></li><li><a href="#10">Helper Functions</a></li><li><a href="#11">Display Functions</a></li><li><a href="#12">Hypothesis Building Functions</a></li></ul></div><pre class="codeinput"><span class="comment">%Josh Tenenbaum's number game</span>
-<span class="comment">%Written by Kevin Murphy and Matthew Dunham</span>
-<span class="keyword">function</span> numbersGame
-</pre><h2>Global Variables<a name="3"></a></h2><pre class="codeinput">first = 1; last = 100; <span class="comment">%Range for the hypothesis space</span>
-
-hypFn =         @mathHypothesesSmall;
-priorFn =       @mathPriorSmall;
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Josh Tenenbaum's Number Game</a></li><li><a href="#3">Global Variables</a></li><li><a href="#5">Hypothesis Spaces</a></li><li><a href="#6">Priors</a></li><li><a href="#7">Likelihoods</a></li><li><a href="#8">Posteriors</a></li><li><a href="#9">Predictive</a></li><li><a href="#10">Helper Functions</a></li><li><a href="#11">Display Functions</a></li><li><a href="#12">Hypothesis Building Functions</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> numbersGame
+</pre><h2>Josh Tenenbaum's Number Game<a name="2"></a></h2><p>Written by Kevin Murphy and Matthew Dunham</p><h2>Global Variables<a name="3"></a></h2><pre class="codeinput">first = 1; last = 100; <span class="comment">%Range for the hypothesis space</span>
+hypFn        =  @mathHypothesesSmall;
+priorFn      =  @mathPriorSmall;
 likelihoodFn =  @likelihood;
-posteriorFn =   @posterior;
-postPredFn =    @postPredictive;
-priorPredFn =   @priorPredictive;
-
+posteriorFn  =  @posterior;
+postPredFn   =  @postPredictive;
+priorPredFn  =  @priorPredictive;
 
 hypSpace = hypFn();
 inconcept = buildExtensionTable(hypSpace);
@@ -555,25 +551,21 @@ inconcept = buildExtensionTable(hypSpace);
 </pre><p class="footer"><br>
       Published with MATLAB&reg; 7.9<br></p></div><!--
 ##### SOURCE BEGIN #####
-%Josh Tenenbaum's number game
-%Written by Kevin Murphy and Matthew Dunham
 function numbersGame
-
+%% Josh Tenenbaum's Number Game
+% Written by Kevin Murphy and Matthew Dunham
 
 %% Global Variables
 first = 1; last = 100; %Range for the hypothesis space
-
-hypFn =         @mathHypothesesSmall;
-priorFn =       @mathPriorSmall;            
+hypFn        =  @mathHypothesesSmall;
+priorFn      =  @mathPriorSmall;            
 likelihoodFn =  @likelihood;
-posteriorFn =   @posterior;     
-postPredFn =    @postPredictive;
-priorPredFn =   @priorPredictive;
-
+posteriorFn  =  @posterior;     
+postPredFn   =  @postPredictive;
+priorPredFn  =  @priorPredictive;
 
 hypSpace = hypFn();                         
 inconcept = buildExtensionTable(hypSpace); 
-
 %%
 makePlots(); 
 % Note, plots won't work if using log likelihood or a large hypothesis

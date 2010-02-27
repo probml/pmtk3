@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>betaCredibleInt</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="betaCredibleInt"><style type="text/css">
+      --><title>Compute beta credible interval</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-26"><meta name="m-file" content="betaCredibleInt"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,20 +62,31 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% betaCredibleInt</span>
-S = 47; N = 100; a = S+1; b  = (N-S)+1; alpha = 0.05;
-l = betainv(alpha/2, a, b);
-u = betainv(1-alpha/2, a, b);
+  </style></head><body><div class="content"><h1>Compute beta credible interval</h1><pre class="codeinput"><span class="comment">%Requires stats toolbox</span>
+<span class="comment">%PMTKstats betainv</span>
+S = 47;
+N = 100;
+a = S+1;
+b = (N-S)+1;
+alpha = 0.05;
+l  = betainv(alpha/2, a, b);
+u  = betainv(1-alpha/2, a, b);
 CI = [l,u] <span class="comment">% 0.3749    0.5673</span>
 </pre><pre class="codeoutput">CI =
     0.3749    0.5673
 </pre><p class="footer"><br>
       Published with MATLAB&reg; 7.9<br></p></div><!--
 ##### SOURCE BEGIN #####
-% betaCredibleInt
-S = 47; N = 100; a = S+1; b  = (N-S)+1; alpha = 0.05;
-l = betainv(alpha/2, a, b);
-u = betainv(1-alpha/2, a, b);
+%% Compute beta credible interval
+%Requires stats toolbox
+%PMTKstats betainv
+S = 47; 
+N = 100; 
+a = S+1; 
+b = (N-S)+1; 
+alpha = 0.05;
+l  = betainv(alpha/2, a, b);
+u  = betainv(1-alpha/2, a, b);
 CI = [l,u] % 0.3749    0.5673
 
 ##### SOURCE END #####
