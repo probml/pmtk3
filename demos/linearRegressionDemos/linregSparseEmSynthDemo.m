@@ -41,7 +41,7 @@ for trial=1:5
    [Xtrain, mu] = center(Xtrain);
    Xtest = center(Xtest, mu);
    
-   priors = {'NEG', 'NG', 'NJ', 'Laplace', 'Ridge'}; % neg too slow
+   priors = {'NEG', 'NG', 'NJ', 'Laplace', 'Ridge'}; 
    for m=1:length(priors)
       prior = priors{m};
       switch lower(prior)

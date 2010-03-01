@@ -4,7 +4,7 @@ function logp = studentLogprob(model, X)
 % -  model is a structure containing fields mu, Sigma, dof
 % -  logp(i) = logp(X(i, :) | model)  
 %
-% For the scalar case, Sigma is the variance!
+% For the scalar case, Sigma is the variance not the standard deviation
 
 mu = model.mu; Sigma = model.Sigma; nu = model.dof; 
 d = size(Sigma, 1);

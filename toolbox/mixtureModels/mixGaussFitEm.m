@@ -4,12 +4,20 @@ function [model, loglikHist] = mixGaussFitEm(data, K, varargin)
 % To perform MAP estimation using a vague conjugate prior, use
 %  model = mixGaussFitEm(data, K, 'doMAP', 1)
 %
+% You can optionally call a plotting funciton at each iteration
+% to visualize progress. The function should have this itnerface
+%   plotfn(data,  mu, Sigma, mixweight, post, loglik, iter)
+% where post is N*K. 
+%
+% Return arguments:
 % model is a structure containing these fields:
 %   mu(:,) is k'th centroid
 %   Sigma(:,:,k)
 %   mixweight(k)
 %   post(k,i)
-% loglikHist(t) for plotting
+%   K
+%
+% loglikHist is the history of log-likelihood (plus log-prior) vs iteration
 
 
 [maxIter, thresh, plotfn, verbose, mu, Sigma, mixweight, doMAP] = processArgs(...
@@ -18,41 +26,25 @@ function [model, loglikHist] = mixGaussFitEm(data, K, varargin)
  
 [N,D] = size(data);
 if doMAP
+  % set hyper-parameters
   prior.m0 = zeros(D,1);
   prior.kappa0 = 0;
   prior.nu0 = D+2;
   prior.S0 = (1/K^(1/D))*var(data(:))*eye(D);
 end
 
-if isempty(mu)
-   % initialize with Kmeans
-   [mu, assign] = kmeansFit(data, K);
-   % Now fit Gaussians using hard assignments
-   Sigma = zeros(D,D,K);
-   counts = zeros(1,K); 
-   for c=1:K
-      ndx = find(assign==c);
-      counts(c) = length(ndx);
-      Sigma(:,:,c) = cov(data(ndx,:));
-   end
-   mixweight = normalize(counts);
-end
 
-  
+if isempty(mu)
+  [mu, Sigma, mixweight] = kmeansInitMixGauss(data, K);
+end
  
-%% Plot
+ 
 if ~isempty(plotfn)
-    % do an initial E step for plotting purposes. 
-    logpost = zeros(N, K);
-    logprior = log(mixweight);
-    for c=1:K
-        model.mu = mu(:, c); model.Sigma = Sigma(:, :, c);
-        logpost(:, c) = gaussLogprob(model, data) + logprior(c);
-    end
-    post = exp(normalizeLogspace(logpost))';
+    % do an initial E step to visualize initial params 
+    model.mu  = mu; model.Sigma = Sigma; model.mixweight = mixweight; model.K = K;
+    [z, post, ll] = mixGaussInfer(model, data); %#ok
     plotfn(data,  mu, Sigma, mixweight, post, -inf, 0); 
 end
-%% 
 
 
 iter = 1;
@@ -60,18 +52,14 @@ done = false;
 Y = data'; % Y(:,i) is i'th case
 while ~done
   % E step - compute responsibilities
-  logpost = zeros(N,K);
-  logmixweight = log(mixweight);
-  for c=1:K
-    model.mu = mu(:, c); model.Sigma = Sigma(:, :, c);
-    logpost(:,c) = gaussLogprob(model, data) + logmixweight(c);
-  end
-  [logpost, ll] = normalizeLogspace(logpost); 
-  post = exp(logpost)'; % post(c, i) = responsibility for cluster c, point i
+   model.mu  = mu; model.Sigma = Sigma; model.mixweight = mixweight; model.K = K;
+  [z, post, ll] = mixGaussInfer(model, data); %#ok
+  % post(i,c) = responsibility for cluster c, point i
   
   % Evaluate objective funciton
   loglik = sum(ll)/N;
   if doMAP
+    % add log prior
     kappa0 = prior.kappa0; m0 = prior.m0;
     nu0 = prior.nu0; S0 = prior.S0;
     logprior = zeros(1,K);
@@ -86,11 +74,11 @@ while ~done
   
  
   % compute expected sufficient statistics
-  w = sum(post,2);  % w(c) = sum_i post(c,i)
+  w = sum(post,1);  % w(c) = sum_i post(c,i)
   Sk = zeros(D,D,K);
   ybark = zeros(D,K);
   for c=1:K
-    weights = repmat(post(c,:), D, 1); % weights(:,i) = post(c,i)
+    weights = repmat(post(:,c), 1, D)'; % weights(:,i) = post(i,c)
     Yk = Y .* weights; % Yk(:,i) = post(c,i) * Y(:,i)
     ybark(:,c) = sum(Yk/w(c),2);
     Ykmean = Y - repmat(ybark(:,c),1,N);
@@ -136,5 +124,5 @@ end
 
 
 model.mu  = mu; model.Sigma = Sigma; model.mixweight = mixweight; model.K = K;
-model.post = post;
+
 

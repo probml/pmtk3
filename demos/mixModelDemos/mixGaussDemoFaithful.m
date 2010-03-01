@@ -22,11 +22,11 @@ end
 
 %%%%%%
 
-function plotfn(X, mu, Sigma, mixweight, post, loglik, iter)
+function plotfn(X, mu, Sigma, mixweight, post, loglik, iter) %#ok
     
     str = sprintf('iteration %d, loglik %5.4f\n', iter, loglik);
     n = size(X, 1); 
-    colors = [post(1, :)', zeros(n, 1), post(2, :)'];   
+    colors = [post(:,1), zeros(n, 1), post(:,2)]; % fraction of red and blue   
     figure; hold on; 
     for i=1:n
         plot(X(i, 1), X(i, 2), 'o', 'MarkerSize', 6, 'MarkerFaceColor', colors(i, :), 'MarkerEdgeColor', 'k'); 
@@ -41,6 +41,5 @@ function plotfn(X, mu, Sigma, mixweight, post, loglik, iter)
     axis square
     box on
     set(gca, 'YTick', -2:2);
-    %pause(1)
     
 end
