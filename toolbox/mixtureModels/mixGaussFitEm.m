@@ -1,19 +1,28 @@
 function [model, loglikHist] = mixGaussFitEm(data, K, varargin)
 % EM for fitting mixture of K gaussians
 % data(i,:) is i'th case
+% To perform MAP estimation using a vague conjugate prior, use
+%  model = mixGaussFitEm(data, K, 'doMAP', 1)
+%
 % model is a structure containing these fields:
 %   mu(:,) is k'th centroid
 %   Sigma(:,:,k)
 %   mixweight(k)
-%
+%   post(k,i)
 % loglikHist(t) for plotting
 
 
-[maxIter, thresh, plotfn, verbose, mu, Sigma, mixweight] = processArgs(...
+[maxIter, thresh, plotfn, verbose, mu, Sigma, mixweight, doMAP] = processArgs(...
     varargin, '-maxIter', 100, '-thresh', 1e-3, '-plotfn', [], ...
-    '-verbose', false, '-mu', [], '-Sigma', [], '-mixweight', []);
+    '-verbose', false, '-mu', [], '-Sigma', [], '-mixweight', [], '-doMAP', 0);
  
 [N,D] = size(data);
+if doMAP
+  prior.m0 = zeros(D,1);
+  prior.kappa0 = 0;
+  prior.nu0 = D+2;
+  prior.S0 = (1/K^(1/D))*var(data(:))*eye(D);
+end
 
 if isempty(mu)
    % initialize with Kmeans
@@ -52,36 +61,40 @@ Y = data'; % Y(:,i) is i'th case
 while ~done
   % E step - compute responsibilities
   logpost = zeros(N,K);
-  logprior = log(mixweight);
+  logmixweight = log(mixweight);
   for c=1:K
     model.mu = mu(:, c); model.Sigma = Sigma(:, :, c);
-    logpost(:,c) = gaussLogprob(model, data) + logprior(c);
+    logpost(:,c) = gaussLogprob(model, data) + logmixweight(c);
   end
-  [logpost, ll] = normalizeLogspace(logpost);
-  loglikHist(iter) = sum(ll)/N;
+  [logpost, ll] = normalizeLogspace(logpost); 
   post = exp(logpost)'; % post(c, i) = responsibility for cluster c, point i
+  
+  % Evaluate objective funciton
+  loglik = sum(ll)/N;
+  if doMAP
+    kappa0 = prior.kappa0; m0 = prior.m0;
+    nu0 = prior.nu0; S0 = prior.S0;
+    logprior = zeros(1,K);
+    for c=1:K
+      Sinv = inv(Sigma(:,:,c));
+      logprior(c) = logdet(Sinv)*(nu0 + D + 2)/2 - 0.5*trace(Sinv*S0) ...
+        -kappa0/2*(mu(:,c)-m0)'*Sinv*(mu(:,c)-m0);
+    end
+    loglik = loglik + sum(logprior)/N;
+  end
+  loglikHist(iter) = loglik;
+  
  
   % compute expected sufficient statistics
   w = sum(post,2);  % w(c) = sum_i post(c,i)
-  WYY = zeros(D, D, K);  % WYY(:,:,c) = sum_i post(c,i) Y(:,i) Y(:,i)'
-  WY = zeros(D, K);  % WY(:,c) = sum_i post(c,i) Y(:,i)
+  Sk = zeros(D,D,K);
+  ybark = zeros(D,K);
   for c=1:K
     weights = repmat(post(c,:), D, 1); % weights(:,i) = post(c,i)
-    WYbig = Y .* weights; % WYbig(:,i) = post(c,i) * Y(:,i)
-    WYY(:,:,c) = WYbig * Y';
-    WY(:,c) = sum(WYbig, 2); 
-    
-    %{
-    % debug
-    tmp = zeros(D,1);
-    tmp2 = zeros(D,D);
-    for i=1:N
-       tmp = tmp + post(c,i)*Y(:,i);
-       tmp2 = tmp2 + post(c,i)*Y(:,i)*Y(:,i)';
-    end
-    assert(approxeq(tmp, WY(:,c)));
-    assert(approxeq(tmp2, WYY(:,:,c)));
-    %} 
+    Yk = Y .* weights; % Yk(:,i) = post(c,i) * Y(:,i)
+    ybark(:,c) = sum(Yk/w(c),2);
+    Ykmean = Y - repmat(ybark(:,c),1,N);
+    Sk(:,:,c) = weights.*Ykmean*Ykmean';
   end
   
  
@@ -90,10 +103,23 @@ while ~done
   % Set any zero weights to one before dividing
   % This is valid because w(c)=0 => WY(:,c)=0, and 0/0=0
   w = w + (w==0);
-  mu = WY ./ repmat(w(:)', [D 1]);
   Sigma = zeros(D,D,K);
-  for c=1:K
-    Sigma(:,:,c) = WYY(:,:,c)/w(c)  - mu(:,c)*mu(:,c)';
+  mu = zeros(D,K);
+  if doMAP
+    kappa0 = prior.kappa0; m0 = prior.m0;
+    nu0 = prior.nu0; S0 = prior.S0;
+    for c=1:K
+      mu(:,c) = (w(c)*ybark(:,c)+kappa0*m0)./(w(c)+kappa0);
+      a = (kappa0*w(c))./(kappa0 + w(c));
+      b = nu0 + w(c) + D + 2;
+      Sprior = (ybark(:,c)-m0)*(ybark(:,c)-m0)';
+      Sigma(:,:,c) = (S0 + Sk(:,:,c) + a*Sprior)./b;
+    end
+  else
+    for c=1:K
+      mu(:,c) = ybark(:,c);
+      Sigma(:,:,c) = Sk(:,:,c)/w(c);
+    end
   end
   
   % Converged?
@@ -110,5 +136,5 @@ end
 
 
 model.mu  = mu; model.Sigma = Sigma; model.mixweight = mixweight; model.K = K;
-
+model.post = post;
 
