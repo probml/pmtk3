@@ -211,5 +211,3 @@ for k=1:length(z)
      *mpbdv(-2*(alpha/K+1),abs(z(k))/sqrt(c))...
      /mpbdv(-2*(alpha/K+1/2),abs(z(k))/sqrt(c));
 end
-close all
-clear all
