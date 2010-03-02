@@ -16,7 +16,7 @@ targetArgs = {X,y,lambda};
 sigmaMH = 1.5;
 proposalArgs = {sigmaMH*C};
 
-[ws, naccept] = metropHastings(@logpost, @proposal, xinit, Nsamples, targetArgs, proposalArgs);
+[ws, naccept] = metropolisHastings(@logpost, @proposal, xinit, Nsamples, targetArgs, proposalArgs);
 
 % trace plots
 figure

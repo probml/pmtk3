@@ -5,7 +5,7 @@
 
 
 %% Create data
-clear all
+
 N = 100;
 K = 3;
 dims = 10:10:100;
