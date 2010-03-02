@@ -1,6 +1,6 @@
 function [xtrain, ytrain, xtest, ytestNoisefree, ytestNoisy, sigma2] = polyDataMake(varargin)
-[sampling, deg, n] = processArgs(varargin, ...
-    '-sampling', 'sparse', '-deg', 3, '-n', 21);
+[sampling, deg, n] = process_options(varargin, ...
+    'sampling', 'sparse', 'deg', 3, 'n', 21);
 setSeed(0);
 switch sampling
     case 'irregular', xtrain = [-1:0.1:-0.5,  3:0.1:3.5]';

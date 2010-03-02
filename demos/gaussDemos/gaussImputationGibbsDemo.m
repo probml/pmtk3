@@ -13,7 +13,7 @@ mu = randn(d,1); Sigma = randpd(d);
 
 for useFull = [false]
   if useFull
-    [model, dataSamples, LLtrace] = gaussMissingFitGibbs(XfullTrain, '-verbose', false, '-mu0', nanmean(XfullTrain), '-Lambda0', diag(nanvar(XfullTrain)), '-k0', 0.01, '-dof', d + 2);
+    [model, dataSamples, LLtrace] = gaussMissingFitGibbs(XfullTrain, 'verbose', false, 'mu0', nanmean(XfullTrain), 'Lambda0', diag(nanvar(XfullTrain)), 'k0', 0.01, 'dof', d + 2);
     muSamples = model.mu; SigmaSamples = model.Sigma; 
     muHat = mean(muSamples);
     SigmaHat = mean(SigmaSamples,3);
@@ -22,7 +22,7 @@ for useFull = [false]
     Xtrain = XfullTrain;
     fname = 'mvnImputeFull';
   else
-    [model, dataSamples, LLtrace] = gaussMissingFitGibbs(XmissTrain, '-verbose', false, '-mu0', nanmean(XmissTrain), '-Lambda0', diag(nanvar(XmissTrain)), '-k0', 0.01, '-dof', d + 2);
+    [model, dataSamples, LLtrace] = gaussMissingFitGibbs(XmissTrain, 'verbose', false, 'mu0', nanmean(XmissTrain), 'Lambda0', diag(nanvar(XmissTrain)), 'k0', 0.01, 'dof', d + 2);
     muSamples = model.mu; SigmaSamples = model.Sigma; 
     muHat = mean(muSamples);
     SigmaHat = mean(SigmaSamples,3);
@@ -36,10 +36,10 @@ for useFull = [false]
   conf(isinf(conf))=0;
   
   figure;
-  hintonScale({Xtrain}, {'-map', 'jet', '-title', 'training data'}, ...
-    {Xmiss}, {'-map', 'Jet', '-title', 'observed'}, ...
-    {Ximpute, conf}, {'-title', 'imputed'}, ...
-    {Xhid}, {'-title', 'hidden truth'});
+  hintonScale({Xtrain}, {'map', 'jet', 'title', 'training data'}, ...
+    {Xmiss}, {'-map', 'Jet', 'title', 'observed'}, ...
+    {Ximpute, conf}, {'title', 'imputed'}, ...
+    {Xhid}, {'title', 'hidden truth'});
   printPmtkFigure(fname);
 end
 

@@ -9,7 +9,7 @@ function S = splitString(varargin)
 % '-center'     if true, [default], the string is center justified 
 % '-cellMode'   if true, a cell array of strings is returned, instead of a char array.
 
-    [S,minSize,maxSize,cellMode,center] = processArgs(varargin,'*+-S','','-minSize',8,'-maxSize',10,'-cellMode',false,'-center',true);
+    [S,minSize,maxSize,cellMode,center] = process_options(varargin,'S','','minSize',8,'maxSize',10,'cellMode',false,'center',true);
 
     S = splitInTwo(S);
     if center

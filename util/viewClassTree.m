@@ -1,10 +1,10 @@
 function  h = viewClassTree(varargin)
 % View a class inheritence hierarchy. 
-% Same args as getClasses + '-topClass'
+% Same args as getClasses 
 % Needs graphViz4Matlab
 % Classes must use classdef syntax not old style
 
-args = processArgs(varargin,'-source',pwd(),'-ignoreDirs',{'unitTests',fullfile('util','graphs','graphlayout')},'-topOnly',false,'-topClass',[]);
+args = process_options(varargin,'source',pwd(),'ignoreDirs',{'unitTests',fullfile('util','graphs','graphlayout')},'topOnly',false,'topClass',[]);
 [topClass,unusedArgs] = extractArgs(4,args);
 layout = Treelayout();
 
@@ -67,7 +67,7 @@ if ~isempty(edgeColors)
 end
 
     function dblcfun(label)
-       h = viewClassTree('-topClass',label); 
+       h = viewClassTree('topClass',label); 
        for i=1:2,shrinkNodes(h);end
        increaseFontSize(h);
     end

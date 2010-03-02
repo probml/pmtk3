@@ -4,8 +4,8 @@ function [beta,iter] = LassoShooting(X, y, lambda,varargin)
     
     [n p] = size(X);
     [maxIter, optTol, verbose, beta,offsetAdded] = ...
-        processArgs(varargin, '-maxIter',10000, '-optTol',1e-5, '-verbose', 0,...
-        '-w0', [],'-offsetAdded',false);
+        process_options(varargin, 'maxIter',10000, 'optTol',1e-5, 'verbose', 0,...
+        'w0', [],'offsetAdded',false);
     if isempty(beta)
         if(offsetAdded)
             lam = repmat(lambda,p,1); lam(1) = 0;

@@ -8,8 +8,8 @@ function [model, loglikTrace] = gaussMissingFitICM(data, varargin)
 
 % Written by Cody Severinski and Kevin Murphy
 
-[maxIter, opttol, verbose] = processArgs(varargin, ...
-  '-maxIter', 100, '-tol', 1e-4, '-verbose', false); 
+[maxIter, opttol, verbose] = process_options(varargin, ...
+  'maxIter', 100, 'tol', 1e-4, 'verbose', false); 
 
 allMissing = find(all(isnan(data),2));
 data = data(setdiffPMTK(1:size(data,1), allMissing),:);

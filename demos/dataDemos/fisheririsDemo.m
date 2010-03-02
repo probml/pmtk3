@@ -1,6 +1,6 @@
 [X,y,classnames,varnames] = fisheririsLoad;
 figure(1);clf
-pscatter(X,'-y', y);
+pscatter(X,'y', y);
 suptitle(sprintf('iris data, red=setosa, green=versicolor, blue=virginica'));
 printPmtkFigure fisherIrisPairs
 

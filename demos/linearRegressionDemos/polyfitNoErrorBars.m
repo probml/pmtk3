@@ -1,5 +1,5 @@
 %% Linear Regression with Polynomial Expansion
-[xtrain, ytrain, xtest, ytestNoisefree, ytest] = polyDataMake('-sampling','thibaux');
+[xtrain, ytrain, xtest, ytestNoisefree, ytest] = polyDataMake('sampling','thibaux');
 degs = 1:2;
 
 for i=1:length(degs)

@@ -16,13 +16,13 @@ estimatedSupport = bolasso(X,y)
 
 
 %now do the same but use cross validation instead of LCR
-estimatedSupport = bolasso(X,y,'-modelSelectionMethod','CV','-plotResults',false);
+estimatedSupport = bolasso(X,y,'modelSelectionMethod','CV','plotResults',false);
 
 
 
 %If we want both the LCR and CV results, we can get them both at once,
 %(more efficiently) with the following syntax:
 if(0)
-estimatedSupport = bolasso(X,y,'-modelSelectionMethod','BOTH')
+estimatedSupport = bolasso(X,y,'modelSelectionMethod','BOTH')
 end
 

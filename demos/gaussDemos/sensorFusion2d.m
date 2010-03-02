@@ -20,10 +20,10 @@ py.mu = zeros(4,1); py.Sigma =  blkdiag(Sigmas{1}, Sigmas{2});
 post = gaussSoftCondition(prior, py, A, y);
 
 figure;
-gaussPlot2d(y1, Sigmas{1}, 'r');
+gaussPlot2d(y1, Sigmas{1}, 'color', 'r');
 hold on
 grid on;
-gaussPlot2d(y2, Sigmas{2}, 'g');
-gaussPlot2d(post.mu, post.Sigma, 'k');
+gaussPlot2d(y2, Sigmas{2}, 'color', 'g');
+gaussPlot2d(post.mu, post.Sigma, 'color', 'k');
 axis([-1.5 1.5 -1.5 1.5]);
 end

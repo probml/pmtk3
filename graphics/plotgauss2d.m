@@ -43,7 +43,7 @@ if length(mu) ~= 2, error('mu must be a 2 by 1 vector'); end
 
 [p, ...
     n, ...
-    plot_opts] = processArgs(varargin, '-conf', 0.95, 	'-num-pts', 100, '-plot_opts', {});
+    plot_opts] = process_options(varargin, 'conf', 0.95, 	'num-pts', 100, 'plot_opts', {});
 h = [];
 holding = ishold;
 if (Sigma == zeros(2, 2))

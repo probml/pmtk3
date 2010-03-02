@@ -41,14 +41,14 @@ mixweight = normalize(ones(K,1));
 
 try
   [modelGMM, loglikHistGMM] = mixGaussFitEm(X, K,...
-    '-mu', mu0, '-Sigma', Sigma, '-mixweight', mixweight);
+    'mu', mu0, 'Sigma', Sigma, 'mixweight', mixweight);
 catch
   fprintf('MLE failed\n'); NmleFail(dimi) = NmleFail(dimi) + 1;
 end
 
 try
   [modelGMMMAP, loglikHistGMMMAP] = mixGaussFitEm(X, K, ...
-    '-mu', mu0, '-Sigma', Sigma, '-mixweight', mixweight,  '-doMAP', 1, '-verbose', false);
+    'mu', mu0, 'Sigma', Sigma, 'mixweight', mixweight,  'doMAP', 1, 'verbose', false);
 catch
   fprintf('MAP failed\n'); NmapFail(dimi) = NmapFail(dimi) + 1;
 end

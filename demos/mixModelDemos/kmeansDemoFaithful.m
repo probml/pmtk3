@@ -12,7 +12,7 @@ printPmtkFigure('faithful');
 mu = [-1.5 1.5; 1.5 -1.5]';
 setSeed(4);
 K = 2;
-[mu, assign, errHist] = kmeansFit(X, K, '-plotfn', @plotKmeans, ...
+[mu, assign, errHist] = kmeansFit(X, K, 'plotfn', @plotKmeans, ...
    '-maxIter', 10, '-mu', mu);
 end
 

@@ -9,7 +9,7 @@ function  pscatter(X,varargin)
 % y: n*1 optional class labels, default ones(n,1)
 
 %---------------------------------------------------
-% NOTE: uses function histo()  and processArgs()
+% NOTE: uses function histo()  and process_options()
 %---------------------------------------------------
 
 %PMTKauthor Anders Holtsberg
@@ -18,14 +18,14 @@ function  pscatter(X,varargin)
 % JP LeSage added the vnames capability (www.spatial-econometrics.com)
 % Kevin Murphy changed vnames to be cell array (1 March 2007),
 % and added ability to change the plot symbol for classes (28 December 2007)
-% and changed to processArgs (9 Sep 08)
+
 
 
 [n,p] = size(X);
 
-[vnames, plotsymbol, y] = processArgs(...
-  varargin, '-vnames', num2cell(int2str((1:p)')), '-plotsymbol', [], ...
-  '-y', ones(n,1));
+[vnames, plotsymbol, y] = process_options(...
+  varargin, 'vnames', num2cell(int2str((1:p)')), 'plotsymbol', [], ...
+  'y', ones(n,1));
 
 nclasses = length(unique(y));
 if isempty(plotsymbol)

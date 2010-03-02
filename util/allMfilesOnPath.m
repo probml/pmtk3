@@ -4,7 +4,7 @@ function m = allMfilesOnPath()
 p = mypath();
 m = {};
 for i=1:numel(p)
-    m = [m; mfiles(p{i}, '-topOnly', true)]; %#ok
+    m = [m; mfiles(p{i}, 'topOnly', true)]; %#ok
 end
 m = unique(m); 
 

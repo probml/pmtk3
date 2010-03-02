@@ -3,7 +3,7 @@ function classes = getClasses(varargin)
 % on the Matlab path. You can optionally specify directories to ignore. By
 % default, the util and unitTests directories are ignored.
     
-[source,ignoreDirs,topOnly] = processArgs(varargin,'-source',pwd(),'-ignoreDirs',{},'-topOnly',false);
+[source,ignoreDirs,topOnly] = process_options(varargin,'source',pwd(),'ignoreDirs',{},'topOnly',false);
 
 if nargin < 1, source = '.'; end
 if nargin < 2, 

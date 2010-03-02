@@ -38,8 +38,8 @@ function [w, sigma, logpostTrace]=linregFitSparseEm(X, y,  prior, scale, shape, 
 warning off MATLAB:log:logOfZero
 warning off MATLAB:divideByZero
 
-[maxIter, verbose, convTol] = processArgs(varargin, ...
-   '-maxIter', 100, '-verbose', false, '-convTol', 1e-3);
+[maxIter, verbose, convTol] = process_options(varargin, ...
+   'maxIter', 100, 'verbose', false, 'convTol', 1e-3);
 
  if nargin <5, shape = 1; end
  if nargin < 6, sigma = -1; end

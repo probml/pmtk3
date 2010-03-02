@@ -18,17 +18,17 @@ verb = true;
 
 % first EM
 fprintf('EM First\n')
-[model, LLtrace{1}] = gaussMissingFitEm(Xmiss, '-verbose', verb, '-maxIter', 500);
+[model, LLtrace{1}] = gaussMissingFitEm(Xmiss, 'verbose', verb, 'maxIter', 500);
 [muHat{1}, SigmaHat{1}] = structvals(model);
 % second ICM
 fprintf('Now ICM\n')
-[model, LLtrace{2}] = gaussMissingFitICM(Xmiss, '-verbose', verb);
+[model, LLtrace{2}] = gaussMissingFitICM(Xmiss, 'verbose', verb);
 muHat{2} = model.mu;
 SigmaHat{2} = model.Sigma; 
 
 % third Gibbs
 fprintf('Now Gibbs\n')
-[model, dataSamples, LLtrace{3}] = gaussMissingFitGibbs(Xmiss, '-mu0', nanmean(Xmiss), '-Lambda0', diag(nanvar(Xmiss)), '-k0', 0.01, '-dof', d + 2, '-verbose', verb);
+[model, dataSamples, LLtrace{3}] = gaussMissingFitGibbs(Xmiss, 'mu0', nanmean(Xmiss), 'Lambda0', diag(nanvar(Xmiss)), 'k0', 0.01, 'dof', d + 2, 'verbose', verb);
 muSamples = model.mu; SigmaSamples = model.Sigma; 
 muHat{3} = mean(muSamples);
 SigmaHat{3} = mean(SigmaSamples,3);

@@ -63,7 +63,7 @@
 % Copyright (C) 2002 Mark A. Paskin
 
 function [varargout] = process_options(args, varargin)
-error('Deprecated: please use processArgs'); 
+
 % Check the number of input arguments
 n = length(varargin);
 if (mod(n, 2))

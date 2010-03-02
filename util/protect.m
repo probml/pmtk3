@@ -11,7 +11,7 @@ function func = protect(varargin)
 % ans =
 %         0    5.5000   11.0000   16.5000         0
 
-    [fn,default,guard] = processArgs(varargin,'*+-func',@(x)x,'-default',0,'+-guard',@isempty);
+    [fn,default,guard] = process_options(varargin,'*func',@(x)x,'default',0,'guard',@isempty);
     function out = wrapper(in)
         if guard(in)
             out = default;

@@ -23,7 +23,7 @@ function local = islocal(varargin)
 %
 % See also, localMethods
  
-        [methodName,className,allowAbstract] = processArgs(varargin,'*-methodName','','*-className','','-allowAbstract',false);
+        [methodName,className,allowAbstract] = process_options(varargin,'methodName','','className','','allowAbstract',false);
         if iscell(methodName)
            local = cellfun(@(mn)islocal(mn,className,allowAbstract),methodName);
            return;

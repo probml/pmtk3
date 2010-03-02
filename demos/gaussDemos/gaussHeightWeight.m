@@ -31,7 +31,7 @@ printPmtkFigure('heightWeightScatter')
 for c=1:2
   X = data.X(classNdx{c},:);
   mu = mean(X); Sigma = cov(X);
-  gaussPlot2d(mu, Sigma, '-color', colors(c));
+  gaussPlot2d(mu, Sigma, 'color', colors(c));
 end
 printPmtkFigure('heightWeightScatterCov')
 

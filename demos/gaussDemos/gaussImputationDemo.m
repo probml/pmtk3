@@ -11,7 +11,7 @@ Xmiss = Xfull;
 Xmiss(missing) = NaN;
 
 %% Impute
-[model, LLtrace] = gaussMissingFitEm(Xmiss, '-verbose', false);
+[model, LLtrace] = gaussMissingFitEm(Xmiss, 'verbose', false);
 [XimputeEM] = gaussImpute(model, Xmiss);
 
 % oracle 

@@ -18,8 +18,8 @@ if nargin < 3 || isempty(distPrior), distPrior = ones(nstates, 1); end
 if nargin < 4 || isempty(mixPrior) , mixPrior  = ones(1, nmix);    end
 distPrior = colvec(distPrior);
 mixPrior  = rowvec(mixPrior);
-[maxiter, tol, verbose, saveMemory] = processArgs(varargin,...
-    '-maxiter', 100, '-tol', 1e-4, '-verbose', true, '-saveMemory', false);
+[maxiter, tol, verbose, saveMemory] = process_options(varargin,...
+    'maxiter', 100, 'tol', 1e-4, 'verbose', true, 'saveMemory', false);
 %% Initial M-step using Kmeans
 [mu, assign] = kmeansFit(X, nmix); %#ok
 mixweight = normalize(rowvec(histc(assign, 1:nmix)) + mixPrior - 1);

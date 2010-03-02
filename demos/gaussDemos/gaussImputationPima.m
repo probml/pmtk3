@@ -37,7 +37,7 @@ end
 
 
 fittedModel{1} = struct('mu', mean(pima), 'Sigma', cov(pima));
-fittedModel{2} = gaussMissingFitEm(pimaNan, '-verbose', true);
+fittedModel{2} = gaussMissingFitEm(pimaNan, 'verbose', true);
 
 
 % For comparison we also consider the 'best' model -- the model fitted given that we have access to all the data

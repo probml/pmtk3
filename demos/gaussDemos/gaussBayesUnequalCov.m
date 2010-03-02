@@ -23,14 +23,14 @@ py.Sigma = blkdiag(Sigmas{1}, Sigmas{2});
 
 post = gaussSoftCondition(prior, py, A, y);
 figure;
-gaussPlot2d(y1, Sigmas{1}, '-color', 'r');
+gaussPlot2d(y1, Sigmas{1}, 'color', 'r');
 hh=plot(y1(1), y1(2),  'rx', 'markersize', 12, 'linewidth', 3);
 hold on
 grid off;
-gaussPlot2d(y2, Sigmas{2}, 'g');
+gaussPlot2d(y2, Sigmas{2},'color', 'g');
 hh=plot(y2(1), y2(2),  'go', 'markersize', 12, 'linewidth', 3);
 mu = post.mu; Sigma = post.Sigma;
-gaussPlot2d(mu, Sigma, '-color', 'k');
+gaussPlot2d(mu, Sigma, 'color', 'k');
 hh=plot(mu(1), mu(2),  'k+', 'markersize', 12, 'linewidth', 3);
 axis([-1.5 1.5 -1.5 1.5]);
 printPmtkFigure(sprintf('mvnBayesUnequalCov%s', suffix))

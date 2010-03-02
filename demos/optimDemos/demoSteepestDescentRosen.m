@@ -30,8 +30,8 @@ x0 = [0; 0];
 x0 = [-1;-1];
 global xhist
 xhist = [];
-x = steepestDescent(@rosen2d, x0, '-maxIter', 100, ...
-  '-exactLineSearch', exactLineSearch, '-outputFn', @optimstore);
+x = steepestDescent(@rosen2d, x0, 'maxIter', 100, ...
+  'exactLineSearch', exactLineSearch, 'outputFn', @optimstore);
 
 hold on;
 plot(xhist(1,:), xhist(2,:), 'ro-');

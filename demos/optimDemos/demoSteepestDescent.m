@@ -19,13 +19,13 @@ x0 = [0; 0];
 global xhist
 xhist = [];
 if 0
-  x = steepestDescent(@aokiFn, x0, '-maxIter', 10, ...
-    '-exactLineSearch', exactLineSearch, '-outputFn', @optimstore);
+  x = steepestDescent(@aokiFn, x0, 'maxIter', 10, ...
+    'exactLineSearch', exactLineSearch, 'outputFn', @optimstore);
 else
   %stepSize = 0.1;
   stepSize = 0.6;
-  x = steepestDescent(@aokiFn, x0, '-maxIter', 20, ...
-    '-stepSize', stepSize, '-outputFn', @optimstore);
+  x = steepestDescent(@aokiFn, x0, 'maxIter', 20, ...
+    'stepSize', stepSize, 'outputFn', @optimstore);
 end
   
 hold on;

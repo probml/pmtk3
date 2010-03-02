@@ -58,7 +58,7 @@ function resultplotfn(X, Y, mu, Sigma, post, loglik)
     end
     K  = size(mu,2);
     for k=1:K
-        h=gaussPlot2d(mu(:,k), Sigma(:,:,k), '-color', 'k');
+        h=gaussPlot2d(mu(:,k), Sigma(:,:,k), 'color', 'k');
         set(h, 'linestyle', linestyles{k});
         plot(mu(1,k), mu(2,k),'o','linewidth',2, 'color', 'k');
     end

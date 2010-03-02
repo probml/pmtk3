@@ -19,7 +19,7 @@ prior.mu = [0 0]';
 prior.Sigma = 0.1*eye(2);
 
 subplot(nr, nc,2);
-gaussPlot2d(prior.mu, prior.Sigma, '-plotMarker', true);
+gaussPlot2d(prior.mu, prior.Sigma, 'plotMarker', true);
 
 axis(xrange);axis square
 title('prior')
@@ -31,7 +31,7 @@ for i=1:length(ns)
   A = eye(2); y = mean(X(1:n,:))';
   post = gaussSoftCondition(prior, py, A, y);
   subplot(nr, nc,i+2);
-  gaussPlot2d(post.mu, post.Sigma, '-plotMarker', true);
+  gaussPlot2d(post.mu, post.Sigma, 'plotMarker', true);
   axis(xrange);
   axis square
   title(sprintf('n=%d',n))

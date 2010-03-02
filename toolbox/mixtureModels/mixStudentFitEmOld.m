@@ -1,4 +1,4 @@
-function [model, loglikHist] = mixStudentFitEm(data, K, varargin)
+function [model, loglikHist] = mixStudentFitEmOld(data, K, varargin)
 % EM for fitting mixture of K Student-t distributions
 % data(i,:) is i'th case
 % model is a structure containing these fields:
@@ -14,9 +14,9 @@ function [model, loglikHist] = mixStudentFitEm(data, K, varargin)
 %PMTKauthor Robert Tseng
 %PMTKmodified Kevin Murphy
 
-[maxIter, thresh, plotfn, verbose, mu, Sigma, dof, mixweight] = processArgs(...
-    varargin, '-maxIter', 100, '-thresh', 1e-3, '-plotfn', [], ...
-    '-verbose', false, '-mu', [], '-Sigma', [], '-dof', 1*ones(1,K), '-mixweight', []);
+[maxIter, thresh, plotfn, verbose, mu, Sigma, dof, mixweight] = process_options(...
+    varargin, 'maxIter', 100, 'thresh', 1e-3, 'plotfn', [], ...
+    'verbose', false, 'mu', [], 'Sigma', [], 'dof', 1*ones(1,K), 'mixweight', []);
  
 [N,D] = size(data);
 

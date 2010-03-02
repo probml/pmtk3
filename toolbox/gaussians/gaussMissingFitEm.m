@@ -9,8 +9,8 @@ function [model, loglikTrace] = gaussMissingFitEm(data, varargin)
 %PMTKauthor Cody Severinski
 %PMTKmodified Kevin Murphy
 
-[maxIter, tol, verbose] = processArgs(varargin, ...
-  '-maxIter', 100, '-tol', 1e-4, '-verbose', false); 
+[maxIter, tol, verbose] = process_options(varargin, ...
+  'maxIter', 100, 'tol', 1e-4, 'verbose', false); 
 
 
 [n,d] = size(data);

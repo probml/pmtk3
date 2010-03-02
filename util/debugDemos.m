@@ -45,7 +45,7 @@ htmlData = htmlData(perm, :);
 htmlTableColors = htmlTableColors(perm, :);
 
 
-htmlTable('-data', htmlData, '-colNames', {'Name', 'Status', 'Error Identifier', 'Error Message', 'Time'}, '-dataColors', htmlTableColors);
+htmlTable('data', htmlData, 'colNames', {'Name', 'Status', 'Error Identifier', 'Error Message', 'Time'}, 'dataColors', htmlTableColors);
 
     
 end

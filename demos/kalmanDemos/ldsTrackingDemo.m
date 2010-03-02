@@ -37,7 +37,7 @@ plot(x(1,:), x(2,:), 'ks-', plotArgs{:});
 plot(y(1,:), y(2,:), 'bo', plotArgs{:});
 plot(xfilt(1,:), xfilt(2,:), 'rx:', plotArgs{:});
 for t=1:T
-    gaussPlot2d(xfilt(1:2,t), Vfilt(1:2, 1:2, t), '-color', 'y'); 
+    gaussPlot2d(xfilt(1:2,t), Vfilt(1:2, 1:2, t), 'color', 'y'); 
 end
 legend('true', 'observed', 'filtered', 3)
 xlabel('x'); ylabel('y'); box on;
@@ -47,7 +47,7 @@ plot(x(1,:), x(2,:), 'ks-', plotArgs{:});
 plot(y(1,:), y(2,:), 'bo', plotArgs{:});
 plot(xsmooth(1,:), xsmooth(2,:), 'rx:', plotArgs{:});
 for t=1:T, 
-    gaussPlot2d(xsmooth(1:2,t), Vsmooth(1:2, 1:2, t), '-color', 'y'); end
+    gaussPlot2d(xsmooth(1:2,t), Vsmooth(1:2, 1:2, t), 'color', 'y'); end
 legend('true', 'observed', 'smoothed', 3)
 xlabel('x'); ylabel('y'); box on;
 
