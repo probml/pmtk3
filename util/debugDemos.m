@@ -1,7 +1,7 @@
 function errors = debugDemos(subFolder, exclusions)
 % Debug the PMTK demos, by attempting to run them all, saving 
 % a list of those which fail. 
-
+cd(tempdir());
 dbclear if error
 dbclear if warning
 if nargin < 1, subFolder = ''; end
