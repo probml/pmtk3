@@ -30,11 +30,12 @@ function m = serialize(v, n)
 %
 %   See also mat2str, num2str, int2str, sprintf, class, eval
 
-%% AUTHOR    : J?ger Hanseg?rd 
+%% AUTHOR    : Joger Hansegard 
 %% $DATE     : 29-Jun-2006 17:37:49 $ 
 %% $Revision : 1.00 $ 
 %% DEVELOPED : 7.2.0.232 (R2006a) 
 %% FILENAME  : serialize.m 
+%PMTKauthor Joger Hansegard
 switch nargin
   case 0
     selftest()
