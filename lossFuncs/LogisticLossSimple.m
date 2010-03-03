@@ -6,6 +6,8 @@ function [nll,g,H] = LogisticLossSimple(w,X,y)
 
 y01 = (y+1)/2;
 mu = sigmoid(X*w);
+mu = max(mu, eps); % bound away from 0
+mu = min(1-eps, mu); % bound away from 1
 nll = -sum(y01 .* log(mu) + (1-y01) .* log(1-mu));
 
 if nargout > 1
