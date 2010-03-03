@@ -107,6 +107,8 @@ text = [text
     '            fprintf(fid, ''%f\n'', yhat(i));'
     '        end'
     '        fclose(fid);'
+    '    otherwise'
+    '        fprintf(''%s is not a supported option'', args{1});'
     'end'
     ];
 %% Write to File
