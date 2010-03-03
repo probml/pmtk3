@@ -12,9 +12,3 @@ function [model, lambdaStar, mu, se] = logregKernelFitL2CV...
 end
 
 
-
-%PMTKtest
-% load crabs
-% model = logregKernelFitL2CV(Xtrain, ytrain)
-% yhat = logregPredict(model, Xtest)
-% nerrors = sum(yhat ~= ytest)
