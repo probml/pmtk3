@@ -16,3 +16,5 @@ elseif isvector(M)
 else
   sz = size(M);
 end
+
+end

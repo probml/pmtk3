@@ -25,3 +25,7 @@ sub = floor(sub ./ bsxfun(@times, prev_cum_size, ones(length(index),1))) + 1;
 %  sub(:,dim) = floor(index/cum_size(dim))+1;
 %  index = rem(index,cum_size(dim));
 %end
+
+
+
+end

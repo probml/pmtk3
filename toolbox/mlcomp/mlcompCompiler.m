@@ -54,6 +54,8 @@ predictText = getT(predictFn);
 filter = @(s)endswith(s, '.m');  % exclude mex files
 fitDependencies     = filterCell(depfunFast(fitFn,     true), filter);
 predictDependencies = filterCell(depfunFast(predictFn, true), filter);
+dependencies        = union(fitDependencies, predictDependencies);
+dependencies        = union(dependencies, {'getText', 'mlcompReadData'});
 %% Serialize Optionalal Inputs
 fitFnOptionText     = serialize(fitOpts);
 predictFnOptionText = serialize(predictOpts);
@@ -71,23 +73,11 @@ text = [text
     fitText
     '%%%%%%%%%%%% PREDICT FUNCTION %%%%%%%%%%%%'
     predictText
-    '%%%%%%%%%%%% FIT DEPENDENCIES %%%%%%%%%%%%'
+    '%%%%%%%%%%%% DEPENDENCIES %%%%%%%%%%%%'
     ];
-for i=1:numel(fitDependencies)
-    text = [text; getT(fitDependencies{i})];
+for i=1:numel(dependencies)
+    text = [text; getT(dependencies{i})];
 end
-text = [text;'%%%%%%%%%%%% PREDICT DEPENDENCES %%%%%%%%%%%%'];
-for i=1:numel(predictDependencies)
-    text = [text; getT(predictDependencies{i}); ''];
-end
-text = [text
-    '%%%%%%%%%%%% GETTEXT FUNCTION %%%%%%%%%%%%'
-    getT('getText.m');
-    ];
-text = [text
-    '%%%%%%%%%%%% DATA READER %%%%%%%%%%%%'
-    getT('mlcompReadData.m');
-    ];
 text = [text
     '%%%%%%%%%%%% START SCRIPT %%%%%%%%%%%%'
     'switch(args{1})'

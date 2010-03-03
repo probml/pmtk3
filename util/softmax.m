@@ -6,5 +6,7 @@ denom = sum(tmp, 2);
 %mu = tmp ./ repmat(denom, 1, C);
 mu = bsxfun(@rdivide, tmp, denom);
 
+end
+
 
 

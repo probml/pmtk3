@@ -1,8 +1,8 @@
-function m = mfiles(varargin)
+function m = mfiles(source, varargin)
 % list all mfiles in the specified directory structure.     
    
-   
-    [source,topOnly] = process_options(varargin,'source',pwd(),'topOnly',false);
+    if nargin == 0, source = pwd(); end
+    [topOnly] = process_options(varargin,'topOnly',false);
     
     if topOnly
         I = what(source);

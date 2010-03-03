@@ -18,3 +18,4 @@ if nargout > 2
   H = X'*diag(mu.*(1-mu))*X;
 end
 
+end

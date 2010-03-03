@@ -43,3 +43,6 @@ else
 end
 bestParam = params(bestNdx,:);
 model = fitFn(X, y, bestParam);
+
+
+end
