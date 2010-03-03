@@ -8,3 +8,4 @@ end
 %X = X - repmat(mu, n, 1);
 X = bsxfun(@minus, X, mu);
 
+end

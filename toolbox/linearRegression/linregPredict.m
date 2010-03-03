@@ -20,3 +20,5 @@ if nargout >= 2
   [N] = size(X,1);
   v = model.sigma2*ones(N,1);
 end
+
+end

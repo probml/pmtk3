@@ -169,8 +169,7 @@ if 0 % verbose
   figure; plot(logpostTrace, 'o-'); title(str)
 end
 
-warning on MATLAB:log:logOfZero
-warning on MATLAB:divideByZero
+
 
 end
 

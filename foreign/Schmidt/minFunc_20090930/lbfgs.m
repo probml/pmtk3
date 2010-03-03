@@ -38,3 +38,5 @@ for i = 1:k
     r(:,i+1) = r(:,i) + s(:,i)*(al(i)-be(i));
 end
 d=r(:,k+1);
+
+end

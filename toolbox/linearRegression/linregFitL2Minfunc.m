@@ -12,3 +12,4 @@ options.Display = 'none';
 w = minFunc(@penalizedL2, winit, options, funObj, lambda);
 
 
+end

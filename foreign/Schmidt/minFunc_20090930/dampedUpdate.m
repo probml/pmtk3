@@ -41,3 +41,5 @@ end
 
 % Update scale of initial Hessian approximation
 Hdiag = (y'*s)/(y'*y);
+
+end

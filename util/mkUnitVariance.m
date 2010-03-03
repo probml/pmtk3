@@ -13,3 +13,4 @@ n = size(X,1);
 X = bsxfun(@rdivide,X,s);
 
 end
+

@@ -36,3 +36,5 @@ if any(abs(d) > 1e5)
     % We want the optimizer to stop if the solution is unbounded
     g = zeros(p,1);
 end
+
+end

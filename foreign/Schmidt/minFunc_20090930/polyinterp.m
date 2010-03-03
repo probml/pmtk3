@@ -143,3 +143,5 @@ if doPlot
         pause(1);
     end
 end
+
+end

@@ -9,3 +9,5 @@ else
 end
 [f,finDif] = funObj(x + v*mu,varargin{:});
 Hv = (finDif-g)/mu;
+
+end

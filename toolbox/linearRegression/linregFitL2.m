@@ -28,3 +28,5 @@ model.w0 = ybar - xbar*w;
 model.w = w;
 yhat = linregPredict(model, X);
 model.sigma2 = var((yhat - y).^2); % MLE
+
+end

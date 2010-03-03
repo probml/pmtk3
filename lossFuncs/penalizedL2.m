@@ -24,3 +24,5 @@ end
 if nargout > 2
     H = H + diag(2*lambda);
 end
+
+end

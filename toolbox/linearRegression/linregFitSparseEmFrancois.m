@@ -139,8 +139,7 @@ end
 w=z(end,:)'; % Final value 
 logpostTrace = logpdf;
 
-warning on MATLAB:log:logOfZero
-warning on MATLAB:divideByZero
+
 
 
 %%%%%%%%%%

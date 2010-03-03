@@ -10,3 +10,5 @@ optimValues.searchdirection = d;
 optimValues.firstorderopt = opt;
 
 outputFcn(x,optimValues,state,varargin{:});
+
+end
