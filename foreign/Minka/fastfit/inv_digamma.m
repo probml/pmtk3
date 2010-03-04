@@ -25,3 +25,5 @@ y = -3:0.01:0.1;
 x = digamma(inv_digamma(y));
 max(abs(x-y))
 max(abs(x-y)./inv_digamma(y))
+
+end

@@ -166,7 +166,7 @@ if diagnostics
   diagn.pos = diagn_pos;
   diagn.acc = diagn_acc;
 end
-
+end
 % Return complete state of the sampler.
 function state = get_state(f)
 
@@ -192,4 +192,5 @@ else
 end
 return
 
+end
 end

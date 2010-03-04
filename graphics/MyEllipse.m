@@ -151,7 +151,7 @@ end
 %axis equal
 
 set(gca,'nextplot',hold_state);
-
+end
 %---------------------------------------------------------------
 % getpoints - Generate x and y points that define an ellipse, given a 2x2
 %   covariance matrix, C. z, if requested, is all zeros with same shape as
@@ -174,7 +174,7 @@ if nargin >= 2
   y(r > clipping_radius) = nan;
   z(r > clipping_radius) = nan;
 end
-
+end
 %---------------------------------------------------------------
 function x=qchisq(P,n)
 % QCHISQ(P,N) - quantile of the chi-square distribution.
@@ -197,7 +197,7 @@ for ii=1:14
     break;
   end
 end
-
+end
 %---------------------------------------------------------------
 function F=pchisq(x,n)
 % PCHISQ(X,N) - Probability function of the chi-square distribution.
@@ -222,7 +222,7 @@ else
     end
   end
 end
-
+end
 %---------------------------------------------------------------
 function f=dchisq(x,n)
 % DCHISQ(X,N) - Density function of the chi-square distribution.
@@ -232,7 +232,7 @@ end
 f=zeros(size(x));
 s = x>=0;
 f(s) = x(s).^(n/2-1).*exp(-x(s)/2)./(2^(n/2)*gamma(n/2));
-
+end
 %---------------------------------------------------------------
 function properties = getopt(properties,varargin)
 %GETOPT - Process paired optional arguments as 'prop1',val1,'prop2',val2,...
