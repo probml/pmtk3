@@ -8,3 +8,4 @@ lossFn = @(yhat, ytest)mean(yhat ~= ytest);
 [SVMmodel, SigmaStar, SVMmu, SVMse] = fitCv(Sigmas, @svmFit, @svmPredict, lossFn, Xtrain, ytrain,  Nfolds);
 yhat = svmPredict(SVMmodel, Xtest);
 svmNerrors = sum(yhat ~= ytest) % 12
+
