@@ -1,8 +1,9 @@
 function [X, y, comments] = mlcompReadData(fpath)
 % Convert an mlcomp data file to matlab format. 
 
+startswith = @(str, prefix)strncmp(str, prefix, length(prefix));
 raw = getText(fpath);
-iscomment = cellfun(@(s)startswith(s, '#'), raw);
+iscomment = cellfun(@(s)startswith(strtrim(s), '#'), raw);
 comments = raw(iscomment);
 raw = raw(~iscomment);
 parser = @(s)tokenize(strrep(strtrim(s), ':', ' '));
