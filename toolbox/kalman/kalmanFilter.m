@@ -99,7 +99,7 @@ for t=1:T
   end
   loglik = loglik + LL;
 end
-
+end
 %%%%%%%%%%
 
 function [xnew, Vnew, loglik, VVnew] = kalman_update(A, C, Q, R, y, x, V, varargin)
@@ -152,3 +152,5 @@ K = Vpred*C'*Sinv; % Kalman gain matrix
 xnew = xpred + K*e;
 Vnew = (eye(ss) - K*C)*Vpred;
 VVnew = (eye(ss) - K*C)*A*V;
+
+end

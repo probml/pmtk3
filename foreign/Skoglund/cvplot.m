@@ -16,3 +16,5 @@ s = linspace(0,1,length(res_mean));
 plot(s, res_mean);
 ax = axis;
 line([s_opt s_opt], [ax(3) ax(4)], 'Color', 'r', 'LineStyle', '-.');
+
+end

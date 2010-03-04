@@ -28,3 +28,5 @@ else
   end
   p = p + gammaln(s) - sum(gammaln(a));
 end
+
+end

@@ -83,7 +83,7 @@ end
 % Delete the temporary file
 delete(tmp_nam);
 return
-
+end
 function cmd = find_ghostscript
 % Find the full path to a ghostscript executable
 cmd = '';
@@ -109,7 +109,7 @@ for a = 1:numel(dir_list)
     end
 end
 return
-
+end
 function fix_lines(fname)
 % Improve the style of lines used and set grid lines to an entirely new
 % style using dots, not dashes
@@ -195,3 +195,4 @@ fh = fopen(fname, 'wt');
 fprintf(fh, '%s%s%s%s', fstrm(1:first_sec), second_sec, new_style, remaining);
 fclose(fh);
 return
+end

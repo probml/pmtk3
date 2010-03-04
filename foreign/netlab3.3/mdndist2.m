@@ -49,3 +49,5 @@ n2 = sum(diff2, 2);
 % so that we have a distance for each centre per target
 n2 = reshape(n2, ncentres, ntarget)';
 
+
+end

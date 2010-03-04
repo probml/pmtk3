@@ -23,3 +23,5 @@ for i=1:Npartitions
   ndx = ndx+Nbin(i);
 end
 
+
+end

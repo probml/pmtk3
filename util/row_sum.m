@@ -5,3 +5,4 @@ function s = row_sum(x)
 % unfortunately, this removes any sparseness of x.
 s = x*ones(size(x, 1),1);
 
+end

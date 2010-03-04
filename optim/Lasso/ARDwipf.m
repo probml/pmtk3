@@ -30,7 +30,7 @@ end
 [mu,dmu,k,gamma] = sparse_learning(X,y,lambda,maxIter,method,0,verbose);
 w = mu;
 bestModel = find(gamma > thresh);
-
+end
 function [mu,dmu,k,gamma] = sparse_learning(Phi,T,lambda,iters,flag1,flag2,flag3)
 % *************************************************************************
 % 
@@ -176,3 +176,4 @@ mu = temp;
    
 return;
 
+end

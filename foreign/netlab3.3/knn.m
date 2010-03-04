@@ -32,3 +32,4 @@ end
 net.tr_in = tr_in; 
 net.tr_targets = tr_targets;
 
+end

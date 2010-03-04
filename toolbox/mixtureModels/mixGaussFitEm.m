@@ -126,3 +126,4 @@ end
 model.mu  = mu; model.Sigma = Sigma; model.mixweight = mixweight; model.K = K;
 
 
+end

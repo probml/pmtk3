@@ -26,3 +26,4 @@ for i = 1:n
     end
 end
 g = g(:);
+end

@@ -47,3 +47,4 @@ y = X*w + sqrt(sigma2)*randn(n,1);
 
 
 
+end

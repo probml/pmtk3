@@ -43,3 +43,4 @@ for iter = 1:100
   if(abs(a - old_a) < 1e-8) break, end
 end  
 b = m/a;
+end

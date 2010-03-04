@@ -15,3 +15,5 @@ function mix = gtmfwd(net)
 
 net.gmmnet.centres = rbffwd(net.rbfnet, net.X);
 mix = net.gmmnet;
+
+end

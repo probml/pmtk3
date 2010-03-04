@@ -48,3 +48,4 @@ else                                                % compute derivative matrix
     clear K;
   end
 end
+end

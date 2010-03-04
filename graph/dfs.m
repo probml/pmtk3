@@ -53,7 +53,7 @@ for u=1:n
   end
 end
 
-
+end
 %%%%%%%%%%
 
 function dfs_visit(u, adj_mat, directed)
@@ -87,5 +87,5 @@ color(u) = black;
 post = [post u];
 time_stamp = time_stamp + 1;
 f(u) = time_stamp;
-
+end
 

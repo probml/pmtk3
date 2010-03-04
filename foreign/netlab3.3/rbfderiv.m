@@ -50,4 +50,4 @@ for k = 1 : net.nout
   end
 end
 
-    
+end

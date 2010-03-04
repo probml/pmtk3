@@ -17,3 +17,5 @@ if nargout > 1
   [logPz, ll] = normalizeLogSpace(logPz);
   pz = exp(logPz);
 end
+
+end

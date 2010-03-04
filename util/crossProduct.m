@@ -25,3 +25,5 @@ switch nargin
  otherwise
   error('not supported')
 end
+
+end

@@ -29,3 +29,5 @@ else
   m = repmat(qmag, pn, 1) + repmat(pmag', 1, qn) - 2*p'*Aq;
   
 end
+
+end

@@ -34,3 +34,5 @@ if row
 else
   [K,N] = size(data);
 end
+
+end

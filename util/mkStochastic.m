@@ -25,3 +25,5 @@ else % multi-dimensional array
   T = T ./ norm;
   T = reshape(T, ns);
 end
+
+end

@@ -151,7 +151,7 @@ function latextable(X,varargin)
 % 8 - APPLY PREFERENCES
     applypref(a);
 
-    
+end 
 %--------------------------------------------------------------------------
 % SUBFUNCTION: subfunction_options
 function [a] = subfunction_options(in)
@@ -214,7 +214,7 @@ end
 % 4 - CORRECT VERTICAL AND HORIZONTAL ARRAYS WITH A SINGLETON DIMENSION
     if size(a.horiz,2) == 1; a.horiz = a.horiz'; end
     if size(a.vert,1) == 1; a.vert = a.vert'; end
-
+end
 %--------------------------------------------------------------------------
 function A = convertdata(X,form)
 % CONVERTDATA changes numeric and cell arrays into strings for each row
@@ -241,6 +241,7 @@ function A = convertdata(X,form)
             A{i,1} = [A{i,1},'\\'];
         end 
     end
+end    
 %--------------------------------------------------------------------------
 function applypref(a)
 % APPPYPREF applies the last used directory and property settings
@@ -267,3 +268,4 @@ function applypref(a)
                 end
             end
         end
+end

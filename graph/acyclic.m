@@ -21,3 +21,5 @@ else
   [d, pre, post, cycle] = dfs(adj_mat,[],directed);
   b = ~cycle;    
 end
+
+end

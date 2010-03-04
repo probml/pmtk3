@@ -17,3 +17,5 @@ function g = netderiv(w, net, x)
 fstr = [net.type, 'deriv'];
 net = netunpak(net, w);
 g = feval(fstr, net, x);
+
+end

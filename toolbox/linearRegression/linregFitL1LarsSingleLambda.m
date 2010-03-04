@@ -7,3 +7,5 @@ function [w, allW] = linregFitL1LarsSingleLambda(X, y, lambda)
 
 allW = lars(X, y, 'lasso');
 w = colvec(interpolateLarsWeights(allW, lambda, X, y));
+
+end

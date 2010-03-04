@@ -57,6 +57,8 @@ for t=T-1:-1:1
 end
 
 VVsmooth(:,:,1) = zeros(ss,ss);
+end
+
 
 %%%%%%%%
 function [xsmooth, Vsmooth, VVsmooth_future] = smooth_update(xsmooth_future, Vsmooth_future, ...
@@ -77,3 +79,4 @@ VVsmooth_future = VVfilt_future + (Vsmooth_future - Vfilt_future)*inv(Vfilt_futu
 
 
 
+end

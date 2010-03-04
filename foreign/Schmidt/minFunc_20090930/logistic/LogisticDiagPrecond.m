@@ -18,3 +18,6 @@ m = v./h;
 % Exact preconditioner
 %H = X'*diag(sig.*(1-sig))*X;
 %m = H\v;
+
+
+end

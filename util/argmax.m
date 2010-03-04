@@ -9,3 +9,5 @@ function indices = argmax(v)
 
 [m i] = max(v(:));
 indices = ind2subv(sizePMTK(v), i);
+
+end

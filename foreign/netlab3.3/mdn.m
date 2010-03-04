@@ -75,3 +75,5 @@ net.mlp = mlpnet;
 net.nin = nin;
 net.nout = dim_target;
 net.nwts = mlpnet.nwts;
+
+end

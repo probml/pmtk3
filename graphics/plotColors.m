@@ -8,3 +8,4 @@ for i=1:length(colors)
   styles{i} = sprintf('-%s%s', colors(i), symbols(i));
 end
 
+end

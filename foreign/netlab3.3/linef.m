@@ -19,3 +19,6 @@ function y = linef(lambda, fn, x, d, varargin)
 fn = fcnchk(fn, length(varargin));
 
 y = feval(fn, x+lambda.*d, varargin{:});
+
+
+end

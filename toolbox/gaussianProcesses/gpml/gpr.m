@@ -65,3 +65,5 @@ else                    % ... otherwise compute (marginal) test predictions ...
   end  
 
 end
+
+end

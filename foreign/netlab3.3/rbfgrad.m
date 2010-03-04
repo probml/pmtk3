@@ -63,3 +63,4 @@ otherwise
    error(['Unknown output function ', net.outfn]);
 end
 
+end

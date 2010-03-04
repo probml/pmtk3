@@ -37,3 +37,5 @@ net.c = mix.centres;
 
 % options(7) gives scale of function widths
 net = rbfsetfw(net, options(7));
+
+end

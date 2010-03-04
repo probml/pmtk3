@@ -83,3 +83,5 @@ mdl.gamma = gamma;
 mdl.L = L;
 mdl.fit.m = X*mn;
 mdl.fit.var = diag(X * Sn * X') + 1/beta;
+
+end

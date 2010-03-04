@@ -124,3 +124,5 @@ fEvals = output.funcCount;
 if mode == 3
     w = w(1:p)-w(p+1:end);
 end
+
+end

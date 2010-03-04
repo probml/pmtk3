@@ -38,3 +38,5 @@ for n = 1:ndata
 	g(n, :, :) = temp;
     end
 end
+
+end

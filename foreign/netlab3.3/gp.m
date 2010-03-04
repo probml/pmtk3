@@ -91,3 +91,5 @@ end
 % Store training data as needed for gpfwd
 net.tr_in = [];
 net.tr_targets = [];
+
+end

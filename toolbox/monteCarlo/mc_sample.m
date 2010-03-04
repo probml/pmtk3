@@ -15,3 +15,5 @@ for i=1:numex
     S(i, t) = sampleDiscrete(trans(S(i,t-1),:));
   end
 end
+
+end

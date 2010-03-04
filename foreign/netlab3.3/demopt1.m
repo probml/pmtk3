@@ -165,6 +165,7 @@ hold off
 
 clc
 disp('Press any key to end.')
-pause
+
 close(fh1);
-clear all;
+
+end

@@ -52,3 +52,5 @@ M.gmu0  = 0.001;
 M.btau0 = 1;
 M.gtau0 = 1e-10;
 M.SigW = eye(q);
+
+end

@@ -4,3 +4,5 @@ function [logp] = mixStudentLogprob(model, X)
 
 [z, pz, logp] = mixStudentInfer(model, X); %#ok
 
+
+end

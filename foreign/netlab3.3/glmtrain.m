@@ -204,3 +204,5 @@ options(8) = err;
 if (options(1) >= 0)
   disp(maxitmess);
 end
+
+end

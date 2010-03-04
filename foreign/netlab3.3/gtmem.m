@@ -133,3 +133,5 @@ options(8) = -sum(log(gtmprob(net, t)));
 if (display >= 0)
   disp(maxitmess);
 end
+
+end

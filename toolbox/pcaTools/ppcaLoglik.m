@@ -29,3 +29,4 @@ if  nargout >= 2 % debugging - O(d^3) time
    %assert(approxeq(logp, ll))
 end
 
+end

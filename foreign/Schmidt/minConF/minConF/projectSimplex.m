@@ -12,3 +12,5 @@ for j = 1:nVars
 end
 theta = (1/row)*(sm_row-1);
 w = max(v-theta,0);
+
+end

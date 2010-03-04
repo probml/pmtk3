@@ -46,3 +46,4 @@ else                                              % compute derivative matrices
     clear K;
   end
 end
+end

@@ -378,3 +378,5 @@ elseif strcmp(action, 'help'),
   hHelpDlg = helpdlg(helpStr, 'Netlab Demo Help');	
 
 end;
+
+end

@@ -34,3 +34,5 @@ gb1 = sum(delout, 1);
 gdata = [gw1(:)', gb1];
 
 [g, gdata, gprior] = gbayes(net, gdata);
+
+end

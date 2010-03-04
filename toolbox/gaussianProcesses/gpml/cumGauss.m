@@ -83,3 +83,4 @@ elseif nargin == 3
 else
   error('No valid input provided.')    
 end
+end

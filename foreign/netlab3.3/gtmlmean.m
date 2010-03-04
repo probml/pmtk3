@@ -20,3 +20,5 @@ end
 
 R = gtmpost(net, data);
 means = R*net.X;
+
+end

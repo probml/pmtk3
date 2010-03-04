@@ -10,3 +10,5 @@ for i = 1:n1
         XX(i,j) = Z*exp(-dist/(2*sigma^2));
     end
 end
+
+end

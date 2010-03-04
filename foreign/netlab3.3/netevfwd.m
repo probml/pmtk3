@@ -27,3 +27,5 @@ if nargin == 5
 else
   [y, extra, invhess] = feval(func, net, x, t, x_test, invhess);
 end
+
+end

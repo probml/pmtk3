@@ -5,3 +5,5 @@ function [yhat, py] = mlpClassifPredictNetlab(model, X)
 
 [py] = mlpfwd(model.net, X);
 [junk, yhat] = max(py,[],2); %#ok
+
+end

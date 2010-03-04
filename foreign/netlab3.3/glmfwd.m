@@ -60,3 +60,5 @@ switch net.outfn
   otherwise
     error(['Unknown activation function ', net.outfn]);
 end
+
+end

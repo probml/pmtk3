@@ -11,3 +11,5 @@ function [lambda_max] = find_lambdamax_l1_ls(At,y)
 %
 
 lambda_max = norm(2*(At*y),inf);
+
+end

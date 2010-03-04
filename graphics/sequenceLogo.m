@@ -1,4 +1,4 @@
-function W = seqlogo(P, varargin)
+function W = sequenceLogo(P, varargin)
 %SEQLOGO displays sequence logos for DNA and protein sequences
 %
 %   SEQLOGO(SEQS) displays the sequence logo for a set of aligned sequences,
@@ -316,7 +316,7 @@ if displayLogo
         seqshowlogo(wtM, symbolList, isAA, startPos);
     end
 end
-
+end
 %-------------------- Helper functions and callbacks ----------------%
 function [p,s] = sortWeightOrder(weight, symbollist)
 % Sort weight matrix by the sort of symbol list in ASCII direction order
@@ -327,7 +327,7 @@ for i = 1:size(weight, 2)
     x=weight(:,i);
     p(:,i) = x(index);
 end
-
+end
 %--------------------------------------------------------------------%
 function seqshowlogo(varargin)
 %SEQSHOWLOGO displays a Java seqlogo frame in a figure window
@@ -392,7 +392,7 @@ setpixelposition(hFigure,pos);
 
 set(logoContainer, 'units', 'normalized');
 set(hFigure, 'visible', 'on')
-
+end
 %----------------------------------------------------------------------%
 % % Using figure print function instead.
 % % function printHandler(hsrc, event,logoViewer) %#ok
@@ -401,14 +401,14 @@ set(hFigure, 'visible', 'on')
 %----------------------------------------------------------------------%
 function saveHandler(hsrc, event, logoViewer) %#ok
 awtinvoke(logoViewer, 'saveLogoDialog()')
-     
+end  
 %----------------------------------------------------------------------%
 function onLogoClosing(hfig, event, logoViewer, logoContainer)%#ok
 if ~isempty(logoViewer)
     awtinvoke(logoViewer, 'cleanup()');
     delete(logoContainer);
 end
-
+end
 %--------------------------------------------------------------------
 function initFigureTools(fig, logoViewer)
 % helper function to set figure menus and toolbar
@@ -459,7 +459,7 @@ uimenu(hw,'Label','Send Feedback','Position',3,'Separator','on',...
 
 set(0,'ShowHiddenHandles',oldSH)
 
-
+end
 %%%%%%%
 
 function tf = opttf(pval,okarg,mfile)
@@ -500,4 +500,6 @@ else
         '%s must be a logical value, true or false.',...
         upper(okarg));
     xcptn.throwAsCaller;
+end
+
 end

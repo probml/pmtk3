@@ -98,3 +98,5 @@ else
   model.mu = []; model.Sigma = []; dataSamples = [];
 end
 model.mu = muSamples; model.Sigma = SigmaSamples;
+
+end

@@ -10,3 +10,5 @@ if isempty(s)
 end
 ss = repmat(s, n, 1);
 X = X./ss;
+
+end

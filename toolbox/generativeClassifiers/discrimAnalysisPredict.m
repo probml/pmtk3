@@ -25,3 +25,5 @@ logjoint = loglik + repmat(log(classPrior(:)'), N, 1);
 logpost = logjoint - repmat(logsumexp(logjoint,2), 1, Nclasses);
 post = exp(logpost);
 [junk, yhat] = max(post,[],2); 
+
+end

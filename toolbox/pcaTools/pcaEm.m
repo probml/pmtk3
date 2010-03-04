@@ -48,3 +48,4 @@ Xrecon = Z*W' + repmat(mu, n, 1);
 
 
 
+end

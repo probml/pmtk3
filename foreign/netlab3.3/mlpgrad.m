@@ -31,3 +31,5 @@ delout = y - t;
 gdata = mlpbkp(net, x, z, delout);
 
 [g, gdata, gprior] = gbayes(net, gdata);
+
+end

@@ -21,3 +21,4 @@ if nargout > 2
     H = 2*X(viol,:)'*X(viol,:);
 end
 
+end

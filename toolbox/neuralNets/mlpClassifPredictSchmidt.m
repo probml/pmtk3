@@ -10,3 +10,5 @@ yhat = mu>0;
 if nargout >= 2
   py = sigmoid(mu);
 end
+
+end

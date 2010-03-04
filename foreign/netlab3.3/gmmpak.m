@@ -20,3 +20,4 @@ p = [mix.priors, mix.centres(:)', mix.covars(:)'];
 if strcmp(mix.covar_type, 'ppca')
   p = [p, mix.lambda(:)', mix.U(:)'];
 end
+end

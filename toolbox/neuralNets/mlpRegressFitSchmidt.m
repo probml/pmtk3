@@ -26,3 +26,4 @@ model.nHidden = nHidden;
 yhat = mlpRegressPredictSchmidt(model, X);
 model.sigma2 = mean((y(:) - yhat(:)).^2);
 
+end

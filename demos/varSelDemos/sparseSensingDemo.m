@@ -2,6 +2,7 @@
 %PMTKauthor Figueiredo
 %PMTKurl http://www.lx.it.pt/~mtf/GPSR/
 %PMTKmodified Kevin Murphy 
+%PMTKslow
 % the code to only use l1ls, not the GPSR code
 
 setSeed(0);

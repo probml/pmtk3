@@ -24,7 +24,7 @@ else
   montage(patchesColorBig)
 
 end
-
+end
 %%%%%%%%%%%%%
 
 function h = montageFilenames(filenames)
@@ -69,7 +69,7 @@ end
 if nargout > 0
     h = hh;
 end
-
+end
 %--------------------------------------------------------------
 %Parse Inputs Function
 
@@ -99,4 +99,5 @@ if nargin==2
     msg2 = 'Use multidimensional arrays to represent multiframe images.';
     error(eid,'%s\n%s',msg1,msg2);    
   end
+end
 end

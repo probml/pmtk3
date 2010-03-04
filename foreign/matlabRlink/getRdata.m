@@ -47,3 +47,4 @@ catch
         error('Could not get %s.\n%s',varname,msg);
     end
 end
+end

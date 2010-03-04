@@ -24,3 +24,5 @@ switch net.type
     case 'mdn'
 	net.mlp = convertoldnet(net.mlp);
 end
+
+end

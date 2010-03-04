@@ -15,3 +15,5 @@ y = (x-repmat(minx,n,1)) ./ repmat(rangex, n, 1);
 y = y * (maxVal-minVal);
 % shift to min:max
 y = y + minVal;
+
+end

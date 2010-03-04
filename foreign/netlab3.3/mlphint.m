@@ -90,3 +90,4 @@ axis equal;
 xpos = net.nhidden;
 line([xpos xpos], [0 net.nout], 'color', 'red', 'linewidth', 3);
 
+end

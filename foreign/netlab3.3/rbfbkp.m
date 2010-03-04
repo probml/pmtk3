@@ -70,3 +70,5 @@ otherwise
 end
    
 g = [gc(:)', gwi, gw2(:)', gb2];
+
+end

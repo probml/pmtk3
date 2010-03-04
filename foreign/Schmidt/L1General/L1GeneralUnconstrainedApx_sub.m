@@ -142,3 +142,5 @@ while i < maxIter
     
 end
 w(abs(w) < threshold) = 0;
+
+end

@@ -46,7 +46,7 @@ end
 
 val = serializevalue(v, n);
 m = [val ';'];
-
+end
 %
 % Main hub for serializing values
 %
@@ -64,7 +64,7 @@ elseif isobject(v)
 else
   error('Unhandled type %s', class(v));
 end
-
+end
 %
 % Serialize a string
 % 
@@ -78,6 +78,7 @@ catch
 end
 if doConvertToUint8 || ~isequal(eval(val), v) 
   val = ['char(' serializevalue(uint8(v), n) ')'];
+end
 end
 
 %
@@ -98,7 +99,7 @@ else
   end
   val = sprintf('reshape(%s, %s)', val, mat2str(size(v)));
 end
-
+end
 %
 % Serialize a cell
 %
@@ -122,7 +123,7 @@ val = [ '{' vstr{:} '}'];
 if ~isvector(v)
   val = ['reshape('  val sprintf(', %s)', mat2str(size(v)))];
 end
-
+end
 %
 % Serialize a struct by converting the field values using struct2cell
 %
@@ -142,14 +143,14 @@ val = [val(1:end-2) ')'];
 if ~isvector(v)
   val = sprintf('reshape(%s, %s)', val, mat2str(size(v)));
 end
-
+end
 %
 % Serialize an object by converting to struct and add a call to the copy
 % contstructor
 %
 function val = serializeobject(v, n)
 val = sprintf('%s(%s)', class(v), serializevalue(struct(v), n));
-
+end
 
 %
 % Self test
@@ -183,7 +184,7 @@ a.b.anotherteststr = teststr3;
 a.c{2}    = cell(10,10,8, 2);
 dotest('Structs and cells', a);
 
-
+end
 %
 % Helper for self test
 %
@@ -205,7 +206,7 @@ catch
   error('%s failed', description);
 end
 
-
+end
 % Created by: J?ger Hanseg?rd
 % Contact...: jogerh@ifi.uio.no
 % ===== EOF ====== [serialize.m] ======

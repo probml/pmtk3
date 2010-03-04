@@ -15,3 +15,5 @@ else
     cs = find(adj_mat(j,:)) + (t-2)*ss;
   end
 end
+
+end

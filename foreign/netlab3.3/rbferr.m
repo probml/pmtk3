@@ -48,3 +48,4 @@ end
 % Compute Bayesian regularised error
 [e, edata, eprior] = errbayes(net, edata);
 
+end

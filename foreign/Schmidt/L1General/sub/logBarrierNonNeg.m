@@ -35,3 +35,4 @@ if nargout > 2
    H = [H -H;-H H] + mu*(diag([wP;wM].^-2));
 end
 
+end

@@ -29,3 +29,5 @@ end
 
 [xfilled,M2] = BPCAfill(x999, M.q);
 [nrmse, rmse] = missingNRMSE(x999, xfilled, xorg);
+
+end

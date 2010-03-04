@@ -7,3 +7,5 @@ if length(sizes)==1
 else
   T = repmat(T, sizes(:)');
 end
+
+end

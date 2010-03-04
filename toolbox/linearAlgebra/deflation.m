@@ -10,3 +10,4 @@ for j=1:K
   C = C - lambda(j)*V(:,j)*V(:,j)'; % deflation
 end
 
+end

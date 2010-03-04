@@ -19,3 +19,5 @@ if 0
    MinvWT2 = inv(M)*W';
    assert(approxeq(MinvWT, MinvWT2))
 end
+
+end

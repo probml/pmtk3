@@ -40,3 +40,4 @@ else
   [PCcoeff, PCvec] = eigdec(cov(data), N);
 end
 
+end

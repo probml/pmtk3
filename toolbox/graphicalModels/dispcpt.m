@@ -14,3 +14,5 @@ for i=1:prod(parents_size)
   fprintf(1, '%6.4f ', CPT(index{:}));
   fprintf(1, '\n');
 end
+
+end

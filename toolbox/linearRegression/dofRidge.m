@@ -1,4 +1,3 @@
-
 function df = dofRidge(X, lambdas)
 % Compute the degrees of freedom for a given lambda value
 % Elements 1e p63
@@ -23,3 +22,4 @@ for i=1:nlambdas
 end
 
       
+end

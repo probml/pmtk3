@@ -62,7 +62,7 @@ elseif nargin == 3
 else
   error('No valid input provided.')    
 end
-
+end
 
 % The gauherint function approximates "\int t^k logistic(y t) N(t|mu,var)dt" by
 % means of Gaussian Hermite Quadrature. A call to gauher.m is made.
@@ -81,7 +81,7 @@ if nargout>1                                                      % first moment
   if nargout>2, m2 = reshape(f0.*f0.*sig*w, sz); end             % second moment
 end
 
-
+end
 % The erfint function approximates "\int t^k logistic(y t) N(t|mu,s2) dt" by 
 % setting:
 %         logistic(t) \approx 1/2 + \sum_{i=1}^5 (c_i/2) erf(lambda_i t)
@@ -116,3 +116,4 @@ if nargout>1                                                      % first moment
 end
 
 
+end

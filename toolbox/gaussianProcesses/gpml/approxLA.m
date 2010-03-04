@@ -70,3 +70,5 @@ if nargout >= 4                                        % do we want derivatives?
     dnlZ(j) = -s1-s2'*s3;
   end
 end
+
+end

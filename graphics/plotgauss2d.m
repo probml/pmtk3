@@ -5,7 +5,7 @@ function h=plotgauss2d(mu, Sigma)
 
 h = plotcov2(mu, Sigma);
 return;
-
+end
 %%%%%%%%%%%%%%%%%%%%%%%%
 
 % PLOTCOV2 - Plots a covariance ellipse with major and minor axes
@@ -123,7 +123,8 @@ if (~holding) hold off; end
 % See also: MAHAL2CONF
 
 % Copyright (C) 2002 Mark A. Paskin
-
+end
 function m = conf2mahal(c, d)
 
 m = chi2inv(c, d); % matlab stats toolbox
+end

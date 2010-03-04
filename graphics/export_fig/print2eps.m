@@ -42,3 +42,5 @@ set(fig, 'PaperPositionMode', old_mode);
 % Fix the line styles
 fix_lines(name);
 return
+
+end

@@ -47,3 +47,4 @@ if isfield(net, 'alpha')
     h = h + diag(index*net.alpha);
   end 
 end
+end

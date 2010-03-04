@@ -64,3 +64,4 @@ for j = 1:mix.ncentres
   total_samples = total_samples + num_samples;
 end
   
+end

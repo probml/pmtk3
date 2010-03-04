@@ -47,3 +47,5 @@ switch net.outfn
 end
 
 [e, edata, eprior] = errbayes(net, edata);
+
+end

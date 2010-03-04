@@ -18,3 +18,4 @@ end
 
 w = [net.w1(:)', net.b1];
 
+end

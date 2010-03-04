@@ -28,3 +28,5 @@ nodes = (reshape(net.map, net.nin, net.num_nodes))';
 d2 = dist2(x, nodes);
 % Find winning node for each pattern: minimum value in each row
 [w, win_nodes] = min(d2, [], 2);
+
+end

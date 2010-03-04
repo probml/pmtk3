@@ -59,3 +59,5 @@ net.gmmnet = gmm(dim_data, nlatent, 'spherical');
 
 % Create empty latent data sample
 net.X = [];
+
+end

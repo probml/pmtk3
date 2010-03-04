@@ -52,3 +52,5 @@ if nargout > 1
   prior.index = indx;
   prior.alpha = [aw2, ab2]';
 end
+
+end

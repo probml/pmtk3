@@ -20,3 +20,4 @@ if iter > maxIter
   warning('did not converge')
 end
  
+end

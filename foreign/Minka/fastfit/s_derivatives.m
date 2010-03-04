@@ -29,3 +29,5 @@ for k = 1:length(a)
     c3 = c3 - c3k/m(k)^2;
   end
 end
+
+end

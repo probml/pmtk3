@@ -21,3 +21,5 @@ for i=1:d
       CPDs{i} = mkStochastic(cnt+prior);
    end  
 end
+
+end

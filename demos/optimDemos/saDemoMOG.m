@@ -1,4 +1,4 @@
-function SAdemoMOG()
+function saDemoMOG()
 % Demo of Simulated Annealing for finding the mode of
 % a mixture of two 1D Gaussians using a Gaussian proposal.
 
@@ -38,7 +38,7 @@ for i=1:4
   %text(14,.1,sprintf('iter %d', Ns(i)))
   title(sprintf('iter %d', Ns(i)))
 end
-
+end
 %%%%%%%%%%
 
 function p = mogProb(x)
@@ -55,7 +55,10 @@ for k=1:K
   p = p + mixWeights(k)*gausspdf(x(:), mu(k), sigma(k));
 end
 
+end
+
 function  E = target(x)
 p = mogProb(x);
 E = -log(p+eps); % energy = -ve log posterior
 
+end

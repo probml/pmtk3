@@ -24,3 +24,5 @@ s = sum(prob, 2);
 % Set any zeros to one before dividing
 s = s + (s==0);
 post = prob./(s*ones(1, mixparams.ncentres));
+
+end

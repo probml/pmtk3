@@ -184,7 +184,7 @@ end
 if k == maxk
   disp('LARS warning: Forced exit. Maximum number of iteration reached.');
 end
-
+end
 %% Fast Cholesky insert and remove functions
 % Updates R in a Cholesky factorization R'R = X'X of a data matrix X. R is
 % the current R matrix to be updated. x is a column vector representing the
@@ -200,7 +200,7 @@ else
   R_kk = sqrt(diag_k - R_k'*R_k); % norm(x'x) = norm(R'*R), find last element by exclusion
   R = [R R_k; [zeros(1,size(R,2)) R_kk]]; % update R
 end
-
+end
 % Deletes a variable from the X'X matrix in a Cholesky factorisation R'R =
 % X'X. Returns the downdated R. This function is just a stripped version of
 % Matlab's qrdelete.
@@ -220,3 +220,4 @@ R(end,:) = []; % remove zero'ed out row
 %
 % There is a modification that turns least angle regression into stagewise
 % (epsilon) regression. This has not been implemented. 
+end

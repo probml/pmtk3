@@ -31,3 +31,5 @@ if length(x) == 1
 else
   y(i) = gammaln(x(i)+n(i)) - gammaln(x(i));
 end
+
+end

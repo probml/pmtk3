@@ -80,7 +80,7 @@ title('data space');
 
 
 printPmtkFigure bayesLinRegPlot2d
-
+end
 %%%%%%%%%%%
 
 % Plot the specified number of lines of the form y = w0 + w1*x in [-1,1]x[-1,1] by
@@ -110,7 +110,7 @@ end
 %Generates a colour filled contour plot of the bivariate function, 'func'
 %over the domain [-1,1]x[-1,1], plotting it to the current figure. Also plots
 %the specified point as a white cross. 
-
+end
 function contourPlot(func,trueValue)
 stepSize = 0.05; 
 [x,y] = meshgrid(-1:stepSize:1,-1:stepSize:1); % Create grid.
@@ -131,7 +131,7 @@ if(length(trueValue) == 2)
     hold on;
     plot(trueValue(1),trueValue(2),'+w');
 end
-
+end
 %%%%%%%%%%
 
 % Given the mean = priorMu and covarianceMatrix = priorSigma of a prior
@@ -145,3 +145,5 @@ function [postW,postMu,postSigma] = update(xtrain,ytrain,likelihoodPrecision,pri
 postSigma  = inv(inv(priorSigma) + likelihoodPrecision*xtrain'*xtrain); 
 postMu = postSigma*inv(priorSigma)*priorMu + likelihoodPrecision*postSigma*xtrain'*ytrain; 
 postW = @(W)gausspdf(W,postMu',postSigma);
+
+end

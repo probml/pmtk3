@@ -101,3 +101,5 @@ if show_progress
   figure(2)
   plot(e)
 end
+
+end

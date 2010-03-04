@@ -23,3 +23,4 @@ w = feval(pakstr, net);
 if (isfield(net, 'mask'))
    w = w(logical(net.mask));
 end
+end

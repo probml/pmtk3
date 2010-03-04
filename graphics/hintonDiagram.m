@@ -65,3 +65,5 @@ plot([0 R R 0 0]+0.5,[0 0 S S 0]+0.5,'w');
 %xlabel('Input');
 %ylabel('Neuron');
 grid on
+
+end

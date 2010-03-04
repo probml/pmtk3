@@ -7,3 +7,4 @@ function x = randnegbin(a,b)
 lambda = randgamma(a).*b;
 x = poissrnd(lambda);
 
+end

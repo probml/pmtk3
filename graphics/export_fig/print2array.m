@@ -41,3 +41,5 @@ A = imread(tmp_nam);
 % Delete the file
 delete(tmp_nam);
 return
+
+end

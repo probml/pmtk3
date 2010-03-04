@@ -125,7 +125,7 @@ while (1)
     end
 
 end
-
+end
 %-------------------------------------------------------------------------------
 
 function Graph = graphinit
@@ -229,3 +229,4 @@ Graph.xy_delta = xy_delta ;
 Graph.nodelabel = nodelabel ;
 Graph.arrows = arrows ;
 
+end

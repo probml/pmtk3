@@ -54,3 +54,5 @@ for i=1:c
     C(i,j) = sum((Yclass==j).*(TL==i));
   end
 end   
+
+end

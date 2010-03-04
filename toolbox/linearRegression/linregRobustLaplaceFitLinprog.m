@@ -25,3 +25,5 @@ model.w   = w(2:end);
 model.includeOffset = true;
 X1 = [ones(N,1) X];
 model.sigma2 = var((X1*w - y).^2); % MLE of noise variance
+
+end

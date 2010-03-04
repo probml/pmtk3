@@ -15,3 +15,5 @@ if length(x) == 1
 else
   y(i) = digamma(x(i)+n(i)) - digamma(x(i));
 end
+
+end

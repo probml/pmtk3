@@ -17,3 +17,6 @@ if ~errstring
 end
 
 w = [net.c(:)', net.wi, net.w2(:)', net.b2];
+
+
+end

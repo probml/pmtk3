@@ -83,7 +83,7 @@ if nargin == 3
 end
 
 [h, hdata] = hbayes(net, hdata);
-
+end
 function hdata = rearrange_hess(net, j, out_hess, hdata)
 
 % Because all the biases come after all the input weights,
@@ -104,3 +104,5 @@ hdata(b_index, ob_start:ob_end) = out_hess(net.nin+1,1:net.nin);
 hdata(ob_start:ob_end, b_index) = out_hess(1:net.nin, net.nin+1);
 
 return 
+
+end

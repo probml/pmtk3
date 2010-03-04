@@ -22,3 +22,5 @@ writeText(wikiText, wikiFile);
 system(sprintf('svn ci %s -m "auto-updated by publishDemos"', wikiFile));
 docdir = fullfile(pmtk3Root(), 'docs', 'demos'); 
 system(sprintf('svn ci %s -m "auto-updated by publishDemos"', docdir));
+
+end

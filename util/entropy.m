@@ -15,3 +15,5 @@ if scale
   unif = normalize(ones(n,1));
   H = H / entropy(unif);
 end
+
+end

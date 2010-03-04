@@ -52,7 +52,7 @@ function naiveBayesBayesianDemo()
     for c=1:C
         for j=1:ndims
             sf = (1+post.kappa(c))/post.kappa(c);
-            logprobBayesC(:,c,j) = studentTlogprob(Xtest(:,j), post.mu(c, j), sf*post.s2(c, j), post.nu(c));
+            logprobBayesC(:,c,j) = studentLogprob(Xtest(:,j), post.mu(c, j), sf*post.s2(c, j), post.nu(c));
             model.mu = mle.mu(c, j); model.Sigma = mle.s2(c, j);
             logprobPluginC(:,c,j) = gaussLogprob(model, Xtest(:, j));
         end

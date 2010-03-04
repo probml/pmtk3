@@ -20,3 +20,5 @@ else
     % optimal projection is given by projecting coefficients 
     % of spectral decomposition onto non-negative orthant)
 end
+
+end

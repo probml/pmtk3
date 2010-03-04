@@ -226,7 +226,7 @@ else
     set(fig, 'InvertHardcopy', old_mode);
 end
 return
-
+end
 function [name fig formats] = parse_args(nout, varargin)
 % Parse the input arguments
 % Set the defaults
@@ -256,7 +256,7 @@ if ~isvector(formats) && ~isbitmap(formats)
     formats.png = true;
 end
 return
-
+end
 function fh = isolate_subplot(ah, vis)
 % Isolate the axes in a figure on their own
 % Tag the axes so we can find them in the copy
@@ -296,7 +296,7 @@ end
 % Delete all axes except for the input axes and associated items
 delete(axs(I));
 return
-
+end
 function fh = copyfig(fh)
 % Is there a legend?
 if numel(findobj(get(fh, 'Children'), 'Type', 'axes', 'Tag', 'legend'))
@@ -310,7 +310,7 @@ else
     fh = copyobj(fh, 0);
 end
 return
-
+end
 function A = quarter_size(A, padval)
 % Downsample an image by a factor of 4
 try
@@ -344,7 +344,7 @@ if size(A, 3) == 3 && ...
     A = A(:,:,1); % Save only one channel for 8-bit output
 end
 return
-
+end
 function [A v] = crop_background(A, bcol)
 % Map the foreground pixels
 M = A(:,:,1) ~= bcol(1);
@@ -357,11 +357,12 @@ M = any(M, 2);
 v = [find(M, 1) find(M, 1, 'last') find(N, 1) find(N, 1, 'last')];
 A = A(v(1):v(2),v(3):v(4),:);
 return
-
+end
 function b = isvector(formats)
 b = formats.pdf || formats.eps;
 return
-
+end
 function b = isbitmap(formats)
 b = formats.png || formats.tif || formats.jpg || formats.bmp || formats.im || formats.alpha;
 return
+end

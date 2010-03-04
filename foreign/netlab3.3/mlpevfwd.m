@@ -24,3 +24,4 @@ if nargin == 4
 else
   [extra, invhess] = fevbayes(net, y, a, x, t, x_test, invhess);
 end
+end

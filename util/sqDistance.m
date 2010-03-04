@@ -9,14 +9,10 @@ function d = sqDistance(p,q,pSOS,qSOS)
 % 
 % Matthew Dunham    
 
-pn = size(p,1);
-qn = size(q,1);
 if(nargin < 4)
     pSOS = sum(p.^2,2);
     qSOS = sum(q.^2,2);
 end
-if exist('bsxfun', 'builtin')
-    d = bsxfun(@plus,pSOS,qSOS') - 2*p*q';
-else
-    d = repmat(qSOS',  pn, 1) + repmat(pSOS, 1, qn) - 2*p*q';
+d = bsxfun(@plus, pSOS, qSOS') - 2*p*q';
+
 end

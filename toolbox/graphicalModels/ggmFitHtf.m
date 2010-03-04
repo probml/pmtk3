@@ -49,3 +49,5 @@ end
 
 % ensure symmetry 
 precMat = (precMat + precMat')/2;
+
+end

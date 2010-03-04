@@ -9,3 +9,5 @@ elseif length(sizes)==1
 else
   T = ones(sizes(:)');
 end
+
+end

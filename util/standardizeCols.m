@@ -6,3 +6,5 @@ function [X, mu, s] = standardizeCols(X, mu, s)
 if nargin < 2, mu = []; s = []; end
 [X,mu] = center(X,mu);
 [X,s] = mkUnitVariance(X,s);
+
+end

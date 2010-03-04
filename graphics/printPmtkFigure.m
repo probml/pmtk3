@@ -20,3 +20,5 @@ if false% set to false to turn off printing
   %  fprintf('could not print to %s/%s\n', printFolder, filename);
   %end
 end
+
+end

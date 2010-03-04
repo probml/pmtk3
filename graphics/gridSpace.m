@@ -20,3 +20,4 @@ for i=1:nout,
   g(:,i) = x(:);
 end
 
+end

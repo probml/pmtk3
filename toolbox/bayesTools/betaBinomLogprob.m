@@ -10,3 +10,4 @@ if isscalar(a)
 end
 L = betaln(X+a, N-X+b) - betaln(a,b) + nchoosekln(N, X);
 
+end

@@ -44,3 +44,5 @@ end
 for t=T-1:-1:1
   path(t) = psi(path(t+1),t+1);
 end
+
+end

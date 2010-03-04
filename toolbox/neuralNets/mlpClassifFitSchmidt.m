@@ -23,5 +23,6 @@ model.nParams = nParams;
 model.w = w;
 model.nHidden = nHidden;
 
+end
 
 

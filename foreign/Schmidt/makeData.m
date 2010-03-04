@@ -50,3 +50,5 @@ else
         y(flipPos) = -y(flipPos);
     end
 end
+
+end

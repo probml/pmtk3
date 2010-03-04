@@ -27,3 +27,5 @@ end
 temp = temp./(mix.covars'*ones(1, mix.nin));
 temp = temp.*(mix.priors'*ones(1, mix.nin));
 g = sum(temp, 1)/gmmprob(mix, x);
+
+end

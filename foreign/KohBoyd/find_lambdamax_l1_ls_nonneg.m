@@ -11,3 +11,6 @@ function [lambda_max] = find_lambdamax_l1_ls_nonneg(At,y)
 %
 
 lambda_max = 2*max(At*y);
+
+
+end

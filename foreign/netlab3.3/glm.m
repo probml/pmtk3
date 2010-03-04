@@ -80,3 +80,4 @@ if nargin == 5
   net.beta = beta;
 end
 
+end

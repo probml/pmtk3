@@ -3,3 +3,5 @@ function c = chooseln(n,k)
 % c = log choose(n,k)
 
 c = factorialln(n) -factorialln (k) - factorialln(n-k);      
+
+end

@@ -18,3 +18,4 @@ xlabel('factor index')
 ax = axis;
 axis( [ax(1:2) -5 5] );
 text( 0, -2-log10(M.tau),['tau=' num2str(M.tau)])
+end

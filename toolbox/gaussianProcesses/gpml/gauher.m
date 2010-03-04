@@ -52,3 +52,4 @@ function [x,w]=gauher(N)
         w = V(1,:)'.^2;
         x = sqrt(2)*diag(D);
     end
+end

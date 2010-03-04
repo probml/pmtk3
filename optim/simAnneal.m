@@ -1,6 +1,6 @@
 function [xopt, fval, samples, energies, acceptanceRate, temp] = simAnneal(target, x0, opts)
 % Simulated annealing algorithm to find the global *minimum* of a function
-% 
+%
 % INPUTS (similar to fminunc)
 % target is the energy function (*negative* unnormalized log posterior)
 %   called as 'E = target(x)'
@@ -35,9 +35,9 @@ def = struct(...
 
 fields = fieldnames(def);
 for i=1:length(fields)
-  if ~isfield(opts, fields{i})
-    opts.(fields{i}) = def.(fields{i});
-  end
+    if ~isfield(opts, fields{i})
+        opts.(fields{i}) = def.(fields{i});
+    end
 end
 proposal = opts.proposal;
 
@@ -52,34 +52,34 @@ temp(1) = T;
 converged = 0;
 iter = 1;
 while ~converged
-  if opts.verbose, fprintf('iter %d, temp %6.4f, energy =%6.4f\n', iter, T, energyOld); end
-  xprime = feval(proposal, x);
-  energyNew = feval(target, xprime);
-  
-  % convergence check
-  if iter > opts.minIter & iter > 2*opts.convWindow
-    vals = energies(iter-opts.convWindow:iter-1);
-    if std(vals) < opts.convThresh % hasn't changed much during the window
-      converged = 1;
-      if opts.verbose, fprintf('converged in %d iter\n', iter); end
-      break
+    if opts.verbose, fprintf('iter %d, temp %6.4f, energy =%6.4f\n', iter, T, energyOld); end
+    xprime = feval(proposal, x);
+    energyNew = feval(target, xprime);
+    
+    % convergence check
+    if iter > opts.minIter & iter > 2*opts.convWindow
+        vals = energies(iter-opts.convWindow:iter-1);
+        if std(vals) < opts.convThresh % hasn't changed much during the window
+            converged = 1;
+            if opts.verbose, fprintf('converged in %d iter\n', iter); end
+            break
+        end
     end
-  end
-  
-  alpha = exp((energyOld - energyNew)/T);
-  r = min(1, alpha);
-  u = rand(1,1);
-  if u < r
-    x = xprime;
-    naccept = naccept + 1;
-    energyOld = energyNew;
-  end 
-  samples(iter,:) = x;
-  energies(iter) = energyOld;
-  iter = iter + 1;
-  if iter > opts.maxIter, converged = 1;  end
-  T = feval(opts.temp, T, iter);
-  temp(iter) = T;
+    
+    alpha = exp((energyOld - energyNew)/T);
+    r = min(1, alpha);
+    u = rand(1,1);
+    if u < r
+        x = xprime;
+        naccept = naccept + 1;
+        energyOld = energyNew;
+    end
+    samples(iter,:) = x;
+    energies(iter) = energyOld;
+    iter = iter + 1;
+    if iter > opts.maxIter, converged = 1;  end
+    T = feval(opts.temp, T, iter);
+    temp(iter) = T;
 end
 
 niter =  iter - 1;
@@ -88,3 +88,6 @@ samples = samples(1:niter, :);
 energies = energies(1:niter);
 xopt = x;
 fval = energyOld;
+
+
+end

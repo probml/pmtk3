@@ -36,3 +36,4 @@ end
 % Add output noise variance
 cov = covp + (net.min_noise + exp(net.noise))*eye(ndata);
 
+end

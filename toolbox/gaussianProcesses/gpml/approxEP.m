@@ -89,7 +89,7 @@ if nargout > 4                                         % do we want derivatives?
     dnlZ(j) = -sum(sum(F.*dK))/2;
   end
 end
-
+end
 
 % function to compute the parameters of the Gaussian approximation, Sigma and
 % mu, and the negative log marginal likelihood, nlZ, from the current site 
@@ -108,3 +108,4 @@ nu_n  = mu./diag(Sigma)-tnu;                      % vectors of cavity parameters
 nlZ   = sum(log(diag(L))) - sum(log(feval(lik, y, nu_n./tau_n, 1./tau_n)))   ...
        -tnu'*Sigma*tnu/2 - nu_n'*((ttau./tau_n.*nu_n-2*tnu)./(ttau+tau_n))/2 ...
        +sum(tnu.^2./(tau_n+ttau))/2-sum(log(1+ttau./tau_n))/2;
+end

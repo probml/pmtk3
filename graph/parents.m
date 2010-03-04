@@ -3,3 +3,5 @@ function ps = parents(adj_mat, i)
 % ps = parents(adj_mat, i)
 
 ps = find(adj_mat(:,i))';
+
+end

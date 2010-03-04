@@ -82,3 +82,5 @@ function [W, output]  = boundOptL2overrelaxed(X, Y, lambda)
     output.ftrace = ftrace;
     output.iter = iter;
     output.converged = converged;
+    
+end

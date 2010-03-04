@@ -66,3 +66,5 @@ wij = -hij+hi+hi'; % mutual information
 %isequal(treeAdjMat, treeAdjMat1)
 %treeAdjMat = setdiag(treeAdjMat, 0);
 G = mkRootedTree(treeAdjMat);
+
+end

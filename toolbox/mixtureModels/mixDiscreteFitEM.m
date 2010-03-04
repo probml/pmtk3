@@ -79,3 +79,5 @@ model.mixweight = mixweight;
 model.nstates = nstates;
 model.d = d;
 model.nmix = nmix;
+
+end

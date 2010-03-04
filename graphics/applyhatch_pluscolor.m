@@ -264,3 +264,4 @@ set(imaxes,'DataAspectRatio',[1 1 1],'DataAspectRatioMode','manual');
 
 if nargout > 0, im_hatch = bits; end
 if nargout < 2, clear colorlist; end
+end

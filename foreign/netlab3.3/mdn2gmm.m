@@ -39,3 +39,4 @@ for i = 1:nmixes
       centres(:)', mdnmixes.covars(i,:)]);
 end
 
+end

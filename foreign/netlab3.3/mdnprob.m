@@ -50,3 +50,5 @@ a = exp(-(dist2./variance))./normal;
 
 % Accumulate negative log likelihood of targets
 prob = mixparams.mixcoeffs.*a;
+
+end

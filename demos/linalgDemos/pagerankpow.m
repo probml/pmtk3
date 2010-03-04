@@ -40,3 +40,4 @@ while max(abs(x-z)) > .0001
    cnt = cnt+1;
 end
 
+end

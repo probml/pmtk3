@@ -10,3 +10,5 @@ bar_p = sum(m.*bar_p);
 s = 1/(sum(m.*log(m)) - bar_p);
 s = s*(length(m)-1)/2;
 a = s*m;
+
+end

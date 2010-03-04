@@ -1,4 +1,5 @@
 %% Run svm light on a binary dataset
+%PMTKslow
 load crabs
 %% SVM
 Sigmas = logspace(-1, 0.5, 20);

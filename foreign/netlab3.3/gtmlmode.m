@@ -23,3 +23,5 @@ R = gtmpost(net, data);
 % Mode is maximum responsibility
 [max_resp, max_index] = max(R, [], 2);
 modes = net.X(max_index, :);
+
+end

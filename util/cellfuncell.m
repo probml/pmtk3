@@ -7,3 +7,5 @@ function out = cellfuncell(fun, C, varargin)
 %varargin{end+1} = 'UniformOutput';
 %varargin{end+1} = false;  % slow extending varargin unnecessarily
 out = cellfun(fun, C, varargin{:},'UniformOutput',false);
+
+end

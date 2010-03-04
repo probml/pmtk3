@@ -64,3 +64,5 @@ deltas(:, (ncentres*(1+dim_target)+1):nmixparams) = ...
 
 % Now back-propagate deltas through MLP
 g = mlpbkp(net.mlp, x, z, deltas);
+
+end

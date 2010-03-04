@@ -29,3 +29,4 @@ n2 = (ones(ncentres, 1) * sum((x.^2)', 1))' + ...
 if any(any(n2<0))
   n2(n2<0) = 0;
 end
+end

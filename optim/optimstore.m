@@ -6,3 +6,4 @@ fhist = [fhist optimValues.fval];
 funcounthist = [funcounthist optimValues.funcount];
 stop = false;
 
+end

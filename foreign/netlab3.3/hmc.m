@@ -247,7 +247,7 @@ end
 % Store final momentum value in global so that it can be retrieved later
 HMC_MOM = p;
 return
-
+end
 % Return complete state of sampler (including momentum)
 function state = get_state(f)
 
@@ -256,7 +256,7 @@ state.randstate = rand('state');
 state.randnstate = randn('state');
 state.mom = HMC_MOM;
 return
-
+end
 % Set complete state of sampler (including momentum) or just set randn
 % and rand with integer argument.
 function set_state(f, x)
@@ -279,3 +279,5 @@ else
   HMC_MOM = x.mom;
 end
 return
+
+end

@@ -8,3 +8,5 @@ s = (a(ok) - m2(ok)) ./ (m2(ok) - a(ok).^2);
 % each dimension of p gives an independent estimate of s, so take the median.
 s = median(s);
 a = a*s;
+
+end

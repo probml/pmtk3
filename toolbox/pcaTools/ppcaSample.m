@@ -8,3 +8,4 @@ C = U*(Lam-sigma2*eye(K))*U' + sigma2*eye(d);
 model.mu = mu; model.Sigma = C;
 X = gaussSample(model, N);
 
+end

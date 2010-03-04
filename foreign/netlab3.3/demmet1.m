@@ -99,5 +99,6 @@ disp(' ')
 disp('Press any key to exit.')
 pause
 close(fh1);
-clear all;
 
+
+end

@@ -3,3 +3,5 @@ function p = statsToolboxInstalled()
 
 p = onMatlabPath(fullfile(matlabroot, 'toolbox', 'stats'));
 %p = exist('aoctool')>0; % name of obscure toolbox functin
+
+end

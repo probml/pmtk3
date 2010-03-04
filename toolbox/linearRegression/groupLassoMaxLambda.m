@@ -9,3 +9,5 @@ nVars = size(X,2);
 [f,g] = funObj1(zeros(nVars,1)); %#ok
 grad_norms = sqrt(accumarray(groups(groups~=0),g(groups~=0).^2));
 maxLambda = max(grad_norms);
+
+end

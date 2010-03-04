@@ -22,3 +22,5 @@ T = squeeze(T);
 % s = size(M);
 % keep = setdiffPMTK(dims,ndx);
 % M = squeeze(sum(reshape(permute(M,[ndx,keep]),[prod(s(ndx)),s(keep)]),1));
+
+end

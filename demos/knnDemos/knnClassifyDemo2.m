@@ -31,3 +31,4 @@ figure;
 plot(Ks, errRateTrain, 'ro-', Ks, errRateTest, 'ko-');
 return
 
+end

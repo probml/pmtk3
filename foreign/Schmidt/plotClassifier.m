@@ -103,3 +103,6 @@ xlim(domainx);
 ylim(domainy);
 %legend({'Class 1','Class 2',method});
 title(method);
+
+
+end

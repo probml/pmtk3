@@ -9,3 +9,6 @@ if nargout > 1
   model.Sigma = py.Sigma + A*pmu.Sigma*A';
   logevidence = gaussLogprob(model, y);
 end
+
+
+end

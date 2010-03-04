@@ -35,8 +35,8 @@ na = abs(nv);
 
 for  k = 0:na;
   vk = k.*(abs(1).*sign(nv))+v0;
-end;
-
+end
+end
 
 %%%%%%%%%%%%%%%% SUBROUTINES
 function [v,x,dv,dp,pdf,pdd] = pbdv(v,x,dv,dp,pdf,pdd);
@@ -156,7 +156,7 @@ pdf = dv(na-1+1);
 pdd = dp(na-1+1);
 v   = vh;
 return;
-
+end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [va,x,pd] = dvsa(va,x,pd);
 %                for small argument
@@ -208,7 +208,7 @@ else;
   end;
 end;
 return;
-
+end
 
 
 function [va,x,pd]=dvla(va,x,pd);
@@ -248,7 +248,7 @@ x1=-x;
 pd=pi.*vl./gl+cos(pi.*va).*pd;
 end;
 return;
-
+end
 
 
 function [va,x,pv]=vvla(va,x,pv);
@@ -289,7 +289,7 @@ dsl=sin(pi.*va).*sin(pi.*va);
 pv=dsl.*gl./pi.*pdl-cos(pi.*va).*pv;
 end;
 return;
-
+end
 
 
 function [x,ga]=gamma(x,ga);
@@ -340,3 +340,4 @@ if (x < 0.0d0) ga=-pi./(x.*ga.*sin(pi.*x)); end;
 end;
 end;
 return;
+end

@@ -16,3 +16,5 @@ for i=1:n % for each data case, marginalize out the unknown variables
     logZ = (d/2)*log(2*pi) + 0.5*logdet(Sigma(vis, vis));
     logp(i) = -0.5*sum((XiVis*inv(Sigma(vis, vis))).*XiVis, 2) - logZ; 
 end
+
+end

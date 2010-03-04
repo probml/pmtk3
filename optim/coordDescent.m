@@ -38,3 +38,5 @@ while ~stop
     stop = stop | outputFn(x, optimValues, state);
   end
 end
+
+end

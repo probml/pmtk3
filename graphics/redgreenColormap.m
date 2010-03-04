@@ -100,3 +100,5 @@ green = fliplr(red);
 blue = zeros(size(red));
 
 p = [red',green',blue'];
+
+end

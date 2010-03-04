@@ -21,3 +21,5 @@ function old = applytofig(h,varargin)
 
 temp = tempname;
 old = exportfig(h,temp, varargin{:},'applystyle',1);
+
+end

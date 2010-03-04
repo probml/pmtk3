@@ -121,3 +121,4 @@ if strcmp(net.outfn, 'neuroscale')
   net.mask = rbfprior(rbfunc, nin, nhidden, nout);
 end
 
+end

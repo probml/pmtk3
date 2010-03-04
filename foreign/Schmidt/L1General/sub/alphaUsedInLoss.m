@@ -9,3 +9,4 @@ if strcmp(func2str(gradFunc),'LaplaceLoss') || ...
 		strcmp(func2str(gradFunc),'SVMMultiLoss')
     b = 1;
 end
+end

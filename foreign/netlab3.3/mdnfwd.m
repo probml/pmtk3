@@ -91,3 +91,4 @@ mixparams.mixcoeffs = mixpriors;
 mixparams.centres   = mixcentres;
 mixparams.covars      = mixwidths;
 
+end

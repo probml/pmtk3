@@ -35,3 +35,5 @@ gw1 = x'*delhid;
 gb1 = sum(delhid, 1);
 
 g = [gw1(:)', gb1, gw2(:)', gb2];
+
+end

@@ -144,9 +144,11 @@ delete(slow)
 set(quit,'string','close','callback','close(gcf)','value',0)
 printPmtkFigure harvard500spy
 
-
+end
 %------------------------
 
 function h = hashfun(url)
 % Almost unique numeric hash code for pages already visited.
 h = length(url) + 1024*sum(url);
+
+end

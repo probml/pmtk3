@@ -27,3 +27,5 @@ fh = figure('Name', 'Confusion matrix', ...
 
 plotmat(C, 'k', 'k', 14);
 title(['Classification rate: ' num2str(rate(1)) '%'], 'FontSize', 14);
+
+end

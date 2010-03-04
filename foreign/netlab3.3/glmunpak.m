@@ -28,3 +28,5 @@ nin = net.nin;
 nout = net.nout;
 net.w1 = reshape(w(1:nin*nout), nin, nout);
 net.b1 = reshape(w(nin*nout + 1: (nin + 1)*nout), 1, nout);
+
+end

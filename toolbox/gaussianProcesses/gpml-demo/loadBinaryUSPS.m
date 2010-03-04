@@ -25,3 +25,5 @@ ITE1 = test_labels(D1+1,:) == 1;            % offset by 1 as we label from zero
 ITE2 = test_labels(D2+1,:) == 1;
 xx = [test_patterns(:,ITE1)'; test_patterns(:,ITE2)'];
 yy = [ones(sum(ITE1),1); -ones(sum(ITE2),1)];
+
+end

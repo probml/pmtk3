@@ -7,3 +7,5 @@ function [model, output] = mlpRegressFitNetlab(X, y, H, lambda, options)
 % output is the return value from minFunc
 
 [model, output] = mlpGenericFitNetlab(X, y, H, lambda, options, 'linear');
+
+end

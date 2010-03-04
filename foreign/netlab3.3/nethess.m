@@ -27,3 +27,5 @@ h = s{1};
 for i = 2:nargout
   varargout{i-1} = s{i};
 end
+
+end

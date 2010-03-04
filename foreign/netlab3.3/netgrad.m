@@ -19,3 +19,5 @@ gradstr = [net.type, 'grad'];
 net = netunpak(net, w);
 
 g = feval(gradstr, net, x, t);
+
+end

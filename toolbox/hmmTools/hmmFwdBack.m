@@ -21,3 +21,4 @@ function [gamma, alpha, beta, loglik] = hmmFwdBack(initDist, transmat, obslik)
 beta = hmmBackwards(transmat, obslik);
 gamma = normalize(alpha .* beta, 1);% make each column sum to 1
 
+end

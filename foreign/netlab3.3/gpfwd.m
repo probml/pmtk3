@@ -49,3 +49,5 @@ if nargout >= 2
   sigsq = (ones(ndata, 1) * gpcovarp(net, x(1,:), x(1,:))) ...
     - sum((ktest*cninv).*ktest, 2); 
 end
+
+end

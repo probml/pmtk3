@@ -34,3 +34,5 @@ end
 if show_progress
   plot(run.e)
 end
+
+end

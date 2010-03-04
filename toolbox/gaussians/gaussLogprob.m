@@ -19,3 +19,5 @@ if 0 % test
   logp2 = log(mvnpdf(X, rowvec(mu), Sigma)); %#ok
   assert(approxeq(logp, logp2))
 end
+
+end

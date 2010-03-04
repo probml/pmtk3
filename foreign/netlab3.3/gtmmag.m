@@ -25,3 +25,5 @@ for m = 1:nlatent
   temp = squeeze(Jacs(m, :, :));  % Turn into a 2d matrix
   mags(m) = sqrt(det(temp*temp'));
 end
+
+end

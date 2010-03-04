@@ -178,7 +178,7 @@ catch
   fprintf('sorry, cant convetr to postscript automatigcally\n');
 end
 cd(currentDir)
-
+end
 %%%%%%%%%%%%%%%
 
 function graph_to_dot(adj, varargin)
@@ -262,7 +262,7 @@ for node1 = 1:Nnds              % process ARCs
 end
 fprintf(fid, '}'); 
 fclose(fid);
-
+end
 
 function [x, y, label] = readCoordsFromDotFile(filename, Nvrt)
 
@@ -330,7 +330,7 @@ end
 
 x = .9*(x-min(x))/drange(x)+.05;  % normalise and push off margins 
 if drange(y) == 0, y = .5*ones(size(y)); else, y = .9*(y-min(y))/drange(y)+.05; end
-
+end
 
 %%%%%%%%%%%%
 
@@ -443,7 +443,7 @@ if ~(size(Adj,1)==size(Adj,2))           % Make sure Adj is a square matrix. ?
 end;
 
 
-
+end
 %%%%%%%%%%%%%%%%%%%%%
 
 function [x, y, h] = graph_draw(adj, varargin)
@@ -536,7 +536,7 @@ if nargout > 2
     if ~isempty(idx1), h(idx1,:) = h1;   end;
     if ~isempty(idx2), h(idx2,:) = h2;   end;
 end;
-
+end
 %%%%%%%%%%%%%%%
 
 function [t, wd] = textoval(x, y, str, fontsize)
@@ -564,6 +564,7 @@ for i = 1:N,
     temp = [temp;  tx ptc];
 end;
 t = temp; 
+end
 
 function [p] = ellipse(x, y, rx, ry)
 %  [p] = ellipse(x, y, rx, ry)    Draws Ellipse shaped patch objects
@@ -581,6 +582,7 @@ for i = 1:N
 	px = rx(i) * cos(t) + x(i);    py = ry(i) * sin(t) + y(i);
 	p(i) = patch(px, py, c(i));
 end;
+end
 
 function [h, wd] = textbox(x,y,str)
 %  [h, wd] = textbox(x,y,str)    draws a box around the text 
@@ -604,7 +606,7 @@ for i = 1:N,
     tx = text(x(i),y(i),str{i},'HorizontalAlignment','center','VerticalAlign','middle');      
     h = [h; tx ptc];
 end;
-
+end
 function [h,yy,zz] = my_arrow(varargin)
 % [h,yy,zz] = my_arrow(varargin)  Draw a line with an arrowhead.
 
@@ -974,7 +976,7 @@ H(1) = patch(xyz{:});
 set(H,'Clipping','off');
 set(H,{'UserData'},num2cell(ud,2));
   % make sure the axis limits did not change
-
+end
 function [out,is2D] = arrow_is2DXY(ax)
 % check if axes are 2-D X-Y plots,  may not work for modified camera angles, etc.
 	out = zeros(size(ax)); % 2-D X-Y plots
@@ -983,7 +985,7 @@ function [out,is2D] = arrow_is2DXY(ax)
 	views = cat(1,views{:});
 	out(:) = abs(views(:,2))==90;
 	is2D(:) = out(:) | all(rem(views',90)==0)';
-
+end
 function out = arrow_WarpToFill(notstretched,manualcamera,curax)
 % check if we are in "WarpToFill" mode.
 	out = strcmp(get(curax,'WarpToFill'),'on');
@@ -991,7 +993,7 @@ function out = arrow_WarpToFill(notstretched,manualcamera,curax)
 	% out = ~( any(notstretched) & any(manualcamera) );
 
 %%%%%%
-
+end
 function C = my_setdiff(A,B)
 % MYSETDIFF Set difference of two sets of positive integers (much faster than built-in setdiff)
 % C = my_setdiff(A,B)
@@ -1010,7 +1012,7 @@ else % both non-empty
     bits(B) = 0;
     C = A(logical(bits(A)));
 end
-	
+end
 %%%%%%%%%%
 
 % PROCESS_OPTIONS - Processes options passed to a Matlab function.
@@ -1147,7 +1149,7 @@ if (~warn)
 end
 
 %%%%%%%%%%%%
-
+end
 function M = removeRowsCols(M, rows, cols)
 % Remove rows and columns from a matrix
 % Example
@@ -1177,7 +1179,7 @@ M(k) = [];
 M = reshape(M, [nr-length(rows) nc-length(cols)]);
 
 %%%%%%%%%
-
+end
 function M = setdiag(M, v)
 % SETDIAG Set the diagonal of a matrix to a specified scalar/vector.
 % M = set_diag(M, v)
@@ -1198,7 +1200,7 @@ J = 1:n+1:n^2;
 M(J) = v;
 
 %M = triu(M,1) + tril(M,-1) + diag(v);
-
+end
 
 %%%%%%%%%%%
 
@@ -1254,7 +1256,7 @@ else
   %end
   ndx = (subv-1)*cp + 1;
 end
-
+end
 %%%%%%%%%%%
 
 function d = bitv2dec(bits)
@@ -1268,3 +1270,4 @@ function d = bitv2dec(bits)
 twos = pow2(n-1:-1:0);
 d = sum(bits .* twos(ones(m,1),:),2);
 
+end

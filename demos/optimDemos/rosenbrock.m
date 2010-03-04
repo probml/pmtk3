@@ -30,3 +30,5 @@ if nargout > 2
   ddf(2:D,2:D) = ddf(2:D,2:D) + 200*eye(D-1);
   ddf = ddf - diag(400*x(1:D-1),1) - diag(400*x(1:D-1),-1);
 end
+
+end

@@ -26,3 +26,5 @@ elseif nargout == 2                              % compute test set covariances
 else                                                % compute derivative matrix
   A = -2*it2*(1+x*x');
 end
+
+end

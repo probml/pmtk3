@@ -26,3 +26,5 @@ else
   end
 end
 loglik = sum(log(scale)+eps);
+
+end

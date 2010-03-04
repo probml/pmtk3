@@ -62,7 +62,7 @@ else
     D = mkFromVectors(A,B,C);
   end
 end
-
+end
 %%%%%%%%%%%
 
 function M = mkFromVectorsSparse(main, upper, lower)
@@ -72,9 +72,12 @@ rows = [1:n 2:n 1:n-1];
 cols = [1:n 1:n-1 2:n];
 s = [main(:)' lower(:)' upper(:)'];
 M = sparse(rows, cols, s);
-
+end
 %%%%%%%%%%%
 
 function M = mkFromVectors(main, upper, lower)
 
 M = diag(main,0) + diag(upper,1) + diag(lower,-1);
+
+
+end

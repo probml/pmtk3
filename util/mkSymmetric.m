@@ -19,3 +19,5 @@ M(M==0) = Mt(M==0);
 %L = tril(M);
 %M =T | T' | L | L';
 %M = (M+M')/2;
+
+end

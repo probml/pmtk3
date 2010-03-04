@@ -9,3 +9,5 @@ elseif numel(sizes)==1
 else
   T = reshape(T, sizes(:)');
 end
+
+end

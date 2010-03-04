@@ -32,3 +32,5 @@ while ~converged && (iter < maxIter)
   w_old = w;
 end
 w = w(:);
+
+end

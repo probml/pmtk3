@@ -6,3 +6,4 @@ S = sqdist(X1',X2');
 K = Z*exp(-1/(2*sigma^2) * S); % match minfuncDemo behavior
 %K = exp(-(1/sigma^2) * S);
 
+end

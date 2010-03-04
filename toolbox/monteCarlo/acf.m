@@ -14,3 +14,5 @@ s2 = y(1);
 assert(approxeq(s2, var(x,1)))
 y = y/s2;
 y = y(1:lagmax+1);
+
+end

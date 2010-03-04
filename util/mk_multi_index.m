@@ -21,3 +21,4 @@ for i=1:length(dims)
   index{dims(i)} = vals(i);
 end
 
+end

@@ -14,3 +14,5 @@ a(1)  = a(1) + sign(a(1)) * norm(a);  %the Householder trick
 z     = eye(length(a)) - 2.0/norm(a)^2*a*a'; 
 Sig   = z * diag(e) * z' ;              % target covariance
 Lam   = z * inv(diag(e)) * z';          % and its inverse
+
+end

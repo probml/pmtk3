@@ -58,3 +58,5 @@ else
     error('Third argument has wrong size.');
   end
 end
+
+end

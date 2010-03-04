@@ -24,3 +24,5 @@ end
 net.gmmnet.centres = rbffwd(net.rbfnet, net.X);
 
 [post, a] = gmmpost(net.gmmnet, data);
+
+end

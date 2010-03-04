@@ -282,3 +282,4 @@ end
 if ~isempty(TargetField)
   error('Property names and values must be specified in pairs.');
 end
+end

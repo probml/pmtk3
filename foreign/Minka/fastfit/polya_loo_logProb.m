@@ -10,3 +10,5 @@ for i = 1:cols(data)
   p(i) = sum(data(:,i).*log(data(:,i)-1 + a));
   p(i) = p(i) - sdata(i)*log(sdata(i)-1 + sa);
 end
+
+end

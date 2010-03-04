@@ -20,3 +20,5 @@ end
 net.gmmnet.centres = rbffwd(net.rbfnet, net.X);
 
 prob = gmmprob(net.gmmnet, data);
+
+end

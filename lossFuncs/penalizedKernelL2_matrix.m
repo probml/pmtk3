@@ -1,4 +1,4 @@
-function [nll,g,H] = penalizedL2(w,K,nCols,gradFunc,lambda,varargin)
+function [nll,g,H] = penalizedKernelL2_matrix(w,K,nCols,gradFunc,lambda,varargin)
 % Adds kernel L2-penalization to a loss function, when the weight vector
 %   is actually a matrix with nCols columns (and the kernel is
 %   block-diagonal with respect to the columns)
@@ -30,4 +30,6 @@ end
 if nargout > 2
     fprintf('Hessian Not Implemented for matrix kernels\n');
     pause;
+end
+
 end

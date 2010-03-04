@@ -47,3 +47,4 @@ disp('Press any key to exit.');
 pause; 
 delete(h1);
 delete(h2);
+end

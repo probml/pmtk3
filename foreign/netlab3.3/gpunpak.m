@@ -34,3 +34,4 @@ net.inweights = hp(3:mark1);
 % Unpack function specific parameters
 net.fpar = hp(mark1 + 1:size(hp, 2));
 
+end

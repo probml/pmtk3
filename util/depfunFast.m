@@ -58,7 +58,7 @@ if nargin>1 && recursive
         filelist = unique( [ filelist ; newlist ] );
     end
 end
-
+end
 %%%%%%%%%%%%%%%%%%%%%
 % Returns the non-toolbox files which the specified one calls.
 % The specified file is always first in the returned list.
@@ -74,7 +74,7 @@ toolboxroot = lower(fullfile(matlabroot,'toolbox'));
 intoolbox = strncmp(ulist,toolboxroot,numel(toolboxroot));
 
 list = list(~intoolbox);
-
+end
 %%%%%%%%%%%%%%%%%%%%%%%%
 function func = i_function_name(f)
 % Identifies the function name for the specified file,
@@ -88,4 +88,5 @@ if ~isempty(dirname) && dirname(1)=='@'
     func = [ dirname '/' funcname ];
 else
     func = funcname;
+end
 end

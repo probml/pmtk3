@@ -21,3 +21,5 @@ if ~isempty(errstring)
 end
 % Put weights back into network data structure
 net.map = reshape(w', [net.nin net.map_size]);
+
+end

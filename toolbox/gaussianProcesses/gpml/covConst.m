@@ -26,3 +26,5 @@ else                                                % compute derivative matrix
   A = -2*is2*ones(size(x,1));
 end
 
+
+end

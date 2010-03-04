@@ -86,6 +86,7 @@ while (MSTreeEdgesCounter < (n-1))
     T(MSTreeEdges(MSTreeEdgesCounter,2),MSTreeEdges(MSTreeEdgesCounter,3))=1;
     T(MSTreeEdges(MSTreeEdgesCounter,3),MSTreeEdges(MSTreeEdgesCounter,2))=1;
 end
+end
 
 
 %%%%%%%%%%
@@ -100,3 +101,4 @@ parent = ParentPointer(temproot);
 
 
 
+end

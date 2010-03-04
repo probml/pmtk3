@@ -38,3 +38,5 @@ end
 if show_progress
   plot(e)
 end
+
+end

@@ -30,3 +30,5 @@ end
 coeffs = randn(nsamp, d)*sqrt(eval);
 
 x = ones(nsamp, 1)*mu + coeffs*evec';
+
+end

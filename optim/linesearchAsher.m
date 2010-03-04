@@ -23,3 +23,5 @@ while (fxn > fx + sigma * alpha * pgx) & (alpha > alphamin)
   xn = x + alpha * p;
   fxn = feval(f,xn);
 end
+
+end

@@ -10,3 +10,5 @@ for c=1:K
   Sigma(:,:,c) = cov(data(ndx,:));
 end
 mixweight = normalize(counts);
+
+end

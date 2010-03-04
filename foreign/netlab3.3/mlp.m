@@ -90,3 +90,5 @@ net.b2 = randn(1, nout)/sqrt(nhidden + 1);
 if nargin == 6
   net.beta = beta;
 end
+
+end

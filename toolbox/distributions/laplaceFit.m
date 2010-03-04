@@ -4,3 +4,5 @@ function model = laplaceFit(X)
 model.mu = median(X);
 N = length(X);
 model.b = sum(abs(X-model.mu))/N;
+
+end

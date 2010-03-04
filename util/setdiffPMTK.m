@@ -16,3 +16,4 @@ else % both non-empty
     C = A((bits(A)));
 end
 
+end

@@ -17,3 +17,5 @@ if ~isempty(errstring);
   error(errstring);
 end
 hp = [net.bias, net.noise, net.inweights, net.fpar];
+
+end

@@ -17,3 +17,5 @@ Sb = (ones(C,1)*muOverall-muC)'*(ones(C,1)*muOverall-muC);
 [W,D] = eig(inv(Sw)*Sb);
 W = W(:, 1:K);
 Z = Xtrain*W;
+
+end

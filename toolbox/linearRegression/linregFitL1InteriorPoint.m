@@ -4,3 +4,5 @@ function w = linregFitL1InteriorPoint(X, y, lambda)
     
 if lambda==0, w = X\y; return; end
 w = l1_ls(X, y, lambda, 1e-3, true);
+
+end

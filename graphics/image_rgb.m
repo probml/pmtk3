@@ -42,3 +42,5 @@ for r=1:nrows
 end
 image(img)
 end
+
+end

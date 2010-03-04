@@ -77,3 +77,5 @@ hw2 = z'*ry + rz'*delout;
 hb2 = sum(ry, 1);
 
 hdv = [hw1(:)', hb1, hw2(:)', hb2];
+
+end

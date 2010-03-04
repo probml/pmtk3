@@ -42,3 +42,4 @@ else
   [prob, ypred] = max(ypredProb, [], 2); %#ok
 end
 
+end

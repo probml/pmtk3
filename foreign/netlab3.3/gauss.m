@@ -31,3 +31,5 @@ fact = sum(((x*invcov).*x), 2);
 y = exp(-0.5*fact);
 
 y = y./sqrt((2*pi)^d*det(covar));
+
+end

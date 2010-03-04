@@ -51,3 +51,5 @@ if nargout == 2
   % Convert this set of outputs to labels, randomly breaking ties
   [temp, l] = max((y + 0.1*rand(size(y))), [], 2);
 end
+
+end

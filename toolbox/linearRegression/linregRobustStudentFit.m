@@ -22,3 +22,4 @@ else
   error('cannot handle fixed sigma2 but variable dof')
 end
 
+end

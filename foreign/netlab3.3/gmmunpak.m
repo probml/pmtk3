@@ -52,3 +52,4 @@ switch mix.covar_type
     error(['Unknown covariance type ', mix.covar_type]);
 end
   
+end

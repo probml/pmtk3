@@ -30,3 +30,4 @@ else
   y(i) = trigamma(x(i)+n(i)) - trigamma(x(i));
 end
 
+end

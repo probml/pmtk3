@@ -66,3 +66,5 @@ S2SR = sigma2n*sum(a.*e,1)';                 % noise-free SR variance, eq. 8.15
 S2PP = vstar-sum(a.*(Kmm\a),1)'+S2SR;  % PP variance eq. (8.27) including noise
 S2SR = S2SR + sigma2n;                            % SR variance inclusing noise
 
+
+end

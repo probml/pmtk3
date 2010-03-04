@@ -21,3 +21,5 @@ for n=1:length(old.objs)
     set(old.objs{n}, old.prop{n}, old.values{n});
   end
 end
+
+end

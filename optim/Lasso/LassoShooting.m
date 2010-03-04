@@ -47,3 +47,4 @@ function [beta,iter] = LassoShooting(X, y, lambda,varargin)
         converged = (sum(abs(beta-beta_old)) < optTol);
     end
     
+end

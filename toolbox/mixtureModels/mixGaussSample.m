@@ -22,3 +22,4 @@ for j=1:nsamples
   X(j, :) = gaussSample(modelj) ;
 end
 
+end

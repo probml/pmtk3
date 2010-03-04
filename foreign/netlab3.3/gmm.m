@@ -111,3 +111,4 @@ otherwise
   error(['Unknown covariance type ', mix.covar_type]);               
 end
 
+end

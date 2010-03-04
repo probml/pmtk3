@@ -35,7 +35,7 @@ for i=1:length(ns)
    legendstr{i} = sprintf('n=%d', n);
    
    figure(fig2);
-   logp = studentTlogprob(mus, 2*an, mn, bn/(an*kn));
+   logp = studentLogprob(mus, 2*an, mn, bn/(an*kn));
    plot(mus, exp(logp), styles{i}, 'linewidth', 3);
    
    figure(fig3);

@@ -22,3 +22,5 @@ for c=1:Nclasses
 end
 params.SigmaPooled = cov(X);
 params.type = type;
+
+end

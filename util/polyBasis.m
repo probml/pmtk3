@@ -27,3 +27,5 @@ for j = d:-1:1
    X(:,j) = x.*X(:,j+1);
 end
 end
+
+end

@@ -51,3 +51,5 @@ if nargin > 2
   net.mlp.b2((end_centres+1):net.mlp.nout) = ...
     log(temp_mix.covars);
 end
+
+end

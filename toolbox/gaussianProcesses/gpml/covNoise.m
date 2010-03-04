@@ -26,3 +26,5 @@ elseif nargout == 2                              % compute test set covariances
 else                                                % compute derivative matrix
   A = 2*s2*eye(size(x,1));
 end
+
+end

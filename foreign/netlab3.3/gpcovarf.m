@@ -42,3 +42,5 @@ switch net.covar_fn
   otherwise
     error(['Unknown covariance function ', net.covar_fn]);  
 end
+
+end

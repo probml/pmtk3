@@ -59,3 +59,5 @@ end
 
 varargout = cell(nargout, 1);    % allocate the right number of output arguments
 [varargout{:}] = binaryGP(hyper, 'approxLA', covfunc, lik, varargin{:});
+
+end

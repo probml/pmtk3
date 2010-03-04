@@ -41,7 +41,7 @@ lambda = max([0 min([1 lambda])]);
 % shrunk final estimate C
 C = lambda*diag(diag(S)) + (1-lambda)*S;
 
-
+end
 
 
 

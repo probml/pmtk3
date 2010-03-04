@@ -36,3 +36,5 @@ xlabel('false alarm rate')
 ylabel('hit rate')
 grid on
 title(sprintf('AUC=%5.3f', AUC))
+
+end

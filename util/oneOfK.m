@@ -91,3 +91,4 @@ yy = zeros(N, K);
 ndx = sub2ind(size(yy), 1:N, ymapped(:)');
 yy(ndx) = 1;
 
+end

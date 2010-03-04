@@ -55,3 +55,4 @@ M.SigW = Dwinv*(d/N);
 M.alpha = (2*M.galpha0 + d)./ ...
 	  (M.tau*diag(M.W'*M.W)+diag(M.SigW)+2*M.galpha0/M.balpha0);
 
+end

@@ -15,3 +15,5 @@ function index = subv2ind(siz,sub)
 prev_cum_size = [1 cumprod(siz(1:end-1))];
 %index = (sub-1)*prev_cum_size' + 1;
 index = sub*prev_cum_size' - sum(prev_cum_size) + 1;
+
+end

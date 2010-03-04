@@ -1,6 +1,6 @@
 % Show that reconstruction error on test set gets lower
 % as K increases for PCA, but likelihood for PPCA has U shaped curve
-
+%PMTKslow
 
 setSeed(0);
 

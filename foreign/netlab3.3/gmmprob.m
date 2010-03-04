@@ -24,3 +24,5 @@ a = gmmactiv(mix, x);
 
 % Form dot product with priors
 prob = a * (mix.priors)';
+
+end

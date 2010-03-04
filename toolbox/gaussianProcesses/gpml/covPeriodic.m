@@ -34,3 +34,4 @@ else                                              % compute derivative matrices
     A = 2*sf2*exp(-2*(sin(pi*(repmat(x,1,n)-repmat(x',n,1)))/ell).^2);
   end
 end
+end

@@ -49,3 +49,4 @@ end
 Z = X*B;
 Xrecon = Z*B' + repmat(mu, n, 1);
 
+end

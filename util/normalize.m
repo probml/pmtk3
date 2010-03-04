@@ -26,6 +26,7 @@ else
     A = bsxfun(@rdivide,A,z);
 end
 
+end
 
 
 

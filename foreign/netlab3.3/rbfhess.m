@@ -42,7 +42,7 @@ end
 
 % Add in effect of regularisation
 [h, hdata] = hbayes(net, hdata);
-
+end
 % Sub-function to compute data part of Hessian
 function hdata = datahess(net, z, t)
 
@@ -59,7 +59,7 @@ else
   error('Output layer Hessian only.');
 end
 return
-
+end
 % Sub-function to rearrange Hessian matrix
 function hdata = rearrange_hess(net, j, out_hess, hdata)
 
@@ -89,3 +89,5 @@ hdata(ob_start:ob_end, b_index) = out_hess(1:net.nhidden, ...
    net.nhidden+1);
 
 return 
+
+end

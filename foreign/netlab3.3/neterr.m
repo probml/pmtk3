@@ -27,3 +27,5 @@ if nargout > 1
     varargout{i-1} = s{i};
   end
 end
+
+end

@@ -34,3 +34,5 @@ precMat = getRdata('L');
 evalR('L <- stuff$w') %  covariance matrix
 covMat = getRdata('L');
 closeR;
+
+end

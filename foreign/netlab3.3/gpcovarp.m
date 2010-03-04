@@ -28,3 +28,5 @@ end
 
 covf = gpcovarf(net, x1, x2);
 covp = covf + exp(net.bias);
+
+end

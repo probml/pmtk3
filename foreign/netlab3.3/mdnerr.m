@@ -31,3 +31,4 @@ probs     = mdnprob(mixparams, t);
 % Compute the error
 e       = sum( -log(max(eps, sum(probs, 2))));
 
+end

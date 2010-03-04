@@ -12,3 +12,5 @@ if K==1
 else
   [model, output] = mlpGenericFitNetlab(X, y, H, lambda, options, 'softmax');
 end
+
+end

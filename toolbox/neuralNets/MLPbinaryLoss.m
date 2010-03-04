@@ -72,3 +72,4 @@ if nargout > 1
     end
     g(offset+1:offset+nHidden(end)) = gOutput;
 end
+end

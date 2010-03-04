@@ -5,3 +5,5 @@ function assign = kmeansEncode(data, mu)
 
 dist = sqdist(data', mu);
 assign = minidx(dist,[],2);
+
+end

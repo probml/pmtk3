@@ -16,3 +16,5 @@ gamma = lambda1/S;
 betaStar = lassoSolver(Xstar, ystar, gamma, varargin{:});
 %beta = betaStar/S; % naive enet
 beta = S*betaStar; % corrected enet
+
+end

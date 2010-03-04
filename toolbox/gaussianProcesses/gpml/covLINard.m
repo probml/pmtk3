@@ -33,3 +33,5 @@ elseif nargout == 2                              % compute test set covariances
 else                                              % compute derivative matrices
   A = -2*x(:,z)*x(:,z)';
 end
+
+end

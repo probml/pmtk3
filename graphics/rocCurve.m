@@ -1,4 +1,4 @@
-function [faRate, hitRate, AUC] = ROCcurve(score, trueLabel, doPlot)
+function [faRate, hitRate, AUC] = rocCurve(score, trueLabel, doPlot)
 % Plot a receiver operating curve
 % function [faRate, hitRate, AUC] = plotROCcurve(score, trueLabel, doPlot)
 %
@@ -36,3 +36,5 @@ xlabel('false alarm rate')
 ylabel('hit rate')
 grid on
 title(sprintf('AUC=%5.3f', AUC))
+
+end

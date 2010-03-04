@@ -60,3 +60,5 @@ switch net.outfn
     error(['Unknown activation function ', net.outfn]);  
 end
 [e, edata, eprior] = errbayes(net, edata);
+
+end

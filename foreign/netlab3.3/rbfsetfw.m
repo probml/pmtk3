@@ -28,3 +28,5 @@ if strcmp(net.actfn, 'gaussian')
    end
    net.wi = widths * ones(size(net.wi));
 end
+
+end

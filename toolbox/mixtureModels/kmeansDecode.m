@@ -11,3 +11,5 @@ for k=1:K
   Nassign = length(ndx);
   Xhat(ndx, :) = repmat(mu(:,k)', Nassign, 1);
 end
+
+end

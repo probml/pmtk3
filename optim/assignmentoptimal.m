@@ -118,14 +118,14 @@ end
 
 % compute cost and remove invalid assignments
 [assignment, cost] = computeassignmentcost__(assignment, originalDistMatrix, nOfRows);
-
+end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function assignment = buildassignmentvector__(starMatrix)
 
 [maxValue, assignment] = max(starMatrix, [], 2);
 assignment(maxValue == 0) = 0;
-
+end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [assignment, cost] = computeassignmentcost__(assignment, distMatrix, nOfRows)
 
@@ -134,7 +134,7 @@ costVector = distMatrix(rowIndex + nOfRows * (assignment(rowIndex)-1));
 finiteIndex = isfinite(costVector);
 cost = sum(costVector(finiteIndex));
 assignment(rowIndex(~finiteIndex)) = 0;
-
+end
 % Step 2: %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [assignment, distMatrix, starMatrix, primeMatrix, coveredColumns, coveredRows] = step2__(distMatrix, starMatrix, primeMatrix, coveredColumns, coveredRows, minDim)
 
@@ -149,7 +149,7 @@ else
 	% move to step 3
 	[assignment, distMatrix, starMatrix, primeMatrix, coveredColumns, coveredRows] = step3__(distMatrix, starMatrix, primeMatrix, coveredColumns, coveredRows, minDim);
 end
-
+end
 % Step 3: %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [assignment, distMatrix, starMatrix, primeMatrix, coveredColumns, coveredRows] = step3__(distMatrix, starMatrix, primeMatrix, coveredColumns, coveredRows, minDim)
 
@@ -180,7 +180,7 @@ end
 
 % move to step 5
 [assignment, distMatrix, starMatrix, primeMatrix, coveredColumns, coveredRows] = step5__(distMatrix, starMatrix, primeMatrix, coveredColumns, coveredRows, minDim);
-
+end
 % Step 4: %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [assignment, distMatrix, starMatrix, primeMatrix, coveredColumns, coveredRows] = step4__(distMatrix, starMatrix, primeMatrix, coveredColumns, coveredRows, row, col, minDim)
 
@@ -215,7 +215,7 @@ coveredRows(:) = 0;
 % move to step 2
 [assignment, distMatrix, starMatrix, primeMatrix, coveredColumns, coveredRows] = step2__(distMatrix, starMatrix, primeMatrix, coveredColumns, coveredRows, minDim);
 
-
+end
 % Step 5: %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [assignment, distMatrix, starMatrix, primeMatrix, coveredColumns, coveredRows] = step5__(distMatrix, starMatrix, primeMatrix, coveredColumns, coveredRows, minDim)
 
@@ -237,3 +237,4 @@ distMatrix(:, uncoveredColumnsIndex) = distMatrix(:, uncoveredColumnsIndex) - h;
 [assignment, distMatrix, starMatrix, primeMatrix, coveredColumns, coveredRows] = step3__(distMatrix, starMatrix, primeMatrix, coveredColumns, coveredRows, minDim);
 
 
+end

@@ -7,3 +7,6 @@ model.a = gausscdf((a-mu)/sigma, 0, 1);
 model.b = gausscdf((b-mu)/sigma, 0, 1); 
 u = sampleUniform(model, N);
 x = mu + sigma*gaussinv(u);
+
+
+end

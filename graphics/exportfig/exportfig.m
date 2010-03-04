@@ -746,7 +746,7 @@ end
 if hadError
   error(deblank(lasterr));
 end
-
+end
 %
 %  Local Functions
 %
@@ -755,7 +755,7 @@ function outData = LocalPushOldData(inData, objs, prop, values)
 outData.objs = {objs, inData.objs{:}};
 outData.prop = {prop, inData.prop{:}};
 outData.values = {values, inData.values{:}};
-
+end
 function cellArray = LocalGetAsCell(fig,prop,allowemptycell);
 cellArray = get(fig,prop);
 if nargin < 3
@@ -764,14 +764,14 @@ end
 if ~iscell(cellArray) & (allowemptycell | ~isempty(cellArray))
   cellArray = {cellArray};
 end
-
+end
 function newArray = LocalScale(inArray, scale, minv, maxv)
 n = length(inArray);
 newArray = cell(n,1);
 for k=1:n
   newArray{k} = min(maxv,max(minv,scale*inArray{k}(1)));
 end
-
+end
 function gray = LocalMapToGray1(color)
 gray = color;
 if ischar(color)
@@ -797,7 +797,7 @@ end
 if ~ischar(color)
   gray = 0.30*color(1) + 0.59*color(2) + 0.11*color(3);
 end
-
+end
 function newArray = LocalMapToGray(inArray);
 n = length(inArray);
 newArray = cell(n,1);
@@ -812,7 +812,7 @@ for k=1:n
     newArray{k} = [color color color];
   end
 end
-
+end
 function newArray = LocalMapColorToStyle(inArray);
 inArray = LocalGetAsCell(inArray,'Color');
 n = length(inArray);
@@ -834,7 +834,7 @@ for k=1:n
     newArray{k} = styles{mod(ind-1,nstyles)+1};
   end
 end
-
+end
 function newArray = LocalMapCData(inArray);
 n = length(inArray);
 newArray = cell(n,1);
@@ -848,7 +848,7 @@ for k=1:n
   end
   newArray{k} = color;
 end
-
+end
 function outData = LocalUpdateColors(inArray, prop, inData)
 value = LocalGetAsCell(inArray,prop);
 outData.objs = {inData.objs{:}, inArray};
@@ -862,12 +862,12 @@ if (~isempty(value))
   end
   set(inArray,{prop},value);
 end
-
+end
 function bool = LocalIsPositiveScalar(value)
 bool = isnumeric(value) & ...
        prod(size(value)) == 1 & ...
        value > 0;
-
+end
 function value = LocalToNum(value,auto)
 if ischar(value)
   if strcmp(value,'auto')
@@ -876,7 +876,7 @@ if ischar(value)
     value = str2num(value);
   end
 end
-
+end
 %convert a struct to {field1,val1,field2,val2,...}
 function c = LocalToCell(s)
 f = fieldnames(s);
@@ -885,13 +885,13 @@ opts = cell(2,length(f));
 opts(1,:) = f;
 opts(2,:) = v;
 c = {opts{:}};
-
+end
 function c = LocalIsHG(obj,hgtype)
 c = 0;
 if (length(obj) == 1) & ishandle(obj) 
   c = strcmp(get(obj,'type'),hgtype);
 end
-
+end
 function c = LocalHas3DPlot(a)
 zticks = LocalGetAsCell(a,'ZTickLabel');
 c = 0;
@@ -901,7 +901,7 @@ for k=1:length(zticks)
     return;
   end
 end
-
+end
 function r = LocalUnionRect(r1,r2)
 if isempty(r1)
   r = r2;
@@ -916,7 +916,7 @@ elseif max(r2(3:4)) > 0
 else
   r = r1;
 end
-
+end
 function r = LocalAxesTightBoundingBox(axesR, a)
 if strcmp(get(a,'handlevisibility'),'on')
   r = get(a,'position');
@@ -1025,7 +1025,7 @@ if strcmp(get(a,'visible'),'on')
   set(a,'fontunits',oldunits);
   delete(label);
 end
-
+end
 function c = LocalManualAxesMode(old, allAxes, base)
 xs = ['X' base];
 ys = ['Y' base];
@@ -1054,8 +1054,10 @@ set(allNonLogXAxes,xs,'manual');
 set(allNonLogYAxes,ys,'manual');
 set(allNonLogZAxes,zs,'manual');
 c = old;
-
+end
 function val = LocalCheckAuto(val, auto)
 if ischar(val) & strcmp(val,'auto')
   val = auto;
+end
+
 end

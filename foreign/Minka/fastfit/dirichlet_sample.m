@@ -29,3 +29,5 @@ r = y./repmat(r, size(y, 1), 1);
 if row
   r = r';
 end
+
+end

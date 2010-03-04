@@ -53,3 +53,5 @@ switch net.actfn
 end
 
 a = z*net.w2 + ones(ndata, 1)*net.b2;
+
+end

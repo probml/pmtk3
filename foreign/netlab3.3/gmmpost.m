@@ -34,3 +34,5 @@ if any(s==0)
    post(zero_rows, :) = 1/mix.ncentres;
 end
 post = post./(s*ones(1, mix.ncentres));
+
+end

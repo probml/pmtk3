@@ -80,6 +80,8 @@ end
 
 t = median(times) / num_inner_iterations;
 
+end
+
 function t = roughEstimate(f)
 %   Return rough estimate of time required for one execution of
 %   f().  Basic warmups are done, but no fancy looping, medians,
@@ -105,6 +107,8 @@ while toc(t1) < 0.01
 end
 t = toc(t1) / counter;
 
+end
+
 function outputs = outputArray(f)
 %   Return a cell array to be used as the output arguments when
 %   calling f.  If nargin(f) is 0, return a 1-by-0 cell array so
@@ -114,3 +118,4 @@ function outputs = outputArray(f)
 num_outputs = ~(nargout(f) == 0);
 outputs = cell(1, num_outputs);
 
+end

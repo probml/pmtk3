@@ -72,7 +72,7 @@ if show_progress
   disp(['gradient at exit = ' num2str(max(abs(g)))])
   plot(e)
 end
-
+end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function g = gradient(a, data, sdata)
@@ -87,7 +87,7 @@ g = g - sum(digamma(sdata + sa));
 g = g + N*(digamma(sa) - digamma(a));
 % scale for numerical stability
 g = g/N;
-
+end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function g = gradient2(a, data, sdata)
@@ -103,7 +103,7 @@ end
 g = g - sum(di_pochhammer(sa,sdata));
 % scale for numerical stability
 g = g/N;
-
+end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function hg = hessian_times_gradient(a, data, sdata, g, lambda)
@@ -120,7 +120,7 @@ q = q - lambda;
 q = 1./q;
 b = sum(g .* q)/(1/z + sum(q));
 hg = (g - b).*q;
-
+end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function hg = hessian_times_gradient2(a, data, sdata, g, lambda)
@@ -141,3 +141,4 @@ b = sum(g .* q)/(1/z + sum(q));
 hg = (g - b).*q;
 % apply the constraint a >= 0
 %hg(a == 0) = 0;
+end

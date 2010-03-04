@@ -50,3 +50,6 @@ if figPos(2) + figPos(4) > rootSize(4)
 end
 set(f, 'Position',figPos, ...
        'Visible', 'on');
+
+   
+end

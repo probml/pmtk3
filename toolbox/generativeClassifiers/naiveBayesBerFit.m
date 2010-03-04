@@ -1,4 +1,3 @@
-
 function model = naiveBayesBerFit(Xtrain, ytrain, pseudoCount)
 % Fit a naive Bayes classifier with binary features using MAP/ML estimation
 % Xtrain(i,j) = 0 or 1, for bit j in case i
@@ -23,3 +22,5 @@ for c=1:C
 end
 model.classPrior = normalize(Nclass);
 model.theta = theta;
+
+end

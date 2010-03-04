@@ -32,3 +32,5 @@ if (isfield(net, 'mask'))
 end
 
 net = feval(unpakstr, net, w);
+
+end

@@ -174,3 +174,5 @@ options(8) = fold;
 if (options(1) >= 0)
   disp(maxitmess);
 end
+
+end

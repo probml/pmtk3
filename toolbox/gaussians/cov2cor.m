@@ -6,3 +6,5 @@ function [R,S] = cov2cor(V)
 S = sqrt(diag(V));
 R = V ./ (S*S');
 R = setdiag(R, 1); % set diag entries to exactly 1
+
+end

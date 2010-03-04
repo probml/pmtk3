@@ -3,3 +3,4 @@ function L = factorialln(n)
 
 % n! = gamma(n+1)
 L= gammaln(n + 1);
+end

@@ -6,3 +6,4 @@ x(x < LB) = LB(x < LB);
 if nargin > 2
 x(x > UB) = UB(x > UB);
 end
+end

@@ -75,3 +75,4 @@ s = (t - min(t))/max(t - min(t));
 b_opt = interp1q(s(s_idx), b(s_idx, :), s_opt);
 
 
+end

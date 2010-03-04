@@ -3,3 +3,5 @@ function model  = studentDist(mu, Sigma, dof)
 
 model = struct('mu',mu, 'Sigma',Sigma, 'dof', dof, ...
   'type', 'student', 'ndims', length(mu));
+
+end

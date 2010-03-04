@@ -27,3 +27,5 @@ num = num/(ndata*binwidth);
 
 h = bar(bins, num, 0.6);
 
+end
+

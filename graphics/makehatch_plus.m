@@ -70,3 +70,5 @@ switch (hatch)
   otherwise
     error(['Undefined hatch pattern "' hatch '".']);
 end
+
+end

@@ -155,3 +155,6 @@ end
 
 net = somunpak(net, tempw);
 options(8) = sum(min(dist2(tempw, x)));
+
+
+end

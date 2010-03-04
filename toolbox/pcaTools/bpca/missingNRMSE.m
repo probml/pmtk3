@@ -12,3 +12,5 @@ missidx = find( prob>990 );
 nrmse = sqrt( mean( (guess(missidx)-answer(missidx)).^2 ) ) ...
 	/ std( answer(missidx) );
 rmse =  sqrt( mean( (guess(missidx)-answer(missidx)).^2 ) );
+
+end

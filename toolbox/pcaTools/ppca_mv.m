@@ -87,3 +87,5 @@ X = Ye*C;
  
 % add data mean to expected complete data
 Ye = Ye + repmat(M,N,1);
+
+end

@@ -9,3 +9,5 @@ if nargout >= 2
   sigma2 = repmat(model.sigma2, N, 1);
   % predictive variance is constant since we are using a plug-in approx
 end
+
+end

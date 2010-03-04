@@ -16,3 +16,5 @@ end
 if nargout > 2
     H = X'*diag(sparse(norm_yXw.*norm_yXw./probit_yXw.^2 + norm_yXw.*yXw.*sqrt(2)./probit_yXw))*X;
 end
+
+end

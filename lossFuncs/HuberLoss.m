@@ -11,3 +11,5 @@ f = (1/2)*sum(r(closeInd).^2) + k*sum(abs(r(~closeInd))) - (1/2)*sum(~closeInd)*
 if nargout > 1
    g = X(closeInd,:)'*(X(closeInd,:)*w - y(closeInd)) + k*X(~closeInd,:)'*sign(r(~closeInd));
 end
+
+end

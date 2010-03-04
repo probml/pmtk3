@@ -36,3 +36,5 @@ for i=1:numel(P(:))
        P(i) = realmin;
    end
 end
+
+end

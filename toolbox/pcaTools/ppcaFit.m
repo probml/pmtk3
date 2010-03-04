@@ -11,3 +11,5 @@ sigma2 = mean(evals(K+1:end));
 W = evecs(:,1:K) * sqrt(diag(evals(1:K))-sigma2*eye(K));
 Xproj = X*W;
 Xrecon = Xproj*W' + repmat(mu, n, 1);
+
+end

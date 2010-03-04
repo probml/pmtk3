@@ -29,3 +29,5 @@ else
    fprintf('No support vectors with interpolation error e - cannot compute bias.\n');
    bias = (max(y)+min(y))/2;
 end
+
+end

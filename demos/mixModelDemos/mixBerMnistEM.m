@@ -1,5 +1,5 @@
 %% Bernoulli mixture model for mnist digits
-
+%PMTKslow
 %% Setup data
 setSeed(0);
 binary     = true;

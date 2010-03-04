@@ -25,3 +25,6 @@ zz = find(lambdas==0);
 if ~isempty(zz)   % Interpolation breaks when lambda = 0, which corresponds to lsq solution = Wfull(1,:)
     Wbig(zz,:) = repmat(Wfull(1,:), length(zz), 1);
 end
+
+
+end

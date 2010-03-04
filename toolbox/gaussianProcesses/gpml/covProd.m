@@ -59,3 +59,4 @@ case 4                      % compute derivative matrix or test set covariances
   end
 
 end
+end

@@ -10,3 +10,4 @@ if 0 % debug
   end
   assert(approxeq(nk, nk2))
 end         
+end

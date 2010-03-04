@@ -9,3 +9,5 @@ else
     bits(A) = true;
     C = B(bits(B));
 end
+
+end

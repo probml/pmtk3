@@ -38,7 +38,7 @@ if nargin == 3
 end
 
 [h, hdata] = hbayes(net, hdata);
-
+end
 % Sub-function to compute data part of Hessian
 function hdata = datahess(net, x, t)
 
@@ -49,3 +49,5 @@ for v = eye(net.nwts);
 end
 
 return
+
+end

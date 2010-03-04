@@ -22,3 +22,4 @@ hh = plot(obj.XData(ndx), obj.YData(ndx), '.', 'color', col);
 set(hh, 'marker', marker, 'markersize', 12);
 
 
+end

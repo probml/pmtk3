@@ -47,3 +47,5 @@ for n = 1:ndata
   % Now compute the Jacobian
   jac(n, :, :) =  Psi * net.w2;
 end
+
+end

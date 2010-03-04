@@ -10,3 +10,4 @@ for i=1:N
   [ll(i)] = studentLogprob(studentDist(mu(i), sigma2, dof), y(i));
 end
 
+end

@@ -8,3 +8,5 @@ N  = size(X,1);
 if nargout >= 2
   sigma2 = repmat(1/model.net.beta, N, 1);
 end
+
+end

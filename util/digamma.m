@@ -82,3 +82,4 @@ if ~isempty(i)
   r = r .* r;
   y(i) = y(i) - r .* ( s3 - r .* ( s4 - r .* (s5 - r .* (s6 - r .* s7))));
 end
+end

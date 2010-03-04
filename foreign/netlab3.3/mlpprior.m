@@ -60,3 +60,5 @@ indx = [indx, extra];
 
 prior.index = indx;
 prior.alpha = [aw1, ab1, aw2, ab2]';
+
+end

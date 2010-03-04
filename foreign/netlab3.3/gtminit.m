@@ -131,7 +131,7 @@ if net.dim_latent < size(data, 2)
   sigma = min(sigma, PCcoeff(net.dim_latent+1));
 end
 net.gmmnet.covars = sigma*ones(1, net.gmmnet.ncentres);
-
+end
 % Sub-function to create the sample data in 2d
 function sample = gtm_rctg(samp_size)
 
@@ -151,3 +151,4 @@ return;
 
    
    
+end

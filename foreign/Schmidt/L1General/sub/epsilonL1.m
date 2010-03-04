@@ -27,3 +27,4 @@ if nargout > 2
     H = H + diag(lambda.*((w.^2+epsilon).^(-1/2) - (w.^2).*((w.^2+epsilon).^(-3/2))));
 end
 
+end

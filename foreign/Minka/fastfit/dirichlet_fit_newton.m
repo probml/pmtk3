@@ -73,7 +73,7 @@ if show_progress
   %disp(['gradient at exit = ' num2str(max(abs(g)))])
   plot(run.e)
 end
-
+end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function hg = hessian_times_gradient(a, g, lambda)
@@ -88,3 +88,4 @@ hg = (g - b).*q;
 
 K = length(a);
 addflops(K-1 + (K+1)*flops_digamma + 1 + 7*K);
+end

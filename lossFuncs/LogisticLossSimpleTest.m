@@ -36,3 +36,4 @@ if nargout > 2
   assert(approxeq(H,H2))
 end
 
+end

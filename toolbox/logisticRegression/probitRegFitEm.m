@@ -42,3 +42,5 @@ while ~done
 end
 w=w(end,:)'; % Final value 
 logpostTrace = -logpdf;
+
+end

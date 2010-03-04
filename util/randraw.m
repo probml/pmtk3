@@ -4096,7 +4096,7 @@ if strcmp(runMode, 'genRun')
 end % if strcmp(runMode, 'genRun')
 
 return;
-
+end
 
 function checkParamsNum(funcName, distribName, runDistribName, distribParams, correctNum)
 if ~any( numel(distribParams) == correctNum )
@@ -4154,19 +4154,19 @@ if ~condLogical
           runDistribName);
 end
 return;
-
+end
 function cdf = normcdf(y)
 cdf = 0.5*(1+erf(y/sqrt(2)));
 return;
-
+end
 function pdf = normpdf(y)
 pdf = 1/sqrt(2*pi) * exp(-1/2*y.^2);
 return;
-
+end
 function cdfinv = norminv(y)
 cdfinv = sqrt(2) * erfinv(2*y - 1);
 return;
-
+end
 function out = randFrom5Tbls( P, offset, sampleSize)
 sizeP = length(P);
 
@@ -4174,7 +4174,7 @@ if sizeP == 0
      out = [];
      return;
 end
-
+end
 a = mod(floor([0 P]/16777216), 64);
 na = cumsum( a );
 b = mod(floor([0 P]/262144), 64);
@@ -4225,3 +4225,5 @@ for ii = 1:N
 end
 
 return;
+
+end

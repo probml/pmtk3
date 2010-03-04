@@ -47,3 +47,5 @@ fprintf(1, 'Checking gradient ...\n\n');
 delta = gradient - deltaf;
 fprintf(1, '   analytic   diffs     delta\n\n');
 disp([gradient', deltaf', delta'])
+
+end

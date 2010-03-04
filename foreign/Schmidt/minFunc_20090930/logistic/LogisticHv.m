@@ -6,3 +6,6 @@ function [Hv] = LogisticHv(v,w,X,y)
 
 sig = 1./(1+exp(-y.*(X*w)));
 Hv = X.'*(sig.*(1-sig).*(X*v));
+
+
+end

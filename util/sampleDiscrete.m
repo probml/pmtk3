@@ -38,3 +38,5 @@ end
 
 % convert using a binning algorithm
 %M=bindex(R,cumprob);
+
+end

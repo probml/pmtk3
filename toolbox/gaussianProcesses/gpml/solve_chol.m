@@ -23,3 +23,5 @@ if size(A,1) ~= size(A,2) | size(A,1) ~= size(B,1)
 end
 
 x = A\(A'\B);
+
+end

@@ -14,3 +14,6 @@ function y = rosen(x)
 % Calculate value of Rosenbrock's function: x should be nrows by 2 columns
 
 y = 100 * ((x(:,2) - x(:,1).^2).^2) + (1.0 - x(:,1)).^2;
+
+
+end

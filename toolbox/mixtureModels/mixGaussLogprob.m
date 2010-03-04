@@ -4,3 +4,4 @@ function [logp] = mixGaussLogprob(model, X)
 
 [z, pz, logp] = mixGaussInfer(model, X); %#ok
 
+end

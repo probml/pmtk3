@@ -21,3 +21,5 @@ for i = 1:nInstances
     end
     y(i) = fp{end}*outputWeights;
 end
+
+end
