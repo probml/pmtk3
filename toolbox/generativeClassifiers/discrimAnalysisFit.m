@@ -13,12 +13,15 @@ function params = discrimAnalysisFit(X, y, type)
 
 [n d] = size(X);
 Nclasses = length(unique(y));
+params.mu = zeros(d, Nclasses);
+params.Sigma = zeros(d, d, Nclasses);
+params.classPrior = zeros(1, Nclasses);
 for c=1:Nclasses
-  ndx = find(y == c);
-  dat = X(ndx, :);
-  params.mu(:,c) = mean(dat);
-  params.Sigma(:,:,c) = covmat(dat);
-  params.classPrior(c) = length(ndx)/n;
+    ndx = (y == c);
+    dat = X(ndx, :);
+    params.mu(:,c) = mean(dat);
+    params.Sigma(:,:,c) = covmat(dat);
+    params.classPrior(c) = length(ndx)/n;
 end
 params.SigmaPooled = cov(X);
 params.type = type;
