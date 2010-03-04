@@ -2,8 +2,8 @@ function errors = debugDemos(subFolder, exclusions)
 % Debug the PMTK demos, by attempting to run them all, saving 
 % a list of those which fail. 
 cd(tempdir());
-dbclear if error
-dbclear if warning
+dbclear('if error');
+dbclear('if warning');
 if nargin < 1, subFolder = ''; end
 if nargin < 2, exclusions = {'PMTKslow', 'PMTKinteractive'}; end
 hideFigures
