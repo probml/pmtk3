@@ -24,9 +24,18 @@ function [y, initSupport] = setSupport(labels, newSupport, initSupport)
         y = labels;
         return;
     end
-
-    if nargin < 3 && numel(unique(labels)) < numel(newSupport)
-        error('Too few unique labels for given support'); 
+    initUnique = unique(labels);    
+    if nargin < 3 && numel(initUnique) < numel(newSupport)
+        % try and infer missing labels
+        minimum = min(initUnique);
+        maximum = max(initUnique);
+        if numel(minimum:maximum) == numel(newSupport)
+            initSupport = minimum:maximum;
+        elseif maximum == numel(newSupport)
+            initSupport = 1:maximum;
+        else
+            initSupport = minimum:numel(newSupport)-1;
+        end
     end
 
     if nargin > 2, opt = {initSupport}; else opt={}; end

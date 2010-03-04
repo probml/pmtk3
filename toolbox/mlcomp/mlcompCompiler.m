@@ -51,11 +51,27 @@ getT = @(s)removeComments(getText(s));
 fitText     = getT(fitFn);
 predictText = getT(predictFn);
 %% Find Dependencies
-filter = @(s)endswith(s, '.m');  % exclude mex files
-fitDependencies     = filterCell(depfunFast(fitFn,     true), filter);
-predictDependencies = filterCell(depfunFast(predictFn, true), filter);
-dependencies        = union(fitDependencies, predictDependencies);
-dependencies        = union(dependencies, {'getText', 'mlcompReadData'});
+fitDependencies      = depfunFast(fitFn, true);
+predictDependencies  = depfunFast(predictFn, true);
+dependencies         = union(fitDependencies, predictDependencies);
+dependencies         = union(dependencies, {'getText.m', 'mlcompReadData.m'});
+[mexf, dependencies] = partitionCell(dependencies, @(s)isSubstring('.mex', s));
+for i=1:numel(mexf)
+    fname = [strtok(mexf{i}, '.'), '.m'];
+    if exist(fname, 'file')
+        dependencies = union(dependencies, {fname});
+    else
+       warning('mlcomp:missingMexFile',...
+       'No corresponding m-file could be found for the mex file %s.', mexf{i});
+    end 
+end
+%% Check Dependencies
+allfiles = [dependencies, fitFn, predictFn];
+ndx = cellfun(@isEndKeywordMissing, allfiles);
+if any(ndx)
+   warning('mlcomp:missingEndKeyword',...
+ 'The following functions may be missing a terminating end statement %s.', catString(allfiles(ndx), ', '));
+end
 %% Serialize Optionalal Inputs
 fitFnOptionText     = serialize(fitOpts);
 predictFnOptionText = serialize(predictOpts);
@@ -76,7 +92,7 @@ text = [text
     '%%%%%%%%%%%% DEPENDENCIES %%%%%%%%%%%%'
     ];
 for i=1:numel(dependencies)
-    text = [text; getT(dependencies{i})];
+    text = [text; getT(dependencies{i})]; %#ok
 end
 text = [text
     '%%%%%%%%%%%% START SCRIPT %%%%%%%%%%%%'
