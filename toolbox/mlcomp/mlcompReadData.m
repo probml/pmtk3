@@ -1,8 +1,12 @@
-function [X, y] = mlcompReadData(fpath)
+function [X, y, comments] = mlcompReadData(fpath)
 % Convert an mlcomp data file to matlab format. 
 
+raw = getText(fpath);
+iscomment = cellfun(@(s)startswith(s, '#'), raw);
+comments = raw(iscomment);
+raw = raw(~iscomment);
 parser = @(s)tokenize(strrep(strtrim(s), ':', ' '));
-raw = cellfun(parser, getText(fpath), 'UniformOutput', false);
+raw = cellfun(parser, raw, 'UniformOutput', false);
 d = (max(cellfun(@numel, raw)) - 1)/2;
 n = numel(raw);
 X = zeros(n, d); 
@@ -22,6 +26,13 @@ function toks = tokenize(s)
         toks = [];
         return;
     end
-    [tok, remaining] = strtok(s, ' '); 
-    toks = [str2double(tok), tokenize(remaining)];
+    [tok, remaining] = strtok(s, ' ');
+    toks = str2double(tok);
+    while ~isempty(remaining)
+        [tok, remaining] = strtok(remaining, ' '); %#ok  octave has no textscan function
+        if ~isempty(tok)
+            toks = [toks, str2double(tok)]; %#ok
+        end
+    end
+    
 end

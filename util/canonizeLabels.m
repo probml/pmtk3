@@ -32,12 +32,7 @@ function [canonized,support] = canonizeLabels(labels,support)
 % To make 0,1 use canonizeLabels(y)-1
 % To make -1,+1 use (2*(canonizeLabels(y)-1))-1
 
-%{
-if nargin < 2 || isempty(support)
-  canonized = labels;
-  return;
-end
-%}
+
 
 [nrows,ncols] = size(labels);
 labels = labels(:);
