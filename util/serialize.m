@@ -61,6 +61,8 @@ elseif iscell(v)
   val = serializecell(v, n);
 elseif isobject(v)
   val = serializeobject(v, n);
+elseif isa(v, 'function_handle')
+  val = serializehandle(v); 
 else
   error('Unhandled type %s', class(v));
 end
@@ -150,6 +152,10 @@ end
 %
 function val = serializeobject(v, n)
 val = sprintf('%s(%s)', class(v), serializevalue(struct(v), n));
+end
+
+function val = serializehandle(v)
+    val = sprintf('str2func(''%s'')', func2str(v));
 end
 
 %
