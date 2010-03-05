@@ -9,7 +9,7 @@ mlcompCompiler('logregFit', 'logregPredict', localdir);
 cd(localdir);
 system(sprintf('octave -qf run learn data'));
 system(sprintf('octave -qf run predict data yhat'));
-yhat = str2num(str2mat((getText(fullfile(localdir, 'yhat')))));
+yhat = str2double(getText('yhat'));
 nerrs = sum(yhat ~= y)
 
 
