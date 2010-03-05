@@ -21,15 +21,9 @@ for i = 1:nInstances
 end
 
 % Now convert categorical matrix to binary (1ofK) encoding
-X_ind = zeros(nInstances,sum(nStates));
-offset = 0;
-for s = 1:length(nStates)
-    for i = 1:nInstances
-        X_ind(i,offset+X(i,s)) = 1;
-    end
-    offset = offset+nStates(s);
-end
+X_ind = dummyEncoding(X, nStates);
 
+ 
 % Now make sparse weight vector, where sparsity is in groups
 offset = 0;
 nVars = sum(nStates);

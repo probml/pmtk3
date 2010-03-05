@@ -7,12 +7,14 @@ function [model, lambdaStar, mu, se] = logregFitCV...
 % X(i, :)       - is the ith case
 % y             - the labels - these will be automatically transformed into
 %                 the right spcae.
-% regularizerFn - @penalizedL1, or @penalizedL2
-% lambdaRange   - optional range to cross validate over
+% regularizerFn - @penalizedL1, or @penalizedL2 (default=L2)
+% lambdaRange   - values to try or [] (default) for auto generated
 % inclueOffset  - if true, (default) a column of ones is added to X
 % nfolds       - the number of cross validation folds, (defualt = 5)
-    if nargin < 3, regularizerFn = @penalizedL2; end
-    if nargin < 4, 
+    if nargin < 3 || isempty(regularizerFn),
+      regularizerFn = @penalizedL2;
+    end
+    if nargin < 4 || isempty(lambdaRange), 
         lambdaRange = [0, logspace(-2.5, 0  , 5  ), ...
                           logspace( 0.1, 1.5, 10 ), ...
                           logspace( 1.6, 2.5, 4) ];
