@@ -1,6 +1,6 @@
 %% 
 
-localdir = tempdir(); 
+localdir = 'C:\users\matt\desktop'; % tempdir(); 
 stat = load('satData.txt');
 X = stat(:, 4); 
 y = stat(:, 1) + 1; 
