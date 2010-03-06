@@ -9,7 +9,7 @@ function X_ind = dummyEncoding(X, nStates)
 if nargin < 2
     nStates = zeros(1, D);
     for j=1:D
-        nStates(j) = length(unique(X(:, j)));
+        nStates(j) = length(unique(X(:, j))); 
     end
 end
 
