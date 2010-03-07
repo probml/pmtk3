@@ -1,5 +1,6 @@
+% Let us run logregSATdemo on the mlcomp syste,
 
-% we first compile some code that will run on the mlcomp server
+%% we first compile some code that will run on the mlcomp server
 tmpFolder = 'C:\kmurphy\GoogleCode\mlcomp';
 lambdaRange = []; % auto-generated
 includeOffset = true;
@@ -8,10 +9,15 @@ nfolds = 5;
 fitArgs = {[],  lambdaRange, includeOffset, nfolds};
 mlcompCompiler('logregFitCV', 'logregPredict', tmpFolder, fitArgs);
 
+%% Now convert data
+dataFile = fullfile(tmpFolder, 'satData-mlcomp.txt');
+stat = load('satData.txt'); 
+y = stat(:,1);
+X = stat(:,4);
+mlcompWriteData(X, y, dataFile)
+ 
 % Now we run it
 % Execute the following commands in octave to make sure it works
-dataFile = 'C:\kmurphy\GoogleCode\pmtkData';
-predFile = 'C:\kmurphy\GoogleCode\mlcomp\pred.txt';
-
+predFile = fullfile(tmpFolder, 'satData-logreg-mlcomp-pred.txt')
 %octave -qf run learn dataFile
 %octave -qf run predict tmpFolder predFile

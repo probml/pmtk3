@@ -12,32 +12,36 @@ y	= ytrue + noise*randn(N,1);
 X = x;
 
 
-lambda = 1e-1;
+lambda = 0.5;
 rbfScale = 0.3;
 Ktrain =  rbfKernel(X, X, rbfScale);
 %Xtest = [-5:.05:5]';
 Xtest = [-10:.1:10]';
 Ktest = rbfKernel(Xtest, X, rbfScale);
 
-for trial=1:3
-   switch trial
+for method=1:3
+   switch method
       case 1,
-         epsilon = 0.3;
-         [w, bias, SV] = svmRegrFit(Ktrain, y, epsilon, 1/lambda);
-         lossStr = sprintf('SVM(%s=%3.1f)',  '\epsilon', epsilon);
-         fname = 'SVM3';
-      case 2,
-         epsilon = 0.1;
-         [w, bias, SV] = svmRegrFit(Ktrain, y, epsilon, 1/lambda);
-         lossStr = sprintf('SVM(%s=%3.1f)', '\epsilon', epsilon);
-         fname = 'SVM1';
-      case 3,
          model = linregFitL2(Ktrain, y, lambda);
-         w = model.w; bias = model.w0;
+         w = model.w;
+         yhat = linregPredict(model, Ktest);
          lossStr = sprintf('linreg');
-         fname = 'linreg';
+         fname = 'linregL2';
+     case 2,
+       model = linregFitL1(Ktrain, y, lambda);
+       w = model.w;
+       SV = find(abs(w) > 1e-5);
+       yhat = linregPredict(model, Ktest);
+       lossStr = sprintf('linregL1');
+       fname = 'linregL1';
+      case 3,
+         epsilon = 0.0001; % 0.001;
+         [model, SV] = svmSimpleRegrFit(Ktrain, y, epsilon, 1/lambda);
+         w = model.alpha;
+         lossStr = sprintf('SVM(%s=%6.4f)', '\epsilon', epsilon);
+         fname = 'SVM1';
+         yhat = svmSimpleRegrPredict(model, Ktest);
    end
-   yhat = Ktest*w + bias;
    
    
    % Plot results
@@ -45,12 +49,13 @@ for trial=1:3
    plot(X,y,'*', 'markersize', 8, 'linewidth', 2);
    h=plot(Xtest(:,1),yhat,'g-');
    set(h,'LineWidth',3);
-   if strcmp(lossStr(1:3), 'SVM')
+   if method>1 % strcmp(lossStr(1:3), 'SVM')
       %SV = abs(Krbf*uRBF - y) >= changePoint;
       plot(X(SV),y(SV),'o','color','r', 'markersize', 12, 'linewidth', 2);
-      plot(Xtest(:,1),yhat+epsilon,'c--', 'linewidth', 2);
-      plot(Xtest(:,1),yhat-epsilon,'c--', 'linewidth', 2);
-      legend({'Data','prediction','Support Vectors','Eps-Tube'});
+      %plot(Xtest(:,1),yhat+epsilon,'c--', 'linewidth', 2);
+      %plot(Xtest(:,1),yhat-epsilon,'c--', 'linewidth', 2);
+      legend({'Data','prediction','Support Vectors'});
+      %legend({'Data','prediction','Support Vectors','Eps-Tube'});
    end
    title(sprintf('%s', lossStr))
    printPmtkFigure(sprintf('svmRegrDemoData%s', fname))

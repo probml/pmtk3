@@ -5,8 +5,8 @@ load crabs
 Sigmas = logspace(-1, 0.5, 20);
 Nfolds = 5;
 lossFn = @(yhat, ytest)mean(yhat ~= ytest); 
-[SVMmodel, SigmaStar, SVMmu, SVMse] = fitCv(Sigmas, @svmFit, @svmPredict, lossFn, Xtrain, ytrain,  Nfolds);
-yhat = svmPredict(SVMmodel, Xtest);
+[SVMmodel, SigmaStar, SVMmu, SVMse] = fitCv(Sigmas, @svmLightFit, @svmLightPredict, lossFn, Xtrain, ytrain,  Nfolds);
+yhat = svmLightPredict(SVMmodel, Xtest);
 svmNerrors = sum(yhat ~= ytest)
 %% LR L2
 % Cross validates over both lambda and 'rbf' Sigma

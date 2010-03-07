@@ -1,4 +1,4 @@
-function [beta,bias, svi] = svmRegrFit(K,y,e,C)
+function [model, svi] = svmSimpleRegrFit(K,y,e,C)
 % Support vector regression
 % One norm epsilon insensitive loss funciton
 
@@ -14,20 +14,21 @@ beq = 0;
 lb = zeros(2*n,1);    
 ub = C*ones(2*n,1);   
 
-alpha = quadprog(H,f,A,b,Aeq,beq,lb,ub);
-beta =  alpha(1:n) - alpha(n+1:2*n);
+a = quadprog(H,f,A,b,Aeq,beq,lb,ub);
+alpha =  a(1:n) - a(n+1:2*n);
 
 epsilon = C*1e-6;
-svi = find( abs(beta) > epsilon ); % support vectors
+svi = find( abs(alpha) > epsilon ); % support vectors
 
 % find bias from average of support vectors with interpolation error e
 % SVs with interpolation error e have alphas: 0 < alpha < C
-svii = find( abs(beta) > epsilon & abs(beta) < (C - epsilon));
-if length(svii) > 0
-   bias = (1/length(svii))*sum(y(svii) - e*sign(beta(svii)) - K(svii,svi)*beta(svi));
+svii = find( abs(alpha) > epsilon & abs(alpha) < (C - epsilon));
+if ~isempty(svii)
+   bias = (1/length(svii))*sum(y(svii) - e*sign(alpha(svii)) - K(svii,svi)*alpha(svi));
 else
    fprintf('No support vectors with interpolation error e - cannot compute bias.\n');
    bias = (max(y)+min(y))/2;
 end
-
+model.bias = bias;
+model.alpha = alpha;
 end
