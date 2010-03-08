@@ -14,10 +14,11 @@ X = x;
 
 lambda = 0.5;
 rbfScale = 0.3;
-Ktrain =  rbfKernel(X, X, rbfScale);
+kernelFn = @(X1,X2) rbfKernel(X1,X2,rbfScale);
+Ktrain =  kernelFn(X, X);
 %Xtest = [-5:.05:5]';
 Xtest = [-10:.1:10]';
-Ktest = rbfKernel(Xtest, X, rbfScale);
+Ktest = kernelFn(Xtest, X);
 
 for method=1:3
    switch method
@@ -36,11 +37,11 @@ for method=1:3
        fname = 'linregL1';
       case 3,
          epsilon = 0.0001; % 0.001;
-         [model, SV] = svmSimpleRegrFit(Ktrain, y, epsilon, 1/lambda);
+         [model, SV] = svmSimpleRegrFit(X, y, kernelFn, epsilon, 1/lambda);
          w = model.alpha;
          lossStr = sprintf('SVM(%s=%6.4f)', '\epsilon', epsilon);
          fname = 'SVM1';
-         yhat = svmSimpleRegrPredict(model, Ktest);
+         yhat = svmSimpleRegrPredict(model, Xtest);
    end
    
    

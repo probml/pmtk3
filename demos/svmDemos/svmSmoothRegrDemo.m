@@ -17,9 +17,10 @@ rbfScale = 1;
 
 for lossType = 1:2
    Krbf = kernelRBF(X,X,rbfScale);
+   kernelFn = @(X1,X2) kernelRBF(X1,X2,rbfScale);
    if lossType==1
       changePoint= 0.3;
-      [uRBF, bias] = svmSimpleRegrFit(Krbf, y, changePoint, 1/lambda);
+      [uRBF, bias] = svmSimpleRegrFit(X, y, kernelFn, changePoint, 1/lambda);
       lossStr = 'SVR(0.3)';
    else
       switch lossType

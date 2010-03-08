@@ -1,10 +1,12 @@
-function [model, svi] = svmSimpleRegrFit(K,y,e,C)
+function [model, svi] = svmSimpleRegrFit(X,y,kernelFn,e,C)
 % Support vector regression
 % One norm epsilon insensitive loss funciton
 
-% Based on code by Steve Gunn
-% http://www.isis.ecs.soton.ac.uk/resources/svminfo/
+%PMTKauthor Steve Gunn
+%PMTKurl http://www.isis.ecs.soton.ac.uk/resources/svminfo/
+%PMTKmodified Kevin Murphy
 
+K = kernelFn(X,X);
 n = length(y);
 H = [K -K; -K K];
 f = [(e*ones(n,1) - y); (e*ones(n,1) + y)];
@@ -31,4 +33,6 @@ else
 end
 model.bias = bias;
 model.alpha = alpha;
+model.X = X;
+model.kernelFn = kernelFn;
 end
