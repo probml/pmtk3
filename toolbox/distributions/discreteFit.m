@@ -13,7 +13,7 @@ function model = discreteFit(X, alpha, weights)
 % model        - a struct with the following fields:
 %
 %     d       - the number of distributions, i.e. size(X, 2)
-%     K       - the number of states, i.e. numel(unique(X))
+%     K       - the number of states, i.e. nunique(X)
 %     T       - a K-by-d stochastic matrix, (each *column* represents a
 %               different distribution).
 %

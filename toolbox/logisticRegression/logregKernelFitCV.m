@@ -11,7 +11,7 @@ function [model, lambdaStar, mu, se] = logregKernelFitCV...
     if nargin < 6, kernelType       = 'rbf';                 end
     if nargin < 7, nfolds           = 5;                     end
     
-    Nclasses = numel(unique(y)); 
+    Nclasses = nunique(y); 
     if Nclasses < 3, newSupport = [-1, 1]; 
     else             newSupport = 1:Nclasses; 
     end

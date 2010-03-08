@@ -12,7 +12,7 @@ function S = partitionedSum(X, y, C)
 
 
 if nargin < 3
-    C = numel(unique(y));
+    C = nunique(y);
 end
 S = bsxfun(@eq, sparse(1:C).', y.')*X;
 

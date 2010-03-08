@@ -19,7 +19,7 @@ function [model, lambdaStar, mu, se] = logregFitCV...
                           logspace( 0.1, 1.5, 10 ), ...
                           logspace( 1.6, 2.5, 4) ];
     end
-    Nclasses = numel(unique(y)); 
+    Nclasses = nunique(y); 
     if Nclasses < 3,   newSupport = [-1, 1];
     else               newSupport = 1:Nclasses; 
     end

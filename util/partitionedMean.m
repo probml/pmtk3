@@ -11,7 +11,7 @@ function M = partitionedMean(X, y, C)
 
 %tic
 if nargin < 3
-    C = numel(unique(y));
+    C = nunique(y);
 end
 
 S = bsxfun(@eq, sparse(1:C)', y');       % C-by-n logical sparse matrix, (basically a one-of-K encoding transposed)
@@ -26,7 +26,7 @@ if test
     tic
     d = size(X, 2);
     if nargin < 3
-        C = numel(unique(y));
+        C = nunique(y);
     end
     M1 = zeros(C, d);
     for i=1:C

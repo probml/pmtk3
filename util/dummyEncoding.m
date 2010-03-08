@@ -4,31 +4,31 @@ function X_ind = dummyEncoding(X, nStates)
 % These matrices are then concatinated horizontally forming an
 % n-by-sum(nStates) binary matrix.
 
-%tic
 [N, D] = size(X);
-if nargin < 2
-    nStates = zeros(1, D);
-    for j=1:D
-        nStates(j) = length(unique(X(:, j))); 
-    end
+if nargin < 2, 
+    nStates = nunique(X);
 end
-
-K = sum(nStates);
 offset = cumsum(nStates);
 offset = [0, offset(1:end-1)];
 X = bsxfun(@plus, X, offset)';
 I = repmat(1:N, D, 1);
+K = max(sum(nStates), max(X(:)));  
 ndx = sub2ind([N, K], I(:), X(:));
 X_ind = false(N, K);
 X_ind(ndx) = true;
-%toc
 
 
 
 test = false;
 if test
-    X = bsxfun(@minus, X', offset); % return X back to normal
+    X = bsxfun(@minus, X', offset); % return X back to original state
     tic
+    if nargin < 2
+        nStates = zeros(1, D);
+        for j=1:D
+            nStates(j) = length(unique(X(:, j)));
+        end
+    end
     [N,D] = size(X);
     if nargin < 2
         nStates = zeros(1,D);

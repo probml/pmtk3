@@ -20,7 +20,7 @@ function h = plotDecisionBoundary(X, Y, predictFcn, stipple, colors, symbols, ma
     if nargin < 7, markersize = 8; end
     
     resolution = 200;          % set higher for smoother contours, lower for speed/mem
-    nclasses = numel(unique(Y));
+    nclasses = nunique(Y);
     range = dataWindow(X);
     [X1grid, X2grid, yhat] = gridPredict(range, resolution, predictFcn);
     [X1sparse, X2sparse, yhatSparse] = gridPredict(range, resolution / 2.5, predictFcn);
