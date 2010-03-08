@@ -37,11 +37,11 @@ for method=1:3
        fname = 'linregL1';
       case 3,
          epsilon = 0.0001; % 0.001;
-         [model, SV] = svmSimpleRegrFit(X, y, kernelFn, epsilon, 1/lambda);
+         [model, SV] = svmQPregFit(X, y, kernelFn, epsilon, 1/lambda);
          w = model.alpha;
          lossStr = sprintf('SVM(%s=%6.4f)', '\epsilon', epsilon);
          fname = 'SVM1';
-         yhat = svmSimpleRegrPredict(model, Xtest);
+         yhat = svmQPregPredict(model, Xtest);
    end
    
    
