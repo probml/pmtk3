@@ -1,9 +1,6 @@
-function model = svmFit(X, y, sigma, options)
-% This is a simple interface to svm-light, 
-% which must be on the system path. 
+function model = svmLightFit(X, y, sigma, options)
+% Call svmLight to fit a binary SVM classifier using RBF kernel 
 % 
-% You can use the addtosystempath function to add the directory containing
-% svm_learn.exe. 
 %
 % sigma is the RBF bandwidth, (ignored if options is specified)
 % y is automaically converted to {-1, 1}
@@ -11,6 +8,9 @@ function model = svmFit(X, y, sigma, options)
 % model is a structure which can be passed to svmPredict. It contains
 % the filename storing the model information, and nsvecs - the number
 % of support vectors. 
+%
+% You can use the addtosystempath function to add the directory containing
+% svm_learn.exe. 
     
     tmp = tempdir();
     trainFile = fullfile(tmp, 'train.svm');

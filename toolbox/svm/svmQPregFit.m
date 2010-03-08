@@ -1,4 +1,4 @@
-function [model, svi] = svmSimpleRegrFit(X,y,kernelFn,e,C)
+function [model, svi] = svmQPregFit(X,y,kernelFn,e,C)
 % Support vector regression
 % One norm epsilon insensitive loss funciton
 
@@ -16,6 +16,7 @@ beq = 0;
 lb = zeros(2*n,1);    
 ub = C*ones(2*n,1);   
 
+warning('off','optim:quadprog:SwitchToMedScale')
 a = quadprog(H,f,A,b,Aeq,beq,lb,ub);
 alpha =  a(1:n) - a(n+1:2*n);
 

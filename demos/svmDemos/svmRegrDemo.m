@@ -21,31 +21,31 @@ Xtest = [-10:.1:10]';
 Ktest = kernelFn(Xtest, X);
 
 for method=1:3
-   switch method
-      case 1,
-         model = linregFitL2(Ktrain, y, lambda);
-         w = model.w;
-         yhat = linregPredict(model, Ktest);
-         lossStr = sprintf('linreg');
-         fname = 'linregL2';
-     case 2,
-       model = linregFitL1(Ktrain, y, lambda);
-       w = model.w;
-       SV = find(abs(w) > 1e-5);
-       yhat = linregPredict(model, Ktest);
-       lossStr = sprintf('linregL1');
-       fname = 'linregL1';
-      case 3,
-         epsilon = 0.0001; % 0.001;
-         [model, SV] = svmQPregFit(X, y, kernelFn, epsilon, 1/lambda);
-         w = model.alpha;
-         lossStr = sprintf('SVM(%s=%6.4f)', '\epsilon', epsilon);
-         fname = 'SVM1';
-         yhat = svmQPregPredict(model, Xtest);
-   end
-   
-   
-   % Plot results
+  switch method
+    case 1,
+      model = linregFitL2(Ktrain, y, lambda);
+      w = model.w;
+      yhat = linregPredict(model, Ktest);
+      lossStr = sprintf('linregL2');
+      fname = 'linregL2';
+    case 2,
+      model = linregFitL1(Ktrain, y, lambda);
+      w = model.w;
+      SV = find(abs(w) > 1e-5);
+      yhat = linregPredict(model, Ktest);
+      lossStr = sprintf('linregL1');
+      fname = 'linregL1';
+    case 3,
+      epsilon = 0.0001; % 0.001;
+      [model, SV] = svmQPregFit(X, y, kernelFn, epsilon, 1*(1/lambda));
+      w = model.alpha;
+      lossStr = sprintf('SVM(%s=%6.4f)', '\epsilon', epsilon);
+      fname = 'SVM1';
+      yhat = svmQPregPredict(model, Xtest);
+  end
+  
+  
+  % Plot results
    figure; hold on;
    plot(X,y,'*', 'markersize', 8, 'linewidth', 2);
    h=plot(Xtest(:,1),yhat,'g-');

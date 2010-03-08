@@ -1,4 +1,4 @@
-function [model, svi] = svmSimpleClassifFit(X,y,kernelFn,C)
+function [model, svi] = svmQPclassifFit(X,y,kernelFn,C)
 % Support vector machine binary classification
 % y will be converted to a column vector of -1,+1
 %PMTKauthor Steve Gunn
@@ -9,30 +9,33 @@ K = kernelFn(X,X);
 y = convertLabelsToPM1(y(:));
 n = length(y);
 H = y*y' .* K;
-f = [(e*ones(n,1) - y); (e*ones(n,1) + y)];
+f = -ones(n,1);
 A = []; b = [];
-Aeq = [ones(1,n) -ones(1,n)];
+Aeq = y';
 beq = 0;   
-lb = zeros(2*n,1);    
-ub = C*ones(2*n,1);   
+lb = zeros(n,1);    
+ub = C*ones(n,1);   
 
-a = quadprog(H,f,A,b,Aeq,beq,lb,ub);
-alpha =  a(1:n) - a(n+1:2*n);
+warning('off','optim:quadprog:SwitchToMedScale')
+alpha = quadprog(H,f,A,b,Aeq,beq,lb,ub);
 
 epsilon = C*1e-6;
-svi = find( abs(alpha) > epsilon ); % support vectors
-
-% find bias from average of support vectors with interpolation error e
-% SVs with interpolation error e have alphas: 0 < alpha < C
-svii = find( abs(alpha) > epsilon & abs(alpha) < (C - epsilon));
+svi = find( alpha > epsilon);  % support vectors
+ 
+% find b0 from average of support vectors on margin
+% SVs on margin have alphas: 0 < alpha < C
+svii = find( alpha > epsilon & alpha < (C - epsilon));
 if ~isempty(svii)
-   bias = (1/length(svii))*sum(y(svii) - e*sign(alpha(svii)) - K(svii,svi)*alpha(svi));
+  bias =  (1/length(svii))*sum(y(svii) - H(svii,svi)*alpha(svi).*y(svii));
 else
-   fprintf('No support vectors with interpolation error e - cannot compute bias.\n');
-   bias = (max(y)+min(y))/2;
+  fprintf('No support vectors on margin - cannot compute bias.\n');
+  bias = 0;
 end
+      
+
 model.bias = bias;
 model.alpha = alpha;
 model.X = X;
+model.y = y; % -1,1
 model.kernelFn = kernelFn;
 end
