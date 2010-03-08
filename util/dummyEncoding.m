@@ -24,13 +24,6 @@ if test
     X = bsxfun(@minus, X', offset); % return X back to original state
     tic
     if nargin < 2
-        nStates = zeros(1, D);
-        for j=1:D
-            nStates(j) = length(unique(X(:, j)));
-        end
-    end
-    [N,D] = size(X);
-    if nargin < 2
         nStates = zeros(1,D);
         for j=1:D
             nStates(j) = length(unique(X(:,j)));
