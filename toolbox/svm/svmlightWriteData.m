@@ -1,4 +1,4 @@
-function svmWriteData(X, y, fname)
+function svmlightWriteData(X, y, fname)
 % Write data in svm_light format
 % X is nexamples-by-nfeatures
 % y is nexamples-by-1 and contains only {-1,0,1}

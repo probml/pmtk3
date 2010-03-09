@@ -1,4 +1,4 @@
-function model = svmLightFit(X, y, sigma, options)
+function model = svmlightFit(X, y, sigma, options)
 % Call svmLight to fit a binary SVM classifier using RBF kernel 
 % 
 %
@@ -28,7 +28,7 @@ function model = svmLightFit(X, y, sigma, options)
     X = mkUnitVariance(center(X));
     y = canonizeLabels(y) - 1; 
     y(y==0) = -1; 
-    svmWriteData(X, y, trainFile);
+    svmlightWriteData(X, y, trainFile);
     systemf('svm_learn %s %s %s > %s', options, trainFile, modelFile, logFile);
     model.file = modelFile; 
     
