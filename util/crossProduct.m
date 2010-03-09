@@ -1,4 +1,4 @@
-function out = crossProduct(A, B, C)
+function out = crossProduct(varargin)
 % out = crossProduct(A, B, C, ...) each row of outcontain all combinations of A, B, C, ...
 % Example
 % C = crossProduct(1:2, 2:4, 3:4)
@@ -14,7 +14,9 @@ function out = crossProduct(A, B, C)
 %     2     3     4
 %     1     4     4
 %     2     4     4
-     
+
+out = gridSpace(varargin{:});  % works for any number of dimensions. 
+%{
 switch nargin
  case 2
   [C1, C2] = meshgrid(A, B);
@@ -27,3 +29,4 @@ switch nargin
 end
 
 end
+%}

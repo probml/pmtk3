@@ -1,4 +1,4 @@
-function [model, bestParam, mu, se] = fitCv(params, fitFn, predictFn, lossFn, X, y,  Nfolds, useSErule)
+function [model, bestParam, mu, se] = fitCv(params, fitFn, predictFn, lossFn, X, y,  Nfolds, useSErule, doPlot)
 % Fit a set of models of different complexity and use cross validation to pick the best
 %
 % Inputs:
@@ -23,6 +23,7 @@ function [model, bestParam, mu, se] = fitCv(params, fitFn, predictFn, lossFn, X,
 % se(i) - standard error for mu(i,:)
 
 if nargin < 8, useSErule = false; end
+if nargin < 9, doPlot = false; end
 % if params is 1 row vector, it is a probbaly a set of
 % single tuning params
 if size(params, 1)==1
@@ -43,6 +44,22 @@ else
 end
 bestParam = unwrapCell(params(bestNdx,:));
 model = fitFn(X, y, bestParam);
+
+if doPlot()
+   if ~isnumeric(bestParam)
+      error('Plotting only supported for numerical values');  
+   end
+   switch numel(bestParam)
+       case 1
+           plotCVcurve(params, mu, se, bestParam);
+       case 2
+           plotCVgrid(params, mu, se, bestParam); 
+       otherwise
+            error('Plotting is only supported in 1D or 2D'); 
+   end
+   
+   
+end
 
 
 end

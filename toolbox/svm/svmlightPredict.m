@@ -1,4 +1,4 @@
-function yhat = svmPredict(model, X)
+function yhat = svmlightPredict(model, X)
 % This is a simple interface to svm_light, 
 % which must be on the system path. 
 %
@@ -15,7 +15,7 @@ function yhat = svmPredict(model, X)
     modelFile   = model.file; 
     logFile     = fullfile(tmp, 'testLog.svm');
     resultsFile = fullfile(tmp, 'results.svm');
-    svmWriteData(X, zeros(size(X, 1), 1), testFile);
+    svmlightWriteData(X, zeros(size(X, 1), 1), testFile);
     systemf('svm_classify %s %s %s %s > %s', testOptions, testFile, modelFile, resultsFile, logFile);
     yhat = sign(dlmread(resultsFile));
     if 1
