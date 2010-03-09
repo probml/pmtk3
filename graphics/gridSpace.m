@@ -3,7 +3,7 @@ function g = gridSpace(varargin)
 % of the number of inputs. Suppose [a,b,c] = ndgrid(1:10,1:10,1:10), if 
 % g = gridSpace(1:10,1:10,1:10), then g = [a(:),b(:),c(:)];
 %
-% Matthew Dunham
+
     
 if nargin==1, varargin = repmat(varargin,[1 2]); end
 nout = numel(varargin);
