@@ -16,13 +16,13 @@ function [model, lambdaStar, mu, se] = logregKernelFitCV...
     else             newSupport = 1:Nclasses; 
     end
     [y, support] = setSupport(y, newSupport); 
-    parameterSpace = makeModelSpace(lambdaRange, kernelParamRange);
+    parameterSpace = crossProduct(lambdaRange, kernelParamRange);
     %%    
     coreFitFn = @(X, y, lambda, includeOffset)...
        logregFitCore(X, y, lambda, includeOffset, regularizerFn, Nclasses);    
     %%
     fitFn = @(X, y, params)logregKernelFit...
-       (X, y, coreFitFn, params{1}, params{2}, kernelType);
+       (X, y, coreFitFn, params(1), params(2), kernelType);
     %%
     lossFn = @(yhat, ytest)mean(yhat ~= ytest); 
     %%

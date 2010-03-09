@@ -45,7 +45,7 @@ end
 bestParam = unwrapCell(params(bestNdx,:));
 model = fitFn(X, y, bestParam);
 
-if doPlot()
+if doPlot
    if ~isnumeric(bestParam)
       error('Plotting only supported for numerical values');  
    end
@@ -53,7 +53,7 @@ if doPlot()
        case 1
            plotCVcurve(params, mu, se, bestParam);
        case 2
-           plotCVgrid(params, mu, se, bestParam); 
+           plotCVgrid(params, mu, bestParam); 
        otherwise
             error('Plotting is only supported in 1D or 2D'); 
    end
