@@ -22,7 +22,7 @@ function [model, lambdaStar, mu, se] = logregKernelFitCV...
        logregFitCore(X, y, lambda, includeOffset, regularizerFn, Nclasses);    
     %%
     fitFn = @(X, y, params)logregKernelFit...
-       (X, y, coreFitFn, params{1}{1}, params{1}{2}, kernelType);
+       (X, y, coreFitFn, params{1}, params{2}, kernelType);
     %%
     lossFn = @(yhat, ytest)mean(yhat ~= ytest); 
     %%

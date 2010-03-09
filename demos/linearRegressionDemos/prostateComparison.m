@@ -41,7 +41,7 @@ end
 %% All subsets
     function model = fitFn(X, y, ndx)    
        [N,D] = size(X);
-       include = ndx{:};
+       include = ndx;
        exclude = setdiff(1:D, include);
        X(:, exclude) = 0;
        lambda = eps; % needed to avoid numerical issues caused by 0 entries in X
@@ -50,16 +50,16 @@ end
 %%    
 d = size(data.Xtrain, 2); 
 ss = powerset(1:d); % 256 models
-[modelFull, bestNdx] = ...
+[modelFull, ssStarFull] = ...
         fitCv(ss, @fitFn, predictFn, lossFn, data.Xtrain, data.ytrain, nfolds);
-ssStarFull = ss{bestNdx};
+
 
 %% for plotting purposes, look at fewer subsets
 ssSmall = {[], 1, 1:2, 1:3, 1:4, 1:5, 1:6, 1:7, 1:8};
-[model, ssStarNdx, mu, se] = ...
+[model, ssStar, mu, se] = ...
         fitCv(ssSmall, @fitFn, predictFn, lossFn, data.Xtrain, data.ytrain, nfolds);
-ssStarNdx = ssStarNdx-1;    % -1 since we are counting from size = 0
-%ssStarNdx = cellfind(ssSmall, ssStar) - 1;
+
+ssStarNdx = cellfind(ssSmall, ssStar) - 1;
 useLogScale = false; 
 figure;
 plotCVcurve(0:8, mu, se, ssStarNdx, useLogScale); % plot w.r.t to subset sizes

@@ -1,7 +1,7 @@
 function M = unwrapCell(C)
 % Recursively remove superfluous cell nestings and eventually concatinate
 % using cell2mat. This is an idempotent operation; calling it on a cell 
-% array that cannot be unwrapped any further, returns the orginal cell 
+% array that cannot be unwrapped any further returns the orginal cell 
 % array, unaltered. Full unwrapping, (using cell2mat concatination) only 
 % applies to cell array nestings whose values are numeric. Other types, 
 % i.e. objects, strings, etc, are never concatinated, but unnecessary cell

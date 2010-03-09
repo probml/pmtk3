@@ -65,11 +65,11 @@ for trial=1:5
       fitFn = @(X,y,ps) linregFitSparseEm(X,y, prior, ps(1), ps(2), sigmaTrue, options{:});
       predictFn = @(w, X) X*w;
       lossFn = @(yhat, y)  sum((yhat-y).^2);
-      [w, kstar, mu, se] = fitCv(params, fitFn, predictFn, lossFn, Xtrain, ytrain,  Nfolds, useSErule);
+      [w, bestParams, mu, se] = fitCv(params, fitFn, predictFn, lossFn, Xtrain, ytrain,  Nfolds, useSErule);
       
       % refit model more carefully with best params and all the data
-      scale = params(kstar, 1);
-      shape = params(kstar, 2);
+      scale = bestParams(1);
+      shape = bestParams(2);
       options = {'maxIter', 30, 'verbose', true};
       [w, sigmaHat, logpostTrace] = linregFitSparseEm(Xtrain, ytrain,  prior, scale, shape, sigmaTrue, options{:});
       mse(m) = mean((ytest-Xtest*w).^2);
