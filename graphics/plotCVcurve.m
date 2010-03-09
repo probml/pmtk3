@@ -36,6 +36,12 @@ else
         'LineWidth', 2, 'LineStyle', '--');
     uistack(hline, 'bottom')
     legend(hline, sprintf('%.2f', lambdaBest), 'Location', 'best');
+    warning('off','MATLAB:Axes:NegativeDataInLogAxis');
+    mu = cvMeanErrors; 
+    if(isequal(logspace(log10(min(mu(:, 1))), log10(max(mu(:, 1))),nunique(mu(:, 1)))',unique(mu(:, 1))))
+      set(gca,'Xscale','log');
+    end
+
 end
 
 
