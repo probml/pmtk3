@@ -1,3 +1,4 @@
+% Visualize the effect of change the hyper-params for a 1d GP regression
 % based on demo_gpr by Carl Rasmussen
 
 % generate data
