@@ -114,7 +114,7 @@ printPmtkFigure('groupLassoVanillaEm')
 % Fit with EM version of group Lasso
 sigma = 1; % not fixing this causes numerical problems...
 fitFn = @(X, y, lambda) linregFitGroupLassoEm(X, y, groups, lambda, sigma);
-[wHatGroupEm] = fitCv(lambdasL1, fitFn, predictFn, lossFn, Xtrain, ytrain, Nfolds, useSErule);
+[wHatGroupEm] = fitCv(lambdasGL1, fitFn, predictFn, lossFn, Xtrain, ytrain, Nfolds, useSErule);
 
 
 figure; stem(wHatGroupEm); title('groupLassoEm'); drawGroups(nStates, wTrue);

@@ -32,13 +32,12 @@ if size(params, 1)==1
 end
 NM = size(params,1);
 
-if NM==1 % single param
+if NM==1 && nargout<=2 % single param
    model  = fitFn(X, y, params(1,:));
-   yhat = predictFn(model, X);
-   mu = lossFn(y, yhat);
-   se = 0;
    bestParam = params(1,:);
    return;
+   % if you ask for mu, you still need to run cvEstimate
+   % to estimate te gneralization error for this 1 model
 end
 
 mu = zeros(1,NM);
