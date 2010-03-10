@@ -5,6 +5,7 @@ function linregGroupLassoDemo()
 
 setSeed(1);
 
+%% Make data
 % Generate categorical features
 nInstances = 50;
 %nStates = [10 5 10 5 20 5 10 5 20 5 10 20 10];
@@ -48,7 +49,7 @@ Xtest = X_ind(floor(nInstances/2)+1:end,:);
 ytest = y(floor(nInstances/2)+1:end);
 end
 
-% Set up groups
+%% Set up groups
 offset = 0;
 groups = zeros(nVars, 1);
 for s = 1:length(nStates)
@@ -57,46 +58,34 @@ for s = 1:length(nStates)
 end
 nGroups = max(groups);
 
-% setup CV
+%% setup CV
 predictFn = @(w, X) X*w;
 lossFn = @(yhat, y)  sum((yhat-y).^2);
 useSErule = false;
 Nfolds = 3;
 
-if 1
-% Fit with EM version of Lasso
-maxLambda = lassoMaxLambda(Xtrain, ytrain);
-lambdas = linspace(maxLambda, 1e-2, 100);
-shape = 1;
-sigma = 1; % not fixing this causes numerical problems...
-fitFn = @(X, y, lambda) linregFitSparseEm(X, y, 'laplace', lambda, shape, sigma);
-tic
-[wHatLassoEm] = fitCv(lambdas, fitFn, predictFn, lossFn, Xtrain, ytrain, Nfolds, useSErule);
-toc
-end
+%maxLambda = lassoMaxLambda(Xtrain, ytrain);
+%lambdasL1 = linspace(maxLambda, 1e-2, maxLambda);
+lambdasL1 = 5;
 
-% Fit with regular lasso
-maxLambda = lassoMaxLambda(Xtrain, ytrain);
-lambdas = linspace(maxLambda, 1e-2, 100);
+%maxLambda = groupLassoMaxLambda(groups, Xtrain, ytrain);
+%lambdasGL1 = linspace(maxLambda, 0, 100);
+lambdasGL1 = lambdasL1;
+
+%% Fit with regular lasso
 fitFn = @(X,y,lambda) linregFitL1InteriorPoint(X,y,  lambda); %5sec
 %fitFn = @(X,y,lambda) linregFitL1Shooting(X,y,  lambda); %30sec
 %fitFn = @(X,y,lambda) linregFitL1LarsSingleLambda(X,y,  lambda);
-tic
-[wHatLasso] = fitCv(lambdas, fitFn, predictFn, lossFn, Xtrain, ytrain,  Nfolds, useSErule);
-toc
+[wHatLasso] = fitCv(lambdasL1, fitFn, predictFn, lossFn, Xtrain, ytrain,  Nfolds, useSErule);
 
 
-% Fit with group lasso
-maxLambda = groupLassoMaxLambda(groups, Xtrain, ytrain);
-lambdas = linspace(maxLambda, 0, 100);
+%% Fit with group lasso
 fitFn = @(X,y,lambda) linregFitGroupLassoProj(X,y, groups, lambda);
-tic
-[wHatGroup] = fitCv(lambdas, fitFn, predictFn, lossFn, Xtrain, ytrain,  Nfolds, useSErule);
-toc
+[wHatGroup] = fitCv(lambdasGL1, fitFn, predictFn, lossFn, Xtrain, ytrain,  Nfolds, useSErule);
 
 
 
-% Plot
+%% Plot
 figure; stem(wTrue); title('truth');  drawGroups(nStates, wTrue);
 printPmtkFigure('groupLassoTruth')
 
@@ -106,9 +95,33 @@ printPmtkFigure('groupLassoGroup')
 figure; stem(wHatLasso); title('lasso'); drawGroups(nStates, wTrue);
 printPmtkFigure('groupLassoVanilla')
 
+
+%% EM version
+
+if 1
+% Fit with EM version of Lasso
+shape = 1;
+sigma = 1; % not fixing this causes numerical problems...
+fitFn = @(X, y, lambda) linregFitSparseEm(X, y, 'laplace', lambda, shape, sigma);
+[wHatLassoEm] = fitCv(lambdasL1, fitFn, predictFn, lossFn, Xtrain, ytrain, Nfolds, useSErule);
+
+
+
 figure; stem(wHatLassoEm); title('lassoEm'); drawGroups(nStates, wTrue);
 printPmtkFigure('groupLassoVanillaEm')
 
+
+% Fit with EM version of group Lasso
+sigma = 1; % not fixing this causes numerical problems...
+fitFn = @(X, y, lambda) linregFitGroupLassoEm(X, y, groups, lambda, sigma);
+[wHatGroupEm] = fitCv(lambdasL1, fitFn, predictFn, lossFn, Xtrain, ytrain, Nfolds, useSErule);
+
+
+figure; stem(wHatGroupEm); title('groupLassoEm'); drawGroups(nStates, wTrue);
+printPmtkFigure('groupLassoGroupEm')
+
+
+end
 
 placeFigures
 end

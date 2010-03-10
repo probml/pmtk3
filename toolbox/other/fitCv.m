@@ -31,6 +31,16 @@ if size(params, 1)==1
     params = params(:);
 end
 NM = size(params,1);
+
+if NM==1 % single param
+   model  = fitFn(X, y, params(1,:));
+   yhat = predictFn(model, X);
+   mu = lossFn(y, yhat);
+   se = 0;
+   bestParam = params(1,:);
+   return;
+end
+
 mu = zeros(1,NM);
 se = zeros(1,NM);
 w = waitbar(0,'Cross Validating'); % works in Octave
