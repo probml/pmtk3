@@ -7,4 +7,3 @@ lossFn = @(y, yhat)mean(y~=yhat);
     (sigmaRange, @svmlightFit, @svmLightPredict, lossFn, X, y, nfolds);
 end
 
-%% SVM
