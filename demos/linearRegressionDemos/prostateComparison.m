@@ -20,17 +20,18 @@ fitFns        = {@(X, y, lambda)linregFitL1(X, y, lambda, 'lars', standardizeDat
                 
 predictFn     =  @linregPredict;
 lossFn        =  @(yhat, ytest)mean((yhat - ytest).^2);
-lambdas       =  logspace(2, 0, 30);
+lambdas       =  [logspace(2, -2, 20) 0]; % most constrained to least
 figureNames   = {'prostateLassoCV', 'prostateRidgeCV'};
 titlePrefixes = {'lasso', 'ridge'};
 nfolds = 10;
-useLogScale = true; 
+useLogScale = false;  % true; 
 
 for i=1:numel(fitFns);
     [model, lambdaStar, mu, se] = ...
         fitCv(lambdas, fitFns{i}, predictFn, lossFn, data.Xtrain, data.ytrain, nfolds);
     figure;
-    plotCVcurve(lambdas(end:-1:1), mu, se, lambdaStar, useLogScale); 
+    %plotCVcurve(lambdas(end:-1:1), mu, se, lambdaStar, useLogScale);
+    plotCVcurve(lambdas, mu, se, lambdaStar, useLogScale);
     xlabel('lambda value');
     yhat = linregPredict(model, data.Xtest); 
     mse(i) = lossFn(yhat, data.ytest);

@@ -40,6 +40,7 @@ else
     mu = cvMeanErrors; 
     if(isequal(logspace(log10(min(mu(:, 1))), log10(max(mu(:, 1))),nunique(mu(:, 1)))',unique(mu(:, 1))))
       set(gca,'Xscale','log');
+      fprintf('setting scale to log\n');
     end
 
 end
