@@ -54,9 +54,10 @@ while ~done
    muOld = mu;
    SigmaOld = Sigma;
    mu = sum(expVals,2)/n;
+   Sigma = sum(expProd,3)/n - mu*mu';
    % Compute ESS = 1/n sum_i E[ (x_i-mu) (x_i-mu)' ] using *new* value of mu
-   ESS = sum(expProd,3) + n*mu*mu'- 2*sum(expVals,2)*mu' ;
-   Sigma = ESS/n;
+   %ESS = sum(expProd,3) + n*mu*mu'- 2*sum(expVals,2)*mu' ;
+   %Sigma = ESS/n;
    
    if(det(Sigma) <= 0)
       warning('Warning: Obtained Nonsingular Sigma.  Exiting with last reasonable parameters')
