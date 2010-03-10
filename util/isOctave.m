@@ -1,5 +1,4 @@
-function b = isOctave()
+function answer = isOctave()
 % Return true if this function is run on Octave, otherwise false.     
-     v = ver();
-     b = isequal(v(1).Name,'Octave');
+    answer = ~isSubstring('MATLAB', matlabroot); 
 end

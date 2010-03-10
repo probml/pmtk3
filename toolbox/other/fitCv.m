@@ -33,10 +33,13 @@ end
 NM = size(params,1);
 mu = zeros(1,NM);
 se = zeros(1,NM);
+w = waitbar(0, 'Starting Cross Validation'); % works in Octave
 for m=1:NM
     param = unwrapCell(params(m, :));
     [mu(m), se(m)] =  cvEstimate(@(X, y) fitFn(X, y, param), predictFn, lossFn, X, y,  Nfolds);
+    waitbar(m/NM, w, 'Cross Validating');
 end
+if ~isOctave(), close(w); end
 if useSErule
     bestNdx = oneStdErrorRule(mu, se);
 else
