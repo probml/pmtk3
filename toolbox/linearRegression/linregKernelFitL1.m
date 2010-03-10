@@ -6,7 +6,7 @@ end
 
 X = mkUnitVariance(center(X)); % important for kernel performance
 K = kernelBasis(X, X, kernelType, kernelParam);
-model = linregFitL1(K, y, lambda, 'lars', false);
+model = linregFitL1(K, y, lambda, 'interiorpoint', false);
 model.basis = X;
 model.kernelType = kernelType;
 model.kernelParam = kernelParam;
