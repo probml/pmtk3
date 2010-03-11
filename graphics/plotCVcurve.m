@@ -32,11 +32,15 @@ else
     ylabel('CV error'); 
     box on; 
     axis tight;
+    ylimits = get(gca, 'ylim'); 
+    ylimits(1) = ylimits(1) - 0.1*diff(ylimits); 
+    ylimits(2) = ylimits(2) + 0.1*diff(ylimits); 
+    set(gca, 'ylim', ylimits); 
     hline = verticalLine(lambdaBest, 'Color', colors{3},...
         'LineWidth', 2, 'LineStyle', '--');
     uistack(hline, 'bottom')
-    legend(hline, sprintf('%.2f', lambdaBest), 'Location', 'best');
-   
+    %legend(hline, sprintf('%.2f', lambdaBest));
+    title(sprintf('selected value: %.2f', lambdaBest)); 
 
 end
 

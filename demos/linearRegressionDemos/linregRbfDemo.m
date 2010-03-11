@@ -10,10 +10,11 @@ centers = linspace(min(xtrain), max(xtrain), K)';
 figure; hold on
 for i=1:length(sigmas)
     sigma = sigmas(i);
-    Xtrain = rbfKernel(xtrain(:), centers, sigma);
-    Xtest = rbfKernel(xtest(:), centers, sigma);
-    model = linregFitL2(Xtrain, ytrain, lambda, 'QR', false);
-    ypred = linregPredict(model, Xtest);
+    
+    model = linregFit(xtrain, ytrain, ...
+        'kernelFn', @rbfKernel, 'kernelParam', sigma,...
+        'lambda', lambda, 'fitMethod', 'QR','standardizeX',  false);
+    ypred = linregPredict(model, xtest);
     
     subplot2(3,3,i,1)
     scatter(xtrain,ytrain,'b','filled');
@@ -27,9 +28,9 @@ for i=1:length(sigmas)
         plot(xtest, Xtest(:,j)); hold on
     end
     title(sprintf('RBF, sigma %f', sigma))
-
+    XtrainRBF = rbfKernel(xtrain(:), centers, sigma);
     subplot2(3,3,i,3)
-    imagesc(Xtrain); colormap('gray')
+    imagesc(XtrainRBF); colormap('gray')
     title(sprintf('RBF, sigma %f', sigma))
     
 end

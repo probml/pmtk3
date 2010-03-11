@@ -2,43 +2,41 @@ function prostateComparison()
 %% Compare L1, L2, allSubsets, and OLS linear regression on the prostate data set
 % Reproduced table 3.3 and fig 3.7 on p63 of "Elements of statistical learning" 2e
 
-
-saveLatex = false;
+warning('off', 'MATLAB:Axes:NegativeDataInLogAxis');
 setSeed(1);
-mse = zeros(4, 1); 
-weights = zeros(9, 4);
-
+saveLatex = false;
 data = load('prostate.mat');
-data.X = mkUnitVariance(center(data.X));
-%data.y = center(data.y);
-data.Xtrain = data.X(data.istrain, :); 
-data.Xtest  = data.X(~data.istrain, :);
-standardizeData  = false; % no need to do this inside CV
+[Xtrain, ytrain] = shuffleRows(data.Xtrain, data.ytrain);  % there is an ordering effect
 
-fitFns        = {@(X, y, lambda)linregFitL1(X, y, lambda, 'lars', standardizeData), ...
-                 @(X, y, lambda)linregFitL2(X, y, lambda, 'QR', standardizeData)};
-                
-predictFn     =  @linregPredict;
-lossFn        =  @(yhat, ytest)mean((yhat - ytest).^2);
-lambdas       =  [logspace(2, -2, 20) 0]; % most constrained to least
+Xtest   = data.Xtest;   
+ytest  = data.ytest;
+nfolds = 10;
+%%
+
+maxLambda    =  log10(lambdaMaxLasso(Xtrain, ytrain));
+lambdaRange  =  logspace(-2, maxLambda, 20); 
+
+fit = @(regType)linregFit(Xtrain, ytrain,'lambda',...
+      lambdaRange, 'regType', regType, 'doPlot', true, 'nfolds', nfolds);
+
+loss = @(yhat, ytest) mean((yhat - ytest).^2);                 
 figureNames   = {'prostateLassoCV', 'prostateRidgeCV'};
 titlePrefixes = {'lasso', 'ridge'};
-nfolds = 10;
-useLogScale = false;  % true; 
+regTypes = {'L1', 'L2'};
 
-for i=1:numel(fitFns);
-    [model, lambdaStar, mu, se] = ...
-        fitCv(lambdas, fitFns{i}, predictFn, lossFn, data.Xtrain, data.ytrain, nfolds);
-    figure;
-    %plotCVcurve(lambdas(end:-1:1), mu, se, lambdaStar, useLogScale);
-    plotCVcurve(lambdas, mu, se, lambdaStar, useLogScale);
+for i=1:numel(regTypes)
+   [model, lambdaStar, mu, se] = fit(regTypes{i});  
+    set(gca, 'xdir', 'reverse');
+    set(gca, 'xscale', 'log'); 
     xlabel('lambda value');
-    yhat = linregPredict(model, data.Xtest); 
-    mse(i) = lossFn(yhat, data.ytest);
+    yhat = linregPredict(model, Xtest); 
+    mse(i) = loss(yhat, ytest);
     title(sprintf('%s, mseTest = %5.3f', titlePrefixes{i}, mse(i)));
     printPmtkFigure(figureNames{i});
     weights(:, i) = [model.w0; colvec(model.w)]; 
 end
+
+
 %% All subsets
     function model = fitFn(X, y, ndx)    
        [N,D] = size(X);
@@ -46,19 +44,19 @@ end
        exclude = setdiff(1:D, include);
        X(:, exclude) = 0;
        lambda = eps; % needed to avoid numerical issues caused by 0 entries in X
-       model = linregFitL2(X, y, lambda, 'QR', false); 
+       model = linregFit(X, y, 'lambda', lambda); 
     end
 %%    
 d = size(data.Xtrain, 2); 
 ss = powerset(1:d); % 256 models
 [modelFull, ssStarFull] = ...
-        fitCv(ss, @fitFn, predictFn, lossFn, data.Xtrain, data.ytrain, nfolds);
+        fitCv(ss, @fitFn, @linregPredict, loss, Xtrain, ytrain, nfolds);
 
 
 %% for plotting purposes, look at fewer subsets
 ssSmall = {[], 1, 1:2, 1:3, 1:4, 1:5, 1:6, 1:7, 1:8};
 [model, ssStar, mu, se] = ...
-        fitCv(ssSmall, @fitFn, predictFn, lossFn, data.Xtrain, data.ytrain, nfolds);
+        fitCv(ssSmall, @fitFn, @linregPredict, loss, Xtrain, ytrain, nfolds);
 
 ssStarNdx = cellfind(ssSmall, ssStar) - 1;
 useLogScale = false; 
@@ -66,7 +64,7 @@ figure;
 plotCVcurve(0:8, mu, se, ssStarNdx, useLogScale); % plot w.r.t to subset sizes
 xlabel('subset size');
 yhat = linregPredict(modelFull, data.Xtest); 
-mse(3) = lossFn(yhat, data.ytest);
+mse(3) = loss(yhat, data.ytest);
 t = {  sprintf('%s, mseTest = %5.3f', 'all subsets', mse(3)); 
        ['best subset = ', mat2str(ssStarFull)]
     };
@@ -75,10 +73,10 @@ printPmtkFigure('prostateSubsetsCV');
 
 weights(:, 3) = [modelFull.w0; colvec(modelFull.w)];
 %% OLS
-model = linregFit(data.Xtrain, data.ytrain);
+model = linregFit(data.Xtrain, data.ytrain, 'lambda', 0);
 weights(:, 4) = [model.w0; colvec(model.w)];
 yhat = linregPredict(model, data.Xtest);
-mse(4) = lossFn(yhat, data.ytest); 
+mse(4) = loss(yhat, data.ytest); 
 %%
 fprintf('| OLS | SS | L2 | L1 |\n');
 fprintf('weights: \n');

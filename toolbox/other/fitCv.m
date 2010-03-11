@@ -21,6 +21,8 @@ function [model, bestParam, mu, se] = fitCv(params, fitFn, predictFn, lossFn, X,
 % bestNdx - index of best model
 % mu(i) - mean loss for params(i,:)
 % se(i) - standard error for mu(i,:)
+
+
 wstate = warning('query', 'MATLAB:nearlySingularMatrix');
 warning('off', 'MATLAB:nearlySingularMatrix');
 if nargin < 8, useSErule = false; end
