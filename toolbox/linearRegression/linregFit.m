@@ -101,6 +101,8 @@ if ~isempty(kernelFn) && isempty(kernelParam)
     switch func2str(kernelFn)
         case 'rbfKernel'
             kernelParam = logspace(-1, 1, nkernelParams);
+        case 'kernelPoly', 
+            kernelParam = 1:nkernelParams;
         otherwise
             kernelParam = logspace(-1, 1, nkernelParams);
     end
