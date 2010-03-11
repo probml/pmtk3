@@ -9,6 +9,6 @@ ypm = sign(y01-0.5);
 
 lambda = 0;
 
-model1 = logregFitL2(X, y01, lambda);
+model1 = logregFit(X, y01, 'lambda', lambda, 'standardizeX', false);
 model2 = logregBinaryFitL2IRLS(X, y01,lambda);
 assert(approxeq(model1.w, model2.w))

@@ -1,4 +1,4 @@
-function [nll,g,H] = LogisticLossSimple(w,X,y)
+function [nll,g,H] = LogisticLossSimple(w,X,y,k)
 % Negative log likelihood for binary logistic regression
 % w: d*1
 % X: n*d

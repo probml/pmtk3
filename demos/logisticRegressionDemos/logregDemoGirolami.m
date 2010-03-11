@@ -38,22 +38,22 @@ for i = 1:Polynomial_Order
 end
 [N,D] = size(XtrainPoly);
 
-model = logregFitL2(XtrainPoly,ytrain, lambda, false);
+model = logregFit(XtrainPoly,ytrain,'lambda', lambda,'standardizeX', false);
 wMAP = model.w;
-fn = @(w)LogisticLossSimple(w, XtrainPoly, ytrain); 
+fn = @(w)LogisticLossSimple(w, addOnes(XtrainPoly), ytrain); 
 [f,g,H] = penalizedL2(wMAP, fn, lambda);
 C = inv(H);
 %[wMAP, C] = logregFitFminunc(ytrain, XtrainPoly, lambda);
 
-[trainPredProb, trainPredLabels] = logregPredict(model, XtrainPoly);
-[testPredProb, testPredLabels] = logregPredict(model, XtestPoly);
+[trainPredLabels] = logregPredict(model, XtrainPoly);
+[testPredLabels] = logregPredict(model, XtestPoly);
 fprintf('\n\n 0-1 error using MAP Value\n');
 Train_Error = 100 - 100*sum(trainPredLabels == ytrain)/Ntrain
 Test_Error = 100 - 100*sum(testPredLabels == ytest)/Ntest
 
 % plot the data points and show the contour of P(C=1|x)
 subplot2(2,2,trial,1)
-Posterior = 1./(1+exp(-gridPoly*wMAP));
+Posterior = 1./(1+exp(-addOnes(gridPoly)*wMAP));
 contour(xs,ys,reshape(Posterior,[ngrid,ngrid]));
 hold on
 plot(Xtrain(find(ytrain==1),1), Xtrain(find(ytrain==1),2),'r.');

@@ -14,7 +14,8 @@ setSeed(0);
 X = zeros(N, 2);
 z = sampleDiscrete(pi, 1, N);
 for c=1:3
-    model = struct('mu', mus(c, :), 'Sigma', sigma*eye(2));
+    model.mu = mus(c, :); 
+    model.Sigma = sigma*eye(2); 
     X(z==c, :) = gaussSample(model, sum(z==c));
 end
 labels = z;
@@ -22,8 +23,8 @@ labels(labels==3) = 2; % merge 2 and 3
 %% Map to RBF basis
 Gtrain = rbfKernel(X, centres, sigmaRbf); % gram matrix
 %% Fit in transformed space
-y = labels; 
-model = logregFitL2(Gtrain, y, lambda, addOnes);
+y = labels'; 
+model = logregFit(Gtrain, y, 'lambda',  lambda);
 %% Plot in the original space
 plotDecisionBoundary(X, y, @(Xtest)logregPredict(model, rbfKernel(Xtest, centres, sigmaRbf)));
 hold on; axis square

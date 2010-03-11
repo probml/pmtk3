@@ -7,7 +7,7 @@ includeOffset = true;
 nfolds = 5;
 %fitArgs = {@penalizedL2,  lambdaRange, includeOffset, nfolds};
 fitArgs = {[],  lambdaRange, includeOffset, nfolds};
-mlcompCompiler('logregFitCV', 'logregPredict', tmpFolder, fitArgs);
+mlcompCompiler('logregFit', 'logregPredict', tmpFolder, fitArgs);
 
 %% Now convert data
 dataFile = fullfile(tmpFolder, 'satData-mlcomp.txt');

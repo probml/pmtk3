@@ -2,8 +2,8 @@ function prostateComparison()
 %% Compare L1, L2, allSubsets, and OLS linear regression on the prostate data set
 % Reproduced table 3.3 and fig 3.7 on p63 of "Elements of statistical learning" 2e
 
-warning('off', 'MATLAB:Axes:NegativeDataInLogAxis');
-setSeed(1);
+
+setSeed(0);
 saveLatex = false;
 data = load('prostate.mat');
 [Xtrain, ytrain] = shuffleRows(data.Xtrain, data.ytrain);  % there is an ordering effect

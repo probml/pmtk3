@@ -1,3 +1,5 @@
+%% Simple tests of logregFit
+%PMTKslow
 load crabs
 %%
 model = logregFit(Xtrain, ytrain, 'lambda', 0);
@@ -8,16 +10,12 @@ model = logregFit(Xtrain, ytrain);
 yhat  = logregPredict(model, Xtest);
 nerr  = sum(yhat ~= ytest)
 %%
-model = logregFit(Xtrain, ytrain, 'regType', 'L1');
-yhat  = logregPredict(model, Xtest);
-nerr  = sum(yhat ~= ytest)
-%%
 model = logregFit(Xtrain, ytrain, 'regType', 'L1', 'fitMethod', 'minfunc');
 yhat  = logregPredict(model, Xtest);
 nerr  = sum(yhat ~= ytest)
 %%
 [model,bestParams] = logregFit(Xtrain, ytrain, 'regType', 'L1',... 
-        'kernelFn', @rbfKernel, 'nlambdas', 3, 'nkernelParams', 3, 'fitMethod', 'grafting');
+        'kernelFn', @rbfKernel, 'nlambdas', 3, 'nkernelParams', 3);
 yhat  = logregPredict(model, Xtest);
 nerr  = sum(yhat ~= ytest) 
 %%

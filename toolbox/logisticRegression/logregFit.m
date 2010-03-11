@@ -93,7 +93,7 @@ switch lower(fitMethod)
     case 'minfunc'
         switch lower(regType)
             case 'l1' % smooth approximation
-                fitCore = @(X,y,winit,l)minFunc(@penalizedL1, winit(:),opts, @(w)objective(w, X, y), l(:));
+                fitCore = @(X,y,winit,l)minFunc(@penalizedL1, winit(:),opts, @(w)objective(w, X, y, nclasses), l(:));
             case 'l2'
                 fitCore = @(X,y,winit,l)minFunc(@penalizedL2, winit(:),opts, @(w)objective(w, X, y, nclasses), l(:));
         end
@@ -101,6 +101,7 @@ switch lower(fitMethod)
         fitCore = @(X,y,winit,l)L1GeneralProjection(objective, winit(:), l, opts, X, y);
     case 'grafting'
         fitCore = @(X,y,winit,l)L1GeneralGrafting(objective, winit(:), l, opts, X, y);
+    otherwise
         error('unrecognized fitMethod: %s', fitMethod);
 end
 if isempty(kernelFn)
