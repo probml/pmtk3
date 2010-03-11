@@ -4,11 +4,9 @@ function logregXorDemo()
 % not. 
     
     [X, y] = createXORdata();
-    Y1tok = canonizeLabels(y,0:1);
     lambda = 1e-2;
-    addOnes = true;
     %% Linear Features
-    model = logregFitL2(X, Y1tok, lambda, addOnes);
+    model = logregFit(X, y, 'lambda', lambda);
     yhat = logregPredict(model, X);
     errorRate = mean(yhat ~= y);
     fprintf('Error rate using raw features: %2.f%%\n', 100*errorRate);
@@ -17,16 +15,12 @@ function logregXorDemo()
     
     %% RBF Features
     rbfScale = 1;
-    Krbf = rbfKernel(X, X, rbfScale); 
-    model = logregFitL2(Krbf, y, lambda, addOnes);
-    yhat = logregPredict(model, Krbf);
+    model = logregFit(X, y, 'lambda', lambda, 'kernelFn', @rbfKernel, 'kernelParam', rbfScale);
+    yhat = logregPredict(model, X);
     errorRate = mean(yhat ~= y);
     fprintf('Error rate using RBF features: %2.f%%\n', 100*errorRate);
-    predictFcn = @(Xtest) logregPredict(model, rbfKernel(Xtest, X, rbfScale)); 
+    predictFcn = @(Xtest)logregPredict(model, Xtest); 
     plotDecisionBoundary(X, y, predictFcn);
     printPmtkFigure('logregXorRbf')
-    
-    
-    
     
 end
