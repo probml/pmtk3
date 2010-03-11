@@ -1,6 +1,6 @@
 function [model, varargout] = logregFit(X, y, varargin)
-% Fit a logistic regression model, (support multiclass)
-%% INPUTS:
+% Fit a logistic regression model, (supports multiclass)
+%% INPUTS: (specified as name value pairs)
 % regType       ... L1 or L2
 % lambda        ... regularizer (can be a range tuned via cv)
 % kernelFn      ... @(X, X1, kernelParam)
@@ -72,12 +72,11 @@ if rescaleX
     pre.Xscale = scaleXrange;
 end
 %%
-
 if isbinary
     [y, ySupport] = setSupport(y, [-1 1]);
     objective = @LogisticLossSimple;
 else
-    [y, ySupport] = setSupport(y, 1:Nclasses);
+    [y, ySupport] = setSupport(y, 1:nclasses);
     objective = @SoftmaxLoss2;
 end
 
@@ -96,13 +95,12 @@ switch lower(fitMethod)
             case 'l1' % smooth approximation
                 fitCore = @(X,y,winit,l)minFunc(@penalizedL1, winit(:),opts, @(w)objective(w, X, y), l(:));
             case 'l2'
-                fitCore = @(X,y,winit,l)minFunc(@penalizedL2, winit(:),opts, @(w)objective(w, X, y), l(:));
+                fitCore = @(X,y,winit,l)minFunc(@penalizedL2, winit(:),opts, @(w)objective(w, X, y, nclasses), l(:));
         end
     case 'l1projection'
         fitCore = @(X,y,winit,l)L1GeneralProjection(objective, winit(:), l, opts, X, y);
     case 'grafting'
         fitCore = @(X,y,winit,l)L1GeneralGrafting(objective, winit(:), l, opts, X, y);
-    otherwise
         error('unrecognized fitMethod: %s', fitMethod);
 end
 if isempty(kernelFn)
@@ -155,7 +153,7 @@ lambda(1, :) = 0; % Don't penalize bias term
 winit  = zeros(d, nclasses-1);
 w = fitFn(X, y, winit, lambda);
 if ~isbinary
-    w = [reshape(w, [d Nclasses-1]) zeros(d, 1)];
+    w = [reshape(w, [d nclasses-1]) zeros(d, 1)];
 end
 model.w = w;
 model.binary = isbinary;
