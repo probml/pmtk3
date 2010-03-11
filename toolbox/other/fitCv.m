@@ -27,7 +27,7 @@ if nargin < 8, useSErule = false; end
 if nargin < 9, doPlot = false; end
 % if params is 1 row vector, it is a probbaly a set of
 % single tuning params
-if size(params, 1)==1
+if size(params, 1)==1 && size(params, 2) > 3
     %warning('fitCV expects each *row* of Ks to containg tuning params')
     params = params(:);
 end
