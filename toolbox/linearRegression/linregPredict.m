@@ -5,15 +5,17 @@ function [yhat, v] = linregPredict(model, X)
 
 % Transform the test data in the same way as the training data
 if isfield(model, 'Xmu')
-    [X] = center(X, model.Xmu);
+    X = center(X, model.Xmu);
 end
 if isfield(model, 'Xstnd')
-    [X] = mkUnitVariance(X, model.Xstnd);
+    X = mkUnitVariance(X, model.Xstnd);
+end
+if isfield(model, 'Xscale')
+    X = rescaleData(X, model.Xscale(1), model.Xscale(2));
 end
 
-if isfield(model, 'kernelType')
-    X = mkUnitVariance(center(X)); % important for kernel performance
-    X = kernelBasis(X, model.basis, model.kernelType, model.kernelParam);
+if isfield(model, 'kernelFn')
+    X = model.kernelFn(X, model.basis, model.kernelParam);
 end
 
 yhat = X*model.w;

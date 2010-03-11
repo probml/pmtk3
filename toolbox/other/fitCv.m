@@ -21,7 +21,8 @@ function [model, bestParam, mu, se] = fitCv(params, fitFn, predictFn, lossFn, X,
 % bestNdx - index of best model
 % mu(i) - mean loss for params(i,:)
 % se(i) - standard error for mu(i,:)
-
+wstate = warning('query', 'MATLAB:nearlySingularMatrix');
+warning('off', 'MATLAB:nearlySingularMatrix');
 if nargin < 8, useSErule = false; end
 if nargin < 9, doPlot = false; end
 % if params is 1 row vector, it is a probbaly a set of
@@ -32,12 +33,12 @@ if size(params, 1)==1
 end
 NM = size(params,1);
 
-if NM==1 && nargout<=2 % single param
+if NM==1  % single param
    model  = fitFn(X, y, params(1,:));
    bestParam = params(1,:);
+   mu = NaN;    se = NaN; 
    return;
-   % if you ask for mu, you still need to run cvEstimate
-   % to estimate te gneralization error for this 1 model
+ 
 end
 
 mu = zeros(1,NM);
@@ -63,8 +64,10 @@ if doPlot
    end
    switch numel(bestParam)
        case 1
+           figure;
            plotCVcurve(params, mu, se, bestParam);
        case 2
+           figure;
            plotCVgrid(params, mu, bestParam); 
        otherwise
             error('Plotting is only supported in 1D or 2D'); 
@@ -73,5 +76,7 @@ if doPlot
    
 end
 
-
+if strcmp(wstate.state, 'on')
+    warning('on', 'MATLAB:nearlySingularMatrix');
+end
 end

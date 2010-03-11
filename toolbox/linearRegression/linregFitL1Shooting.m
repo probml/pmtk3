@@ -5,8 +5,8 @@ function w = linregFitL1Shooting(X, y, lambda)
 if lambda==0, w = X\y; return; end
 
  % initialize with ridge estimate
-initModel = linregFitL2(X, y, lambda);
-w = initModel.w;
+w = linregFitL2QR(X, y, lambda);
+
 
 XX2 = X'*X*2;
 Xy2 = X'*y*2;
