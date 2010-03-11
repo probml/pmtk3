@@ -13,7 +13,7 @@ lambdas = [0 0.00001 0.001];
 NL = length(lambdas);
 for k=1:NL
     lambda = lambdas(k);
-    [model] = linregFitL2(Xtrain, ytrain, lambda, 'QR', false);
+    [model] = linregFit(Xtrain, ytrain, 'lambda', lambda, 'fitMethod', 'QR', 'standardizeX', false);
     [ypredTest, s2] = linregPredict(model, Xtest);
     sig = sqrt(s2);
     
@@ -32,7 +32,7 @@ NL = length(lambdas);
  testMse = zeros(1,NL); trainMse = zeros(1,NL);
 for k=1:NL
     lambda = lambdas(k);
-    [model] = linregFitL2(Xtrain, ytrain, lambda, 'QR', false);
+    [model] = linregFit(Xtrain, ytrain, 'lambda', lambda, 'fitMethod', 'QR', 'standardizeX', false);
     ypredTest = linregPredict(model, Xtest);
     ypredTrain = linregPredict(model, Xtrain);
 

@@ -1,4 +1,4 @@
-function [model, loglikHist] = mixGaussMissingFitEm(data, K, varargin)
+function [model, loglikHist] = mixGaussMissingFitEmHannes(data, K, varargin)
 % EM for fitting mixture of K gaussians with missing data
 % data(i,:) is i'th case
 % model is a structure containing these fields:

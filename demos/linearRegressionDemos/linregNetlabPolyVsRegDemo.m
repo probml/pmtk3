@@ -21,10 +21,10 @@ Xtrain = degexpand(Xtrain, deg, false);
 [Xtest] = rescaleData(xtest);
 Xtest = degexpand(Xtest, deg, false);
 
-modelLS = linregFit(Xtrain,ytrain);
+modelLS = linregFit(Xtrain,ytrain, 'lambda', 0);
 fprintf('%5.3f, ', modelLS.w); fprintf('\n');
 
-modelRidge = linregFitL2(Xtrain, ytrain, 1e-3)
+modelRidge = linregFit(Xtrain, ytrain,'lambda',  1e-3)
 fprintf('%5.3f, ', modelRidge.w); fprintf('\n');
 
 

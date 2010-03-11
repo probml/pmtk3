@@ -10,9 +10,9 @@ D=50; % dinensionality
 rho=.5;
 correl=zeros(D,D);
 for i=1:D
-   for j=1:D
-       correl(i,j)=rho^(abs(i-j));
-   end
+    for j=1:D
+        correl(i,j)=rho^(abs(i-j));
+    end
 end
 X=randn(N,D)*chol(correl);
 % true weight vector has 3 non zero components
@@ -28,13 +28,13 @@ doPlot(w_true, w_true, 'true')
 lambda = 10;
 methods = {'shooting', 'em', 'lars', 'interiorPoint'};
 for i=1:length(methods)
-  method = methods{i};
-  model{i} = linregFitL1(X, y, lambda, method);
-  if i > 1
-    assert(approxeq(model{i}.w, model{1}.w, 1e-1))
-  end
-  subplot(nr, nc, i+1)
-  doPlot(model{i}.w, w_true, method)
+    method = methods{i};
+    model{i} = linregFit(X, y, 'lambda', lambda,'regType', 'L1', 'FitMethod', method);
+    if i > 1
+        assert(approxeq(model{i}.w, model{1}.w, 1e-1))
+    end
+    subplot(nr, nc, i+1)
+    doPlot(model{i}.w, w_true, method)
 end
 
 

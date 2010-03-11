@@ -134,6 +134,10 @@ nfolds = min(size(X, 1), nfolds);
 fitCv(paramRange, fitfn, @linregPredict, lossFn, X, y, nfolds, useSErule, doPlot);
 
 model = catstruct(model, pre);  % add preprocessor info to model
+%%
+yhat = linregPredict(model, X);
+model.sigma2 = var((yhat - y).^2); % MLE
+
 end % end of main function
 
 
