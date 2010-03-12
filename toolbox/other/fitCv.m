@@ -38,6 +38,7 @@ NM = size(params,1);
 if NM==1  % single param
    model  = fitFn(X, y, params(1,:));
    bestParam = params(1,:);
+   % use cvEstimate to estimate generalization error of a single model
    mu = NaN;    se = NaN; 
    return;
  

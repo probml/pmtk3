@@ -6,8 +6,8 @@ function [ w, loglik ] = linregSparseScadFit( X, y, lambda, varargin )
    'maxIter', 100, 'convTol', 1e-3, 'alpha', 3.7);
 
 % Initialize with Lasso
-model = linregFit(X, y, 'regType', 'L1', 'lambda', lambda, 'fitMethod', 'interiorpoint');
-w = model.w;
+w = linregFitL1InteriorPoint(X, y, lambda);
+
 
 iter = 1;
 done = false;

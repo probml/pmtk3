@@ -10,7 +10,7 @@ function [model, varargout] = linregFit(X, y, varargin)
 % standardizeX  ... if true, call mkUnitVariance(center(X))
 % rescaleX      ... if true, call rescaleData(X, scaleXrange(1), scaleXrange(2))         
 % scaleXrange   ... [minX, maxX], e.g. [-1 1] 
-% nregParams    ... number of auto-generated regularizer params to cv over
+% nlambdas      ... number of auto-generated regularizer params to cv over
 % nkernelParams ... number of auto-generated kernel params to cv over
 % nfolds        ... number of folds in the cross validation
 % useSErule     ... if true, pick simplest model within one stderr of best
@@ -117,7 +117,7 @@ if isempty(lambda)
             lambdaMax = lambdaMaxLasso(K, center(y)); 
             lambda = linspace(1e-5, lambdaMax, nlambdas); 
         case 'l2'
-            lambda = linspace(1e-5, 20, nlambdas); 
+            lambda = linspace(1e-5, 200, nlambdas); 
     end
 end
 

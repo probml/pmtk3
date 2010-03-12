@@ -1,3 +1,5 @@
+function linregSparseEmSynthDemo()
+
 % Sparse linear regression with EM on synthetic data
 % Similar to fig 8 from "Sparse Bayesian nonparametric regression",
 % Caron and Doucet, ICML08
@@ -20,7 +22,7 @@ sparsities = [0.05];
 for sparsityNdx=1:length(sparsities)
    sparsity = sparsities(sparsityNdx);
    
-for trial=1:5
+for trial=1:2
    nnz = ceil(D*sparsity);
    ndx = unidrnd(D,1,nnz);
    w_true = zeros(D,1);
@@ -41,48 +43,47 @@ for trial=1:5
    [Xtrain, mu] = center(Xtrain);
    Xtest = center(Xtest, mu);
    
-   priors = {'NEG', 'NG', 'NJ', 'Laplace', 'Ridge'}; 
+   priors = {'scad','NJ', 'Laplace', 'Ridge'}; 
+   %priors = {'scad', 'NEG', 'NG', 'NJ', 'Laplace', 'Ridge'}; 
+
    for m=1:length(priors)
+     useEM = false;
       prior = priors{m};
       switch lower(prior)
-        case 'nj'
-          scales = [1 1];
-          shapes = [1 1];
-          % these are dummy values, since NJ has no params
-         % Also, we use 2 values since fitCV converts
-         % a matrix of 1 row  to a column vector
-        case {'laplace','ridge'}
+        case {'ng', 'neg'}
           scales = [0.001 0.01 0.1 1 10];
-          shapes = 1;
-        case {'ng', 'neg'},
-         scales = [0.001 0.01 0.1 1 10];
-         shapes=[0.01 0.1 1];
+          shapes = [0.01 0.1 1];
+          [w, logPostTrace] = fitWithEmAndCV(prior, scales, shapes);
+          useEM = true;
+        case 'nj'
+          % no tuning parameters so no need for CV
+          options = {'maxIter', 30, 'verbose', true};
+          [w, logPostTrace] = linregFitSparseEm(Xtrain, ytrain,  'nj',  options{:});
+          useEM = true;
+        case 'scad'
+          [ w, logPostTrace] = linregSparseScadFit( Xtrain, ytrain, lambda, varargin );
+        case 'ridge'
+          % this will use CV to pick lambda
+          model = linregFit(Xtrain, ytrain, 'regType', 'L2');
+          w = model.w;
+        case 'laplace'
+          % this will use CV to pick lambda
+          model = linregFit(Xtrain, ytrain, 'regType', 'L1');
+          w = model.w;
+        otherwise
+          w = [];
       end
-      params = crossProduct(scales, shapes);
-      Nfolds=3;
-      useSErule = false;
-      options = {'maxIter', 15, 'verbose', false};
-      fitFn = @(X,y,ps) linregFitSparseEm(X,y, prior, 'shape', ps(1), 'scale', ps(2), ...
-        'sigma', sigmaTrue, options{:});
-      predictFn = @(w, X) X*w;
-      lossFn = @(yhat, y)  sum((yhat-y).^2);
-      [w, bestParams, mu, se] = fitCv(params, fitFn, predictFn, lossFn, Xtrain, ytrain,  Nfolds, useSErule);
       
-      % refit model more carefully with best params and all the data
-      scale = bestParams(1);
-      shape = bestParams(2);
-      options = {'maxIter', 30, 'verbose', true};
-      [w, sigmaHat, logpostTrace] = linregFitSparseEm(Xtrain, ytrain,  prior, scale, shape, sigmaTrue, options{:});
+     
       mse(m) = mean((ytest-Xtest*w).^2);
       mseTrial(trial,m) = mse(m);
       nnzTrial(trial,m) = sum(abs(w) > 1e-3);
       nnzTrue(trial) = nnz;
       weights{trial,m} = w;
       
-      if ~strcmpi(prior, 'ridge')
-        figure(m); clf; plot(logpostTrace, 'o-');
-        str = sprintf('%s, scale=%5.3f, shape=%5.3f\n',   prior, scale, shape);
-        title(sprintf('%s, trial %d, sparsity %5.3f', str, trial, sparsity))
+      if useEM
+        figure(m); clf; plot(logPostTrace, 'o-');
+        title(sprintf('%s, trial %d, sparsity %5.3f', prior, trial, sparsity))
       end
    end % for m
    
@@ -119,6 +120,24 @@ end
 
 %printPmtkFigure(sprintf('linregSparseEmSynthWeights%d',  sparsity*100))
  
-
-   
 end % sparsityNdx
+
+end
+
+function [w, logPostTrace] = fitWithEmAndCV(prior, scales, shapes)
+params = crossProduct(scales, shapes);
+Nfolds=3;
+useSErule = false;
+options = {'maxIter', 15, 'verbose', false};
+fitFn = @(X,y,ps) linregFitSparseEm(X,y, prior, 'shape', ps(1), 'scale', ps(2),options{:});
+predictFn = @(w, X) X*w;
+lossFn = @(yhat, y)  sum((yhat-y).^2);
+[w, bestParams, mu, se] = fitCv(params, fitFn, predictFn, lossFn, Xtrain, ytrain,  Nfolds, useSErule);
+
+% refit model more carefully with best params and all the data
+scale = bestParams(1);
+shape = bestParams(2);
+options = {'maxIter', 30, 'verbose', true};
+[w, sigma, logPostTrace] = ...
+  linregFitSparseEm(Xtrain, ytrain,  prior, 'shape', shape, 'scale', scale, options{:});
+end
