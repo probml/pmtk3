@@ -2,6 +2,7 @@ function [z, pz, ll] = mixGaussInfer(model, X)
 % z(i) = argmax_k p(z=k|X(i,:), model) hard clustering
 % pz(i,k) = p(z=k|X(i,:), model) soft responsibility
 % ll(i) = log p(X(i,:) | model)  logprob of observed data
+% This can handle NaNs in X
 
 K = model.K;
 N = size(X,1);
@@ -16,7 +17,4 @@ if nargout > 1
   [logPz, ll] = normalizeLogSpace(logPz);
   pz = exp(logPz);
 end
-
-
-
 end

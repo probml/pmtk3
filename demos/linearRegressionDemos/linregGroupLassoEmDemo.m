@@ -1,7 +1,6 @@
-function linregGroupLassoDemo()
+function linregGroupLassoEmDemo()
 
-% Demo of group lasso compared to vanilla lasso
-%PMTKauthor Mark Schmidt
+% Compare group lasso solved using EM and projected gradients
 
 setSeed(1);
 
@@ -56,42 +55,53 @@ for s = 1:length(nStates)
     groups(offset+1:offset+nStates(s),1) = s;
     offset = offset+nStates(s);
 end
-nGroups = max(groups);
 
-%% setup CV
-predictFn = @(w, X) X*w;
-lossFn = @(yhat, y)  sum((yhat-y).^2);
-useSErule = false;
-Nfolds = 3;
 
-maxLambda = lassoMaxLambda(Xtrain, ytrain);
-lambdasL1 = linspace(maxLambda, 0, 20);
-
-maxLambda = groupLassoMaxLambda(groups, Xtrain, ytrain);
-lambdasGL1 = linspace(maxLambda, 0, 20);
-
+lambdaL1 = 15;
+lambdaGL1 = lambdaL1;
 
 %% Fit 
-fitFn = @(X,y,lambda) linregFitL1InteriorPoint(X,y,  lambda); 
-[wHatLasso] = fitCv(lambdasL1, fitFn, predictFn, lossFn, Xtrain, ytrain,  Nfolds, useSErule);
+wHatLasso =  linregFitL1InteriorPoint(Xtrain, ytrain,  lambdaL1); 
 
-fitFn = @(X,y,lambda) linregFitGroupLassoProj(X,y, groups, lambda);
-[wHatGroup] = fitCv(lambdasGL1, fitFn, predictFn, lossFn, Xtrain, ytrain,  Nfolds, useSErule);
+wHatGroup =  linregFitGroupLassoProj(Xtrain, ytrain, groups, lambdaGL1);
 
+% Fit with EM 
+wHatLassoEmL = linregFitSparseEm(Xtrain, ytrain, 'laplace', 'lambda', lambdaL1);
+
+wHatLassoEmNG = linregFitSparseEm(Xtrain, ytrain, 'ng', 'shape', 1, 'scale', (0.5*lambdaL1)^2/2);
+
+
+wHatGroupEmGL = linregFitSparseEm(Xtrain, ytrain, 'groupLasso', 'lambda', (0.5*lambdaGL1), 'groups', groups);
+
+wHatGroupEmGNG = linregFitSparseEm(Xtrain, ytrain, 'gng', 'lambda', (0.5*lambdaGL1), 'groups', groups);
 
 %% Plot
-figure; stem(wTrue); title('truth');  drawGroups(nStates, wTrue);
-printPmtkFigure('groupLassoTruth')
 
-figure; stem(wHatGroup); title('group lasso'); drawGroups(nStates, wTrue);
-printPmtkFigure('groupLassoGroup')
 
 figure; stem(wHatLasso); title('lasso'); drawGroups(nStates, wTrue);
-printPmtkFigure('groupLassoVanilla')
+printPmtkFigure('groupLasso-LassoIP')
 
+figure; stem(wHatLassoEmL); title('lassoEmL'); drawGroups(nStates, wTrue);
+printPmtkFigure('groupLasso-LassoEmL')
+
+figure; stem(wHatLassoEmNG); title('lassoEmNG'); drawGroups(nStates, wTrue);
+printPmtkFigure('groupLasso-LassoEmNG')
+
+
+
+figure; stem(wHatGroup); title('group lasso'); drawGroups(nStates, wTrue);
+printPmtkFigure('groupLasso-GroupProj')
+
+figure; stem(wHatGroupEmGL); title('groupLassoEmGL'); drawGroups(nStates, wTrue);
+printPmtkFigure('groupLasso-GroupEmGL')
+
+figure; stem(wHatGroupEmGNG); title('groupLassoEmGNG'); drawGroups(nStates, wTrue);
+printPmtkFigure('groupLasso-GroupEmGNG')
+
+
+placeFigures
 
 end
-
 
 function drawGroups(nStates, wTrue)
 hold on

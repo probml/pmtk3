@@ -1,7 +1,6 @@
-function [Xc, V] = mixGaussImpute(model, X)
+function [Xc] = mixGaussImpute(model, X)
 % Fill in NaN entries of X using posterior mode on each row
 % Xc(i,j) = E[X(i,j) | D]
-% V(i,j) = Variance
 %PMTKauthor Hannes Bretschneider
 
 mixweight = model.mixweight;
@@ -27,7 +26,6 @@ for i=1:n
   end
   ri = normalize(ri);
   Xc(i, hidNodes) =  rowvec(ri * modelHgivenV.mu');
-  V(i, hidNodes) = rowvec(ri * modelHgivenV.Sigma');
 end
 end
 

@@ -84,9 +84,8 @@ switch lower(fitMethod)
     case 'interiorpoint' 
         fitCore = @(X,y,l) linregFitL1InteriorPoint(X,y,l,opts{:});
     case 'em'            
-         sigma = 1;
          fitCore = @(X,y,l)linregFitSparseEm...
-             (X, y,'laplace',l/(2*sigma),1,sigma,opts{:});
+             (X, y,'laplace','lambda', l, opts{:});
     otherwise
          error('unrecognized fitMethod: %s', fitMethod);
 end

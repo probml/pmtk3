@@ -1,4 +1,4 @@
-function [w, sigma, logpostTrace]=linregFitSparseEm(X, y,  prior, scale, shape, sigma, varargin)
+function [w, sigma, logpostTrace]=linregFitSparseEm(X, y,  prior,  varargin)
 % Use EM to fit linear  regression  with sparsity promoting prior
 % See the paper "Sparse Bayesian nonparametric regression"
 % by F. Caron and A. Doucet, ICML2008.
@@ -14,12 +14,17 @@ function [w, sigma, logpostTrace]=linregFitSparseEm(X, y,  prior, scale, shape, 
 %
 % X: N*D design matrix 
 % y:        data (vector of size N*1),
-% sigma: if +ve, it is fixed at this value, if 0 it will be estimated
-% prior: one of 'ng','laplace','nj','neg'
+% prior: one of 'ng','laplace','nj','neg', 'groupLasso', 'groupNG'
 %
 % Optional args
 % maxIter - [300]
 % verbose - [false]
+% scale
+% shape
+% lambda
+% sigma: if +ve, it is fixed at this value, if 0 it will be estimated
+% groups: a vector of length D specifying group membership (for group
+% lasso)
 %
 % -- OUTPUTS --
 %
@@ -32,17 +37,16 @@ function [w, sigma, logpostTrace]=linregFitSparseEm(X, y,  prior, scale, shape, 
 % Jan 30, 2008
 
 %PMTKauthor Francois Caron
-%PMTKmodified Kevin Murphy, 12 Nov 2009
+%PMTKmodified Kevin Murphy, Hannes Bretschneider
 
 
 warning off MATLAB:log:logOfZero
 warning off MATLAB:divideByZero
 
-[maxIter, verbose, convTol] = process_options(varargin, ...
-   'maxIter', 100, 'verbose', false, 'convTol', 1e-3);
+[shape, scale, lambda, maxIter, verbose, convTol, sigma, groups] = process_options(varargin, ...
+   'shape', [], 'scale', [], 'lambda', [], ...
+   'maxIter', 100, 'verbose', false, 'convTol', 1e-3, 'sigma', 1, 'groups', []);
 
- if nargin <5, shape = 1; end
- if nargin < 6, sigma = -1; end
  
 [N D]=size(X);
 if sigma<0
@@ -51,6 +55,13 @@ if sigma<0
    sigma=-sigma;
 else % sigma known
    computeSigma=0;
+end
+
+if ~isempty(groups)
+  nGroups = max(groups);
+  groupSize = arrayfun(@(i)sum(groups == i), 1:nGroups);
+  shapeGroup = (groupSize + 1)/2; % shape for groups 1:nGroups
+  shapeFeat = shapeGroup(groups); % shape for features 1:D
 end
 
 switch(lower(prior))
@@ -68,7 +79,7 @@ switch(lower(prior))
   case 'laplace'
     pen=@laplaceNeglogpdf;
     diffpen=@laplaceNeglogpdfDeriv;
-    params = {scale^2/2}; % user specifies laplace param, not gamma param
+    params = {lambda}; % user specifies laplace param, not gamma param
   case 'nj'
     pen=@normalJeffreysNeglogpdf;
     diffpen=@normalJeffreysNeglogpdfDeriv;
@@ -77,6 +88,11 @@ switch(lower(prior))
     pen=@normalExpGammaNeglogpdf;
     diffpen=@normalExpGammaNeglogpdfDeriv;
     params = {shape, scale};
+  case {'grouplasso', 'gng'}
+    scale = lambda^2/2;
+     pen=@normalGammaNeglogpdf;
+    diffpen=@normalGammaNeglogpdfDeriv;
+    params = {colvec(shapeFeat), scale};
   otherwise
     error(['unrecognized prior ' prior])
 end
@@ -119,16 +135,25 @@ while ~done
   wOld = w;
   sigmaOld = sigma;
   % E step
-   % psi=diag(abs(wOld)./gamma); 
-   %psi=diag(abs(wOld)./(gamma * sigmaOld)); % Park and Cassella '08
+  switch prior
+    case 'groupLasso'
+      wNormGroup = arrayfun(@(i)twoNormGroup(wOld,groups,i), 1:nGroups);
+      wNormFeat = wNormGroup(groups);
+      psi = diag(wNormFeat./(lambda*sigma));
+    case 'gng'
+      wNormGroup = arrayfun(@(i)twoNormGroup(wOld,groups,i), 1:nGroups);
+      wNormFeat = colvec(wNormGroup(groups));
+      psi=diag(wNormFeat./diffpen(wNormFeat,params{:}));
+    otherwise
     psi=diag(abs(wOld)./diffpen(wOld,params{:}));
+  end
   % M step
   w = psi*V*inv((V'*psi*V+sigma^2*Si2))*alpha_hat;
   yhat = X*w;
   se = (y-yhat).^2;
   if computeSigma
-    sigma = sqrt(mean(var(se)))
-    sigma = max(sigma, 1e-2) % hack to prevent sigma getting too small
+    sigma = sqrt(mean(var(se)));
+    sigma = max(sigma, 1e-2); % hack to prevent sigma getting too small
   end
   
   if computeLogpost
@@ -169,12 +194,14 @@ if 0 % verbose
   figure; plot(logpostTrace, 'o-'); title(str)
 end
 
-
-
 end
 
  
-
+function out=twoNormGroup(w, groups, i)
+% Computes the two-norm of the weights in group i
+w = w(groups==i);
+out = sqrt(sum(w.^2));
+end
 
 
 

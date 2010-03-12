@@ -21,6 +21,11 @@ Xmiss(missing) = NaN;
 %% Impute
 
 % GMM
+% initialize with true params to see if it helps
+[modelKinitTrue] = mixGaussMissingFitEm(Xmiss, K, ...
+  'mu', trueModel.mu, 'Sigma', trueModel.Sigma, 'mixweight', trueModel.mixweight);
+[XimputeEMKinitTrue] = mixGaussImpute(modelKinitTrue, Xmiss);
+
 [modelK] = mixGaussMissingFitEm(Xmiss, K);
 [XimputeEMK] = mixGaussImpute(modelK, Xmiss);
 
@@ -39,7 +44,8 @@ Xmiss(missing) = NaN;
 
 % Scatter plots
 doPlot(Xmiss, Xfull, XimputeTruth, 'true params', 'gmmImputeScatterTruth')
-doPlot(Xmiss, Xfull, XimputeEMK, sprintf('em gmm(%d)',K), 'gmmImputeScatterEmK')
+doPlot(Xmiss, Xfull, XimputeEMKinitTrue, sprintf('em gmm(%d), init from true',K), 'gmmImputeScatterEmKinitTrue')
+doPlot(Xmiss, Xfull, XimputeEMK, sprintf('em gmm(%d)',K), 'gmmImputeScatterEmKInitRnd')
 doPlot(Xmiss, Xfull, XimputeEM1, 'em gmm(1)', 'gmmImputeScatterEm1')
 doPlot(Xmiss, Xfull, XimputeEMG, 'em gauss', 'gmmImputeScatterEmG')
 doPlot(Xmiss, Xfull, XimputeMV, 'mean value imputation', 'gmmImputeScatterMV')

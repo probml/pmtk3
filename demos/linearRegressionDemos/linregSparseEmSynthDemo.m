@@ -2,7 +2,7 @@
 % Similar to fig 8 from "Sparse Bayesian nonparametric regression",
 % Caron and Doucet, ICML08
 % We do not include normalInverseGaussian
-% but we do include normalExpGaussian
+% but we do include normalExpGaussian  (see Griffin and Brown)
 %PMTKslow
 
 
@@ -31,9 +31,9 @@ for trial=1:5
    Ntest = 10000;
    sigmaTrue = 1;
    Xtrain=randn(Ntrain,D)*C; 
-   ytrain=Xtrain*w_true + sigmaTrue*randn(Ntrain,1); % Vector of observations
+   ytrain=Xtrain*w_true + sigmaTrue*randn(Ntrain,1); 
    Xtest=randn(Ntest,D)*C; 
-   ytest=Xtest*w_true + sigmaTrue*randn(Ntest,1); % Vector of observations
+   ytest=Xtest*w_true + sigmaTrue*randn(Ntest,1); 
     
    [ytrain, muY, sY] = standardizeCols(ytrain);
    ytest = standardizeCols(ytest, muY, sY);
@@ -62,7 +62,8 @@ for trial=1:5
       Nfolds=3;
       useSErule = false;
       options = {'maxIter', 15, 'verbose', false};
-      fitFn = @(X,y,ps) linregFitSparseEm(X,y, prior, ps(1), ps(2), sigmaTrue, options{:});
+      fitFn = @(X,y,ps) linregFitSparseEm(X,y, prior, 'shape', ps(1), 'scale', ps(2), ...
+        'sigma', sigmaTrue, options{:});
       predictFn = @(w, X) X*w;
       lossFn = @(yhat, y)  sum((yhat-y).^2);
       [w, bestParams, mu, se] = fitCv(params, fitFn, predictFn, lossFn, Xtrain, ytrain,  Nfolds, useSErule);
