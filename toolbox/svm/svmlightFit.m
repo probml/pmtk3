@@ -62,7 +62,7 @@ end
 tmp = tempdir();
 trainFile = fullfile(tmp, 'train.svm');
 modelFile = fullfile(tmp, sprintf('model%s.svm', datestring()));
-logFile   = fullfile(tmp, 'trainLog.svm');
+
 
 %-z c       classification
 %-t 2       for rbf expansion
@@ -77,7 +77,7 @@ end
 X = mkUnitVariance(center(X));
 
 svmlightWriteData(X, y, trainFile);
-[iserror, response] = system(sprintf('svm_learn %s %s %s > %s', options, trainFile, modelFile, logFile));
+[iserror, response] = system(sprintf('svm_learn %s %s %s', options, trainFile, modelFile));
 if iserror
     error('There was a problem calling svmlight: %s', response);
 end
@@ -95,7 +95,7 @@ if saveAlphas
     model.svi = find( alpha > epsilon );  % support vectors indices
     model.alpha = alpha; 
 end
-if 1
+if 0 % slow
     delete(trainFile);
     delete(logFile);
     if saveAlphas

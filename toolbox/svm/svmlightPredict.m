@@ -13,12 +13,11 @@ function yhat = svmlightPredict(model, X)
     tmp = tempdir();
     testFile    = fullfile(tmp, 'test.svm');
     modelFile   = model.file; 
-    logFile     = fullfile(tmp, 'testLog.svm');
     resultsFile = fullfile(tmp, 'results.svm');
     svmlightWriteData(X, zeros(size(X, 1), 1), testFile);
-    systemf('svm_classify %s %s %s %s > %s', testOptions, testFile, modelFile, resultsFile, logFile);
+    systemf('svm_classify %s %s %s %s', testOptions, testFile, modelFile, resultsFile);
     yhat = sign(dlmread(resultsFile));
-    if 1
+    if 0 %slow
        delete(testFile);
        delete(resultsFile);
        delete(logFile);

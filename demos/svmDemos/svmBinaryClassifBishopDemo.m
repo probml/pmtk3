@@ -19,6 +19,11 @@ logregArgs.lambda = lambda;
 logregArgs.regType = 'L2';
 logregArgs.kernelFn = @rbfKernel;
 logregArgs.kernelParam = rbfScale; 
+
+
+[model, bestParams, cvMU, cvSigma] = svmlightFitCV(X, y); 
+
+
 %% Train and test
 for method=3:4
     switch method
