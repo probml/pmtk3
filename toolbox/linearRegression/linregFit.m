@@ -1,7 +1,7 @@
 function [model, varargout] = linregFit(X, y, varargin)
 % Fit a linear regression model
 %% INPUTS: 
-% regType       ... L1 or L2
+% regType       ... L1, L2, none, scad
 % lambda        ... regularizer (can be a range tuned via cv)
 % kernelFn      ... @(X, X1, kernelParam)
 % kernelParam   ... e.g. sigma in an RBF kernel (can be a range tuned via cv)
@@ -46,7 +46,7 @@ args = prepareArgs(varargin); % converts struct args to a cell array
     'standardizeX'  , true   , ...
     'rescaleX'      , false  , ...
     'scaleXrange'   , [-1,1] , ...
-    'nlambdas'      , 20     , ...
+    'nlambdas'      , 10     , ...
     'nkernelParams' , 10     , ...
     'nfolds'        , 5      , ...        
     'useSErule'     , false  , ...
@@ -60,6 +60,8 @@ if isempty(fitMethod)
     switch lower(regType)
         case 'l1'  , fitMethod = 'lars';
         case {'l2', 'none'}  , fitMethod = 'qr';
+      case 'scad'  , fitMethod = 'scadLLA';
+      case 'none', fitMethod = 'qr'; lambda = 0;
     end
 end
 %% preprocess X, (kernelization happens later)
@@ -88,8 +90,10 @@ switch lower(fitMethod)
     case 'interiorpoint' 
         fitCore = @(X,y,l) linregFitL1InteriorPoint(X,y,l,opts{:});
     case 'em'            
-         fitCore = @(X,y,l)linregFitSparseEm...
-             (X, y,'laplace','lambda', l, opts{:});
+         fitCore = @(X,y,l)linregFitLassoEm(X, y, l, opts{:});
+     % other
+  case 'scadlla'
+    fitCore = @(X,y,l) linregSparseScadFitLLA( X, y, l, opts{:} );
     otherwise
          error('unrecognized fitMethod: %s', fitMethod);
 end
@@ -120,8 +124,8 @@ if isempty(lambda)
             end
             lambdaMax = lambdaMaxLasso(K, center(y)); 
             lambda = linspace(1e-5, lambdaMax, nlambdas); 
-        case 'l2'
-            lambda = linspace(1e-5, 200, nlambdas); 
+        case {'l2', 'scad'}
+            lambda = 10.^(linspace(-3,2, nlambdas)); 
     end
 end
 

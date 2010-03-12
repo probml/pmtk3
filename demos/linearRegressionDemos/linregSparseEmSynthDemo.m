@@ -22,7 +22,9 @@ sparsities = [0.05];
 for sparsityNdx=1:length(sparsities)
    sparsity = sparsities(sparsityNdx);
    
-for trial=1:2
+   Ntrials = 5;
+for trial=1:Ntrials
+  fprintf('\n\n starting trial %d of %d\n\n', trial, Ntrials);
    nnz = ceil(D*sparsity);
    ndx = unidrnd(D,1,nnz);
    w_true = zeros(D,1);
@@ -43,25 +45,27 @@ for trial=1:2
    [Xtrain, mu] = center(Xtrain);
    Xtest = center(Xtest, mu);
    
-   priors = {'scad','NJ', 'Laplace', 'Ridge'}; 
-   %priors = {'scad', 'NEG', 'NG', 'NJ', 'Laplace', 'Ridge'}; 
+   priors = {'Scad','NJ', 'NG', 'NEG', 'Laplace', 'Ridge'}; 
+
 
    for m=1:length(priors)
      useEM = false;
       prior = priors{m};
       switch lower(prior)
-        case {'ng', 'neg'}
+        case {'ng', 'neg'} 
           scales = [0.001 0.01 0.1 1 10];
-          shapes = [0.01 0.1 1];
-          [w, logPostTrace] = fitWithEmAndCV(prior, scales, shapes);
+          shapes = [0.01 0.1 1 10];
+          [w, logPostTrace] = fitWithEmAndCV(Xtrain, ytrain, prior, scales, shapes);
           useEM = true;
         case 'nj'
           % no tuning parameters so no need for CV
           options = {'maxIter', 30, 'verbose', true};
-          [w, logPostTrace] = linregFitSparseEm(Xtrain, ytrain,  'nj',  options{:});
+          [w, sigma, logPostTrace] = linregFitSparseEm(Xtrain, ytrain,  'nj',  options{:});
           useEM = true;
         case 'scad'
-          [ w, logPostTrace] = linregSparseScadFit( Xtrain, ytrain, lambda, varargin );
+           % this will use CV to pick lambda
+          model = linregFit(Xtrain, ytrain, 'regType', 'scad');
+          w = model.w;
         case 'ridge'
           % this will use CV to pick lambda
           model = linregFit(Xtrain, ytrain, 'regType', 'L2');
@@ -96,14 +100,15 @@ title(sprintf('mse on test for D=%d, Ntrain=%d, sparsity=%3.2f', D, Ntrain, spar
 printPmtkFigure(sprintf('linregSparseEmSynthMseBoxplotSp%d', sparsity*100))
 
 figure;
-boxplot(nnzTrial(:, 1:end-1), 'labels', priors(1:end-1))
+ridgeNdx = strcmpi(priors,'Ridge');
+boxplot(nnzTrial(:, ~ridgeNdx), 'labels', priors(~ridgeNdx))
 title(sprintf('nnz  for D=%d, Ntrain=%d, sparsity=%3.2f', D, Ntrain, sparsity))
 printPmtkFigure(sprintf('linregSparseEmSynthNnzBoxplotSp%d', sparsity*100))
 
 %nr = 2; nc = 2;
 figure; 
 %subplot(nr, nc, 1);
-trial = 5;
+%trial = 5;
 stem(weightsTrue{trial}, 'marker', 'none', 'linewidth', 2);
 box off
 title('true');
@@ -124,20 +129,20 @@ end % sparsityNdx
 
 end
 
-function [w, logPostTrace] = fitWithEmAndCV(prior, scales, shapes)
+function [w, logPostTrace] = fitWithEmAndCV(Xtrain, ytrain, prior, scales, shapes)
 params = crossProduct(scales, shapes);
 Nfolds=3;
 useSErule = false;
 options = {'maxIter', 15, 'verbose', false};
-fitFn = @(X,y,ps) linregFitSparseEm(X,y, prior, 'shape', ps(1), 'scale', ps(2),options{:});
+fitFn = @(X,y,ps) linregFitSparseEm(X,y, prior, 'scale', ps(1), 'shape', ps(2),options{:});
 predictFn = @(w, X) X*w;
 lossFn = @(yhat, y)  sum((yhat-y).^2);
 [w, bestParams, mu, se] = fitCv(params, fitFn, predictFn, lossFn, Xtrain, ytrain,  Nfolds, useSErule);
 
-% refit model more carefully with best params and all the data
+% refit model using more iterations with best params and all the data
 scale = bestParams(1);
 shape = bestParams(2);
 options = {'maxIter', 30, 'verbose', true};
 [w, sigma, logPostTrace] = ...
-  linregFitSparseEm(Xtrain, ytrain,  prior, 'shape', shape, 'scale', scale, options{:});
+  linregFitSparseEm(Xtrain, ytrain,  prior,  'scale', scale, 'shape', shape, options{:});
 end

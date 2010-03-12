@@ -127,8 +127,7 @@ end
 done = false;
 iter = 1; 
 if verbose
-  str = sprintf('EM with %s, scale %5.3f, shape %5.3f\n', ...
-    prior, scale, shape);
+  str = sprintf('EM with %s, scale %5.3f, shape %5.3f', prior, scale, shape);
   disp(str);
 end
 while ~done
@@ -166,7 +165,7 @@ while ~done
       end
     end
   end
-  if verbose &&(mod(iter,50)==0)
+  if verbose &&(mod(iter,1)==0)
     if computeLogpost
       fprintf('iter %d, pen NLL = %5.3f\n', iter, NLL(iter))
     else
@@ -189,6 +188,7 @@ while ~done
   iter = iter + 1;
 end
 
+NLL = NLL(~isinf(NLL));
 logpostTrace = -NLL;
 if 0 % verbose
   figure; plot(logpostTrace, 'o-'); title(str)

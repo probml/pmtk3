@@ -1,4 +1,4 @@
-function beta = lars(X, y, method, stop, useGram, Gram, trace)
+function beta = lars(X, y, method, stop, useGram, Gram,  verbose)
 % LARS  The LARS algorithm for performing LAR or LASSO.
 %    BETA = LARS(X, Y) performs least angle regression on the variables in
 %    X to approximate the response Y. Variables X are assumed to be
@@ -19,8 +19,8 @@ function beta = lars(X, y, method, stop, useGram, Gram, trace)
 %    BETA = LARS(X, Y, METHOD, STOP, USEGRAM, GRAM) makes it possible to
 %    supply a pre-computed Gram matrix. Set USEGRAM to 1 to enable. If no
 %    Gram matrix is available, exclude argument or set GRAM = [].
-%    BETA = LARS(X, Y, METHOD, STOP, USEGRAM, GRAM, TRACE) with nonzero
-%    TRACE will print the adding and subtracting of variables as all
+%    BETA = LARS(X, Y, METHOD, STOP, USEGRAM, GRAM, verbose) with nonzero
+%    verbose will print the adding and subtracting of variables as all
 %    LARS/lasso solutions are found.
 %    Returns BETA where each row contains the predictor coefficients of
 %    one iteration. A suitable row is chosen using e.g. cross-validation,
@@ -34,7 +34,7 @@ function beta = lars(X, y, method, stop, useGram, Gram, trace)
 %% Input checking
 % Set default values.
 if nargin < 7
-    trace = 0;
+    verbose = 0;
 end
 if nargin < 6
   Gram = [];
@@ -83,7 +83,7 @@ stopcond = 0; % Early stopping condition boolean
 k = 0; % Iteration count
 vars = 0; % Current number of variables
 
-if trace
+if verbose
   disp(sprintf('Step\tAdded\tDropped\t\tActive set size'));
 end
 
@@ -101,7 +101,7 @@ while vars < nvars && ~stopcond && k < maxk
     A = [A j];
     I(I == j) = [];
     vars = vars + 1;
-    if trace
+    if verbose
       disp(sprintf('%d\t\t%d\t\t\t\t\t%d', k, j, vars));
     end
   end
@@ -165,7 +165,7 @@ while vars < nvars && ~stopcond && k < maxk
     I = [I A(j)];
     A(j) = [];
     vars = vars - 1;
-    if trace
+    if verbose
       disp(sprintf('%d\t\t\t\t%d\t\t\t%d', k, j, vars));
     end
   end
@@ -181,7 +181,7 @@ if size(beta,1) > k+1
   beta(k+2:end, :) = [];
 end
 
-if k == maxk
+if verbose && (k == maxk)
   disp('LARS warning: Forced exit. Maximum number of iteration reached.');
 end
 end
