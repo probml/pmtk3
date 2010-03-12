@@ -20,7 +20,7 @@ logregArgs.regType = 'L2';
 logregArgs.kernelFn = @rbfKernel;
 logregArgs.kernelParam = rbfScale; 
 %% Train and test
-for method=1:4
+for method=3:4
     switch method
         case 1,
             model = logregFit(X, y, logregArgs);

@@ -16,8 +16,9 @@ beq = 0;
 lb = zeros(n,1);    
 ub = C*ones(n,1);   
 
-warning('off','optim:quadprog:SwitchToMedScale')
-alpha = quadprog(H,f,A,b,Aeq,beq,lb,ub);
+%warning('off','optim:quadprog:SwitchToMedScale')
+options = optimset('LargeScale', 'off', 'MaxIter', 1000); 
+alpha = quadprog(H,f,A,b,Aeq,beq,lb,ub, [], options);
 
 epsilon = C*1e-6;
 svi = find( alpha > epsilon);  % support vectors
