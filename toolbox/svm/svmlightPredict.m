@@ -9,7 +9,7 @@ function yhat = svmlightPredict(model, X)
 % svm_classify.exe. 
 
     X =  mkUnitVariance(center(X));
-    testOptions = '-v 3';
+    testOptions = '';
     tmp = tempdir();
     testFile    = fullfile(tmp, 'test.svm');
     modelFile   = model.file; 
