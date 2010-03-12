@@ -25,6 +25,7 @@ function [model, bestParam, mu, se] = fitCv(params, fitFn, predictFn, lossFn, X,
 
 wstate = warning('query', 'MATLAB:nearlySingularMatrix');
 warning('off', 'MATLAB:nearlySingularMatrix');
+if nargin < 7, Nfolds = 5; end
 if nargin < 8, useSErule = false; end
 if nargin < 9, doPlot = false; end
 % if params is 1 row vector, it is a probbaly a set of

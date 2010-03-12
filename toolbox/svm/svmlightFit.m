@@ -74,7 +74,7 @@ text = getText(modelFile);
 model.nsvecs = str2double(char(strtok(text(cellfun(@(str)~isempty(str),strfind(text,'number of support vectors plus 1'))))))-1;
 model.kernelType  = kernelType; 
 model.kernelParam = kernelParam; 
-
+model.C = C; 
 if 1
     delete(trainFile);
     delete(logFile);
