@@ -14,7 +14,7 @@ nfolds = 10;
 %%
 
 maxLambda    =  log10(lambdaMaxLasso(Xtrain, ytrain));
-lambdaRange  =  logspace(-2, maxLambda, 20); 
+lambdaRange  =  logspace(-2, maxLambda, 30); 
 
 fit = @(regType)linregFit(Xtrain, ytrain,'lambda',...
       lambdaRange, 'regType', regType, 'doPlot', true, 'nfolds', nfolds);
@@ -61,7 +61,7 @@ ssSmall = {[], 1, 1:2, 1:3, 1:4, 1:5, 1:6, 1:7, 1:8};
 ssStarNdx = cellfind(ssSmall, ssStar) - 1;
 useLogScale = false; 
 figure;
-plotCVcurve(0:8, mu, se, ssStarNdx, useLogScale); % plot w.r.t to subset sizes
+plotCVcurve(0:8, mu, se, numel(ssStarFull), useLogScale); % plot w.r.t to subset sizes
 xlabel('subset size');
 yhat = linregPredict(modelFull, data.Xtest); 
 mse(3) = loss(yhat, data.ytest);

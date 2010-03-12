@@ -41,7 +41,7 @@ args = prepareArgs(varargin); % converts struct args to a cell array
     doPlot        ...
     ] = process_options(args    , ...
     'nclasses'      , nunique(y), ...
-    'regType'       , 'l2'      , ...
+    'regType'       , 'none'      , ...
     'lambda'        ,  []       , ...
     'kernelFn'      ,  []       , ...
     'kernelParam'   ,  []       , ...
@@ -58,12 +58,17 @@ args = prepareArgs(varargin); % converts struct args to a cell array
     'doPlot'        , false  );
 %% set defaults
 isbinary = nclasses < 3;
+if strcmpi(regType, 'none') && isempty(lambda)
+    regType = 'l2';
+    lambda = 0;
+end
 if isempty(fitMethod)
     switch lower(regType)
         case 'l1'  , fitMethod = 'l1projection';
-        case 'l2'  , fitMethod = 'minfunc';
+        case {'l2', 'none'}  , fitMethod = 'minfunc';
     end
 end
+
 %% preprocess X, (kernelization happens later)
 pre = struct();
 if standardizeX
