@@ -15,16 +15,20 @@ gamma = 1/(2*rbfScale^2);
 kernelFn = @(X1,X2) rbfKernel(X1,X2,rbfScale);
 Ktrain =  kernelFn(X, X);
 
-
+logregArgs.lambda = lambda;
+logregArgs.regType = 'L2';
+logregArgs.kernelFn = @rbfKernel;
+logregArgs.kernelParam = rbfScale; 
 %% Train and test
 for method=1:4
     switch method
         case 1,
-            model = logregFit(X, y, 'lambda', lambda, 'regType', 'L2', 'kernelFn', @rbfKernel, 'kernelParam', rbfScale);
+            model = logregFit(X, y, logregArgs);
             fname = 'logregL2';
             predictFn = @(Xtest) logregPredict(model, Xtest);
         case 2,
-            model = logregFit(X, y,'lambda', lambda, 'regType', 'L1', 'kernelFn', @rbfKernel, 'kernelParam', rbfScale);
+            logregArgs.regType = 'L1';
+            model = logregFit(X, y, logregArgs);
             SV = (abs(model.w) > 1e-5);
             fname = 'logregL1';
             predictFn = @(Xtest) logregPredict(model, Xtest);
