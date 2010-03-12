@@ -33,11 +33,16 @@ for method=1:4
             [model, SV] = svmQPclassifFit(X, y, kernelFn,  C);
             fname = 'SVM';
             predictFn = @(Xtest) svmQPclassifPredict(model, Xtest);
+            yhat = svmQPclassifPredict(model, X);
+            trainingErrorsSVM = sum(yhat ~= convertLabelsToPM1(y))
         case 4
+            C = 1 / lambda;
             gamma = 1/(2*rbfScale^2);
             model = svmlightFit(X, y, C, gamma); 
             fname = 'SVMlight';
             predictFn = @(Xtest)svmlightPredict(model, Xtest); 
+            yhat = svmlightPredict(model, X); 
+            trainingErrorsSVMlight = sum(yhat ~= convertLabelsToPM1(y))
     end
     % Plot results
     plotDecisionBoundary(X, y, predictFn);
