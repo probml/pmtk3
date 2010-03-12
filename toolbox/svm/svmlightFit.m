@@ -69,7 +69,7 @@ logFile   = fullfile(tmp, 'trainLog.svm');
 %-g gamma   to specify rbf bandwidth
 %-v 0       verbosity level 0-3 (0 is quiet)
 %-b 1       fit biased hyperplane
-if(nargin < 6)
+if(nargin < 7)
     options = sprintf('%s %s %s %s %s -v 0 -b 1 -# 1000', ...
         typeswitch, kswitch, kpswitch, cswitch, saveAlphaSwitch);
 end
