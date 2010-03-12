@@ -1,6 +1,6 @@
-function model = svmlightFit(X, y, C, kernelParam, kernelType, options)
+function model = svmlightFit(X, y, C, kernelParam, kernelType, saveAlphas, options)
 % Call svmLight to fit a binary SVM classifier using the specified kernel,
-% (rbf by default). If RBF, the kernelParam is gamma in 
+% (rbf by default). If RBF, the kernelParam is gamma in
 % exp(-gamma ||X-X'||^2)
 %
 % y is automaically converted to {-1, 1}
@@ -14,13 +14,24 @@ function model = svmlightFit(X, y, C, kernelParam, kernelType, options)
 
 
 if nargin < 3 || isempty(C)
-   cswitch = ''; 
+    cswitch = '';
 else
-   cswitch = sprintf('-c %f', C); 
+    cswitch = sprintf('-c %f', C);
 end
-    
+
 if nargin < 5 || isempty(kernelType)
     kernelType = 'rbf';
+end
+
+if nargin < 6 || isempty(saveAlphas)
+    saveAlphas = true;
+end
+
+if saveAlphas
+    alphaFile = [tempname(), 'alphas.svn'];
+    saveAlphaSwitch = sprintf('-a %s', alphaFile);
+else
+    saveAlphaSwitch = '';
 end
 
 switch kernelType
@@ -42,7 +53,7 @@ if nunique(y) < 3
     typeswitch = '-z c';
     y = convertLabelsToPM1(y);
 else
-    error('not yet implemented'); 
+    error('not yet implemented');
     model.problemType = 'regression';
     typeswitch = '-z r';
 end
@@ -57,8 +68,10 @@ logFile   = fullfile(tmp, 'trainLog.svm');
 %-t 2       for rbf expansion
 %-g gamma   to specify rbf bandwidth
 %-v 0       verbosity level 0-3 (0 is quiet)
+%-b 1       fit biased hyperplane
 if(nargin < 6)
-    options = sprintf('%s %s %s %s -v 0', typeswitch, kswitch, kpswitch, cswitch);
+    options = sprintf('%s %s %s %s %s -v 0 -b 1 -# 1000', ...
+        typeswitch, kswitch, kpswitch, cswitch, saveAlphaSwitch);
 end
 
 X = mkUnitVariance(center(X));
@@ -66,17 +79,27 @@ X = mkUnitVariance(center(X));
 svmlightWriteData(X, y, trainFile);
 [iserror, response] = system(sprintf('svm_learn %s %s %s > %s', options, trainFile, modelFile, logFile));
 if iserror
-    error('There was a problem calling svmlight: %s', response); 
+    error('There was a problem calling svmlight: %s', response);
 end
 model.file = modelFile;
 
-text = getText(modelFile);
-model.nsvecs = str2double(char(strtok(text(cellfun(@(str)~isempty(str),strfind(text,'number of support vectors plus 1'))))))-1;
-model.kernelType  = kernelType; 
-model.kernelParam = kernelParam; 
-model.C = C; 
+%text = getText(modelFile);
+%model.nsvecs = str2double(char(strtok(text(cellfun(@(str)~isempty(str),strfind(text,'number of support vectors plus 1'))))))-1;
+model.kernelType  = kernelType;
+model.kernelParam = kernelParam;
+model.C = C;
+model.fitOptions = options;
+if saveAlphas
+    alpha = str2double(getText(alphaFile));
+    epsilon = C*1e-6;
+    model.svi = find( alpha > epsilon );  % support vectors indices
+    model.alpha = alpha; 
+end
 if 1
     delete(trainFile);
     delete(logFile);
+    if saveAlphas
+        delete(alphaFile);
+    end
 end
 end

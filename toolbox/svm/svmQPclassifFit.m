@@ -5,23 +5,26 @@ function [model, svi] = svmQPclassifFit(X,y,kernelFn,C)
 %PMTKurl http://www.isis.ecs.soton.ac.uk/resources/svminfo/
 %PMTKmodified Kevin Murphy
 
-K = kernelFn(X,X);
+K = kernelFn(X, X);
 y = convertLabelsToPM1(y(:));
 n = length(y);
 H = y*y' .* K;
-f = -ones(n,1);
-A = []; b = [];
+f = -ones(n, 1);
+A = []; 
+b = [];
 Aeq = y';
 beq = 0;   
-lb = zeros(n,1);    
-ub = C*ones(n,1);   
+lb = zeros(n, 1);    
+ub = C*ones(n, 1);   
 
-%warning('off','optim:quadprog:SwitchToMedScale')
+H = H+1e-10*eye(size(H));
+
 options = optimset('LargeScale', 'off', 'MaxIter', 1000); 
-alpha = quadprog(H,f,A,b,Aeq,beq,lb,ub, [], options);
-
+[alpha] = quadprog(H, f, A, b, Aeq, beq, lb, ub, zeros(n, 1), options);
 epsilon = C*1e-6;
-svi = find( alpha > epsilon);  % support vectors
+ndx = alpha > epsilon; 
+svi = find(ndx);  % support vector indices
+alpha(~ndx) = 0; 
  
 % find b0 from average of support vectors on margin
 % SVs on margin have alphas: 0 < alpha < C

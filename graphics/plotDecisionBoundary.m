@@ -14,9 +14,9 @@ function h = plotDecisionBoundary(X, Y, predictFcn, stipple, colors, symbols, ma
 % plotDecisionBoundary(X, y, @(Xtest)logregPredict(model, Xtest));
 % predictFcn = @(Xtest) logregPredict(model, rbfKernel(Xtest, X, rbfScale)); 
 % plotDecisionBoundary(X, y, predictFcn);
-    if nargin < 4, stipple = true; end
-    if nargin < 5, colors = pmtkColors(); end
-    if nargin < 6,  symbols = '+ovd*.xs^d><ph'; end
+    if nargin < 4 || isempty(stipple), stipple = true; end
+    if nargin < 5 || isempty(colors),  colors = pmtkColors(); end
+    if nargin < 6 || isempty(symbols),  symbols = '+ovd*.xs^d><ph'; end
     if nargin < 7, markersize = 8; end
     
     resolution = 300;          % set higher for smoother contours, lower for speed/mem
