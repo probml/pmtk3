@@ -12,14 +12,14 @@ perm = sortidx(X, 'ascend');
 X = X(perm);
 y = y(perm);
 
-model = logregFitL2(X, y, 0);
+model = logregFit(X, y,'lambda', 0);
 [yhat, prob] = logregPredict(model, X);
 
 % visualize model fit for each training point
 figure;
-plot(X, y, 'ko', 'linewidth', 2);
+plot(X, y, 'ko', 'linewidth', 2, 'MarkerSize', 10);
 hold on
-plot(X, prob, 'rx', 'linewidth', 2)
+plot(X, prob, 'rx', 'linewidth', 2,'MarkerSize', 10)
 axis_pct
 
 % draw vertical line at location where SAT score has 2 different label

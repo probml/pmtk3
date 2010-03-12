@@ -10,4 +10,3 @@ lrL2Nerrors = sum(yhat ~= ytest) %0
 
 
 
-%logspace

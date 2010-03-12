@@ -50,6 +50,7 @@ uPoly = [uPoly zeros(nInstances,1)];
 
 % RBF
 rbfScale = 1;
+
 Krbf = kernelRBF(X,X,rbfScale);
 funObj = @(u)SoftmaxLoss2(u,Krbf,y,nClasses);
 fprintf('Training kernel(rbf) multinomial logistic regression model...\n');
@@ -58,10 +59,11 @@ uRBF = minFunc(@penalizedL2,randn(nInstances*(nClasses-1),1),options,funObj,lamb
 uRBF = reshape(uRBF,[nInstances nClasses-1]);
 uRBF = [uRBF zeros(nInstances,1)];
 
-addOnes = false;
-modelRBF = logregFitL2(Krbf, y, lambda, addOnes);
+
+modelRBF = logregFit(X, y, 'kernelFn', @kernelRBF, 'kernelParam', rbfScale,...
+    'lambda', lambda, 'standardizeX', false, 'includeOffset', false);
 wRBF = modelRBF.w;
-assert(approxeq(wRBF, uRBF, 1e-1))
+assert(approxeq(wRBF, uRBF))
 
 % Compute training errors
 [junk yhat] = max(X*wLinear,[],2);
@@ -71,7 +73,7 @@ trainErr_poly = sum(y~=yhat)/length(y)
 [junk yhat] = max(Krbf*uRBF,[],2);
 trainErr_rbf = sum(y~=yhat)/length(y)
 
-[yhat2, prob] = logregPredict(modelRBF, Krbf);
+[yhat2, prob] = logregPredict(modelRBF, X);
 assert(isequal(yhat, yhat2))
 
 figure;

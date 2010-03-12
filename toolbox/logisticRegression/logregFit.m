@@ -14,6 +14,7 @@ function [model, varargout] = logregFit(X, y, varargin)
 % nkernelParams ... number of auto-generated kernel params to cv over
 % nfolds        ... number of folds in the cross validation
 % useSErule     ... if true, pick simplest model within one stderr of best
+% includeOffset ... if true, a column of ones is added to X (default true)
 % doPlot        ... if true, plot the cv curve or cv grid
 %% OUTPUTS:
 % model         ... a struct, which you can pass directly to logregPredict
@@ -36,6 +37,7 @@ args = prepareArgs(varargin); % converts struct args to a cell array
     nkernelParams ...
     nfolds        ...
     useSErule     ...
+    includeOffset ...
     doPlot        ...
     ] = process_options(args    , ...
     'nclasses'      , nunique(y), ...
@@ -52,6 +54,7 @@ args = prepareArgs(varargin); % converts struct args to a cell array
     'nkernelParams' , 10        , ...
     'nfolds'        , 5         , ...
     'useSErule'     , false     , ...
+    'includeOffset' , true      , ...
     'doPlot'        , false  );
 %% set defaults
 isbinary = nclasses < 3;
@@ -105,9 +108,9 @@ switch lower(fitMethod)
         error('unrecognized fitMethod: %s', fitMethod);
 end
 if isempty(kernelFn)
-    fitfn = @(X, y, param)simpleFit(X, y, param, fitCore, nclasses);
+    fitfn = @(X, y, param)simpleFit(X, y, param, fitCore, nclasses, includeOffset);
 else
-    fitfn = @(X, y, param)kernelizedFit(X, y, param(1), param(2), fitCore, kernelFn, nclasses);
+    fitfn = @(X, y, param)kernelizedFit(X, y, param(1), param(2), fitCore, kernelFn, nclasses, includeOffset);
 end
 
 %% constuct parameter space
@@ -142,15 +145,19 @@ model.ySupport = ySupport;
 end % end of main function
 
 
-function model = simpleFit(X, y, lambda, fitFn, nclasses)
+function model = simpleFit(X, y, lambda, fitFn, nclasses, includeOffset)
 % Fit function wrapper
 
 isbinary = nclasses < 3;
-X = [ones(size(X, 1), 1), X];
-model.includeOffset = true;
+if includeOffset
+    X = [ones(size(X, 1), 1), X];
+end
+model.includeOffset = includeOffset;
 d = size(X, 2);
 lambda = lambda*ones(d, nclasses-1);
-lambda(1, :) = 0; % Don't penalize bias term
+if includeOffset
+    lambda(1, :) = 0; % Don't penalize bias term
+end
 winit  = zeros(d, nclasses-1);
 w = fitFn(X, y, winit, lambda);
 if ~isbinary
@@ -166,20 +173,24 @@ end
 
 end
 
-function model = kernelizedFit(X, y, lambda, kernelParam, fitfn, kernelFn, nclasses)
+function model = kernelizedFit(X, y, lambda, kernelParam, fitfn, kernelFn, nclasses, includeOffset)
 % Fit function wrapper
 
 isbinary = nclasses < 3;
 K = kernelFn(X, X, kernelParam);
-K = [ones(size(K, 1), 1), K];
-model.includeOffset = true;
+if includeOffset
+    K = [ones(size(K, 1), 1), K];
+end
+model.includeOffset = includeOffset;
 d = size(K, 2);
 lambda = lambda*ones(d, nclasses-1);
-lambda(1, :) = 0; % Don't penalize bias term
+if includeOffset
+    lambda(1, :) = 0; % Don't penalize bias term
+end
 winit  = zeros(d, nclasses-1);
 w  = fitfn(K, y, winit, lambda);
 if ~isbinary
-    w = [reshape(w, [d Nclasses-1]) zeros(d, 1)];
+    w = [reshape(w, [d nclasses-1]) zeros(d, 1)];
 end
 model.w  = w;
 model.basis = X;
