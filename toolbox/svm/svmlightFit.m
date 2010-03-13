@@ -93,7 +93,7 @@ if saveAlphas
     alpha = str2double(getText(alphaFile));
     epsilon = C*1e-6;
     model.svi = find( alpha > epsilon );  % support vectors indices
-    model.alpha = alpha; 
+    model.alpha = alpha.*y; % undoes the multiplication by svmlight
 end
 if 0 % slow
     delete(trainFile);

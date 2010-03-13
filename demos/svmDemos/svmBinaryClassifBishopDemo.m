@@ -21,7 +21,7 @@ logregArgs.kernelFn = @rbfKernel;
 logregArgs.kernelParam = rbfScale; 
 
 
-[model, bestParams, cvMU, cvSigma] = svmlightFitCV(X, y); 
+%[model, bestParams, cvMU, cvSigma] = svmlightFitCV(X, y); 
 
 
 %% Train and test
