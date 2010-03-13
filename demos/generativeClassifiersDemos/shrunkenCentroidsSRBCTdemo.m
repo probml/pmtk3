@@ -1,6 +1,5 @@
-% Try to reproduce fig 18.4 from "Elements of statistical learning" 2nd edn
+% Reproduce fig 18.4 from "Elements of statistical learning" 2nd edn
 
-%PMTKauthor Hannes Bretschneider
  
 %% Import data
 xtrain = importdata('khan.xtrain');
@@ -23,7 +22,7 @@ predictFn = @(model, X)  naiveBayesGaussPredict(model, X);
 
 
 %% Error rates in the training and test sets for varying Delta
-Deltas = linspace(0,8,20);
+Deltas = linspace(0, 8, 50);
 lDelta = length(Deltas);
 nTrain = length(ytrain);
 nTest = length(ytest);
@@ -42,17 +41,38 @@ plot(Deltas, errTrain, 'go-', Deltas, errTest, 'bo:',...
 legend('Training', 'Test');
  
 %% Cross validation
-nFolds = 5;
+% We have to combine train and test sets to get the same
+% CV curve as in Hastie fig 18.4...
+nFolds = 10;
 useSErule = false;
 [bestModel, bestDelta, errCV, se] = fitCV(Deltas, fitFn, predictFn,...
-    @zeroOneLossFn, xtrain, ytrain, nFolds, useSErule); 
+    @zeroOneLossFn, [xtrain;xtest], [ytrain;ytest], nFolds, useSErule); 
 
-figure;
-plot(Deltas, errTrain, 'go-', Deltas, errTest, 'bo:',...
-    Deltas, errCV, 'ro-.', 'MarkerSize', 4, 'linewidth', 2)
-legend('Training', 'Test', 'CV', 'Location', 'Best');
+  figure;
+lambda = Deltas;
+xticklam=[1:8];
+xtickNgenes = numgenes(round(linspace(1,length(numgenes), length(xticklam))));
+axisH=axes;
+set(axisH,'xlabel',xlabel('Number of Genes'),'layer','top',...
+  'xaxislocation','top','xlim',[xticklam(1) xticklam(end)],'xminortick','on',...
+  'ytick',[],'yticklabel',[],'xticklabel',xtickNgenes,'xtick',xticklam);
+hold on
+axes('position',get(axisH,'position'),'xminortick','on','xtick',xticklam,'xticklabel',xticklam,'layer','bottom')
+hold on
+plot(lambda,errTest,'bo--','markersize',10,'linewidth',2)
+plot(lambda,errTrain,'gx-','markersize',10,'linewidth',2)
+plot(lambda,errCV,'rs:','markersize',10,'linewidth',2)
+axis([0 lambda(end) 0 1])
+xlabel('\lambda')
+ylabel('Misclassification Error','position',[-0.7 0.49 1.001])
+%ticks=get(gca,'ytick');
+%set(gca,'yticklabel',[]);
+%text(ticks*0-0.3,ticks-0.02,cellstr(num2str(ticks')),'rotation',90,'fontsize',15)
+legend( 'Test', 'Train', 'CV', 'Location', 'Best');
+bestNdx  = find(bestDelta==Deltas);
+fprintf('best lambda=%5.3f, ngenes = %d\n', bestDelta, numgenes(bestNdx));
+line([bestDelta bestDelta], [0 1]);
 printPmtkFigure('shrunkenCentroidsErrVsLambda')
-
   
 %% Plot centroids
 centShrunk = bestModel.offset;
@@ -65,7 +85,9 @@ for g=1:numGroups
     figure; hold on;
     plot(1:D, centUnshrunk(g,:), 'Color', [.8 .8 .8]);
     plot(1:D, centShrunk(g,:), 'b', 'LineWidth', 2);
-    title(sprintf('Group %d', g));
+    title(sprintf('Class %d', g));
     hold off;
     printPmtkFigure(sprintf('shrunkenCentroidsClass%d', g))
 end
+
+
