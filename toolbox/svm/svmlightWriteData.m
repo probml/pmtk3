@@ -12,7 +12,7 @@ data(:, 3:2:end) = X;
 format = [yformat, repmat(' %d:%f', 1, d), '\n'];
 fid = fopen(fname, 'w');
 data = data';
-fprintf(fid, format, data);
+fprintf(fid, format, data); % data gets written out column by column
 fclose(fid);
 
 
