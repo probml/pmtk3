@@ -14,7 +14,7 @@ function yhat = svmlightPredict(model, X)
     testFile    = fullfile(tmp, 'test.svm');
     modelFile   = model.file; 
     resultsFile = fullfile(tmp, 'results.svm');
-    svmlightWriteData(X, zeros(size(X, 1), 1), testFile);
+    svmlightWriteData(X, zeros(size(X, 1), 1), testFile, '%d');
     systemf('svm_classify %s %s %s %s', testOptions, testFile, modelFile, resultsFile);
     yhat = sign(dlmread(resultsFile));
     if 0 %slow

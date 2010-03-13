@@ -25,7 +25,7 @@ logregArgs.kernelParam = rbfScale;
 
 
 %% Train and test
-for method=3:4
+for method=4
     switch method
         case 1,
             model = logregFit(X, y, logregArgs);

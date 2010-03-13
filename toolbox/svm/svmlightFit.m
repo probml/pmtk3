@@ -3,14 +3,16 @@ function model = svmlightFit(X, y, C, kernelParam, kernelType, saveAlphas, optio
 % (rbf by default). If RBF, the kernelParam is gamma in
 % exp(-gamma ||X-X'||^2)
 %
-% y is automaically converted to {-1, 1}
+% y is automaically converted to {-1, 1} if classification
 %
-% model is a structure which can be passed to svmPredict. It contains
-% the filename storing the model information, and nsvecs - the number
-% of support vectors.
+% model is a structure which can be passed to svmPredict. 
 %
 % You can use the addtosystempath function to add the directory containing
 % svm_learn.exe.
+%
+
+
+
 
 
 if nargin < 3 || isempty(C)
@@ -18,22 +20,18 @@ if nargin < 3 || isempty(C)
 else
     cswitch = sprintf('-c %f', C);
 end
-
 if nargin < 5 || isempty(kernelType)
     kernelType = 'rbf';
 end
-
 if nargin < 6 || isempty(saveAlphas)
     saveAlphas = true;
 end
-
-if saveAlphas
+if saveAlphas  % adds extra IO overhead
     alphaFile = [tempname(), 'alphas.svn'];
     saveAlphaSwitch = sprintf('-a %s', alphaFile);
 else
     saveAlphaSwitch = '';
 end
-
 switch kernelType
     case 'linear'
         kswitch = '-t 0';
@@ -48,12 +46,13 @@ switch kernelType
         error('%s is not a supported kernelType. Valid options are ''linear'', ''polynomial'', ''rbf'', ''sigmoid''.', kernelType);
 end
 
-if nunique(y) < 3
+if isequal(y, round(y)) && nunique(y) < 3
+    yformat = '%d';
     model.problemType = 'classification';
     typeswitch = '-z c';
     y = convertLabelsToPM1(y);
 else
-    error('not yet implemented');
+    yformat = '%f';
     model.problemType = 'regression';
     typeswitch = '-z r';
 end
@@ -76,7 +75,7 @@ end
 
 X = mkUnitVariance(center(X));
 
-svmlightWriteData(X, y, trainFile);
+svmlightWriteData(X, y, trainFile, yformat);
 [iserror, response] = system(sprintf('svm_learn %s %s %s', options, trainFile, modelFile));
 if iserror
     error('There was a problem calling svmlight: %s', response);
@@ -93,7 +92,7 @@ if saveAlphas
     alpha = str2double(getText(alphaFile));
     epsilon = C*1e-6;
     model.svi = find( alpha > epsilon );  % support vectors indices
-    model.alpha = alpha.*y; % undoes the multiplication by svmlight
+    model.alpha = alpha.*y; % undoes the multiplication done by svmlight
 end
 if 0 % slow
     delete(trainFile);
