@@ -24,7 +24,6 @@ Ktest = kernelFn(Xtest, X);
 for method=1:4
     switch method
         case 1,
-            %model = linregFitL2(Ktrain, y, lambda);
             model = linregFit(X, y, 'regType', 'L2', 'lambda', lambda,...
                 'kernelFn', @rbfKernel,'kernelParam', rbfScale);
             w = model.w;
@@ -32,7 +31,6 @@ for method=1:4
             lossStr = sprintf('linregL2');
             fname = 'linregL2';
         case 2,
-            %model = linregFitL1(Ktrain, y, lambda);
             model = linregFit(X, y, 'regType', 'L1', 'lambda', lambda,...
                 'kernelFn', @rbfKernel,'kernelParam', rbfScale);
             w = model.w;
@@ -41,7 +39,7 @@ for method=1:4
             lossStr = sprintf('linregL1');
             fname = 'linregL1';
         case 3,
-            epsilon = 0.1; % 0.001;
+            epsilon = 0.1; %0.1 is the svmlight default
             [model, SV] = svmQPregFit(X, y, kernelFn, epsilon, 1*(1/lambda));
             w = model.alpha;
             lossStr = sprintf('SVM(%s=%6.4f)', '\epsilon', epsilon);

@@ -1,4 +1,4 @@
-function [h, he, hline] = plotCVcurve(lambdas, cvMeanErrors, cvStdErrors, lambdaBest, useLogScale)
+function [h, he, vline, hline] = plotCVcurve(lambdas, cvMeanErrors, cvStdErrors, lambdaBest, useLogScale, hline)
 % Plot a cross validation curve with error bars.
 % This is just a pretty version of the built in errorbars function. 
 %
@@ -32,17 +32,21 @@ else
     xlabel('parameter value'); 
     ylabel('CV error'); 
     box on; 
+    if nargin == 6
+       hline = horizontalLine(hline, 'LineStyle', '--', 'Color', colors{4}, 'LineWidth', 2);  
+    else
+        hline = [];
+    end
     axis tight;
     ylimits = get(gca, 'ylim'); 
     ylimits(1) = ylimits(1) - 0.1*diff(ylimits); 
     ylimits(2) = ylimits(2) + 0.1*diff(ylimits); 
     set(gca, 'ylim', ylimits); 
-    hline = verticalLine(lambdaBest, 'Color', colors{3},...
+    vline = verticalLine(lambdaBest, 'Color', colors{3},...
         'LineWidth', 2, 'LineStyle', '--');
     uistack(hline, 'bottom')
     %legend(hline, sprintf('%.2f', lambdaBest));
     title(sprintf('selected value: %.2f', lambdaBest)); 
-
 end
 
 

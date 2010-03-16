@@ -1,4 +1,4 @@
-function [model, bestParam, mu, se] = fitCv(params, fitFn, predictFn, lossFn, X, y,  Nfolds, useSErule, doPlot)
+function [model, bestParam, mu, se] = fitCv(params, fitFn, predictFn, lossFn, X, y,  Nfolds, useSErule, doPlot, plotArgs)
 % Fit a set of models of different complexity and use cross validation to pick the best
 %
 % Inputs:
@@ -28,6 +28,7 @@ warning('off', 'MATLAB:nearlySingularMatrix');
 if nargin < 7, Nfolds = 5; end
 if nargin < 8, useSErule = false; end
 if nargin < 9, doPlot = false; end
+if nargin < 10, plotArgs = {}; end
 % if params is 1 row vector, it is a probbaly a set of
 % single tuning params
 if size(params, 1)==1 && size(params, 2) > 3
@@ -62,17 +63,20 @@ end
 bestParam = unwrapCell(params(bestNdx,:));
 model = fitFn(X, y, bestParam);
 
-if doPlot
+if doPlot && size(params, 1) > 1;
    if ~isnumeric(bestParam)
       error('Plotting only supported for numerical values');  
    end
-   switch numel(bestParam)
+   singlevals = find(nunique(params) == 1); 
+   multivals = setdiff(1:numel(bestParam), singlevals);
+   ND = max(numel(bestParam)- numel(singlevals), 1);
+   switch ND
        case 1
            figure;
-           plotCVcurve(params, mu, se, bestParam);
+           plotCVcurve(params(:, multivals), mu, se, bestParam(multivals), plotArgs{:});
        case 2
            figure;
-           plotCVgrid(params, mu, bestParam); 
+           plotCVgrid(params(:, multivals), mu, bestParam(multivals), plotArgs{:}); 
        otherwise
             error('Plotting is only supported in 1D or 2D'); 
    end
