@@ -5,7 +5,6 @@ function model = svmlightFit(X, y, C, kernelParam, kernelType, saveAlphas, optio
 %
 % Supports classification and regression. 
 %
-% y is automaically converted to {-1, 1} if classification.
 %
 % model is a structure which can be passed to svmPredict. 
 %
