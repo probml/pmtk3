@@ -8,12 +8,12 @@ function model = naiveBayesGaussFitShrunkenCentroids(Xtrain, ytrain, lambda)
 %#PMTKauthor Robert Tseng
 
   
-C = length(unique(ytrain));
+C = length(unique(ytrain)); % see nunique()
 [N, D] = size(Xtrain);
 xbar = mean(Xtrain);
 Nclass = zeros(1,C);
 sse = zeros(1,D);
-centroid = zeros(C,D);
+centroid = zeros(C,D); % see partitionedMean for a vectorized solution
 for c=1:C
   ndx = find(ytrain==c);
   Nclass(c) = length(ndx);

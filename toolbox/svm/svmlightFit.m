@@ -1,21 +1,19 @@
 function model = svmlightFit(X, y, C, kernelParam, kernelType, saveAlphas, options)
 % Call svmLight to fit a binary SVM classifier using the specified kernel,
 % (rbf by default). If RBF, the kernelParam is gamma in
-% exp(-gamma ||X-X'||^2)
+% exp(-gamma ||X-X'||^2).
 %
-% y is automaically converted to {-1, 1} if classification
+% Supports classification and regression. 
+%
+% y is automaically converted to {-1, 1} if classification.
 %
 % model is a structure which can be passed to svmPredict. 
 %
 % You can use the addtosystempath function to add the directory containing
 % svm_learn.exe.
 %
-
-
-
-
-
-if nargin < 3 || isempty(C)
+%%
+if nargin < 3 || isempty(C), 
     cswitch = '';
 else
     cswitch = sprintf('-c %f', C);
@@ -56,34 +54,27 @@ else
     model.problemType = 'regression';
     typeswitch = '-z r';
 end
-
-
 tmp = tempdir();
 trainFile = fullfile(tmp, 'train.svm');
 modelFile = fullfile(tmp, sprintf('model%s.svm', datestring()));
-
 
 %-z c       classification
 %-t 2       for rbf expansion
 %-g gamma   to specify rbf bandwidth
 %-v 0       verbosity level 0-3 (0 is quiet)
 %-b 1       fit biased hyperplane
+%-# 1000    max # of iterations
 if(nargin < 7)
     options = sprintf('%s %s %s %s %s -v 0 -b 1 -# 1000', ...
         typeswitch, kswitch, kpswitch, cswitch, saveAlphaSwitch);
 end
-
 X = mkUnitVariance(center(X));
-
 svmlightWriteData(X, y, trainFile, yformat);
 [iserror, response] = system(sprintf('svm_learn %s %s %s', options, trainFile, modelFile));
 if iserror
     error('There was a problem calling svmlight: %s', response);
 end
 model.file = modelFile;
-
-%text = getText(modelFile);
-%model.nsvecs = str2double(char(strtok(text(cellfun(@(str)~isempty(str),strfind(text,'number of support vectors plus 1'))))))-1;
 model.kernelType  = kernelType;
 model.kernelParam = kernelParam;
 model.C = C;
@@ -92,13 +83,10 @@ if saveAlphas
     alpha = str2double(getText(alphaFile));
     epsilon = C*1e-6;
     model.svi = find( alpha > epsilon );  % support vectors indices
-    model.alpha = alpha.*y; % undoes the multiplication done by svmlight
-end
-if 0 % slow
-    delete(trainFile);
-    delete(logFile);
-    if saveAlphas
-        delete(alphaFile);
+    if strcmp(model.problemType, 'classification')
+        model.alpha = alpha.*y; % undoes the multiplication done by svmlight
+    else
+        model.alpha = alpha; 
     end
 end
 end
