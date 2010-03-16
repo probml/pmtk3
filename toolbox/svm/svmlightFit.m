@@ -86,7 +86,8 @@ if saveAlphas
     if strcmp(model.problemType, 'classification')
         model.alpha = alpha.*y; % undoes the multiplication done by svmlight
     else
-        model.alpha = alpha; 
+        n = numel(y); 
+        model.alpha = alpha(1:n) - alpha(n+1:2*n);
     end
 end
 end

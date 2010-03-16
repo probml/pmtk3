@@ -7,7 +7,9 @@ function [M, counts] = partitionedMean(X, y, C)
 % C  - (optional) the number of classes, (calculated if not specified)
 %
 % M  - a C-by-d matrix of means. 
-% counts(i) = sum(y==i); 
+% counts(i) = sum(y==i)
+%
+% See also partitionedSum
 
 
 %tic

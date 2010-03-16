@@ -15,9 +15,9 @@ Aeq = [ones(1,n) -ones(1,n)];
 beq = 0;   
 lb = zeros(2*n,1);    
 ub = C*ones(2*n,1);   
-
-warning('off','optim:quadprog:SwitchToMedScale')
-a = quadprog(H,f,A,b,Aeq,beq,lb,ub);
+H = H+1e-10*eye(size(H));
+options = optimset('LargeScale', 'off', 'MaxIter', 1000); 
+a = quadprog(H,f,A,b,Aeq,beq,lb,ub, zeros(2*n, 1), options);
 alpha =  a(1:n) - a(n+1:2*n);
 
 epsilon = C*1e-6;
