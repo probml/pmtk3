@@ -6,6 +6,7 @@ function [model, svi] = svmQPregFit(X,y,kernelFn,e,C)
 %PMTKurl http://www.isis.ecs.soton.ac.uk/resources/svminfo/
 %PMTKmodified Kevin Murphy
 
+
 K = kernelFn(X,X);
 n = length(y);
 H = [K -K; -K K];

@@ -87,7 +87,7 @@ if saveAlphas
         model.alpha = alpha.*y; % undoes the multiplication done by svmlight
     else
         n = numel(y); 
-        model.alpha = alpha(1:n) - alpha(n+1:2*n);
+        model.alpha = alpha(1:n) + alpha(n+1:2*n);
     end
 end
 end

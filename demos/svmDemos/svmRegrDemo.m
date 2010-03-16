@@ -9,7 +9,7 @@ noise		= 0.1;
 x	= 10*[-1:2/(N-1):1]';
 ytrue	= sin(abs(x))./abs(x);
 y	= ytrue + noise*randn(N,1);
-X = x;
+X = mkUnitVariance(center(x)); 
 
 
 lambda = 0.5;
@@ -18,6 +18,7 @@ kernelFn = @(X1,X2) rbfKernel(X1,X2,rbfScale);
 Ktrain =  kernelFn(X, X);
 %Xtest = [-5:.05:5]';
 Xtest = (-10:.1:10)';
+Xtest = mkUnitVariance(center(Xtest)); 
 Ktest = kernelFn(Xtest, X);
 
 for method=1:4
@@ -40,7 +41,7 @@ for method=1:4
             lossStr = sprintf('linregL1');
             fname = 'linregL1';
         case 3,
-            epsilon = 0.0001; % 0.001;
+            epsilon = 0.1; % 0.001;
             [model, SV] = svmQPregFit(X, y, kernelFn, epsilon, 1*(1/lambda));
             w = model.alpha;
             lossStr = sprintf('SVM(%s=%6.4f)', '\epsilon', epsilon);
