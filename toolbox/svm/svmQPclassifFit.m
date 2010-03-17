@@ -22,7 +22,7 @@ H = H+1e-10*eye(size(H));
 options = optimset('LargeScale', 'off', 'MaxIter', 1000); 
 [alpha] = quadprog(H, f, A, b, Aeq, beq, lb, ub, zeros(n, 1), options);
 epsilon = C*1e-6;
-ndx = alpha > epsilon; 
+ndx = alpha > 0; % epsilon; 
 svi = find(ndx);  % support vector indices
 alpha(~ndx) = 0; 
  

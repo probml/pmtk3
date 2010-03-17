@@ -3,6 +3,7 @@ function [model, varargout] = logregFit(X, y, varargin)
 %% INPUTS: (specified as name value pairs)
 % regType       ... L1 or L2
 % lambda        ... regularizer (can be a range tuned via cv)
+%               each ROW should contain the combination of desired lambdas
 % kernelFn      ... @(X, X1, kernelParam)
 % kernelParam   ... e.g. sigma in an RBF kernel (can be a range tuned via cv)
 % fitMethod     ... regType dependent, e.g. minfunc
@@ -53,7 +54,7 @@ args = prepareArgs(varargin); % converts struct args to a cell array
     'standardizeX'  , true      , ...
     'rescaleX'      , false     , ...
     'scaleXrange'   , [-1,1]    , ...
-    'nlambdas'      , 20        , ...
+    'nlambdas'      , 10        , ...
     'nkernelParams' , 10        , ...
     'nfolds'        , 5         , ...
     'useSErule'     , false     , ...
@@ -94,31 +95,33 @@ end
 %% construct fit function
 opts = fitOptions;
 if isempty(opts)
-    opts.Display     = 'none'; opts.TolFun = 1e-12;
-    opts.MaxIter     = 5000;   opts.Method = 'lbfgs';
-    opts.MaxFunEvals = 10000;  opts.TolX   = 1e-12;
+    opts.Display     = 'none'; opts.TolFun = 1e-3;
+    opts.MaxIter     = 200;   opts.Method = 'lbfgs';
+    opts.MaxFunEvals = 2000;  opts.TolX   = 1e-3;
+    opts.Corr = 10; % number of corrections for LBFGS (small to save memory)
+    opts.corrections = 10; % this is what it is called by L1GeneralProjection
 end
 
 
 switch lower(fitMethod)
-    case 'minfunc'
-        switch lower(regType)
-            case 'l1' % smooth approximation
-                fitCore = @(X,y,winit,l)minFunc(@penalizedL1, winit(:),opts, @(w)objective(w, X, y), l(:));
-            case 'l2'
-                fitCore = @(X,y,winit,l)minFunc(@penalizedL2, winit(:),opts, @(w)objective(w, X, y), l(:));
-        end
-    case 'l1projection'
-        fitCore = @(X,y,winit,l)L1GeneralProjection(objective, winit(:), l(:), opts, X, y);
-    case 'grafting'
-        fitCore = @(X,y,winit,l)L1GeneralGrafting(objective, winit(:), l(:), opts, X, y);
-    otherwise
-        error('unrecognized fitMethod: %s', fitMethod);
+  case 'minfunc'
+    switch lower(regType)
+      case 'l1' % smooth approximation
+        fitCore = @(X,y,winit,l)minFunc(@penalizedL1, winit(:),opts, @(w)objective(w, X, y), l(:));
+      case 'l2'
+        fitCore = @(X,y,winit,l)minFunc(@penalizedL2, winit(:),opts, @(w)objective(w, X, y), l(:));
+    end
+  case 'l1projection'
+    fitCore = @(X,y,winit,l)L1GeneralProjection(objective, winit(:), l(:), opts, X, y);
+  case 'grafting'
+    fitCore = @(X,y,winit,l)L1GeneralGrafting(objective, winit(:), l(:), opts, X, y);
+  otherwise
+    error('unrecognized fitMethod: %s', fitMethod);
 end
 if isempty(kernelFn)
-    fitfn = @(X, y, param)simpleFit(X, y, param, fitCore, nclasses, includeOffset);
+  fitfn = @(X, y, param)simpleFit(X, y, param, fitCore, nclasses, includeOffset);
 else
-    fitfn = @(X, y, param)kernelizedFit(X, y, param(1), param(2), fitCore, kernelFn, nclasses, includeOffset);
+  fitfn = @(X, y, param)kernelizedFit(X, y, param(1), param(2), fitCore, kernelFn, nclasses, includeOffset);
 end
 
 %% constuct parameter space
@@ -133,13 +136,17 @@ if ~isempty(kernelFn) && isempty(kernelParam)
     end
 end
 if isempty(lambda)
-    lambda = linspace(1e-5, 20, nlambdas)';
+    lambda = colvec(linspace(1e-5, 20, nlambdas));
 end
 
 if isempty(kernelParam)
     paramRange = lambda;
 else
     paramRange = crossProduct(lambda, kernelParam);
+end
+if doPlot
+  fprintf('cross validating over \n');
+  disp(paramRange)
 end
 %% cross validation
 lossFn = @(y, yhat)mean((y-yhat).^2);
@@ -167,7 +174,7 @@ if includeOffset
     lambda(1, :) = 0; % Don't penalize bias term
 end
 winit  = zeros(d, nclasses-1);
-w = fitFn(X, y, winit, lambda);
+w = fitFn(X, y, winit, lambda(:));
 if ~isbinary
     w = [reshape(w, [d nclasses-1]) zeros(d, 1)];
 end
@@ -178,6 +185,7 @@ if isbinary
 else
     model.ySupport = 1:nclasses;
 end
+model.lambda = lambda;
 
 end
 
@@ -196,7 +204,7 @@ if includeOffset
     lambda(1, :) = 0; % Don't penalize bias term
 end
 winit  = zeros(d, nclasses-1);
-w  = fitfn(K, y, winit, lambda);
+w  = fitfn(K, y, winit, lambda(:));
 if ~isbinary
     w = [reshape(w, [d nclasses-1]) zeros(d, 1)];
 end
@@ -210,5 +218,5 @@ if isbinary
 else
     model.ySupport = 1:nclasses;
 end
-
+model.lambda = lambda;
 end

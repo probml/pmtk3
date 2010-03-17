@@ -11,7 +11,7 @@ ytrue	= sin(abs(x))./abs(x);
 y	= ytrue + noise*randn(N,1);
 X = mkUnitVariance(center(x)); 
 
-
+% We pick  hyperparameters that result in a pretty plot
 lambda = 0.5;
 rbfScale = 0.3;
 kernelFn = @(X1,X2) rbfKernel(X1,X2,rbfScale);
@@ -43,7 +43,7 @@ for method=1:4
             [model, SV] = svmQPregFit(X, y, kernelFn, epsilon, 1*(1/lambda));
             w = model.alpha;
             lossStr = sprintf('SVM(%s=%6.4f)', '\epsilon', epsilon);
-            fname = 'SVM1';
+            fname = 'SVMQP';
             yhat = svmQPregPredict(model, Xtest);
         case 4
             C = 1/lambda;

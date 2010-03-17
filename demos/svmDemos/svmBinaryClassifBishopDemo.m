@@ -9,6 +9,7 @@ y = Y(:);
 
 X = mkUnitVariance(center(X));
 %% Set up kernels
+% We pick  hyperparameters that result in a pretty plot
 lambda = 2;
 rbfScale = 0.3;
 gamma = 1/(2*rbfScale^2);
@@ -25,7 +26,7 @@ logregArgs.kernelParam = rbfScale;
 
 
 %% Train and test
-for method=1:4
+for method=3:3
     switch method
         case 1,
             model = logregFit(X, y, logregArgs);

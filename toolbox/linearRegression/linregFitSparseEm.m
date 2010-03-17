@@ -88,11 +88,20 @@ switch(lower(prior))
     pen=@normalExpGammaNeglogpdf;
     diffpen=@normalExpGammaNeglogpdfDeriv;
     params = {shape, scale};
-  case {'grouplasso', 'gng'}
+  case {'glaplace', 'grouplasso'}
+    pen=@laplaceNeglogpdf;
+    diffpen=@laplaceNeglogpdfDeriv;
+    params = {lambda}; % user specifies laplace param, not gamma param
+  case 'gng'
     scale = lambda^2/2;
      pen=@normalGammaNeglogpdf;
     diffpen=@normalGammaNeglogpdfDeriv;
     params = {colvec(shapeFeat), scale};
+  case 'gng1'
+    scale = lambda^2/2;
+     pen=@normalGammaNeglogpdf;
+    diffpen=@normalGammaNeglogpdfDeriv;
+    params = {1, scale};
   otherwise
     error(['unrecognized prior ' prior])
 end
@@ -134,12 +143,12 @@ while ~done
   wOld = w;
   sigmaOld = sigma;
   % E step
-  switch prior
-    case 'groupLasso'
+  switch lower(prior)
+    case 'grouplasso' % special purpose code
       wNormGroup = arrayfun(@(i)twoNormGroup(wOld,groups,i), 1:nGroups);
       wNormFeat = wNormGroup(groups);
       psi = diag(wNormFeat./(lambda*sigma));
-    case 'gng'
+    case {'gng','gng1','glaplace'}
       wNormGroup = arrayfun(@(i)twoNormGroup(wOld,groups,i), 1:nGroups);
       wNormFeat = colvec(wNormGroup(groups));
       psi=diag(wNormFeat./diffpen(wNormFeat,params{:}));

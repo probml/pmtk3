@@ -240,6 +240,7 @@ end
     HessianIter,outputFcn,useMex,useNegCurv,precFunc] = ...
     minFunc_processInputOptions(options);
 
+
 % Constants
 SD = 0;
 CSD = 1;

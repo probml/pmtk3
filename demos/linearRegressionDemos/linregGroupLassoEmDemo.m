@@ -61,23 +61,21 @@ lambdaL1 = 15;
 lambdaGL1 = lambdaL1;
 
 %% Fit 
+if 0
 wHatLasso =  linregFitL1InteriorPoint(Xtrain, ytrain,  lambdaL1); 
+wHatLassoEmL = linregFitSparseEm(Xtrain, ytrain, 'laplace', 'lambda', lambdaL1);
+wHatLassoEmNG = linregFitSparseEm(Xtrain, ytrain, 'ng', 'shape', 1, 'scale', (0.5*lambdaL1)^2/2);
+end
 
 wHatGroup =  linregFitGroupLassoProj(Xtrain, ytrain, groups, lambdaGL1);
-
-% Fit with EM 
-wHatLassoEmL = linregFitSparseEm(Xtrain, ytrain, 'laplace', 'lambda', lambdaL1);
-
-wHatLassoEmNG = linregFitSparseEm(Xtrain, ytrain, 'ng', 'shape', 1, 'scale', (0.5*lambdaL1)^2/2);
-
-
-wHatGroupEmGL = linregFitSparseEm(Xtrain, ytrain, 'groupLasso', 'lambda', (0.5*lambdaGL1), 'groups', groups);
-
+wHatGroupEmGL = linregFitSparseEm(Xtrain, ytrain, 'groupLasso', 'lambda', (lambdaGL1), 'groups', groups);
+wHatGroupEmGL1 = linregFitSparseEm(Xtrain, ytrain, 'glaplace', 'lambda', (lambdaGL1), 'groups', groups);
 wHatGroupEmGNG = linregFitSparseEm(Xtrain, ytrain, 'gng', 'lambda', (0.5*lambdaGL1), 'groups', groups);
+wHatGroupEmGNG1 = linregFitSparseEm(Xtrain, ytrain, 'gng1', 'lambda', (0.5*lambdaGL1), 'groups', groups);
 
 %% Plot
 
-
+if 0
 figure; stem(wHatLasso); title('lasso'); drawGroups(nStates, wTrue);
 printPmtkFigure('groupLasso-LassoIP')
 
@@ -86,7 +84,7 @@ printPmtkFigure('groupLasso-LassoEmL')
 
 figure; stem(wHatLassoEmNG); title('lassoEmNG'); drawGroups(nStates, wTrue);
 printPmtkFigure('groupLasso-LassoEmNG')
-
+end
 
 
 figure; stem(wHatGroup); title('group lasso'); drawGroups(nStates, wTrue);
@@ -95,8 +93,15 @@ printPmtkFigure('groupLasso-GroupProj')
 figure; stem(wHatGroupEmGL); title('groupLassoEmGL'); drawGroups(nStates, wTrue);
 printPmtkFigure('groupLasso-GroupEmGL')
 
+figure; stem(wHatGroupEmGL1); title('groupLassoEmGL1'); drawGroups(nStates, wTrue);
+printPmtkFigure('groupLasso-GroupEmGL1')
+
+
 figure; stem(wHatGroupEmGNG); title('groupLassoEmGNG'); drawGroups(nStates, wTrue);
 printPmtkFigure('groupLasso-GroupEmGNG')
+
+figure; stem(wHatGroupEmGNG1); title('groupLassoEmGNG1'); drawGroups(nStates, wTrue);
+printPmtkFigure('groupLasso-GroupEmGNG1')
 
 
 placeFigures

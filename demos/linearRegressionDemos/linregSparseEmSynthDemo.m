@@ -54,7 +54,7 @@ for trial=1:Ntrials
       switch lower(prior)
         case {'ng', 'neg'} 
           scales = [0.001 0.01 0.1 1 10];
-          shapes = [0.01 0.1 1 10];
+          shapes = [0.001 0.01 0.1 1 10];
           [w, logPostTrace] = fitWithEmAndCV(Xtrain, ytrain, prior, scales, shapes);
           useEM = true;
         case 'nj'
@@ -108,7 +108,7 @@ printPmtkFigure(sprintf('linregSparseEmSynthNnzBoxplotSp%d', sparsity*100))
 %nr = 2; nc = 2;
 figure; 
 %subplot(nr, nc, 1);
-%trial = 5;
+trial = 1;
 stem(weightsTrue{trial}, 'marker', 'none', 'linewidth', 2);
 box off
 title('true');
