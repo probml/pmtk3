@@ -17,11 +17,11 @@ params.mu = zeros(d, Nclasses);
 params.Sigma = zeros(d, d, Nclasses);
 params.classPrior = zeros(1, Nclasses);
 for c=1:Nclasses
-    ndx = (y == c);
+    ndx = (y == c); 
     dat = X(ndx, :);
     params.mu(:,c) = mean(dat);
     params.Sigma(:,:,c) = covmat(dat);
-    params.classPrior(c) = length(ndx)/n;
+    params.classPrior(c) = sum(ndx)/n;
 end
 params.SigmaPooled = cov(X);
 params.type = type;
