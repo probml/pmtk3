@@ -67,7 +67,7 @@ if isempty(customOptions)
             kernelSwitch = '';
             paramSwitch = '';
     end
-    if ~isequal(y, round(y)) && nunique(y) < 3
+    if isequal(y, round(y)) && nunique(y) < 3
         typeSwitch = '-s 0'; %classification
         epsilonTubeSwitch = '';
     else
