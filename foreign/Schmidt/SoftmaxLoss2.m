@@ -29,11 +29,13 @@ end
 
 if nargout > 2
     H = zeros(p*(k-1));
-    SM = exp(X*w(:,1:k-1))./repmat(Z,[1 k-1]);
+    %SM = exp(X*w(:,1:k-1))./repmat(Z,[1 k-1]);
+    SM = bsxfun(@rdivide, exp(X*w(:,1:k-1)), Z);
     for c1 = 1:k-1
         for c2 = 1:k-1
             D = SM(:,c1).*((c1==c2)-SM(:,c2));
-            H((p*(c1-1)+1):p*c1,(p*(c2-1)+1):p*c2) = X'*diag(sparse(D))*X;
+            %H((p*(c1-1)+1):p*c1,(p*(c2-1)+1):p*c2) = X'*diag(sparse(D))*X;
+            H((p*(c1-1)+1):p*c1,(p*(c2-1)+1):p*c2) = bsxfun(@times, X, D)'*X;
         end
     end
 end

@@ -91,7 +91,7 @@ while fEvals < maxIter
        if posDef == 0
           d(free==1) = -R\(R'\g(free==1));
        else
-          [L D perm] = mchol(H(free==1,free==1));
+          [L D perm] = mcholC(H(free==1,free==1));
           dtemp = zeros(sum(free==1),1);
           gtemp = g(free==1);
           dtemp(perm) = -L' \ ((D.^-1).*(L \ gtemp(perm)));
@@ -101,7 +101,7 @@ while fEvals < maxIter
              if verbose == 2
                 fprintf('Step gone crazy, adjusting...\n');
              end
-             [L D perm] = mchol(H(free==1,free==1),1);
+             [L D perm] = mcholC(H(free==1,free==1),1);
              dtemp = zeros(sum(free==1),1);
              gtemp = g(free==1);
              dtemp(perm) = -L' \ ((D.^-1).*(L \ gtemp(perm)));
@@ -110,7 +110,7 @@ while fEvals < maxIter
        end
     elseif order == 2
 
-       [L D perm] = mchol(H(free==1,free==1));
+       [L D perm] = mcholC(H(free==1,free==1));
        dtemp = zeros(sum(free==1),1);
        gtemp = g(free==1);
        dtemp(perm) = -L' \ ((D.^-1).*(L \ gtemp(perm)));
@@ -120,7 +120,7 @@ while fEvals < maxIter
           if verbose == 2
                 fprintf('Step gone crazy, adjusting...\n');
             end
-            [L D perm] = mchol(H(free==1,free==1),1);
+            [L D perm] = mcholC(H(free==1,free==1),1);
             dtemp = zeros(sum(free==1),1);
             gtemp = g(free==1);
             dtemp(perm) = -L' \ ((D.^-1).*(L \ gtemp(perm)));
