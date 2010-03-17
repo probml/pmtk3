@@ -21,7 +21,7 @@ function [w,fEvals] = L1GeneralProjection(gradFunc,w,lambda,params,varargin)
 % Process input options
 [verbose,maxIter,optTol,threshold,alpha,order,corrections] = ...
     myProcessOptions(params,'verbose',1,'maxIter',250,...
-    'optTol',1e-6,'threshold',1e-4,'alpha',5e4,'order',2,'corrections',100);
+    'optTol',1e-6,'threshold',1e-4,'alpha',5e4,'order',-1,'corrections',100);
 
 % Some loss functions also use alpha as a parameter
 if alphaUsedInLoss(gradFunc)
