@@ -17,6 +17,6 @@ printPmtkFigure('huberLoss')
 figure; hold on
 plot(err, L2, 'r-',  err, vapnik, 'b:', err, huber, 'g-.',...
    'linewidth', 3);
-legend('L2','vapnik', 'huber', 'location', 'north')
+legend('L2',sprintf('%s-insensitive','\epsilon'), 'huber', 'location', 'north')
 set(gca, 'ylim', [-0.5 5])
 printPmtkFigure('vapnikLoss')

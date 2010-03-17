@@ -1,6 +1,7 @@
-%% Reproduce Figure 12.6 in "The elements of statistical learning" 2e 
-% by Hastie, Tibshirani, Friedman, in which we cross validate over both C
-% and gamma svm parameters. We also show the 2D % surface similar to figure 7 in
+% Plot CV error vs error vs gamma and C for an SVM, plus 1d slices
+% Similar to Figure 12.6 in "The elements of statistical learning" 2e 
+% by Hastie, Tibshirani, Friedman,
+% We also show the 2D % surface similar to figure 7 in
 % http://www.csie.ntu.edu.tw/~cjlin/papers/guide/guide.pdf.
 %PMTKslow
 %% Load Data
@@ -18,7 +19,7 @@ for i=1:numel(gammas)
     svmlightFitCV(X, y, 'kernelParam', gamma, 'C', Crange, 'cvopts', cvopts);
     title(['\gamma', sprintf(' = %.1f', gamma)]); 
     xlabel('C'); ylabel('cv error');
-    printPmtkFigure(sprintf('hastie2dCVgamma%.f', gamma));
+    printPmtkFigure(sprintf('svmCvGamma%d', 10*gamma));
 end
 %% Plot 2D heat map
 C = logspace(-1, 3.5, 10); 
@@ -31,6 +32,8 @@ set(gca, 'xscale', 'log', 'yscale', 'log');
 t = {sprintf('best C = %.2f', bestParams(1))
     ['best \gamma', sprintf(' = %.2f', bestParams(2) )]};
 title(t);
+printPmtkFigure('svmCvHeatmap')
+ 
 %% Plot 2D contour
 figure
 nc = numel(C);
@@ -43,6 +46,8 @@ contour(xx, yy, zz, 'LineWidth', 2);
 set(gca, 'xscale', 'log', 'yscale', 'log'); 
 xlabel('C');
 ylabel('\gamma');
+printPmtkFigure('svmCvContour')
+
 %% Plot 2D surface
 figure
 surf(xx, yy, zz);
@@ -50,5 +55,7 @@ set(gca, 'xscale', 'log', 'yscale', 'log');
 xlabel('C');
 ylabel('\gamma');
 zlabel('cv error')
+printPmtkFigure('svmCvSurf')
+
 %%
 placeFigures;
