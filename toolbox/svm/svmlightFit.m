@@ -89,4 +89,5 @@ if saveAlphas
         model.alpha = alpha(1:n) + alpha(n+1:2*n);
     end
 end
+model.engine = 'svmlight';
 end
