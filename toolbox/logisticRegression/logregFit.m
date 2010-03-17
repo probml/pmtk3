@@ -21,6 +21,9 @@ function [model, varargout] = logregFit(X, y, varargin)
 % varargout{1}  ... the best parameter values chosen by CV
 % varargout{2}  ... mean loss
 % varargout{3}  ... standard error of varargout{2}
+%%
+assert(size(y, 1) >= size(y, 2));
+assert(size(y, 1) == size(X, 1));
 %% process options
 args = prepareArgs(varargin); % converts struct args to a cell array
 [   nclasses      ...
@@ -85,7 +88,7 @@ if isbinary
     objective = @LogisticLossSimple;
 else
     [y, ySupport] = setSupport(y, 1:nclasses);
-    objective = @SoftmaxLoss2;
+    objective = @(w, X, y)SoftmaxLoss2(w, X, y, nclasses);
 end
 
 %% construct fit function
@@ -101,14 +104,14 @@ switch lower(fitMethod)
     case 'minfunc'
         switch lower(regType)
             case 'l1' % smooth approximation
-                fitCore = @(X,y,winit,l)minFunc(@penalizedL1, winit(:),opts, @(w)objective(w, X, y, nclasses), l(:));
+                fitCore = @(X,y,winit,l)minFunc(@penalizedL1, winit(:),opts, @(w)objective(w, X, y), l(:));
             case 'l2'
-                fitCore = @(X,y,winit,l)minFunc(@penalizedL2, winit(:),opts, @(w)objective(w, X, y, nclasses), l(:));
+                fitCore = @(X,y,winit,l)minFunc(@penalizedL2, winit(:),opts, @(w)objective(w, X, y), l(:));
         end
     case 'l1projection'
-        fitCore = @(X,y,winit,l)L1GeneralProjection(objective, winit(:), l, opts, X, y);
+        fitCore = @(X,y,winit,l)L1GeneralProjection(objective, winit(:), l(:), opts, X, y);
     case 'grafting'
-        fitCore = @(X,y,winit,l)L1GeneralGrafting(objective, winit(:), l, opts, X, y);
+        fitCore = @(X,y,winit,l)L1GeneralGrafting(objective, winit(:), l(:), opts, X, y);
     otherwise
         error('unrecognized fitMethod: %s', fitMethod);
 end
@@ -122,15 +125,15 @@ end
 if ~isempty(kernelFn) && isempty(kernelParam)
     switch func2str(kernelFn)
         case 'rbfKernel'
-            kernelParam = logspace(-1, 1, nkernelParams);
+            kernelParam = logspace(-1, 1, nkernelParams)';
         case 'kernelPoly',
-            kernelParam = 1:nkernelParams;
+            kernelParam = (1:nkernelParams)';
         otherwise
-            kernelParam = logspace(-1, 1, nkernelParams);
+            kernelParam = logspace(-1, 1, nkernelParams)';
     end
 end
 if isempty(lambda)
-    lambda = linspace(1e-5, 20, nlambdas);
+    lambda = linspace(1e-5, 20, nlambdas)';
 end
 
 if isempty(kernelParam)
