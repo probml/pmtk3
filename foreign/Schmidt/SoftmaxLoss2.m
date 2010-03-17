@@ -11,14 +11,20 @@ w(:,k) = zeros(p,1);
 
 Z = sum(exp(X*w),2);
 nll = -sum((sum(X.*w(:,y).',2) - log(Z)));
-
 if nargout > 1
-    g = zeros(p,k-1);
-
-    for c = 1:k-1
-        g(:,c) = -sum(X.*repmat((y==c) - exp(X*w(:,c))./Z,[1 p]));
+    if 0
+        g = zeros(p,k-1);
+        for c = 1:k-1
+            g(:,c) = -sum(X.*repmat((y==c) - exp(X*w(:,c))./Z,[1 p]));
+        end
+        g = reshape(g,[p*(k-1) 1]);
+    else
+        S = bsxfun(@eq, sparse(1:k-1), y);
+        expXw = bsxfun(@rdivide, exp(X*w(:, 1:k-1)), Z);
+        g = -X'*(S-expXw);
+        g = g(:);
     end
-    g = reshape(g,[p*(k-1) 1]);
+    %assert(approxeq(g, gtest));
 end
 
 if nargout > 2
