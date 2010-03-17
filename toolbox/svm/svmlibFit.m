@@ -13,8 +13,6 @@ function model = svmlibFit(X, y, C, kernelParam, kernelType, varargin)
 %     add this line to your startup.m file.
 % (5) (if linux, mexify by running libsvmMake.m - already done for windows)
 % (6) test the mex interface with libsvmTest.m
-%%
-
 %% libsvm options:
 % -s svm_type : set type of SVM (default 0)
 % 	0 -- C-SVC
@@ -38,7 +36,7 @@ function model = svmlibFit(X, y, C, kernelParam, kernelType, varargin)
 % -h shrinking: whether to use the shrinking heuristics, 0 or 1 (default 1)
 % -b probability_estimates: whether to train a SVC or SVR model for probability estimates, 0 or 1 (default 0)
 % -wi weight: set the parameter C of class i to weight*C, for C-SVC (default 1)
-
+%%
 [shrink, epsilonTube, estProb, customOptions] = process_options...
     (varargin, 'shrink', 0, 'epsilonTube', 0.1, 'estProb', 0, 'customOptions', '');
 shrinkSwitch = sprintf('-h %d', shrink);
@@ -75,7 +73,7 @@ if isempty(customOptions)
     else
         typeSwitch = '-s 3'; %regression
         epsilonTubeSwitch = sprintf('-p %d', epsilonTube);
-    end    
+    end
     Cswitch = sprintf('-c %f', C);
     options = sprintf('%s %s %s %s %s %s %s', ...
         Cswitch, typeSwitch, kernelSwitch, paramSwitch,...
