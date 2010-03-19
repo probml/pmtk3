@@ -17,3 +17,4 @@ model2 = svmFit(Xtrain, ytrain, 'kernel', 'linear',...,
                'fitFn', @svmlibLinearFit, 'standardizeX', false);
 yhat2  = svmPredict(model2, Xtest);
 nerrors = sum(yhat ~= ytest)
+%%
