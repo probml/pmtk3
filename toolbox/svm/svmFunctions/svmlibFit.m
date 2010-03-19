@@ -63,12 +63,13 @@ if isempty(customOptions)
         case 'sigmoid'
             kernelSwitch = '-t 3';
             paramSwitch = sprintf('-g %f', kernelParam);
-        case 'default'
+        otherwise
             kernelSwitch = '';
             paramSwitch = '';
     end
-    if isequal(y, round(y)) && nunique(y) < 3
-        typeSwitch = '-s 0'; %classification
+    
+    if isequal(y, round(y)) 
+        typeSwitch = '-s 0'; %classification (both binary and multiclass)
         epsilonTubeSwitch = '';
     else
         typeSwitch = '-s 3'; %regression
@@ -83,5 +84,5 @@ else
 end
 model = svmtrain(y, X, options);
 model.C = C;
-model.engine = 'libsvm';
+model.fitEngine = mfilename();
 end

@@ -18,7 +18,7 @@ fitkern = @(k,p)logregFit(X, y, 'lambda', lambda, 'kernelFn', k, 'kernelParam', 
 %% Polynomial
 modelPoly = fitkern(@kernelPoly, polyOrder); 
 %% RBF
-modelRBF = fitkern(@rbfKernel, rbfScale); 
+modelRBF = fitkern(@kernelRbfSigma, rbfScale); 
 %% Compute training errors
 [yhat, prob] = logregPredict(modelLinear, X); %#ok
 trainErr_linear = mean(y~=yhat);

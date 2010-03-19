@@ -6,21 +6,20 @@ Xtrain = data.X;
 ytrain = convertLabelsToPM1(data.y);
 Xtest  = data.xnew;
 ytest  = convertLabelsToPM1(data.prob >= 0.5);
-Xtrain = mkUnitVariance(center(Xtrain));
-Xtest = mkUnitVariance(center(Xtest));
+%Xtrain = mkUnitVariance(center(Xtrain));
+%Xtest = mkUnitVariance(center(Xtest));
 gammas = [5, 1, 0.5, 0.1];
 Crange = logspace(-1, 3.5, 20); 
 
 ng = numel(gammas);
 nc = numel(Crange); 
 testError = zeros(ng, nc); 
-saveAlphas = false; %  faster
 for i=1:ng
     gamma = gammas(i);
     for j=1:nc
         C = Crange(j); 
-        model = svmlightFit(Xtrain, ytrain, C, gamma, 'rbf', saveAlphas); 
-        yhat = svmlightPredict(model, Xtest); 
+        model = svmFit(Xtrain, ytrain, 'C', C,'kernelParam', gamma, 'kernel', 'rbf'); 
+        yhat = svmPredict(model, Xtest); 
         testError(i, j) = mean(yhat ~= ytest); 
     end
 end
@@ -42,6 +41,6 @@ for i=1:ng
     title(['\gamma',sprintf(' = %.2f', gammas(i))]); 
     legend(hline, 'bayes error', 'location', 'NorthWest')
     
-    set(gca, 'ylim',[0.1, 0.6],  'xlim', [1e-1, 1*10^(3.5)])
+    %set(gca, 'ylim',[0.1, 0.6],  'xlim', [1e-1, 1*10^(3.5)])
     box on;
 end

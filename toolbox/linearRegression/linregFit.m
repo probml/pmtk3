@@ -106,7 +106,7 @@ end
 %% constuct parameter space
 if ~isempty(kernelFn) && isempty(kernelParam)
     switch func2str(kernelFn)
-        case 'rbfKernel'
+        case 'kernelRbfSigma'
             kernelParam = logspace(-1, 1, nkernelParams);
         case 'kernelPoly', 
             kernelParam = 1:nkernelParams;

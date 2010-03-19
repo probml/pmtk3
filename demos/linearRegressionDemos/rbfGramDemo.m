@@ -35,7 +35,7 @@ axis([-0.5 1.5 -0.5 1.5])
 printPmtkFigure('rbfScatter')
 
 
-K = rbfKernel(X, mu, 0.5);
+K = kernelRbfSigma(X, mu, 0.5);
 %figure; imagesc(K); colorbar
 figure; hintonDiagram(K);
 printPmtkFigure('rbfHinton')

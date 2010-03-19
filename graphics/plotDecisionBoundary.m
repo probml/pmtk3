@@ -12,7 +12,7 @@ function h = plotDecisionBoundary(X, Y, predictFcn, stipple, colors, symbols, ma
 %
 % Examples
 % plotDecisionBoundary(X, y, @(Xtest)logregPredict(model, Xtest));
-% predictFcn = @(Xtest) logregPredict(model, rbfKernel(Xtest, X, rbfScale)); 
+% predictFcn = @(Xtest) logregPredict(model, kernelRbfSigma(Xtest, X, rbfScale)); 
 % plotDecisionBoundary(X, y, predictFcn);
     if nargin < 4 || isempty(stipple), stipple = true; end
     if nargin < 5 || isempty(colors),  colors = pmtkColors(); end

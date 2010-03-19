@@ -14,7 +14,7 @@ X = mkUnitVariance(center(x));
 % We pick  hyperparameters that result in a pretty plot
 lambda = 0.5;
 rbfScale = 0.3;
-kernelFn = @(X1,X2) rbfKernel(X1,X2,rbfScale);
+kernelFn = @(X1,X2) kernelRbfSigma(X1,X2,rbfScale);
 Ktrain =  kernelFn(X, X);
 %Xtest = [-5:.05:5]';
 Xtest = (-10:.1:10)';
@@ -25,35 +25,42 @@ for method=1:4
     switch method
         case 1,
             model = linregFit(X, y, 'regType', 'L2', 'lambda', lambda,...
-                'kernelFn', @rbfKernel,'kernelParam', rbfScale);
+                'kernelFn', @kernelRbfSigma,'kernelParam', rbfScale);
             w = model.w;
             yhat = linregPredict(model, Xtest);
             lossStr = sprintf('linregL2');
             fname = 'linregL2';
         case 2,
             model = linregFit(X, y, 'regType', 'L1', 'lambda', lambda,...
-                'kernelFn', @rbfKernel,'kernelParam', rbfScale);
+                'kernelFn', @kernelRbfSigma,'kernelParam', rbfScale);
             w = model.w;
             SV = find(abs(w) > 1e-5);
             yhat = linregPredict(model, Xtest);
             lossStr = sprintf('linregL1');
             fname = 'linregL1';
         case 3,
-            epsilon = 0.1; %0.1 is the svmlight default
-            [model, SV] = svmQPregFit(X, y, kernelFn, epsilon, 1*(1/lambda));
+            epsilon = 0.1; % default
+            gamma = 1/(2*rbfScale^2);
+            C = 1/lambda;
+            model = svmFit(X, y,...
+                'kernel', @kernelRbfGamma, 'kernelParam', gamma, ...
+                'fitFn', @svmQPregFit, 'C', C); 
+            SV = model.svi;
+            %[model, SV] = svmQPregFit(X, y, kernelFn, epsilon, 1*(1/lambda));
             w = model.alpha;
             lossStr = sprintf('SVM(%s=%6.4f)', '\epsilon', epsilon);
             fname = 'SVMQP';
-            yhat = svmQPregPredict(model, Xtest);
+            yhat = svmPredict(model, Xtest);
         case 4
             C = 1/lambda;
             gamma = 1/(2*rbfScale^2);
-            model = svmlightFit(X, y, C, gamma);
+            model = svmFit(X, y, 'C', C, 'kernel', 'rbf', ...
+                'kernelParam', gamma,'fitFn', @svmlightFit);
             w = model.alpha;
             SV = model.svi;
             lossStr = 'SVMlight';
             fname = 'SVMlight';
-            yhat = svmlightPredict(model, Xtest);
+            yhat = svmPredict(model, Xtest);
     end
     
     

@@ -96,6 +96,7 @@ end
 opts = fitOptions;
 if isempty(opts)
     opts.Display     = 'none'; opts.TolFun = 1e-3;
+    opts.verbose     = false;
     opts.MaxIter     = 200;   opts.Method = 'lbfgs';
     opts.MaxFunEvals = 2000;  opts.TolX   = 1e-3;
     opts.Corr = 10; % number of corrections for LBFGS (small to save memory)
@@ -108,7 +109,7 @@ switch lower(fitMethod)
     switch lower(regType)
       case 'l1' % smooth approximation
         fitCore = @(X,y,winit,l)minFunc(@penalizedL1, winit(:),opts, @(w)objective(w, X, y), l(:));
-      case 'l2'
+      case {'l2', 'none'}
         fitCore = @(X,y,winit,l)minFunc(@penalizedL2, winit(:),opts, @(w)objective(w, X, y), l(:));
     end
   case 'l1projection'
@@ -127,7 +128,7 @@ end
 %% constuct parameter space
 if ~isempty(kernelFn) && isempty(kernelParam)
     switch func2str(kernelFn)
-        case 'rbfKernel'
+        case 'kernelRbfSigma'
             kernelParam = logspace(-1, 1, nkernelParams)';
         case 'kernelPoly',
             kernelParam = (1:nkernelParams)';
@@ -169,6 +170,7 @@ if includeOffset
 end
 model.includeOffset = includeOffset;
 d = size(X, 2);
+model.lambda = lambda;
 lambda = lambda*ones(d, nclasses-1);
 if includeOffset
     lambda(1, :) = 0; % Don't penalize bias term
@@ -185,7 +187,7 @@ if isbinary
 else
     model.ySupport = 1:nclasses;
 end
-model.lambda = lambda;
+
 
 end
 
@@ -199,6 +201,7 @@ if includeOffset
 end
 model.includeOffset = includeOffset;
 d = size(K, 2);
+model.lambda = lambda;
 lambda = lambda*ones(d, nclasses-1);
 if includeOffset
     lambda(1, :) = 0; % Don't penalize bias term
@@ -218,5 +221,5 @@ if isbinary
 else
     model.ySupport = 1:nclasses;
 end
-model.lambda = lambda;
+
 end

@@ -67,7 +67,7 @@ if(nargin < 7)
     options = sprintf('%s %s %s %s %s -v 0 -b 1 -# 1000', ...
         typeswitch, kswitch, kpswitch, cswitch, saveAlphaSwitch);
 end
-X = mkUnitVariance(center(X));
+
 svmlightWriteData(X, y, trainFile, yformat);
 [iserror, response] = system(sprintf('svm_learn %s %s %s', options, trainFile, modelFile));
 if iserror
@@ -89,5 +89,5 @@ if saveAlphas
         model.alpha = alpha(1:n) + alpha(n+1:2*n);
     end
 end
-model.engine = 'svmlight';
+model.fitEngine = mfilename();
 end

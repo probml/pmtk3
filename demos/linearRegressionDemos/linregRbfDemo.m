@@ -12,7 +12,7 @@ for i=1:length(sigmas)
     sigma = sigmas(i);
     
     model = linregFit(xtrain, ytrain, ...
-        'kernelFn', @rbfKernel, 'kernelParam', sigma,...
+        'kernelFn', @kernelRbfSigma, 'kernelParam', sigma,...
         'lambda', lambda, 'fitMethod', 'QR','standardizeX',  false);
     ypred = linregPredict(model, xtest);
     
@@ -23,12 +23,12 @@ for i=1:length(sigmas)
     title(sprintf('RBF, sigma %f', sigma))
  
     subplot2(3,3,i,2)
-    Xtest = rbfKernel(xtest(:), centers, sigma);
+    Xtest = kernelRbfSigma(xtest(:), centers, sigma);
     for j=1:K
         plot(xtest, Xtest(:,j)); hold on
     end
     title(sprintf('RBF, sigma %f', sigma))
-    XtrainRBF = rbfKernel(xtrain(:), centers, sigma);
+    XtrainRBF = kernelRbfSigma(xtrain(:), centers, sigma);
     subplot2(3,3,i,3)
     imagesc(XtrainRBF); colormap('gray')
     title(sprintf('RBF, sigma %f', sigma))

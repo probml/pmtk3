@@ -21,7 +21,7 @@ mse = lossFn(yhat, ytest)
 w = linregFitL2QR(mkUnitVariance(center(Xtrain)),center(ytrain), bestLambda); 
 assert(isequal(model.w, w));
 %%
-model = linregFit(Xtrain, ytrain, 'kernelFn', @rbfKernel, 'doPlot', true);
+model = linregFit(Xtrain, ytrain, 'kernelFn', @kernelRbfSigma, 'doPlot', true);
 set(gca, 'YScale', 'log');
 yhat = linregPredict(model, Xtest);
 mse = lossFn(yhat, ytest)
@@ -34,7 +34,7 @@ mse = lossFn(yhat, ytest)
 
 
 %%
-model = linregFit(Xtrain, ytrain, 'regType', 'L1', 'kernelFn', @rbfKernel,...
+model = linregFit(Xtrain, ytrain, 'regType', 'L1', 'kernelFn', @kernelRbfSigma,...
     'lambda', 0.5:0.5:4, 'doPlot', true, 'fitMethod', 'interiorpoint', 'kernelParam', 3:0.5:4);
 set(gca, 'YScale', 'log');
 yhat = linregPredict(model, Xtest);

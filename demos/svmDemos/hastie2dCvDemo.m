@@ -16,7 +16,8 @@ plotArgs = {true, data.bayesError};  %{useLogScale, hline}
 cvopts = {5, false, true, plotArgs}; %{nfolds, useSErule, doPlot, plotArgs}
 for i=1:numel(gammas)
     gamma = gammas(i); 
-    svmlightFitCV(X, y, 'kernelParam', gamma, 'C', Crange, 'cvopts', cvopts);
+    svmFit(X, y, 'kernelParam', gamma, 'C', Crange, ...
+        'cvOptions', cvopts, 'fitFn', @svmlightFit);
     title(['\gamma', sprintf(' = %.1f', gamma)]); 
     xlabel('C'); ylabel('cv error');
     printPmtkFigure(sprintf('svmCvGamma%d', 10*gamma));
@@ -24,8 +25,9 @@ end
 %% Plot 2D heat map
 C = logspace(-1, 3.5, 10); 
 gammas = logspace(-1, 1, 10);
-[model, bestParams, CVmu, CVse] = svmlightFitCV...
-    (X, y, 'kernelParam', gammas, 'C', C, 'cvopts', {5, false, true});
+[model, bestParams, CVmu, CVse] = svmFit...
+    (X, y, 'kernelParam', gammas, 'C', C, 'cvOptions', {5, false, true},...
+    'fitFn', @svmlightFit);
 xlabel('C');
 ylabel('\gamma');
 set(gca, 'xscale', 'log', 'yscale', 'log'); 

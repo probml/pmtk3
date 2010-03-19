@@ -21,12 +21,12 @@ end
 labels = z;
 labels(labels==3) = 2; % merge 2 and 3
 %% Map to RBF basis
-Gtrain = rbfKernel(X, centres, sigmaRbf); % gram matrix
+Gtrain = kernelRbfSigma(X, centres, sigmaRbf); % gram matrix
 %% Fit in transformed space
 y = labels'; 
 model = logregFit(Gtrain, y, 'lambda',  lambda);
 %% Plot in the original space
-plotDecisionBoundary(X, y, @(Xtest)logregPredict(model, rbfKernel(Xtest, centres, sigmaRbf)));
+plotDecisionBoundary(X, y, @(Xtest)logregPredict(model, kernelRbfSigma(Xtest, centres, sigmaRbf)));
 hold on; axis square
 plot(centres(:, 1), centres(:, 2), 'k+', 'MarkerSize', 12, 'LineWidth', 3);
 set(gca, 'XTick', -1:1, 'YTick', -1:1);

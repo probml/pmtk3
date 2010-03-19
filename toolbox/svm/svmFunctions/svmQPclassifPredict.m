@@ -1,7 +1,6 @@
 function [yhat, f] = svmQPclassifPredict(model, Xtest)
 % yhat(i) = -1 or 1
-Xtest = mkUnitVariance(center(Xtest)); 
-Ktest = model.kernelFn(Xtest, model.X); 
+Ktest = model.kernelFn(Xtest, model.X, model.kernelParam); 
 [Ntest, Ntrain] = size(Ktest); %#ok
 H = repmat(model.y(:)', Ntest, 1) .* Ktest;
 f = H*model.alpha + model.bias;

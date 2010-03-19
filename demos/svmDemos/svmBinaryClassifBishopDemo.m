@@ -7,18 +7,18 @@
 load bishop2class
 y = Y(:);
 
-X = mkUnitVariance(center(X));
+%X = mkUnitVariance(center(X));
 %% Set up kernels
 % We pick  hyperparameters that result in a pretty plot
 lambda = 2;
 rbfScale = 0.3;
 gamma = 1/(2*rbfScale^2);
-kernelFn = @(X1,X2) rbfKernel(X1,X2,rbfScale);
-Ktrain =  kernelFn(X, X);
+kernelFn = @kernelRbfSigma;
+Ktrain =  kernelFn(X, X, rbfScale);
 
 logregArgs.lambda = lambda;
 logregArgs.regType = 'L2';
-logregArgs.kernelFn = @rbfKernel;
+logregArgs.kernelFn = @kernelRbfSigma;
 logregArgs.kernelParam = rbfScale; 
 
 
@@ -26,7 +26,7 @@ logregArgs.kernelParam = rbfScale;
 
 
 %% Train and test
-for method=3:3
+for method=1:4
     switch method
         case 1,
             model = logregFit(X, y, logregArgs);
@@ -41,23 +41,23 @@ for method=3:3
         case 3
             C = 1/lambda;
             tic
-            [model, SV] = svmQPclassifFit(X, y, kernelFn,  C);
+            model = svmFit(X, y,'kernel', kernelFn,'C', C, 'kernelParam', rbfScale);
             toc
             fname = 'SVM';
-            predictFn = @(Xtest) svmQPclassifPredict(model, Xtest);
-            yhat = svmQPclassifPredict(model, X);
+            predictFn = @(Xtest) svmPredict(model, Xtest);
+            yhat = svmPredict(model, X);
             trainingErrorsSVM = sum(yhat ~= convertLabelsToPM1(y))
-            SVsvm = SV;
+            SVsvm = model.svi;
         case 4
             C = 1 / lambda;
             gamma = 1/(2*rbfScale^2);
             tic
-            modelLight = svmlightFit(X, y, C, gamma); 
+            modelLight = svmFit(X, y,'C', C,'kernel', 'rbf', 'kernelParam', gamma, 'fitFn', @svmlightFit); 
             toc
             SV = modelLight.svi; 
             fname = 'SVMlight';
-            predictFn = @(Xtest)svmlightPredict(modelLight, Xtest); 
-            yhat = svmlightPredict(modelLight, X); 
+            predictFn = @(Xtest)svmPredict(modelLight, Xtest); 
+            yhat = svmPredict(modelLight, X); 
             trainingErrorsSVMlight = sum(yhat ~= convertLabelsToPM1(y))
     end
     % Plot results
