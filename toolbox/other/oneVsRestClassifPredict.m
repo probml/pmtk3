@@ -7,6 +7,6 @@ score = zeros(N, C);
 for c=1:C
     score(:, c) = predFn(model.modelClass{c}, X);
 end
-[conf, yhat] = max(score);
+[conf, yhat] = max(score, [], 2);
 
 end
