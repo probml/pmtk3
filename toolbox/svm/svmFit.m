@@ -41,6 +41,12 @@ function [model, varargout] = svmFit(X, y, varargin)
 %
 %  Make sure the binary executables are on your system 
 %  path. You can use addtosystempath() to do this within Matlab.
+% For example, I have made a shortcut button which executes the following
+%
+% addtosystempath(fullfile(pmtk3Root(), 'foreign\svmLightWindows'))
+% addtosystempath(fullfile(pmtk3Root(),'foreign\liblinear-1.51\windows'))
+% addtosystempath(fullfile(pmtk3Root(),'\foreign\libsvm-mat-2.9-1'))
+
 %%
 d = size(X, 2);
 [   C            ,... 

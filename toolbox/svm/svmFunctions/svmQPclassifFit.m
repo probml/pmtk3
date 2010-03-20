@@ -33,7 +33,7 @@ lb  = zeros(n, 1);
 ub  = C*ones(n, 1);
 H   = H+1e-10*eye(size(H));
 
-options = optimset('LargeScale', 'off', 'MaxIter', 1000);
+options = optimset('LargeScale', 'off', 'MaxIter', 1000, 'display', 'off');
 [alpha] = quadprog(H, f, A, b, Aeq, beq, lb, ub, zeros(n, 1), options);
 epsilon = C*1e-6;
 ndx     = alpha > 0;  % epsilon;

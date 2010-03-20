@@ -1,6 +1,6 @@
 %% Test the oneVsRestClassifFit function 
 % by comparing its results to liblinear's built in procedure. 
-load soy
+load soy %C=3, N=307, D=35
 setSeed(0);
 [X, Y] = shuffleRows(X, Y);
 Xtrain = X(1:250, :); ytrain = Y(1:250);

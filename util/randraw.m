@@ -436,7 +436,8 @@ if strcmp(runMode, 'genRun')
                     %  max_ab < 0.5            Joehnk's algorithm
                     %  1 < min_ab              Cheng's algortihm BB
                     %  min_ab <= 1 <= max_ab   Atkinson's switching algorithm
-                    %  0.5<= max_ab < 1        Atkinson's switching algorithm
+                    %  0.5<= max_ab < 1        Atkinson's switching
+                    %  algorithm
 
 
                     checkParamsNum(funcName, 'Beta', 'beta', distribParams, [2, 4]);
@@ -4109,7 +4110,7 @@ if ~any( numel(distribParams) == correctNum )
           ''') for help) ');
 end
 return;
-
+end
 
 function validateParam(funcName, distribName, runDistribName, distribParamsName, paramName, param, conditionStr)
 condLogical = 1;
@@ -4155,25 +4156,27 @@ if ~condLogical
 end
 return;
 end
+
 function cdf = normcdf(y)
 cdf = 0.5*(1+erf(y/sqrt(2)));
 return;
 end
+
 function pdf = normpdf(y)
 pdf = 1/sqrt(2*pi) * exp(-1/2*y.^2);
 return;
 end
+
 function cdfinv = norminv(y)
 cdfinv = sqrt(2) * erfinv(2*y - 1);
 return;
 end
+
 function out = randFrom5Tbls( P, offset, sampleSize)
 sizeP = length(P);
-
 if sizeP == 0
      out = [];
      return;
-end
 end
 a = mod(floor([0 P]/16777216), 64);
 na = cumsum( a );
