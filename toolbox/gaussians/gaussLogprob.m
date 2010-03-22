@@ -4,7 +4,7 @@ function logp = gaussLogprob(model, X)
 % X(i,:) is i'th case, can contain NaNs for missing values
 % In the univariate case, Sigma is the variance, not the SD.
 
-if any(isnan(X))
+if any(isnan(X(:)))
   logp = gaussLogprobMissingData(model, X);
   return;
 end

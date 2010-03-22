@@ -1,7 +1,7 @@
 function printPmtkFigure(filename)
 % print current figure to specified file in .eps and .pdf formats
 
-if false % set to false to turn off printing
+if false% set to false to turn off printing
    %printFolder = 'C:\kmurphy\PML\Figures\pdfFigures';
    printFolder = 'C:\kmurphy\dropbox\PML\Figures\pdfFigures';
   %pdfcrop;

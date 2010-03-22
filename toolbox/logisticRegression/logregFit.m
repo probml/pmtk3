@@ -100,7 +100,12 @@ if isempty(opts)
     opts.MaxIter     = 200;   opts.Method = 'lbfgs';
     opts.MaxFunEvals = 2000;  opts.TolX   = 1e-3;
     opts.Corr = 10; % number of corrections for LBFGS (small to save memory)
-    opts.corrections = 10; % this is what it is called by L1GeneralProjection
+   
+    if strcmpi(fitMethod, 'l1projection')
+      % for L1GeneralProjection
+      opts.order = -1; % Turn on using L-BFGS
+      opts.corrections = 10; %  num. LBFGS corections
+    end
 end
 
 
