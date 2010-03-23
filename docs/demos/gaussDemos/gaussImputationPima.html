@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>gaussImputationPima</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="gaussImputationPima"><style type="text/css">
+      --><title>gaussImputationPima</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="gaussImputationPima"><style type="text/css">
 
 body {
   background-color: white;
@@ -101,7 +101,7 @@ subplot(4,4,(row-1)*4+col);
 
 
 fittedModel{1} = struct(<span class="string">'mu'</span>, mean(pima), <span class="string">'Sigma'</span>, cov(pima));
-fittedModel{2} = gaussMissingFitEm(pimaNan, <span class="string">'-verbose'</span>, true);
+fittedModel{2} = gaussMissingFitEm(pimaNan, <span class="string">'verbose'</span>, true);
 
 
 <span class="comment">% For comparison we also consider the 'best' model -- the model fitted given that we have access to all the data</span>
@@ -143,7 +143,7 @@ printPmtkFigure <span class="string">pima-realvsimputed</span>
 5: LL = -2350.288
 6: LL = -2350.148
 </pre><img vspace="5" hspace="5" src="gaussImputationPima_01.png" alt=""> <img vspace="5" hspace="5" src="gaussImputationPima_02.png" alt=""> <img vspace="5" hspace="5" src="gaussImputationPima_03.png" alt=""> <p class="footer"><br>
-      Published with MATLAB&reg; 7.9<br></p></div><!--
+      Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 % Impute missing entries of the 4d Pima Indians data using an MVN  
 %PMTKauthor Cody Severinski
@@ -184,7 +184,7 @@ end
 
 
 fittedModel{1} = struct('mu', mean(pima), 'Sigma', cov(pima));
-fittedModel{2} = gaussMissingFitEm(pimaNan, '-verbose', true);
+fittedModel{2} = gaussMissingFitEm(pimaNan, 'verbose', true);
 
 
 % For comparison we also consider the 'best' model REPLACE_WITH_DASH_DASH the model fitted given that we have access to all the data

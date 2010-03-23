@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>mixGaussDemoFaithful</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="mixGaussDemoFaithful"><style type="text/css">
+      --><title>mixGaussDemoFaithful</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="mixGaussDemoFaithful"><style type="text/css">
 
 body {
   background-color: white;
@@ -76,8 +76,8 @@ p.footer {
     Sigma = repmat(0.1*eye(2),[1 1 K]);
     mixweight = normalize(ones(1,K));
     [model, loglikHist] = mixGaussFitEm(X, K, <span class="keyword">...</span>
-        <span class="string">'-maxIter'</span>, 10, <span class="string">'-plotfn'</span>, @plotfn,<span class="keyword">...</span>
-        <span class="string">'-mu'</span>, mu, <span class="string">'-Sigma'</span>, Sigma, <span class="string">'-mixweight'</span>, mixweight);
+        <span class="string">'maxIter'</span>, 10, <span class="string">'plotfn'</span>, @plotfn,<span class="keyword">...</span>
+        <span class="string">'mu'</span>, mu, <span class="string">'Sigma'</span>, Sigma, <span class="string">'mixweight'</span>, mixweight);
     figure;
     plot(loglikHist, <span class="string">'o-'</span>, <span class="string">'linewidth'</span>, 3)
     xlabel(<span class="string">'iter'</span>)
@@ -86,11 +86,11 @@ p.footer {
 
 <span class="comment">%%%%%%</span>
 
-<span class="keyword">function</span> plotfn(X, mu, Sigma, mixweight, post, loglik, iter)
+<span class="keyword">function</span> plotfn(X, mu, Sigma, mixweight, post, loglik, iter) <span class="comment">%#ok</span>
 
     str = sprintf(<span class="string">'iteration %d, loglik %5.4f\n'</span>, iter, loglik);
     n = size(X, 1);
-    colors = [post(1, :)', zeros(n, 1), post(2, :)'];
+    colors = [post(:,1), zeros(n, 1), post(:,2)]; <span class="comment">% fraction of red and blue</span>
     figure; hold <span class="string">on</span>;
     <span class="keyword">for</span> i=1:n
         plot(X(i, 1), X(i, 2), <span class="string">'o'</span>, <span class="string">'MarkerSize'</span>, 6, <span class="string">'MarkerFaceColor'</span>, colors(i, :), <span class="string">'MarkerEdgeColor'</span>, <span class="string">'k'</span>);
@@ -98,18 +98,17 @@ p.footer {
     classColors = <span class="string">'rb'</span>;
     K  = size(mu,2);
     <span class="keyword">for</span> k=1:K
-        gaussPlot2d(mu(:,k), Sigma(:,:,k), <span class="string">'-color'</span>, classColors(k));
+        gaussPlot2d(mu(:,k), Sigma(:,:,k), <span class="string">'color'</span>, classColors(k));
         plot(mu(1,k), mu(2,k),<span class="string">'o'</span>,<span class="string">'linewidth'</span>,2, <span class="string">'color'</span>, classColors(k));
     <span class="keyword">end</span>
     title(str)
     axis <span class="string">square</span>
     box <span class="string">on</span>
     set(gca, <span class="string">'YTick'</span>, -2:2);
-    <span class="comment">%pause(1)</span>
 
 <span class="keyword">end</span>
 </pre><img vspace="5" hspace="5" src="mixGaussDemoFaithful_01.png" alt=""> <img vspace="5" hspace="5" src="mixGaussDemoFaithful_02.png" alt=""> <img vspace="5" hspace="5" src="mixGaussDemoFaithful_03.png" alt=""> <img vspace="5" hspace="5" src="mixGaussDemoFaithful_04.png" alt=""> <img vspace="5" hspace="5" src="mixGaussDemoFaithful_05.png" alt=""> <img vspace="5" hspace="5" src="mixGaussDemoFaithful_06.png" alt=""> <img vspace="5" hspace="5" src="mixGaussDemoFaithful_07.png" alt=""> <img vspace="5" hspace="5" src="mixGaussDemoFaithful_08.png" alt=""> <img vspace="5" hspace="5" src="mixGaussDemoFaithful_09.png" alt=""> <p class="footer"><br>
-      Published with MATLAB&reg; 7.9<br></p></div><!--
+      Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 function mixGaussDemoFaithful
     % reproduce Bishop fig 9.8
@@ -125,8 +124,8 @@ function mixGaussDemoFaithful
     Sigma = repmat(0.1*eye(2),[1 1 K]);
     mixweight = normalize(ones(1,K));
     [model, loglikHist] = mixGaussFitEm(X, K, ...
-        '-maxIter', 10, '-plotfn', @plotfn,...
-        '-mu', mu, '-Sigma', Sigma, '-mixweight', mixweight);
+        'maxIter', 10, 'plotfn', @plotfn,...
+        'mu', mu, 'Sigma', Sigma, 'mixweight', mixweight);
     figure;
     plot(loglikHist, 'o-', 'linewidth', 3)
     xlabel('iter')
@@ -135,11 +134,11 @@ end
 
 %%%%%%
 
-function plotfn(X, mu, Sigma, mixweight, post, loglik, iter)
+function plotfn(X, mu, Sigma, mixweight, post, loglik, iter) %#ok
     
     str = sprintf('iteration %d, loglik %5.4f\n', iter, loglik);
     n = size(X, 1); 
-    colors = [post(1, :)', zeros(n, 1), post(2, :)'];   
+    colors = [post(:,1), zeros(n, 1), post(:,2)]; % fraction of red and blue   
     figure; hold on; 
     for i=1:n
         plot(X(i, 1), X(i, 2), 'o', 'MarkerSize', 6, 'MarkerFaceColor', colors(i, :), 'MarkerEdgeColor', 'k'); 
@@ -147,14 +146,13 @@ function plotfn(X, mu, Sigma, mixweight, post, loglik, iter)
     classColors = 'rb';
     K  = size(mu,2);
     for k=1:K
-        gaussPlot2d(mu(:,k), Sigma(:,:,k), '-color', classColors(k));
+        gaussPlot2d(mu(:,k), Sigma(:,:,k), 'color', classColors(k));
         plot(mu(1,k), mu(2,k),'o','linewidth',2, 'color', classColors(k));
     end
     title(str)
     axis square
     box on
     set(gca, 'YTick', -2:2);
-    %pause(1)
     
 end
 

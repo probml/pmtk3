@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>Plot the full L1 regularization path for the prostate data set</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="lassoPathProstate"><style type="text/css">
+      --><title>Plot the full L1 regularization path for the prostate data set</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="lassoPathProstate"><style type="text/css">
 
 body {
   background-color: white;
@@ -76,28 +76,28 @@ set(gca, <span class="string">'XTick'</span>, 1:2:10);
 set(gca, <span class="string">'XTickLabel'</span>, {<span class="string">'0'</span>, <span class="string">'0.25'</span>, <span class="string">'0.5'</span>, <span class="string">'0.75'</span>,<span class="string">'1'</span>});
 printPmtkFigure <span class="string">lassoPathProstate</span>
 </pre><pre class="codeoutput">w =
-  Columns 1 through 4
-         0         0         0         0
-    0.4190         0         0         0
-    0.4992         0         0         0
-    0.5724    0.1245         0         0
-    0.5752    0.1273         0    0.0052
-    0.6052    0.1708         0    0.0735
-    0.6207    0.1937   -0.0578    0.1089
-    0.6254    0.2039   -0.0819    0.1230
-    0.6883    0.2245   -0.1454    0.1545
-  Columns 5 through 8
-         0         0         0         0
-         0         0         0         0
-    0.0802         0         0         0
-    0.1765         0         0         0
-    0.1811         0         0         0
-    0.2337         0         0    0.0423
-    0.2473         0         0    0.0676
-    0.2537         0    0.0090    0.0716
-    0.3155   -0.1467    0.0324    0.1270
+  Columns 1 through 5
+         0         0         0         0         0
+    0.4190         0         0         0         0
+    0.4992         0         0         0    0.0802
+    0.5724    0.1245         0         0    0.1765
+    0.5752    0.1273         0    0.0052    0.1811
+    0.6052    0.1708         0    0.0735    0.2337
+    0.6207    0.1937   -0.0578    0.1089    0.2473
+    0.6254    0.2039   -0.0819    0.1230    0.2537
+    0.6883    0.2245   -0.1454    0.1545    0.3155
+  Columns 6 through 8
+         0         0         0
+         0         0         0
+         0         0         0
+         0         0         0
+         0         0         0
+         0         0    0.0423
+         0         0    0.0676
+         0    0.0090    0.0716
+   -0.1467    0.0324    0.1270
 </pre><img vspace="5" hspace="5" src="lassoPathProstate_01.png" alt=""> <p class="footer"><br>
-      Published with MATLAB&reg; 7.9<br></p></div><!--
+      Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Plot the full L1 regularization path for the prostate data set
 load prostate

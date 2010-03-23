@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>ldsTrackingDemo</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="ldsTrackingDemo"><style type="text/css">
+      --><title>ldsTrackingDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="ldsTrackingDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -101,7 +101,7 @@ plot(x(1,:), x(2,:), <span class="string">'ks-'</span>, plotArgs{:});
 plot(y(1,:), y(2,:), <span class="string">'bo'</span>, plotArgs{:});
 plot(xfilt(1,:), xfilt(2,:), <span class="string">'rx:'</span>, plotArgs{:});
 <span class="keyword">for</span> t=1:T
-    gaussPlot2d(xfilt(1:2,t), Vfilt(1:2, 1:2, t), <span class="string">'-color'</span>, <span class="string">'y'</span>);
+    gaussPlot2d(xfilt(1:2,t), Vfilt(1:2, 1:2, t), <span class="string">'color'</span>, <span class="string">'y'</span>);
 <span class="keyword">end</span>
 legend(<span class="string">'true'</span>, <span class="string">'observed'</span>, <span class="string">'filtered'</span>, 3)
 xlabel(<span class="string">'x'</span>); ylabel(<span class="string">'y'</span>); box <span class="string">on</span>;
@@ -111,7 +111,7 @@ plot(x(1,:), x(2,:), <span class="string">'ks-'</span>, plotArgs{:});
 plot(y(1,:), y(2,:), <span class="string">'bo'</span>, plotArgs{:});
 plot(xsmooth(1,:), xsmooth(2,:), <span class="string">'rx:'</span>, plotArgs{:});
 <span class="keyword">for</span> t=1:T,
-    gaussPlot2d(xsmooth(1:2,t), Vsmooth(1:2, 1:2, t), <span class="string">'-color'</span>, <span class="string">'y'</span>); <span class="keyword">end</span>
+    gaussPlot2d(xsmooth(1:2,t), Vsmooth(1:2, 1:2, t), <span class="string">'color'</span>, <span class="string">'y'</span>); <span class="keyword">end</span>
 legend(<span class="string">'true'</span>, <span class="string">'observed'</span>, <span class="string">'smoothed'</span>, 3)
 xlabel(<span class="string">'x'</span>); ylabel(<span class="string">'y'</span>); box <span class="string">on</span>;
 </pre><pre class="codeoutput">mse_filt =
@@ -119,7 +119,7 @@ xlabel(<span class="string">'x'</span>); ylabel(<span class="string">'y'</span>)
 mse_smooth =
     3.2473
 </pre><img vspace="5" hspace="5" src="ldsTrackingDemo_01.png" alt=""> <img vspace="5" hspace="5" src="ldsTrackingDemo_02.png" alt=""> <p class="footer"><br>
-      Published with MATLAB&reg; 7.9<br></p></div><!--
+      Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 % Make a point move in the 2D plane
 % State = (x y xdot ydot). We only observe (x y).
@@ -160,7 +160,7 @@ plot(x(1,:), x(2,:), 'ks-', plotArgs{:});
 plot(y(1,:), y(2,:), 'bo', plotArgs{:});
 plot(xfilt(1,:), xfilt(2,:), 'rx:', plotArgs{:});
 for t=1:T
-    gaussPlot2d(xfilt(1:2,t), Vfilt(1:2, 1:2, t), '-color', 'y'); 
+    gaussPlot2d(xfilt(1:2,t), Vfilt(1:2, 1:2, t), 'color', 'y'); 
 end
 legend('true', 'observed', 'filtered', 3)
 xlabel('x'); ylabel('y'); box on;
@@ -170,7 +170,7 @@ plot(x(1,:), x(2,:), 'ks-', plotArgs{:});
 plot(y(1,:), y(2,:), 'bo', plotArgs{:});
 plot(xsmooth(1,:), xsmooth(2,:), 'rx:', plotArgs{:});
 for t=1:T, 
-    gaussPlot2d(xsmooth(1:2,t), Vsmooth(1:2, 1:2, t), '-color', 'y'); end
+    gaussPlot2d(xsmooth(1:2,t), Vsmooth(1:2, 1:2, t), 'color', 'y'); end
 legend('true', 'observed', 'smoothed', 3)
 xlabel('x'); ylabel('y'); box on;
 

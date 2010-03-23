@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>logregXorDemo</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="logregXorDemo"><style type="text/css">
+      --><title>logregXorDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="logregXorDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -68,29 +68,26 @@ p.footer {
 <span class="comment">% not.</span>
 
     [X, y] = createXORdata();
-    Y1tok = canonizeLabels(y,0:1);
     lambda = 1e-2;
-    addOnes = true;
-</pre><h2>Linear Features<a name="3"></a></h2><pre class="codeinput">    model = logregFitL2(X, Y1tok, lambda, addOnes);
+</pre><h2>Linear Features<a name="3"></a></h2><pre class="codeinput">    model = logregFit(X, y, <span class="string">'lambda'</span>, lambda);
     yhat = logregPredict(model, X);
     errorRate = mean(yhat ~= y);
     fprintf(<span class="string">'Error rate using raw features: %2.f%%\n'</span>, 100*errorRate);
     plotDecisionBoundary(X, y, @(X)logregPredict(model, X));
     printPmtkFigure(<span class="string">'logregXorLinear'</span>)
-</pre><pre class="codeoutput">Error rate using raw features: 76%
+</pre><pre class="codeoutput">Error rate using raw features: 49%
 </pre><img vspace="5" hspace="5" src="logregXorDemo_01.png" alt=""> <h2>RBF Features<a name="4"></a></h2><pre class="codeinput">    rbfScale = 1;
-    Krbf = rbfKernel(X, X, rbfScale);
-    model = logregFitL2(Krbf, y, lambda, addOnes);
-    yhat = logregPredict(model, Krbf);
+    model = logregFit(X, y, <span class="string">'lambda'</span>, lambda, <span class="string">'kernelFn'</span>, @kernelRbfSigma, <span class="string">'kernelParam'</span>, rbfScale);
+    yhat = logregPredict(model, X);
     errorRate = mean(yhat ~= y);
     fprintf(<span class="string">'Error rate using RBF features: %2.f%%\n'</span>, 100*errorRate);
-    predictFcn = @(Xtest) logregPredict(model, rbfKernel(Xtest, X, rbfScale));
+    predictFcn = @(Xtest)logregPredict(model, Xtest);
     plotDecisionBoundary(X, y, predictFcn);
     printPmtkFigure(<span class="string">'logregXorRbf'</span>)
 </pre><pre class="codeoutput">Error rate using RBF features:  0%
 </pre><img vspace="5" hspace="5" src="logregXorDemo_02.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
 </pre><p class="footer"><br>
-      Published with MATLAB&reg; 7.9<br></p></div><!--
+      Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 function logregXorDemo()
 % Apply L2 Logistic Regression to the XOR problem and show how an RBF 
@@ -98,11 +95,9 @@ function logregXorDemo()
 % not. 
     
     [X, y] = createXORdata();
-    Y1tok = canonizeLabels(y,0:1);
     lambda = 1e-2;
-    addOnes = true;
     %% Linear Features
-    model = logregFitL2(X, Y1tok, lambda, addOnes);
+    model = logregFit(X, y, 'lambda', lambda);
     yhat = logregPredict(model, X);
     errorRate = mean(yhat ~= y);
     fprintf('Error rate using raw features: %2.f%%\n', 100*errorRate);
@@ -111,17 +106,13 @@ function logregXorDemo()
     
     %% RBF Features
     rbfScale = 1;
-    Krbf = rbfKernel(X, X, rbfScale); 
-    model = logregFitL2(Krbf, y, lambda, addOnes);
-    yhat = logregPredict(model, Krbf);
+    model = logregFit(X, y, 'lambda', lambda, 'kernelFn', @kernelRbfSigma, 'kernelParam', rbfScale);
+    yhat = logregPredict(model, X);
     errorRate = mean(yhat ~= y);
     fprintf('Error rate using RBF features: %2.f%%\n', 100*errorRate);
-    predictFcn = @(Xtest) logregPredict(model, rbfKernel(Xtest, X, rbfScale)); 
+    predictFcn = @(Xtest)logregPredict(model, Xtest); 
     plotDecisionBoundary(X, y, predictFcn);
     printPmtkFigure('logregXorRbf')
-    
-    
-    
     
 end
 ##### SOURCE END #####

@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>bootstrap demo for MLE for Bernoulli</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="bootstrapDemoBer"><style type="text/css">
+      --><title>bootstrap demo for MLE for Bernoulli</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="bootstrapDemoBer"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,7 +62,8 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h1>bootstrap demo for MLE for Bernoulli</h1><pre class="codeinput">theta = 0.7;
+  </style></head><body><div class="content"><h1>bootstrap demo for MLE for Bernoulli</h1><pre class="codeinput"><span class="comment">%PMTKslow</span>
+theta = 0.7;
 Ns = [10 100];
 <span class="keyword">for</span> Ni=1:length(Ns)
 N = Ns(Ni);
@@ -111,11 +112,11 @@ title(ttl)
 printPmtkFigure(sprintf(<span class="string">'bootstrapDemoBerBayes%d'</span>, N));
 
 <span class="keyword">end</span>
-</pre><img vspace="5" hspace="5" src="bootstrapDemoBer_01.png" alt=""> <img vspace="5" hspace="5" src="bootstrapDemoBer_02.png" alt=""> <img vspace="5" hspace="5" src="bootstrapDemoBer_03.png" alt=""> <img vspace="5" hspace="5" src="bootstrapDemoBer_04.png" alt=""> <p class="footer"><br>
-      Published with MATLAB&reg; 7.9<br></p></div><!--
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 %% bootstrap demo for MLE for Bernoulli
-
+%PMTKslow
 theta = 0.7;
 Ns = [10 100];
 for Ni=1:length(Ns)

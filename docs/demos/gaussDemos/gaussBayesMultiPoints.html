@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>gaussBayesMultiPoints</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="gaussBayesMultiPoints"><style type="text/css">
+      --><title>gaussBayesMultiPoints</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="gaussBayesMultiPoints"><style type="text/css">
 
 body {
   background-color: white;
@@ -82,7 +82,7 @@ prior.mu = [0 0]';
 prior.Sigma = 0.1*eye(2);
 
 subplot(nr, nc,2);
-gaussPlot2d(prior.mu, prior.Sigma, <span class="string">'-plotMarker'</span>, true);
+gaussPlot2d(prior.mu, prior.Sigma, <span class="string">'plotMarker'</span>, true);
 
 axis(xrange);axis <span class="string">square</span>
 title(<span class="string">'prior'</span>)
@@ -94,14 +94,14 @@ title(<span class="string">'prior'</span>)
   A = eye(2); y = mean(X(1:n,:))';
   post = gaussSoftCondition(prior, py, A, y);
   subplot(nr, nc,i+2);
-  gaussPlot2d(post.mu, post.Sigma, <span class="string">'-plotMarker'</span>, true);
+  gaussPlot2d(post.mu, post.Sigma, <span class="string">'plotMarker'</span>, true);
   axis(xrange);
   axis <span class="string">square</span>
   title(sprintf(<span class="string">'n=%d'</span>,n))
 <span class="keyword">end</span>
 printPmtkFigure(<span class="string">'mvnBayesMultiPoints'</span>)
 </pre><img vspace="5" hspace="5" src="gaussBayesMultiPoints_01.png" alt=""> <p class="footer"><br>
-      Published with MATLAB&reg; 7.9<br></p></div><!--
+      Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 
 setSeed(0);
@@ -124,7 +124,7 @@ prior.mu = [0 0]';
 prior.Sigma = 0.1*eye(2);
 
 subplot(nr, nc,2);
-gaussPlot2d(prior.mu, prior.Sigma, '-plotMarker', true);
+gaussPlot2d(prior.mu, prior.Sigma, 'plotMarker', true);
 
 axis(xrange);axis square
 title('prior')
@@ -136,7 +136,7 @@ for i=1:length(ns)
   A = eye(2); y = mean(X(1:n,:))';
   post = gaussSoftCondition(prior, py, A, y);
   subplot(nr, nc,i+2);
-  gaussPlot2d(post.mu, post.Sigma, '-plotMarker', true);
+  gaussPlot2d(post.mu, post.Sigma, 'plotMarker', true);
   axis(xrange);
   axis square
   title(sprintf('n=%d',n))

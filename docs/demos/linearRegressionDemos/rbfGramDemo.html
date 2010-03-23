@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>rbfGramDemo</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="rbfGramDemo"><style type="text/css">
+      --><title>rbfGramDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="rbfGramDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -99,12 +99,12 @@ axis([-0.5 1.5 -0.5 1.5])
 printPmtkFigure(<span class="string">'rbfScatter'</span>)
 
 
-K = rbfKernel(X, mu, 0.5);
+K = kernelRbfSigma(X, mu, 0.5);
 <span class="comment">%figure; imagesc(K); colorbar</span>
 figure; hintonDiagram(K);
 printPmtkFigure(<span class="string">'rbfHinton'</span>)
 </pre><img vspace="5" hspace="5" src="rbfGramDemo_01.png" alt=""> <img vspace="5" hspace="5" src="rbfGramDemo_02.png" alt=""> <p class="footer"><br>
-      Published with MATLAB&reg; 7.9<br></p></div><!--
+      Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 % Demo of an RBF gram matrix
 
@@ -143,7 +143,7 @@ axis([-0.5 1.5 -0.5 1.5])
 printPmtkFigure('rbfScatter')
 
 
-K = rbfKernel(X, mu, 0.5);
+K = kernelRbfSigma(X, mu, 0.5);
 %figure; imagesc(K); colorbar
 figure; hintonDiagram(K);
 printPmtkFigure('rbfHinton')

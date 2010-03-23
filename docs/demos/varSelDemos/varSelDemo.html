@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>varSelDemo</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="varSelDemo"><style type="text/css">
+      --><title>varSelDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="varSelDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,12 +62,12 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> varSelDemo()
-
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Variable Selection Demo</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> varSelDemo()
+</pre><h2>Variable Selection Demo<a name="2"></a></h2><pre class="codeinput"><span class="comment">%PMTKslow</span>
 methods = {<span class="keyword">...</span>
-    @(X,y) larsSelectSubsetCV(X,y, <span class="string">'-nfolds'</span>, 5), <span class="keyword">...</span>
-    @(X,y) fbmpCore(X,y,<span class="string">'-maxNumSearches'</span>,5), <span class="keyword">...</span>
-    @(X,y) ARDwipf(X,y,<span class="string">'-maxIter'</span>,50)};
+    @(X,y) larsSelectSubsetCV(X,y, <span class="string">'nfolds'</span>, 5), <span class="keyword">...</span>
+    @(X,y) fbmpCore(X,y,<span class="string">'maxNumSearches'</span>,5), <span class="keyword">...</span>
+    @(X,y) ARDwipf(X,y,<span class="string">'maxIter'</span>,50)};
 
 methodNames = {<span class="string">'lars'</span>, <span class="string">'bmp'</span>, <span class="string">'ard'</span>};
 nmethods = length(methodNames);
@@ -109,10 +109,7 @@ metricNames = {<span class="string">'NMSE'</span>, <span class="string">'time'</
     title(str)
     xlabel(<span class="string">'d'</span>)
 <span class="keyword">end</span>
-
-
-
-<span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
 
 <span class="keyword">function</span> [metrics] = helper(fn, n,d,r,lassoSignConsistent,sigma,ntrials)
 <span class="keyword">for</span> t=1:ntrials
@@ -134,27 +131,16 @@ metricNames = {<span class="string">'NMSE'</span>, <span class="string">'time'</
 <span class="keyword">end</span>
 metrics = [nmse(:) time(:) precision(:) recall(:)];
 <span class="keyword">end</span>
-</pre><pre class="codeoutput">expt 1 (d=50) of 3
-method 1 (lars) of 3
-method 2 (bmp) of 3
-method 3 (ard) of 3
-expt 2 (d=150) of 3
-method 1 (lars) of 3
-method 2 (bmp) of 3
-method 3 (ard) of 3
-expt 3 (d=200) of 3
-method 1 (lars) of 3
-method 2 (bmp) of 3
-method 3 (ard) of 3
-</pre><img vspace="5" hspace="5" src="varSelDemo_01.png" alt=""> <img vspace="5" hspace="5" src="varSelDemo_02.png" alt=""> <img vspace="5" hspace="5" src="varSelDemo_03.png" alt=""> <img vspace="5" hspace="5" src="varSelDemo_04.png" alt=""> <p class="footer"><br>
-      Published with MATLAB&reg; 7.9<br></p></div><!--
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 function varSelDemo()
-
+%% Variable Selection Demo
+%PMTKslow
 methods = {...
-    @(X,y) larsSelectSubsetCV(X,y, '-nfolds', 5), ...
-    @(X,y) fbmpCore(X,y,'-maxNumSearches',5), ...
-    @(X,y) ARDwipf(X,y,'-maxIter',50)};
+    @(X,y) larsSelectSubsetCV(X,y, 'nfolds', 5), ...
+    @(X,y) fbmpCore(X,y,'maxNumSearches',5), ...
+    @(X,y) ARDwipf(X,y,'maxIter',50)};
 
 methodNames = {'lars', 'bmp', 'ard'};
 nmethods = length(methodNames);

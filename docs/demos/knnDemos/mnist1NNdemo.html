@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>mnist1NNdemo</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="mnist1NNdemo"><style type="text/css">
+      --><title>mnist1NNdemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="mnist1NNdemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -104,20 +104,18 @@ XtestSOS  = sum(Xtest.^2,2);
 batches = mat2cell(1:ntest,1,(ntest/nbatches)*ones(1,nbatches));
 ypred = zeros(ntest,1);
 <span class="keyword">if</span> ~isOctave(), wbar = waitbar(0,sprintf(<span class="string">'%d of %d classified'</span>,0,ntest)); <span class="keyword">end</span> <span class="comment">% waitbar only works in Matlab</span>
-</pre><img vspace="5" hspace="5" src="mnist1NNdemo_01.png" alt=""> <h2>Classify<a name="3"></a></h2><pre class="codeinput"><span class="keyword">for</span> i=1:nbatches
+</pre><h2>Classify<a name="3"></a></h2><pre class="codeinput"><span class="keyword">for</span> i=1:nbatches
     t = toc; <span class="keyword">if</span> ~isOctave(), waitbar(i/nbatches,wbar,sprintf(<span class="string">'%d of %d Classified\nElapsed Time: %.2f seconds'</span>,(i-1)*(ntest/nbatches),ntest,t));<span class="keyword">end</span>
     dst = sqDistance(Xtest(batches{i},:),Xtrain,XtestSOS(batches{i},:),XtrainSOS);
     [junk,closest] = min(dst,[],2);
     ypred(batches{i}) = ytrain(closest);
 <span class="keyword">end</span>
-</pre><img vspace="5" hspace="5" src="mnist1NNdemo_02.png" alt=""> <h2>Report<a name="4"></a></h2><pre class="codeinput"><span class="keyword">if</span> ~isOctave(), close(wbar); <span class="keyword">end</span>
+</pre><h2>Report<a name="4"></a></h2><pre class="codeinput"><span class="keyword">if</span> ~isOctave(), close(wbar); <span class="keyword">end</span>
 errorRate = mean(ypred ~= ytest);
 fprintf(<span class="string">'Error Rate: %.2f%%\n'</span>,100*errorRate);
 t = toc; fprintf(<span class="string">'Total Time: %.2f seconds\n'</span>,t);
-</pre><pre class="codeoutput">Error Rate: 3.80%
-Total Time: 43.90 seconds
 </pre><p class="footer"><br>
-      Published with MATLAB&reg; 7.9<br></p></div><!--
+      Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 % Classify the MNIST digits using a one nearest neighbour classifier
 % and Euclidean distance.

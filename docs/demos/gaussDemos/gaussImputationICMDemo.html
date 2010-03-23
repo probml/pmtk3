@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>gaussImputationICMDemo</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="gaussImputationICMDemo"><style type="text/css">
+      --><title>gaussImputationICMDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="gaussImputationICMDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -79,12 +79,12 @@ verb = true;
 <span class="comment">%for useFull = [true false]</span>
 <span class="keyword">for</span> useFull = false
   <span class="keyword">if</span> useFull
-    modelHat = gaussMissingFitICM(XfullTrain, <span class="string">'-verbose'</span>, verb);
+    modelHat = gaussMissingFitICM(XfullTrain, <span class="string">'verbose'</span>, verb);
     [Ximpute, V] = gaussImpute(modelHat, Xmiss);
     Xtrain = XfullTrain;
     fname = <span class="string">'mvnImputeFull'</span>;
   <span class="keyword">else</span>
-    [modelHat, LLtrace] = gaussMissingFitICM(XmissTrain, <span class="string">'-verbose'</span>, verb);
+    [modelHat, LLtrace] = gaussMissingFitICM(XmissTrain, <span class="string">'verbose'</span>, verb);
     figure; plot(LLtrace); title(<span class="string">'EM loglik vs iteration'</span>)
     [Ximpute, V] = gaussImpute(modelHat, Xmiss);
     Xtrain = XmissTrain;
@@ -94,10 +94,10 @@ verb = true;
   conf(isinf(conf))=0;
 
   figure;
-  hintonScale({Xtrain}, {<span class="string">'-map'</span>, <span class="string">'jet'</span>, <span class="string">'-title'</span>, <span class="string">'training data'</span>}, <span class="keyword">...</span>
-    {Xmiss}, {<span class="string">'-map'</span>, <span class="string">'Jet'</span>, <span class="string">'-title'</span>, <span class="string">'observed'</span>}, <span class="keyword">...</span>
-    {Ximpute, conf}, {<span class="string">'-title'</span>, <span class="string">'imputed'</span>}, <span class="keyword">...</span>
-    {Xhid}, {<span class="string">'-title'</span>, <span class="string">'hidden truth'</span>});
+  hintonScale({Xtrain}, {<span class="string">'map'</span>, <span class="string">'jet'</span>, <span class="string">'title'</span>, <span class="string">'training data'</span>}, <span class="keyword">...</span>
+    {Xmiss}, {<span class="string">'map'</span>, <span class="string">'Jet'</span>, <span class="string">'title'</span>, <span class="string">'observed'</span>}, <span class="keyword">...</span>
+    {Ximpute, conf}, {<span class="string">'title'</span>, <span class="string">'imputed'</span>}, <span class="keyword">...</span>
+    {Xhid}, {<span class="string">'title'</span>, <span class="string">'hidden truth'</span>});
   printPmtkFigure(fname);
 <span class="keyword">end</span>
 
@@ -136,232 +136,11 @@ Xhid(~missing) = NaN;
 7: LL = -1080.044
 8: LL = -884.983
 9: LL = -621.099
-10: LL = -114.107
-Warning: Matrix is close to singular or badly
-scaled.
-         Results may be inaccurate. RCOND =
-         1.467138e-017. 
-11: LL = 505.736
-Warning: Matrix is close to singular or badly
-scaled.
-         Results may be inaccurate. RCOND =
-         2.455878e-018. 
-12: LL = 513.058
-Warning: Matrix is close to singular or badly
-scaled.
-         Results may be inaccurate. RCOND =
-         2.257310e-017. 
-Warning: warning: EM did not increase
-objective.  Exiting with last reasonable
-parameters \n 
-13: LL = 475.235
-Warning: Matrix is close to singular or badly
-scaled.
-         Results may be inaccurate. RCOND =
-         2.257310e-017. 
-14: LL = 475.235
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
+10: LL = -114.110
+Warning: Warning: Obtained Nonsingular Sigma.
+Exiting with last reasonable parameters \n 
 </pre><img vspace="5" hspace="5" src="gaussImputationICMDemo_01.png" alt=""> <img vspace="5" hspace="5" src="gaussImputationICMDemo_02.png" alt=""> <p class="footer"><br>
-      Published with MATLAB&reg; 7.9<br></p></div><!--
+      Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 function gaussImputationICMDemo()
 
@@ -380,12 +159,12 @@ verb = true;
 %for useFull = [true false]
 for useFull = false
   if useFull
-    modelHat = gaussMissingFitICM(XfullTrain, '-verbose', verb);
+    modelHat = gaussMissingFitICM(XfullTrain, 'verbose', verb);
     [Ximpute, V] = gaussImpute(modelHat, Xmiss);
     Xtrain = XfullTrain;
     fname = 'mvnImputeFull';
   else
-    [modelHat, LLtrace] = gaussMissingFitICM(XmissTrain, '-verbose', verb);
+    [modelHat, LLtrace] = gaussMissingFitICM(XmissTrain, 'verbose', verb);
     figure; plot(LLtrace); title('EM loglik vs iteration')
     [Ximpute, V] = gaussImpute(modelHat, Xmiss);
     Xtrain = XmissTrain;
@@ -395,10 +174,10 @@ for useFull = false
   conf(isinf(conf))=0;
   
   figure;
-  hintonScale({Xtrain}, {'-map', 'jet', '-title', 'training data'}, ...
-    {Xmiss}, {'-map', 'Jet', '-title', 'observed'}, ...
-    {Ximpute, conf}, {'-title', 'imputed'}, ...
-    {Xhid}, {'-title', 'hidden truth'});
+  hintonScale({Xtrain}, {'map', 'jet', 'title', 'training data'}, ...
+    {Xmiss}, {'map', 'Jet', 'title', 'observed'}, ...
+    {Ximpute, conf}, {'title', 'imputed'}, ...
+    {Xhid}, {'title', 'hidden truth'});
   printPmtkFigure(fname);
 end
 

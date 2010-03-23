@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>sparseSensingDemo</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="sparseSensingDemo"><style type="text/css">
+      --><title>sparseSensingDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="sparseSensingDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -66,6 +66,7 @@ p.footer {
 <span class="comment">%PMTKauthor Figueiredo</span>
 <span class="comment">%PMTKurl http://www.lx.it.pt/~mtf/GPSR/</span>
 <span class="comment">%PMTKmodified Kevin Murphy</span>
+<span class="comment">%PMTKslow</span>
 <span class="comment">% the code to only use l1ls, not the GPSR code</span>
 
 setSeed(0);
@@ -161,32 +162,14 @@ v = [0 n+1 bottom-0.15*(top-bottom)  top+0.15*((top-bottom))];
 axis(v)
 
 printPmtkFigure(<span class="string">'sparseSensingDemo'</span>)
-</pre><pre class="codeoutput">
-Solving a problem of size (m=1024, n=4096), with lambda=1.02520e-001
------------------------------------------------------------------------------
- iter       gap         primobj         dualobj      step len   pcg iters
-   0    3.27e+001    4.04071e+001    7.67735e+000         Inf        0
-   1    2.27e+001    3.03921e+001    7.67735e+000    1.0e+000        1
-   2    2.24e+001    3.00828e+001    7.67735e+000    5.0e-001        1
-   3    1.85e+001    2.61894e+001    7.67735e+000    5.0e-001        2
-   4    1.41e+001    2.36068e+001    9.49409e+000    5.0e-001        2
-   5    8.11e+000    1.98560e+001    1.17484e+001    5.0e-001        4
-   6    4.36e+000    1.75127e+001    1.31499e+001    5.0e-001        7
-   7    2.01e+000    1.58192e+001    1.38134e+001    5.0e-001        7
-   8    1.13e+000    1.52809e+001    1.41540e+001    5.0e-001       11
-   9    5.39e-001    1.48785e+001    1.43393e+001    5.0e-001        9
-  10    2.99e-001    1.47406e+001    1.44416e+001    5.0e-001       11
-  11    1.44e-001    1.46405e+001    1.44968e+001    5.0e-001       10
-Absolute tolerance reached.
-ans =
-   213
-</pre><img vspace="5" hspace="5" src="sparseSensingDemo_01.png" alt=""> <p class="footer"><br>
-      Published with MATLAB&reg; 7.9<br></p></div><!--
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 % Figure 1 from Figueiredo'07,  "Gradient projection for sparse reconstruction"
 %PMTKauthor Figueiredo
 %PMTKurl http://www.lx.it.pt/~mtf/GPSR/
 %PMTKmodified Kevin Murphy 
+%PMTKslow
 % the code to only use l1ls, not the GPSR code
 
 setSeed(0);

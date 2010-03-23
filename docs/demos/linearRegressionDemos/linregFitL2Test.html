@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>linregFitL2Test</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="linregFitL2Test"><style type="text/css">
+      --><title>linregFitL2Test</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="linregFitL2Test"><style type="text/css">
 
 body {
   background-color: white;
@@ -69,12 +69,12 @@ X = rand(n,2);
 <span class="comment">%X = [ones(n,1) X];</span>
 y = randn(n,1);
 lambda = 1e-2;
-model1 = linregFitL2(X, y, lambda, <span class="string">'QR'</span>);
-model2 = linregFitL2(X, y, lambda, <span class="string">'minfunc'</span>);
+model1 = linregFit(X, y, <span class="string">'lambda'</span>, lambda, <span class="string">'fitMethod'</span>, <span class="string">'QR'</span>);
+model2 = linregFit(X, y, <span class="string">'lambda'</span>, lambda, <span class="string">'fitMethod'</span>,  <span class="string">'minfunc'</span>);
 assert(approxeq(model1.w, model2.w))
 assert(approxeq(model1.w0, model2.w0))
 </pre><p class="footer"><br>
-      Published with MATLAB&reg; 7.9<br></p></div><!--
+      Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 % check that different fitting methods for ridge regression give same result
 
@@ -83,8 +83,8 @@ X = rand(n,2);
 %X = [ones(n,1) X];
 y = randn(n,1);
 lambda = 1e-2;
-model1 = linregFitL2(X, y, lambda, 'QR');
-model2 = linregFitL2(X, y, lambda, 'minfunc');
+model1 = linregFit(X, y, 'lambda', lambda, 'fitMethod', 'QR');
+model2 = linregFit(X, y, 'lambda', lambda, 'fitMethod',  'minfunc');
 assert(approxeq(model1.w, model2.w))
 assert(approxeq(model1.w0, model2.w0))
 ##### SOURCE END #####

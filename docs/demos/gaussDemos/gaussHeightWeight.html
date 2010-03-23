@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>MVN Height Weight Demo in 2d</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="gaussHeightWeight"><style type="text/css">
+      --><title>MVN Height Weight Demo in 2d</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="gaussHeightWeight"><style type="text/css">
 
 body {
   background-color: white;
@@ -93,11 +93,11 @@ printPmtkFigure(<span class="string">'heightWeightScatter'</span>)
 <span class="keyword">for</span> c=1:2
   X = data.X(classNdx{c},:);
   mu = mean(X); Sigma = cov(X);
-  gaussPlot2d(mu, Sigma, <span class="string">'-color'</span>, colors(c));
+  gaussPlot2d(mu, Sigma, <span class="string">'color'</span>, colors(c));
 <span class="keyword">end</span>
 printPmtkFigure(<span class="string">'heightWeightScatterCov'</span>)
 </pre><img vspace="5" hspace="5" src="gaussHeightWeight_01.png" alt=""> <img vspace="5" hspace="5" src="gaussHeightWeight_02.png" alt=""> <p class="footer"><br>
-      Published with MATLAB&reg; 7.9<br></p></div><!--
+      Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 %% MVN Height Weight Demo in 2d
 
@@ -132,7 +132,7 @@ printPmtkFigure('heightWeightScatter')
 for c=1:2
   X = data.X(classNdx{c},:);
   mu = mean(X); Sigma = cov(X);
-  gaussPlot2d(mu, Sigma, '-color', colors(c));
+  gaussPlot2d(mu, Sigma, 'color', colors(c));
 end
 printPmtkFigure('heightWeightScatterCov')
 

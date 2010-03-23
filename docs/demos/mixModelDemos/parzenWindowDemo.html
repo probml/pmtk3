@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>parzenWindowDemo</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="parzenWindowDemo"><style type="text/css">
+      --><title>parzenWindowDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="parzenWindowDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -98,7 +98,7 @@ p.footer {
        plot(domain,g(domain'),<span class="string">'-b'</span>,<span class="string">'LineWidth'</span>,2.5);
        printPmtkFigure(sprintf(<span class="string">'parzen%sH0p%s'</span>,strcat(upper(kernel(1)), kernel(2:end)), hvalstr((decloc+1):end)));
     <span class="keyword">end</span>
-    placeFigures(<span class="string">'-nrows'</span>,3,<span class="string">'-ncols'</span>,1,<span class="string">'-square'</span>,false);
+    placeFigures(<span class="string">'nrows'</span>,3,<span class="string">'ncols'</span>,1,<span class="string">'square'</span>,false);
 
 
     <span class="keyword">function</span> data = generateData
@@ -148,9 +148,9 @@ Error in ==&gt; placeFigures at 123
 handles = setupVariables();               
 
 Error in ==&gt; parzenWindowDemo at 37
-    placeFigures('-nrows',3,'-ncols',1,'-square',false);
+    placeFigures('nrows',3,'ncols',1,'square',false);
 </pre><p class="footer"><br>
-      Published with MATLAB&reg; 7.9<br></p></div><!--
+      Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 function parzenWindowDemo
 % Demonstrate a non-parametric (parzen) density estimator in 1D with a 
@@ -188,7 +188,7 @@ function parzenWindowDemo
        plot(domain,g(domain'),'-b','LineWidth',2.5);
        printPmtkFigure(sprintf('parzen%sH0p%s',strcat(upper(kernel(1)), kernel(2:end)), hvalstr((decloc+1):end)));
     end
-    placeFigures('-nrows',3,'-ncols',1,'-square',false);
+    placeFigures('nrows',3,'ncols',1,'square',false);
 
     
     function data = generateData

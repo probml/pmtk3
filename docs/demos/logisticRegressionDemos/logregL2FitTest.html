@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>logregL2FitTest</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="logregL2FitTest"><style type="text/css">
+      --><title>logregL2FitTest</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="logregL2FitTest"><style type="text/css">
 
 body {
   background-color: white;
@@ -72,12 +72,22 @@ y12 = canonizeLabels(y01);
 ypm = sign(y01-0.5);
 
 lambda = 0;
-
-model1 = logregFitL2(X, y01, lambda);
+opts.maxIter = 1000;
+opts.TolX   = 1e-6;
+opts.TolFun = 1e-6;
+model1 = logregFit(X, y01, <span class="string">'lambda'</span>, lambda, <span class="string">'standardizeX'</span>, false,<span class="keyword">...</span>
+    <span class="string">'fitOptions'</span>, opts);
 model2 = logregBinaryFitL2IRLS(X, y01,lambda);
 assert(approxeq(model1.w, model2.w))
+</pre><pre class="codeoutput"> Iteration   FunEvals     Step Length    Function Val        Opt Cond
+         1          2    3.06026e-001    6.00879e+000    7.53521e-001
+         2          3    1.00000e+000    5.95831e+000    1.87083e-001
+         3          4    1.00000e+000    5.95404e+000    5.10759e-002
+         4          5    1.00000e+000    5.95362e+000    5.05774e-003
+         5          6    1.00000e+000    5.95361e+000    4.33018e-004
+Directional Derivative below TolX
 </pre><p class="footer"><br>
-      Published with MATLAB&reg; 7.9<br></p></div><!--
+      Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 % Test that the minfunc method and IRLS give same result
 
@@ -89,8 +99,11 @@ y12 = canonizeLabels(y01);
 ypm = sign(y01-0.5);
 
 lambda = 0;
-
-model1 = logregFitL2(X, y01, lambda);
+opts.maxIter = 1000;
+opts.TolX   = 1e-6;
+opts.TolFun = 1e-6;
+model1 = logregFit(X, y01, 'lambda', lambda, 'standardizeX', false,...
+    'fitOptions', opts);
 model2 = logregBinaryFitL2IRLS(X, y01,lambda);
 assert(approxeq(model1.w, model2.w))
 

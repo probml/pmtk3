@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>demoRosen2d</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="demoRosen2d"><style type="text/css">
+      --><title>demoRosen2d</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="demoRosen2d"><style type="text/css">
 
 body {
   background-color: white;
@@ -80,10 +80,7 @@ contour(xc,yc,zc,[.1 1 4 16 64 256 1024 4096])
 hold <span class="string">on</span>
 opts = optimset(opts, <span class="string">'OutputFcn'</span>, @optimplot2d, <span class="string">'Display'</span>, <span class="string">'iter'</span>);
 [x fval] = fminunc(@rosen2d, xstart, opts)
-</pre><pre class="codeoutput">Warning: Gradient must be provided for
-trust-region algorithm;
-  using line-search algorithm instead. 
-
+</pre><pre class="codeoutput">
 Local minimum found.
 
 Optimization completed because the size of the gradient is less than
@@ -103,7 +100,7 @@ output =
          stepsize: 1
     firstorderopt: 3.1185e-004
         algorithm: [1x38 char]
-          message: [1x441 char]
+          message: [1x438 char]
 
 Local minimum found.
 
@@ -124,7 +121,7 @@ output =
      cgiterations: 25
     firstorderopt: 2.7783e-008
         algorithm: [1x32 char]
-          message: [1x503 char]
+          message: [1x500 char]
 
                                 Norm of      First-order 
  Iteration        f(x)          step          optimality   CG-iterations
@@ -172,7 +169,7 @@ x =
 fval =
   1.9310e-017
 </pre><img vspace="5" hspace="5" src="demoRosen2d_01.png" alt=""> <p class="footer"><br>
-      Published with MATLAB&reg; 7.9<br></p></div><!--
+      Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 
 xstart = [-1 2];

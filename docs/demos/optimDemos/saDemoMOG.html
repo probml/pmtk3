@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>saDemoMOG</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="saDemoMOG"><style type="text/css">
+      --><title>saDemoMOG</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="saDemoMOG"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,7 +62,7 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> SAdemoMOG()
+  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> saDemoMOG()
 <span class="comment">% Demo of Simulated Annealing for finding the mode of</span>
 <span class="comment">% a mixture of two 1D Gaussians using a Gaussian proposal.</span>
 
@@ -99,9 +99,10 @@ figure;
   hold <span class="string">on</span>;
   plot(x_t,y_t,<span class="string">'k'</span>,<span class="string">'linewidth'</span>,2)
   axis([-10 20 0 .15])
-  text(14,.1,sprintf(<span class="string">'iter %d'</span>, Ns(i)))
+  <span class="comment">%text(14,.1,sprintf('iter %d', Ns(i)))</span>
+  title(sprintf(<span class="string">'iter %d'</span>, Ns(i)))
 <span class="keyword">end</span>
-
+<span class="keyword">end</span>
 <span class="comment">%%%%%%%%%%</span>
 
 <span class="keyword">function</span> p = mogProb(x)
@@ -118,9 +119,13 @@ p = zeros(N,1);
   p = p + mixWeights(k)*gausspdf(x(:), mu(k), sigma(k));
 <span class="keyword">end</span>
 
+<span class="keyword">end</span>
+
 <span class="keyword">function</span>  E = target(x)
 p = mogProb(x);
 E = -log(p+eps); <span class="comment">% energy = -ve log posterior</span>
+
+<span class="keyword">end</span>
 </pre><pre class="codeoutput">xopt =
   10.000289568587938
 fval =
@@ -128,9 +133,9 @@ fval =
 Nsamples =
         5000
 </pre><img vspace="5" hspace="5" src="saDemoMOG_01.png" alt=""> <p class="footer"><br>
-      Published with MATLAB&reg; 7.9<br></p></div><!--
+      Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
-function SAdemoMOG()
+function saDemoMOG()
 % Demo of Simulated Annealing for finding the mode of
 % a mixture of two 1D Gaussians using a Gaussian proposal.
 
@@ -167,9 +172,10 @@ for i=1:4
   hold on;
   plot(x_t,y_t,'k','linewidth',2)
   axis([-10 20 0 .15])
-  text(14,.1,sprintf('iter %d', Ns(i)))
+  %text(14,.1,sprintf('iter %d', Ns(i)))
+  title(sprintf('iter %d', Ns(i)))
 end
-
+end
 %%%%%%%%%%
 
 function p = mogProb(x)
@@ -186,10 +192,12 @@ for k=1:K
   p = p + mixWeights(k)*gausspdf(x(:), mu(k), sigma(k));
 end
 
+end
+
 function  E = target(x)
 p = mogProb(x);
 E = -log(p+eps); % energy = -ve log posterior
 
-
+end
 ##### SOURCE END #####
 --></body></html>

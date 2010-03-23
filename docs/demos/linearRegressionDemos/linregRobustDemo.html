@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>linregRobustDemo</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="linregRobustDemo"><style type="text/css">
+      --><title>linregRobustDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="linregRobustDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -73,7 +73,7 @@ y = [y' k  k k]';
 
 n = length(x);
 Xtrain = x(:);
-modelLS = linregFit(Xtrain, y);<span class="comment">% least squares soln</span>
+modelLS = linregFit(Xtrain, y, <span class="string">'lambda'</span>, 0);<span class="comment">% least squares soln</span>
 xs = 0:0.1:1;
 Xtest = xs(:);
 yhatLS = linregPredict(modelLS, Xtest);
@@ -123,7 +123,7 @@ set(gca,<span class="string">'ylim'</span>,[-6 4])
 <span class="keyword">end</span>
 <span class="keyword">end</span>
 </pre><p class="footer"><br>
-      Published with MATLAB&reg; 7.9<br></p></div><!--
+      Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 %% robust linear regression
 function linregRobustDemo()
@@ -138,7 +138,7 @@ y = [y' k  k k]';
 
 n = length(x);
 Xtrain = x(:);
-modelLS = linregFit(Xtrain, y);% least squares soln
+modelLS = linregFit(Xtrain, y, 'lambda', 0);% least squares soln
 xs = 0:0.1:1;
 Xtest = xs(:);
 yhatLS = linregPredict(modelLS, Xtest);

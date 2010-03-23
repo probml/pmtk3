@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>gprDemoChangeHparams</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="gprDemoChangeHparams"><style type="text/css">
+      --><title>Visualize the effect of change the hyper-params for a 1d GP regression</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="gprDemoChangeHparams"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,9 +62,7 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% based on demo_gpr by Carl Rasmussen</span>
-
-<span class="comment">% generate data</span>
+  </style></head><body><div class="content"><h1>Visualize the effect of change the hyper-params for a 1d GP regression</h1><p>based on demo_gpr by Carl Rasmussen</p><pre class="codeinput"><span class="comment">% generate data</span>
 n = 20;
 rand(<span class="string">'state'</span>,18);
 randn(<span class="string">'state'</span>,20);
@@ -95,8 +93,9 @@ hyps = [log(1), log(1), log(0.1);<span class="keyword">...</span>
   printPmtkFigure(sprintf(<span class="string">'gprDemoChangeHparams%d'</span>, i));
 <span class="keyword">end</span>
 </pre><img vspace="5" hspace="5" src="gprDemoChangeHparams_01.png" alt=""> <img vspace="5" hspace="5" src="gprDemoChangeHparams_02.png" alt=""> <img vspace="5" hspace="5" src="gprDemoChangeHparams_03.png" alt=""> <p class="footer"><br>
-      Published with MATLAB&reg; 7.9<br></p></div><!--
+      Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
+%% Visualize the effect of change the hyper-params for a 1d GP regression
 % based on demo_gpr by Carl Rasmussen
 
 % generate data

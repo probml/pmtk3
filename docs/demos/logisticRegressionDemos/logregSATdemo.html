@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>logregSATdemo</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="logregSATdemo"><style type="text/css">
+      --><title>logregSATdemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="logregSATdemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -76,14 +76,14 @@ perm = sortidx(X, <span class="string">'ascend'</span>);
 X = X(perm);
 y = y(perm);
 
-model = logregFitL2(X, y, 0);
+model = logregFit(X, y,<span class="string">'lambda'</span>, 0);
 [yhat, prob] = logregPredict(model, X);
 
 <span class="comment">% visualize model fit for each training point</span>
 figure;
-plot(X, y, <span class="string">'ko'</span>, <span class="string">'linewidth'</span>, 2);
+plot(X, y, <span class="string">'ko'</span>, <span class="string">'linewidth'</span>, 2, <span class="string">'MarkerSize'</span>, 10);
 hold <span class="string">on</span>
-plot(X, prob, <span class="string">'rx'</span>, <span class="string">'linewidth'</span>, 2)
+plot(X, prob, <span class="string">'rx'</span>, <span class="string">'linewidth'</span>, 2,<span class="string">'MarkerSize'</span>, 10)
 axis_pct
 
 <span class="comment">% draw vertical line at location where SAT score has 2 different label</span>
@@ -91,28 +91,8 @@ h = line([525 525], [0 1]);
 set(h, <span class="string">'color'</span>, <span class="string">'k'</span>, <span class="string">'linewidth'</span>, 2);
 
 printPmtkFigure(<span class="string">'logregSATdemo'</span>)
-</pre><pre class="codeoutput">Warning: Log of zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Log of zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Log of zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Log of zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Log of zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
 </pre><img vspace="5" hspace="5" src="logregSATdemo_01.png" alt=""> <p class="footer"><br>
-      Published with MATLAB&reg; 7.9<br></p></div><!--
+      Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 % Example from Johnson and Albert p87
 
@@ -128,14 +108,14 @@ perm = sortidx(X, 'ascend');
 X = X(perm);
 y = y(perm);
 
-model = logregFitL2(X, y, 0);
+model = logregFit(X, y,'lambda', 0);
 [yhat, prob] = logregPredict(model, X);
 
 % visualize model fit for each training point
 figure;
-plot(X, y, 'ko', 'linewidth', 2);
+plot(X, y, 'ko', 'linewidth', 2, 'MarkerSize', 10);
 hold on
-plot(X, prob, 'rx', 'linewidth', 2)
+plot(X, prob, 'rx', 'linewidth', 2,'MarkerSize', 10)
 axis_pct
 
 % draw vertical line at location where SAT score has 2 different label

@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>biclusterDemo</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="biclusterDemo"><style type="text/css">
+      --><title>biclusterDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="biclusterDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -74,7 +74,7 @@ dummyData(5:5:end, 5:5:end) = 1;
 patternDummyRows = 5:5:size(dummyData,1);
 patternDummyCols = 5:5:size(dummyData,2);
 setSeed(1);
-[dummyBcRow, dummyBcCol, dummyRowProb, dummyColProb] = biclusterMultiple(dummyData, <span class="string">'-trace'</span>, true, <span class="string">'-plot'</span>, false, <span class="string">'-allRowThres'</span>, 0.7, <span class="string">'-allColThres'</span>, 0.8);
+[dummyBcRow, dummyBcCol, dummyRowProb, dummyColProb] = biclusterMultiple(dummyData, <span class="string">'trace'</span>, true, <span class="string">'plot'</span>, false, <span class="string">'allRowThres'</span>, 0.7, <span class="string">'allColThres'</span>, 0.8);
 
 h = figure();
 axes(<span class="string">'Position'</span>, [0.15, 0.15, 0.8, 0.8]);
@@ -104,17 +104,7 @@ printPmtkFigure(<span class="string">'dummyBiclusterProb'</span>);
 figure(); colormap(<span class="string">'gray'</span>); imagesc(dummyData);
 title(<span class="string">'Data Matrix'</span>);
 printPmtkFigure(<span class="string">'dummyBiclusterData'</span>);
-</pre><pre class="codeoutput">First discover a bicluster in a really simple example -- binary data
-
-Starting Gibbs sampler on data matrix 
-Bicluster search # 1, restart 1 / 1 
-Samples collected: 100... 200... 300... 400... 500... 
-Expected rows in bicluster according to threshold level (0.70): [5 10 15 20 25 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100] 
-Expected columns in bicluster according to threshold level (0.80): [5 10 15 20 25 30] 
-Bicluster search # 2, restart 1 / 1 
-Samples collected: 100... 200... 300... 400... 500... 
-No bicluster found.  Either the row of column subset was empty based on the threshold levels (row = 0.70, column = 0.80)
-</pre><img vspace="5" hspace="5" src="biclusterDemo_01.png" alt=""> <img vspace="5" hspace="5" src="biclusterDemo_02.png" alt=""> <h2>Now a more difficult example<a name="4"></a></h2><pre class="codeinput">fprintf(<span class="string">'\n\nNow we try a more difficult example, similar to the example from Fig. 2 in Shen et al (2003): Biclustering Microarray Data in Gibbs Sampling\n'</span>)
+</pre><h2>Now a more difficult example<a name="4"></a></h2><pre class="codeinput">fprintf(<span class="string">'\n\nNow we try a more difficult example, similar to the example from Fig. 2 in Shen et al (2003): Biclustering Microarray Data in Gibbs Sampling\n'</span>)
 uniData = unidrnd(nLevels, [nRow, nCol]);
 <span class="comment">% now we embed the pattern</span>
 patternRowSize = 25;
@@ -135,7 +125,7 @@ fprintf(<span class="string">'True columns: %s\n'</span>, mat2str(sort(patternUn
 <span class="keyword">end</span>
 
 setSeed(2);
-[uniBcRow, uniBcCol, uniRowProb, uniColProb] = biclusterMultiple(uniData, <span class="string">'-plot'</span>, false, <span class="string">'-allRowThres'</span>, 0.7, <span class="string">'-allColThres'</span>, 0.8);
+[uniBcRow, uniBcCol, uniRowProb, uniColProb] = biclusterMultiple(uniData, <span class="string">'plot'</span>, false, <span class="string">'allRowThres'</span>, 0.7, <span class="string">'allColThres'</span>, 0.8);
 figure();
 <span class="comment">%subplot('Position', [0.15, 0.15, 0.2, 0.8]);</span>
 subplot(<span class="string">'Position'</span>, [0.15, 0.15, 0.8, 0.8]);
@@ -199,21 +189,7 @@ printPmtkFigure(<span class="string">'uniBiclusterDataPermuteDiscovery'</span>)
 <span class="comment">%imagesc(uniData(patternUniRows, patternUniCols));</span>
 <span class="comment">%title('True Bicluster');</span>
 <span class="comment">%printPmtkFigure('uniBiclusterTruthDiscovered');</span>
-</pre><pre class="codeoutput">
-
-Now we try a more difficult example, similar to the example from Fig. 2 in Shen et al (2003): Biclustering Microarray Data in Gibbs Sampling
-True rows: [6 10 26 32 33 45 46 47 48 49 50 51 53 54 62 63 66 69 73 87 90 92 94 95 99]
-True columns: [1 2 9 11 13 15 25 30]
-
-Starting Gibbs sampler on data matrix 
-Bicluster search # 1, restart 1 / 1 
-Samples collected: 100... 200... 300... 400... 500... 
-Expected rows in bicluster according to threshold level (0.70): [6 10 26 32 33 45 46 47 48 49 50 51 53 54 62 63 66 69 73 87 90 92 94 95 99] 
-Expected columns in bicluster according to threshold level (0.80): [1 9 11 13 15 25 30] 
-Bicluster search # 2, restart 1 / 1 
-Samples collected: 100... 200... 300... 400... 500... 
-No bicluster found.  Either the row of column subset was empty based on the threshold levels (row = 0.70, column = 0.80)
-</pre><img vspace="5" hspace="5" src="biclusterDemo_03.png" alt=""> <h2>Now an example with multiple biclusters<a name="5"></a></h2><pre class="codeinput">fprintf(<span class="string">'\n\nNow multiple biclusters on a larger data matrix\n'</span>)
+</pre><h2>Now an example with multiple biclusters<a name="5"></a></h2><pre class="codeinput">fprintf(<span class="string">'\n\nNow multiple biclusters on a larger data matrix\n'</span>)
 clear <span class="string">data</span>
 nRow = 200;
 nCol = 40;
@@ -254,7 +230,7 @@ sharp = 0.95;
 <span class="keyword">end</span>
 
 setSeed(3);
-[multBcRow, multBcCol, multRowPost, multColPost] = biclusterMultiple(data, <span class="string">'-plot'</span>, false, <span class="string">'-allRowThres'</span>, 0.7, <span class="string">'-allColThres'</span>, 0.8);
+[multBcRow, multBcCol, multRowPost, multColPost] = biclusterMultiple(data, <span class="string">'plot'</span>, false, <span class="string">'allRowThres'</span>, 0.7, <span class="string">'allColThres'</span>, 0.8);
 
 <span class="comment">%figure();</span>
 <span class="comment">%colormap('gray');</span>
@@ -331,33 +307,7 @@ figure(); colormap(<span class="string">'gray'</span>);
   <span class="keyword">end</span>
 <span class="keyword">end</span>
 printPmtkFigure(<span class="string">'multBiclusterDiscovered'</span>);
-</pre><pre class="codeoutput">
-
-Now multiple biclusters on a larger data matrix
-True rows: [9;10;12;16;18;19;20;27;32;34;49;52;53;57;59;64;67;75;83;86;96;100;109;123;124;128;129;135;149;157;159;160;172;173;176;177;181;185;187;195]
-True columns: [2;3;10;14;28;32;37]
-True rows: [3;5;6;7;10;17;24;34;38;41;44;61;70;74;75;78;79;104;108;112;139;141;184;190;196]
-True columns: [7;8;12;23;26;27;31;32;35;39]
-True rows: [5;7;14;15;21;22;37;40;42;46;48;50;54;62;69;77;85;87;88;89;90;107;108;111;112;113;127;131;139;140;147;152;171;182;199]
-True columns: [12;17;20;34;35;36;38;40]
-
-Starting Gibbs sampler on data matrix 
-Bicluster search # 1, restart 1 / 1 
-Samples collected: 100... 200... 300... 400... 500... 
-Expected rows in bicluster according to threshold level (0.70): [9 10 12 16 19 20 27 32 34 45 52 57 59 64 67 75 83 86 96 100 123 124 128 129 135 149 159 160 172 173 176 185 187 195] 
-Expected columns in bicluster according to threshold level (0.80): [2 7 8 10 12 14 16 24 25 32 34 40] 
-Bicluster search # 2, restart 1 / 1 
-Samples collected: 100... 200... 300... 400... 500... 
-Expected rows in bicluster according to threshold level (0.70): [5 15 21 22 37 40 42 46 48 50 54 62 69 77 85 87 88 89 90 107 108 111 112 113 127 131 139 147 152 171] 
-Expected columns in bicluster according to threshold level (0.80): [2 3 7 10 12 14 20 28 32 36 37 40] 
-Bicluster search # 3, restart 1 / 1 
-Samples collected: 100... 200... 300... 400... 500... 
-Expected rows in bicluster according to threshold level (0.70): [3 17 24 38 78 79 184 196] 
-Expected columns in bicluster according to threshold level (0.80): [2 3 7 10 12 14 20 28 32 34 36 37 40] 
-Bicluster search # 4, restart 1 / 1 
-Samples collected: 100... 200... 300... 400... 500... 
-No bicluster found.  Either the row of column subset was empty based on the threshold levels (row = 0.70, column = 0.80)
-</pre><img vspace="5" hspace="5" src="biclusterDemo_04.png" alt=""> <img vspace="5" hspace="5" src="biclusterDemo_05.png" alt=""> <img vspace="5" hspace="5" src="biclusterDemo_06.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
 
 <span class="keyword">function</span> [] = plotPermute(matRows, matCols, data)
 
@@ -401,7 +351,7 @@ No bicluster found.  Either the row of column subset was empty based on the thre
 <span class="comment">%  end</span>
 <span class="keyword">end</span>
 </pre><p class="footer"><br>
-      Published with MATLAB&reg; 7.9<br></p></div><!--
+      Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 function [] = biclusterDemo()
 %PMTKslow    
@@ -417,7 +367,7 @@ dummyData(5:5:end, 5:5:end) = 1;
 patternDummyRows = 5:5:size(dummyData,1);
 patternDummyCols = 5:5:size(dummyData,2);
 setSeed(1);
-[dummyBcRow, dummyBcCol, dummyRowProb, dummyColProb] = biclusterMultiple(dummyData, '-trace', true, '-plot', false, '-allRowThres', 0.7, '-allColThres', 0.8);
+[dummyBcRow, dummyBcCol, dummyRowProb, dummyColProb] = biclusterMultiple(dummyData, 'trace', true, 'plot', false, 'allRowThres', 0.7, 'allColThres', 0.8);
 
 h = figure();
 axes('Position', [0.15, 0.15, 0.8, 0.8]);
@@ -470,7 +420,7 @@ for k=1:patternColSize
 end
 
 setSeed(2);
-[uniBcRow, uniBcCol, uniRowProb, uniColProb] = biclusterMultiple(uniData, '-plot', false, '-allRowThres', 0.7, '-allColThres', 0.8);
+[uniBcRow, uniBcCol, uniRowProb, uniColProb] = biclusterMultiple(uniData, 'plot', false, 'allRowThres', 0.7, 'allColThres', 0.8);
 figure();
 %subplot('Position', [0.15, 0.15, 0.2, 0.8]);
 subplot('Position', [0.15, 0.15, 0.8, 0.8]);
@@ -577,7 +527,7 @@ for j=1:truecount
 end
 
 setSeed(3);
-[multBcRow, multBcCol, multRowPost, multColPost] = biclusterMultiple(data, '-plot', false, '-allRowThres', 0.7, '-allColThres', 0.8);
+[multBcRow, multBcCol, multRowPost, multColPost] = biclusterMultiple(data, 'plot', false, 'allRowThres', 0.7, 'allColThres', 0.8);
 
 %figure();
 %colormap('gray');

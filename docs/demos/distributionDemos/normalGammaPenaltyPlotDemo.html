@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>normalGammaPenaltyPlotDemo</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="normalGammaPenaltyPlotDemo"><style type="text/css">
+      --><title>normalGammaPenaltyPlotDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="normalGammaPenaltyPlotDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,12 +62,8 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> normalGammaPenaltyPlotDemo()
-<span class="comment">% Plot contours of penalty(w1) + penalty(w2)</span>
-<span class="comment">% where penalty(w) = -log p(w)</span>
-<span class="comment">% and p(w) = normalGamma(w | delta, c)</span>
-
-<span class="comment">%PMTKauthor Francois Caron</span>
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Plot contours of penalty(w1) + penalty(w2), where penalty(w) = -log p(w)</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> normalGammaPenaltyPlotDemo()
+</pre><h2>Plot contours of penalty(w1) + penalty(w2), where penalty(w) = -log p(w)<a name="2"></a></h2><p>and p(w) = normalGamma(w | delta, c)</p><pre class="codeinput"><span class="comment">%PMTKauthor Francois Caron</span>
 <span class="comment">%PMTKmodified Kevin Murphy</span>
 
 c = 1;
@@ -81,8 +77,8 @@ figure; hold <span class="string">on</span>
 <span class="keyword">for</span> i=1:length(deltas)
   delta = deltas(i);
    pen = @(X) normalGammaNeglogpdf(X, delta, c);
-  Z=pen(X) + pen(Y) - pen(1) - pen(pas);
-  contour(X,Y,Z,[0 0], styles{i}, <span class="string">'linewidth'</span>, 2);
+  Z=pen(X(:)) + pen(Y(:)) - pen(1) - pen(pas);
+  contour(X,Y,reshape(Z, size(X)),[0 0], styles{i}, <span class="string">'linewidth'</span>, 2);
   str{i} = sprintf(<span class="string">'%s=%3.2f, c=1'</span>, <span class="string">'\delta'</span>, delta);
 <span class="keyword">end</span>
 legend(str)
@@ -104,16 +100,13 @@ legend(str)
 title(sprintf(<span class="string">'penalty induced by NEG(%s,c) prior'</span>, <span class="string">'\delta'</span>))
 printPmtkFigure(<span class="string">'NEGPenalty'</span>)
 <span class="keyword">end</span>
-
-<span class="keyword">end</span>
-</pre><img vspace="5" hspace="5" src="normalGammaPenaltyPlotDemo_01.png" alt=""> <img vspace="5" hspace="5" src="normalGammaPenaltyPlotDemo_02.png" alt=""> <p class="footer"><br>
-      Published with MATLAB&reg; 7.9<br></p></div><!--
+</pre><img vspace="5" hspace="5" src="normalGammaPenaltyPlotDemo_01.png" alt=""> <img vspace="5" hspace="5" src="normalGammaPenaltyPlotDemo_02.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 function normalGammaPenaltyPlotDemo()
-% Plot contours of penalty(w1) + penalty(w2)
-% where penalty(w) = -log p(w)
+%% Plot contours of penalty(w1) + penalty(w2), where penalty(w) = -log p(w)
 % and p(w) = normalGamma(w | delta, c)
-
 %PMTKauthor Francois Caron
 %PMTKmodified Kevin Murphy
 
@@ -128,8 +121,8 @@ figure; hold on
 for i=1:length(deltas)
   delta = deltas(i);
    pen = @(X) normalGammaNeglogpdf(X, delta, c);
-  Z=pen(X) + pen(Y) - pen(1) - pen(pas);
-  contour(X,Y,Z,[0 0], styles{i}, 'linewidth', 2);
+  Z=pen(X(:)) + pen(Y(:)) - pen(1) - pen(pas);
+  contour(X,Y,reshape(Z, size(X)),[0 0], styles{i}, 'linewidth', 2);
   str{i} = sprintf('%s=%3.2f, c=1', '\delta', delta);
 end
 legend(str)

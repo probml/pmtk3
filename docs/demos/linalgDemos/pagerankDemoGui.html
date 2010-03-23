@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>pagerankDemoGui</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="pagerankDemoGui"><style type="text/css">
+      --><title>pagerankDemoGui</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="pagerankDemoGui"><style type="text/css">
 
 body {
   background-color: white;
@@ -64,6 +64,7 @@ p.footer {
 
   </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> pagerankDemoGui
 <span class="comment">%PMTKslow</span>
+<span class="comment">%PMTKinteractive</span>
 <span class="comment">% PAGERANKDEMO draws the 6-node "tiny web" in Section 2.11 of "Numerical</span>
 <span class="comment">% Computing with MATLAB", by Cleve Moler, SIAM, 2004.  It then simulates the</span>
 <span class="comment">% computation of Google's PageRank algorithm, by randomly selecting links to</span>
@@ -188,7 +189,7 @@ steps = 1 ;
     <span class="keyword">end</span>
 
 <span class="keyword">end</span>
-
+<span class="keyword">end</span>
 <span class="comment">%-------------------------------------------------------------------------------</span>
 
 <span class="keyword">function</span> Graph = graphinit
@@ -291,22 +292,14 @@ Graph.xy = xy ;
 Graph.xy_delta = xy_delta ;
 Graph.nodelabel = nodelabel ;
 Graph.arrows = arrows ;
-</pre><pre class="codeoutput">
-pagerankdemo not found.
 
-Use the Help browser Search tab to search the documentation, or
-type "help help" for help command options, such as help for methods.
-
-</pre><pre class="codeoutput">Error using ==&gt; input
-Cannot call INPUT from EVALC.
-
-Error in ==&gt; pagerankDemoGui at 65
-input ('hit enter to start at node alpha: ') ;
+<span class="keyword">end</span>
 </pre><p class="footer"><br>
-      Published with MATLAB&reg; 7.9<br></p></div><!--
+      Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 function pagerankDemoGui
 %PMTKslow
+%PMTKinteractive
 % PAGERANKDEMO draws the 6-node "tiny web" in Section 2.11 of "Numerical
 % Computing with MATLAB", by Cleve Moler, SIAM, 2004.  It then simulates the
 % computation of Google's PageRank algorithm, by randomly selecting links to
@@ -431,7 +424,7 @@ while (1)
     end
 
 end
-
+end
 %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
 
 function Graph = graphinit
@@ -535,6 +528,6 @@ Graph.xy_delta = xy_delta ;
 Graph.nodelabel = nodelabel ;
 Graph.arrows = arrows ;
 
-
+end
 ##### SOURCE END #####
 --></body></html>

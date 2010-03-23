@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>normalGammaThresholdPlotDemo</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="normalGammaThresholdPlotDemo"><style type="text/css">
+      --><title>normalGammaThresholdPlotDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="normalGammaThresholdPlotDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,9 +62,8 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> normalGammaThresholdPlotDemo()
-
-<span class="comment">%PMTKauthor author Francois Caron</span>
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Threshold Plot Demo</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> normalGammaThresholdPlotDemo()
+</pre><h2>Threshold Plot Demo<a name="2"></a></h2><pre class="codeinput"><span class="comment">%PMTKauthor author Francois Caron</span>
 
 <span class="comment">%z=-10:.1:10;</span>
 z=-10:0.5:10;
@@ -78,7 +77,7 @@ x=-10.005:.05:10;
   deltas = [0.01 0.75 1];
   <span class="keyword">for</span> i=1:length(deltas)
     delta = deltas(i);
-    [temp outNG{i}(k)]=min(.5*(z(k)-x).^2+normalGammaNeglogpdf(x, delta, 1));
+    [temp outNG{i}(k)]=min(.5*(z(k)-x).^2+normalGammaNeglogpdf(x, delta, 1)');
   <span class="keyword">end</span>
 
   <span class="comment">% normal Jeffreys</span>
@@ -149,20 +148,18 @@ legend(str, <span class="string">'location'</span>, <span class="string">'southe
 plot(z,z,<span class="string">'r:'</span>, <span class="string">'linewidth'</span>, 3)
 title(<span class="string">'normalExpGauss'</span>)
 printPmtkFigure(<span class="string">'NEGthreshold'</span>)
-
-
-<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="normalGammaThresholdPlotDemo_01.png" alt=""> <img vspace="5" hspace="5" src="normalGammaThresholdPlotDemo_02.png" alt=""> <img vspace="5" hspace="5" src="normalGammaThresholdPlotDemo_03.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
 
 
 <span class="keyword">function</span> out = pen_NIG(w, delta, gamma)
 tmp = sqrt(delta^2 + w.^2);
 out = log(tmp)-log(besselk(1,gamma*tmp));
 <span class="keyword">end</span>
-</pre><img vspace="5" hspace="5" src="normalGammaThresholdPlotDemo_01.png" alt=""> <img vspace="5" hspace="5" src="normalGammaThresholdPlotDemo_02.png" alt=""> <img vspace="5" hspace="5" src="normalGammaThresholdPlotDemo_03.png" alt=""> <p class="footer"><br>
-      Published with MATLAB&reg; 7.9<br></p></div><!--
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 function normalGammaThresholdPlotDemo()
-
+%% Threshold Plot Demo
 %PMTKauthor author Francois Caron
 
 %z=-10:.1:10;
@@ -177,7 +174,7 @@ for k=1:length(z)
   deltas = [0.01 0.75 1];
   for i=1:length(deltas)
     delta = deltas(i);
-    [temp outNG{i}(k)]=min(.5*(z(k)-x).^2+normalGammaNeglogpdf(x, delta, 1));
+    [temp outNG{i}(k)]=min(.5*(z(k)-x).^2+normalGammaNeglogpdf(x, delta, 1)');
   end
   
   % normal Jeffreys

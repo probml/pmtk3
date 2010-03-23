@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>surfer</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="surfer"><style type="text/css">
+      --><title>surfer</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="surfer"><style type="text/css">
 
 body {
   background-color: white;
@@ -208,12 +208,14 @@ delete(slow)
 set(quit,<span class="string">'string'</span>,<span class="string">'close'</span>,<span class="string">'callback'</span>,<span class="string">'close(gcf)'</span>,<span class="string">'value'</span>,0)
 printPmtkFigure <span class="string">harvard500spy</span>
 
-
+<span class="keyword">end</span>
 <span class="comment">%------------------------</span>
 
 <span class="keyword">function</span> h = hashfun(url)
 <span class="comment">% Almost unique numeric hash code for pages already visited.</span>
 h = length(url) + 1024*sum(url);
+
+<span class="keyword">end</span>
 </pre><pre class="codeoutput">ans = 
     'http://www.harvard.edu'
     'http://www.news.harvard.edu/rss/home.xml'
@@ -231,7 +233,7 @@ h = length(url) + 1024*sum(url);
     'http://www.gsas.harvard.edu'
     'http://www.law.harvard.edu'
 </pre><img vspace="5" hspace="5" src="surfer_01.png" alt=""> <p class="footer"><br>
-      Published with MATLAB&reg; 7.9<br></p></div><!--
+      Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 function [U,G] = surfer(root,n)
 
@@ -379,12 +381,13 @@ delete(slow)
 set(quit,'string','close','callback','close(gcf)','value',0)
 printPmtkFigure harvard500spy
 
-
+end
 %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
 
 function h = hashfun(url)
 % Almost unique numeric hash code for pages already visited.
 h = length(url) + 1024*sum(url);
 
+end
 ##### SOURCE END #####
 --></body></html>

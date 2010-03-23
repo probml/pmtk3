@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>mixGaussPlotDemo</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="mixGaussPlotDemo"><style type="text/css">
+      --><title>mixGaussPlotDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="mixGaussPlotDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -88,11 +88,11 @@ p.footer {
     xrangeMix = [min(xrange(:,1)), max(xrange(:,2)), min(xrange(:,3)), max(xrange(:,4))];
     figure;
     model.mu = mu; model.Sigma = Sigma; model.mixweight=mixmat; model.K = 3;
-    plotDistribution(@(X)mixGaussLogprob(model, X), <span class="string">'-useLog'</span>, false, <span class="string">'-useContour'</span>, true, <span class="string">'-npoints'</span>, 200, <span class="string">'-xrange'</span>, xrangeMix);
+    plotDistribution(@(X)mixGaussLogprob(model, X), <span class="string">'useLog'</span>, false, <span class="string">'useContour'</span>, true, <span class="string">'npoints'</span>, 200, <span class="string">'xrange'</span>, xrangeMix);
     axis <span class="string">tight</span>;
     printPmtkFigure(<span class="string">'mixgauss3Contour'</span>);
 </pre><img vspace="5" hspace="5" src="mixGaussPlotDemo_01.png" alt=""> <img vspace="5" hspace="5" src="mixGaussPlotDemo_02.png" alt=""> <pre class="codeinput">    figure;
-    h = plotDistribution(@(X)mixGaussLogprob(model, X), <span class="string">'-useLog'</span>, false, <span class="string">'-useContour'</span>, false, <span class="string">'-npoints'</span>, 200, <span class="string">'-xrange'</span>, xrangeMix);
+    h = plotDistribution(@(X)mixGaussLogprob(model, X), <span class="string">'useLog'</span>, false, <span class="string">'useContour'</span>, false, <span class="string">'npoints'</span>, 200, <span class="string">'xrange'</span>, xrangeMix);
     brown = [0.8 0.4 0.2];
     set(h,<span class="string">'FaceColor'</span>,brown,<span class="string">'EdgeColor'</span>,<span class="string">'none'</span>);
     hold <span class="string">on</span>;
@@ -106,7 +106,7 @@ p.footer {
     m.mu = mu; m.Sigma = Sigma; m.mixweight = mixmat;
     X = mixGaussSample(m, nsamples);
     figure;
-    plotDistribution(@(X)mixGaussLogprob(model, X), <span class="string">'-useLog'</span>, false, <span class="string">'-useContour'</span>, true, <span class="string">'-npoints'</span>, 200, <span class="string">'-xrange'</span>, xrangeMix);
+    plotDistribution(@(X)mixGaussLogprob(model, X), <span class="string">'useLog'</span>, false, <span class="string">'useContour'</span>, true, <span class="string">'npoints'</span>, 200, <span class="string">'xrange'</span>, xrangeMix);
     hold <span class="string">on</span>
     plot(X(:,1), X(:,2), <span class="string">'.'</span>);
     axis <span class="string">tight</span>;
@@ -139,7 +139,7 @@ p.footer {
     <span class="keyword">end</span>
 <span class="keyword">end</span>
 </pre><p class="footer"><br>
-      Published with MATLAB&reg; 7.9<br></p></div><!--
+      Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 function mixGaussPlotDemo()
 %% Plot a Mixture of Gaussians
@@ -171,12 +171,12 @@ function mixGaussPlotDemo()
     xrangeMix = [min(xrange(:,1)), max(xrange(:,2)), min(xrange(:,3)), max(xrange(:,4))];
     figure;
     model.mu = mu; model.Sigma = Sigma; model.mixweight=mixmat; model.K = 3;
-    plotDistribution(@(X)mixGaussLogprob(model, X), '-useLog', false, '-useContour', true, '-npoints', 200, '-xrange', xrangeMix);
+    plotDistribution(@(X)mixGaussLogprob(model, X), 'useLog', false, 'useContour', true, 'npoints', 200, 'xrange', xrangeMix);
     axis tight;
     printPmtkFigure('mixgauss3Contour');
 %%      
     figure;
-    h = plotDistribution(@(X)mixGaussLogprob(model, X), '-useLog', false, '-useContour', false, '-npoints', 200, '-xrange', xrangeMix);
+    h = plotDistribution(@(X)mixGaussLogprob(model, X), 'useLog', false, 'useContour', false, 'npoints', 200, 'xrange', xrangeMix);
     brown = [0.8 0.4 0.2];
     set(h,'FaceColor',brown,'EdgeColor','none');
     hold on;
@@ -191,7 +191,7 @@ function mixGaussPlotDemo()
     m.mu = mu; m.Sigma = Sigma; m.mixweight = mixmat;
     X = mixGaussSample(m, nsamples);
     figure;
-    plotDistribution(@(X)mixGaussLogprob(model, X), '-useLog', false, '-useContour', true, '-npoints', 200, '-xrange', xrangeMix);
+    plotDistribution(@(X)mixGaussLogprob(model, X), 'useLog', false, 'useContour', true, 'npoints', 200, 'xrange', xrangeMix);
     hold on
     plot(X(:,1), X(:,2), '.');
     axis tight;

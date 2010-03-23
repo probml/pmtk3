@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>logregMultinomKernelMinfuncDemo</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="logregMultinomKernelMinfuncDemo"><style type="text/css">
+      --><title>logregMultinomKernelMinfuncDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="logregMultinomKernelMinfuncDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -114,7 +114,8 @@ uPoly = [uPoly zeros(nInstances,1)];
 
 <span class="comment">% RBF</span>
 rbfScale = 1;
-Krbf = kernelRBF(X,X,rbfScale);
+
+Krbf = kernelRbfSigma(X,X,rbfScale);
 funObj = @(u)SoftmaxLoss2(u,Krbf,y,nClasses);
 fprintf(<span class="string">'Training kernel(rbf) multinomial logistic regression model...\n'</span>);
 uRBF = minFunc(@penalizedL2,randn(nInstances*(nClasses-1),1),options,funObj,lambda);
@@ -122,10 +123,11 @@ uRBF = minFunc(@penalizedL2,randn(nInstances*(nClasses-1),1),options,funObj,lamb
 uRBF = reshape(uRBF,[nInstances nClasses-1]);
 uRBF = [uRBF zeros(nInstances,1)];
 
-addOnes = false;
-modelRBF = logregFitL2(Krbf, y, lambda, addOnes);
+
+modelRBF = logregFit(X, y, <span class="string">'kernelFn'</span>, @kernelRbfSigma, <span class="string">'kernelParam'</span>, rbfScale,<span class="keyword">...</span>
+    <span class="string">'lambda'</span>, lambda, <span class="string">'standardizeX'</span>, false, <span class="string">'includeOffset'</span>, false, <span class="string">'fitOptions'</span>, struct());
 wRBF = modelRBF.w;
-assert(approxeq(wRBF, uRBF, 1e-1))
+assert(approxeq(wRBF, uRBF))
 
 <span class="comment">% Compute training errors</span>
 [junk yhat] = max(X*wLinear,[],2);
@@ -135,7 +137,7 @@ trainErr_poly = sum(y~=yhat)/length(y)
 [junk yhat] = max(Krbf*uRBF,[],2);
 trainErr_rbf = sum(y~=yhat)/length(y)
 
-[yhat2, prob] = logregPredict(modelRBF, Krbf);
+[yhat2, prob] = logregPredict(modelRBF, X);
 assert(isequal(yhat, yhat2))
 
 figure;
@@ -145,10 +147,108 @@ figure;
 plotClassifier(X,y,uPoly,<span class="string">'Kernel-Poly Multinomial Logistic Regression'</span>,@kernelPoly,polyOrder);
 
 figure;
-plotClassifier(X,y,uRBF,<span class="string">'Kernel-RBF Multinomial Logistic Regression'</span>,@kernelRBF,rbfScale);
+plotClassifier(X,y,uRBF,<span class="string">'Kernel-RBF Multinomial Logistic Regression'</span>,@kernelRbfSigma,rbfScale);
 </pre><pre class="codeoutput">Training linear multinomial logistic regression model...
 Training kernel(poly) multinomial logistic regression model...
 Training kernel(rbf) multinomial logistic regression model...
+ Iteration   FunEvals     Step Length    Function Val        Opt Cond
+         1          3    9.01367e-003    1.42002e+002    3.55571e+002
+         2          4    1.00000e+000    1.37540e+002    3.16163e+002
+         3          5    1.00000e+000    1.25666e+002    4.86282e+002
+         4          6    1.00000e+000    1.20489e+002    4.64213e+002
+         5          7    1.00000e+000    1.17090e+002    2.95214e+002
+         6          8    1.00000e+000    1.13244e+002    1.25416e+002
+         7          9    1.00000e+000    1.12452e+002    9.76673e+001
+         8         10    1.00000e+000    1.10075e+002    7.37198e+001
+         9         11    1.00000e+000    1.07185e+002    8.17149e+001
+        10         12    1.00000e+000    1.04500e+002    1.91060e+002
+        11         13    1.00000e+000    1.02364e+002    7.88308e+001
+        12         14    1.00000e+000    1.01408e+002    6.40334e+001
+        13         15    1.00000e+000    1.00938e+002    4.83706e+001
+        14         16    1.00000e+000    1.00163e+002    3.68899e+001
+        15         17    1.00000e+000    9.92475e+001    4.09503e+001
+        16         18    1.00000e+000    9.79082e+001    5.98224e+001
+        17         19    1.00000e+000    9.47929e+001    8.25433e+001
+        18         20    1.00000e+000    9.06471e+001    1.04321e+002
+        19         21    1.00000e+000    8.91124e+001    1.69999e+002
+        20         22    1.00000e+000    8.54451e+001    4.10416e+001
+        21         23    1.00000e+000    8.46214e+001    3.24663e+001
+        22         24    1.00000e+000    8.41992e+001    2.45846e+001
+        23         25    1.00000e+000    8.37140e+001    2.28393e+001
+        24         26    1.00000e+000    8.28338e+001    4.11340e+001
+        25         27    1.00000e+000    8.22583e+001    3.94135e+001
+        26         28    1.00000e+000    8.17843e+001    3.33576e+001
+        27         29    1.00000e+000    8.15567e+001    2.14612e+001
+        28         30    1.00000e+000    8.13648e+001    2.64832e+001
+        29         31    1.00000e+000    8.10590e+001    4.06768e+001
+        30         32    1.00000e+000    8.07317e+001    4.08495e+001
+        31         33    1.00000e+000    8.05222e+001    2.06210e+001
+        32         34    1.00000e+000    8.04714e+001    5.35989e+000
+        33         35    1.00000e+000    8.04607e+001    8.02058e+000
+        34         36    1.00000e+000    8.04469e+001    1.37225e+001
+        35         37    1.00000e+000    8.04207e+001    2.08208e+001
+        36         38    1.00000e+000    8.03806e+001    2.40535e+001
+        37         39    1.00000e+000    8.03270e+001    1.95270e+001
+        38         40    1.00000e+000    8.02789e+001    8.40471e+000
+        39         41    1.00000e+000    8.02569e+001    1.11447e+001
+        40         42    1.00000e+000    8.02429e+001    1.19317e+001
+        41         43    1.00000e+000    8.02266e+001    1.14111e+001
+        42         44    1.00000e+000    8.01981e+001    8.99709e+000
+        43         45    1.00000e+000    8.01670e+001    1.35956e+001
+        44         46    1.00000e+000    8.01365e+001    1.68147e+001
+        45         47    1.00000e+000    8.01110e+001    1.49115e+001
+        46         48    1.00000e+000    8.00910e+001    8.55763e+000
+        47         49    1.00000e+000    8.00817e+001    4.79427e+000
+        48         50    1.00000e+000    8.00780e+001    5.16374e+000
+        49         51    1.00000e+000    8.00754e+001    3.75025e+000
+        50         52    1.00000e+000    8.00732e+001    2.88799e+000
+        51         53    1.00000e+000    8.00700e+001    4.33000e+000
+        52         54    1.00000e+000    8.00652e+001    8.50503e+000
+        53         55    1.00000e+000    8.00551e+001    1.37259e+001
+        54         56    1.00000e+000    8.00399e+001    1.59563e+001
+        55         57    1.00000e+000    8.00253e+001    1.02206e+001
+        56         58    1.00000e+000    8.00200e+001    2.69262e+000
+        57         59    1.00000e+000    8.00193e+001    5.82565e-001
+        58         60    1.00000e+000    8.00192e+001    8.17374e-001
+        59         61    1.00000e+000    8.00190e+001    1.05723e+000
+        60         62    1.00000e+000    8.00181e+001    1.60464e+000
+        61         63    1.00000e+000    8.00164e+001    1.97687e+000
+        62         64    1.00000e+000    8.00132e+001    2.00134e+000
+        63         65    1.00000e+000    8.00113e+001    3.20447e+000
+        64         66    1.00000e+000    8.00100e+001    7.85358e-001
+        65         67    1.00000e+000    8.00097e+001    7.48538e-001
+        66         68    1.00000e+000    8.00097e+001    4.09779e-001
+        67         69    1.00000e+000    8.00096e+001    3.82956e-001
+        68         70    1.00000e+000    8.00095e+001    9.09417e-001
+        69         71    1.00000e+000    8.00094e+001    1.80153e+000
+        70         72    1.00000e+000    8.00091e+001    2.74674e+000
+        71         73    1.00000e+000    8.00086e+001    2.94577e+000
+        72         74    1.00000e+000    8.00082e+001    1.33304e+000
+        73         75    1.00000e+000    8.00081e+001    2.30547e-001
+        74         76    1.00000e+000    8.00081e+001    1.29290e-001
+        75         77    1.00000e+000    8.00081e+001    1.36432e-001
+        76         78    1.00000e+000    8.00081e+001    1.48224e-001
+        77         79    1.00000e+000    8.00081e+001    1.71454e-001
+        78         80    1.00000e+000    8.00080e+001    1.96380e-001
+        79         81    1.00000e+000    8.00080e+001    2.01544e-001
+        80         82    1.00000e+000    8.00080e+001    2.82175e-001
+        81         83    1.00000e+000    8.00080e+001    3.71282e-002
+        82         84    1.00000e+000    8.00080e+001    1.86418e-002
+        83         85    1.00000e+000    8.00080e+001    1.30534e-002
+        84         86    1.00000e+000    8.00079e+001    4.98011e-002
+        85         87    1.00000e+000    8.00079e+001    8.84099e-002
+        86         88    1.00000e+000    8.00079e+001    1.17830e-001
+        87         89    1.00000e+000    8.00079e+001    8.31935e-002
+        88         90    1.00000e+000    8.00079e+001    2.61595e-002
+        89         91    1.00000e+000    8.00079e+001    2.79234e-003
+        90         92    1.00000e+000    8.00079e+001    1.79806e-003
+        91         93    1.00000e+000    8.00079e+001    1.96322e-003
+        92         94    1.00000e+000    8.00079e+001    3.20971e-003
+        93         95    1.00000e+000    8.00079e+001    4.13005e-003
+        94         96    1.00000e+000    8.00079e+001    1.98158e-003
+        95         97    1.00000e+000    8.00079e+001    2.79498e-003
+        96         98    1.00000e+000    8.00079e+001    1.01152e-003
+Directional Derivative below TolX
 trainErr_linear =
     0.4900
 trainErr_poly =
@@ -156,7 +256,7 @@ trainErr_poly =
 trainErr_rbf =
     0.2300
 </pre><img vspace="5" hspace="5" src="logregMultinomKernelMinfuncDemo_01.png" alt=""> <img vspace="5" hspace="5" src="logregMultinomKernelMinfuncDemo_02.png" alt=""> <img vspace="5" hspace="5" src="logregMultinomKernelMinfuncDemo_03.png" alt=""> <img vspace="5" hspace="5" src="logregMultinomKernelMinfuncDemo_04.png" alt=""> <p class="footer"><br>
-      Published with MATLAB&reg; 7.9<br></p></div><!--
+      Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 %PMTKauthor Mark Schmidt
 %PMTKmodified Kevin Murphy
@@ -210,7 +310,8 @@ uPoly = [uPoly zeros(nInstances,1)];
 
 % RBF
 rbfScale = 1;
-Krbf = kernelRBF(X,X,rbfScale);
+
+Krbf = kernelRbfSigma(X,X,rbfScale);
 funObj = @(u)SoftmaxLoss2(u,Krbf,y,nClasses);
 fprintf('Training kernel(rbf) multinomial logistic regression model...\n');
 uRBF = minFunc(@penalizedL2,randn(nInstances*(nClasses-1),1),options,funObj,lambda);
@@ -218,10 +319,11 @@ uRBF = minFunc(@penalizedL2,randn(nInstances*(nClasses-1),1),options,funObj,lamb
 uRBF = reshape(uRBF,[nInstances nClasses-1]);
 uRBF = [uRBF zeros(nInstances,1)];
 
-addOnes = false;
-modelRBF = logregFitL2(Krbf, y, lambda, addOnes);
+
+modelRBF = logregFit(X, y, 'kernelFn', @kernelRbfSigma, 'kernelParam', rbfScale,...
+    'lambda', lambda, 'standardizeX', false, 'includeOffset', false, 'fitOptions', struct());
 wRBF = modelRBF.w;
-assert(approxeq(wRBF, uRBF, 1e-1))
+assert(approxeq(wRBF, uRBF))
 
 % Compute training errors
 [junk yhat] = max(X*wLinear,[],2);
@@ -231,7 +333,7 @@ trainErr_poly = sum(y~=yhat)/length(y)
 [junk yhat] = max(Krbf*uRBF,[],2);
 trainErr_rbf = sum(y~=yhat)/length(y)
 
-[yhat2, prob] = logregPredict(modelRBF, Krbf);
+[yhat2, prob] = logregPredict(modelRBF, X);
 assert(isequal(yhat, yhat2))
 
 figure;
@@ -241,7 +343,7 @@ figure;
 plotClassifier(X,y,uPoly,'Kernel-Poly Multinomial Logistic Regression',@kernelPoly,polyOrder);
 
 figure;
-plotClassifier(X,y,uRBF,'Kernel-RBF Multinomial Logistic Regression',@kernelRBF,rbfScale);
+plotClassifier(X,y,uRBF,'Kernel-RBF Multinomial Logistic Regression',@kernelRbfSigma,rbfScale);
 
 
 ##### SOURCE END #####

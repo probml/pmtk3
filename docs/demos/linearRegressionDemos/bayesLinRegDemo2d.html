@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>bayesLinRegDemo2d</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="bayesLinRegDemo2d"><style type="text/css">
+      --><title>bayesLinRegDemo2d</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="bayesLinRegDemo2d"><style type="text/css">
 
 body {
   background-color: white;
@@ -144,7 +144,7 @@ title(<span class="string">'data space'</span>);
 
 
 printPmtkFigure <span class="string">bayesLinRegPlot2d</span>
-
+<span class="keyword">end</span>
 <span class="comment">%%%%%%%%%%%</span>
 
 <span class="comment">% Plot the specified number of lines of the form y = w0 + w1*x in [-1,1]x[-1,1] by</span>
@@ -174,7 +174,7 @@ ylabel(<span class="string">' y '</span>,<span class="string">'Rotation'</span>,
 <span class="comment">%Generates a colour filled contour plot of the bivariate function, 'func'</span>
 <span class="comment">%over the domain [-1,1]x[-1,1], plotting it to the current figure. Also plots</span>
 <span class="comment">%the specified point as a white cross.</span>
-
+<span class="keyword">end</span>
 <span class="keyword">function</span> contourPlot(func,trueValue)
 stepSize = 0.05;
 [x,y] = meshgrid(-1:stepSize:1,-1:stepSize:1); <span class="comment">% Create grid.</span>
@@ -195,7 +195,7 @@ ylabel(<span class="string">' W1 '</span>,<span class="string">'Rotation'</span>
     hold <span class="string">on</span>;
     plot(trueValue(1),trueValue(2),<span class="string">'+w'</span>);
 <span class="keyword">end</span>
-
+<span class="keyword">end</span>
 <span class="comment">%%%%%%%%%%</span>
 
 <span class="comment">% Given the mean = priorMu and covarianceMatrix = priorSigma of a prior</span>
@@ -209,8 +209,10 @@ ylabel(<span class="string">' W1 '</span>,<span class="string">'Rotation'</span>
 postSigma  = inv(inv(priorSigma) + likelihoodPrecision*xtrain'*xtrain);
 postMu = postSigma*inv(priorSigma)*priorMu + likelihoodPrecision*postSigma*xtrain'*ytrain;
 postW = @(W)gausspdf(W,postMu',postSigma);
+
+<span class="keyword">end</span>
 </pre><img vspace="5" hspace="5" src="bayesLinRegDemo2d_01.png" alt=""> <p class="footer"><br>
-      Published with MATLAB&reg; 7.9<br></p></div><!--
+      Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 function bayesLinRegDemo2d()
 
@@ -294,7 +296,7 @@ title('data space');
 
 
 printPmtkFigure bayesLinRegPlot2d
-
+end
 %%%%%%%%%%%
 
 % Plot the specified number of lines of the form y = w0 + w1*x in [-1,1]x[-1,1] by
@@ -324,7 +326,7 @@ end
 %Generates a colour filled contour plot of the bivariate function, 'func'
 %over the domain [-1,1]x[-1,1], plotting it to the current figure. Also plots
 %the specified point as a white cross. 
-
+end
 function contourPlot(func,trueValue)
 stepSize = 0.05; 
 [x,y] = meshgrid(-1:stepSize:1,-1:stepSize:1); % Create grid.
@@ -345,7 +347,7 @@ if(length(trueValue) == 2)
     hold on;
     plot(trueValue(1),trueValue(2),'+w');
 end
-
+end
 %%%%%%%%%%
 
 % Given the mean = priorMu and covarianceMatrix = priorSigma of a prior
@@ -360,5 +362,6 @@ postSigma  = inv(inv(priorSigma) + likelihoodPrecision*xtrain'*xtrain);
 postMu = postSigma*inv(priorSigma)*priorMu + likelihoodPrecision*postSigma*xtrain'*ytrain; 
 postW = @(W)gausspdf(W,postMu',postSigma);
 
+end
 ##### SOURCE END #####
 --></body></html>

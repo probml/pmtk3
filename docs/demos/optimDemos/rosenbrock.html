@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>rosenbrock</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="rosenbrock"><style type="text/css">
+      --><title>rosenbrock</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="rosenbrock"><style type="text/css">
 
 body {
   background-color: white;
@@ -94,10 +94,12 @@ f = sum(100*(x(2:D)-x(1:D-1).^2).^2 + (1-x(1:D-1)).^2);
   ddf(2:D,2:D) = ddf(2:D,2:D) + 200*eye(D-1);
   ddf = ddf - diag(400*x(1:D-1),1) - diag(400*x(1:D-1),-1);
 <span class="keyword">end</span>
+
+<span class="keyword">end</span>
 </pre><pre class="codeoutput">ans =
-    3.872064439376808e+004
+    5.685324197088531e+004
 </pre><p class="footer"><br>
-      Published with MATLAB&reg; 7.9<br></p></div><!--
+      Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 function [f, df, ddf] = rosenbrock(x)
 
@@ -132,5 +134,6 @@ if nargout > 2
   ddf = ddf - diag(400*x(1:D-1),1) - diag(400*x(1:D-1),-1);
 end
 
+end
 ##### SOURCE END #####
 --></body></html>

@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>gaussInferMuSigmaDemo</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="gaussInferMuSigmaDemo"><style type="text/css">
+      --><title>gaussInferMuSigmaDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="gaussInferMuSigmaDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,9 +62,8 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> gaussInferMuSigmaDemo()
-<span class="comment">% plot p(mu,sigma^2|D) in 2d using uninformative prior for different n</span>
-setSeed(1);
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">plot p(mu,sigma^2|D) in 2d using uninformative prior for different n</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> gaussInferMuSigmaDemo()
+</pre><h2>plot p(mu,sigma^2|D) in 2d using uninformative prior for different n<a name="2"></a></h2><pre class="codeinput">setSeed(1);
 muTrue = 5; varTrue = 8;
 X = randn(500,1)*sqrt(varTrue) + muTrue;
 
@@ -85,26 +84,29 @@ fig1 = figure; hold <span class="string">on</span>;
 fig2 = figure; hold <span class="string">on</span>;
 fig3 = figure; hold <span class="string">on</span>;
 <span class="keyword">for</span> i=1:length(ns)
-   n = ns(i);
-   x = X(1:n);
-   mn = mean(x);
-   kn = n;
-   an = n/2;
-   bn = 0.5*sum((x-mn).^2);
-   figure(fig1);
-   logp = GIGlogpdf(grid(:,1), grid(:,2), mn, kn, an, bn);
-   p = reshape(exp(logp), nr, nc);
-   [c,h] = contour(X1, X2, p, 5, styles{i}, <span class="string">'linewidth'</span> , 3);
-   <span class="comment">%h = surf(X1, X2, p, plotArgs{:});</span>
-   legendstr{i} = sprintf(<span class="string">'n=%d'</span>, n);
+    n = ns(i);
+    x = X(1:n);
+    mn = mean(x);
+    kn = n;
+    an = n/2;
+    bn = 0.5*sum((x-mn).^2);
+    figure(fig1);
+    logp = GIGlogpdf(grid(:,1), grid(:,2), mn, kn, an, bn);
+    p = reshape(exp(logp), nr, nc);
+    [c,h] = contour(X1, X2, p, 5, styles{i}, <span class="string">'linewidth'</span> , 3);
+    <span class="comment">%h = surf(X1, X2, p, plotArgs{:});</span>
+    legendstr{i} = sprintf(<span class="string">'n=%d'</span>, n);
 
-   figure(fig2);
-   logp = studentTlogprob(mus, 2*an, mn, bn/(an*kn));
-   plot(mus, exp(logp), styles{i}, <span class="string">'linewidth'</span>, 3);
+    figure(fig2);
+    model.mu = 2*an;
+    model.Sigma = mn;
+    model.dof = bn/(an*kn);
+    logp = studentLogprob(model, mus);
+    plot(mus, exp(logp), styles{i}, <span class="string">'linewidth'</span>, 3);
 
-   figure(fig3);
-   logp = IGlogpdf(sigma2s, an, bn);
-   plot(sigma2s, exp(logp), styles{i}, <span class="string">'linewidth'</span>, 3);
+    figure(fig3);
+    logp = IGlogpdf(sigma2s, an, bn);
+    plot(sigma2s, exp(logp), styles{i}, <span class="string">'linewidth'</span>, 3);
 
 <span class="keyword">end</span>
 figure(fig1);
@@ -123,9 +125,7 @@ figure(fig3);
 legend(legendstr);
 xlabel(sprintf(<span class="string">'%s'</span>, <span class="string">'\sigma^2'</span>))
 printPmtkFigure(<span class="string">'sigmaPost'</span>)
-
-
-<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="gaussInferMuSigmaDemo_01.png" alt=""> <img vspace="5" hspace="5" src="gaussInferMuSigmaDemo_02.png" alt=""> <img vspace="5" hspace="5" src="gaussInferMuSigmaDemo_03.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
 
 <span class="keyword">function</span> logp=GIGlogpdf(mu,s2,m,k,a,b)
 logZ = 0.5*log(2*pi) -0.5*log(k) + gammaln(a) - a*log(b);
@@ -136,11 +136,11 @@ logp = logp - logZ;
 <span class="keyword">function</span> logp = IGlogpdf(x, a, b)
 logp = a*log(b)-gammaln(a) -(a+1).*log(x) -b./x;
 <span class="keyword">end</span>
-</pre><img vspace="5" hspace="5" src="gaussInferMuSigmaDemo_01.png" alt=""> <img vspace="5" hspace="5" src="gaussInferMuSigmaDemo_02.png" alt=""> <img vspace="5" hspace="5" src="gaussInferMuSigmaDemo_03.png" alt=""> <p class="footer"><br>
-      Published with MATLAB&reg; 7.9<br></p></div><!--
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 function gaussInferMuSigmaDemo()
-% plot p(mu,sigma^2|D) in 2d using uninformative prior for different n
+%% plot p(mu,sigma^2|D) in 2d using uninformative prior for different n
 setSeed(1);
 muTrue = 5; varTrue = 8;
 X = randn(500,1)*sqrt(varTrue) + muTrue;
@@ -152,7 +152,7 @@ sigma2s = linspace(sigma2Range(1), sigma2Range(2), npts);
 [X1,X2] = meshgrid(mus',sigma2s');
 grid = [X1(:) X2(:)];
 [nr] = size(X1,1); nc = size(X2,1);
- 
+
 [styles, colors, symbols] =  plotColors();
 ns = [2 5 50 100];
 h = zeros(1,length(ns));
@@ -162,27 +162,30 @@ fig1 = figure; hold on;
 fig2 = figure; hold on;
 fig3 = figure; hold on;
 for i=1:length(ns)
-   n = ns(i);
-   x = X(1:n);
-   mn = mean(x);
-   kn = n;
-   an = n/2;
-   bn = 0.5*sum((x-mn).^2);
-   figure(fig1);
-   logp = GIGlogpdf(grid(:,1), grid(:,2), mn, kn, an, bn);
-   p = reshape(exp(logp), nr, nc);
-   [c,h] = contour(X1, X2, p, 5, styles{i}, 'linewidth' , 3);
-   %h = surf(X1, X2, p, plotArgs{:});
-   legendstr{i} = sprintf('n=%d', n);
-   
-   figure(fig2);
-   logp = studentTlogprob(mus, 2*an, mn, bn/(an*kn));
-   plot(mus, exp(logp), styles{i}, 'linewidth', 3);
-   
-   figure(fig3);
-   logp = IGlogpdf(sigma2s, an, bn);
-   plot(sigma2s, exp(logp), styles{i}, 'linewidth', 3);
-   
+    n = ns(i);
+    x = X(1:n);
+    mn = mean(x);
+    kn = n;
+    an = n/2;
+    bn = 0.5*sum((x-mn).^2);
+    figure(fig1);
+    logp = GIGlogpdf(grid(:,1), grid(:,2), mn, kn, an, bn);
+    p = reshape(exp(logp), nr, nc);
+    [c,h] = contour(X1, X2, p, 5, styles{i}, 'linewidth' , 3);
+    %h = surf(X1, X2, p, plotArgs{:});
+    legendstr{i} = sprintf('n=%d', n);
+    
+    figure(fig2);
+    model.mu = 2*an; 
+    model.Sigma = mn;
+    model.dof = bn/(an*kn);
+    logp = studentLogprob(model, mus);
+    plot(mus, exp(logp), styles{i}, 'linewidth', 3);
+    
+    figure(fig3);
+    logp = IGlogpdf(sigma2s, an, bn);
+    plot(sigma2s, exp(logp), styles{i}, 'linewidth', 3);
+    
 end
 figure(fig1);
 legend(legendstr);
@@ -216,6 +219,6 @@ end
 
 
 
-    
+
 ##### SOURCE END #####
 --></body></html>

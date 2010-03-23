@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>gibbsDemoDenoising</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="gibbsDemoDenoising"><style type="text/css">
+      --><title>gibbsDemoDenoising</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="gibbsDemoDenoising"><style type="text/css">
 
 body {
   background-color: white;
@@ -66,7 +66,7 @@ p.footer {
 <span class="comment">% Denoising of letter A using Gibbs sampling</span>
 <span class="comment">% with an Ising Prior and a Gaussian likelihood</span>
 <span class="comment">% Based on code originally written by Brani Vidakovic</span>
-
+<span class="comment">%PMTKslow</span>
 setSeed(3);
 sigma = 2; <span class="comment">% noise level</span>
 
@@ -165,14 +165,14 @@ title(sprintf(<span class="string">'posterior mean of last %d samples'</span>, n
 fname = sprintf(<span class="string">'gibbsDemoDenoisingMean%dJ%3.2fS%2.1f.eps'</span>, iter, J, sigma);
 printPmtkFigure(fname);
 printPmtkFigure(<span class="string">'gibbsDemoDenoisingAvg'</span>);
-</pre><img vspace="5" hspace="5" src="gibbsDemoDenoising_01.png" alt=""> <img vspace="5" hspace="5" src="gibbsDemoDenoising_02.png" alt=""> <img vspace="5" hspace="5" src="gibbsDemoDenoising_03.png" alt=""> <img vspace="5" hspace="5" src="gibbsDemoDenoising_04.png" alt=""> <img vspace="5" hspace="5" src="gibbsDemoDenoising_05.png" alt=""> <img vspace="5" hspace="5" src="gibbsDemoDenoising_06.png" alt=""> <img vspace="5" hspace="5" src="gibbsDemoDenoising_07.png" alt=""> <img vspace="5" hspace="5" src="gibbsDemoDenoising_08.png" alt=""> <img vspace="5" hspace="5" src="gibbsDemoDenoising_09.png" alt=""> <img vspace="5" hspace="5" src="gibbsDemoDenoising_10.png" alt=""> <img vspace="5" hspace="5" src="gibbsDemoDenoising_11.png" alt=""> <img vspace="5" hspace="5" src="gibbsDemoDenoising_12.png" alt=""> <img vspace="5" hspace="5" src="gibbsDemoDenoising_13.png" alt=""> <p class="footer"><br>
-      Published with MATLAB&reg; 7.9<br></p></div><!--
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 % gibbsDemoDenoising
 % Denoising of letter A using Gibbs sampling
 % with an Ising Prior and a Gaussian likelihood
 % Based on code originally written by Brani Vidakovic
-
+%PMTKslow
 setSeed(3);
 sigma = 2; % noise level
 

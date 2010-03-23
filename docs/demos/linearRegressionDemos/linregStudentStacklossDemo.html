@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>linregStudentStacklossDemo</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="linregStudentStacklossDemo"><style type="text/css">
+      --><title>linregStudentStacklossDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="linregStudentStacklossDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -91,14 +91,6 @@ X1 = [ones(n,1) X];
     modelConstr{i} = linregRobustStudentFitConstr(X, y, dof);
     loglikConstr(i) = sum(linregRobustStudentLogprob(modelConstr{i}, X, y));
 <span class="keyword">end</span>
-</pre><pre class="codeoutput">Warning: Log of zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
 </pre><h2>format output<a name="3"></a></h2><pre class="codeinput">fprintf(<span class="string">'estimated dof, EM %5.3f, constr %5.3f\n'</span>, <span class="keyword">...</span>
     modelEM{end}.dof, modelConstr{end}.dof);
 ndof = length(dofs);
@@ -125,49 +117,49 @@ latextable(table, <span class="string">'Format'</span>, <span class="string">'%5
 table
 </pre><pre class="codeoutput">estimated dof, EM 1.149, constr 1.139
 table =
-  Columns 1 through 4
-  100.0000  -52.7174  -40.1107    0.7412
-    8.0000  -52.2855  -40.8600    0.8307
-    4.0000  -51.6974  -40.2090    0.8738
-    3.0000  -51.3496  -39.2918    0.8695
-    2.0000  -50.6477  -38.2816    0.8592
-    1.1000  -50.0374  -38.4724    0.8594
-    1.0000  -50.0832  -38.5928    0.8593
-    0.5000  -51.5809  -40.6280    0.8395
-         0  -50.0325  -38.4241    0.8594
-  Columns 5 through 6
-    1.1872   -0.1406
-    0.8909   -0.1216
-    0.6855   -0.1100
-    0.6061   -0.0996
-    0.5173   -0.0841
-    0.4622   -0.0689
-    0.4607   -0.0670
-    0.5371   -0.0467
-    0.4635   -0.0698
+  Columns 1 through 5
+  100.0000  -52.7174  -40.1107    0.7412    1.1872
+    8.0000  -52.2855  -40.8600    0.8307    0.8909
+    4.0000  -51.6974  -40.2090    0.8738    0.6855
+    3.0000  -51.3496  -39.2918    0.8695    0.6061
+    2.0000  -50.6477  -38.2816    0.8592    0.5173
+    1.1000  -50.0374  -38.4724    0.8594    0.4622
+    1.0000  -50.0832  -38.5928    0.8593    0.4607
+    0.5000  -51.5809  -40.6280    0.8395    0.5371
+         0  -50.0325  -38.4241    0.8594    0.4635
+  Column 6
+   -0.1406
+   -0.1216
+   -0.1100
+   -0.0996
+   -0.0841
+   -0.0689
+   -0.0670
+   -0.0467
+   -0.0698
 table =
-  Columns 1 through 4
-  100.0000  -52.7180  -40.0168    0.7379
-    8.0000  -52.2892  -40.0841    0.8320
-    4.0000  -51.6976  -40.0756    0.8737
-    3.0000  -51.3533  -39.8611    0.8694
-    2.0000  -50.6531  -38.8057    0.8587
-    1.1000  -50.0432  -38.8799    0.8587
-    1.0000  -50.0997  -39.2571    0.8575
-    0.5000  -51.5920  -40.3598    0.8391
-         0  -50.0461  -39.0598    0.8583
-  Columns 5 through 6
-    1.1972   -0.1419
-    0.8872   -0.1306
-    0.6856   -0.1115
-    0.6090   -0.0936
-    0.5189   -0.0781
-    0.4633   -0.0639
-    0.4646   -0.0588
-    0.5387   -0.0499
-    0.4652   -0.0619
+  Columns 1 through 5
+  100.0000  -52.7180  -40.0168    0.7379    1.1972
+    8.0000  -52.2892  -40.0841    0.8320    0.8872
+    4.0000  -51.6976  -40.0756    0.8737    0.6856
+    3.0000  -51.3533  -39.8611    0.8694    0.6090
+    2.0000  -50.6501  -38.6326    0.8588    0.5183
+    1.1000  -50.0408  -38.7845    0.8588    0.4632
+    1.0000  -50.0997  -39.2578    0.8575    0.4646
+    0.5000  -51.5925  -40.3538    0.8391    0.5388
+         0  -50.0462  -39.0626    0.8583    0.4650
+  Column 6
+   -0.1419
+   -0.1306
+   -0.1115
+   -0.0936
+   -0.0800
+   -0.0651
+   -0.0588
+   -0.0500
+   -0.0619
 </pre><p class="footer"><br>
-      Published with MATLAB&reg; 7.9<br></p></div><!--
+      Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 
 % Reproduce table 1 from "Robust statistical modeling using the T

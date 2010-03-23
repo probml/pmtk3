@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>prostateScatterDemo</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="prostateScatterDemo"><style type="text/css">
+      --><title>prostateScatterDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="prostateScatterDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -64,7 +64,7 @@ p.footer {
 
   </style></head><body><div class="content"><pre class="codeinput">load <span class="string">prostate</span>
 figure;
-pscatter([y X], <span class="string">'-vnames'</span>, {names{end}, names{1:end-1}})
+pscatter([y X], <span class="string">'vnames'</span>, {names{end}, names{1:end-1}})
 svi = unique(X(:,5))
 gleason = unique(X(:,7))
 printPmtkFigure(<span class="string">'prostateScatter'</span>)
@@ -77,11 +77,11 @@ gleason =
     1.7364
     3.1284
 </pre><img vspace="5" hspace="5" src="prostateScatterDemo_01.png" alt=""> <p class="footer"><br>
-      Published with MATLAB&reg; 7.9<br></p></div><!--
+      Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 load prostate
 figure;
-pscatter([y X], '-vnames', {names{end}, names{1:end-1}})
+pscatter([y X], 'vnames', {names{end}, names{1:end-1}})
 svi = unique(X(:,5))
 gleason = unique(X(:,7))
 printPmtkFigure('prostateScatter')

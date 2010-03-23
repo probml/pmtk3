@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>huberLossDemo</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="huberLossDemo"><style type="text/css">
+      --><title>huberLossDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="huberLossDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -73,12 +73,19 @@ huber = 0.5*ind .* (err.^2) + (1-ind) .* (delta*(abs(err)-delta/2));
 vapnik = ind .* 0 + (1-ind) .* (abs(err) - delta);
 
 figure; hold <span class="string">on</span>
-plot(err, L2, <span class="string">'r-'</span>, err, L1, <span class="string">'b:'</span>, err, huber, <span class="string">'g-.'</span>,<span class="keyword">...</span>
-   err, vapnik, <span class="string">'c--'</span>, <span class="string">'linewidth'</span>, 3);
-legend(<span class="string">'L2'</span>,<span class="string">'L1'</span>,<span class="string">'huber'</span>,<span class="string">'vapnik'</span>)
+plot(err, L2, <span class="string">'r-'</span>, err, L1, <span class="string">'b:'</span>, err, huber, <span class="string">'g-.'</span>,<span class="string">'linewidth'</span>, 3);
+legend(<span class="string">'L2'</span>,<span class="string">'L1'</span>,<span class="string">'huber'</span>, <span class="string">'location'</span>, <span class="string">'north'</span>)
+set(gca, <span class="string">'ylim'</span>, [-0.5 5])
 printPmtkFigure(<span class="string">'huberLoss'</span>)
-</pre><img vspace="5" hspace="5" src="huberLossDemo_01.png" alt=""> <p class="footer"><br>
-      Published with MATLAB&reg; 7.9<br></p></div><!--
+
+figure; hold <span class="string">on</span>
+plot(err, L2, <span class="string">'r-'</span>,  err, vapnik, <span class="string">'b:'</span>, err, huber, <span class="string">'g-.'</span>,<span class="keyword">...</span>
+   <span class="string">'linewidth'</span>, 3);
+legend(<span class="string">'L2'</span>,sprintf(<span class="string">'%s-insensitive'</span>,<span class="string">'\epsilon'</span>), <span class="string">'huber'</span>, <span class="string">'location'</span>, <span class="string">'north'</span>)
+set(gca, <span class="string">'ylim'</span>, [-0.5 5])
+printPmtkFigure(<span class="string">'vapnikLoss'</span>)
+</pre><img vspace="5" hspace="5" src="huberLossDemo_01.png" alt=""> <img vspace="5" hspace="5" src="huberLossDemo_02.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 % Plot the Huber loss fn compared to L1 and L2
 % cf Hastie book 2e p350
@@ -91,10 +98,16 @@ huber = 0.5*ind .* (err.^2) + (1-ind) .* (delta*(abs(err)-delta/2));
 vapnik = ind .* 0 + (1-ind) .* (abs(err) - delta);
 
 figure; hold on
-plot(err, L2, 'r-', err, L1, 'b:', err, huber, 'g-.',...
-   err, vapnik, 'cREPLACE_WITH_DASH_DASH', 'linewidth', 3);
-legend('L2','L1','huber','vapnik')
+plot(err, L2, 'r-', err, L1, 'b:', err, huber, 'g-.','linewidth', 3);
+legend('L2','L1','huber', 'location', 'north')
+set(gca, 'ylim', [-0.5 5])
 printPmtkFigure('huberLoss')
 
+figure; hold on
+plot(err, L2, 'r-',  err, vapnik, 'b:', err, huber, 'g-.',...
+   'linewidth', 3);
+legend('L2',sprintf('%s-insensitive','\epsilon'), 'huber', 'location', 'north')
+set(gca, 'ylim', [-0.5 5])
+printPmtkFigure('vapnikLoss')
 ##### SOURCE END #####
 --></body></html>

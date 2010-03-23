@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>linregDemo1</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="linregDemo1"><style type="text/css">
+      --><title>linregDemo1</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="linregDemo1"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,13 +62,13 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h1></h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Make data</a></li><li><a href="#2">Basic fitting</a></li><li><a href="#3">Use pmtk functions to do same thing</a></li><li><a href="#4">Plot</a></li><li><a href="#5">Repeat with standardization</a></li></ul></div><h2>Make data<a name="1"></a></h2><pre class="codeinput">[xtrain, ytrain, xtest, ytestNoisefree, ytest] = polyDataMake(<span class="string">'-sampling'</span>,<span class="string">'thibaux'</span>);
+  </style></head><body><div class="content"><h1></h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Make data</a></li><li><a href="#2">Basic fitting</a></li><li><a href="#3">Use pmtk functions to do same thing</a></li><li><a href="#4">Plot</a></li><li><a href="#5">Repeat with standardization</a></li></ul></div><h2>Make data<a name="1"></a></h2><pre class="codeinput">[xtrain, ytrain, xtest, ytestNoisefree, ytest] = polyDataMake(<span class="string">'sampling'</span>,<span class="string">'thibaux'</span>);
 Xtrain = xtrain; Xtest = xtest;
 </pre><h2>Basic fitting<a name="2"></a></h2><pre class="codeinput">Xtrain1 = [ones(size(Xtrain,1),1) Xtrain];
 w = Xtrain1 \ ytrain;
 Xtest1 = [ones(size(Xtest,1),1) Xtest];
 ypredTest = Xtest1*w;
-</pre><h2>Use pmtk functions to do same thing<a name="3"></a></h2><pre class="codeinput">model = linregFit(Xtrain, ytrain);
+</pre><h2>Use pmtk functions to do same thing<a name="3"></a></h2><pre class="codeinput">model = linregFit(Xtrain, ytrain, <span class="string">'lambda'</span>, 0);
 [ypredTest2, v] = linregPredict(model, Xtest);
 assert(approxeq(ypredTest, ypredTest2))
 </pre><h2>Plot<a name="4"></a></h2><pre class="codeinput">figure;
@@ -84,7 +84,7 @@ printPmtkFigure(<span class="string">'linregDemo1'</span>)
 </pre><img vspace="5" hspace="5" src="linregDemo1_01.png" alt=""> <h2>Repeat with standardization<a name="5"></a></h2><p>This has no effect on the predictions in this case Be careful not to apply standardization to the column of 1s! Note that we use xtrain not Xtrain, and xtest not Xtest</p><pre class="codeinput">[Xtrain, mu, sigma] = standardizeCols(xtrain);
 Xtest = standardizeCols(xtest, mu, sigma);
 
-model = linregFit(Xtrain, ytrain);
+model = linregFit(Xtrain, ytrain, <span class="string">'lambda'</span>, 0);
 ypredTest = linregPredict(model, Xtest);
 
 figure;
@@ -92,11 +92,11 @@ scatter(Xtrain(:,1),ytrain,<span class="string">'b'</span>,<span class="string">
 hold <span class="string">on</span>;
 plot(Xtest(:,1), ypredTest, <span class="string">'k'</span>, <span class="string">'linewidth'</span>, 3);
 </pre><img vspace="5" hspace="5" src="linregDemo1_02.png" alt=""> <p class="footer"><br>
-      Published with MATLAB&reg; 7.9<br></p></div><!--
+      Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 
 %% Make data
-[xtrain, ytrain, xtest, ytestNoisefree, ytest] = polyDataMake('-sampling','thibaux');
+[xtrain, ytrain, xtest, ytestNoisefree, ytest] = polyDataMake('sampling','thibaux');
 Xtrain = xtrain; Xtest = xtest;
 
 %% Basic fitting
@@ -106,7 +106,7 @@ Xtest1 = [ones(size(Xtest,1),1) Xtest];
 ypredTest = Xtest1*w;
 
 %% Use pmtk functions to do same thing
-model = linregFit(Xtrain, ytrain);
+model = linregFit(Xtrain, ytrain, 'lambda', 0);
 [ypredTest2, v] = linregPredict(model, Xtest);
 assert(approxeq(ypredTest, ypredTest2))
 
@@ -129,7 +129,7 @@ printPmtkFigure('linregDemo1')
 [Xtrain, mu, sigma] = standardizeCols(xtrain);
 Xtest = standardizeCols(xtest, mu, sigma);
 
-model = linregFit(Xtrain, ytrain);
+model = linregFit(Xtrain, ytrain, 'lambda', 0);
 ypredTest = linregPredict(model, Xtest);
 
 figure;

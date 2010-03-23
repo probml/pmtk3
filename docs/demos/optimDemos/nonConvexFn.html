@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>nonConvexFn</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="nonConvexFn"><style type="text/css">
+      --><title>nonConvexFn</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="nonConvexFn"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,7 +62,7 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput"> <span class="keyword">function</span> nonConvexFn
+  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> nonConvexFn
 <span class="comment">%A non convex function in 1d</span>
 
 
@@ -85,11 +85,13 @@ t = @(x) f(Xk) + f1(Xk)*(x - Xk) + (1/2)*f2(Xk)*(x - Xk).^2;
 maximum = domain(maxNDX);
 
 h1=plot(domain,f(domain),<span class="string">'-r'</span>,<span class="string">'LineWidth'</span>,3);
+
+<span class="keyword">end</span>
 </pre><img vspace="5" hspace="5" src="nonConvexFn_01.png" alt=""> <p class="footer"><br>
-      Published with MATLAB&reg; 7.9<br></p></div><!--
+      Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
- function nonConvexFn
-%A non convex function in 1d 
+function nonConvexFn
+%A non convex function in 1d
 
 
 hold all;
@@ -100,7 +102,7 @@ ymin = -50; ymax = 600;
 domain = xmin:0.01:xmax;
 
 f = @(x)-x.^3 + 15*x.^2;
-Xk = 8;         
+Xk = 8;
 
 f1 = @(x) -3*x.^2 + 30*x;
 f2 = @(x) -6*x + 30;
@@ -112,5 +114,6 @@ maximum = domain(maxNDX);
 
 h1=plot(domain,f(domain),'-r','LineWidth',3);
 
+end
 ##### SOURCE END #####
 --></body></html>

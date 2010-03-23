@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>pcaOverfitDemo</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="pcaOverfitDemo"><style type="text/css">
+      --><title>pcaOverfitDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="pcaOverfitDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -64,7 +64,7 @@ p.footer {
 
   </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% Show that reconstruction error on test set gets lower</span>
 <span class="comment">% as K increases for PCA, but likelihood for PPCA has U shaped curve</span>
-
+<span class="comment">%PMTKslow</span>
 
 setSeed(0);
 
@@ -115,34 +115,12 @@ plot(Ks, -ll, <span class="string">'-o'</span>, <span class="string">'linewidth'
 ylabel(<span class="string">'negloglik'</span>); xlabel(<span class="string">'K'</span>);
 title(<span class="string">'test set negative loglik'</span>);
 printPmtkFigure(<span class="string">'pcaVsKnll'</span>)
-</pre><pre class="codeoutput">name =
-mnist3
-n =
-        1000
-Ks =
-     1   122   244   365   486
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Log of zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Log of zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-Warning: Divide by zero. This warning will be
-removed in a future release.
-         Consider using DBSTOP IF NANINF when
-         debugging. 
-</pre><img vspace="5" hspace="5" src="pcaOverfitDemo_01.png" alt=""> <img vspace="5" hspace="5" src="pcaOverfitDemo_02.png" alt=""> <p class="footer"><br>
-      Published with MATLAB&reg; 7.9<br></p></div><!--
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 % Show that reconstruction error on test set gets lower
 % as K increases for PCA, but likelihood for PPCA has U shaped curve
-
+%PMTKslow
 
 setSeed(0);
 

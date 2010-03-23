@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>Plot Linear Gaussian CPD p(y|x) = N(Y|a + bx, sigma) where a is</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="linregWedgeDemo2"><style type="text/css">
+      --><title>Plot Linear Gaussian CPD p(y|x) = N(Y|a + bx, sigma) where a is</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="linregWedgeDemo2"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,7 +62,7 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h1>Plot Linear Gaussian CPD p(y|x) = N(Y|a + bx, sigma) where a is</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">the offset and b is the slope.</a></li></ul></div><h2>the offset and b is the slope.<a name="1"></a></h2><pre class="codeinput">[xtrain, ytrain, xtest, ytestNoisefree, ytest] = polyDataMake(<span class="string">'-sampling'</span>,<span class="string">'thibaux'</span>);
+  </style></head><body><div class="content"><h1>Plot Linear Gaussian CPD p(y|x) = N(Y|a + bx, sigma) where a is</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">the offset and b is the slope.</a></li></ul></div><h2>the offset and b is the slope.<a name="1"></a></h2><pre class="codeinput">[xtrain, ytrain, xtest, ytestNoisefree, ytest] = polyDataMake(<span class="string">'sampling'</span>,<span class="string">'thibaux'</span>);
 n = size(xtrain,1);
 Xtrain = [ones(n,1) xtrain];
 w = Xtrain\ytrain;
@@ -107,12 +107,12 @@ zlabel(<span class="string">'P(Y | X)'</span>,fontSize{:});
 <span class="comment">%set(gca,'XTick',[0,5,10],'YTick',[0,5,10],'ZTick',0:0.1:0.5);</span>
 set(gca,fontSize{:},<span class="string">'LineWidth'</span>,1.5);
 </pre><img vspace="5" hspace="5" src="linregWedgeDemo2_01.png" alt=""> <img vspace="5" hspace="5" src="linregWedgeDemo2_02.png" alt=""> <p class="footer"><br>
-      Published with MATLAB&reg; 7.9<br></p></div><!--
+      Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Plot Linear Gaussian CPD p(y|x) = N(Y|a + bx, sigma) where a is
 %% the offset and b is the slope. 
 
-[xtrain, ytrain, xtest, ytestNoisefree, ytest] = polyDataMake('-sampling','thibaux');
+[xtrain, ytrain, xtest, ytestNoisefree, ytest] = polyDataMake('sampling','thibaux');
 n = size(xtrain,1);
 Xtrain = [ones(n,1) xtrain];
 w = Xtrain\ytrain;

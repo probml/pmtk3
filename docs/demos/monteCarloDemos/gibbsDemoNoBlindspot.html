@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>Denoising of image  using Gibbs sampling</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="gibbsDemoNoBlindspot"><style type="text/css">
+      --><title>Denoising of image  using Gibbs sampling</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="gibbsDemoNoBlindspot"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,7 +62,8 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h1>Denoising of image  using Gibbs sampling</h1><p>with an Ising Prior and a Gaussian likelihood.</p><pre class="codeinput">setSeed(4);
+  </style></head><body><div class="content"><h1>Denoising of image  using Gibbs sampling</h1><p>with an Ising Prior and a Gaussian likelihood.</p><pre class="codeinput"><span class="comment">%PMTKslow</span>
+setSeed(4);
 sigma = 1; <span class="comment">% noise level</span>
 
 load(<span class="string">'imageWithoutHole.mat'</span>) <span class="comment">% defines y</span>
@@ -120,12 +121,12 @@ maxIter = 100000;
     drawnow
   <span class="keyword">end</span>
 <span class="keyword">end</span>
-</pre><img vspace="5" hspace="5" src="gibbsDemoNoBlindspot_01.png" alt=""> <img vspace="5" hspace="5" src="gibbsDemoNoBlindspot_02.png" alt=""> <p class="footer"><br>
-      Published with MATLAB&reg; 7.9<br></p></div><!--
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Denoising of image  using Gibbs sampling
 % with an Ising Prior and a Gaussian likelihood.
-
+%PMTKslow
 setSeed(4);
 sigma = 1; % noise level
 

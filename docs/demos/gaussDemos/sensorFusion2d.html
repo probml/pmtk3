@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>sensorFusion2d</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-02-25"><meta name="m-file" content="sensorFusion2d"><style type="text/css">
+      --><title>sensorFusion2d</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="sensorFusion2d"><style type="text/css">
 
 body {
   background-color: white;
@@ -84,15 +84,15 @@ py.mu = zeros(4,1); py.Sigma =  blkdiag(Sigmas{1}, Sigmas{2});
 post = gaussSoftCondition(prior, py, A, y);
 
 figure;
-gaussPlot2d(y1, Sigmas{1}, <span class="string">'r'</span>);
+gaussPlot2d(y1, Sigmas{1}, <span class="string">'color'</span>, <span class="string">'r'</span>);
 hold <span class="string">on</span>
 grid <span class="string">on</span>;
-gaussPlot2d(y2, Sigmas{2}, <span class="string">'g'</span>);
-gaussPlot2d(post.mu, post.Sigma, <span class="string">'k'</span>);
+gaussPlot2d(y2, Sigmas{2}, <span class="string">'color'</span>, <span class="string">'g'</span>);
+gaussPlot2d(post.mu, post.Sigma, <span class="string">'color'</span>, <span class="string">'k'</span>);
 axis([-1.5 1.5 -1.5 1.5]);
 <span class="keyword">end</span>
 </pre><img vspace="5" hspace="5" src="sensorFusion2d_01.png" alt=""> <img vspace="5" hspace="5" src="sensorFusion2d_02.png" alt=""> <img vspace="5" hspace="5" src="sensorFusion2d_03.png" alt=""> <p class="footer"><br>
-      Published with MATLAB&reg; 7.9<br></p></div><!--
+      Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 function sensorFusion2d()
 
@@ -116,11 +116,11 @@ py.mu = zeros(4,1); py.Sigma =  blkdiag(Sigmas{1}, Sigmas{2});
 post = gaussSoftCondition(prior, py, A, y);
 
 figure;
-gaussPlot2d(y1, Sigmas{1}, 'r');
+gaussPlot2d(y1, Sigmas{1}, 'color', 'r');
 hold on
 grid on;
-gaussPlot2d(y2, Sigmas{2}, 'g');
-gaussPlot2d(post.mu, post.Sigma, 'k');
+gaussPlot2d(y2, Sigmas{2}, 'color', 'g');
+gaussPlot2d(post.mu, post.Sigma, 'color', 'k');
 axis([-1.5 1.5 -1.5 1.5]);
 end
 ##### SOURCE END #####
