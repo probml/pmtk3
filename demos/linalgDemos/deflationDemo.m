@@ -1,3 +1,5 @@
+%% Compute largest K eigenvectors and eigenvalues of a symmetric matrix
+% using power method combined with successive deflation
 seed = 0; randn('state', seed); rand('state', seed);
 n = 10; d = 3;
 X = randn(n,d);

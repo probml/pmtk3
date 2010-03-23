@@ -1,3 +1,4 @@
+%% Fisher Iris Data Visualization Demo
 [X,y,classnames,varnames] = fisheririsLoad;
 figure(1);clf
 pscatter(X,'y', y);

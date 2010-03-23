@@ -1,5 +1,5 @@
-% Compare SVM and kernelized logreg on synthetic 2 class data in 2d
-
+%% Compare SVM and kernelized logreg on synthetic 2 class data in 2d
+%
 %% Load  Data
 % Load synthetic data generated from a mixture of 2 Gaussians. Source:
 % http://research.microsoft.com/~cmbishop/PRML/webdatasets/datasets.htm

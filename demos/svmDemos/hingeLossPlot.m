@@ -1,3 +1,4 @@
+%% Hinge Loss Plot
 y = 1;
 eta = -1:0.01:2;
 z = y*eta;

@@ -1,5 +1,5 @@
 function scadPlot()
-
+%% LLA and LQA approximation - fig 1 of Zou & Li 2008
 z = -10:0.01:10;
 a = 3.7; lambda = 2;
 
@@ -12,7 +12,7 @@ title(sprintf('scad penalty rule, %s=%5.3f, a=%5.3f', '\lambda', lambda, a))
 printPmtkFigure('scadPenalty')
 end
 
-% LLA and LQA approximation - fig 1 of Zou & Li 2008
+
 p = penalty(z, a, lambda);
 figure; hold on
 plot(z, p, 'k-', 'linewidth', 3);

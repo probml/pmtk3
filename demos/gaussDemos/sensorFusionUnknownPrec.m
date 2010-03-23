@@ -1,4 +1,4 @@
-
+%% Sensor Fusion Demo
 xs = [1.1 1.9]; nx = length(xs);
 ys = [2.9 4.1]; ny = length(ys);
 xbar = mean(xs);

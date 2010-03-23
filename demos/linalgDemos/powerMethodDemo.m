@@ -1,3 +1,4 @@
+%% Power Method Demo
 seed = 0; rand('state', seed); randn('state', seed);
 
 %C = randpd(3);

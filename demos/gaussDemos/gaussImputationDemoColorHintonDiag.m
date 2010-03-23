@@ -1,5 +1,5 @@
 function gaussImputationDemoColorHintonDiag()
-
+%% Gauss Imputation Demo
 
 setSeed(1);
 d = 10;

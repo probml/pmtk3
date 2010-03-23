@@ -1,12 +1,11 @@
 function linregSparseEmSynthDemo()
-
 % Sparse linear regression with EM on synthetic data
 % Similar to fig 8 from "Sparse Bayesian nonparametric regression",
 % Caron and Doucet, ICML08
 % We do not include normalInverseGaussian
 % but we do include normalExpGaussian  (see Griffin and Brown)
 %PMTKslow
-
+%PMTKreallySlow
 
 setSeed(0);
 

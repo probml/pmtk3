@@ -1,3 +1,0 @@
-function demoQuadBowl(x)
-
-end

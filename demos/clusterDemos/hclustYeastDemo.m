@@ -1,3 +1,4 @@
+%% Hierarchical Clustering Demo
 load('yeastData310.mat') % 'X', 'genes', 'times');
 
 corrDist = pdist(X, 'corr');

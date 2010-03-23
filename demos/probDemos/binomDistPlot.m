@@ -1,5 +1,6 @@
+%% Plot Binomial Distributions as Histograms 
 thetas = [1/2 1/4 3/4 0.9];
-figure(1); clf
+figure; 
 for i=1:4
   subplot(2,2,i)
   theta = thetas(i);

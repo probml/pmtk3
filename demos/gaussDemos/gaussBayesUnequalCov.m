@@ -1,5 +1,5 @@
 function gaussBayesUnequalCov()
-
+%% Bayesian updating of a 2D Gaussian
 Sigmas = {0.01*eye(2), 0.01*eye(2)};
 helper(Sigmas, 'Equal')
 

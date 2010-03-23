@@ -1,4 +1,4 @@
-% Reproduce fig 3.5 on p56 of "Elements of statistical learning" 
+%% Reproduce fig 3.5 on p56 of "Elements of statistical learning" 
 load prostate
 [n, d] = size(X);
 mse = zeros(2^8-1, 1); 

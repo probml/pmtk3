@@ -1,5 +1,4 @@
-
-
+%% Convergence Rate Demo
 for ki=1:11
   k = ki-1;
   theta(ki) = 1 + (1/2)^k;

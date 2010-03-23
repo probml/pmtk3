@@ -1,3 +1,4 @@
+%% MC Quantile Demo
 mu = 0; sigma = 1; % standard normal
 S = 1000; % number of samples
 setSeed(1); % set the seed for the random number generator

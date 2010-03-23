@@ -1,5 +1,5 @@
 function fnJoinDemo()
-
+%% Squared Error Fn Demo
 nInst = 1000;
 nVars = 100;
 A = randn(nInst,nVars);

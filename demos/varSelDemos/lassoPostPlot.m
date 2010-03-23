@@ -1,5 +1,5 @@
 function lassoPostPlot()
-% Reproduce fig 1 of "Bayesian lasso regression", Chris Hans, 2009
+%% Reproduce fig 1 of "Bayesian lasso regression", Chris Hans, 2009
 
 bols =  1.96;
 xtx = 1;

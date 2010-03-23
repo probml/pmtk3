@@ -1,5 +1,4 @@
-
-
+%% Probit Regression Demo
 setSeed(0);
 N = 100; D = 2;
 X = randn(N,D);

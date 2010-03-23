@@ -1,3 +1,4 @@
+%% Run NaiveBayes on the mnist data
 load('mnistALL')
 % train_images: [28x28x60000 uint8]
 % test_images: [28x28x10000 uint8]

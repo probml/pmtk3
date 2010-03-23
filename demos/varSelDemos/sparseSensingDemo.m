@@ -1,4 +1,4 @@
-% Figure 1 from Figueiredo'07,  "Gradient projection for sparse reconstruction"
+%% Figure 1 from Figueiredo'07,  "Gradient projection for sparse reconstruction"
 %PMTKauthor Figueiredo
 %PMTKurl http://www.lx.it.pt/~mtf/GPSR/
 %PMTKmodified Kevin Murphy 

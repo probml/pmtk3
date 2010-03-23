@@ -1,4 +1,4 @@
-
+%% Compare ppcaFit to Netlab's verson
 
 setSeed(0);
 n = 50;

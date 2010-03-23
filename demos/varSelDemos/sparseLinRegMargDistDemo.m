@@ -1,5 +1,4 @@
-
-% Compute empirical distribution of coefficients
+%% Compute empirical distribution of coefficients
 % draw from a Gaussian ensemble where exactly k0 elements are non-zero
 % The resulting marginal is a good prior for the weights in 
 % a sparse linear regression model

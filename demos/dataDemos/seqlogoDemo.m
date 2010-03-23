@@ -1,4 +1,4 @@
-
+%% DNA Sequence Demo
 
 seed = 0; rand('state', seed); randn('state', seed); 
 Nseq = 10;

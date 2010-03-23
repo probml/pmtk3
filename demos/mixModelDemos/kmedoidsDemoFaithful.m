@@ -1,4 +1,4 @@
-
+%% Run Kmedoids on the old faithful demo
 X = load('faithful.txt');
 X = standardizeCols(X);
 N = size(X,1);

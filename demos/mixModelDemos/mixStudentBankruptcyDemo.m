@@ -1,5 +1,5 @@
 function mixStudentBankruptcyDemo()
-
+%% Fit a mixture of Student T distributions to the bankruptcy data
 setSeed(0);
 bank = importdata('bankruptcy.txt');
 Y = bank.data(:,1); % 0,1

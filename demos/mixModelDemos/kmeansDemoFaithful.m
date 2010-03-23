@@ -1,6 +1,6 @@
 function kmeansDemoFaithful
+%% Run Kmeans on the old faithful data
 
-close all
 X = load('faithful.txt');
 X = standardizeCols(X);
 figure; plot(X(:,1), X(:,2), '.', 'markersize', 10)

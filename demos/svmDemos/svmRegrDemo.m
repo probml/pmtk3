@@ -1,3 +1,4 @@
+%% SVM Regression Demo
 nVars = 1;
 nInstances = 50;
 setSeed(0);

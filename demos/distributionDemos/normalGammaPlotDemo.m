@@ -1,5 +1,5 @@
 function normalGammaPlotDemo()
-
+%% Normal Gamma Distribution Plot
 xs = -1:0.01:1;
 %deltas = [1 1 0.1, 0.1];
 %cs = [1 0.1 1 0.1];

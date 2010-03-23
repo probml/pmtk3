@@ -1,3 +1,4 @@
+%% Bimodal Spike Demo
 mu = [0 2];
 sigma = [1 0.05];
 w = [0.5 0.5];

@@ -1,5 +1,4 @@
-
-
+%% Polynomial Regression Demo
 [xtrain, ytrain, xtest, ytestNoisefree, ytest] = polyDataMake('sampling','thibaux');
 
 deg = 14;

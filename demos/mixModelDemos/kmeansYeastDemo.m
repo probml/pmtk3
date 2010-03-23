@@ -1,3 +1,4 @@
+%% Cluster yeast data using Kmeans
 load('yeastData310.mat') % 'X', 'genes', 'times');
 
 

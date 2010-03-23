@@ -1,4 +1,4 @@
-% smooth support vector machine regression
+%% smooth support vector machine regression
 %PMTKauthor Mark Schmidt
 %PMTKurl http://people.cs.ubc.ca/~schmidtm/Software/minFunc/minFunc.html#11
 

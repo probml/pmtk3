@@ -1,3 +1,4 @@
+%% PCA Scree Plot
 seed = 0; randn('state', seed);
 %X=[randn(100,2)+2.*ones(100,2);2.*randn(100,2)-2.*ones(100,2)];
 

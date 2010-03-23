@@ -1,3 +1,4 @@
+%% Visualize projection onto the PC
 setSeed(0);
 n = 5;
 X=[randn(n,2)+2.*ones(n,2);2.*randn(n,2)-2.*ones(n,2)];

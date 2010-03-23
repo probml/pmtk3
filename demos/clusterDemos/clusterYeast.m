@@ -1,3 +1,4 @@
+%% Yeast Clustergram Demo
 load('yeastData310.mat') % 'X', 'genes', 'times');
 
 

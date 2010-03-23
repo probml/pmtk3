@@ -5,7 +5,7 @@ function publishFolder(folder)
 %
 % publishFolder bayesDemos
 
-doNotEvalList = {'PMTKinteractive', 'PMTKbroken', 'PMTKslow'};
+doNotEvalList = {'PMTKinteractive', 'PMTKbroken', 'PMTKreallySlow'};
 globalEval    = true;
 googleRoot    = sprintf('http://code.google.com/p/pmtk3/source/browse/trunk/demos/%s/', folder);
 dest = fullfile(pmtk3Root(), 'docs', 'demos');

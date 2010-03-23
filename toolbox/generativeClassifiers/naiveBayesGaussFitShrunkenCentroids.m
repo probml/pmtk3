@@ -4,8 +4,7 @@ function model = naiveBayesGaussFitShrunkenCentroids(Xtrain, ytrain, lambda)
 % ytrain in {1,...C}
 % Model is a structure with these fields:
 % mu(c,j), sigma(c,j), classPrior(c), offset(c,j), xbar
-
-%#PMTKauthor Robert Tseng
+%PMTKauthor Robert Tseng
 
   
 C = length(unique(ytrain)); % see nunique()

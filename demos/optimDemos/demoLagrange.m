@@ -1,3 +1,4 @@
+%% Lagrange Demo
 A = [1 1; 1 -1; -1 1; -1 -1];
 H = 2*eye(2);
 K = [H A'; A zeros(4)];
