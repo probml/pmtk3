@@ -62,9 +62,8 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> sensorFusion2d()
-
-Sigmas = {0.01*eye(2), 0.01*eye(2)};
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Sensor Fusion Demo 2D</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> sensorFusion2d()
+</pre><h2>Sensor Fusion Demo 2D<a name="2"></a></h2><pre class="codeinput">Sigmas = {0.01*eye(2), 0.01*eye(2)};
 helper(Sigmas)
 
 Sigmas = {0.05*eye(2), 0.01*eye(2)};
@@ -72,7 +71,7 @@ helper(Sigmas)
 
 Sigmas = {0.01*[10 1; 1 1], 0.01*[1 1; 1 10]};
 helper(Sigmas)
-<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="sensorFusion2d_01.png" alt=""> <img vspace="5" hspace="5" src="sensorFusion2d_02.png" alt=""> <img vspace="5" hspace="5" src="sensorFusion2d_03.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
 
 <span class="keyword">function</span> helper(Sigmas)
 y1 = [0 -1]';
@@ -91,11 +90,11 @@ gaussPlot2d(y2, Sigmas{2}, <span class="string">'color'</span>, <span class="str
 gaussPlot2d(post.mu, post.Sigma, <span class="string">'color'</span>, <span class="string">'k'</span>);
 axis([-1.5 1.5 -1.5 1.5]);
 <span class="keyword">end</span>
-</pre><img vspace="5" hspace="5" src="sensorFusion2d_01.png" alt=""> <img vspace="5" hspace="5" src="sensorFusion2d_02.png" alt=""> <img vspace="5" hspace="5" src="sensorFusion2d_03.png" alt=""> <p class="footer"><br>
+</pre><p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 function sensorFusion2d()
-
+%% Sensor Fusion Demo 2D
 Sigmas = {0.01*eye(2), 0.01*eye(2)};
 helper(Sigmas)
 

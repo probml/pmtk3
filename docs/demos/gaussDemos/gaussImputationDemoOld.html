@@ -62,10 +62,8 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> gaussImputationDemoOld()
-
-
-setSeed(0);
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Gauss Imputation Demo</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> gaussImputationDemoOld()
+</pre><h2>Gauss Imputation Demo<a name="2"></a></h2><pre class="codeinput">setSeed(0);
 d = 10;
 mu = randn(d,1); Sigma = randpd(d);
 pcMissing = 0.5;
@@ -104,8 +102,7 @@ pcMissing = 0.5;
     {Xhid}, {<span class="string">'title'</span>, <span class="string">'hidden truth'</span>});
   printPmtkFigure(fname);
 <span class="keyword">end</span>
-
-<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="gaussImputationDemoOld_01.png" alt=""> <img vspace="5" hspace="5" src="gaussImputationDemoOld_02.png" alt=""> <img vspace="5" hspace="5" src="gaussImputationDemoOld_03.png" alt=""> <img vspace="5" hspace="5" src="gaussImputationDemoOld_04.png" alt=""> <img vspace="5" hspace="5" src="gaussImputationDemoOld_05.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
 
 
 <span class="keyword">function</span> [Xfull, Xmiss, Xhid, missing] = mkData(mu, Sigma, n, rnd, pcMissing)
@@ -131,11 +128,11 @@ Xhid = Xfull;
 Xhid(~missing) = NaN;
 
 <span class="keyword">end</span>
-</pre><img vspace="5" hspace="5" src="gaussImputationDemoOld_01.png" alt=""> <img vspace="5" hspace="5" src="gaussImputationDemoOld_02.png" alt=""> <img vspace="5" hspace="5" src="gaussImputationDemoOld_03.png" alt=""> <img vspace="5" hspace="5" src="gaussImputationDemoOld_04.png" alt=""> <img vspace="5" hspace="5" src="gaussImputationDemoOld_05.png" alt=""> <p class="footer"><br>
+</pre><p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 function gaussImputationDemoOld()
-
+%% Gauss Imputation Demo
 
 setSeed(0);
 d = 10;

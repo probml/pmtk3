@@ -62,8 +62,8 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">Make data</a></li><li><a href="#4">Impute</a></li><li><a href="#5">Plotting</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> gaussImputationDemo()
-</pre><h2>Make data<a name="3"></a></h2><pre class="codeinput">setSeed(1);
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Gauss Imputation Demo</a></li><li><a href="#3">Make data</a></li><li><a href="#4">Impute</a></li><li><a href="#5">Plotting</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> gaussImputationDemo()
+</pre><h2>Gauss Imputation Demo<a name="2"></a></h2><h2>Make data<a name="3"></a></h2><pre class="codeinput">setSeed(1);
 d = 10; n = 100; pcMissing = 0.5;
 mu = randn(d,1); Sigma = randpd(d);
 trueModel = struct(<span class="string">'mu'</span>, mu, <span class="string">'Sigma'</span>, Sigma);
@@ -129,7 +129,7 @@ printPmtkFigure(fname);
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 function gaussImputationDemo()
-
+%% Gauss Imputation Demo
 %% Make data
 setSeed(1);
 d = 10; n = 100; pcMissing = 0.5;

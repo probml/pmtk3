@@ -62,7 +62,7 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Plot regularized fit for various lambdas</a></li><li><a href="#3">Now compare logev with train/test error on a dense grid of lambdas</a></li></ul></div><pre class="codeinput">[xtrain, ytrain, xtest, ytestNoisefree, ytest] = polyDataMake(<span class="string">'sampling'</span>,<span class="string">'thibaux'</span>);
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Polynomial Regression Demo</a></li><li><a href="#2">Plot regularized fit for various lambdas</a></li><li><a href="#3">Now compare logev with train/test error on a dense grid of lambdas</a></li></ul></div><h2>Polynomial Regression Demo<a name="1"></a></h2><pre class="codeinput">[xtrain, ytrain, xtest, ytestNoisefree, ytest] = polyDataMake(<span class="string">'sampling'</span>,<span class="string">'thibaux'</span>);
 
 deg = 14;
 [Xtrain] = rescaleData(xtrain);
@@ -109,8 +109,7 @@ printPmtkFigure(<span class="string">'linregL2PolyVsReg-mse'</span>)
 </pre><img vspace="5" hspace="5" src="linregPolyVsReg_04.png" alt=""> <p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
-
-
+%% Polynomial Regression Demo
 [xtrain, ytrain, xtest, ytestNoisefree, ytest] = polyDataMake('sampling','thibaux');
 
 deg = 14;

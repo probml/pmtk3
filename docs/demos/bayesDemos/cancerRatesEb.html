@@ -83,9 +83,10 @@ bPost    = zeros(d, 1);
 <span class="keyword">end</span>
 thetaPooledMLE = sum(data.y)/sum(data.n)
 </pre><pre class="codeoutput">ans =
-    0.8269  607.4871
+  1.0e+002 *
+   0.008269321203688   6.074870804154890
 thetaPooledMLE =
-  9.9331e-004
+    9.933126276616582e-004
 </pre><h2>Plot<a name="4"></a></h2><pre class="codeinput">figure;
 subplot(4,1,1); bar(data.y); title(<span class="string">'number of people with cancer (truncated at 5)'</span>)
 set(gca,<span class="string">'ylim'</span>,[0 5])

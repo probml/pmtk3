@@ -68,7 +68,7 @@ lossFn = @(y, yhat)mean((y-yhat).^2);
 yhat = linregPredict(model, Xtest);
 mse = lossFn(yhat, ytest)
 </pre><pre class="codeoutput">mse =
-    2.7281
+   2.728091796510800
 </pre><pre class="codeinput">[ytrain, ybar] = center(ytrain);
 w = Xtrain \ ytrain;
 w0  = ybar - mean(Xtrain)*w;
@@ -78,7 +78,7 @@ assert(isequal(w0, model.w0));
 yhat = linregPredict(model, Xtest);
 mse = lossFn(yhat, ytest)
 </pre><pre class="codeoutput">mse =
-    3.1027
+   3.102744701313804
 </pre><pre class="codeinput">w = linregFitL2QR(mkUnitVariance(center(Xtrain)),center(ytrain), bestLambda);
 assert(isequal(model.w, w));
 </pre><pre class="codeinput">model = linregFit(Xtrain, ytrain, <span class="string">'kernelFn'</span>, @kernelRbfSigma, <span class="string">'doPlot'</span>, true);
@@ -86,20 +86,20 @@ set(gca, <span class="string">'YScale'</span>, <span class="string">'log'</span>
 yhat = linregPredict(model, Xtest);
 mse = lossFn(yhat, ytest)
 </pre><pre class="codeoutput">mse =
-    2.5981
+   2.598124704048155
 </pre><img vspace="5" hspace="5" src="linregFitTest_01.png" alt=""> <pre class="codeinput">model = linregFit(Xtrain, ytrain, <span class="string">'regType'</span>, <span class="string">'L1'</span>, <span class="keyword">...</span>
     <span class="string">'doPlot'</span>, true, <span class="string">'fitMethod'</span>, <span class="string">'interiorpoint'</span>);
 yhat = linregPredict(model, Xtest);
 mse = lossFn(yhat, ytest)
 </pre><pre class="codeoutput">mse =
-    3.1027
+   3.102744682491912
 </pre><img vspace="5" hspace="5" src="linregFitTest_02.png" alt=""> <pre class="codeinput">model = linregFit(Xtrain, ytrain, <span class="string">'regType'</span>, <span class="string">'L1'</span>, <span class="string">'kernelFn'</span>, @kernelRbfSigma,<span class="keyword">...</span>
     <span class="string">'lambda'</span>, 0.5:0.5:4, <span class="string">'doPlot'</span>, true, <span class="string">'fitMethod'</span>, <span class="string">'interiorpoint'</span>, <span class="string">'kernelParam'</span>, 3:0.5:4);
 set(gca, <span class="string">'YScale'</span>, <span class="string">'log'</span>);
 yhat = linregPredict(model, Xtest);
 mse = lossFn(yhat, ytest)
 </pre><pre class="codeoutput">mse =
-    3.5048
+   3.504808767021665
 </pre><img vspace="5" hspace="5" src="linregFitTest_03.png" alt=""> <p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####

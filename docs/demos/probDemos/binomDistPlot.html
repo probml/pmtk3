@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>binomDistPlot</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="binomDistPlot"><style type="text/css">
+      --><title>Plot Binomial Distributions as Histograms</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="binomDistPlot"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,8 +62,8 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput">thetas = [1/2 1/4 3/4 0.9];
-figure(1); clf
+  </style></head><body><div class="content"><h1>Plot Binomial Distributions as Histograms</h1><pre class="codeinput">thetas = [1/2 1/4 3/4 0.9];
+figure;
 <span class="keyword">for</span> i=1:4
   subplot(2,2,i)
   theta = thetas(i);
@@ -77,8 +77,9 @@ figure(1); clf
 </pre><img vspace="5" hspace="5" src="binomDistPlot_01.png" alt=""> <p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
+%% Plot Binomial Distributions as Histograms 
 thetas = [1/2 1/4 3/4 0.9];
-figure(1); clf
+figure; 
 for i=1:4
   subplot(2,2,i)
   theta = thetas(i);

@@ -62,73 +62,65 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> conjugateFnExpLowerBound
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Conjugate Function Lower Bound</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> conjugateFnExpLowerBound
+</pre><h2>Conjugate Function Lower Bound<a name="2"></a></h2><pre class="codeinput">f = @(x) exp(-x);
+domain = 0:0.01:3;
+xi = 1;
+offset = 0.015;
+t1 = @(x) -exp(-xi)*x + f(xi)+exp(-xi)*xi-offset;
+t2 = @(x) -exp(-0.5)*x + f(0.5)+exp(-0.5)*0.5-offset;
+t3 = @(x) -exp(-2)*x + f(2)+exp(-2)*2-offset;
 
 
-    f = @(x) exp(-x);
-    domain = 0:0.01:3;
-    xi = 1;
-    offset = 0.015;
-    t1 = @(x) -exp(-xi)*x + f(xi)+exp(-xi)*xi-offset;
-    t2 = @(x) -exp(-0.5)*x + f(0.5)+exp(-0.5)*0.5-offset;
-    t3 = @(x) -exp(-2)*x + f(2)+exp(-2)*2-offset;
+figure; hold <span class="string">on</span>;
 
+plot(domain,t1(domain),<span class="string">'-b'</span>,<span class="string">'LineWidth'</span>,3);
+plot(domain,t2(domain),<span class="string">'-g'</span>,<span class="string">'LineWidth'</span>,3);
+plot(domain,t3(domain),<span class="string">'-g'</span>,<span class="string">'LineWidth'</span>,3);
+plot([1 1],[0 f(1)],<span class="string">'-k'</span>,<span class="string">'LineWidth'</span>,4);
+plot(domain,f(domain),<span class="string">'-r'</span>,<span class="string">'LineWidth'</span>,5);
+axis([0 3 0 1]);
+set(gca,<span class="string">'XTick'</span>,[0 1.5 3],<span class="string">'YTick'</span>,[0 0.5 1],<span class="string">'box'</span>,<span class="string">'on'</span>,<span class="string">'LineWidth'</span>,2,<span class="string">'FontSize'</span>,14);
+pdfcrop;
 
-    figure; hold <span class="string">on</span>;
-
-    plot(domain,t1(domain),<span class="string">'-b'</span>,<span class="string">'LineWidth'</span>,3);
-    plot(domain,t2(domain),<span class="string">'-g'</span>,<span class="string">'LineWidth'</span>,3);
-    plot(domain,t3(domain),<span class="string">'-g'</span>,<span class="string">'LineWidth'</span>,3);
-    plot([1 1],[0 f(1)],<span class="string">'-k'</span>,<span class="string">'LineWidth'</span>,4);
-    plot(domain,f(domain),<span class="string">'-r'</span>,<span class="string">'LineWidth'</span>,5);
-    axis([0 3 0 1]);
-    set(gca,<span class="string">'XTick'</span>,[0 1.5 3],<span class="string">'YTick'</span>,[0 0.5 1],<span class="string">'box'</span>,<span class="string">'on'</span>,<span class="string">'LineWidth'</span>,2,<span class="string">'FontSize'</span>,14);
-    pdfcrop;
-
-
-    annotation(gcf,<span class="string">'textbox'</span>,[0.365 0.01208 0.05599 0.1111],<span class="keyword">...</span>
+annotation(gcf,<span class="string">'textbox'</span>,[0.365 0.01208 0.05599 0.1111],<span class="keyword">...</span>
     <span class="string">'String'</span>,{<span class="string">'1'</span>},<span class="keyword">...</span>
     <span class="string">'FontSize'</span>,20,<span class="keyword">...</span>
     <span class="string">'LineStyle'</span>,<span class="string">'none'</span>);
 
-    printPmtkFigure(<span class="string">'conjugateFnExpLowerBound'</span>);
-
-
-
-<span class="keyword">end</span>
-</pre><img vspace="5" hspace="5" src="conjugateFnExpLowerBound_01.png" alt=""> <p class="footer"><br>
+printPmtkFigure(<span class="string">'conjugateFnExpLowerBound'</span>);
+</pre><img vspace="5" hspace="5" src="conjugateFnExpLowerBound_01.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 function conjugateFnExpLowerBound
+%% Conjugate Function Lower Bound
+f = @(x) exp(-x);
+domain = 0:0.01:3;
+xi = 1;
+offset = 0.015;
+t1 = @(x) -exp(-xi)*x + f(xi)+exp(-xi)*xi-offset;
+t2 = @(x) -exp(-0.5)*x + f(0.5)+exp(-0.5)*0.5-offset;
+t3 = @(x) -exp(-2)*x + f(2)+exp(-2)*2-offset;
 
 
-    f = @(x) exp(-x);
-    domain = 0:0.01:3;
-    xi = 1;
-    offset = 0.015;
-    t1 = @(x) -exp(-xi)*x + f(xi)+exp(-xi)*xi-offset;
-    t2 = @(x) -exp(-0.5)*x + f(0.5)+exp(-0.5)*0.5-offset;
-    t3 = @(x) -exp(-2)*x + f(2)+exp(-2)*2-offset;
-    
-    
-    figure; hold on;
-   
-    plot(domain,t1(domain),'-b','LineWidth',3);
-    plot(domain,t2(domain),'-g','LineWidth',3);
-    plot(domain,t3(domain),'-g','LineWidth',3); 
-    plot([1 1],[0 f(1)],'-k','LineWidth',4);
-    plot(domain,f(domain),'-r','LineWidth',5);
-    axis([0 3 0 1]);
-    set(gca,'XTick',[0 1.5 3],'YTick',[0 0.5 1],'box','on','LineWidth',2,'FontSize',14);
-    pdfcrop;
-    
-    
-    annotation(gcf,'textbox',[0.365 0.01208 0.05599 0.1111],...
+figure; hold on;
+
+plot(domain,t1(domain),'-b','LineWidth',3);
+plot(domain,t2(domain),'-g','LineWidth',3);
+plot(domain,t3(domain),'-g','LineWidth',3);
+plot([1 1],[0 f(1)],'-k','LineWidth',4);
+plot(domain,f(domain),'-r','LineWidth',5);
+axis([0 3 0 1]);
+set(gca,'XTick',[0 1.5 3],'YTick',[0 0.5 1],'box','on','LineWidth',2,'FontSize',14);
+pdfcrop;
+
+annotation(gcf,'textbox',[0.365 0.01208 0.05599 0.1111],...
     'String',{'1'},...
     'FontSize',20,...
     'LineStyle','none');
 
-    printPmtkFigure('conjugateFnExpLowerBound'); 
+printPmtkFigure('conjugateFnExpLowerBound');
 
 
 

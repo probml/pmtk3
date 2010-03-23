@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>rotationDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="rotationDemo"><style type="text/css">
+      --><title>Rotation Matrix Demo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="rotationDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,7 +62,7 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput">a = (45/180)*pi;
+  </style></head><body><div class="content"><h1>Rotation Matrix Demo</h1><pre class="codeinput">a = (45/180)*pi;
 R = [cos(a) -sin(a) 0;
      sin(a) cos(a) 0 ;
      0 0 1]
@@ -77,17 +77,32 @@ RR = [cos(a) -sin(a) 0;
 
 assert(approxeq(R',RR))
 </pre><pre class="codeoutput">R =
-    0.7071   -0.7071         0
-    0.7071    0.7071         0
-         0         0    1.0000
+  Columns 1 through 2
+   0.707106781186548  -0.707106781186547
+   0.707106781186547   0.707106781186548
+                   0                   0
+  Column 3
+                   0
+                   0
+   1.000000000000000
 A =
-    1.5000   -0.5000         0
-   -0.5000    1.5000         0
-         0         0    3.0000
+  Columns 1 through 2
+   1.500000000000000  -0.500000000000000
+  -0.500000000000000   1.500000000000000
+                   0                   0
+  Column 3
+                   0
+                   0
+   3.000000000000000
 U =
-   -0.7071   -0.7071         0
-   -0.7071    0.7071         0
-         0         0    1.0000
+  Columns 1 through 2
+  -0.707106781186547  -0.707106781186547
+  -0.707106781186547   0.707106781186547
+                   0                   0
+  Column 3
+                   0
+                   0
+   1.000000000000000
 D =
      1     0     0
      0     2     0
@@ -95,6 +110,7 @@ D =
 </pre><p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
+%% Rotation Matrix Demo
 a = (45/180)*pi;
 R = [cos(a) -sin(a) 0;
      sin(a) cos(a) 0 ;

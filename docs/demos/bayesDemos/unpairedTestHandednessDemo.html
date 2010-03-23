@@ -139,17 +139,17 @@ logmarglik1int = log(dblquad(@(t1,t2) binomprob(y1, t1, n1) .* <span class="keyw
   binomprob(y2, t2, n2) ./ beta(1,1),  0, 1, 0, 1));
 assert(approxeq(logmarglik1, logmarglik1int))
 </pre><pre class="codeoutput">post =
-    0.7213    0.2787
+   0.721348953121218   0.278651046878782
 BF10 =
-    0.3863
+   0.386291607789936
 </pre><h2>Now do a one-sided test<a name="4"></a></h2><pre class="codeinput">logmarglik1 = log(dblquad(@(t1,t2) binomprob(y1, t1, n1) .* <span class="keyword">...</span>
   binomprob(y2, t2, n2) .* (t1(:) &gt; t2(:)) ./ beta(1,1),  0, 1, 0, 1) );
 post = exp(normalizeLogspace([logmarglik0 logmarglik1]))
 BF10 = exp(logmarglik1 - logmarglik0)
 </pre><pre class="codeoutput">post =
-    0.7432    0.2568
+   0.743245890762720   0.256754109237280
 BF10 =
-    0.3454
+   0.345449752804954
 </pre><p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####

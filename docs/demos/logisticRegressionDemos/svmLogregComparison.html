@@ -70,16 +70,22 @@ SVMmodel = svmFit(Xtrain, ytrain, <span class="string">'kernel'</span>, <span cl
     <span class="string">'C'</span>, Cvals, <span class="string">'kernelParam'</span>, gammas);
 yhat = svmPredict(SVMmodel, Xtest);
 svmNerrors = sum(yhat ~= ytest) <span class="comment">%0</span>
+</pre><pre class="codeoutput">svmNerrors =
+     0
 </pre><h2>LR L1<a name="3"></a></h2><pre class="codeinput">lambdaL1 = 3e-7; SigmaL1 = 8.5; <span class="comment">% see logregKernelCrabsDemo for cross validation</span>
 LRL1model = logregFit(Xtrain, ytrain, <span class="string">'lambda'</span>, lambdaL1, <span class="keyword">...</span>
     <span class="string">'kernelFn'</span>, @kernelRbfSigma, <span class="string">'kernelParam'</span>, SigmaL1, <span class="string">'regType'</span>, <span class="string">'L1'</span>);
 yhat = logregPredict(LRL1model, Xtest);
 lrL1Nerrors = sum(yhat ~= ytest)
+</pre><pre class="codeoutput">lrL1Nerrors =
+     0
 </pre><h2>LR L2 (no kernel)<a name="4"></a></h2><p>Cross validates over both lambda and 'rbf' Gamma</p><pre class="codeinput">lambdas = logspace(-5,0,50);
 [LRL2model, lambdaStar, LRmu, LRse] = logregFit(Xtrain, ytrain,<span class="keyword">...</span>
     <span class="string">'lambda'</span>, lambdas, <span class="string">'regType'</span>, <span class="string">'L2'</span>);
 yhat = logregPredict(LRL2model, Xtest);
 lrL2Nerrors = sum(yhat ~= ytest)
+</pre><pre class="codeoutput">lrL2Nerrors =
+     3
 </pre><p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####

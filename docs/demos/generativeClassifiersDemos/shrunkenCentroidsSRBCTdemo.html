@@ -97,8 +97,6 @@ figure;
 plot(Deltas, errTrain, <span class="string">'go-'</span>, Deltas, errTest, <span class="string">'bo:'</span>,<span class="keyword">...</span>
   <span class="string">'MarkerSize'</span>, 4, <span class="string">'linewidth'</span>, 2)
 legend(<span class="string">'Training'</span>, <span class="string">'Test'</span>);
-</pre><pre class="codeoutput">Warning: File: C:\pmtk3\toolbox\generativeClassifiers\naiveBayesGaussFitShrunkenCentroids.m Line: 8 Column: 1
-Unrecognized Compiler pragma "%#PMTKauthor Robert Tseng". 
 </pre><img vspace="5" hspace="5" src="shrunkenCentroidsSRBCTdemo_01.png" alt=""> <h2>Cross validation<a name="4"></a></h2><p>We have to combine train and test sets to get the same CV curve as in Hastie fig 18.4...</p><pre class="codeinput">nFolds = 10;
 useSErule = false;
 [bestModel, bestDelta, errCV, se] = fitCV(Deltas, fitFn, predictFn,<span class="keyword">...</span>
@@ -129,19 +127,7 @@ bestNdx  = find(bestDelta==Deltas);
 fprintf(<span class="string">'best lambda=%5.3f, ngenes = %d\n'</span>, bestDelta, numgenes(bestNdx));
 line([bestDelta bestDelta], [0 1]);
 printPmtkFigure(<span class="string">'shrunkenCentroidsErrVsLambda'</span>)
-</pre><pre class="codeoutput">Warning: Could not find an exact (case-sensitive)
-match for 'fitCV'.
-C:\pmtk3\toolbox\other\fitCv.m is a case-insensitive
-match and will be used instead.
-You can improve the performance of your code by using
-exact
-name matches and we therefore recommend that you
-update your
-usage accordingly. Alternatively, you can disable
-this warning using
-warning('off','MATLAB:dispatcher:InexactCaseMatch').
-This warning will become an error in future releases. 
-best lambda=4.408, ngenes = 39
+</pre><pre class="codeoutput">best lambda=4.408, ngenes = 39
 </pre><img vspace="5" hspace="5" src="shrunkenCentroidsSRBCTdemo_02.png" alt=""> <h2>Plot centroids<a name="5"></a></h2><pre class="codeinput">centShrunk = bestModel.offset;
 model = fitFn(xtrain, ytrain, 0);
 centUnshrunk = model.offset;

@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>clusterYeast</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="clusterYeast"><style type="text/css">
+      --><title>Yeast Clustergram Demo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="clusterYeast"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,7 +62,7 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput">load(<span class="string">'yeastData310.mat'</span>) <span class="comment">% 'X', 'genes', 'times');</span>
+  </style></head><body><div class="content"><h1>Yeast Clustergram Demo</h1><pre class="codeinput">load(<span class="string">'yeastData310.mat'</span>) <span class="comment">% 'X', 'genes', 'times');</span>
 
 
 corrDist = pdist(X, <span class="string">'corr'</span>);
@@ -145,6 +145,7 @@ printPmtkFigure <span class="string">clusterYeastSingleLink</span>
 </pre><img vspace="5" hspace="5" src="clusterYeast_01.png" alt=""> <img vspace="5" hspace="5" src="clusterYeast_02.png" alt=""> <img vspace="5" hspace="5" src="clusterYeast_03.png" alt=""> <img vspace="5" hspace="5" src="clusterYeast_04.png" alt=""> <img vspace="5" hspace="5" src="clusterYeast_05.png" alt=""> <img vspace="5" hspace="5" src="clusterYeast_06.png" alt=""> <img vspace="5" hspace="5" src="clusterYeast_07.png" alt=""> <img vspace="5" hspace="5" src="clusterYeast_08.png" alt=""> <img vspace="5" hspace="5" src="clusterYeast_09.png" alt=""> <p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
+%% Yeast Clustergram Demo
 load('yeastData310.mat') % 'X', 'genes', 'times');
 
 

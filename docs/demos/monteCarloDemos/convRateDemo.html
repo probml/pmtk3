@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>convRateDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="convRateDemo"><style type="text/css">
+      --><title>Convergence Rate Demo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="convRateDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,7 +62,7 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">for</span> ki=1:11
+  </style></head><body><div class="content"><h1>Convergence Rate Demo</h1><pre class="codeinput"><span class="keyword">for</span> ki=1:11
   k = ki-1;
   theta(ki) = 1 + (1/2)^k;
   fprintf(<span class="string">'%d | %10.10f\n'</span>, k, theta(ki));
@@ -81,8 +81,7 @@ p.footer {
 </pre><p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
-
-
+%% Convergence Rate Demo
 for ki=1:11
   k = ki-1;
   theta(ki) = 1 + (1/2)^k;

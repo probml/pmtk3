@@ -109,6 +109,21 @@ metricNames = {<span class="string">'NMSE'</span>, <span class="string">'time'</
     title(str)
     xlabel(<span class="string">'d'</span>)
 <span class="keyword">end</span>
+</pre><pre class="codeoutput">expt 1 (d=50) of 3
+method 1 (lars) of 3
+</pre><pre class="codeoutput">Undefined function or method 'linregFitL2' for input arguments of type 'double'.
+
+Error in ==&gt; larsSelectSubsetCV at 25
+        model = linregFitL2(Xtrain(:, vars), ytrain, lambdaRidge, 'QR', false);
+
+Error in ==&gt; varSelDemo&gt;@(X,y)larsSelectSubsetCV(X,y,'nfolds',5) at 5
+    @(X,y) larsSelectSubsetCV(X,y, 'nfolds', 5), ...
+
+Error in ==&gt; varSelDemo&gt;helper at 63
+    [estSupport,West] = fn(X,y);
+
+Error in ==&gt; varSelDemo at 30
+        metrics(:,expt,:,m) = helper(methods{m}, n,d,r,lassoSignConsistent,sigma,ntrials);
 </pre><pre class="codeinput"><span class="keyword">end</span>
 
 <span class="keyword">function</span> [metrics] = helper(fn, n,d,r,lassoSignConsistent,sigma,ntrials)

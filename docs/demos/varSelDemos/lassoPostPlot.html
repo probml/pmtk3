@@ -62,10 +62,8 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> lassoPostPlot()
-<span class="comment">% Reproduce fig 1 of "Bayesian lasso regression", Chris Hans, 2009</span>
-
-bols =  1.96;
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Reproduce fig 1 of "Bayesian lasso regression", Chris Hans, 2009</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> lassoPostPlot()
+</pre><h2>Reproduce fig 1 of "Bayesian lasso regression", Chris Hans, 2009<a name="2"></a></h2><pre class="codeinput">bols =  1.96;
 xtx = 1;
 s2 = 1;
 v2 = s2/(xtx);
@@ -95,8 +93,7 @@ legend(legendStr);
 title(<span class="string">'posterior of w under lasso prior'</span>)
 
 printPmtkFigure(<span class="string">'lassoPost1d'</span>)
-
-<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="lassoPostPlot_01.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
 
 
 <span class="keyword">function</span> p = gaussTrunc(t, m, s, plus)
@@ -106,11 +103,11 @@ printPmtkFigure(<span class="string">'lassoPost1d'</span>)
    p = normpdf(t, m, s)/normcdf(-m/s) .* (t &lt; 0);
 <span class="keyword">end</span>
 <span class="keyword">end</span>
-</pre><img vspace="5" hspace="5" src="lassoPostPlot_01.png" alt=""> <p class="footer"><br>
+</pre><p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 function lassoPostPlot()
-% Reproduce fig 1 of "Bayesian lasso regression", Chris Hans, 2009
+%% Reproduce fig 1 of "Bayesian lasso regression", Chris Hans, 2009
 
 bols =  1.96;
 xtx = 1;

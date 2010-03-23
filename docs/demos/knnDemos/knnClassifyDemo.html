@@ -62,8 +62,8 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">load data</a></li><li><a href="#4">Plot data</a></li><li><a href="#5">Classify and plot predictions on test data</a></li><li><a href="#6">Plot  predicted class  across a grid of points</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> knnClassifyDemo()
-</pre><h2>load data<a name="3"></a></h2><pre class="codeinput">tmp = dlmread(<span class="string">'knnClassify3CTrain.txt'</span>);
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Classify using KNN</a></li><li><a href="#3">load data</a></li><li><a href="#4">Plot data</a></li><li><a href="#5">Classify and plot predictions on test data</a></li><li><a href="#6">Plot  predicted class  across a grid of points</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> knnClassifyDemo()
+</pre><h2>Classify using KNN<a name="2"></a></h2><h2>load data<a name="3"></a></h2><pre class="codeinput">tmp = dlmread(<span class="string">'knnClassify3CTrain.txt'</span>);
 Xtrain = tmp(:,1:2); ytrain = tmp(:,3);
 tmp = dlmread(<span class="string">'knnClassify3CTest.txt'</span>);
 Xtest = tmp(:,1:2); ytest = tmp(:,3);
@@ -133,7 +133,7 @@ C = max(y);
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 function knnClassifyDemo()
-
+%% Classify using KNN
 
 %% load data
 tmp = dlmread('knnClassify3CTrain.txt');

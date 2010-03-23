@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>pcaEmTest</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="pcaEmTest"><style type="text/css">
+      --><title>PCA EM Test</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="pcaEmTest"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,7 +62,7 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">%setSeed(1);</span>
+  </style></head><body><div class="content"><h1>PCA EM Test</h1><pre class="codeinput"><span class="comment">%setSeed(1);</span>
 n = 100; d = 5;
 X = randn(n,d);
 k = 2;
@@ -79,8 +79,8 @@ iter
 max(abs(W1(:))-abs(W(:)))
 mse = mean((Xrecon(:) - X(:)).^2)
 mse2 = mean((Xrecon1(:) - X(:)).^2)
-</pre><pre class="codeoutput">Elapsed time is 0.023691 seconds.
-Elapsed time is 0.077840 seconds.
+</pre><pre class="codeoutput">Elapsed time is 0.071917 seconds.
+Elapsed time is 0.047945 seconds.
 iter =
      8
 ans =
@@ -92,7 +92,7 @@ mse2 =
 </pre><p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
-
+%% PCA EM Test
 %setSeed(1);
 n = 100; d = 5;
 X = randn(n,d);

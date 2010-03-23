@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>linregDemo1</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="linregDemo1"><style type="text/css">
+      --><title>Linreg Demo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="linregDemo1"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,7 +62,7 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h1></h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Make data</a></li><li><a href="#2">Basic fitting</a></li><li><a href="#3">Use pmtk functions to do same thing</a></li><li><a href="#4">Plot</a></li><li><a href="#5">Repeat with standardization</a></li></ul></div><h2>Make data<a name="1"></a></h2><pre class="codeinput">[xtrain, ytrain, xtest, ytestNoisefree, ytest] = polyDataMake(<span class="string">'sampling'</span>,<span class="string">'thibaux'</span>);
+  </style></head><body><div class="content"><h1>Linreg Demo</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Make data</a></li><li><a href="#2">Basic fitting</a></li><li><a href="#3">Use pmtk functions to do same thing</a></li><li><a href="#4">Plot</a></li><li><a href="#5">Repeat with standardization</a></li></ul></div><h2>Make data<a name="1"></a></h2><pre class="codeinput">[xtrain, ytrain, xtest, ytestNoisefree, ytest] = polyDataMake(<span class="string">'sampling'</span>,<span class="string">'thibaux'</span>);
 Xtrain = xtrain; Xtest = xtest;
 </pre><h2>Basic fitting<a name="2"></a></h2><pre class="codeinput">Xtrain1 = [ones(size(Xtrain,1),1) Xtrain];
 w = Xtrain1 \ ytrain;
@@ -94,7 +94,7 @@ plot(Xtest(:,1), ypredTest, <span class="string">'k'</span>, <span class="string
 </pre><img vspace="5" hspace="5" src="linregDemo1_02.png" alt=""> <p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
-
+%% Linreg Demo
 %% Make data
 [xtrain, ytrain, xtest, ytestNoisefree, ytest] = polyDataMake('sampling','thibaux');
 Xtrain = xtrain; Xtest = xtest;

@@ -92,6 +92,23 @@ model = cell(1, NK);
     nParams   = K*d + K-1;
     bicVal(i) = -2*logp(i) + nParams*log(n);
 <span class="keyword">end</span>
+</pre><pre class="codeoutput">Fitting K = 2 
+1	 loglik: -214.859819
+2	 loglik: -214.595208
+3	 loglik: -214.510527
+4	 loglik: -214.476626
+5	 loglik: -214.467664
+Fitting K = 10 
+1	 loglik: -176.143006
+2	 loglik: -175.738353
+3	 loglik: -175.625846
+4	 loglik: -175.558693
+5	 loglik: -175.515661
+6	 loglik: -175.485498
+7	 loglik: -175.452158
+8	 loglik: -175.395357
+9	 loglik: -175.342448
+10	 loglik: -175.284732
 </pre><h2>Plot<a name="4"></a></h2><pre class="codeinput"><span class="keyword">for</span> i=1:NK
     K = Kvalues(i);
     figure();
@@ -116,7 +133,7 @@ model = cell(1, NK);
     title(sprintf(<span class="string">'Minimum achieved for K = %d'</span>, Kvalues(minidx(bicVal))));
     printPmtkFigure(<span class="string">'MnistBICvsKplot'</span>);
 <span class="keyword">end</span>
-</pre><p class="footer"><br>
+</pre><img vspace="5" hspace="5" src="mixBerMnistEM_01.png" alt=""> <img vspace="5" hspace="5" src="mixBerMnistEM_02.png" alt=""> <p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Bernoulli mixture model for mnist digits

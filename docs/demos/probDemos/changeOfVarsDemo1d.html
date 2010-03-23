@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>changeOfVarsDemo1d</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="changeOfVarsDemo1d"><style type="text/css">
+      --><title>Change of Variables Demo 1D</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="changeOfVarsDemo1d"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,9 +62,7 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% x ~ U(-1,1), y=x^2, plot pdf of y</span>
-
-xs = -1:0.1:1;
+  </style></head><body><div class="content"><h1>Change of Variables Demo 1D</h1><p>x ~ U(-1,1), y=x^2, plot pdf of y</p><pre class="codeinput">xs = -1:0.1:1;
 a = -1; b = 1;
 <span class="comment">%dist = UnifDist(a,b);</span>
 <span class="comment">%px = exp(logprob(dist, xs));</span>
@@ -94,6 +92,7 @@ printPmtkFigure(<span class="string">'changeOfVars'</span>);
 </pre><img vspace="5" hspace="5" src="changeOfVarsDemo1d_01.png" alt=""> <p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
+%% Change of Variables Demo 1D
 % x ~ U(-1,1), y=x^2, plot pdf of y
 
 xs = -1:0.1:1;

@@ -62,10 +62,8 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> emLogLikelihoodMax
-
-
-f1 = @(x) log(normpdf(x,0,0.25))+1;
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Visualize EM Lower Bounds</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> emLogLikelihoodMax
+</pre><h2>Visualize EM Lower Bounds<a name="2"></a></h2><pre class="codeinput">f1 = @(x) log(normpdf(x,0,0.25))+1;
 f2 = @(x) log(normpdf(x,1,0.2))+20;
 f3 = @(x) 5*sin(2*(x-0.5)) + f1(0.5*x) + f2(0.5*x)+ 3.5+20*normpdf(x,-2,0.5)-20*normpdf(x,3,1) -70*normpdf(x,4,0.5) + 40*normpdf(x,-3,0.5)+100*normpdf(x,-4,0.8)+10*normpdf(x,3,0.3)-10*normpdf(x,-2.8,0.5);
 domain = -5:0.01:5;
@@ -101,15 +99,12 @@ annotation(gcf,<span class="string">'textbox'</span>,[0.4185 0.02411 0.08859 0.1
 
 pdfcrop;
 printPmtkFigure <span class="string">emLogLikelihoodMax</span>
-
-
-<span class="keyword">end</span>
-</pre><img vspace="5" hspace="5" src="emLogLikelihoodMax_01.png" alt=""> <p class="footer"><br>
+</pre><img vspace="5" hspace="5" src="emLogLikelihoodMax_01.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 function emLogLikelihoodMax
-
-
+%% Visualize EM Lower Bounds
 f1 = @(x) log(normpdf(x,0,0.25))+1;
 f2 = @(x) log(normpdf(x,1,0.2))+20;
 f3 = @(x) 5*sin(2*(x-0.5)) + f1(0.5*x) + f2(0.5*x)+ 3.5+20*normpdf(x,-2,0.5)-20*normpdf(x,3,1) -70*normpdf(x,4,0.5) + 40*normpdf(x,-3,0.5)+100*normpdf(x,-4,0.8)+10*normpdf(x,3,0.3)-10*normpdf(x,-2.8,0.5);

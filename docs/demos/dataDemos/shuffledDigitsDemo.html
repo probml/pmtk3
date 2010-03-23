@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>shuffledDigitsDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="shuffledDigitsDemo"><style type="text/css">
+      --><title>visualize MNIST digits and version where we permute the pixels</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="shuffledDigitsDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,10 +62,7 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">%function digitsShuffle()</span>
-<span class="comment">% visualize MNIST digits and version where we permute the pixels</span>
-
-load(<span class="string">'mnistALL'</span>) <span class="comment">% already randomly shuffled across classes</span>
+  </style></head><body><div class="content"><h1>visualize MNIST digits and version where we permute the pixels</h1><pre class="codeinput">load(<span class="string">'mnistALL'</span>) <span class="comment">% already randomly shuffled across classes</span>
 <span class="comment">% train_images: [28x28x60000 uint8]</span>
 <span class="comment">% test_images: [28x28x10000 uint8]</span>
 <span class="comment">% train_labels: [60000x1 uint8]</span>
@@ -110,8 +107,7 @@ figure(2); printPmtkFigure(<span class="string">'mnistTestUnshuffled'</span>);
 </pre><img vspace="5" hspace="5" src="shuffledDigitsDemo_01.png" alt=""> <img vspace="5" hspace="5" src="shuffledDigitsDemo_02.png" alt=""> <p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
-%function digitsShuffle()
-% visualize MNIST digits and version where we permute the pixels
+%% visualize MNIST digits and version where we permute the pixels
 
 load('mnistALL') % already randomly shuffled across classes
 % train_images: [28x28x60000 uint8]

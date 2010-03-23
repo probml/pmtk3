@@ -62,8 +62,8 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> [xtrain, ytrain, xtest, ytestNoisefree, ytestNoisy, sigma2] = polyDataMake(varargin)
-[sampling, deg, n] = process_options(varargin, <span class="keyword">...</span>
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Sample Data</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> [xtrain, ytrain, xtest, ytestNoisefree, ytestNoisy, sigma2] = polyDataMake(varargin)
+</pre><h2>Sample Data<a name="2"></a></h2><pre class="codeinput">[sampling, deg, n] = process_options(varargin, <span class="keyword">...</span>
     <span class="string">'sampling'</span>, <span class="string">'sparse'</span>, <span class="string">'deg'</span>, 3, <span class="string">'n'</span>, 21);
 setSeed(0);
 <span class="keyword">switch</span> sampling
@@ -104,6 +104,7 @@ restoreSeed;
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 function [xtrain, ytrain, xtest, ytestNoisefree, ytestNoisy, sigma2] = polyDataMake(varargin)
+%% Sample Data
 [sampling, deg, n] = process_options(varargin, ...
     'sampling', 'sparse', 'deg', 3, 'n', 21);
 setSeed(0);

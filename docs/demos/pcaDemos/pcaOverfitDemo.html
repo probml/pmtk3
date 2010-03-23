@@ -115,7 +115,16 @@ plot(Ks, -ll, <span class="string">'-o'</span>, <span class="string">'linewidth'
 ylabel(<span class="string">'negloglik'</span>); xlabel(<span class="string">'K'</span>);
 title(<span class="string">'test set negative loglik'</span>);
 printPmtkFigure(<span class="string">'pcaVsKnll'</span>)
-</pre><p class="footer"><br>
+</pre><pre class="codeoutput">name =
+mnist3
+n =
+        1000
+Ks =
+  Columns 1 through 4
+     1   122   244   365
+  Column 5
+   486
+</pre><img vspace="5" hspace="5" src="pcaOverfitDemo_01.png" alt=""> <img vspace="5" hspace="5" src="pcaOverfitDemo_02.png" alt=""> <p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 % Show that reconstruction error on test set gets lower

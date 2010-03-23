@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>prostateScatterDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="prostateScatterDemo"><style type="text/css">
+      --><title>Prostate pscatter demo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="prostateScatterDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,23 +62,24 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput">load <span class="string">prostate</span>
+  </style></head><body><div class="content"><h1>Prostate pscatter demo</h1><pre class="codeinput">load <span class="string">prostate</span>
 figure;
 pscatter([y X], <span class="string">'vnames'</span>, {names{end}, names{1:end-1}})
 svi = unique(X(:,5))
 gleason = unique(X(:,7))
 printPmtkFigure(<span class="string">'prostateScatter'</span>)
 </pre><pre class="codeoutput">svi =
-   -0.5257
-    1.9024
+  -0.525657483037847
+   1.902379462422684
 gleason =
-   -1.0476
-    0.3444
-    1.7364
-    3.1284
+  -1.047571129722781
+   0.344406946758175
+   1.736385023239131
+   3.128363099720087
 </pre><img vspace="5" hspace="5" src="prostateScatterDemo_01.png" alt=""> <p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
+%% Prostate pscatter demo
 load prostate
 figure;
 pscatter([y X], 'vnames', {names{end}, names{1:end-1}})

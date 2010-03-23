@@ -62,68 +62,61 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> conjugateFnExp
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Conjugate Function</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> conjugateFnExp
+</pre><h2>Conjugate Function<a name="2"></a></h2><pre class="codeinput">f = @(x)x-(x-x.*log(-x));
+domain = -1:0.0005:0;
+figure; hold <span class="string">on</span>;
+m = -1/exp(1);
+plot([m,m],[0,f(m)],<span class="string">'-k'</span>,<span class="string">'LineWidth'</span>,4);
+plot(domain,f(domain),<span class="string">'-r'</span>,<span class="string">'LineWidth'</span>,5);
+axis([-1 0 0 0.4]);
+set(gca,<span class="string">'XTick'</span>,[-1 -0.5 0],<span class="string">'YTick'</span>,[0 0.2 0.4],<span class="string">'box'</span>,<span class="string">'on'</span>,<span class="string">'LineWidth'</span>,2,<span class="string">'FontSize'</span>,14);
+pdfcrop;
 
 
 
-    f = @(x)x-(x-x.*log(-x));
-    domain = -1:0.0005:0;
-    figure; hold <span class="string">on</span>;
-    m = -1/exp(1);
-    plot([m,m],[0,f(m)],<span class="string">'-k'</span>,<span class="string">'LineWidth'</span>,4);
-    plot(domain,f(domain),<span class="string">'-r'</span>,<span class="string">'LineWidth'</span>,5);
-    axis([-1 0 0 0.4]);
-    set(gca,<span class="string">'XTick'</span>,[-1 -0.5 0],<span class="string">'YTick'</span>,[0 0.2 0.4],<span class="string">'box'</span>,<span class="string">'on'</span>,<span class="string">'LineWidth'</span>,2,<span class="string">'FontSize'</span>,14);
-    pdfcrop;
+<span class="comment">%annotation(gcf,'textbox',[0.7983 0.02415 0.05935 0.1111],...</span>
+<span class="comment">%'String',{'\lambda'},...</span>
+<span class="comment">%'FontSize',18,...</span>
+<span class="comment">%'LineStyle','none');</span>
 
-
-
-    <span class="comment">%annotation(gcf,'textbox',[0.7983 0.02415 0.05935 0.1111],...</span>
-    <span class="comment">%'String',{'\lambda'},...</span>
-    <span class="comment">%'FontSize',18,...</span>
-    <span class="comment">%'LineStyle','none');</span>
-
-    annotation(gcf,<span class="string">'textbox'</span>,[0.1611 0.7415 0.2 0.1014],<span class="keyword">...</span>
+annotation(gcf,<span class="string">'textbox'</span>,[0.1611 0.7415 0.2 0.1014],<span class="keyword">...</span>
     <span class="string">'String'</span>,{<span class="string">'L^*(1,\lambda)'</span>},<span class="keyword">...</span>
     <span class="string">'FontSize'</span>,18,<span class="keyword">...</span>
     <span class="string">'LineStyle'</span>,<span class="string">'none'</span>);
 
-    printPmtkFigure(<span class="string">'conjugateFnExp'</span>);
-
-
-
-
-<span class="keyword">end</span>
-</pre><img vspace="5" hspace="5" src="conjugateFnExp_01.png" alt=""> <p class="footer"><br>
+printPmtkFigure(<span class="string">'conjugateFnExp'</span>);
+</pre><img vspace="5" hspace="5" src="conjugateFnExp_01.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 function conjugateFnExp
+%% Conjugate Function
+
+
+f = @(x)x-(x-x.*log(-x));
+domain = -1:0.0005:0;
+figure; hold on;
+m = -1/exp(1);
+plot([m,m],[0,f(m)],'-k','LineWidth',4);
+plot(domain,f(domain),'-r','LineWidth',5);
+axis([-1 0 0 0.4]);
+set(gca,'XTick',[-1 -0.5 0],'YTick',[0 0.2 0.4],'box','on','LineWidth',2,'FontSize',14);
+pdfcrop;
 
 
 
-    f = @(x)x-(x-x.*log(-x));
-    domain = -1:0.0005:0;
-    figure; hold on;
-    m = -1/exp(1);
-    plot([m,m],[0,f(m)],'-k','LineWidth',4);
-    plot(domain,f(domain),'-r','LineWidth',5);
-    axis([-1 0 0 0.4]);
-    set(gca,'XTick',[-1 -0.5 0],'YTick',[0 0.2 0.4],'box','on','LineWidth',2,'FontSize',14);
-    pdfcrop;
+%annotation(gcf,'textbox',[0.7983 0.02415 0.05935 0.1111],...
+%'String',{'\lambda'},...
+%'FontSize',18,...
+%'LineStyle','none');
 
-  
-    
-    %annotation(gcf,'textbox',[0.7983 0.02415 0.05935 0.1111],...
-    %'String',{'\lambda'},...
-    %'FontSize',18,...
-    %'LineStyle','none');
-
-    annotation(gcf,'textbox',[0.1611 0.7415 0.2 0.1014],...
+annotation(gcf,'textbox',[0.1611 0.7415 0.2 0.1014],...
     'String',{'L^*(1,\lambda)'},...
     'FontSize',18,...
     'LineStyle','none');
 
-    printPmtkFigure('conjugateFnExp'); 
+printPmtkFigure('conjugateFnExp');
 
 
 

@@ -62,9 +62,8 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> scadPlot()
-
-z = -10:0.01:10;
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">LLA and LQA approximation - fig 1 of Zou &amp; Li 2008</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> scadPlot()
+</pre><h2>LLA and LQA approximation - fig 1 of Zou &amp; Li 2008<a name="2"></a></h2><pre class="codeinput">z = -10:0.01:10;
 a = 3.7; lambda = 2;
 
 <span class="keyword">if</span> 0
@@ -76,7 +75,7 @@ title(sprintf(<span class="string">'scad penalty rule, %s=%5.3f, a=%5.3f'</span>
 printPmtkFigure(<span class="string">'scadPenalty'</span>)
 <span class="keyword">end</span>
 
-<span class="comment">% LLA and LQA approximation - fig 1 of Zou &amp; Li 2008</span>
+
 p = penalty(z, a, lambda);
 figure; hold <span class="string">on</span>
 plot(z, p, <span class="string">'k-'</span>, <span class="string">'linewidth'</span>, 3);
@@ -99,8 +98,7 @@ plot(z, z, <span class="string">':'</span>, <span class="string">'linewidth'</sp
 title(sprintf(<span class="string">'scad thresholding rule, %s=%5.3f, a=%5.3f'</span>,<span class="string">'\lambda'</span>, lambda, a))
 printPmtkFigure(<span class="string">'scadThreshold'</span>)
 <span class="keyword">end</span>
-
-<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="scadPlot_01.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
 
 <span class="keyword">function</span> th = estimator(z, a, lambda)
 <span class="comment">% equation 2.8 of their paper</span>
@@ -155,11 +153,11 @@ out = penalty(bstar, a, lambda) + <span class="keyword">...</span>
 out = penalty(bstar, a, lambda) + <span class="keyword">...</span>
   0.5*derivPenalty(bstar, a, lambda)/abs(bstar)*(z.^2-bstar^2);
 <span class="keyword">end</span>
-</pre><img vspace="5" hspace="5" src="scadPlot_01.png" alt=""> <p class="footer"><br>
+</pre><p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 function scadPlot()
-
+%% LLA and LQA approximation - fig 1 of Zou & Li 2008
 z = -10:0.01:10;
 a = 3.7; lambda = 2;
 
@@ -172,7 +170,7 @@ title(sprintf('scad penalty rule, %s=%5.3f, a=%5.3f', '\lambda', lambda, a))
 printPmtkFigure('scadPenalty')
 end
 
-% LLA and LQA approximation - fig 1 of Zou & Li 2008
+
 p = penalty(z, a, lambda);
 figure; hold on
 plot(z, p, 'k-', 'linewidth', 3);

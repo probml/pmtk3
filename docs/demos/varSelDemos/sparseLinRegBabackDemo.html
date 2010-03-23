@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>sparseLinRegBabackDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="sparseLinRegBabackDemo"><style type="text/css">
+      --><title>Sparse Linear Regression</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="sparseLinRegBabackDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,74 +62,7 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% =============================================================================</span>
-<span class="comment">%</span>
-<span class="comment">% MODEL:     y = Ax + noise;    s.t.  card(x) = k</span>
-<span class="comment">%</span>
-<span class="comment">% QUESTION:  what constitutes a "plausible" sparsity-inducing prior for</span>
-<span class="comment">%            any given problem (here the sparse linear model above)?</span>
-<span class="comment">%            For example, should p(x) really be a Laplacian !?</span>
-<span class="comment">%</span>
-<span class="comment">% ANSWER:  the most plausible p(x) should resemble the ensemble average</span>
-<span class="comment">%          of all possible posteriors found using a Reference Analysis</span>
-<span class="comment">%          (with a suitably flat prior for the given model).</span>
-<span class="comment">%          This expectation  &lt;p(x|y)&gt;  should be taken w.r.t. all future</span>
-<span class="comment">%          datasets {A,y} as well as different noise settings, etc.</span>
-<span class="comment">%</span>
-<span class="comment">% METHOD:  create a Monte Carlo ensemble of test cases according to the model,</span>
-<span class="comment">%          map out all posterior modes in each case (by exhaustive enumeration)</span>
-<span class="comment">%          and form a (weighted) histogram of all such posterior modes.</span>
-<span class="comment">%          Since {x_i} are deemed exchangeable the elements of x can be pooled</span>
-<span class="comment">%          to give a single marginal prior p(x_i) that is the same for all i.</span>
-<span class="comment">%          This expected marginal posterior is here plotted &amp; visualized as</span>
-<span class="comment">%          the empirical proxy for the "right" sparsity prior for the model.</span>
-<span class="comment">%</span>
-<span class="comment">% -------------------------------------------------------------------------</span>
-<span class="comment">% THINGS TO NOTE:</span>
-<span class="comment">%</span>
-<span class="comment">% o) the expected posterior is always a point-mass mixture ("spike-n-slab")</span>
-<span class="comment">% with the atomic component at 0 having probability mass = (n-k)/n</span>
-<span class="comment">%</span>
-<span class="comment">% o) so the question becomes what should the *continuous* component of this</span>
-<span class="comment">% mixture look like?  For example, does *it* look like a Laplacian?</span>
-<span class="comment">%</span>
-<span class="comment">% o) since all n-choose-k posterior modes are being found (using subsets1.m)</span>
-<span class="comment">% beware of combinatorial explosion with large n (or just keep k very small)</span>
-<span class="comment">%</span>
-<span class="comment">% -------------------------------------------------------------------------</span>
-<span class="comment">% THINGS TO TRY:</span>
-<span class="comment">%</span>
-<span class="comment">% o) run the script as is with the default case of {n=12, k0=12, k=4}</span>
-<span class="comment">% This represents a "dense" true x0 (k0=12) representing a non-sparse problem</span>
-<span class="comment">% that is forced to be sparse (k=4) perhaps for budget reasons</span>
-<span class="comment">%</span>
-<span class="comment">% o) set k0=4 (with k=4); this is now a sparse recovery problem where you</span>
-<span class="comment">% happen to know the true sparsity (k0) beforehand (not very realistic though)</span>
-<span class="comment">%</span>
-<span class="comment">% o) increase the noise by setting noise=1.0  to see how the # of significant</span>
-<span class="comment">% posterior modes in each MC test case increases</span>
-<span class="comment">%</span>
-<span class="comment">% o) try setting k0 &lt; k,  so the problem is actually sparser than you think!</span>
-<span class="comment">% note the increase in the # of significant posterior modes as a result.</span>
-<span class="comment">%</span>
-<span class="comment">% o) try varying the aspect ratio of design matrix A by changing m (# of obs)</span>
-<span class="comment">% and note how the # of significant posterior modes changes with m</span>
-<span class="comment">%</span>
-<span class="comment">% o) A, x, y and noise can be sampled as Uniform, Gaussian or even Binary</span>
-<span class="comment">% see the commented-out portions in the code below, try changing these.</span>
-<span class="comment">%</span>
-<span class="comment">% o) you can explore the prior for all k (i.e., all 2^n sparsities) thus</span>
-<span class="comment">% not commiting to any one k as being the "right" sparsity. If you assume</span>
-<span class="comment">% each k to be equally likely a priori, then just pool over MC runs for each</span>
-<span class="comment">% k=1:n-1. This can be done by setting k=0 (as a special flag for this case)</span>
-<span class="comment">%</span>
-<span class="comment">% -------------------------------------------------------------------------</span>
-<span class="comment">% Baback Moghaddam          baback@jpl.nasa.gov         02/11/08</span>
-<span class="comment">% -------------------------------------------------------------------------</span>
-<span class="comment">% NOTE: this script needs Raanan Yehezkel's "subsets1.m" function</span>
-
-
-<span class="keyword">if</span> ~exist(<span class="string">'n'</span>,<span class="string">'var'</span>), n=12; <span class="keyword">end</span>                 <span class="comment">% n = dimension of x (#cols of A)</span>
+  </style></head><body><div class="content"><h1>Sparse Linear Regression</h1><p>MODEL: y = Ax + noise; s.t.  card(x) = k</p><p>=============================================================================</p><p>MODEL:     y = Ax + noise;    s.t.  card(x) = k</p><p>QUESTION:  what constitutes a "plausible" sparsity-inducing prior for            any given problem (here the sparse linear model above)?            For example, should p(x) really be a Laplacian !?</p><p>ANSWER:  the most plausible p(x) should resemble the ensemble average          of all possible posteriors found using a Reference Analysis          (with a suitably flat prior for the given model).          This expectation  <a href="p(x|y)">p(x|y)</a>  should be taken w.r.t. all future          datasets {A,y} as well as different noise settings, etc.</p><p>METHOD:  create a Monte Carlo ensemble of test cases according to the model,          map out all posterior modes in each case (by exhaustive enumeration)          and form a (weighted) histogram of all such posterior modes.          Since {x_i} are deemed exchangeable the elements of x can be pooled          to give a single marginal prior p(x_i) that is the same for all i.          This expected marginal posterior is here plotted &amp; visualized as          the empirical proxy for the "right" sparsity prior for the model.</p><p>------------------------------------------------------------------------- THINGS TO NOTE:</p><p>o) the expected posterior is always a point-mass mixture ("spike-n-slab") with the atomic component at 0 having probability mass = (n-k)/n</p><p>o) so the question becomes what should the <b>continuous</b> component of this mixture look like?  For example, does <b>it</b> look like a Laplacian?</p><p>o) since all n-choose-k posterior modes are being found (using subsets1.m) beware of combinatorial explosion with large n (or just keep k very small)</p><p>------------------------------------------------------------------------- THINGS TO TRY:</p><p>o) run the script as is with the default case of {n=12, k0=12, k=4} This represents a "dense" true x0 (k0=12) representing a non-sparse problem that is forced to be sparse (k=4) perhaps for budget reasons</p><p>o) set k0=4 (with k=4); this is now a sparse recovery problem where you happen to know the true sparsity (k0) beforehand (not very realistic though)</p><p>o) increase the noise by setting noise=1.0  to see how the # of significant posterior modes in each MC test case increases</p><p>o) try setting k0 &lt; k,  so the problem is actually sparser than you think! note the increase in the # of significant posterior modes as a result.</p><p>o) try varying the aspect ratio of design matrix A by changing m (# of obs) and note how the # of significant posterior modes changes with m</p><p>o) A, x, y and noise can be sampled as Uniform, Gaussian or even Binary see the commented-out portions in the code below, try changing these.</p><p>o) you can explore the prior for all k (i.e., all 2^n sparsities) thus not commiting to any one k as being the "right" sparsity. If you assume each k to be equally likely a priori, then just pool over MC runs for each k=1:n-1. This can be done by setting k=0 (as a special flag for this case)</p><p>------------------------------------------------------------------------- Baback Moghaddam          <a href="mailto:baback@jpl.nasa.gov">baback@jpl.nasa.gov</a>         02/11/08 ------------------------------------------------------------------------- NOTE: this script needs Raanan Yehezkel's "subsets1.m" function</p><pre class="codeinput"><span class="keyword">if</span> ~exist(<span class="string">'n'</span>,<span class="string">'var'</span>), n=12; <span class="keyword">end</span>                 <span class="comment">% n = dimension of x (#cols of A)</span>
 <span class="keyword">if</span> ~exist(<span class="string">'m'</span>,<span class="string">'var'</span>), m=10*n; <span class="keyword">end</span>               <span class="comment">% m = dimension of y (#rows of A)</span>
 <span class="keyword">if</span> ~exist(<span class="string">'k0'</span>,<span class="string">'var'</span>), k0=n; <span class="keyword">end</span>                <span class="comment">% k0 = true sparsity (generative)</span>
 <span class="keyword">if</span> ~exist(<span class="string">'k'</span>,<span class="string">'var'</span>), k=max([2 fix(n/3)]); <span class="keyword">end</span>  <span class="comment">% k = desired sparsity (recovered)</span>
@@ -245,8 +178,9 @@ axis([min(xr) max(xr) 0 ylim(2)*0.1])
 </pre><img vspace="5" hspace="5" src="sparseLinRegBabackDemo_01.png" alt=""> <img vspace="5" hspace="5" src="sparseLinRegBabackDemo_02.png" alt=""> <img vspace="5" hspace="5" src="sparseLinRegBabackDemo_03.png" alt=""> <p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
-
-
+%% Sparse Linear Regression
+% MODEL: y = Ax + noise; s.t.  card(x) = k
+%
 % =============================================================================
 %
 % MODEL:     y = Ax + noise;    s.t.  card(x) = k

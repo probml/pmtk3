@@ -84,7 +84,7 @@ cvopts = {5, false, true, plotArgs}; <span class="comment">%{nfolds, useSErule, 
     xlabel(<span class="string">'C'</span>); ylabel(<span class="string">'cv error'</span>);
     printPmtkFigure(sprintf(<span class="string">'svmCvGamma%d'</span>, 10*gamma));
 <span class="keyword">end</span>
-</pre><h2>Plot 2D heat map<a name="4"></a></h2><pre class="codeinput">C = logspace(-1, 3.5, 10);
+</pre><img vspace="5" hspace="5" src="hastie2dCvDemo_01.png" alt=""> <img vspace="5" hspace="5" src="hastie2dCvDemo_02.png" alt=""> <img vspace="5" hspace="5" src="hastie2dCvDemo_03.png" alt=""> <img vspace="5" hspace="5" src="hastie2dCvDemo_04.png" alt=""> <h2>Plot 2D heat map<a name="4"></a></h2><pre class="codeinput">C = logspace(-1, 3.5, 10);
 gammas = logspace(-1, 1, 10);
 [model, bestParams, CVmu, CVse] = svmFit<span class="keyword">...</span>
     (X, y, <span class="string">'kernelParam'</span>, gammas, <span class="string">'C'</span>, C, <span class="string">'cvOptions'</span>, {5, false, true},<span class="keyword">...</span>
@@ -96,7 +96,7 @@ t = {sprintf(<span class="string">'best C = %.2f'</span>, bestParams(1))
     [<span class="string">'best \gamma'</span>, sprintf(<span class="string">' = %.2f'</span>, bestParams(2) )]};
 title(t);
 printPmtkFigure(<span class="string">'svmCvHeatmap'</span>)
-</pre><h2>Plot 2D contour<a name="5"></a></h2><pre class="codeinput">figure
+</pre><img vspace="5" hspace="5" src="hastie2dCvDemo_05.png" alt=""> <h2>Plot 2D contour<a name="5"></a></h2><pre class="codeinput">figure
 nc = numel(C);
 ng = numel(gammas);
 paramSpace = gridSpace(C, gammas);
@@ -108,15 +108,15 @@ set(gca, <span class="string">'xscale'</span>, <span class="string">'log'</span>
 xlabel(<span class="string">'C'</span>);
 ylabel(<span class="string">'\gamma'</span>);
 printPmtkFigure(<span class="string">'svmCvContour'</span>)
-</pre><h2>Plot 2D surface<a name="6"></a></h2><pre class="codeinput">figure
+</pre><img vspace="5" hspace="5" src="hastie2dCvDemo_06.png" alt=""> <h2>Plot 2D surface<a name="6"></a></h2><pre class="codeinput">figure
 surf(xx, yy, zz);
 set(gca, <span class="string">'xscale'</span>, <span class="string">'log'</span>, <span class="string">'yscale'</span>, <span class="string">'log'</span>);
 xlabel(<span class="string">'C'</span>);
 ylabel(<span class="string">'\gamma'</span>);
 zlabel(<span class="string">'cv error'</span>)
 printPmtkFigure(<span class="string">'svmCvSurf'</span>)
-</pre><pre class="codeinput">placeFigures;
-</pre><p class="footer"><br>
+</pre><img vspace="5" hspace="5" src="hastie2dCvDemo_07.png" alt=""> <pre class="codeinput">placeFigures;
+</pre><img vspace="5" hspace="5" src="hastie2dCvDemo_08.png" alt=""> <img vspace="5" hspace="5" src="hastie2dCvDemo_09.png" alt=""> <img vspace="5" hspace="5" src="hastie2dCvDemo_10.png" alt=""> <img vspace="5" hspace="5" src="hastie2dCvDemo_11.png" alt=""> <img vspace="5" hspace="5" src="hastie2dCvDemo_12.png" alt=""> <img vspace="5" hspace="5" src="hastie2dCvDemo_13.png" alt=""> <img vspace="5" hspace="5" src="hastie2dCvDemo_14.png" alt=""> <img vspace="5" hspace="5" src="hastie2dCvDemo_15.png" alt=""> <p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 % Plot CV error vs error vs gamma and C for an SVM, plus 1d slices

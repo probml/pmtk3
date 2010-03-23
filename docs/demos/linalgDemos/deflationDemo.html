@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>deflationDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="deflationDemo"><style type="text/css">
+      --><title>Compute largest K eigenvectors and eigenvalues of a symmetric matrix</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="deflationDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,7 +62,7 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput">seed = 0; randn(<span class="string">'state'</span>, seed); rand(<span class="string">'state'</span>, seed);
+  </style></head><body><div class="content"><h1>Compute largest K eigenvectors and eigenvalues of a symmetric matrix</h1><p>using power method combined with successive deflation</p><pre class="codeinput">seed = 0; randn(<span class="string">'state'</span>, seed); rand(<span class="string">'state'</span>, seed);
 n = 10; d = 3;
 X = randn(n,d);
 C = (1/n)*X'*X;
@@ -78,14 +78,24 @@ lambda2 = evals;
 assert(approxeq(abs(V1), abs(V2)));
 assert(approxeq(lambda1(1:K), lambda2(1:K)))
 </pre><pre class="codeoutput">V1 =
-    0.4876   -0.4151    0.7681
-    0.3076    0.9050    0.2938
-    0.8171   -0.0930   -0.5689
+  Columns 1 through 2
+   0.487559563904784  -0.415115873811515
+   0.307616991323722   0.905001460238382
+   0.817103089147213  -0.093011656667850
+  Column 3
+   0.768091454850522
+   0.293843740028323
+  -0.568938813434077
 lambda1 =
-    1.7322    0.6850    0.3470
+  Columns 1 through 2
+   1.732247772187615   0.684989757363048
+  Column 3
+   0.347035972996910
 </pre><p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
+%% Compute largest K eigenvectors and eigenvalues of a symmetric matrix
+% using power method combined with successive deflation
 seed = 0; randn('state', seed); rand('state', seed);
 n = 10; d = 3;
 X = randn(n,d);

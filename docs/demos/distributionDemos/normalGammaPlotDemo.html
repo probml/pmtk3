@@ -62,9 +62,8 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> normalGammaPlotDemo()
-
-xs = -1:0.01:1;
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Normal Gamma Distribution Plot</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> normalGammaPlotDemo()
+</pre><h2>Normal Gamma Distribution Plot<a name="2"></a></h2><pre class="codeinput">xs = -1:0.01:1;
 <span class="comment">%deltas = [1 1 0.1, 0.1];</span>
 <span class="comment">%cs = [1 0.1 1 0.1];</span>
 
@@ -112,20 +111,19 @@ ll = LLA(xs, 4, @normalExpGammaNeglogpdf, <span class="keyword">...</span>
 plot(xs, logp, <span class="string">'k-'</span>, <span class="string">'linewidth'</span>, 3)
 plot(xs, ll, <span class="string">'r:'</span>, <span class="string">'linewidth'</span>, 2);
 <span class="keyword">end</span>
-
-<span class="keyword">end</span>
+</pre><pre class="codeoutput">Warning: Ignoring extra legend entries. 
+</pre><img vspace="5" hspace="5" src="normalGammaPlotDemo_01.png" alt=""> <img vspace="5" hspace="5" src="normalGammaPlotDemo_02.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
 
 <span class="comment">% local linear approximation from</span>
 <span class="keyword">function</span> out = LLA(z, bstar, penFn, diffPenFn, varargin)
 out = penFn(bstar, varargin{:}) + <span class="keyword">...</span>
   diffPenFn(bstar, varargin{:})*(abs(z)-abs(bstar));
 <span class="keyword">end</span>
-</pre><pre class="codeoutput">Warning: Ignoring extra legend entries. 
-</pre><img vspace="5" hspace="5" src="normalGammaPlotDemo_01.png" alt=""> <img vspace="5" hspace="5" src="normalGammaPlotDemo_02.png" alt=""> <p class="footer"><br>
+</pre><p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 function normalGammaPlotDemo()
-
+%% Normal Gamma Distribution Plot
 xs = -1:0.01:1;
 %deltas = [1 1 0.1, 0.1];
 %cs = [1 0.1 1 0.1];

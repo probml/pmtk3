@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>linregFreqCaterpillar</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="linregFreqCaterpillar"><style type="text/css">
+      --><title>Linreg frequentist caterpillar demo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="linregFreqCaterpillar"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,7 +62,7 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput">X = dlmread(<span class="string">'caterpillar.txt'</span>); <span class="comment">% from http://www.ceremade.dauphine.fr/~xian/BCS/caterpillar</span>
+  </style></head><body><div class="content"><h1>Linreg frequentist caterpillar demo</h1><pre class="codeinput">X = dlmread(<span class="string">'caterpillar.txt'</span>); <span class="comment">% from http://www.ceremade.dauphine.fr/~xian/BCS/caterpillar</span>
 y = log(X(:,11)); <span class="comment">% log numner of nests</span>
 X = X(:,1:10);
 
@@ -100,6 +100,7 @@ Signif. codes: *** [0,0.001), ** [0.001, 0.01), * [0.01,0.05) . [0.05,1)
 </pre><p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
+%% Linreg frequentist caterpillar demo
 X = dlmread('caterpillar.txt'); % from http://www.ceremade.dauphine.fr/~xian/BCS/caterpillar
 y = log(X(:,11)); % log numner of nests
 X = X(:,1:10);

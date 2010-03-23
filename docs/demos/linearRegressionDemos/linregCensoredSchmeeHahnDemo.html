@@ -62,9 +62,9 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Load</a></li><li><a href="#3">Estimate EM</a></li><li><a href="#4">Estimate OLS</a></li><li><a href="#5">Compute predictions</a></li><li><a href="#6">Plot</a></li></ul></div><pre class="codeinput"><span class="comment">%PMTKauthor Hannes Bretschneider</span>
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">From Schmee and Hahn, "A simple method for regression analysis</a></li><li><a href="#2">Load</a></li><li><a href="#3">Estimate EM</a></li><li><a href="#4">Estimate OLS</a></li><li><a href="#5">Compute predictions</a></li><li><a href="#6">Plot</a></li></ul></div><h2>From Schmee and Hahn, "A simple method for regression analysis<a name="1"></a></h2><pre class="codeinput"><span class="comment">%PMTKauthor Hannes Bretschneider</span>
 </pre><h2>Load<a name="2"></a></h2><pre class="codeinput">load <span class="string">schmeeHahn</span>;
-<span class="comment">% from Schmee and Hahn, "A simple method for regression analysis</span>
+
 <span class="comment">% with censored data", technometrics 1979 table 1</span>
 y = log10(time);
 x = 1000./(temp+273.2);
@@ -94,12 +94,11 @@ printPmtkFigure(<span class="string">'linregCensoredSchmeeHahn'</span>)
 </pre><img vspace="5" hspace="5" src="linregCensoredSchmeeHahnDemo_01.png" alt=""> <p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
-
+%% From Schmee and Hahn, "A simple method for regression analysis
 %PMTKauthor Hannes Bretschneider
-
 %% Load
 load schmeeHahn;
-% from Schmee and Hahn, "A simple method for regression analysis
+
 % with censored data", technometrics 1979 table 1
 y = log10(time);
 x = 1000./(temp+273.2);

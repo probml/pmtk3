@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>mixGaussImputationDemoOld</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="mixGaussImputationDemoOld"><style type="text/css">
+      --><title>Imputation for a mixture of Gaussians</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="mixGaussImputationDemoOld"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,7 +62,7 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Make data</a></li><li><a href="#2">Impute</a></li><li><a href="#3">Plotting</a></li></ul></div><h2>Make data<a name="1"></a></h2><pre class="codeinput">setSeed(1);
+  </style></head><body><div class="content"><h1>Imputation for a mixture of Gaussians</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Make data</a></li><li><a href="#2">Impute</a></li><li><a href="#3">Plotting</a></li></ul></div><h2>Make data<a name="1"></a></h2><pre class="codeinput">setSeed(1);
 d = 10; n = 100; pcMissing = 0.5;
 
 K = 5;
@@ -112,6 +112,7 @@ printPmtkFigure(<span class="string">'mixGaussImputeScatterEm'</span>);
 </pre><img vspace="5" hspace="5" src="mixGaussImputationDemoOld_01.png" alt=""> <p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
+%% Imputation for a mixture of Gaussians
 %% Make data
 setSeed(1);
 d = 10; n = 100; pcMissing = 0.5;

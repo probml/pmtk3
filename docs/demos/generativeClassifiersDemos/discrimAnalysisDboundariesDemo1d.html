@@ -62,9 +62,8 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> discrimAnalysisDboundariesDemo1d
-
-<span class="comment">%plotgaussians1d(-1, 3, 1, 1, 0.5)</span>
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Discriminative Analysis Demo 1D</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> discrimAnalysisDboundariesDemo1d
+</pre><h2>Discriminative Analysis Demo 1D<a name="2"></a></h2><pre class="codeinput"><span class="comment">%plotgaussians1d(-1, 3, 1, 1, 0.5)</span>
 <span class="comment">%plotgaussians1d(-1, 3, 1, 1, 0.1)</span>
 figure
 plotgaussians1d(1, -1, 1, 1, 0.5)
@@ -72,7 +71,12 @@ printPmtkFigure <span class="string">dboundaries1dConnected</span>
 figure
 plotgaussians1d(1, -1, 3, 1, 0.5)
 printPmtkFigure <span class="string">dboundaries1dDisconnected</span>
-<span class="keyword">end</span>
+</pre><pre class="codeoutput">b =
+     0
+b =
+  -2.991946511665398
+   0.491946511665398
+</pre><img vspace="5" hspace="5" src="discrimAnalysisDboundariesDemo1d_01.png" alt=""> <img vspace="5" hspace="5" src="discrimAnalysisDboundariesDemo1d_02.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
 <span class="keyword">function</span> plotgaussians1d(mu1, mu2, s1, s2, pi1)
 pi2 = 1-pi1;
 xs = -5:0.1:5;
@@ -102,16 +106,11 @@ e = 0;
   h = line([b(2) xmax], [e e]); set(h, <span class="string">'color'</span>, <span class="string">'r'</span>, <span class="string">'linewidth'</span>, 3);
 <span class="keyword">end</span>
 <span class="keyword">end</span>
-</pre><pre class="codeoutput">b =
-     0
-b =
-   -2.9919
-    0.4919
-</pre><img vspace="5" hspace="5" src="discrimAnalysisDboundariesDemo1d_01.png" alt=""> <img vspace="5" hspace="5" src="discrimAnalysisDboundariesDemo1d_02.png" alt=""> <p class="footer"><br>
+</pre><p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 function discrimAnalysisDboundariesDemo1d
-
+%% Discriminative Analysis Demo 1D
 %plotgaussians1d(-1, 3, 1, 1, 0.5)
 %plotgaussians1d(-1, 3, 1, 1, 0.1)
 figure

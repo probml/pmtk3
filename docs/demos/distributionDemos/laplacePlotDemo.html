@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>laplacePlotDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="laplacePlotDemo"><style type="text/css">
+      --><title>Compare a Gauss and Laplace distribution</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="laplacePlotDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,7 +62,7 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput">xs = -4:0.1:4;
+  </style></head><body><div class="content"><h1>Compare a Gauss and Laplace distribution</h1><pre class="codeinput">xs = -4:0.1:4;
 mu = 0; b = 1;
 pLap = 1/(2*b)*exp(-abs(xs-mu)/b);
 pGauss = normpdf(xs,0, 1);
@@ -76,6 +76,7 @@ printPmtkFigure(<span class="string">'laplaceVsGauss'</span>)
 </pre><img vspace="5" hspace="5" src="laplacePlotDemo_01.png" alt=""> <p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
+%% Compare a Gauss and Laplace distribution
 xs = -4:0.1:4;
 mu = 0; b = 1;
 pLap = 1/(2*b)*exp(-abs(xs-mu)/b);

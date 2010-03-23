@@ -73,7 +73,7 @@ l  = betainv(alpha/2, a, b);
 u  = betainv(1-alpha/2, a, b);
 CI = [l,u] <span class="comment">% 0.3749    0.5673</span>
 </pre><pre class="codeoutput">CI =
-    0.3749    0.5673
+   0.374945772487572   0.567323675044748
 </pre><h2>Monte Carlo approximation<a name="2"></a></h2><pre class="codeinput">setSeed(0);
 S = 1000;
 X = betarnd(a, b, S, 1);
@@ -83,9 +83,9 @@ Xu = X(round(S*(1-alpha/2)));
 CIhat = [Xl Xu]
 CIhat2 = [quantile(X, alpha/2), quantile(X,1-alpha/2)]
 </pre><pre class="codeoutput">CIhat =
-    0.3727    0.5688
+   0.372748428018055   0.568848110771164
 CIhat2 =
-    0.3732    0.5692
+   0.373216019390822   0.569191204756028
 </pre><p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####

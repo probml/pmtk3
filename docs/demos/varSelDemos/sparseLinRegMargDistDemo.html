@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>sparseLinRegMargDistDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="sparseLinRegMargDistDemo"><style type="text/css">
+      --><title>Compute empirical distribution of coefficients</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="sparseLinRegMargDistDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,12 +62,7 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% Compute empirical distribution of coefficients</span>
-<span class="comment">% draw from a Gaussian ensemble where exactly k0 elements are non-zero</span>
-<span class="comment">% The resulting marginal is a good prior for the weights in</span>
-<span class="comment">% a sparse linear regression model</span>
-
-<span class="comment">% Based on code by Baback Moghaddam</span>
+  </style></head><body><div class="content"><h1>Compute empirical distribution of coefficients</h1><p>draw from a Gaussian ensemble where exactly k0 elements are non-zero The resulting marginal is a good prior for the weights in a sparse linear regression model</p><pre class="codeinput"><span class="comment">% Based on code by Baback Moghaddam</span>
 
 <span class="keyword">if</span> ~exist(<span class="string">'n'</span>,<span class="string">'var'</span>), n=12; <span class="keyword">end</span>                 <span class="comment">% n = dimension of x (#cols of A)</span>
 <span class="keyword">if</span> ~exist(<span class="string">'m'</span>,<span class="string">'var'</span>), m=10*n; <span class="keyword">end</span>               <span class="comment">% m = dimension of y (#rows of A)</span>
@@ -109,8 +104,7 @@ axis([min(xr) max(xr) 0 ylim(2)*0.1])
 </pre><img vspace="5" hspace="5" src="sparseLinRegMargDistDemo_01.png" alt=""> <img vspace="5" hspace="5" src="sparseLinRegMargDistDemo_02.png" alt=""> <img vspace="5" hspace="5" src="sparseLinRegMargDistDemo_03.png" alt=""> <p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
-
-% Compute empirical distribution of coefficients
+%% Compute empirical distribution of coefficients
 % draw from a Gaussian ensemble where exactly k0 elements are non-zero
 % The resulting marginal is a good prior for the weights in 
 % a sparse linear regression model

@@ -62,8 +62,8 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">Plotting</a></li><li><a href="#4">Old plotting</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> gaussImputationDemoColorHintonDiag()
-</pre><pre class="codeinput">setSeed(1);
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Gauss Imputation Demo</a></li><li><a href="#3">Plotting</a></li><li><a href="#4">Old plotting</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> gaussImputationDemoColorHintonDiag()
+</pre><h2>Gauss Imputation Demo<a name="2"></a></h2><pre class="codeinput">setSeed(1);
 d = 10;
 mu = randn(d,1); Sigma = randpd(d);
 pcMissing = 0.3;
@@ -175,7 +175,7 @@ Xhid(~missing) = NaN;
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 function gaussImputationDemoColorHintonDiag()
-
+%% Gauss Imputation Demo
 
 setSeed(1);
 d = 10;

@@ -86,11 +86,11 @@ modelRidge = linregFit(Xtrain, ytrain,<span class="string">'lambda'</span>,  1e-
 fprintf(<span class="string">'%5.3f, '</span>, modelRidge.w); fprintf(<span class="string">'\n'</span>);
 </pre><pre class="codeoutput">6.560, -36.934, -109.255, 543.452, 1022.561, -3046.224, -3768.013, 8524.540, 6607.897, -12640.058, -5530.188, 9479.730, 1774.639, -2821.526, 
 modelRidge = 
-        w0: 0.7440
+        w0: 0.744009053199603
          w: [14x1 double]
        Xmu: [1x14 double]
      Xstnd: [1x14 double]
-    sigma2: 5.7184e+003
+    sigma2: 5.718371718865684e+003
 2.128, 0.807, 16.457, 3.704, -24.948, -10.472, -2.625, 4.360, 13.711, 10.063, 8.716, 3.966, -9.349, -9.232, 
 </pre><h2>Plot regularized fit for various lambdas<a name="3"></a></h2><pre class="codeinput">lambdas = [0 0.00001 0.001];
 NL = length(lambdas);
@@ -111,7 +111,10 @@ logev = zeros(1,NL);
 <span class="keyword">end</span>
 logev
 </pre><pre class="codeoutput">logev =
-      -Inf  -80.3441  -60.3664
+  Columns 1 through 2
+                -Inf -80.344077893689615
+  Column 3
+ -60.366394488948117
 </pre><img vspace="5" hspace="5" src="linregNetlabPolyVsRegDemo_01.png" alt=""> <img vspace="5" hspace="5" src="linregNetlabPolyVsRegDemo_02.png" alt=""> <img vspace="5" hspace="5" src="linregNetlabPolyVsRegDemo_03.png" alt=""> <h2>Now compare logev with train/test error on a dense grid of lambdas<a name="4"></a></h2><pre class="codeinput">lambdas = logspace(-10,1.2,9);
 NL = length(lambdas);
 logev = zeros(1,NL); testMse = zeros(1,NL); trainMse = zeros(1,NL);

@@ -62,8 +62,8 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">Make data</a></li><li><a href="#4">Impute</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> mixGaussImputationDemo()
-</pre><h2>Make data<a name="3"></a></h2><pre class="codeinput">setSeed(1);
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Imputation for a mixture of Gaussians</a></li><li><a href="#3">Make data</a></li><li><a href="#4">Impute</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> mixGaussImputationDemo()
+</pre><h2>Imputation for a mixture of Gaussians<a name="2"></a></h2><h2>Make data<a name="3"></a></h2><pre class="codeinput">setSeed(1);
 <span class="comment">%d = 10; n = 100; pc = 0.5;</span>
 d = 10; n = 500; pc = 0.1;
 
@@ -109,8 +109,10 @@ doPlot(Xmiss, Xfull, XimputeEMK, sprintf(<span class="string">'em gmm(%d)'</span
 doPlot(Xmiss, Xfull, XimputeEM1, <span class="string">'em gmm(1)'</span>, <span class="string">'gmmImputeScatterEm1'</span>, n, d, pc)
 doPlot(Xmiss, Xfull, XimputeEMG, <span class="string">'em gauss'</span>, <span class="string">'gmmImputeScatterEmG'</span>, n, d, pc)
 doPlot(Xmiss, Xfull, XimputeMV, <span class="string">'mean value imputation'</span>, <span class="string">'gmmImputeScatterMV'</span>, n, d, pc)
-</pre><pre class="codeoutput">Warning: Matrix is singular to working precision. 
-Warning: Matrix is singular to working precision. 
+</pre><pre class="codeoutput">Warning: Matrix is singular
+to working precision. 
+Warning: Matrix is singular
+to working precision. 
 </pre><img vspace="5" hspace="5" src="mixGaussImputationDemo_01.png" alt=""> <img vspace="5" hspace="5" src="mixGaussImputationDemo_02.png" alt=""> <img vspace="5" hspace="5" src="mixGaussImputationDemo_03.png" alt=""> <img vspace="5" hspace="5" src="mixGaussImputationDemo_04.png" alt=""> <img vspace="5" hspace="5" src="mixGaussImputationDemo_05.png" alt=""> <img vspace="5" hspace="5" src="mixGaussImputationDemo_06.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
 
 
@@ -137,7 +139,7 @@ printPmtkFigure(sprintf(<span class="string">'%s,n%dn%dpc%d'</span>, fname, n, d
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 function mixGaussImputationDemo()
-
+%% Imputation for a mixture of Gaussians
 %% Make data
 setSeed(1);
 %d = 10; n = 100; pc = 0.5;

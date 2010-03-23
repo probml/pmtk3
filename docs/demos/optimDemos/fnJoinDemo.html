@@ -62,9 +62,8 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> fnJoinDemo()
-
-nInst = 1000;
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Squared Error Fn Demo</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> fnJoinDemo()
+</pre><h2>Squared Error Fn Demo<a name="2"></a></h2><pre class="codeinput">nInst = 1000;
 nVars = 100;
 A = randn(nInst,nVars);
 x = rand(nVars,1).*(rand(nVars,1) &gt; .5);
@@ -80,7 +79,7 @@ funObj2 = @(w) fnJoin(w, obj, grad);
 [f2,g2] = funObj2(x);
 assert(approxeq(f1,f2))
 assert(approxeq(g1,g2))
-<span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
 
 <span class="keyword">function</span> [f,g] = SquaredError(w,X,y)
 <span class="comment">% w(feature,1)</span>
@@ -91,24 +90,11 @@ res = Xw-y;
 f = sum(res.^2);
 g = 2*(X.'*res);
 <span class="keyword">end</span>
-</pre><pre class="codeoutput">Warning: Could not find an exact (case-sensitive)
-match for 'fnJoin'.
-C:\pmtk3\util\fnjoin.m is a case-insensitive match
-and will be used instead.
-You can improve the performance of your code by
-using exact
-name matches and we therefore recommend that you
-update your
-usage accordingly. Alternatively, you can disable
-this warning using
-warning('off','MATLAB:dispatcher:InexactCaseMatch').
-This warning will become an error in future
-releases. 
 </pre><p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 function fnJoinDemo()
-
+%% Squared Error Fn Demo
 nInst = 1000;
 nVars = 100;
 A = randn(nInst,nVars);

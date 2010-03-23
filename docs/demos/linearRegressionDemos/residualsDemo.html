@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>residualsDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="residualsDemo"><style type="text/css">
+      --><title>Residuals Demo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="residualsDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,7 +62,7 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput">setSeed(2);
+  </style></head><body><div class="content"><h1>Residuals Demo</h1><pre class="codeinput">setSeed(2);
 <span class="comment">%xTrainRaw = (-10:1:10)';</span>
 n = 20;
 xTrainRaw = randn(n,1);
@@ -104,12 +104,12 @@ legend(hh, <span class="string">'prediction'</span>,<span class="string">'truth'
 printPmtkFigure(<span class="string">'linRegResiduals'</span>)
 restoreSeed;
 </pre><pre class="codeoutput">w =
-    1.4530
-    0.9278
+   1.453045704556361
+   0.927795004031796
 </pre><img vspace="5" hspace="5" src="residualsDemo_01.png" alt=""> <p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
-
+%% Residuals Demo
 setSeed(2);
 %xTrainRaw = (-10:1:10)';
 n = 20;

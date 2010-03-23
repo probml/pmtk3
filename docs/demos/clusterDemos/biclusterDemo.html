@@ -62,8 +62,9 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">First a really simple example</a></li><li><a href="#4">Now a more difficult example</a></li><li><a href="#5">Now an example with multiple biclusters</a></li><li><a href="#8">X0 = 1/2 + length(permuteCols) - length(intersect(matCols{j}, permuteCols));</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> [] = biclusterDemo()
-</pre><pre class="codeinput"><span class="comment">%PMTKslow</span>
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Bicluster Demo</a></li><li><a href="#3">First a really simple example</a></li><li><a href="#4">Now a more difficult example</a></li><li><a href="#5">Now an example with multiple biclusters</a></li><li><a href="#8">X0 = 1/2 + length(permuteCols) - length(intersect(matCols{j}, permuteCols));</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> [] = biclusterDemo()
+</pre><h2>Bicluster Demo<a name="2"></a></h2><pre class="codeinput"><span class="comment">%PMTKslow</span>
+<span class="comment">%PMTKreallySlow</span>
 setSeed(0);
 nRow = 100;
 nCol = 30;
@@ -354,7 +355,9 @@ printPmtkFigure(<span class="string">'multBiclusterDiscovered'</span>);
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 function [] = biclusterDemo()
-%PMTKslow    
+%% Bicluster Demo
+%PMTKslow  
+%PMTKreallySlow
 setSeed(0);
 nRow = 100;
 nCol = 30;

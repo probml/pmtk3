@@ -63,14 +63,13 @@ p.footer {
 }
 
   </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> linregSparseEmSynthDemo()
-
 <span class="comment">% Sparse linear regression with EM on synthetic data</span>
 <span class="comment">% Similar to fig 8 from "Sparse Bayesian nonparametric regression",</span>
 <span class="comment">% Caron and Doucet, ICML08</span>
 <span class="comment">% We do not include normalInverseGaussian</span>
 <span class="comment">% but we do include normalExpGaussian  (see Griffin and Brown)</span>
 <span class="comment">%PMTKslow</span>
-
+<span class="comment">%PMTKreallySlow</span>
 
 setSeed(0);
 
@@ -214,14 +213,13 @@ options = {<span class="string">'maxIter'</span>, 30, <span class="string">'verb
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 function linregSparseEmSynthDemo()
-
 % Sparse linear regression with EM on synthetic data
 % Similar to fig 8 from "Sparse Bayesian nonparametric regression",
 % Caron and Doucet, ICML08
 % We do not include normalInverseGaussian
 % but we do include normalExpGaussian  (see Griffin and Brown)
 %PMTKslow
-
+%PMTKreallySlow
 
 setSeed(0);
 

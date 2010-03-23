@@ -62,8 +62,8 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> demoMinfuncHighdim()
-<span class="comment">%PMTKslow</span>
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Minfunc Demo</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> demoMinfuncHighdim()
+</pre><h2>Minfunc Demo<a name="2"></a></h2><pre class="codeinput"><span class="comment">%PMTKslow</span>
 <span class="comment">%methods = {'sd', 'cg',  'bb'};</span>
 methods = {<span class="string">'sd'</span>, <span class="string">'cg'</span>,  <span class="string">'bb'</span>, <span class="string">'newton'</span>, <span class="string">'newtoncg'</span>, <span class="string">'bfgs'</span>, <span class="string">'lbfgs'</span>};
 <span class="comment">%methods = {'sd', 'cg',  'bb', 'newton', 'newtoncg', 'bfgs', 'lbfgs', 'newton0', 'newton0lbfgs'};</span>
@@ -115,8 +115,64 @@ nr = 3; nc = length(dims);
   title(sprintf(<span class="string">'time d=%d'</span>, d))
 <span class="keyword">end</span>
 printPmtkFigure <span class="string">minfuncRosenBar</span>
-
-<span class="keyword">end</span>
+</pre><pre class="codeoutput">names = 
+    'sd'
+names = 
+    'sd'    'cg'
+names = 
+    'sd'    'cg'    'bb'
+names = 
+  Columns 1 through 3
+    'sd'    'cg'    'bb'
+  Column 4
+    'newto'
+names = 
+  Columns 1 through 3
+    'sd'    'cg'    'bb'
+  Columns 4 through 5
+    'newto'    'newto'
+names = 
+  Columns 1 through 3
+    'sd'    'cg'    'bb'
+  Columns 4 through 5
+    'newto'    'newto'
+  Column 6
+    'bfgs'
+names = 
+  Columns 1 through 3
+    'sd'    'cg'    'bb'
+  Columns 4 through 5
+    'newto'    'newto'
+  Columns 6 through 7
+    'bfgs'    'lbfgs'
+Warning: Plot empty. 
+Warning: Plot empty. 
+Warning: Matrix is close
+to singular or badly
+scaled.
+         Results may be
+         inaccurate. RCOND
+         = 2.145129e-018. 
+Warning: Matrix is close
+to singular or badly
+scaled.
+         Results may be
+         inaccurate. RCOND
+         = 2.145129e-018. 
+Warning: Matrix is close
+to singular or badly
+scaled.
+         Results may be
+         inaccurate. RCOND
+         = 2.145129e-018. 
+Warning: Matrix is close
+to singular or badly
+scaled.
+         Results may be
+         inaccurate. RCOND
+         = 2.145129e-018. 
+Warning: Plot empty. 
+</pre><img vspace="5" hspace="5" src="demoMinfuncHighdim_01.png" alt=""> <img vspace="5" hspace="5" src="demoMinfuncHighdim_02.png" alt=""> <img vspace="5" hspace="5" src="demoMinfuncHighdim_03.png" alt=""> <img vspace="5" hspace="5" src="demoMinfuncHighdim_04.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
 <span class="comment">%%%%%%%%</span>
 
 <span class="keyword">function</span> [fx, fcount,t] = helper(x0, method, plotstyle)
@@ -152,6 +208,7 @@ fcount = output.funcCount;
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 function demoMinfuncHighdim()
+%% Minfunc Demo
 %PMTKslow
 %methods = {'sd', 'cg',  'bb'};
 methods = {'sd', 'cg',  'bb', 'newton', 'newtoncg', 'bfgs', 'lbfgs'};

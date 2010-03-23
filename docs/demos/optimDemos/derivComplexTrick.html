@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>derivComplexTrick</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="derivComplexTrick"><style type="text/css">
+      --><title>This function returns the numerical derivative of an analytic function.</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="derivComplexTrick"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,46 +62,10 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">%</span>
-<span class="comment">% This function returns the numerical derivative of an analytic function.</span>
-<span class="comment">% Of special note, is the incorporation of the "complex step-derivative"</span>
-<span class="comment">% approach which offers greatly improved derivative accuracy compared to</span>
-<span class="comment">% forward and central difference approximations.  This is especially germain</span>
-<span class="comment">% when accuracy at the level of machine precision is a concern.</span>
-<span class="comment">%</span>
-<span class="comment">% This function was motivated by: &lt;a href="matlab:web('http://www.biomedicalcomputationreview.org/2/3/8.pdf','-browser')"&gt;Complex Step Derivatives&lt;/a&gt; authored by Michael Sherman</span>
-<span class="comment">%   -The function with no inputs generates the example used in the above link.</span>
-<span class="comment">%   -For more information see the following citation which is also found in the above link:</span>
-<span class="comment">%      --Martins JR, Sturdza P, and Alonso JJ</span>
-<span class="comment">%        &lt;a href="matlab:web('http://portal.acm.org/citation.cfm?id=838250.838251','-browser')"&gt;The complex-step derivative approximation&lt;/a&gt;</span>
-<span class="comment">%        ACM Trans. Math. Softw. 29(3) (2003)</span>
-<span class="comment">%</span>
-<span class="comment">% SYNTAX:   dfdx=deriv(f,x,h,method)</span>
-<span class="comment">%</span>
-<span class="comment">% INPUTS:   f      - A function a handle (eg f=@(x) sin(x))</span>
-<span class="comment">%           x      - Interval over which f(x) is defined</span>
-<span class="comment">%           h      - Derivative step-size</span>
-<span class="comment">%           method - Numerical methods used to compute derivative</span>
-<span class="comment">%                    'forward2' - Two point forward difference</span>
-<span class="comment">%                    'forward3' - Three point forward difference</span>
-<span class="comment">%                    'central2' - Two point central difference</span>
-<span class="comment">%                    'central4' - Four point central difference</span>
-<span class="comment">%                    'complex'  - Complex step-derivative approximation</span>
-<span class="comment">%</span>
-<span class="comment">% OUTPUTS:  dfdx   - Numerical estimate of the derivative of f(x)</span>
-<span class="comment">%</span>
-<span class="comment">% Example:  These simple examples produce results in the stack if the "links" are clicked.</span>
-<span class="comment">%           Compare the accuracy of different methods:</span>
-<span class="comment">%             &lt;a href="matlab:eval('deriv;')"&gt;&gt;&gt; deriv&lt;/a&gt;</span>
-<span class="comment">%</span>
-<span class="comment">%           Example of how to use the function:</span>
-<span class="comment">%             &lt;a href="matlab:eval('x=linspace(0,2*pi,1e3);')"&gt;&gt;&gt;x=linspace(0,2*pi,1e3);&lt;/a&gt;</span>
-<span class="comment">%             &lt;a href="matlab:eval('f=@(x) sin(x);')"&gt;&gt;&gt;f=@(x) sin(x);&lt;/a&gt;</span>
-<span class="comment">%             &lt;a href="matlab:eval('dfdx=deriv(f,x,1e-3,''forward2''); fprintf(''The results are in the STACK.\n'')')"&gt;&gt;&gt;dfdx=deriv(f,x,1e-3,'forward2');&lt;/a&gt;</span>
-<span class="comment">%</span>
-<span class="comment">% DBE 2006.07.31</span>
-
-<span class="comment">%PMTKurl http://www.mathworks.com/matlabcentral/files/11870/deriv.m</span>
+  </style></head><body><div class="content"><h1>This function returns the numerical derivative of an analytic function.</h1><p>Of special note, is the incorporation of the "complex step-derivative" approach which offers greatly improved derivative accuracy compared to forward and central difference approximations.  This is especially germain when accuracy at the level of machine precision is a concern.</p><p>This function was motivated by: <a href="a">href="matlab:web('http://www.biomedicalcomputationreview.org/2/3/8.pdf','-browser')"&gt;Complex Step Derivatives&lt;/a</a> authored by Michael Sherman   -The function with no inputs generates the example used in the above link.   -For more information see the following citation which is also found in the above link:      --Martins JR, Sturdza P, and Alonso JJ        <a href="a">href="matlab:web('http://portal.acm.org/citation.cfm?id=838250.838251','-browser')"&gt;The complex-step derivative approximation&lt;/a</a>        ACM Trans. Math. Softw. 29(3) (2003)</p><p>SYNTAX:   dfdx=deriv(f,x,h,method)</p><p>INPUTS:   f      - A function a handle (eg f=@(x) sin(x))           x      - Interval over which f(x) is defined           h      - Derivative step-size           method - Numerical methods used to compute derivative                    'forward2' - Two point forward difference                    'forward3' - Three point forward difference                    'central2' - Two point central difference                    'central4' - Four point central difference                    'complex'  - Complex step-derivative approximation</p><p>OUTPUTS:  dfdx   - Numerical estimate of the derivative of f(x)</p><p>Example:  These simple examples produce results in the stack if the "links" are clicked.           Compare the accuracy of different methods:             <a href="a">href="matlab:eval('deriv;')"</a>&gt;&gt; deriv&lt;/a&gt;</p><pre>         Example of how to use the function:
+           &lt;a href="matlab:eval('x=linspace(0,2*pi,1e3);')"&gt;&gt;&gt;x=linspace(0,2*pi,1e3);&lt;/a&gt;
+           &lt;a href="matlab:eval('f=@(x) sin(x);')"&gt;&gt;&gt;f=@(x) sin(x);&lt;/a&gt;
+           &lt;a href="matlab:eval('dfdx=deriv(f,x,1e-3,''forward2''); fprintf(''The results are in the STACK.\n'')')"&gt;&gt;&gt;dfdx=deriv(f,x,1e-3,'forward2');&lt;/a&gt;</pre><p>DBE 2006.07.31</p><pre class="codeinput"><span class="comment">%PMTKurl http://www.mathworks.com/matlabcentral/files/11870/deriv.m</span>
 <span class="comment">%PMTKauthor Daniel Ellis</span>
 <span class="comment">%PMTKurl www.stanford.edu/~dbe</span>
 
@@ -194,9 +158,7 @@ Comparison of precision of each numerical method to the analytic result:
 </pre><p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
-
-%
-% This function returns the numerical derivative of an analytic function.
+%% This function returns the numerical derivative of an analytic function.
 % Of special note, is the incorporation of the "complex step-derivative"
 % approach which offers greatly improved derivative accuracy compared to 
 % forward and central difference approximations.  This is especially germain 

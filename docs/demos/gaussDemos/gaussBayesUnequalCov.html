@@ -62,9 +62,8 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> gaussBayesUnequalCov()
-
-Sigmas = {0.01*eye(2), 0.01*eye(2)};
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Bayesian updating of a 2D Gaussian</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> gaussBayesUnequalCov()
+</pre><h2>Bayesian updating of a 2D Gaussian<a name="2"></a></h2><pre class="codeinput">Sigmas = {0.01*eye(2), 0.01*eye(2)};
 helper(Sigmas, <span class="string">'Equal'</span>)
 
 Sigmas = {0.05*eye(2), 0.01*eye(2)};
@@ -73,7 +72,7 @@ helper(Sigmas, <span class="string">'Two'</span>)
 <span class="comment">%Sigmas = {0.01*[10 1; 1 1], 0.01*[1 1; 1 10]};</span>
 Sigmas = {0.01*[1 1; 1 10], 0.01*[10 1; 1 1]};
 helper(Sigmas, <span class="string">'Mixed'</span>)
-<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="gaussBayesUnequalCov_01.png" alt=""> <img vspace="5" hspace="5" src="gaussBayesUnequalCov_02.png" alt=""> <img vspace="5" hspace="5" src="gaussBayesUnequalCov_03.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
 
 <span class="keyword">function</span> helper(Sigmas, suffix)
 y1 = [0 -1]';
@@ -100,11 +99,11 @@ axis([-1.5 1.5 -1.5 1.5]);
 printPmtkFigure(sprintf(<span class="string">'mvnBayesUnequalCov%s'</span>, suffix))
 
 <span class="keyword">end</span>
-</pre><img vspace="5" hspace="5" src="gaussBayesUnequalCov_01.png" alt=""> <img vspace="5" hspace="5" src="gaussBayesUnequalCov_02.png" alt=""> <img vspace="5" hspace="5" src="gaussBayesUnequalCov_03.png" alt=""> <p class="footer"><br>
+</pre><p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 function gaussBayesUnequalCov()
-
+%% Bayesian updating of a 2D Gaussian
 Sigmas = {0.01*eye(2), 0.01*eye(2)};
 helper(Sigmas, 'Equal')
 

@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>studentFitMultiDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="studentFitMultiDemo"><style type="text/css">
+      --><title>Fit multivariate student T distribution usign ECME</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="studentFitMultiDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,7 +62,7 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput">setSeed(1);
+  </style></head><body><div class="content"><h1>Fit multivariate student T distribution usign ECME</h1><pre class="codeinput">setSeed(1);
 
 N = 100; D = 2;
 mu = randn(1,D);
@@ -88,7 +88,7 @@ niter =
 model2 = 
        mu: [2x1 double]
     Sigma: [2x2 double]
-      dof: 34.980129552292432
+      dof: [1x1 double]
      type: 'student'
     ndims: 2
 niter2 =
@@ -96,7 +96,7 @@ niter2 =
 </pre><p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
-
+%% Fit multivariate student T distribution usign ECME
 setSeed(1);
 
 N = 100; D = 2;

@@ -62,9 +62,8 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> steepestDescentDemo()
-
-fn = @(x) aokiFn(x);
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Visualize steepest descent optimization</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> steepestDescentDemo()
+</pre><h2>Visualize steepest descent optimization<a name="2"></a></h2><pre class="codeinput">fn = @(x) aokiFn(x);
 [x1 x2] = meshgrid(0:0.1:2, -0.5:0.1:3);
 
 Z = fn([x1(:), x2(:)]);
@@ -93,13 +92,12 @@ plot(xhist(1,:), xhist(2,:), <span class="string">'ro-'</span>);
 printPmtkFigure <span class="string">aokiSteepestExact</span>
 <span class="comment">%title(sprintf('exact line searching %d', exactLineSearch))</span>
 <span class="comment">%title(sprintf('step size %3.1f', stepSize))</span>
-
-<span class="keyword">end</span>
-</pre><img vspace="5" hspace="5" src="steepestDescentDemo_01.png" alt=""> <p class="footer"><br>
+</pre><img vspace="5" hspace="5" src="steepestDescentDemo_01.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 function steepestDescentDemo()
-
+%% Visualize steepest descent optimization
 fn = @(x) aokiFn(x);
 [x1 x2] = meshgrid(0:0.1:2, -0.5:0.1:3);
 

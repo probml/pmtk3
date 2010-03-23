@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>naiveBayesMnistSample</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="naiveBayesMnistSample"><style type="text/css">
+      --><title>Run NaiveBayes on the mnist data</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="naiveBayesMnistSample"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,7 +62,7 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput">load(<span class="string">'mnistALL'</span>)
+  </style></head><body><div class="content"><h1>Run NaiveBayes on the mnist data</h1><pre class="codeinput">load(<span class="string">'mnistALL'</span>)
 <span class="comment">% train_images: [28x28x60000 uint8]</span>
 <span class="comment">% test_images: [28x28x10000 uint8]</span>
 <span class="comment">% train_labels: [60000x1 uint8]</span>
@@ -115,6 +115,7 @@ printPmtkFigure(<span class="string">'mnist7HeatmapIID'</span>);
 </pre><img vspace="5" hspace="5" src="naiveBayesMnistSample_01.png" alt=""> <img vspace="5" hspace="5" src="naiveBayesMnistSample_02.png" alt=""> <img vspace="5" hspace="5" src="naiveBayesMnistSample_03.png" alt=""> <p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
+%% Run NaiveBayes on the mnist data
 load('mnistALL')
 % train_images: [28x28x60000 uint8]
 % test_images: [28x28x10000 uint8]

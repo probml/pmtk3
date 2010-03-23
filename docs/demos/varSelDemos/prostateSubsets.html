@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>prostateSubsets</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="prostateSubsets"><style type="text/css">
+      --><title>Reproduce fig 3.5 on p56 of "Elements of statistical learning"</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="prostateSubsets"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,8 +62,7 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% Reproduce fig 3.5 on p56 of "Elements of statistical learning"</span>
-load <span class="string">prostate</span>
+  </style></head><body><div class="content"><h1>Reproduce fig 3.5 on p56 of "Elements of statistical learning"</h1><pre class="codeinput">load <span class="string">prostate</span>
 [n, d] = size(X);
 mse = zeros(2^8-1, 1);
 ss = powerset(1:d);
@@ -94,7 +93,7 @@ box <span class="string">on</span>;
 </pre><img vspace="5" hspace="5" src="prostateSubsets_01.png" alt=""> <p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
-% Reproduce fig 3.5 on p56 of "Elements of statistical learning" 
+%% Reproduce fig 3.5 on p56 of "Elements of statistical learning" 
 load prostate
 [n, d] = size(X);
 mse = zeros(2^8-1, 1); 

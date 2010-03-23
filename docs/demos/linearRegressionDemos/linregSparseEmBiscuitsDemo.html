@@ -141,6 +141,26 @@ names= {<span class="string">'ridge'</span>, <span class="string">'NJ'</span>, <
 <span class="comment">% null model</span>
 <span class="comment">%w=zeros(size(Xtrain,2),1);</span>
 <span class="comment">%mse(end+1)=mean((ytest-Xtest*w).^2);</span>
+</pre><pre class="codeoutput">CV ridge best c=0.001, alpha=1.000, sigma = -1.000
+CV normaljeffreys best c=1.000, alpha=1.000, sigma = -0.100
+CV normalgamma best c=0.001, alpha=10.000, sigma = -0.100
+CV normalinversegaussian best c=0.010, alpha=10.000, sigma = -0.100
+CV laplace best c=0.010, alpha=1.000, sigma = -0.500
+</pre><pre class="codeoutput">CV ridge best c=0.001, alpha=1.000, sigma = -1.000
+CV normaljeffreys best c=1.000, alpha=1.000, sigma = -0.500
+CV normalgamma best c=0.010, alpha=10.000, sigma = -0.100
+CV normalinversegaussian best c=0.100, alpha=10.000, sigma = -0.100
+CV laplace best c=0.010, alpha=1.000, sigma = -0.500
+</pre><pre class="codeoutput">CV ridge best c=0.001, alpha=1.000, sigma = -1.000
+CV normaljeffreys best c=1.000, alpha=1.000, sigma = -0.500
+CV normalgamma best c=0.001, alpha=10.000, sigma = -0.100
+CV normalinversegaussian best c=0.010, alpha=5.000, sigma = -0.100
+CV laplace best c=0.010, alpha=1.000, sigma = -0.500
+</pre><pre class="codeoutput">CV ridge best c=0.001, alpha=1.000, sigma = -1.000
+CV normaljeffreys best c=1.000, alpha=1.000, sigma = -0.100
+CV normalgamma best c=0.001, alpha=10.000, sigma = -0.100
+CV normalinversegaussian best c=0.100, alpha=5.000, sigma = -0.100
+CV laplace best c=0.010, alpha=1.000, sigma = -1.000
 </pre><h2>plot results<a name="3"></a></h2><pre class="codeinput"><span class="comment">%{
 </span><span class="comment">figure;
 </span><span class="comment">bar(mse);
@@ -180,7 +200,7 @@ drawnow
    box <span class="string">off</span>
 <span class="keyword">end</span>
 <span class="keyword">end</span>
-</pre><pre class="codeinput"><span class="keyword">end</span> <span class="comment">% for dim</span>
+</pre><img vspace="5" hspace="5" src="linregSparseEmBiscuitsDemo_01.png" alt=""> <img vspace="5" hspace="5" src="linregSparseEmBiscuitsDemo_02.png" alt=""> <img vspace="5" hspace="5" src="linregSparseEmBiscuitsDemo_03.png" alt=""> <img vspace="5" hspace="5" src="linregSparseEmBiscuitsDemo_04.png" alt=""> <pre class="codeinput"><span class="keyword">end</span> <span class="comment">% for dim</span>
 </pre><p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####

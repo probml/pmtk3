@@ -62,9 +62,8 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> mixStudentBankruptcyDemo()
-
-setSeed(0);
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Fit a mixture of Student T distributions to the bankruptcy data</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> mixStudentBankruptcyDemo()
+</pre><h2>Fit a mixture of Student T distributions to the bankruptcy data<a name="2"></a></h2><pre class="codeinput">setSeed(0);
 bank = importdata(<span class="string">'bankruptcy.txt'</span>);
 Y = bank.data(:,1); <span class="comment">% 0,1</span>
 X = bank.data(:,2:3);
@@ -91,8 +90,15 @@ process(model, zhat, X, Y, <span class="string">'student'</span>);
 [zhat] = mixGaussInfer(model, X);
 figure;
 process(model, zhat, X, Y, <span class="string">'gauss'</span>);
-
-<span class="keyword">end</span>
+</pre><pre class="codeoutput">ans =
+  1.0e+002 *
+  Column 1
+   9.999999446551689
+  Column 2
+   0.023404563491702
+Num Errors using student: 10
+Num Errors using gauss: 21
+</pre><img vspace="5" hspace="5" src="mixStudentBankruptcyDemo_01.png" alt=""> <img vspace="5" hspace="5" src="mixStudentBankruptcyDemo_02.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
 
 <span class="keyword">function</span> process(model, classes, X, Y, name)
 
@@ -131,15 +137,11 @@ legend([h1 h2], <span class="string">'Bankrupt'</span>, <span class="string">'So
 fprintf(<span class="string">'Num Errors using %s: %d\n'</span> , name, error);
 
 <span class="keyword">end</span>
-</pre><pre class="codeoutput">ans =
-  999.9999    2.3405
-Num Errors using student: 10
-Num Errors using gauss: 21
-</pre><img vspace="5" hspace="5" src="mixStudentBankruptcyDemo_01.png" alt=""> <img vspace="5" hspace="5" src="mixStudentBankruptcyDemo_02.png" alt=""> <p class="footer"><br>
+</pre><p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 function mixStudentBankruptcyDemo()
-
+%% Fit a mixture of Student T distributions to the bankruptcy data
 setSeed(0);
 bank = importdata('bankruptcy.txt');
 Y = bank.data(:,1); % 0,1

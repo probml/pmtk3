@@ -62,10 +62,8 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> kmeansDemoFaithful
-
-close <span class="string">all</span>
-X = load(<span class="string">'faithful.txt'</span>);
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Run Kmeans on the old faithful data</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> kmeansDemoFaithful
+</pre><h2>Run Kmeans on the old faithful data<a name="2"></a></h2><pre class="codeinput">X = load(<span class="string">'faithful.txt'</span>);
 X = standardizeCols(X);
 figure; plot(X(:,1), X(:,2), <span class="string">'.'</span>, <span class="string">'markersize'</span>, 10)
 title(<span class="string">'old faithful data'</span>)
@@ -78,7 +76,55 @@ setSeed(4);
 K = 2;
 [mu, assign, errHist] = kmeansFit(X, K, <span class="string">'plotfn'</span>, @plotKmeans, <span class="keyword">...</span>
    <span class="string">'-maxIter'</span>, 10, <span class="string">'-mu'</span>, mu);
-<span class="keyword">end</span>
+</pre><pre class="codeoutput">iteration 1, error 5.4062
+mu =
+  Column 1
+  -0.147475090872531
+   0.217344518199514
+  Column 2
+   0.145322169837896
+  -0.214171605525068
+iteration 2, error 1.8911
+mu =
+  Column 1
+   0.335996130232005
+   0.620904210701580
+  Column 2
+  -0.335996130232004
+  -0.620904210701579
+iteration 3, error 0.7929
+mu =
+  Column 1
+   0.731112991348343
+   0.704836306808314
+  Column 2
+  -1.199593160561843
+  -1.156478988840824
+iteration 4, error 0.2935
+mu =
+  Column 1
+   0.719393289384476
+   0.686259900653881
+  Column 2
+  -1.237356457741298
+  -1.180367029124674
+iteration 5, error 0.2918
+mu =
+  Column 1
+   0.714623254253566
+   0.680210936029413
+  Column 2
+  -1.248786090766330
+  -1.188651433667558
+iteration 6, error 0.2916
+mu =
+  Column 1
+   0.708397462428352
+   0.675499716913095
+  Column 2
+  -1.257766923087073
+  -1.199356640233453
+</pre><img vspace="5" hspace="5" src="kmeansDemoFaithful_01.png" alt=""> <img vspace="5" hspace="5" src="kmeansDemoFaithful_02.png" alt=""> <img vspace="5" hspace="5" src="kmeansDemoFaithful_03.png" alt=""> <img vspace="5" hspace="5" src="kmeansDemoFaithful_04.png" alt=""> <img vspace="5" hspace="5" src="kmeansDemoFaithful_05.png" alt=""> <img vspace="5" hspace="5" src="kmeansDemoFaithful_06.png" alt=""> <img vspace="5" hspace="5" src="kmeansDemoFaithful_07.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
 
 <span class="comment">%%%%%%</span>
 
@@ -101,36 +147,12 @@ title(sprintf(<span class="string">'iteration %d, error %5.4f'</span>, iter, err
 <span class="keyword">if</span> iter==2, printPmtkFigure(<span class="string">'kmeansDemoFaithfulIter2'</span>); <span class="keyword">end</span>
 
 <span class="keyword">end</span>
-</pre><pre class="codeoutput">iteration 1, error 5.4062
-mu =
-   -0.1475    0.1453
-    0.2173   -0.2142
-iteration 2, error 1.8911
-mu =
-    0.3360   -0.3360
-    0.6209   -0.6209
-iteration 3, error 0.7929
-mu =
-    0.7311   -1.1996
-    0.7048   -1.1565
-iteration 4, error 0.2935
-mu =
-    0.7194   -1.2374
-    0.6863   -1.1804
-iteration 5, error 0.2918
-mu =
-    0.7146   -1.2488
-    0.6802   -1.1887
-iteration 6, error 0.2916
-mu =
-    0.7084   -1.2578
-    0.6755   -1.1994
-</pre><img vspace="5" hspace="5" src="kmeansDemoFaithful_01.png" alt=""> <img vspace="5" hspace="5" src="kmeansDemoFaithful_02.png" alt=""> <img vspace="5" hspace="5" src="kmeansDemoFaithful_03.png" alt=""> <img vspace="5" hspace="5" src="kmeansDemoFaithful_04.png" alt=""> <img vspace="5" hspace="5" src="kmeansDemoFaithful_05.png" alt=""> <img vspace="5" hspace="5" src="kmeansDemoFaithful_06.png" alt=""> <img vspace="5" hspace="5" src="kmeansDemoFaithful_07.png" alt=""> <p class="footer"><br>
+</pre><p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 function kmeansDemoFaithful
+%% Run Kmeans on the old faithful data
 
-close all
 X = load('faithful.txt');
 X = standardizeCols(X);
 figure; plot(X(:,1), X(:,2), '.', 'markersize', 10)

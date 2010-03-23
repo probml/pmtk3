@@ -91,9 +91,9 @@ fprintf(<span class="string">'svmLight \t %5.3f \t %5.3f\n'</span>, errorRateSvm
 fprintf(<span class="string">'svmQp \t %5.3f \t %5.3f\n'</span>, errorRateQp, timeQp);
 fprintf(<span class="string">'svmLib \t %5.3f \t %5.3f\n'</span>, errorRateSvmLib, timeSvmLib);
 </pre><pre class="codeoutput">method 	 error 	 time 
-svmLight 	 0.108 	 0.262
-svmQp 	 0.108 	 1.695
-svmLib 	 0.108 	 0.012
+svmLight 	 0.108 	 0.366
+svmQp 	 0.108 	 4.113
+svmLib 	 0.108 	 0.014
 </pre><h2>Example of how to do CV<a name="2"></a></h2><pre class="codeinput">model = svmFit(Xtrain, ytrain, <span class="string">'C'</span>, logspace(-1,1,10));
 yhat  = svmPredict(model, Xtest);
 errorRate = mean(yhat ~= ytest)

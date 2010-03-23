@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>kmedoidsDemoFaithful</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="kmedoidsDemoFaithful"><style type="text/css">
+      --><title>Run Kmedoids on the old faithful demo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="kmedoidsDemoFaithful"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,7 +62,7 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput">X = load(<span class="string">'faithful.txt'</span>);
+  </style></head><body><div class="content"><h1>Run Kmedoids on the old faithful demo</h1><pre class="codeinput">X = load(<span class="string">'faithful.txt'</span>);
 X = standardizeCols(X);
 N = size(X,1);
 Y = X'; <span class="comment">% Y(:,i)</span>
@@ -88,7 +88,7 @@ symbols = {<span class="string">'r.'</span>, <span class="string">'gx'</span>, <
 </pre><img vspace="5" hspace="5" src="kmedoidsDemoFaithful_01.png" alt=""> <p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
-
+%% Run Kmedoids on the old faithful demo
 X = load('faithful.txt');
 X = standardizeCols(X);
 N = size(X,1);

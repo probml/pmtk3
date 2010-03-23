@@ -98,56 +98,80 @@ A = p*G*D + e*z;
 [pi,cnt] = pagerankpow(G);
 fprintf(<span class="string">'matrix free power method\n'</span>); disp(pi(:)')
 </pre><pre class="codeoutput">exact pi
-  Columns 1 through 5
-    0.3210    0.1705    0.1066    0.1368    0.0643
-  Column 6
-    0.2007
+  Columns 1 through 2
+   0.321016940895182   0.170543038221924
+  Columns 3 through 4
+   0.106591629585789   0.136792591301763
+  Columns 5 through 6
+   0.064311800057445   0.200743999937897
 pi over time using power method
-  Columns 1 through 5
-    0.3319    0.1194    0.1194    0.1667    0.0958
-  Column 6
-    0.1667
-  Columns 1 through 5
-    0.3219    0.1797    0.0893    0.1232    0.0724
-  Column 6
-    0.2135
-  Columns 1 through 5
-    0.3214    0.1721    0.1116    0.1369    0.0606
-  Column 6
-    0.1974
-  Columns 1 through 5
-    0.3177    0.1702    0.1067    0.1383    0.0652
-  Column 6
-    0.2018
-  Columns 1 through 5
-    0.3234    0.1693    0.1066    0.1368    0.0645
-  Column 6
-    0.1995
-  Columns 1 through 5
-    0.3200    0.1716    0.1061    0.1363    0.0643
-  Column 6
-    0.2018
-  Columns 1 through 5
-    0.3214    0.1701    0.1070    0.1371    0.0642
-  Column 6
-    0.2002
-  Columns 1 through 5
-    0.3208    0.1707    0.1064    0.1367    0.0644
-  Column 6
-    0.2010
-  Columns 1 through 5
-    0.3212    0.1704    0.1067    0.1368    0.0643
-  Column 6
-    0.2006
-  Columns 1 through 5
-    0.3209    0.1706    0.1065    0.1368    0.0643
-  Column 6
-    0.2008
+  Columns 1 through 2
+   0.331944444444444   0.119444444444444
+  Columns 3 through 4
+   0.119444444444444   0.166666666666667
+  Columns 5 through 6
+   0.095833333333333   0.166666666666667
+  Columns 1 through 2
+   0.321909722222222   0.179652777777778
+  Columns 3 through 4
+   0.089340277777778   0.123182870370370
+  Columns 5 through 6
+   0.072418981481481   0.213495370370370
+  Columns 1 through 2
+   0.321435860339506   0.172070987654321
+  Columns 3 through 4
+   0.111611786265432   0.136924864969136
+  Columns 5 through 6
+   0.060572434413580   0.197384066358025
+  Columns 1 through 2
+   0.317743686503344   0.170191335519547
+  Columns 3 through 4
+   0.106711264628344   0.138334604070216
+  Columns 5 through 6
+   0.065204434317130   0.201814674961420
+  Columns 1 through 2
+   0.323364182038484   0.169278361625514
+  Columns 3 through 4
+   0.106568612457401   0.136803470768765
+  Columns 5 through 6
+   0.064472153172957   0.199513219936878
+  Columns 1 through 2
+   0.320002742132633   0.171563332399191
+  Columns 3 through 4
+   0.106076858723679   0.136271298919943
+  Columns 5 through 6
+   0.064327995229099   0.201757772595455
+  Columns 1 through 2
+   0.321437843445544   0.170114298063825
+  Columns 3 through 4
+   0.107027548927112   0.137082658898821
+  Columns 5 through 6
+   0.064168242629165   0.200169408035534
+  Columns 1 through 2
+   0.320754757933333   0.170701584503488
+  Columns 3 through 4
+   0.106389077716257   0.136713549912272
+  Columns 5 through 6
+   0.064414973235147   0.201026056699503
+  Columns 1 through 2
+   0.321204120161655   0.170446226663312
+  Columns 3 through 4
+   0.106673627955628   0.136817199975234
+  Columns 5 through 6
+   0.064269026561252   0.200589798682919
+  Columns 1 through 2
+   0.320900727622274   0.170616529831547
+  Columns 3 through 4
+   0.106544425094752   0.136768619682180
+  Columns 5 through 6
+   0.064328973350272   0.200840724418975
 matrix free power method
-  Columns 1 through 5
-    0.3210    0.1706    0.1066    0.1368    0.0643
-  Column 6
-    0.2008
+  Columns 1 through 2
+   0.320981356688452   0.170568804091103
+  Columns 3 through 4
+   0.106570122461334   0.136780623108859
+  Columns 5 through 6
+   0.064319788911622   0.200779304738628
 </pre><img vspace="5" hspace="5" src="pagerankDemoPmtk_01.png" alt=""> <h2>Now run it on the Harvard web site<a name="3"></a></h2><pre class="codeinput">load <span class="string">harvard500</span>
 figure;spy(G);
 printPmtkFigure(<span class="string">'harvard500spy'</span>);
@@ -158,7 +182,7 @@ figure;bar(pi);set(gca,<span class="string">'xlim'</span>,[-10 510]);set(gca,<sp
 printPmtkFigure(<span class="string">'harvard500pagerank'</span>);
 [pi,ndx] = sort(pi, <span class="string">'descend'</span>);
 celldisp(U(ndx(1:3)))
-</pre><pre class="codeoutput">Elapsed time is 0.037339 seconds.
+</pre><pre class="codeoutput">Elapsed time is 0.047541 seconds.
 ans{1} =
 http://www.harvard.edu
 ans{2} =
