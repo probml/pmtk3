@@ -1,4 +1,4 @@
-
+%% Steepest Descent Demo Rosen
 exactLineSearch = true;
 %exactLineSearch = false;
 

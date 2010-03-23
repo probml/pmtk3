@@ -1,3 +1,4 @@
+%% RosenBrock Minfunc Demo
 %PMTKslow
 %{
 % "A note on the extended rosenbrock function" Evol. Comp. 2006

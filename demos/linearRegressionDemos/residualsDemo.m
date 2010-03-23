@@ -1,4 +1,4 @@
-
+%% Residuals Demo
 setSeed(2);
 %xTrainRaw = (-10:1:10)';
 n = 20;

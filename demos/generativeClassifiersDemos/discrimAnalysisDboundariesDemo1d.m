@@ -1,5 +1,5 @@
 function discrimAnalysisDboundariesDemo1d
-
+%% Discriminative Analysis Demo 1D
 %plotgaussians1d(-1, 3, 1, 1, 0.5)
 %plotgaussians1d(-1, 3, 1, 1, 0.1)
 figure

@@ -1,3 +1,4 @@
+%% Minfunc Kernelized Logreg Demo
 %PMTKauthor Mark Schmidt
 %PMTKmodified Kevin Murphy
 %PMTKurl http://people.cs.ubc.ca/~schmidtm/Software/minFunc/minFunc.html#7

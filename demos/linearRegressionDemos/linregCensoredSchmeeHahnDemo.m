@@ -1,9 +1,8 @@
-
+%% From Schmee and Hahn, "A simple method for regression analysis
 %PMTKauthor Hannes Bretschneider
-
 %% Load
 load schmeeHahn;
-% from Schmee and Hahn, "A simple method for regression analysis
+
 % with censored data", technometrics 1979 table 1
 y = log10(time);
 x = 1000./(temp+273.2);

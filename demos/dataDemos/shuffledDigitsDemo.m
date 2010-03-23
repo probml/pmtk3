@@ -1,5 +1,4 @@
-%function digitsShuffle()
-% visualize MNIST digits and version where we permute the pixels
+%% visualize MNIST digits and version where we permute the pixels
 
 load('mnistALL') % already randomly shuffled across classes
 % train_images: [28x28x60000 uint8]

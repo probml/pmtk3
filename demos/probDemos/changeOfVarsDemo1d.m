@@ -1,3 +1,4 @@
+%% Change of Variables Demo 1D
 % x ~ U(-1,1), y=x^2, plot pdf of y
 
 xs = -1:0.1:1;

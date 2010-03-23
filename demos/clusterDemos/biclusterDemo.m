@@ -1,5 +1,7 @@
 function [] = biclusterDemo()
-%PMTKslow    
+%% Bicluster Demo
+%PMTKslow  
+%PMTKreallySlow
 setSeed(0);
 nRow = 100;
 nCol = 30;

@@ -1,3 +1,4 @@
+%% Minfunc Logreg Demo
 %PMTKauthor Mark Schmidt
 %PMTKurl  http://people.cs.ubc.ca/~schmidtm/Software/minFunc/minFunc.html
 

@@ -1,6 +1,4 @@
-
-%
-% This function returns the numerical derivative of an analytic function.
+%% This function returns the numerical derivative of an analytic function.
 % Of special note, is the incorporation of the "complex step-derivative"
 % approach which offers greatly improved derivative accuracy compared to 
 % forward and central difference approximations.  This is especially germain 

@@ -1,3 +1,4 @@
+%% Imputation for a mixture of Gaussians
 %% Make data
 setSeed(1);
 d = 10; n = 100; pcMissing = 0.5;

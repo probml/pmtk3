@@ -1,4 +1,5 @@
 function demoMinfuncHighdim()
+%% Minfunc Demo
 %PMTKslow
 %methods = {'sd', 'cg',  'bb'};
 methods = {'sd', 'cg',  'bb', 'newton', 'newtoncg', 'bfgs', 'lbfgs'};

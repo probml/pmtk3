@@ -1,4 +1,4 @@
-
+%% Student T Plot Demo
 %[X1,X2] = meshgrid(linspace(-5,5,100)',linspace(-5,5,100)');
 [X1,X2] = meshgrid(linspace(-2,2,30)',linspace(-2,2,30)');
 n = size(X1,1);

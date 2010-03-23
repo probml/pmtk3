@@ -1,4 +1,4 @@
-
+%% Steepest Descent Demo
 %exactLineSearch = true;
 exactLineSearch = false;
 

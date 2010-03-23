@@ -1,4 +1,5 @@
 function pagerankDemoGui
+%% Page Rank Demo
 %PMTKslow
 %PMTKinteractive
 % PAGERANKDEMO draws the 6-node "tiny web" in Section 2.11 of "Numerical

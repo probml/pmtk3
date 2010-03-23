@@ -1,4 +1,5 @@
-%% MODEL: y = Ax + noise; s.t.  card(x) = k
+%% Sparse Linear Regression
+% MODEL: y = Ax + noise; s.t.  card(x) = k
 %
 % =============================================================================
 %
