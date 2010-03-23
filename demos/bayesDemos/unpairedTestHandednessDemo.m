@@ -1,4 +1,3 @@
-
 %% Analysis of binomial differences  on lefthand/righthand data
 
 setSeed(0);
@@ -27,7 +26,7 @@ fprintf('prob(theta1 > theta2 | data): MC= %5.3f, exact=%5.3f\n', ...
 
 sfs = [1 2 3 4 5];
 Nsf = length(sfs); BF10vsN = zeros(1,Nsf);
-for i=1:Msf
+for i=1:Nsf
 sf = sfs(i);
 y1 = 9*sf; n1 = 52*sf; y2 = 4*sf; n2 = 48*sf;
 N(i) = n1+n2;

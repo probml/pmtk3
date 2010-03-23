@@ -1,5 +1,5 @@
 function normalGammaThresholdPlotDemo()
-
+%% Threshold Plot Demo
 %PMTKauthor author Francois Caron
 
 %z=-10:.1:10;
@@ -14,7 +14,7 @@ for k=1:length(z)
   deltas = [0.01 0.75 1];
   for i=1:length(deltas)
     delta = deltas(i);
-    [temp outNG{i}(k)]=min(.5*(z(k)-x).^2+normalGammaNeglogpdf(x, delta, 1));
+    [temp outNG{i}(k)]=min(.5*(z(k)-x).^2+normalGammaNeglogpdf(x, delta, 1)');
   end
   
   % normal Jeffreys

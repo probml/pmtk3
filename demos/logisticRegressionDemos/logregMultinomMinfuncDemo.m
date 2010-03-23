@@ -23,7 +23,10 @@ wSoftmax = minFunc(@penalizedL2,zeros((nVars+1)*(nClasses-1),1),options,funObj,l
 wSoftmax = reshape(wSoftmax,[nVars+1 nClasses-1]);
 wSoftmax = [wSoftmax zeros(nVars+1,1)];
 
-model = logregFit(X0, y, 'lambda', lambda0, 'standardizeX', false);
+opts.maxIter = 2000;
+opts.TolX   = 1e-7;
+opts.TolFun = 1e-7;
+model = logregFit(X0, y, 'lambda', lambda0, 'standardizeX', false, 'fitOptions', opts);
 wMAP = model.w; 
 assert(approxeq(wMAP, wSoftmax))
 

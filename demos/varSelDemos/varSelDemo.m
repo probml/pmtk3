@@ -1,5 +1,5 @@
 function varSelDemo()
-% Variable Selection Demo
+%% Variable Selection Demo
 %PMTKslow
 methods = {...
     @(X,y) larsSelectSubsetCV(X,y, 'nfolds', 5), ...

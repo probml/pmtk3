@@ -1,4 +1,5 @@
 %% fit a rbf kernel binary logistic regression model to the crabs data 
+%PMTKslow
 load crabs
 % Cross validates over both lambda and 'rbf' Sigma
 [LRL2model, lambdaStar, LRmu, LRse] = logregFit(Xtrain, ytrain,...

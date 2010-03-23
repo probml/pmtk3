@@ -1,7 +1,11 @@
-% Let us run logregSATdemo on the mlcomp syste,
-
+%% Run logregSATdemo on the mlcomp system
+% See also mlcompLocalDemo
 %% we first compile some code that will run on the mlcomp server
+if 0
 tmpFolder = 'C:\kmurphy\GoogleCode\mlcomp';
+else
+    tmpFolder = tempdir();
+end
 lambdaRange = []; % auto-generated
 includeOffset = true;
 nfolds = 5;
@@ -21,3 +25,5 @@ mlcompWriteData(X, y, dataFile)
 predFile = fullfile(tmpFolder, 'satData-logreg-mlcomp-pred.txt')
 %octave -qf run learn dataFile
 %octave -qf run predict tmpFolder predFile
+
+
