@@ -1,5 +1,5 @@
-function [modelStud modelGauss]=mixStudentDemo()
-% Fit a mixture of Gaussians and mixture of Students to some data
+function [modelStud modelGauss]=mixStudentBankruptcyDemoHannes()
+%% Fit a mixture of Gaussians and mixture of Students to some data
 % and use the resulting models to classify
 % This example is based on fig 3.3 of Kenneth Lo's PhD thesis,
 % "Statistical methods for high throughput genomics", UBC 2009
@@ -19,9 +19,10 @@ setSeed(2);
 K = 2; 
 [modelStud, loglikHist] = mixStudentFitEm(X, K);
 modelStud.dof
+[z, post] = mixStudentInfer(modelStud, X);
 
-
-resultplotfn(X, Y, modelStud.mu, modelStud.Sigma, modelStud.post, loglikHist(end));
+resultplotfn(X, Y, modelStud.mu, modelStud.Sigma, post', loglikHist(end));
+modelStud.post = post';
 fprintf('Number of errors (Student):\t %.0f\n', errors(Y, modelStud));
 printPmtkFigure('mixStudentDemoStudentplot')
 
@@ -29,7 +30,8 @@ printPmtkFigure('mixStudentDemoStudentplot')
 [N D] = size(X);
 K = 2;
 [modelGauss, loglikHist] = mixGaussFitEm(X, K);
-
+[z, post] = mixGaussInfer(modelGauss, X);
+modelGauss.post = post';
    resultplotfn(X, Y, modelGauss.mu, modelGauss.Sigma, modelGauss.post, loglikHist(end));
 fprintf('Number of errors (Gaussian): %.0f\n', errors(Y, modelGauss));
 printPmtkFigure('mixStudentDemoGaussplot')
