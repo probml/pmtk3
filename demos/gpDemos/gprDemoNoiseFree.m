@@ -1,5 +1,4 @@
-
-% reproduce fig 2.2 from GP book
+%% reproduce fig 2.2 from GP book
 
 setSeed(0);
 L = 1;

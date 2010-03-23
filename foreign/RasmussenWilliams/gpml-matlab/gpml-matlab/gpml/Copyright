@@ -1,0 +1,21 @@
+
+                     Software that implements
+ 
+          GAUSSIAN PROCESS REGRESSION AND CLASSIFICATION
+
+Copyright (c) 2005 - 2007 by Carl Edward Rasmussen and Chris Williams
+
+Permission is granted for anyone to copy, use, or modify these programs for
+purposes of research or education, provided this copyright notice is retained,
+and note is made of any changes that have been made.
+
+These programs are distributed without any warranty, express or
+implied. As these programs were written for research purposes only, they
+have not been tested to the degree that would be advisable in any
+important application.  All use of these programs is entirely at the
+user's own risk.
+
+The code and associated documentation are avaiable from
+
+http://www.GaussianProcess.org/gpml/code
+

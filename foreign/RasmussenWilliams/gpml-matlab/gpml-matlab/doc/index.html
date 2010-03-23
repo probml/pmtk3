@@ -1,0 +1,95 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Documentation for GPML Matlab Code</title>
+    <link type="text/css" rel="stylesheet" href="style.css">
+  </head>
+
+  <body>
+
+<h2>Documentation for GPML Matlab Code</h2>
+
+The code provided here demonstrates the main algorithms from Rasmussen
+and Williams: <a href="http://www.gaussianprocess.org/gpml">Gaussian Processes
+for Machine Learning</a>.</p>
+
+The code is written in Matlab&reg, and should work with version 6 and
+version 7.  Bug reports should be sent to the authors. All the code
+including demonstrations and html documentation can be downloaded in a
+<a
+href="http://www.gaussianprocess.org/gpml/code/gpml-matlab.tar.gz">tar</a>
+or <a
+href="http://www.gaussianprocess.org/gpml/code/gpml-matlab.zip">zip</a>
+archive file. Previous versions of the code may be available <a
+href="http://www.gaussianprocess.org/gpml/code/old">here</a>. Please
+read the <a href="../gpml/Copyright">copyright</a> notice.</p>
+
+After unpacking the tar or zip file you will find 
+3 subdirectories: gpml, gpml-demo and doc.
+</p>
+
+The directory gpml contains the basic functions for GP regression,
+GP binary classification, and sparse approximate methods for GP regression.
+</p>
+
+The directory gpml-demo contains 
+Matlab&reg scripts with names "demo_*.m". These provide small
+demonstrations of the various programs provided. 
+</p>
+
+The directory doc contains four html files providing 
+documentation. This information can also be accessed via
+the www at <a href="http://www.GaussianProcess.org/gpml/code">http://www.GaussianProcess.org/gpml/code</a>.
+</p>
+
+The code should run directly as provided, but some demos require a lot of
+computation. A significant speedup may be attained by compiling the mex
+files, see the rudimentary instructions on how to do this in the <a
+href="../README">README</a> file.</p>
+
+The documentation is divided into three sections:
+
+<h3>Regression</h3>
+
+Basic <a href="regression.html">Gaussian process regression</a> (GPR)
+code allowing flexible specification of the covariance function.
+
+<h3>Binary Classification</h3>
+
+<a href="classification.html">Gaussian process classification</a> (GPC)
+demonstrates implementations of Laplace and EP approximation methods for binary
+GP classification.
+
+<h3>Sparse Approximation methods for Gaussian Process Regression</h3>
+
+<a href="sparse-approx.html">Approximation methods for GPR</a> demonstrates the
+methods of <b>subset of datapoints</b> (SD), <b>subset of regressors</b> (SR)
+and <b>projected process</b> (PP) approximations.
+
+<br><br><br>
+
+<h3>Other Gaussian Process Code</h3>
+
+A table of other sources of useful Gaussian process software, unrelated to the
+<a href="http://www.gaussianprocess.org/gpml">book</a>, may be found <a
+href="http://www.gaussianprocess.org/#code">here<a>. This 
+includes pointers a number of packages that can handle multi-class
+classification, e.g. <tt>fbm</tt> (Radford Neal), 
+<tt>c++-ivm</tt> (Neil Lawrence), <tt>gpclass</tt> (David
+Barber and Chris Williams), <tt>klr</tt> (kernel multiple
+logistic regression, by Matthias Seeger), and 
+<tt>VBGP</tt> (Mark Girolami and Simon Rogers).
+</p>
+
+<br><br><br>
+
+Go back to the <a href="http://www.gaussianprocess.org/gpml">web page</a> for
+Gaussian Processes for Machine Learning.
+
+<hr>
+<!-- Created: Fri Oct 14 12:23:09 CEST 2005 -->
+<!-- hhmts start -->
+Last modified: Tue Jun 26 10:43:51 CET 2007
+<!-- hhmts end -->
+  </body>
+</html>
