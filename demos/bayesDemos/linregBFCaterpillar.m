@@ -25,7 +25,7 @@ for i=1:(d+1)
 end
 logprobFull = -(d+1)/2 * log10(g+1) + ...
       -(n/2)*log10(y'*y - (g/(g+1))*y'*X1*inv(X1'*X1)*X1'*y);
-logBF = logprobFull  - logprob
+logBF = logprobFull  - logprob;
 BF = 10.^logBF;
 
 for i=1:(d+1)
@@ -42,7 +42,7 @@ for i=1:(d+1)
       sym = '';
    end
    fprintf('w%d & %5.3f & %5.3f & %5.3f  %s\\\\\n', ...
-      i-1, mu(i), vvar(i), logBF(i), sym);
+      i-1, mu(i), sqrt(vvar(i)), logBF(i), sym);
 end
 
 

@@ -1,14 +1,15 @@
-function [w, stderr, pval, R2, sigma2, confint, Zscore] = lm(y, XX, names);
-% simulate the effect of R's lm function
+function [w, stderr, pval, R2, sigma2, confint, Zscore] = linearRegressionFrequentist(y, XX, names, useLatex)
+% simulate  R's lm function for a simple linear regression model
 % Each row ox X is a training case, excluding the 1 term
 
 [n d] = size(XX);
 
-if nargin < 3
+if nargin < 3 || isempty(names)
   for i=1:d
     names{i} = sprintf('x%d: ', i);
   end
 end
+if nargin <4, useLatex = false; end
 
 X = [ones(n,1) XX];
 w = X\y; % mle
@@ -28,6 +29,7 @@ confint = [w-tc*stderr w+tc*stderr];
 names2 = {'intercept', names{:}};
 fprintf('\nlinear regression n=%d, d=%d, R-squared=%10.5f\n\n', n, d, R2);
 
+
 fprintf('%10s %10s %10s %10s %10s %5s\n', ...
 	'', 'estimate', 'std err', 't value', 'p(>|t|)', '');
 
@@ -42,8 +44,14 @@ for i=1:d+1
     str = '.';
   else str = '';
   end
-  fprintf('%10s %10.5f %10.5f %10.5f %10.5f %s\n', ...
-	  names2{i}, w(i), stderr(i), Zscore(i),  pval(i), str);
+  if useLatex
+    fprintf('%10s & %10.5f & %10.5f & %10.5f & %10.5f %s\\\\\n', ...
+      names2{i}, w(i), stderr(i), Zscore(i),  pval(i), str);
+  else
+    fprintf('%10s %10.5f %10.5f %10.5f %10.5f %s\n', ...
+      names2{i}, w(i), stderr(i), Zscore(i),  pval(i), str);
+  end
+  
 end
 
 

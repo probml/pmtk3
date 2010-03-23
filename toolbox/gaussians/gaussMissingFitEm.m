@@ -75,7 +75,7 @@ while ~done
       Sigma = SigmaOld;
    end
    if verbose, fprintf('%d: LL = %5.3f\n', iter, loglikTrace(iter)); end
-   if iter > 1
+   if ~done
       converged = convergenceTest(loglikTrace(iter), loglikTrace(iter-1), tol);
    else 
      converged = false;

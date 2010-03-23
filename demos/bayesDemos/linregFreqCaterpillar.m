@@ -2,7 +2,8 @@ X = dlmread('caterpillar.txt'); % from http://www.ceremade.dauphine.fr/~xian/BCS
 y = log(X(:,11)); % log numner of nests
 X = X(:,1:10);
 
-[w, stderr, pval, R2, sigma2, confint, Zscore] = lm(y, X)
+[w, stderr, pval, R2, sigma2, confint, Zscore] = ...
+  linearRegressionFrequentist(y, X, [], true);
 
 % use stats toolbox
 [n d] = size(X);
