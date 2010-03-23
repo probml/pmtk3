@@ -64,7 +64,7 @@ end
 suptitle('Imputation using true parameters')
 printPmtkFigure('mvnImputeScatterTrue');
 
-placeFigures
+placeFigures();
 
 
 %% Old plotting
