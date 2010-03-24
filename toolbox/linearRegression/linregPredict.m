@@ -5,7 +5,7 @@ function [yhat, v] = linregPredict(model, X)
 
 % Transform the test data in the same way as the training data
 if isfield(model, 'Xmu')
-    X = center(X, model.Xmu);
+    X = centerCols(X, model.Xmu);
 end
 if isfield(model, 'Xstnd')
     X = mkUnitVariance(X, model.Xstnd);

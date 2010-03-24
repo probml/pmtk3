@@ -76,7 +76,7 @@ end
 %% preprocess X, (kernelization happens later)
 pre = struct();
 if standardizeX
-    [X, pre.Xmu]   = center(X);
+    [X, pre.Xmu]   = centerCols(X);
     [X, pre.Xstnd] = mkUnitVariance(X);
 end
 if rescaleX

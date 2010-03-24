@@ -7,7 +7,7 @@
 load bishop2class
 y = Y(:);
 
-%X = mkUnitVariance(center(X));
+%X = mkUnitVariance(centerCols(X));
 %% Set up kernels
 % We pick  hyperparameters that result in a pretty plot
 lambda = 2;

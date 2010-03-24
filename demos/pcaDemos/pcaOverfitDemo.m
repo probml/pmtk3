@@ -22,7 +22,7 @@ end
 
 n = size(X,1)
 n2 = floor(n/2);
-X = center(X);
+X = centerCols(X);
 Xtrain = X(1:n2,:);
 Xtest = X((n2+1):end,:);
 

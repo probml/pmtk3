@@ -10,7 +10,7 @@ noise		= 0.1;
 x	= 10*[-1:2/(N-1):1]';
 ytrue	= sin(abs(x))./abs(x);
 y	= ytrue + noise*randn(N,1);
-X = mkUnitVariance(center(x)); 
+X = mkUnitVariance(centerCols(x)); 
 
 % We pick  hyperparameters that result in a pretty plot
 lambda = 0.5;
@@ -19,7 +19,7 @@ kernelFn = @(X1,X2) kernelRbfSigma(X1,X2,rbfScale);
 Ktrain =  kernelFn(X, X);
 %Xtest = [-5:.05:5]';
 Xtest = (-10:.1:10)';
-Xtest = mkUnitVariance(center(Xtest)); 
+Xtest = mkUnitVariance(centerCols(Xtest)); 
 Ktest = kernelFn(Xtest, X);
 
 for method=1:4

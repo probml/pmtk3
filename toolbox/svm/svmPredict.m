@@ -4,7 +4,7 @@ function yhat = svmPredict(model, Xtest)
 % Xtest(i, :) is the ith case. 
 
 if isfield(model, 'standardizeX') && model.standardizeX
-    Xtest = mkUnitVariance(center(Xtest)); 
+    Xtest = mkUnitVariance(centerCols(Xtest)); 
 end
 if isfield(model, 'rescaleX') && model.rescaleX
    Xtest = rescaleData(Xtest); 

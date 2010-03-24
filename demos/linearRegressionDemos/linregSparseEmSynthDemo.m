@@ -41,8 +41,8 @@ for trial=1:Ntrials
    [ytrain, muY, sY] = standardizeCols(ytrain);
    ytest = standardizeCols(ytest, muY, sY);
    
-   [Xtrain, mu] = center(Xtrain);
-   Xtest = center(Xtest, mu);
+   [Xtrain, mu] = centerCols(Xtrain);
+   Xtest = centerCols(Xtest, mu);
    
    priors = {'Scad','NJ', 'NG', 'NEG', 'Laplace', 'Ridge'}; 
 

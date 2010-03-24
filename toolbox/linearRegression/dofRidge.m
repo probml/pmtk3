@@ -4,7 +4,7 @@ function df = dofRidge(X, lambdas)
 % X should *not* include a column of 1s
 [n,d] = size(X);
 if d==0, df = 0; return; end
-XC  = center(X);
+XC  = centerCols(X);
 D22 = eig(XC'*XC); % evals of X'X = svals^2 of X
 D22 = sort(D22, 'descend');
 D22 = D22(1:min(n,d));

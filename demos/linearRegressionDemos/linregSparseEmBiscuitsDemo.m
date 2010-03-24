@@ -17,8 +17,8 @@ ytest = y_test(:, ing);
 [ytrain, muY, sY] = standardizeCols(ytrain);
 ytest = standardizeCols(ytest, muY, sY);
 
-[Xtrain, mu] = center(Xtrain);
-Xtest = center(Xtest, mu);
+[Xtrain, mu] = centerCols(Xtrain);
+Xtest = centerCols(Xtest, mu);
 
 options = {'maxIter', 200, 'verbose', false};
 models = {'ridge', 'normaljeffreys', 'normalgamma', 'normalinversegaussian', 'laplace'};

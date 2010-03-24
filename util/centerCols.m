@@ -1,4 +1,4 @@
-function [X,mu] = center(X, mu)
+function [X,mu] = centerCols(X, mu)
 % CENTER Make each column be zero mean
 
 if nargin < 2 || isempty(mu)

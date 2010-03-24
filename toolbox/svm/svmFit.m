@@ -99,7 +99,7 @@ elseif ischar(fitFn)
 end
 %% Preprocess Data
 if standardizeX
-    X = mkUnitVariance(center(X));
+    X = mkUnitVariance(centerCols(X));
 end
 if rescaleX
     X = rescaleData(X);    

@@ -63,7 +63,7 @@ for j=1:min(2,length(ndxError))
   imagesc(img);
   colormap(gray)
   title(sprintf('testcase %d, ytrue = %d, yhat = %d', i, ytest(i), yhat(i)));
-  %pause;
+  
 end
 
 

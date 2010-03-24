@@ -6,8 +6,8 @@ Xtrain = data.X;
 ytrain = convertLabelsToPM1(data.y);
 Xtest  = data.xnew;
 ytest  = convertLabelsToPM1(data.prob >= 0.5);
-%Xtrain = mkUnitVariance(center(Xtrain));
-%Xtest = mkUnitVariance(center(Xtest));
+%Xtrain = mkUnitVariance(centerCols(Xtrain));
+%Xtest = mkUnitVariance(centerCols(Xtest));
 gammas = [5, 1, 0.5, 0.1];
 Crange = logspace(-1, 3.5, 20); 
 

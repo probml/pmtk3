@@ -46,8 +46,8 @@ for i=1:5
     plot(pc(k,1), pc(k,2), 'ro');
     figure(2); subplot2(5,5,i,j); hold on
     imagesc(reshape(X(k,:),[h w])); axis off; colormap(gray);
-    %drawnow
-    %pause
+    
+    
   end
 end
 figure(1)

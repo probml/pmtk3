@@ -9,7 +9,7 @@ y = y(ndx); X = X(ndx,:);
 %X = diabetes.x2;
 X = normalize(X);
 %y = diabetes.y;
-y = center(y);
+y = centerCols(y);
 [n p] = size(X);
 
 lambda2 = 1000;

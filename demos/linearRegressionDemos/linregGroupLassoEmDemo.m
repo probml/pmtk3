@@ -39,7 +39,7 @@ Xtrain = X_ind;
 ytrain = y;
 
 [Xtrain, mu, s] = standardizeCols(Xtrain);
-ytrain = center(ytrain);
+ytrain = centerCols(ytrain);
 
 if 0
 Xtrain = X_ind(1:floor(nInstances/2),:);

@@ -6,7 +6,7 @@ function [yhat, p] = logregPredict(model, X)
 % regression.
 
 if isfield(model, 'Xmu')
-    X = center(X, model.Xmu);
+    X = centerCols(X, model.Xmu);
 end
 if isfield(model, 'Xstnd')
     X = mkUnitVariance(X, model.Xstnd);

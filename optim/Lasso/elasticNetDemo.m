@@ -5,9 +5,9 @@ close all;
 load('prostate.mat');
 ndx = find(istrain);
 y = y(ndx); X = X(ndx,:);
-X = center(X);
+X = centerCols(X);
 X = mkUnitNorm(X);
-y = center(y);
+y = centerCols(y);
 [n p] = size(X);
 
 lambda2 = 1000;

@@ -19,10 +19,10 @@ if ~isempty(Xtest) && all(Xtest(:,1)==1)
 end
 [n,d] = size(Xtrain);
 if doStandardize
-  [Xtrain, mu]  = center(Xtrain);
+  [Xtrain, mu]  = centerCols(Xtrain);
   [Xtrain, s]  = mkUnitNorm(Xtrain);
   if ~isempty(Xtest)
-    Xtest = center(Xtest, mu);
+    Xtest = centerCols(Xtest, mu);
     Xtest = mkUnitNorm(Xtest, s);
   end
 end

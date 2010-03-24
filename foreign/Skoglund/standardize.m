@@ -7,7 +7,7 @@ function X = standardize(X)
 
 
 [n p] = size(X);
-X = center(X);
+X = centerCols(X);
 X = X./(ones(n,1)*std(X,1));
 
 end

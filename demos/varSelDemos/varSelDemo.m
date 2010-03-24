@@ -55,9 +55,9 @@ function [metrics] = helper(fn, n,d,r,lassoSignConsistent,sigma,ntrials)
 for t=1:ntrials
     setSeed(t);
     [X,y,Wtrue] = bolassoMakeData(n,d,r,1,lassoSignConsistent,sigma);
-    %X = center(X);
+    %X = centerCols(X);
     %X = mkUnitVariance(X);
-    %y = center(y);
+    %y = centerCols(y);
     trueSupport = find(Wtrue ~= 0); % 1 to r
     start = cputime;
     [estSupport,West] = fn(X,y);

@@ -6,9 +6,9 @@ function [bestSelectedVars, w] = larsSelectSubsetCV(X,y,varargin)
 [lambdaRidge, CVnfolds] = process_options(...
     varargin, 'lambdaRidge', 1e-5, 'nfolds', 5);
 
-X = center(X);
+X = centerCols(X);
 X = mkUnitVariance(X);
-y = center(y);
+y = centerCols(y);
 wLars = lars(X, y, 'lasso'); % each row is a different weight vector
 supports = abs(wLars) ~= 0;
 

@@ -7,7 +7,7 @@ model = linregFit(Xtrain, ytrain, 'lambda', 0, 'standardizeX', false); %ols
 yhat = linregPredict(model, Xtest);
 mse = lossFn(yhat, ytest)
 %%
-[ytrain, ybar] = center(ytrain);
+[ytrain, ybar] = centerCols(ytrain);
 w = Xtrain \ ytrain;
 w0  = ybar - mean(Xtrain)*w;
 assert(isequal(w, model.w));
@@ -18,7 +18,7 @@ assert(isequal(w0, model.w0));
 yhat = linregPredict(model, Xtest);
 mse = lossFn(yhat, ytest)
 %% 
-w = linregFitL2QR(mkUnitVariance(center(Xtrain)),center(ytrain), bestLambda); 
+w = linregFitL2QR(mkUnitVariance(centerCols(Xtrain)),centerCols(ytrain), bestLambda); 
 assert(isequal(model.w, w));
 %%
 model = linregFit(Xtrain, ytrain, 'kernelFn', @kernelRbfSigma, 'doPlot', true);

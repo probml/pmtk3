@@ -128,5 +128,5 @@ disp(' ')
 
 printPmtkFigure('demoEvidenceReg')
 
-%pause; clc; close(h); 
+
 

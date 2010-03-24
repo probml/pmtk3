@@ -5,7 +5,7 @@
 seed = 0; randn('state', seed);
 n = 5;
 X=[randn(n,2)+2.*ones(n,2);2.*randn(n,2)-2.*ones(n,2)];
-X = center(X);
+X = centerCols(X);
 [n d] = size(X);
 [W, mu, sigma2, evals, evecs] = ppcaFit(X, 1);
 %sigma2=eps;

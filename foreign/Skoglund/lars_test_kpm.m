@@ -16,8 +16,8 @@ else
 end
 
 %X = normalize(X);
-X = center(X); X = standardize(X);
-y = center(y);
+X = centerCols(X); X = standardize(X);
+y = centerCols(y);
 
 [n p] = size(X);
 

@@ -4,7 +4,7 @@ function [X, mu, s] = standardizeCols(X, mu, s)
 % If mu and s are omitted, it computed from X and returned for use at test time
 
 if nargin < 2, mu = []; s = []; end
-[X,mu] = center(X,mu);
+[X,mu] = centerCols(X,mu);
 [X,s] = mkUnitVariance(X,s);
 
 end

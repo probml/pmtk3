@@ -67,7 +67,7 @@ end
 %% preprocess X, (kernelization happens later)
 pre = struct(); 
 if standardizeX
-    [X, pre.Xmu]   = center(X);
+    [X, pre.Xmu]   = centerCols(X);
     [X, pre.Xstnd] = mkUnitVariance(X);
 end
 if rescaleX
@@ -122,7 +122,7 @@ if isempty(lambda)
             else
                 K = kernelFn(X, X, mean(kernelParam)); 
             end
-            lambdaMax = lambdaMaxLasso(K, center(y)); 
+            lambdaMax = lambdaMaxLasso(K, centerCols(y)); 
             lambda = linspace(1e-5, lambdaMax, nlambdas); 
         case {'l2', 'scad'}
             lambda = 10.^(linspace(-3,2, nlambdas)); 
@@ -150,7 +150,7 @@ end % end of main function
 
 function model = simpleFit(X, y, lambda, fitFn)
 % Fit function wrapper 
-    [y, ybar] = center(y);  
+    [y, ybar] = centerCols(y);  
     w   = fitFn(X, y, lambda);
     model.w0  = ybar - mean(X)*w; 
     model.w   = w; 
@@ -158,7 +158,7 @@ end
 
 function model = kernelizedFit(X, y, lambda, kernelParam, fitfn, kernelFn)
 % Fit function wrapper
-    [y, ybar] = center(y);  
+    [y, ybar] = centerCols(y);  
     K = kernelFn(X, X, kernelParam); 
     w  = fitfn(K, y, lambda);
     model.w0 = ybar - mean(K)*w;
