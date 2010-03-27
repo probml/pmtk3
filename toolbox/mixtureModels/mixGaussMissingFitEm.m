@@ -15,7 +15,7 @@ if isempty(muk) || isempty(Sigmak)
   muk = zeros(d,K);
   Sigmak = zeros(d,d,K);
   for k=1:K
-    i=round(n*rand); %pick a random vector
+    i=round(n*rand+0.5); %pick a random vector
     proto = data(i,:)';
     h = isnan(proto); % hidden values
     proto(h) = nanmean(data(:,h));

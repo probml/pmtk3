@@ -164,11 +164,14 @@ end
 function makePlots()        
     close all;
     data = [16,8,2,64];
-    displayHypothesisSpace(inconcept,hypSpace);
+    %data = [16, 23, 19, 20];
+    %displayHypothesisSpace(inconcept,hypSpace);
     printPmtkFigure('joshHypSpace'); 
     
+   
     plotPriorLikPost(16, hypSpace, priorFn, likelihoodFn,posteriorFn);
     printPmtkFigure('joshPriorLikPost16');
+ 
     
     plotPriorLikPost(data, hypSpace, priorFn, likelihoodFn,posteriorFn);
     printPmtkFigure('joshPriorLikPostAll');
@@ -188,6 +191,7 @@ function makePlots()
     %printPmtkFigure('josh-2-9');
     printPmtkFigure('joshPredictive16');
     
+    %visualizePredictive(inconcept,data,hypSpace);
     %plotGamma();
 end
 

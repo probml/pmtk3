@@ -107,11 +107,11 @@ end
 if ~isempty(kernelFn) && isempty(kernelParam)
     switch func2str(kernelFn)
         case 'kernelRbfSigma'
-            kernelParam = logspace(-1, 1, nkernelParams);
+            kernelParam = logspace(-1, 2, nkernelParams);
         case 'kernelPoly', 
             kernelParam = 1:nkernelParams;
         otherwise
-            kernelParam = logspace(-1, 1, nkernelParams);
+            kernelParam = logspace(-1, 2, nkernelParams);
     end
 end
 if isempty(lambda)

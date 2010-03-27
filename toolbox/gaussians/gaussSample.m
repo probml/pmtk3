@@ -1,12 +1,10 @@
 function S = gaussSample(model, n)
-% Returns n samples from a multivariate Gaussian distribution having
-% mean mu, and cov matrix Sigma. 
+% Returns n samples (in the rows) from a multivariate Gaussian distribution 
 %
 % Example:
 % model.mu = zeros(1, 10); model.Sigma = randpd(10); 
 % S = gaussSample(model, 100)
-% model.mu = 0; model.Sigma = 1;
-% S = gaussSample(model, 20)         % univariate distribution supported too
+% S = gaussSample(struct('mu',[0], 'Sigma', eye(1)), 3)         
 
       
       mu = model.mu; Sigma = model. Sigma; 
