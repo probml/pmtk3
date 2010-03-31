@@ -43,7 +43,7 @@ while true
     previousLL = currentLL;
     %% E-step
     [z, Rik, L] = mixDiscreteInfer(model, X);
-    currentLL = (sum(L) + sum(log(mixPrior + eps))) / n;
+    currentLL = (sum(L) + sum(log(mixPrior + eps)) + sum(log(distPrior + eps))) / n;
     %% Check convergence
     if verbose, fprintf('%d\t loglik: %g\n', it, currentLL ); end
     it = it+1;

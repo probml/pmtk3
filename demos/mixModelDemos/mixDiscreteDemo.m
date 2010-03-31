@@ -3,13 +3,17 @@
 setSeed(0);
 truth.nmix = 6;
 truth.d = 80;
-truth.nstates = 10;
+truth.nstates = 8;
 truth.mixweight = normalize(rand(1, truth.nmix));
 truth.T = normalize(rand(truth.nstates, truth.d, truth.nmix), 1);
 nsamples = 1000;
 [X, y] = mixDiscreteSample(truth, nsamples); 
+%% Prior
+% use bogus priors just for testing purposes
+distPrior = randi(10, [truth.nstates, 1]); % pseudo counts 
+mixPrior = randi(10, [1, truth.nmix]);     % pseduo counts
 %% Fit
-model = mixDiscreteFitEM(X, truth.nmix);
+model = mixDiscreteFitEM(X, truth.nmix, distPrior, mixPrior);
 %% Compare against the best permutation of the cluster labels.
 ypred = mixDiscreteInfer(model, X);
 allperms = perms(1:model.nmix);
