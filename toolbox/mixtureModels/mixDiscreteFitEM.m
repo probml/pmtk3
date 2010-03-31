@@ -6,7 +6,7 @@ function model = mixDiscreteFitEM(X, nmix, distPrior, mixPrior, varargin)
 % nmix      - the number of mixture components to use
 % distPrior - (optional) prior pseudoCounts for the component distributions.
 % mixPrior  - (optional) prior on the mixture weights.
-% varargin  - (optional) {'-maxiter', 100, '-tol', 1e-4, '-verbose', true, '-saveMemory', false}
+% varargin  - (optional) {'maxiter', 100, 'tol', 1e-4, 'verbose', true, 'saveMemory', false}
 %
 % Returns a struct with fields T, mixweight, nstates, d, nmix
 % model.T is nstates-by-ndistributions-by-nmixtures
@@ -20,34 +20,30 @@ distPrior = colvec(distPrior);
 mixPrior  = rowvec(mixPrior);
 [maxiter, tol, verbose, saveMemory] = process_options(varargin,...
     'maxiter', 100, 'tol', 1e-4, 'verbose', true, 'saveMemory', false);
-%% Initial M-step using Kmeans
-[mu, assign] = kmeansFit(X, nmix); %#ok
-mixweight = normalize(rowvec(histc(assign, 1:nmix)) + mixPrior - 1);
+%% Initialize 
+% by randomly partitioning the data, fitting each partition separately. 
 T = zeros(nstates, d, nmix);
+Xsplit = randsplit(X, nmix);
 for k=1:nmix
-    counts = histc(X(assign==k, :), 1:nstates);
-    T(:, :, k) = normalize(bsxfun(@plus, counts, (distPrior-1)), 1);
+    m = discreteFit(Xsplit{1});
+    T(:, :, k) = m.T;
 end
+T = normalize(T + 0.2*rand(size(T)), 1); % add noise
+mixweight = normalize(10*rand(1, nmix) + mixPrior);
 %% Setup loop
 currentLL = -inf;
-it        = 1;
-Lijk      = zeros(n, d, nmix);
+it = 1;
+model = struct('nstates', nstates, 'nmix', nmix, 'd', d,...
+               'mixweight', mixweight, 'T', T);
 counts    = zeros(nstates, d, nmix);
 %% Enter EM loop
 while true
     previousLL = currentLL;
     %% E-step
-    logT = log(T + eps);
-    for j=1:d
-        Lijk(:, j, :) = logT(X(:, j), j, :);
-    end
-    logRik = bsxfun(@plus, log(mixweight+eps), squeeze(sum(Lijk, 2)));
-    L = logsumexp(logRik, 2);
-    logRik = bsxfun(@minus, logRik, L);
-    Rik = exp(logRik);
+    [z, Rik, L] = mixDiscreteInfer(model, X);
     currentLL = (sum(L) + sum(log(mixPrior + eps))) / n;
     %% Check convergence
-    if verbose, fprintf('%d\t loglik: %f\n', it, currentLL ); end
+    if verbose, fprintf('%d\t loglik: %g\n', it, currentLL ); end
     it = it+1;
     if currentLL < previousLL
         warning('mixDiscreteFitEM:LLdecrease',   ...
@@ -69,15 +65,12 @@ while true
             counts(c, :, :) = sum(bsxfun(@times, (X == c), RikPerm), 1);
         end
     end
+    %% Add pseduo counts
+    counts = bsxfun(@plus, counts-1, distPrior);
     %%
-    T = normalize(counts, 1);
-    mixweight = normalize(sum(Rik) + mixPrior - 1);
+    model.T = normalize(counts, 1);
+    model.mixweight = normalize(sum(Rik) + mixPrior - 1);
 end
-%% Return the model
-model.T = T;
-model.mixweight = mixweight;
-model.nstates = nstates;
-model.d = d;
-model.nmix = nmix;
+
 
 end

@@ -22,7 +22,7 @@ if model.K == 2
 else
     Lij = zeros(n, d);
     for j=1:d
-        Lij(:, j) = log(T(X(:, j), j));
+        Lij(:, j) = log(T(X(:, j), j)+eps);
     end
     L = sum(Lij, 2);
 end
