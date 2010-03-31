@@ -13,7 +13,7 @@ else
     Ntrain  = 1000;
     Kvalues = 2:15;
 end
-[Xtrain, Xtest] = setupMnist('binary', binary, 'ntrain', Ntrain,'ntest', Ntest,'keepSparse', keepSparse);
+[Xtrain, ytrain, Xtest, ytest] = setupMnist('binary', binary, 'ntrain', Ntrain,'ntest', Ntest,'keepSparse', keepSparse);
 Xtrain = Xtrain + 1; % convert from 0:1 to 1:2
 Xtest  = Xtest  + 1; 
 %% Fit

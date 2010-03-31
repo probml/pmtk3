@@ -6,7 +6,8 @@ function model = mixDiscreteFitEM(X, nmix, distPrior, mixPrior, varargin)
 % nmix      - the number of mixture components to use
 % distPrior - (optional) prior pseudoCounts for the component distributions.
 % mixPrior  - (optional) prior on the mixture weights.
-% varargin  - (optional) {'maxiter', 100, 'tol', 1e-4, 'verbose', true, 'saveMemory', false}
+% varargin  - (optional)
+%      {'maxiter', 100, 'tol', 1e-4, 'verbose', true, 'saveMemory', false}
 %
 % Returns a struct with fields T, mixweight, nstates, d, nmix
 % model.T is nstates-by-ndistributions-by-nmixtures
@@ -20,8 +21,9 @@ distPrior = colvec(distPrior);
 mixPrior  = rowvec(mixPrior);
 [maxiter, tol, verbose, saveMemory] = process_options(varargin,...
     'maxiter', 100, 'tol', 1e-4, 'verbose', true, 'saveMemory', false);
-%% Initialize 
-% by randomly partitioning the data, fitting each partition separately. 
+%% Initialize
+% by randomly partitioning the data, fitting each partition separately
+% and then adding noise.
 T = zeros(nstates, d, nmix);
 Xsplit = randsplit(X, nmix);
 for k=1:nmix
@@ -33,8 +35,8 @@ mixweight = normalize(10*rand(1, nmix) + mixPrior);
 %% Setup loop
 currentLL = -inf;
 it = 1;
-model = struct('nstates', nstates, 'nmix', nmix, 'd', d,...
-               'mixweight', mixweight, 'T', T);
+model = struct('nstates'  , nstates  , 'nmix', nmix, 'd', d,...
+               'mixweight', mixweight, 'T'   , T);
 counts    = zeros(nstates, d, nmix);
 %% Enter EM loop
 while true
@@ -61,7 +63,7 @@ while true
     else
         % vectorized solution is faster but takes up much more memory
         RikPerm = permute(Rik, [1, 3, 2]); % insert singleton dimension for bsxfun
-        for c=1:nstates                    % call to bsxfun returns a matrix of size n-by-d-nmix
+        for c=1:nstates  % call to bsxfun returns a matrix of size n-by-d-nmix
             counts(c, :, :) = sum(bsxfun(@times, (X == c), RikPerm), 1);
         end
     end
@@ -71,6 +73,4 @@ while true
     model.T = normalize(counts, 1);
     model.mixweight = normalize(sum(Rik) + mixPrior - 1);
 end
-
-
 end
