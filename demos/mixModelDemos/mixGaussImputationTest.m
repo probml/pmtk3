@@ -18,7 +18,7 @@ prior.m0     = zeros(d,1);
 prior.kappa0 = 0;
 prior.nu0    = d+2;
 prior.S0     = eye(d);
-model = mixGaussFitEmMissingData(Xmissing, nmix, 'prior', prior);
+model = mixGaussMissingFit(Xmissing, nmix, 'prior', prior);
 
 %modelMissing = mixGaussMissingFitEm(Xmissing, nmix);
 modelNotMissing = mixGaussFitEm(X, nmix, 'doMAP', true);

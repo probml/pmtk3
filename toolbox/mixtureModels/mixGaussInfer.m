@@ -14,7 +14,7 @@ for k=1:K
 end
 z = maxidx(logPz, [], 2);
 if nargout > 1
-  [logPz, ll] = normalizeLogSpace(logPz);
+  [logPz, ll] = normalizeLogspace(logPz);
   pz = exp(logPz);
 end
 end
