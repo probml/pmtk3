@@ -11,45 +11,45 @@ function out = htmlTable(varargin)
 %
 %
 % INPUTS:
-%        '-data'          the data to display, an array or cell array         
-%        '-rowNames'      names for each row
-%        '-colNames'      names for each column 
-%        '-title'         title for the table
-%        '-colormap'      matlab style colormap used to color the table see 
+%        'data'          the data to display, an array or cell array         
+%        'rowNames'      names for each row
+%        'colNames'      names for each column 
+%        'title'         title for the table
+%        'colormap'      matlab style colormap used to color the table see 
 %                         the colormap documentation for helper functions 
 %                         like hsv, summer(), etc. Only works for numeric
 %                         arrays. See dataColors below for additional
 %                         options.
-%        '-doshow'        [DEFAULT = true] if true, display the table in
+%        'doshow'        [DEFAULT = true] if true, display the table in
 %                         the Matlab web browser   
-%        '-dosave'        [DEFAULT = false] if true, save the html table   
-%        '-filename'      save to this file
-%        '-newWindow'     [DEFAULT = true] if true, a new window is opened.   
-%        '-dataFormat'    a sprintf style formatter for the data  
-%        '-rowFormat'     a sprintf sytle formatter for the row names   
-%        '-colFormat'     a sprintf style formatter for the col names 
-%        '-dataAlign'     [DEFAULT = 'center'] Options are ['left' |'right' | 'center']
-%        '-dataValign'    [DEFAULT = 'top'   ] Options are ['top','middle','bottom']
-%        '-bgColor'       [DEFAULT = 'white' ] background color: any valid html color spec
-%        '-borderColor'   [DEFAULT = 'grey'  ] color of the border: any%        valid html color spec
-%        '-cellPad'       [DEFAULT = 9] minimum cell padding applied
-%        '-vertCols'      [DEFAULT = false] if true, the column names, (if any) are displayed vertically.
-%        '-caption'       text displayed above or below the table
-%        '-captionLoc'    [DEFAULT = 'bottom'] Options are ['bottom' | 'top']
-%        '-captionFontSize
-%        '-dataColors'    a cell array of colors, the same size as data -
+%        'dosave'        [DEFAULT = false] if true, save the html table   
+%        'filename'      save to this file
+%        'newWindow'     [DEFAULT = true] if true, a new window is opened.   
+%        'dataFormat'    a sprintf style formatter for the data  
+%        'rowFormat'     a sprintf sytle formatter for the row names   
+%        'colFormat'     a sprintf style formatter for the col names 
+%        'dataAlign'     [DEFAULT = 'center'] Options are ['left' |'right' | 'center']
+%        'dataValign'    [DEFAULT = 'top'   ] Options are ['top','middle','bottom']
+%        'bgColor'       [DEFAULT = 'white' ] background color: any valid html color spec
+%        'borderColor'   [DEFAULT = 'grey'  ] color of the border: any%        valid html color spec
+%        'cellPad'       [DEFAULT = 9] minimum cell padding applied
+%        'vertCols'      [DEFAULT = false] if true, the column names, (if any) are displayed vertically.
+%        'caption'       text displayed above or below the table
+%        'captionLoc'    [DEFAULT = 'bottom'] Options are ['bottom' | 'top']
+%        'captionFontSize
+%        'dataColors'    a cell array of colors, the same size as data -
 %                         if specified, each cell is colored according to the corresponding
 %                         entry in dataColors.
-%        '-tableAlign'    
-%        '-tableValign'     
-%        '-colNameAlign'    
-%        '-colNameValign'   
-%        '-rowNameAlign'    
-%        '-rowNameValign'   
-%        '-rowNameColors'   
-%        '-colNameColors'
-%        '-titleAlign' 
-%        '-titleValign'
+%        'tableAlign'    
+%        'tableValign'     
+%        'colNameAlign'    
+%        'colNameValign'   
+%        'rowNameAlign'    
+%        'rowNameValign'   
+%        'rowNameColors'   
+%        'colNameColors'
+%        'titleAlign' 
+%        'titleValign'
 %    
 %
 %
