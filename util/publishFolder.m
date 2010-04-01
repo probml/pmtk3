@@ -4,7 +4,7 @@ function publishFolder(folder)
 % Example
 %
 % publishFolder bayesDemos
-
+shadowFunction('pause', 'keyboard', 'input', 'clear', 'placeFigures');
 doNotEvalList = {'PMTKinteractive', 'PMTKbroken', 'PMTKreallySlow'};
 globalEval    = true;
 googleRoot    = sprintf('http://code.google.com/p/pmtk3/source/browse/trunk/demos/%s/', folder);
@@ -32,7 +32,7 @@ for i=1:numel(sortedInfo)
 end
 fprintf(fid,'</table>');
 closeHTMLfile(fid);
-
+removeShadows();
     function info = mfileInfo(mfile)
         info.name = mfile(1:end-2);
         h = help(mfile);
