@@ -65,9 +65,4 @@ function conjugateFunction
     end
 
 
-
-
-
-
-
 end
