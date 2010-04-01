@@ -19,7 +19,7 @@ for i=1:nMiss % for each data case, marginalize out the unknown variables
     XiVis = X(ndx, vis); 
     XiVis = XiVis - mu(vis);
     logZ = (d/2)*log(2*pi) + 0.5*logdet(Sigma(vis, vis));
-    logpMiss(i) = -0.5*sum((XiVis*inv(Sigma(vis, vis))).*XiVis, 2) - logZ; 
+    logpMiss(i) = -0.5*sum((XiVis/(Sigma(vis, vis))).*XiVis, 2) - logZ; 
 end
 logpCompl = gaussLogprob(model,X(complRows,:));
 

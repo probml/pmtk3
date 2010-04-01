@@ -11,5 +11,10 @@ for c=1:K
   Sigma(:,:,c) = C;
 end
 mixweight = normalize(counts);
+for c=1:K
+   if any(isnan(Sigma(:, :, c)))
+       Sigma(:, :, c) = randpd(D);
+   end
+end
 
 end
