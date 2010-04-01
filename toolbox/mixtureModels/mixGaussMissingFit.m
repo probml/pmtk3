@@ -14,10 +14,11 @@ missing(remove, :) = [];
 [N, D] = size(X);
 %% Initialize
 for i=1:N
-    X(i, missing(i, :)) = mean(X(i, ~missing(i, :)));
+    % use the row mean to get started with kmeans
+    X(i, missing(i, :)) = mean(X(i, ~missing(i, :))); 
 end
 [mu, Sigma, mixweight] = kmeansInitMixGauss(X, nmix);
-X = impute(X, mu, Sigma, mixweight, missing);
+X = impute(X, mu, Sigma, mixweight, missing); % re-impute based on initial params
 %% Setup prior
 if doMAP || ~isempty(prior);
     if isempty(prior)
@@ -89,6 +90,7 @@ while true
         end
     end
     %% Impute
+    % re-impute the values originally missing using the new params. 
     X = impute(X, mu, Sigma, mixweight, missing);
 end
 model = struct('mu',mu,'Sigma',Sigma,'mixweight',mixweight,'K', nmix);
