@@ -61,8 +61,8 @@ while true
             ldet = logdet(inv(Sc));
             muc  = mu(:, c);
             logprior(c) = ldet*(nu0+D+2)/2  - ...
-                0.5*trace(Sc\S0)  - ...
-                kappa0/2*(muc-m0)'*(Sc\(muc-m0));
+                          0.5*trace(Sc\S0)  - ...
+                          kappa0/2*(muc-m0)'*(Sc\(muc-m0));
         end
         currentLL = currentLL + sum(logprior)/N;
     end
