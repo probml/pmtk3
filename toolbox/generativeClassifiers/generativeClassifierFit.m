@@ -8,7 +8,7 @@ function model = generativeClassifierFit(fitFn, X, y, pseudoCount)
 % X           - X(i, :) is the ith case
 % y           - y(i) is the class to which the ith case belongs.
 % pseudoCount - pseduo counts for the class prior 
-%              (default = ones(1,nclasses)
+%              (default = ones(1,nclasses))
 %
 %% Outputs:
 %
