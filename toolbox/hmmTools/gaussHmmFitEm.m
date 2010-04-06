@@ -8,7 +8,7 @@ function model = gaussHmmFitEm(X, nstates, varargin)
 % nstates  - the number of hidden states.
 %
 %% Output
-% model is a struct with fields, pi, A, and emission, nstates.
+% model is a struct with fields, pi, A, emission, nstates.
 %%
 [ tol       , ...
     maxIter   , ...
@@ -20,9 +20,9 @@ function model = gaussHmmFitEm(X, nstates, varargin)
     'tol'      , 1e-4          ,...
     'maxIter'  , 100           ,...
     'verbose'  , true          ,...
-    'pi0'      , []            ,...
-    'transmat0', []            ,...
-    'emission0', []);
+    'pi0'      , []            ,...   % initial guess for starting state dist
+    'transmat0', []            ,...   % initial guess for the transmat
+    'emission0', []);                 % initial guess for the emission dists
 X = colvec(X); 
 nobs = numel(X);
 %% Initialize
@@ -40,6 +40,7 @@ else
     startDist = pi0;
 end
 if isempty(emission0)
+    % Fit on random perturbations of the data, ignoring temporal structure.
     emission = cell(nstates, 1);
     for i=1:nstates
         data        = stackedData + randn(size(stackedData));
