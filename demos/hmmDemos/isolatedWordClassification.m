@@ -15,10 +15,10 @@ transmat0 = normalize(diag(ones(nstates, 1)) + ...
             diag(ones(nstates-1, 1), 1), 2);
 %%        
 fitArgs = {'pi0', pi0, 'transmat0', transmat0};
-fitFn   = @(X)gaussHmmFitEm(X, nstates, fitArgs{:}); 
+fitFn   = @(X)hmmGaussFitEm(X, nstates, fitArgs{:}); 
 model = generativeClassifierFit(fitFn, Xtrain, ytrain); 
 %%
-logprobFn = @gaussHmmLogprob;
+logprobFn = @hmmGaussLogprob;
 [yhat, post] = generativeClassifierPredict(logprobFn, model, Xtest);
 %%
 nerrors = sum(yhat ~= ytest);

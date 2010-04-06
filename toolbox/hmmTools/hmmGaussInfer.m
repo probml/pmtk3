@@ -1,4 +1,4 @@
-function [logp, alpha, beta, gamma, B] = gaussHmmInfer(model, X)
+function [logp, alpha, beta, gamma, B] = hmmGaussInfer(model, X)
 % logp        = log p(X | model)
 % alpha(i, t) = p(S(t)=i | X(1:t, :)    (filtered)
 % beta(i,t) propto p(X(t+1:T, :) | S(t=i))
@@ -16,7 +16,7 @@ for j=1:nstates
     B(j, :) = exp(gaussLogprob(emission{j}, X));
 end
 if nargout < 3
-    [logp, alpha] = hmmFwd(pi, A, B);
+    [logp, alpha] = hmmFilter(pi, A, B);
 else
     [gamma, alpha, beta, logp] = hmmFwdBack(pi, A, B);
 end

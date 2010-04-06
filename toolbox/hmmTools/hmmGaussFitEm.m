@@ -1,4 +1,4 @@
-function model = gaussHmmFitEm(X, nstates, varargin)
+function model = hmmGaussFitEm(X, nstates, varargin)
 % Fit an Hmm to Gaussian observations using EM.
 %% Inputs
 % X        - a cell array of observations;
@@ -62,7 +62,7 @@ while true
         obs       = X{i}';
         m.pi      = startDist; m.emission = emission; 
         m.nstates = nstates  ; m.A        = transmat; 
-        [loglik, alpha, beta, gamma, B] = gaussHmmInfer(m, obs);
+        [loglik, alpha, beta, gamma, B] = hmmGaussInfer(m, obs);
         currentLL = currentLL + sum(loglik);
         %% Distribution over starting states
         startCounts = startCounts + gamma(:, 1)';
@@ -91,7 +91,7 @@ while true
     if verbose, fprintf('%d\t loglik: %g\n', it, currentLL ); end
     it = it+1;
     if currentLL < previousLL
-        warning('gaussHmmFitEm:LLdecrease',   ...
+        warning('hmmGaussFitEm:LLdecrease',   ...
             'The log likelihood has decreased!');
     end
     converged = convergenceTest(currentLL, previousLL, tol) || it > maxIter;
