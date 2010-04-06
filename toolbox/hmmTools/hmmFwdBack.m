@@ -13,7 +13,7 @@ function [gamma, alpha, beta, loglik] = hmmFwdBack(initDist, transmat, obslik)
 % C Version by Guillaume Alain 
 %PMTKauthor Guillaume Alain 
 %PMTKurl http://www.cs.ubc.ca/~gyomalin/
-%PMTKPMTKmex
+%PMTKmex
 
 
 %[alpha, loglik] = hmmFilter(initDist, transmat, obslik);
