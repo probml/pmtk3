@@ -6,8 +6,11 @@ if ~iscell(X)
 end
 nobs = numel(X);
 logp = zeros(nobs, 1);
+pi = model.pi;
+A = model.A;
 for i=1:nobs
-    logp(i) = hmmGaussInfer(model, X{i}');
+    B = hmmGaussMkLocalEvidence(model, X{i}'); 
+    logp(i) = hmmFilter(pi, A, B);
 end
 
 end

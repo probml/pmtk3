@@ -62,7 +62,7 @@ while true
         obs       = X{i}';
         m.pi      = startDist; m.emission = emission; 
         m.nstates = nstates  ; m.A        = transmat; 
-        [loglik, alpha, beta, gamma, B] = hmmGaussInfer(m, obs);
+        [gamma, loglik, alpha, beta, B] = hmmGaussInfer(m, obs); 
         currentLL = currentLL + sum(loglik);
         %% Distribution over starting states
         startCounts = startCounts + gamma(:, 1)';
