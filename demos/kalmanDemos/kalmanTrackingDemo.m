@@ -1,8 +1,9 @@
 % Make a point move in the 2D plane
 % State = (x y xdot ydot). We only observe (x y).
 
-% This code was used to generate Figure 15.9 of "Artificial Intelligence: a Modern Approach",
-% Russell and Norvig, 2nd edition, Prentice Hall, 2003.
+% This code was written by Kevin Murphy
+% and was used to generate Figure 15.A.1 of "Probabilistic graphical models",
+% Koller and Friedman, MIT Press 2009
 
 % X(t+1) = F X(t) + noise(Q)
 % Y(t) = H X(t) + noise(R)

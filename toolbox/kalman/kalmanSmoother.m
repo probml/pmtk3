@@ -64,7 +64,6 @@ end
 function [xsmooth, Vsmooth, VVsmooth_future] = smooth_update(xsmooth_future, Vsmooth_future, ...
     xfilt, Vfilt,  Vfilt_future, VVfilt_future, A, Q, B, u)
 
-
 %xpred = E[X(t+1) | t]
 if isempty(B)
   xpred = A*xfilt;
@@ -72,11 +71,9 @@ else
   xpred = A*xfilt + B*u;
 end
 Vpred = A*Vfilt*A' + Q; % Vpred = Cov[X(t+1) | t]
-J = Vfilt * A' * inv(Vpred); % smoother gain matrix
-xsmooth = xfilt + J*(xsmooth_future - xpred);
-Vsmooth = Vfilt + J*(Vsmooth_future - Vpred)*J';
+L = Vfilt * A' * inv(Vpred); % smoother gain matrix
+xsmooth = xfilt + L*(xsmooth_future - xpred);
+Vsmooth = Vfilt + L*(Vsmooth_future - Vpred)*L';
 VVsmooth_future = VVfilt_future + (Vsmooth_future - Vfilt_future)*inv(Vfilt_future)*VVfilt_future;
-
-
 
 end
