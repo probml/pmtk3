@@ -40,13 +40,19 @@ end
 % We can now try and recover the most likely sequence of hidden states, 
 % the Viterbi path. 
 nstates = numel(obsModel);
-localEvidence = zeros(nstates, len);
-for i=1:nstates
-    localEvidence(i,:) = colvec(obsModel{i}(observed));
-end
-viterbiPath = hmmViterbi(log(pi), log(transmat), log(localEvidence));
+m1.K = length(obsModel{1});
+m1.d = 1;
+m1.T = obsModel{1};
+m2 = m1; 
+m2.T = obsModel{2};
+model.emission = {m1,m2};
+model.nstates  = nstates;
+model.pi = pi;
+model.A = transmat; 
+viterbiPath = hmmDiscreteViterbi(model, observed);
 %% Sequence of Most Likely States (Max Marginals)
-[gamma, alpha, beta, loglik] = hmmFwdBack(pi, transmat, localEvidence);
+[gamma, loglik, alpha, beta, localEvidence]  = hmmDiscreteInfer(model, observed);
+%[gamma, alpha, beta, loglik] = hmmFwdBack(pi, transmat, localEvidence);
 maxmargF = maxidx(alpha); % filtered (forwards pass only)
 maxmarg = maxidx(gamma);  % smoothed (forwards backwards)
 %% Posterior Samples
