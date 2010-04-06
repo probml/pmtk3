@@ -16,9 +16,18 @@ function [gamma, alpha, beta, loglik] = hmmFwdBack(initDist, transmat, obslik)
 %PMTKmex
 
 
-%[alpha, loglik] = hmmFilter(initDist, transmat, obslik);
-[loglik, alpha] = hmmFwd(initDist, transmat, obslik);
+[loglik, alpha] = hmmFilter(initDist, transmat, obslik);
 beta = hmmBackwards(transmat, obslik);
 gamma = normalize(alpha .* beta, 1);% make each column sum to 1
+
+end
+
+function [beta] = hmmBackwards(transmat, obslik)
+[K T] = size(obslik);
+beta = zeros(K,T);
+beta(:,T) = ones(K,1);
+for t=T-1:-1:1
+ beta(:,t) = normalize(transmat * (beta(:,t+1) .* obslik(:,t+1)));
+end
 
 end
