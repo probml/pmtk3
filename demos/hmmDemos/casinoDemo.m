@@ -36,7 +36,7 @@ observed = zeros(1, len);
 for t=1:len
    observed(1, t) = sampleDiscrete(obsModel{hidden(t)}); 
 end
-%% Fit via EM (i.e. without knowing the hidden states)
+%% Fit via EM (pretending we don't know the hidden states)
 nstates = numel(obsModel);
 modelEM = hmmDiscreteFitEm(observed, nstates);
 %% Viterbi Path
