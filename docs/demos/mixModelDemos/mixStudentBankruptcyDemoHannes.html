@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>mixStudentBankruptcyDemoHannes</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="mixStudentBankruptcyDemoHannes"><style type="text/css">
+      --><title>mixStudentBankruptcyDemoHannes</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-04-07"><meta name="m-file" content="mixStudentBankruptcyDemoHannes"><style type="text/css">
 
 body {
   background-color: white;
@@ -82,11 +82,7 @@ modelStud.post = post';
 fprintf(<span class="string">'Number of errors (Student):\t %.0f\n'</span>, errors(Y, modelStud));
 printPmtkFigure(<span class="string">'mixStudentDemoStudentplot'</span>)
 </pre><pre class="codeoutput">ans =
-  1.0e+002 *
-  Column 1
-   0.023392538141671
-  Column 2
-   9.999999446531040
+    2.3409  999.9999
 Number of errors (Student):	 10
 </pre><img vspace="5" hspace="5" src="mixStudentBankruptcyDemoHannes_01.png" alt=""> <h2>Fit Gaussian<a name="5"></a></h2><pre class="codeinput">[N D] = size(X);
 K = 2;
@@ -142,9 +138,9 @@ printPmtkFigure(<span class="string">'mixStudentDemoGaussplot'</span>)
 </pre><pre class="codeoutput">ans = 
            mu: [2x2 double]
         Sigma: [2x2x2 double]
-    mixweight: [1x2 double]
+    mixweight: [0.3491 0.6509]
             K: 2
-          dof: [1x2 double]
+          dof: [2.3409 999.9999]
          post: [2x66 double]
 </pre><p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
