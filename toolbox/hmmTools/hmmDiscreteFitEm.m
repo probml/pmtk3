@@ -91,7 +91,7 @@ while true
         m.pi      = startDist; m.emission = emission;
         m.nstates = nstates  ; m.A        = transmat;
         [gamma, loglik, alpha, beta, B] = hmmDiscreteInfer(m, obs);
-        currentLL = currentLL + sum(loglik);
+        currentLL = currentLL + loglik;
         %% Distribution over starting states
         startCounts = startCounts + gamma(:, 1)';
         %% State transition matrix

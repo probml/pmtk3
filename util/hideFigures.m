@@ -6,7 +6,7 @@ function hideFigures()
     set(0, 'defaultAxesVisible', 'off');
     
     tdir = tempdir();
-    fullpath = fullfile(tdir, 'matlabShadow'); 
+    fullpath = fullfile(tdir, 'matlabFigShadow'); 
     if ~exist(fullpath, 'file');
         mkdir(fullpath);
     end

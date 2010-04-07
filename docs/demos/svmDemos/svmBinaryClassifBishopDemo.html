@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>Compare SVM and kernelized logreg on synthetic 2 class data in 2d</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="svmBinaryClassifBishopDemo"><style type="text/css">
+      --><title>Compare SVM and kernelized logreg on synthetic 2 class data in 2d</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-04-07"><meta name="m-file" content="svmBinaryClassifBishopDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -65,7 +65,7 @@ p.footer {
   </style></head><body><div class="content"><h1>Compare SVM and kernelized logreg on synthetic 2 class data in 2d</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Load  Data</a></li><li><a href="#2">Set up kernels</a></li><li><a href="#3">Train and test</a></li></ul></div><h2>Load  Data<a name="1"></a></h2><p>Load synthetic data generated from a mixture of 2 Gaussians. Source: <a href="http://research.microsoft.com/~cmbishop/PRML/webdatasets/datasets.htm">http://research.microsoft.com/~cmbishop/PRML/webdatasets/datasets.htm</a></p><pre class="codeinput">load <span class="string">bishop2class</span>
 y = Y(:);
 
-<span class="comment">%X = mkUnitVariance(center(X));</span>
+<span class="comment">%X = mkUnitVariance(centerCols(X));</span>
 </pre><h2>Set up kernels<a name="2"></a></h2><p>We pick  hyperparameters that result in a pretty plot</p><pre class="codeinput">lambda = 2;
 rbfScale = 0.3;
 gamma = 1/(2*rbfScale^2);
@@ -121,10 +121,10 @@ logregArgs.kernelParam = rbfScale;
     title(sprintf(<span class="string">'%s'</span>, fname))
     printPmtkFigure(sprintf(<span class="string">'svmBinaryClassifDemo%s'</span>, fname))
 <span class="keyword">end</span>
-</pre><pre class="codeoutput">Elapsed time is 33.534009 seconds.
+</pre><pre class="codeoutput">Elapsed time is 9.288731 seconds.
 trainingErrorsSVM =
     35
-Elapsed time is 0.253390 seconds.
+Elapsed time is 0.138074 seconds.
 trainingErrorsSVMlight =
     35
 </pre><img vspace="5" hspace="5" src="svmBinaryClassifBishopDemo_01.png" alt=""> <img vspace="5" hspace="5" src="svmBinaryClassifBishopDemo_02.png" alt=""> <img vspace="5" hspace="5" src="svmBinaryClassifBishopDemo_03.png" alt=""> <img vspace="5" hspace="5" src="svmBinaryClassifBishopDemo_04.png" alt=""> <p class="footer"><br>
@@ -139,7 +139,7 @@ trainingErrorsSVMlight =
 load bishop2class
 y = Y(:);
 
-%X = mkUnitVariance(center(X));
+%X = mkUnitVariance(centerCols(X));
 %% Set up kernels
 % We pick  hyperparameters that result in a pretty plot
 lambda = 2;

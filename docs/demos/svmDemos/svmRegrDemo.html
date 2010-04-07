@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>SVM Regression Demo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="svmRegrDemo"><style type="text/css">
+      --><title>SVM Regression Demo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-04-07"><meta name="m-file" content="svmRegrDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -73,7 +73,7 @@ noise		= 0.1;
 x	= 10*[-1:2/(N-1):1]';
 ytrue	= sin(abs(x))./abs(x);
 y	= ytrue + noise*randn(N,1);
-X = mkUnitVariance(center(x));
+X = mkUnitVariance(centerCols(x));
 
 <span class="comment">% We pick  hyperparameters that result in a pretty plot</span>
 lambda = 0.5;
@@ -82,7 +82,7 @@ kernelFn = @(X1,X2) kernelRbfSigma(X1,X2,rbfScale);
 Ktrain =  kernelFn(X, X);
 <span class="comment">%Xtest = [-5:.05:5]';</span>
 Xtest = (-10:.1:10)';
-Xtest = mkUnitVariance(center(Xtest));
+Xtest = mkUnitVariance(centerCols(Xtest));
 Ktest = kernelFn(Xtest, X);
 
 <span class="keyword">for</span> method=1:4
@@ -150,7 +150,27 @@ Ktest = kernelFn(Xtest, X);
     printPmtkFigure(sprintf(<span class="string">'svmRegrDemoStem%s'</span>, fname))
 <span class="keyword">end</span>
 placeFigures;
-</pre><img vspace="5" hspace="5" src="svmRegrDemo_01.png" alt=""> <img vspace="5" hspace="5" src="svmRegrDemo_02.png" alt=""> <img vspace="5" hspace="5" src="svmRegrDemo_03.png" alt=""> <img vspace="5" hspace="5" src="svmRegrDemo_04.png" alt=""> <img vspace="5" hspace="5" src="svmRegrDemo_05.png" alt=""> <img vspace="5" hspace="5" src="svmRegrDemo_06.png" alt=""> <img vspace="5" hspace="5" src="svmRegrDemo_07.png" alt=""> <img vspace="5" hspace="5" src="svmRegrDemo_08.png" alt=""> <img vspace="5" hspace="5" src="svmRegrDemo_09.png" alt=""> <p class="footer"><br>
+</pre><pre class="codeoutput">ans =
+  Columns 1 through 3
+   -5.0000  105.0000   -0.1040
+  Column 4
+    0.0730
+ans =
+  Columns 1 through 3
+   -5.0000  105.0000   -0.3301
+  Column 4
+    0.6764
+ans =
+  Columns 1 through 3
+   -5.0000  105.0000   -2.2000
+  Column 4
+    2.2000
+ans =
+  Columns 1 through 3
+   -5.0000  105.0000   -2.2000
+  Column 4
+    2.2000
+</pre><img vspace="5" hspace="5" src="svmRegrDemo_01.png" alt=""> <img vspace="5" hspace="5" src="svmRegrDemo_02.png" alt=""> <img vspace="5" hspace="5" src="svmRegrDemo_03.png" alt=""> <img vspace="5" hspace="5" src="svmRegrDemo_04.png" alt=""> <img vspace="5" hspace="5" src="svmRegrDemo_05.png" alt=""> <img vspace="5" hspace="5" src="svmRegrDemo_06.png" alt=""> <img vspace="5" hspace="5" src="svmRegrDemo_07.png" alt=""> <img vspace="5" hspace="5" src="svmRegrDemo_08.png" alt=""> <p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 %% SVM Regression Demo
@@ -165,7 +185,7 @@ noise		= 0.1;
 x	= 10*[-1:2/(N-1):1]';
 ytrue	= sin(abs(x))./abs(x);
 y	= ytrue + noise*randn(N,1);
-X = mkUnitVariance(center(x)); 
+X = mkUnitVariance(centerCols(x)); 
 
 % We pick  hyperparameters that result in a pretty plot
 lambda = 0.5;
@@ -174,7 +194,7 @@ kernelFn = @(X1,X2) kernelRbfSigma(X1,X2,rbfScale);
 Ktrain =  kernelFn(X, X);
 %Xtest = [-5:.05:5]';
 Xtest = (-10:.1:10)';
-Xtest = mkUnitVariance(center(Xtest)); 
+Xtest = mkUnitVariance(centerCols(Xtest)); 
 Ktest = kernelFn(Xtest, X);
 
 for method=1:4

@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>Simple Tests of the svmFit interface</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-03-23"><meta name="m-file" content="svmFitTest"><style type="text/css">
+      --><title>Simple Tests of the svmFit interface</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-04-07"><meta name="m-file" content="svmFitTest"><style type="text/css">
 
 body {
   background-color: white;
@@ -91,14 +91,14 @@ fprintf(<span class="string">'svmLight \t %5.3f \t %5.3f\n'</span>, errorRateSvm
 fprintf(<span class="string">'svmQp \t %5.3f \t %5.3f\n'</span>, errorRateQp, timeQp);
 fprintf(<span class="string">'svmLib \t %5.3f \t %5.3f\n'</span>, errorRateSvmLib, timeSvmLib);
 </pre><pre class="codeoutput">method 	 error 	 time 
-svmLight 	 0.108 	 0.366
-svmQp 	 0.108 	 4.113
-svmLib 	 0.108 	 0.014
+svmLight 	 0.108 	 0.239
+svmQp 	 0.108 	 0.870
+svmLib 	 0.108 	 0.006
 </pre><h2>Example of how to do CV<a name="2"></a></h2><pre class="codeinput">model = svmFit(Xtrain, ytrain, <span class="string">'C'</span>, logspace(-1,1,10));
 yhat  = svmPredict(model, Xtest);
 errorRate = mean(yhat ~= ytest)
 </pre><pre class="codeoutput">errorRate =
-   0.050000000000000
+    0.0500
 </pre><h2>Example of how to specify the kernel<a name="3"></a></h2><pre class="codeinput">model = svmFit(Xtrain, ytrain, <span class="string">'kernel'</span>, @kernelPoly, <span class="string">'kernelParam'</span>, 3);
 yhat  = svmPredict(model, Xtest);
 errorRate = mean(yhat ~= ytest)
@@ -114,33 +114,33 @@ errorRate =
 yhat  = svmPredict(model, Xtest);
 errorRate = mean(yhat ~= ytest)
 </pre><pre class="codeoutput">errorRate =
-   0.008333333333333
+    0.0083
 </pre><h2>REGRESSION<a name="5"></a></h2><pre class="codeinput">load <span class="string">prostate</span>
 </pre><pre class="codeinput">model = svmFit(Xtrain, ytrain);
 yhat = svmPredict(model, Xtest);
 mse = mean((yhat - ytest).^2)
 </pre><pre class="codeoutput">mse =
-   0.613796129845444
+    0.6138
 </pre><pre class="codeinput">model = svmFit(Xtrain, ytrain, <span class="string">'fitFn'</span>, @svmQPregFit);
 yhat = svmPredict(model, Xtest);
 mse = mean((yhat - ytest).^2)
 </pre><pre class="codeoutput">mse =
-   0.613819719374674
+    0.6138
 </pre><pre class="codeinput">model = svmFit(Xtrain, ytrain, <span class="string">'kernel'</span>, <span class="string">'rbf'</span>, <span class="string">'kernelParam'</span>, [0.1, 0.5, 1, 5], <span class="string">'C'</span>, logspace(-1,1,10));
 yhat = svmPredict(model, Xtest);
 mse = mean((yhat - ytest).^2)
 </pre><pre class="codeoutput">mse =
-   0.591485171217025
+    0.5915
 </pre><pre class="codeinput">model = svmFit(Xtrain, ytrain, <span class="string">'kernel'</span>, <span class="string">'poly'</span>, <span class="string">'kernelParam'</span>, 1:10, <span class="string">'C'</span>, logspace(-2,2,30));
 yhat = svmPredict(model, Xtest);
 mse = mean((yhat - ytest).^2)
 </pre><pre class="codeoutput">mse =
-   0.613917996946653
+    0.6139
 </pre><pre class="codeinput">model = svmFit(Xtrain, ytrain, <span class="string">'kernel'</span>, <span class="string">'linear'</span>, <span class="string">'C'</span>, logspace(-2,2,100));
 yhat = svmPredict(model, Xtest);
 error = mean((yhat - ytest).^2)
 </pre><pre class="codeoutput">error =
-   1.544346416578429
+    1.5443
 </pre><h2>MULTICLASS<a name="11"></a></h2><pre class="codeinput">load <span class="string">soy</span>
 setSeed(0);
 [X, Y] = shuffleRows(X, Y);
@@ -150,7 +150,7 @@ Xtest = X(251:end, :); ytest = Y(251:end);
 yhat = svmPredict(model, Xtest);
 errorRate = mean(yhat ~= ytest)
 </pre><pre class="codeoutput">errorRate =
-   0.017543859649123
+    0.0175
 </pre><p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####

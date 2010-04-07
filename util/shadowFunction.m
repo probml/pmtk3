@@ -18,7 +18,7 @@ if iscell(fname)
     cellfun(@shadowFunction, fname);
     return
 end
-
+fprintf('shadowing %s\n', fname); 
 if endswith(fname, '.m')
     fname = fname(1:end-2);
 end
