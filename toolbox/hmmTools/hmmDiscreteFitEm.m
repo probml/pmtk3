@@ -1,8 +1,8 @@
-function model = hmmGaussFitEm(X, nstates, varargin)
-% Fit an Hmm to Gaussian observations using EM.
+function model = hmmDiscreteFitEm(X, nstates, varargin)
+% Fit an Hmm to discrete observations using EM.
 %% Inputs
 % X        - a cell array of observations;
-%            each observation is d-by-seqLength.
+%            each observation is 1-by-seqLength.
 %            
 %
 % nstates  - the number of hidden states.
@@ -17,7 +17,7 @@ function model = hmmGaussFitEm(X, nstates, varargin)
     transmat0 , ...
     emission0   ...
     ] = process_options(varargin ,...
-    'tol'      , 1e-4          ,...
+    'tol'      , 1e-7          ,...
     'maxIter'  , 100           ,...
     'verbose'  , true          ,...
     'pi0'      , []            ,...   % initial guess for starting state dist
@@ -41,11 +41,15 @@ else
     startDist = pi0;
 end
 if isempty(emission0)
-    % Fit on random perturbations of the data, ignoring temporal structure.
+    % 
     emission = cell(nstates, 1);
+    dataPart = randsplit(colvec(stackedData), nstates); 
+    nobsStates = nunique(stackedData);
     for i=1:nstates
-        data        = stackedData + randn(size(stackedData));
-        emission{i} = gaussFit(data);
+        data = dataPart{i};
+        randWeights = normalize(rand(length(data), 1)); 
+        pseudoCounts = 3*ones(nobsStates, 1); 
+        emission{i} = discreteFit(data, pseudoCounts, randWeights, nobsStates);
     end
 else
     emission = emission0;
@@ -55,15 +59,15 @@ it = 1;
 currentLL   = -inf;
 startCounts = zeros(1, nstates);
 transCounts = zeros(nstates, nstates);
-weights     = zeros(size(stackedData, 1), nstates);
+weights     = zeros(length(stackedData), nstates);
 while true
     previousLL = currentLL;
     [currentLL, startCounts(:), transCounts(:), weights(:)] = deal(0);
     for i=1:nobs
-        obs       = X{i}';
+        obs       = colvec(X{i});
         m.pi      = startDist; m.emission = emission; 
         m.nstates = nstates  ; m.A        = transmat; 
-        [gamma, loglik, alpha, beta, B] = hmmGaussInfer(m, obs); 
+        [gamma, loglik, alpha, beta, B] = hmmDiscreteInfer(m, obs); 
         currentLL = currentLL + sum(loglik);
         %% Distribution over starting states
         startCounts = startCounts + gamma(:, 1)';
@@ -80,19 +84,14 @@ while true
     transmat  = normalize(transCounts, 2);
     %% Observation distributions
     for j=1:nstates
-        w    = weights(:, j);
-        n    = sum(w, 1);
-        xbar = sum(bsxfun(@times, stackedData, w))'/n;  % bishop eq 13.20
-        Xc   = bsxfun(@minus, stackedData, xbar');
-        XX   = bsxfun(@times, Xc, w)'*Xc/n;
-        emission{j}.mu    = xbar;
-        emission{j}.Sigma = XX;
+        alpha = 1; % pseduo counts
+        emission{j} = discreteFit(colvec(stackedData), alpha, weights(:, j));
     end
     %% Check Convergence
     if verbose, fprintf('%d\t loglik: %g\n', it, currentLL ); end
     it = it+1;
     if currentLL < previousLL
-        warning('hmmGaussFitEm:LLdecrease',   ...
+        warning('hmmDiscreteFitEm:LLdecrease',   ...
             'The log likelihood has decreased!');
     end
     converged = convergenceTest(currentLL, previousLL, tol) || it > maxIter;

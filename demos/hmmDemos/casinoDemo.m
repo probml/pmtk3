@@ -36,10 +36,13 @@ observed = zeros(1, len);
 for t=1:len
    observed(1, t) = sampleDiscrete(obsModel{hidden(t)}); 
 end
+%% Fit via EM (i.e. without knowing the hidden states)
+nstates = numel(obsModel);
+modelEM = hmmDiscreteFitEm(observed, nstates);
 %% Viterbi Path
 % We can now try and recover the most likely sequence of hidden states, 
 % the Viterbi path. 
-nstates = numel(obsModel);
+
 m1.K = length(obsModel{1});
 m1.d = 1;
 m1.T = obsModel{1};

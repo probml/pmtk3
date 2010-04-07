@@ -18,7 +18,7 @@ function model = generativeClassifierFit(fitFn, X, y, pseudoCount)
 
 [y, model.support] = canonizeLabels(y);
 nclasses = numel(model.support); 
-setDefaultValue(4, 'pseudoCount', ones(1, nclasses)); 
+SetDefaultValue(4, 'pseudoCount', ones(1, nclasses)); 
 prior = discreteFit(y, pseudoCount);
 
 classConditionals = cell(nclasses, 1);
@@ -31,3 +31,4 @@ model.prior = prior;
 
 
 end
+
