@@ -2,7 +2,13 @@ function logp = gaussInvWishartLogprob(model, m, S)
 % logp(i) = p(m(:, i), S(:, :, i) | model) 
 %         = N(m(:, i) | model.mu, (1/model.k) * S(:, :, i)) *
 %           IW(S(:, :, i) | model.dof, model.Sigma)
+%
+%                   OR if scalar
 % 
+% logp(i) = p(m(i), S(i) | model) 
+%         = N(m(i)  | model.mu, (1/model.k) * S(i)) *
+%           IW(S(i) | model.dof, model.Sigma)
+%
 %
 % model has the following fields: mu, Sigma, dof, k
 %
