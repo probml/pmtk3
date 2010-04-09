@@ -1,7 +1,8 @@
-function yhat = svmPredict(model, Xtest)
+function [yhat, f] = svmPredict(model, Xtest)
 % Return svm predictions.
 % model is a struct as returned by svmFit()
 % Xtest(i, :) is the ith case. 
+% f  is the signed distance to separating hyperplane
 
 if isfield(model, 'standardizeX') && model.standardizeX
     Xtest = mkUnitVariance(centerCols(Xtest)); 
@@ -28,6 +29,11 @@ switch model.fitEngine
             error('Could not find %s', predictName);
         end
 end
-yhat = predictFn(model, Xtest);
+if nargout < 2
+    yhat = predictFn(model, Xtest);
+else
+    % currrently only supported by svmQPclassif*
+    [yhat, f] = predictFn(model, Xtest); 
+end
 
 end
