@@ -1,4 +1,4 @@
-function [h, p] = plotContour(fn, xyRange, varargin)
+function [h, p, c] = plotContour(fn, xyRange, varargin)
 % Plot contours of the function evalatuated at xyRange = [xmin xmax ymin ymax]
 % All other args (varargin) are passed directly to the contour function. 
 % Returns, the plot handle h. 

@@ -57,7 +57,7 @@ bayesPredictFn = @(X)generativeClassifierPredict...
                   (@mixGaussLogprob, genmodel, X);
 bayesError = mean(bayesPredictFn(Xtest) ~= ytest);
 %%
-Cvalues = [10000, 0.01];
+Cvalues = [10000, 0.1];
 nc      = numel(Cvalues);
 kernel = {@kernelLinear, @kernelPoly, @kernelRbfGamma};
 kernelArgs = {{},{'kernelParam', 4},{'kernelParam', 1}};
@@ -107,9 +107,15 @@ for j=1:numel(kernel)
                 plotContour(@(x)argout(2, @svmPredict, svmModel, x), ...
                     axis(), [0 0], '-k', 'linewidth', 1.5);
 
-                plotContour(@(x)argout(2, @svmPredict, svmModel, x), ...
+                [h,p,c] = plotContour(@(x)argout(2, @svmPredict, svmModel, x), ...
                     axis(), [-1 1], '--k', 'linewidth', 1);
                 t = sprintf('C = %g',  Cvalues(i)); 
+                %% Find support vectors on margin
+                SV = Xtrain(svmModel.svi, :); 
+                D = sqDistance(SV, c'); 
+                S = SV(any(D < 0.005, 2), :);
+                plot(S(:, 1), S(:, 2), '.k', 'markersize', 20); 
+                
             case 'logreg'
                 %% Fit LR
                 lrModel = logregFit(Xtrain, ytrain, 'regType', 'l2',...
