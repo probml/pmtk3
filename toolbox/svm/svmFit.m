@@ -64,7 +64,7 @@ d = size(X, 2);
     'fitFn'      , ''    ,...
     'fitOptions' , {}    ,...
     'standardizeX', true  ,...
-    'rescaleX'   , false ,...
+    'rescaleX'   , true   ,...
     'cvOptions'  , {});
 %%
 K = nunique(y);
@@ -102,7 +102,7 @@ if standardizeX
     X = mkUnitVariance(centerCols(X));
 end
 if rescaleX
-    X = rescaleData(X);    
+    [X, minx, rangex] = rescaleData(X, -1, 1);    
 end
 %%
 if numel(C) > 1 || numel(kernelParam) > 1
@@ -124,4 +124,8 @@ model.fitEngine = funcName(fitFn);
 model.type = type;
 model.standardizeX = standardizeX;
 model.rescaleX = rescaleX;
+if rescaleX
+    model.minx = minx;
+    model.rangex = rangex;
+end
 end

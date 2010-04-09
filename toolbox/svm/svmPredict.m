@@ -7,7 +7,7 @@ if isfield(model, 'standardizeX') && model.standardizeX
     Xtest = mkUnitVariance(centerCols(Xtest)); 
 end
 if isfield(model, 'rescaleX') && model.rescaleX
-   Xtest = rescaleData(Xtest); 
+   Xtest = rescaleData(Xtest, -1, 1, model.minx, model.rangex); 
 end
 switch model.fitEngine
     case 'svmlibFit'

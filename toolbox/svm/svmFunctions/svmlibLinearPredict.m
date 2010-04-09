@@ -3,6 +3,6 @@ function yhat = svmlibLinearPredict(model, Xtest)
 % model is returned by svmlibLinearFit
 %%
 n = size(Xtest, 1);
-evalc('yhat = predict(zeros(n, 1), sparse(Xtest), model)');
+evalc('yhat = libLinearPredict(zeros(n, 1), sparse(Xtest), model)');
 end
 

@@ -14,7 +14,7 @@ if nargin < 6
     options = sprintf('%s %s', Cswitch, typeSwitch);
         
 end
-model = train(y, sparse(X), options); % requires sparse matrix
+model = libLinearTrain(y, sparse(X), options); % requires sparse matrix
 model.C = C;
 model.fitEngine = mfilename();
 end

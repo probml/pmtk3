@@ -40,8 +40,6 @@ predictFn = @(X)generativeClassifierPredict(@mixGaussLogprob, genmodel, X);
 purple = [147, 23, 147]./255;
 args = {'--', 'linewidth', 2, 'linecolor', purple};
 
-
-
 Cvalues = [10000, 0.01];
 nc = numel(Cvalues);
 model = cell(nc, 1); 
@@ -54,7 +52,17 @@ for i=1:nc
     testError(i) = mean(ytest ~= svmPredict(model{i}, Xtest));
     hold on;
     plotDecisionBoundary(Xtrain, ytrain, @(x)svmPredict(model{i},x), 'newFigure', false); 
-    hold off;
+    title(sprintf('C = %g', Cvalues(i)));
+    text = {sprintf('Training Error: %.2f'  , trainError(i));
+            sprintf('Test Error:       %.2f', testError(i));
+            sprintf('Bayes Error:    %.2f'  , bayesError)};
+    annotation(gcf,'textbox'        , [0.15 0.12 0.24 0.18], ...
+                   'String'         , text                 , ...
+                   'BackgroundColor', [1 1 1]              , ...
+                   'FontWeight'     , 'demi'               , ...
+                   'FitBoxToText'   , 'on'                 , ...
+                   'LineStyle'      , 'none');
+   
 end
 %%
 

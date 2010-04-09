@@ -4,13 +4,13 @@ CFLAGS = -Wall -Wconversion -O3 -fPIC
 LIBS = blas/blas.a
 #LIBS = -lblas
 
-all: train predict
+all: libLinearTrain libLinearPredict
 
-train: tron.o linear.o train.c blas/blas.a
-	$(CXX) $(CFLAGS) -o train train.c tron.o linear.o $(LIBS)
+libLinearTrain: tron.o linear.o libLinearTrain.c blas/blas.a
+	$(CXX) $(CFLAGS) -o libLinearTrain libLinearTrain.c tron.o linear.o $(LIBS)
 
-predict: tron.o linear.o predict.c blas/blas.a
-	$(CXX) $(CFLAGS) -o predict predict.c tron.o linear.o $(LIBS)
+predict: tron.o linear.o libLinearPredict.c blas/blas.a
+	$(CXX) $(CFLAGS) -o libLinearPredict libLinearPredict.c tron.o linear.o $(LIBS)
 
 tron.o: tron.cpp tron.h
 	$(CXX) $(CFLAGS) -c -o tron.o tron.cpp
@@ -24,4 +24,4 @@ blas/blas.a:
 clean:
 	cd blas;	make clean
 	cd matlab;	make clean
-	rm -f *~ tron.o linear.o train predict
+	rm -f *~ tron.o linear.o libLinearTrain libLinearPredict
