@@ -7,18 +7,18 @@ setSeed(42);
 ncenters = 10;
 d = 2;
 % if false, we use Hastie's exact means/data from his website
-regenerateMeans = true;
-regenerateData  = true;
+regenerateMeans = false;
+regenerateData  = false;
 
-blueMix.Sigma = repmat(eye(d)./5, [1, 1, ncenters]);
+blueMix.Sigma     = repmat(eye(d)./5, [1, 1, ncenters]);
 blueMix.mixweight = normalize(ones(1, ncenters));
-blueMix.K = ncenters;
-orangeMix = blueMix;  % same model except for mixture means
+blueMix.K         = ncenters;
+orangeMix         = blueMix;  % same model except for mixture means
 
 data = loadHastieMixtureData();
 if regenerateMeans
     blueMeanSource.mu      = [1 0];
-    blueMeanSource.Sigma  = eye(d);
+    blueMeanSource.Sigma   = eye(d);
     orangeMeanSource.mu    = [0 1];
     orangeMeanSource.Sigma = eye(d);
     means = [gaussSample(blueMeanSource , ncenters);
@@ -26,7 +26,7 @@ if regenerateMeans
 else
     means = reshape(data.means, [20, 2]);
 end
-blueMix.mu   = means(1:10, :)';
+blueMix.mu   = means(1:10,   :)';
 orangeMix.mu = means(11:end, :)';
 %% Create data
 if regenerateData
@@ -54,7 +54,7 @@ prior.K = 2;
 prior.d = 1;
 genmodel.prior = prior;
 bayesPredictFn = @(X)generativeClassifierPredict...
-                 (@mixGaussLogprob, genmodel, X);
+                  (@mixGaussLogprob, genmodel, X);
 bayesError = mean(bayesPredictFn(Xtest) ~= ytest);
 %%
 Cvalues = [10000, 0.01];
@@ -64,6 +64,7 @@ kernelArgs = {{},{'kernelParam', 4},{'kernelParam', 1}};
 
 purple       = [147, 23, 147]./255;
 contourProps = {'--', 'linewidth', 1.5, 'linecolor', purple};
+
 titleStr     = {  {'SVM Linear Kernel'
                    'SVM Polynomial Kernel (degree 4)'
                    sprintf('SVM RBF Kernel (%s = 1)', '\gamma')
@@ -75,9 +76,10 @@ titleStr     = {  {'SVM Linear Kernel'
                };
 penalties = {'svm', 'logreg'};
 for k=1:numel(penalties) 
-penalty = penalties{k};
+    penalty = penalties{k};
     
 for j=1:numel(kernel)
+    if strcmp(penalty, 'logreg') && j == 1, continue; end
     if j > 1, 
         Cvalues = 1; % Use C = 1 for both poly and rbf kernels
         nc = 1; 
@@ -107,13 +109,14 @@ for j=1:numel(kernel)
 
                 plotContour(@(x)argout(2, @svmPredict, svmModel, x), ...
                     axis(), [-1 1], '--k', 'linewidth', 1);
+                t = sprintf('C = %g',  Cvalues(i)); 
             case 'logreg'
                 %% Fit LR
                 lrModel = logregFit(Xtrain, ytrain, 'regType', 'l2',...
                     'lambda', 1/Cvalues(i), 'kernelFn', kernel{j},  ...
                     kernelArgs{j}{:});
-                trainError = mean(ytrain ~= logregPredict(lrModel, Xtrain));
-                testError  = mean(ytest  ~= logregPredict(lrModel, Xtest));
+                trainError = mean(ytrain~= logregPredict(lrModel, Xtrain));
+                testError  = mean(ytest ~= logregPredict(lrModel, Xtest ));
                 
                 %% Plot the LR decision boundary and the 25%/75% margins
                 plotContour(@(x)argout(2, @logregPredict, lrModel, x), ...
@@ -121,9 +124,11 @@ for j=1:numel(kernel)
 
                 plotContour(@(x)argout(2, @logregPredict, lrModel, x), ...
                     axis(), [0.25 0.75], '--k', 'linewidth', 1);
+                t = sprintf('%s = %g', '\lambda', 1/Cvalues(i)); 
         end
        %% Annotate
-        title({titleStr{k}{j}; sprintf('C = %g', Cvalues(i))});
+       
+        title({titleStr{k}{j}; t});
         text = {sprintf('Training Error: %.2f', trainError);
             sprintf('Test Error:       %.2f', testError);
             sprintf('Bayes Error:    %.2f', bayesError)};
