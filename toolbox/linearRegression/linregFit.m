@@ -59,7 +59,7 @@ end
 if isempty(fitMethod)
     switch lower(regType)
         case 'l1'  , fitMethod = 'lars';
-        case {'l2', 'none'}  , fitMethod = 'qr';
+        case 'l2'  , fitMethod = 'qr';
       case 'scad'  , fitMethod = 'scadLLA';
       case 'none', fitMethod = 'qr'; lambda = 0;
     end
