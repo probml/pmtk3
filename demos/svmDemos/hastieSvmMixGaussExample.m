@@ -18,7 +18,7 @@ blueMix.mu   = means(1:10, :)';
 orangeMix.mu = means(11:end, :)';
 
 Xtrain = data.X;
-ytrain = data.y + 1;
+ytrain = convertLabelsToPM1(data.y);
 [Xtrain, ytrain] = shuffleRows(Xtrain, ytrain);
 bayesError = data.bayesError;
 
@@ -26,7 +26,7 @@ ntest = 10000;
 blueTest = mixGaussSample(blueMix, ntest);
 orangeTest = mixGaussSample(orangeMix, ntest); 
 Xtest = [blueTest; orangeTest];
-ytest = [ones(ntest, 1); 2*ones(ntest, 1)];
+ytest = [-1*ones(ntest, 1); ones(ntest, 1)];
 [Xtest, ytest] = shuffleRows(Xtest, ytest); 
 
 genmodel.nclasses = 2;
@@ -43,14 +43,27 @@ args = {'--', 'linewidth', 2, 'linecolor', purple};
 Cvalues = [10000, 0.01];
 nc = numel(Cvalues);
 model = cell(nc, 1); 
+f = cell(nc, 1); 
 trainError = zeros(nc, 1);
 testError  = zeros(nc, 1);
 for i=1:nc
     plotDecisionBoundary(Xtrain, ytrain, predictFn, 'contourProps', args);
-    model{i} = svmFit(Xtrain, ytrain, 'C', Cvalues(i), 'kernel', 'linear');
-    trainError(i) = mean(ytrain ~= svmPredict(model{i}, Xtrain));
-    testError(i) = mean(ytest ~= svmPredict(model{i}, Xtest));
+    model{i} = svmFit(Xtrain, ytrain, 'C', Cvalues(i), 'kernel', 'linear', 'fitFn', @svmQPclassifFit, 'standardizeX', false);
+    yhatTrain = svmQPclassifPredict(model{i}, Xtrain); 
+    trainError(i) = mean(ytrain ~= yhatTrain);
+    [yhatTest, f{i}] = svmQPclassifPredict(model{i}, Xtest); 
+    testError(i) = mean(ytest ~= yhatTest);
     hold on;
+    margin1 = Xtest(arrayfun(@(x)approxeq(x, 1), f{i}), :);
+    marginM1 = Xtest(arrayfun(@(x)approxeq(x, -1), f{i}), :);
+    xlimits = get(gca, 'xlim'); 
+    ylimits = get(gca, 'ylim'); 
+    xx = xlimits(1):0.01:xlimits(2);
+    yy1 = linregPredict(linregFit(margin1(:, 1), margin1(:, 2)), xx);
+    yyM1 = linregPredict(linregFit(marginM1(:, 1), marginM1(:, 2)), xx);
+    plot(xx, yy1, '--k', 'linewidth', 1.5);
+    plot(xx, yyM1, '--k', 'linewidth', 1.5); 
+    
     plotDecisionBoundary(Xtrain, ytrain, @(x)svmPredict(model{i},x), 'newFigure', false); 
     title(sprintf('C = %g', Cvalues(i)));
     text = {sprintf('Training Error: %.2f'  , trainError(i));
@@ -62,7 +75,7 @@ for i=1:nc
                    'FontWeight'     , 'demi'               , ...
                    'FitBoxToText'   , 'on'                 , ...
                    'LineStyle'      , 'none');
-   
+   set(gca, 'ylim', ylimits); 
 end
 %%
 
