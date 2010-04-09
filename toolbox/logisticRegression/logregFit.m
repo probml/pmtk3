@@ -95,39 +95,42 @@ end
 %% construct fit function
 opts = fitOptions;
 if isempty(opts)
-    opts.Display     = 'none'; opts.TolFun = 1e-3;
-    opts.verbose     = false;
-    opts.MaxIter     = 200;   opts.Method = 'lbfgs';
-    opts.MaxFunEvals = 2000;  opts.TolX   = 1e-3;
-    opts.Corr = 10; % number of corrections for LBFGS (small to save memory)
-   
+    opts.Display     = 'none';
+    if size(X, 2) > 100
+        opts.TolFun      = 1e-3;
+        opts.verbose     = false;
+        opts.MaxIter     = 200;   opts.Method = 'lbfgs';
+        opts.MaxFunEvals = 2000;  opts.TolX   = 1e-3;
+        opts.Corr = 10; % number of corrections for LBFGS (small to save memory)
+    end
+    
     if strcmpi(fitMethod, 'l1projection')
-      % for L1GeneralProjection
-      opts.order = -1; % Turn on using L-BFGS
-      opts.corrections = 10; %  num. LBFGS corections
+        % for L1GeneralProjection
+        opts.order = -1; % Turn on using L-BFGS
+        opts.corrections = 10; %  num. LBFGS corections
     end
 end
 
 
 switch lower(fitMethod)
-  case 'minfunc'
-    switch lower(regType)
-      case 'l1' % smooth approximation
-        fitCore = @(X,y,winit,l)minFunc(@penalizedL1, winit(:),opts, @(w)objective(w, X, y), l(:));
-      case {'l2', 'none'}
-        fitCore = @(X,y,winit,l)minFunc(@penalizedL2, winit(:),opts, @(w)objective(w, X, y), l(:));
-    end
-  case 'l1projection'
-    fitCore = @(X,y,winit,l)L1GeneralProjection(objective, winit(:), l(:), opts, X, y);
-  case 'grafting'
-    fitCore = @(X,y,winit,l)L1GeneralGrafting(objective, winit(:), l(:), opts, X, y);
-  otherwise
-    error('unrecognized fitMethod: %s', fitMethod);
+    case 'minfunc'
+        switch lower(regType)
+            case 'l1' % smooth approximation
+                fitCore = @(X,y,winit,l)minFunc(@penalizedL1, winit(:),opts, @(w)objective(w, X, y), l(:));
+            case {'l2', 'none'}
+                fitCore = @(X,y,winit,l)minFunc(@penalizedL2, winit(:),opts, @(w)objective(w, X, y), l(:));
+        end
+    case 'l1projection'
+        fitCore = @(X,y,winit,l)L1GeneralProjection(objective, winit(:), l(:), opts, X, y);
+    case 'grafting'
+        fitCore = @(X,y,winit,l)L1GeneralGrafting(objective, winit(:), l(:), opts, X, y);
+    otherwise
+        error('unrecognized fitMethod: %s', fitMethod);
 end
 if isempty(kernelFn)
-  fitfn = @(X, y, param)simpleFit(X, y, param, fitCore, nclasses, includeOffset);
+    fitfn = @(X, y, param)simpleFit(X, y, param, fitCore, nclasses, includeOffset);
 else
-  fitfn = @(X, y, param)kernelizedFit(X, y, param(1), param(2), fitCore, kernelFn, nclasses, includeOffset);
+    fitfn = @(X, y, param)kernelizedFit(X, y, param(1), param(2), fitCore, kernelFn, nclasses, includeOffset);
 end
 
 %% constuct parameter space
@@ -151,8 +154,8 @@ else
     paramRange = crossProduct(lambda, kernelParam);
 end
 if doPlot
-  fprintf('cross validating over \n');
-  disp(paramRange)
+    fprintf('cross validating over \n');
+    disp(paramRange)
 end
 %% cross validation
 lossFn = @(y, yhat)mean((y-yhat).^2);

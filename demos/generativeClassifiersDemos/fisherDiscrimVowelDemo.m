@@ -53,7 +53,7 @@ model = discrimAnalysisFit(Xlda, ytrain, 'linear');
 % Plot
 stipple = true;
 plotDecisionBoundary(Xlda, ytrain, @(X) discrimAnalysisPredict(model,X), ...
-  stipple, colors); 
+  'stipple', stipple, 'colors', colors); 
 hold on
 muC2dlda =  muC*W;
 for c=1:C

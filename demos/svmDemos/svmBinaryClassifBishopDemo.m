@@ -61,7 +61,7 @@ for method=1:4
             trainingErrorsSVMlight = sum(yhat ~= convertLabelsToPM1(y))
     end
     % Plot results
-    plotDecisionBoundary(X, y, predictFn, [], [], '+x');
+    plotDecisionBoundary(X, y, predictFn, 'symbols', '+x');
     if method > 1 
         plot(X(SV,1), X(SV,2), 'ok', 'linewidth', 1.5, 'markersize', 12);
     end
