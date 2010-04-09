@@ -45,7 +45,7 @@ Xtest = [mixGaussSample(blueMix  , ntest);
          mixGaussSample(orangeMix, ntest)];
 ytest = [-1*ones(ntest, 1); ones(ntest, 1)];
 [Xtest, ytest] = shuffleRows(Xtest, ytest);
-%% Create the generative model to find & plot the Bayesian decision boundary
+%% Create the generative model to plot the Bayesian decision boundary
 genmodel.nclasses = 2;
 genmodel.classConditionals = {blueMix, orangeMix};
 genmodel.support = [-1 1];
@@ -59,15 +59,24 @@ bayesError = mean(bayesPredictFn(Xtest) ~= ytest);
 %%
 Cvalues = [10000, 0.01];
 nc      = numel(Cvalues);
-kernel = {'linear', 'poly', 'rbf'};
+kernel = {@kernelLinear, @kernelPoly, @kernelRbfGamma};
 kernelArgs = {{},{'kernelParam', 4},{'kernelParam', 1}};
 
 purple       = [147, 23, 147]./255;
 contourProps = {'--', 'linewidth', 1.5, 'linecolor', purple};
-titleStr     = {'Linear Kernel'
-                'Polynomial Kernel (degree 4)'
-                sprintf('RBF Kernel (%s = 1)', '\gamma')
+titleStr     = {  {'SVM Linear Kernel'
+                   'SVM Polynomial Kernel (degree 4)'
+                   sprintf('SVM RBF Kernel (%s = 1)', '\gamma')
+                  }
+                  {'LR Linear Kernel'
+                   'LR Polynomial Kernel (degree 4)'
+                    sprintf(' LR RBF Kernel (%s = 1)', '\gamma')
+                  }
                };
+penalties = {'svm', 'logreg'};
+for k=1:numel(penalties) 
+penalty = penalties{k};
+    
 for j=1:numel(kernel)
     if j > 1, 
         Cvalues = 1; % Use C = 1 for both poly and rbf kernels
@@ -78,25 +87,43 @@ for j=1:numel(kernel)
         plotDecisionBoundary(Xtrain, ytrain, bayesPredictFn,...
             'contourProps'   , contourProps                ,...
             'markerLineWidth', 1.5);
-        %% Fit the SVM
-        svmModel = svmFit(Xtrain, ytrain, 'C', Cvalues(i),...
-         'kernel', kernel{j}, kernelArgs{j}{:}, 'fitFn', @svmQPclassifFit);
-        
-        [yhatTrain, ftrain] = svmPredict(svmModel, Xtrain);
-        trainError = mean(ytrain ~= yhatTrain);
-        [yhatTest, ftest] = svmPredict(svmModel, Xtest);
-        testError = mean(ytest ~= yhatTest);
-        %% Plot the SVM decision boundary and the +-1 margins
         hold on;
-        
-        % These are contours of the function values f:
-        plotContour(@(x)argout(2, @svmPredict, svmModel, x), axis(), ...
-            [0 0], '-k', 'linewidth', 1.5);
-        
-        plotContour(@(x)argout(2, @svmPredict, svmModel, x), axis(), ...
-            [-1 1], '--k', 'linewidth', 1);
+        %%
+        switch penalty
+            case 'svm'
+                %% Fit the SVM
+                svmModel = svmFit(Xtrain, ytrain, 'C', Cvalues(i),...
+                 'kernel', kernel{j}, kernelArgs{j}{:}, ...
+                 'fitFn' , @svmQPclassifFit);
+
+                [yhatTrain, ftrain] = svmPredict(svmModel, Xtrain);
+                trainError = mean(ytrain ~= yhatTrain);
+                [yhatTest, ftest] = svmPredict(svmModel, Xtest);
+                testError = mean(ytest ~= yhatTest);
+                %% Plot the SVM decision boundary and the +-1 margins
+                % These are contours of the function values f:
+                plotContour(@(x)argout(2, @svmPredict, svmModel, x), ...
+                    axis(), [0 0], '-k', 'linewidth', 1.5);
+
+                plotContour(@(x)argout(2, @svmPredict, svmModel, x), ...
+                    axis(), [-1 1], '--k', 'linewidth', 1);
+            case 'logreg'
+                %% Fit LR
+                lrModel = logregFit(Xtrain, ytrain, 'regType', 'l2',...
+                    'lambda', 1/Cvalues(i), 'kernelFn', kernel{j},  ...
+                    kernelArgs{j}{:});
+                trainError = mean(ytrain ~= logregPredict(lrModel, Xtrain));
+                testError  = mean(ytest  ~= logregPredict(lrModel, Xtest));
+                
+                %% Plot the LR decision boundary and the 25%/75% margins
+                plotContour(@(x)argout(2, @logregPredict, lrModel, x), ...
+                    axis(), [0.5 0.5], '-k', 'linewidth', 1.5);
+
+                plotContour(@(x)argout(2, @logregPredict, lrModel, x), ...
+                    axis(), [0.25 0.75], '--k', 'linewidth', 1);
+        end
        %% Annotate
-        title({titleStr{j}; sprintf('C = %g', Cvalues(i))});
+        title({titleStr{k}{j}; sprintf('C = %g', Cvalues(i))});
         text = {sprintf('Training Error: %.2f', trainError);
             sprintf('Test Error:       %.2f', testError);
             sprintf('Bayes Error:    %.2f', bayesError)};
@@ -107,5 +134,6 @@ for j=1:numel(kernel)
             'FitBoxToText'   , 'on'                 , ...
             'LineStyle'      , 'none');
     end
+end
 end
 %%
