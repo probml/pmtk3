@@ -30,7 +30,7 @@ blueMix.mu   = means(1:10,   :)';
 orangeMix.mu = means(11:end, :)';
 %% Create data
 if regenerateData
-    ntrain = 100;
+    ntrain = 100; % per class
     Xtrain = [mixGaussSample(blueMix  , ntrain);
               mixGaussSample(orangeMix, ntrain)];
     ytrain = [-1*ones(ntrain, 1); ones(ntrain, 1)];
@@ -40,7 +40,7 @@ else
     ytrain = convertLabelsToPM1(data.y);
     [Xtrain, ytrain] = shuffleRows(Xtrain, ytrain);
 end
-ntest = 10000;
+ntest = 5000; % per class
 Xtest = [mixGaussSample(blueMix  , ntest);
          mixGaussSample(orangeMix, ntest)];
 ytest = [-1*ones(ntest, 1); ones(ntest, 1)];
