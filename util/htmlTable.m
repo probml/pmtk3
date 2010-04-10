@@ -61,6 +61,9 @@ function out = htmlTable(varargin)
 % htmlTable({{'one';{'two','three'}},1;2,3;4,'four'})
 % You can nest as many levels as you like. 
 
+if iscell(varargin{1})
+    varargin = insertFront('data', varargin);
+end
      [data          , rowNames      , colNames        , title         , colormap        , doshow          , ...
       dosave        , filename      , newWindow       , dataFormat    , rowFormat       , colFormat       , ...
       dataAlign     , dataValign    , bgColor         , borderColor   , cellPad         , vertCols        , ...
@@ -108,7 +111,7 @@ function out = htmlTable(varargin)
         'titleBarColor'     ,'white'   ,...
         'colSpan'           ,[]        ,...
         'customCellAlign'   ,{});
-    
+
 %%   
     if vertCols && ~isempty(colNames)
         for i=1:numel(colNames)
