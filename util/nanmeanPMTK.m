@@ -1,5 +1,5 @@
 function m = nanmeanPMTK(X, dim)
-% Replacement for the statstoolbox nanmean function
+% Replacement for the stats toolbox nanmean function.
 
 if nargin == 1
     dim = find(size(X)~=1, 1);
