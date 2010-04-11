@@ -9,45 +9,45 @@ function [model, loglikTrace] = gaussMissingFitICM(data, varargin)
 % Written by Cody Severinski and Kevin Murphy
 
 [maxIter, opttol, verbose] = process_options(varargin, ...
-  'maxIter', 100, 'tol', 1e-4, 'verbose', false); 
+    'maxIter', 100, 'tol', 1e-4, 'verbose', false);
 
 allMissing = find(all(isnan(data),2));
 data = data(setdiffPMTK(1:size(data,1), allMissing),:);
 [n,d] = size(data);
 dataMissing = isnan(data);
 missingRows = any(dataMissing,2);
-missingRows = find(missingRows == 1);  
+missingRows = find(missingRows == 1);
 X = data;
- 
+
 % Initialize params
-mu = nanmean(data); %mu = mu(:);
+mu = nanmeanPMTK(data); %mu = mu(:);
 Sigma = diag(nanvar(data));
 
 iter = 1;
 converged = false;
 currentLL = -inf;
- 
+
 
 while(~converged)
-		% replace missing values with posterior mode
+    % replace missing values with posterior mode
     for i=missingRows(:)'
-      u = dataMissing(i,:); % unobserved entries
-      o = ~u; % observed entries
-      Sooinv = inv(Sigma(o,o));
-      X(i,u) = mu(u) + (Sigma(u,o)*Sooinv*((X(i,o)-mu(o)))')'; % plugin posterior mode.
+        u = dataMissing(i,:); % unobserved entries
+        o = ~u; % observed entries
+        Sooinv = inv(Sigma(o,o));
+        X(i,u) = mu(u) + (Sigma(u,o)*Sooinv*((X(i,o)-mu(o)))')'; % plugin posterior mode.
     end
-
-		% we store the old values of mu, Sigma just in case the log likelihood decreased and we need to return the last values before the singularity occurred
-		muOld = mu;
-		SigmaOld = Sigma;
+    
+    % we store the old values of mu, Sigma just in case the log likelihood decreased and we need to return the last values before the singularity occurred
+    muOld = mu;
+    SigmaOld = Sigma;
     mu = mean(X);
     Sigma = cov(X);
     
-		if(det(Sigma) <= 0)
-			warning('Warning: Obtained Nonsingular Sigma.  Exiting with last reasonable parameters \n')
-            model.mu = muOld; model.Sigma = SigmaOld; 
-			return;
-		end
+    if(det(Sigma) <= 0)
+        warning('Warning: Obtained Nonsingular Sigma.  Exiting with last reasonable parameters \n')
+        model.mu = muOld; model.Sigma = SigmaOld;
+        return;
+    end
     
     % Convergence check
     prevLL = currentLL;
@@ -55,15 +55,15 @@ while(~converged)
     currentLL = sum(-1/2*logdet(2*pi*Sigma) - 1/2*sum((XC*inv(Sigma)).*XC,2));
     loglikTrace(iter) = currentLL;
     if (currentLL < prevLL)
-			warning('warning: EM did not increase objective.  Exiting with last reasonable parameters \n')
-			mu = muOld;
-			Sigma = SigmaOld;
-		end
+        warning('warning: EM did not increase objective.  Exiting with last reasonable parameters \n')
+        mu = muOld;
+        Sigma = SigmaOld;
+    end
     if verbose, fprintf('%d: LL = %5.3f\n', iter, currentLL); end
     iter = iter + 1;
     converged = iter >=maxIter || (abs(currentLL - prevLL) / (abs(currentLL) + abs(prevLL) + eps)/2) < opttol;
 end
-model = struct('mu', mu, 'Sigma', Sigma); 
+model = struct('mu', mu, 'Sigma', Sigma);
 
 end
- 
+

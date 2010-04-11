@@ -20,22 +20,20 @@ G(R,W)=1;
 % Specify the conditional probability tables as cell arrays
 % The left-most index toggles fastest, so entries are stored in this order:
 % (1,1,1), (2,1,1), (1,2,1), (2,2,1), etc.
-CPD{C} = TabularFactor(reshape([0.5 0.5], 2, 1), [C]);
-CPD{R} = TabularFactor(reshape([0.8 0.2 0.2 0.8], 2, 2), [C R]);
-CPD{S} = TabularFactor(reshape([0.5 0.9 0.5 0.1], 2, 2), [C S]);
-CPD{W} = TabularFactor(reshape([1 0.1 0.1 0.01 0 0.9 0.9 0.99], 2, 2, 2), [S R W]);
+CPD{C} = createTabularFactor(reshape([0.5 0.5], 2, 1), [C]);
+CPD{R} = createTabularFactor(reshape([0.8 0.2 0.2 0.8], 2, 2), [C R]);
+CPD{S} = createTabularFactor(reshape([0.5 0.9 0.5 0.1], 2, 2), [C S]);
+CPD{W} = createTabularFactor(reshape([1 0.1 0.1 0.01 0 0.9 0.9 0.99], 2, 2, 2), [S R W]);
 
-jointF = TabularFactor.multiplyFactors(CPD);
+jointF = tabularFactorMultiply(CPD);
 jointDGM = jointF.T;
 
 
 %% Convert from DGM to UGM
-fac{1} = TabularFactor(ones(2,2,2), [C S R]);
-for i=1:3
-  fac{1} = multiplyBy(fac{1}, CPD{i});
-end
+fac{1} = createTabularFactor(ones(2, 2, 2), [C S R]);
+fac{1} = tabularFactorMultiply(fac{1}, CPD{1}, CPD{2}, CPD{3});
 fac{2} = CPD{4};
-jointF = TabularFactor.multiplyFactors(fac)
+jointF = tabularFactorMultiply(fac)
 joint = jointF.T;
 assert(approxeq(joint, jointDGM))
 
@@ -49,17 +47,18 @@ xticklabelRot(lab, 90, 10, 0.01)
 title('joint distribution of water sprinkler UGM')
 
 %% Inference
-false = 1; true = 2;
-mW = marginalize(jointF, W);
+false = 1; 
+true = 2;
+mW = tabularFactorMarginalize(jointF, W);
 assert(approxeq(mW.T(true), 0.6471))
 
-mSW = marginalize(jointF, [S, W]);
+mSW = tabularFactorMarginalize(jointF, [S, W]);
 assert(approxeq(mSW.T(true,true), 0.2781))
 
-mSgivenW = conditional(jointF, S, W, true);
+mSgivenW = tabularFactorConditional(jointF, S, W, true);
 assert(approxeq(mSgivenW.T(true), 0.4298));
 
-mSgivenWR = conditional(jointF, S, [W R], [true,true]);
+mSgivenWR = tabularFactorConditional(jointF, S, [W R], [true,true]);
 assert(approxeq(mSgivenWR.T(true), 0.1945)); % explaining away
 
 

@@ -9,27 +9,27 @@ function [X, mu, mode] = meanValueImputation(Xmiss, type)
 % meanValueImputation(Xmiss, 'c') % [1 2 3 1 2.2 4 2.2]
 
 
-[N, D] = size(Xmiss); %#ok
+[N, D] = size(Xmiss);
 if nargin < 2, type = repmat('c', 1, D); end
 dataMissing = isnan(Xmiss);
 missingRows = any(dataMissing,2);
- 
+
 X = Xmiss;
 
 mu = zeros(1,D);
 ndxC = find(type=='c');
 for ji=1:length(ndxC)
-  j = ndxC(ji);
-  mu(j) = nanmean(Xmiss(:, j));
-  X(missingRows,j) = mu(j);
+    j = ndxC(ji);
+    mu(j) = nanmeanPMTK(Xmiss(:, j));
+    X(missingRows,j) = mu(j);
 end
 
 mode = zeros(1,D);
 ndxD = find(type=='d');
 for ji=1:length(ndxD)
-  j = ndxD(ji);
-  support = unique(Xmiss(:, j));
-  counts = hist(Xmiss(:,j), support);
-  [junk, mode(j)] = max(counts);
-  X(missingRows, j) = mode(j);
+    j = ndxD(ji);
+    support = unique(Xmiss(:, j));
+    counts = hist(Xmiss(:,j), support);
+    [junk, mode(j)] = max(counts);
+    X(missingRows, j) = mode(j);
 end

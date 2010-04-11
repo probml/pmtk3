@@ -12,35 +12,35 @@ mu = randn(d,1); Sigma = randpd(d);
 [Xfull, Xmiss, Xhid] = mkData(mu, Sigma, 10, false);
 
 for useFull = [false]
-  if useFull
-    [model, dataSamples, LLtrace] = gaussMissingFitGibbs(XfullTrain, 'verbose', false, 'mu0', nanmean(XfullTrain), 'Lambda0', diag(nanvar(XfullTrain)), 'k0', 0.01, 'dof', d + 2);
-    muSamples = model.mu; SigmaSamples = model.Sigma; 
-    muHat = mean(muSamples);
-    SigmaHat = mean(SigmaSamples,3);
-    model = struct('mu', muHat', 'Sigma', SigmaHat);
-    [Ximpute, V] = gaussImpute(model, Xmiss);
-    Xtrain = XfullTrain;
-    fname = 'mvnImputeFull';
-  else
-    [model, dataSamples, LLtrace] = gaussMissingFitGibbs(XmissTrain, 'verbose', false, 'mu0', nanmean(XmissTrain), 'Lambda0', diag(nanvar(XmissTrain)), 'k0', 0.01, 'dof', d + 2);
-    muSamples = model.mu; SigmaSamples = model.Sigma; 
-    muHat = mean(muSamples);
-    SigmaHat = mean(SigmaSamples,3);
-    model = struct('mu', muHat, 'Sigma', SigmaHat);
-    figure; plot(LLtrace); title('EM loglik vs iteration')
-    [Ximpute, V] = gaussImpute(model, Xmiss);
-    Xtrain = XmissTrain;
-    fname = 'mvnImputeEm';
-  end
-  conf = 1./V;
-  conf(isinf(conf))=0;
-  
-  figure;
-  hintonScale({Xtrain}, {'map', 'jet', 'title', 'training data'}, ...
-    {Xmiss}, {'-map', 'Jet', 'title', 'observed'}, ...
-    {Ximpute, conf}, {'title', 'imputed'}, ...
-    {Xhid}, {'title', 'hidden truth'});
-  printPmtkFigure(fname);
+    if useFull
+        [model, dataSamples, LLtrace] = gaussMissingFitGibbs(XfullTrain, 'verbose', false, 'mu0', nanmeanPMTK(XfullTrain), 'Lambda0', diag(nanvar(XfullTrain)), 'k0', 0.01, 'dof', d + 2);
+        muSamples = model.mu; SigmaSamples = model.Sigma;
+        muHat = mean(muSamples);
+        SigmaHat = mean(SigmaSamples,3);
+        model = struct('mu', muHat', 'Sigma', SigmaHat);
+        [Ximpute, V] = gaussImpute(model, Xmiss);
+        Xtrain = XfullTrain;
+        fname = 'mvnImputeFull';
+    else
+        [model, dataSamples, LLtrace] = gaussMissingFitGibbs(XmissTrain, 'verbose', false, 'mu0', nanmeanPMTK(XmissTrain), 'Lambda0', diag(nanvar(XmissTrain)), 'k0', 0.01, 'dof', d + 2);
+        muSamples = model.mu; SigmaSamples = model.Sigma;
+        muHat = mean(muSamples);
+        SigmaHat = mean(SigmaSamples,3);
+        model = struct('mu', muHat, 'Sigma', SigmaHat);
+        figure; plot(LLtrace); title('EM loglik vs iteration')
+        [Ximpute, V] = gaussImpute(model, Xmiss);
+        Xtrain = XmissTrain;
+        fname = 'mvnImputeEm';
+    end
+    conf = 1./V;
+    conf(isinf(conf))=0;
+    
+    figure;
+    hintonScale({Xtrain}, {'map', 'jet', 'title', 'training data'}, ...
+        {Xmiss}, {'-map', 'Jet', 'title', 'observed'}, ...
+        {Ximpute, conf}, {'title', 'imputed'}, ...
+        {Xhid}, {'title', 'hidden truth'});
+    printPmtkFigure(fname);
 end
 
 end
@@ -55,12 +55,12 @@ model = struct('mu', mu, 'Sigma', Sigma);
 Xfull = gaussSample(model, n);
 
 if rnd
-  % Random missing pattern
-  missing = rand(n,d) < pcMissing;
+    % Random missing pattern
+    missing = rand(n,d) < pcMissing;
 else
-  % Make the first 3 stripes (features) be completely missing
-  missing = false(n,d);
-  missing(:, 1:floor(pcMissing*d)) = true;
+    % Make the first 3 stripes (features) be completely missing
+    missing = false(n,d);
+    missing(:, 1:floor(pcMissing*d)) = true;
 end
 
 Xmiss = Xfull;

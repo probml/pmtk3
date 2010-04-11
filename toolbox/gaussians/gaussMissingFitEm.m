@@ -20,7 +20,7 @@ missingRows = find(missingRows == 1);
 X = data'; % it will be easier to work with column vectors
 
 % Initialize params
-mu = nanmean(data); mu = mu(:);
+mu = nanmeanPMTK(data); mu = mu(:);
 Sigma = diag(nanvar(data));
 
 expVals = zeros(d,n);

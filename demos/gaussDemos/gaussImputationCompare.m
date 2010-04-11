@@ -28,7 +28,7 @@ SigmaHat{2} = model.Sigma;
 
 % third Gibbs
 fprintf('Now Gibbs\n')
-[model, dataSamples, LLtrace{3}] = gaussMissingFitGibbs(Xmiss, 'mu0', nanmean(Xmiss), 'Lambda0', diag(nanvar(Xmiss)), 'k0', 0.01, 'dof', d + 2, 'verbose', verb);
+[model, dataSamples, LLtrace{3}] = gaussMissingFitGibbs(Xmiss, 'mu0', nanmeanPMTK(Xmiss), 'Lambda0', diag(nanvar(Xmiss)), 'k0', 0.01, 'dof', d + 2, 'verbose', verb);
 muSamples = model.mu; SigmaSamples = model.Sigma; 
 muHat{3} = mean(muSamples);
 SigmaHat{3} = mean(SigmaSamples,3);
