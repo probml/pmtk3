@@ -6,25 +6,22 @@ Ctrue       = 0.1*[2 1; 1 1];
 mtrue.mu    = muTrue;
 mtrue.Sigma = Ctrue;
 xyrange     = [-1 1 -1 1];
-ns          = [2 5 10];
+ns          = [2 10];
 X = gaussSample(mtrue, ns(end));
-%% Plot Data
+%% Plot Data and truth
 figure;
-nr = 2; 
-nc = 3;
-subplot(nr, nc, 1);
 plot(X(:, 1), X(:, 2), '.', 'markersize', 15);
 axis(xyrange); title('data'); grid on; axis square
-%% Plot Truth
-subplot(nr,nc,2);
-plotContour(@(x)exp(gaussLogprob(mtrue, x)), xyrange);
-axis(xyrange); title('truth'); grid on; axis square
+hold on
+plot(muTrue(1), muTrue(2), 'x', 'linewidth', 3, 'markersize', 15, 'color', 'k')
+printPmtkFigure(sprintf('gauss2dUpdateData'))
 %% Plot Prior
+figure
 prior.mu    = [0 0]';
 prior.Sigma = 0.1*eye(2); 
-subplot(nr, nc, 3); 
 plotContour(@(x)exp(gaussLogprob(prior, x)), xyrange);
 axis(xyrange); title('prior'); grid on; axis square
+printPmtkFigure(sprintf('gauss2dUpdatePrior'))
 for i=1:length(ns)
     data  = X(1:ns(i), :); 
     n     = ns(i); 
@@ -41,10 +38,11 @@ for i=1:length(ns)
     %% Plot Posterior
     post.mu    = muN;
     post.Sigma = Sn; 
-    subplot(nr, nc, i+3); 
+    figure;
     plotContour(@(x)exp(gaussLogprob(post, x)), xyrange);
     axis(xyrange); title(sprintf('post after %d obs', n)); grid on; axis square
+    printPmtkFigure(sprintf('gauss2dUpdatePost%d', n))
 end
-printPmtkFigure gauss2dupdate
+
 
 
