@@ -36,7 +36,9 @@ pg = pg(~builtinMatlab);
 found = cellfun(@(c)exist(c, 'file'), missing); 
 missing = missing(~found); 
 pg = pg(~found); 
-
+t = sprintf('Missing Files (%d)', numel(missing));
+colNames = {'file name' 'page (s)'};
+htmlTable('data', [missing, cellfuncell(@mat2str, pg)], 'title', t, 'dataAlign', 'left', 'colNames', colNames);
 
 
 
