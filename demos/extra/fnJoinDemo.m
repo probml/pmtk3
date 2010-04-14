@@ -10,7 +10,7 @@ funObj = @(x)SquaredError(x,A,b);
 
 obj = @(w) sum((A*w-b).^2);
 grad = @(w) 2*(A.'*(A*w-b));
-funObj2 = @(w) fnJoin(w, obj, grad);
+funObj2 = @(w) fnjoin(w, obj, grad);
 
 [f1,g1]= funObj(x);
 [f2,g2] = funObj2(x);
