@@ -16,6 +16,10 @@ function [missing, pg] = pmlMissingCodeReport(bookSource, includeCodeSol)
 %  *** Also displays an html table ***
 %%
 
+ignoreList = ['polya-fit'; % In light-speed
+             ];
+
+
 SetDefaultValue(1, 'bookSource', 'C:\kmurphy\local\PML\Text');
 SetDefaultValue(2, 'includeCodeSol', true); 
 
@@ -29,6 +33,8 @@ end
 
 missing = pmlCode;
 [missing, idx] = setdiff(missing, codeSolFiles); 
+pg = pg(idx); 
+[missing, idx] = setdiff(missing, ignoreList);
 pg = pg(idx); 
 builtinMatlab = isbuiltin(missing); 
 missing = missing(~builtinMatlab); 
