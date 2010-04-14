@@ -2,7 +2,7 @@ function [missing, extra, copyProblems] = pmlOrganizeCode(bookSource, dest, demo
 % Organize the PMTK code files referenced in PML into folders according to
 % the chapter in which they are referenced. If a file is referenced in
 % more than one chapter, the first chapter is used unless this is chapter
-% 1, the introduction. Files are copied, not moved.
+% 1, the introduction. Files are copied, not moved. 
 %
 %% Input
 %
@@ -21,6 +21,9 @@ function [missing, extra, copyProblems] = pmlOrganizeCode(bookSource, dest, demo
 %
 %% Output
 %
+% If you only want a report of missing or extra files use
+% pmlMissingCodeReport() or pmlUnusedDemoReport() instead. 
+% 
 % missing        - a cell array of the code files referenced in PML that
 %                  are not on the Matlab path.
 %
@@ -43,7 +46,10 @@ codeIndFile   = fullfile(bookSource, 'code.ind');
 chname = processChapterNames(chname);
 [pmlCode, pg] = pmlCodeRefs(codeIndFile);
 %% Remove built in functions
-pmlCode = pmlCode(~isbuiltin(pmlCode)); 
+notBuiltin = ~isbuiltin(pmlCode);
+pmlCode = pmlCode(notBuiltin); 
+pg = pg(notBuiltin); 
+
 %%
 nchapters     = numel(chpg);
 [pmlCode, missing, foundNdx] = partitionCell(...
@@ -59,7 +65,7 @@ if ~exist(dest, 'file')
    system(sprintf('md "%s"', dest)); 
 end
 for i=1:nchapters
-    directory = fullfile(dest, sprintf('ch%d %s', i, chname{i}));
+    directory = fullfile(dest, sprintf('%s', chname{i}));
     if ~exist(directory, 'file')
         system(sprintf('md "%s"', directory));
     end
@@ -76,7 +82,7 @@ for i=1:numel(pmlCode)
     if demosOnly && ~ismember(file, PMTKdemos)
         continue
     end
-    d = fullfile(dest, sprintf('ch%d %s', chapter, chname{chapter}));
+    d = fullfile(dest, sprintf('%s', chname{chapter}));
     err = system(sprintf('copy "%s" "%s"', which(file), d));
     if err
         copyProblems = insertEnd(file, copyProblems);
@@ -126,4 +132,5 @@ function chname = processChapterNames(chname)
 % make sure the chapter names are valid directory names
 chname = cellfuncell(@(c)regexprep(c, '[,()\[\]:;&%$#@!`?]', ''), chname);
 chname = cellfuncell(@(c)strrep(strtrim(c), '  ', ' '), chname);
+chname = cellfuncell(@(c)strrep(strtrim(c), ' ', '_'), chname);
 end
