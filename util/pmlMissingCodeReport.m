@@ -4,7 +4,7 @@ function [missing, pg] = pmlMissingCodeReport(bookSource, includeCodeSol)
 %% Input
 %
 % bookSource      - path to the PML latex source containing e.g. pml.tex
-%                  (default = C:\kmurphy\local\PML\Text)
+%                  (default = C:\kmurphy\dropbox\PML\Text)
 %
 % includeCodeSol  - if true (default) the codeSol directory is also
 %                   searched. 
@@ -16,12 +16,12 @@ function [missing, pg] = pmlMissingCodeReport(bookSource, includeCodeSol)
 %  *** Also displays an html table ***
 %%
 % Don't include these functions in the report
-ignoreList = ['polya-fit'; % In light-speed
+ignoreList = {'polya-fit'; % In light-speed
               'lm';        % R function (ours is called linearRegressionFrequentist)
-              ];
+             };
 
 
-SetDefaultValue(1, 'bookSource', 'C:\kmurphy\local\PML\Text');
+SetDefaultValue(1, 'bookSource', 'C:\kmurphy\dropbox\PML\Text');
 SetDefaultValue(2, 'includeCodeSol', true); 
 
 if includeCodeSol
