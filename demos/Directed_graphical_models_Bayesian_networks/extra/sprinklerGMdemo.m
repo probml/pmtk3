@@ -20,17 +20,17 @@ G(R,W)=1;
 % Specify the conditional probability tables as cell arrays
 % The left-most index toggles fastest, so entries are stored in this order:
 % (1,1,1), (2,1,1), (1,2,1), (2,2,1), etc.
-CPD{C} = createTabularFactor(reshape([0.5 0.5], 2, 1), [C]);
-CPD{R} = createTabularFactor(reshape([0.8 0.2 0.2 0.8], 2, 2), [C R]);
-CPD{S} = createTabularFactor(reshape([0.5 0.9 0.5 0.1], 2, 2), [C S]);
-CPD{W} = createTabularFactor(reshape([1 0.1 0.1 0.01 0 0.9 0.9 0.99], 2, 2, 2), [S R W]);
+CPD{C} = tabularFactorCreate(reshape([0.5 0.5], 2, 1), [C]);
+CPD{R} = tabularFactorCreate(reshape([0.8 0.2 0.2 0.8], 2, 2), [C R]);
+CPD{S} = tabularFactorCreate(reshape([0.5 0.9 0.5 0.1], 2, 2), [C S]);
+CPD{W} = tabularFactorCreate(reshape([1 0.1 0.1 0.01 0 0.9 0.9 0.99], 2, 2, 2), [S R W]);
 
 jointF = tabularFactorMultiply(CPD);
 jointDGM = jointF.T;
 
 
 %% Convert from DGM to UGM
-fac{1} = createTabularFactor(ones(2, 2, 2), [C S R]);
+fac{1} = tabularFactorCreate(ones(2, 2, 2), [C S R]);
 fac{1} = tabularFactorMultiply(fac{1}, CPD{1}, CPD{2}, CPD{3});
 fac{2} = CPD{4};
 jointF = tabularFactorMultiply(fac)

@@ -6,6 +6,6 @@ if nargin < 3,
     maximize = false;
 end
 smallT = marg_table(bigpot.T, bigpot.domain, bigpot.sizes, onto, maximize);
-smallpot = createTabularFactor(smallT, onto);
+smallpot = tabularFactorCreate(smallT, onto);
 
 end

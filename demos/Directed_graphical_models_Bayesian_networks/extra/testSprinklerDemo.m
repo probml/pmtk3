@@ -35,10 +35,10 @@ joint2 = repmat(reshape(CPD{C}, [2 1 1 1]), [1 2 2 2]) .* ...
 assert(approxeq(joint, joint2));
 
 % using factors
-fac{C} = createTabularFactor(CPD{C}, [C]);
-fac{R} = createTabularFactor(CPD{R}, [C R]);
-fac{S} = createTabularFactor(CPD{S}, [C S]);
-fac{W} = createTabularFactor(CPD{W}, [S R W]);
+fac{C} = tabularFactorCreate(CPD{C}, [C]);
+fac{R} = tabularFactorCreate(CPD{R}, [C R]);
+fac{S} = tabularFactorCreate(CPD{S}, [C S]);
+fac{W} = tabularFactorCreate(CPD{W}, [S R W]);
 J = tabularFactorMultiply(fac);
 joint3 = J.T;
 assert(approxeq(joint, joint3));

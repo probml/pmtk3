@@ -1,6 +1,6 @@
 function TF = tabularFactorMultiply(varargin)
 % T = multiplyFactors(fac1, fac2, fac3, ...)
-% Each factor is a struct as returned by createTabularFactor and has
+% Each factor is a struct as returned by tabularFactorCreate and has
 % fields T, domain, sizes.
 
 
@@ -22,7 +22,7 @@ sz = prod(ns(dom));
 if sz > 100000
     fprintf('creating tabular factor with %d entries\n', sz);
 end
-TF     = createTabularFactor(onesPMTK(ns(dom)), dom);
+TF     = tabularFactorCreate(onesPMTK(ns(dom)), dom);
 T      = TF.T;
 domain = TF.domain;
 sizes  = TF.sizes;

@@ -1,4 +1,4 @@
-function m = createTabularFactor(T, domain)
+function m = tabularFactorCreate(T, domain)
 % T(j, k, ...) = p(X = (j, k, ...)), multidim array
 %
 % m is a struct with fields, T, domain, sizes.

@@ -10,5 +10,5 @@ Vndx = lookupIndices(visVars, Tbig.domain);
 ndx = mk_multi_index(d, Vndx, visValues);
 Tsmall = squeeze(Tbig.T(ndx{:}));
 H = setdiffPMTK(Tbig.domain, visVars);
-Tsmall = createTabularFactor(Tsmall, H);
+Tsmall = tabularFactorCreate(Tsmall, H);
 end
