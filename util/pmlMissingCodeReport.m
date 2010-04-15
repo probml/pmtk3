@@ -17,7 +17,8 @@ function [missing, pg] = pmlMissingCodeReport(bookSource, includeCodeSol)
 %%
 
 ignoreList = ['polya-fit'; % In light-speed
-             ];
+              'lm';        % R function
+              ];
 
 
 SetDefaultValue(1, 'bookSource', 'C:\kmurphy\local\PML\Text');
