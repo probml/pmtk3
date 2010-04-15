@@ -7,7 +7,7 @@ function [missing, extra, copyProblems] = pmlOrganizeCode(bookSource, dest, demo
 %% Input
 %
 % bookSource     - path to the PML latex source containing e.g. pml.tex
-%                 (default = C:\kmurphy\local\PML\Text)
+%                 (default = C:\kmurphy\dropbox\PML\Text)
 %
 % dest           - destination for the copied files
 %                  (default = 'C:\users\matt\Desktop\PMLcode')
@@ -31,7 +31,7 @@ function [missing, extra, copyProblems] = pmlOrganizeCode(bookSource, dest, demo
 %
 % copyProblems   - a cell array of the files that could not be copied
 %% Set Defaults
-SetDefaultValue(1, 'bookSource', 'C:\kmurphy\local\PML\Text');
+SetDefaultValue(1, 'bookSource', 'C:\kmurphy\dropbox\PML\Text');
 SetDefaultValue(2, 'dest',  'C:\users\matt\Desktop\PMLcode');
 SetDefaultValue(3, 'demosOnly', true);
 SetDefaultValue(4, 'includeCodeSol', false);
@@ -43,7 +43,7 @@ end
 tocfile       = fullfile(bookSource, 'pml.toc');
 codeIndFile   = fullfile(bookSource, 'code.ind');
 [chpg, chname]= pmlChapterPages(tocfile);
-chname = processChapterNames(chname);
+chname = pmlProcessChapterNames(chname);
 [pmlCode, pg] = pmlCodeRefs(codeIndFile);
 %% Remove built in functions
 notBuiltin = ~isbuiltin(pmlCode);
@@ -57,7 +57,7 @@ nchapters     = numel(chpg);
 pg(~foundNdx) = [];
 ch = zeros(numel(pmlCode), 1);
 for i=1:numel(pmlCode)
-    ch(i) = getChapter(chpg, pg{i});
+    ch(i) = pmlGetChapter(chpg, pg{i});
     assert(ch(i) ~= 0);
 end
 %% Create destination directory structure
@@ -97,6 +97,8 @@ for i=1:numel(extra)
         copyProblems = insertEnd(extra{i}, copyProblems);
     end
 end
+%% Organize the extra files
+pmlMoveExtraCode(bookSource, dest)
 
 %% Check that we have accounted for all of the demos
 copiedFiles = cellfuncell(@(c)c(1:end-2), mfiles(dest));
@@ -107,32 +109,5 @@ end
 
 
 
-function ch = getChapter(chpg, pg)
-% Given a list of the chapter starting pages, and a list of page numbers,
-% return a representative chapter. If the pages are from different
-% chapters, select the first, (unless this is chapter 1).
-chaps = zeros(numel(pg), 1);
-for i=1:numel(pg)
-    chaps(i) = sum(pg(i) >= chpg);
-end
-chaps = unique(chaps);
-if numel(chaps) == 1
-    ch = chaps;
-elseif chaps(1) == 1
-    ch = chaps(2);
-else
-    ch = chaps(1);
-end
 
 
-end
-
-
-function chname = processChapterNames(chname)
-% make sure the chapter names are valid directory names
-chname = cellfuncell(@(c)regexprep(c, '[,()\[\]:;&%$#@!`?]', ''), chname);
-chname = cellfuncell(@(c)strrep(strtrim(c), '  ', ' '), chname);
-chname = cellfuncell(@(c)strrep(strtrim(c), 'unfinished', ''), chname);
-chname = cellfuncell(@(c)strrep(strtrim(c), 'Unfinished', ''), chname);
-chname = cellfuncell(@(c)strrep(strtrim(c), ' ', '_'), chname);
-end
