@@ -17,7 +17,7 @@ function [missing, pg] = pmlMissingCodeReport(bookSource, includeCodeSol)
 %%
 
 ignoreList = ['polya-fit'; % In light-speed
-              'lm';        % R function
+              'lm';        % R function (ours is called linearRegressionFrequentist)
               ];
 
 
