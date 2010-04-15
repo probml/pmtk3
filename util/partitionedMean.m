@@ -10,9 +10,16 @@ function [M, counts] = partitionedMean(X, y, C)
 % counts(i) = sum(y==i)
 %
 % See also partitionedSum
+%%
+% This is a vectorized version of this code fragment:
+%
+% M = zeros(C, d);
+% for c=1:C
+%     M(c, :) = mean(X(y==c, :));
+% end
+% counts = histc(y, 1:C);
+%%
 
-
-%tic
 if nargin < 3
     C = nunique(y);
 end
