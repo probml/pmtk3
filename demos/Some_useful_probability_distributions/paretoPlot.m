@@ -16,7 +16,7 @@ legend(legendStr)
 title('Pa(m=1, k)')
 set(gca, 'xlim', [1 5]);
 printPmtkFigure pareto-pdf;
-%%
+%% Plot on a log log scale
 copyobj(gca, figure());
 set(gca, 'xscale', 'log', 'yscale', 'log');
 axis(exp([0 1.5 -6 2]));
