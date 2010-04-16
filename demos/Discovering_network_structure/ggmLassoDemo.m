@@ -17,7 +17,7 @@ for i=1:L
     nedges(i) = sum(A(:))/2;
     ttl=sprintf('lambda=%3.2f, nedges=%d', lambda, nedges(i));
     g = graphViz4Matlab('-adjMat', A, '-undirected', true, ...
-        '-nodeLabels', labels, '-layout', CircleLayout());
+        '-nodeLabels', labels, '-layout', Circlelayout());
     f=freeze(g); % convert to regular figure
     title(ttl)
     %figure; imagesc(P); colorbar; title(ttl);

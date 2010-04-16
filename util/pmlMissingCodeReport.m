@@ -16,10 +16,11 @@ function [missing, pg] = pmlMissingCodeReport(bookSource, includeCodeSol)
 %  *** Also displays an html table ***
 %%
 % Don't include these functions in the report
-ignoreList = {'polya-fit'; % In light-speed
-              'lm';        % R function (ours is called linearRegressionFrequentist)
-              'ReBEL';     % http://choosh.csee.ogi.edu/rebel/
+ignoreList = {'polya-fit'  % In light-speed
+              'lm'         % R function (ours is called linearRegressionFrequentist)
+              'ReBEL'      % http://choosh.csee.ogi.edu/rebel/
               'demo-gpr'   % Carl Rasmussen’s demo-gpr script
+              'diana'      % R package
              };
 
 
