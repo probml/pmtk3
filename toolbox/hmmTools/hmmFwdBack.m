@@ -2,7 +2,7 @@ function [gamma, alpha, beta, loglik] = hmmFwdBack(initDist, transmat, obslik)
 % INPUT:
 % initDist(i) = p(S(1) = i)
 % transmat(i,j) = p(S(t) = j | S(t-1)=i)
-% obslik(i,t) = p(y(t)| S(t)=i)  
+% obslik(i,t) = p(y(t)| S(t)=i)
 %
 % OUTPUT
 % gamma(i,t) = p(S(t)=i | y(1:T))
@@ -10,8 +10,8 @@ function [gamma, alpha, beta, loglik] = hmmFwdBack(initDist, transmat, obslik)
 % beta(i,t) propto p(y(t+1:T) | S(t=i))
 % loglik = log p(y(1:T))
 % Matlab Version by Kevin Murphy
-% C Version by Guillaume Alain 
-%PMTKauthor Guillaume Alain 
+% C Version by Guillaume Alain
+%PMTKauthor Guillaume Alain
 %PMTKurl http://www.cs.ubc.ca/~gyomalin/
 %PMTKmex
 
@@ -27,7 +27,7 @@ function [beta] = hmmBackwards(transmat, obslik)
 beta = zeros(K,T);
 beta(:,T) = ones(K,1);
 for t=T-1:-1:1
- beta(:,t) = normalize(transmat * (beta(:,t+1) .* obslik(:,t+1)));
+    beta(:,t) = normalize(transmat * (beta(:,t+1) .* obslik(:,t+1)));
 end
 
 end
