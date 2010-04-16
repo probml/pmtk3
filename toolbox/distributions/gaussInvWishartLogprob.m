@@ -37,10 +37,7 @@ iwModel.Sigma = Sigma;
 iwModel.dof   = dof; 
 piw = invWishartLogprob(iwModel, S);
 
-logZ = (dof*d/2)*log(2) + mvtGammaln(d, dof/2) - ...
-       (dof/2)*logdet(Sigma) + (d/2)*log(2*pi/k);
-   
-logp = pgauss + piw - logZ; 
+logp = pgauss + piw;
 
 
   
