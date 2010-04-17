@@ -11,8 +11,9 @@ for j = 1:numel(lambdas);
     x = ((1:N)-0.5)./N;
     y = fun(x) + randn(N, 1)*noise;
     %%
-    D = spdiags(ones(N-1, 1)*[-1 1], [0 1], N-1, N);
-    A = [speye(N); sqrt(lambda)*D];
+    D = diag(-ones(N, 1)) + diag(ones(N-1, 1), 1);
+    D(end, :) = [];
+    A = [eye(N); sqrt(lambda)*D];
     b = [y; zeros(N-1, 1)];
     w = A \ b;
     %%
