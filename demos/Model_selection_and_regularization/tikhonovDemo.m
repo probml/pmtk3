@@ -10,7 +10,7 @@ for j = 1:numel(lambdas);
     noise = 0.5;
     x = ((1:N)-0.5)./N;
     y = fun(x) + randn(N, 1)*noise;
-    %%
+    %% Form a band diagonal difference matrix
     D = diag(-ones(N, 1)) + diag(ones(N-1, 1), 1);
     D(end, :) = [];
     A = [eye(N); sqrt(lambda)*D];
