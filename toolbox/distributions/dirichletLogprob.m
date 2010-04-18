@@ -2,7 +2,7 @@ function logp = dirichletLogprob(model, X)
 % logp(i) = log p(X(i, :) | model.alpha)
 %
 % *** X is automatically appended with [X, 1-sum(X, 2)] ***
-%
+%     
 % If model.alpha is a scalar, it is automatically replicated to the right
 % size. 
 %
