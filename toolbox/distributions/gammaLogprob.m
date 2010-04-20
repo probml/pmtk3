@@ -1,7 +1,7 @@
 function logp = gammaLogprob(model, X)
 % logp(i) = log p(X(i) | model.a, model.b) 
 % model.a is the shape,
-% model.b is the rate, (not scale).
+% model.b is the rate, i.e. 1/scale
 a = model.a;
 b = model.b;
 
