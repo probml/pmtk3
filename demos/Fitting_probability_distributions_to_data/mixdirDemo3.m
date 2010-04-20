@@ -80,7 +80,8 @@ title('entropy vs position')
 
 postC = sum(postZ(1:4,:));
 figure();
-stem(postC); title('p(C(t)=1|Dt)');
+stem(postC); 
+title('p(C(t)=1|Dt)');
 hold on
 for t=1:Nlocn
     if z(t)<5
