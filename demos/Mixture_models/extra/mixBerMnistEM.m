@@ -48,7 +48,8 @@ for i=1:NK
         title(sprintf('%1.2f', mixweightK(j)));
         axis off
     end
-    printPmtkFigure(sprintf('MnistMix%dBernoullis', K));
+    
+    printPmtkFigure(sprintf('mixBernoulliMnist%d', K));
 end
 if numel(Kvalues) > 2
     figure(); 
