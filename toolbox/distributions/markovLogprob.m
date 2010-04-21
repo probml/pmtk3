@@ -1,7 +1,7 @@
 function logp = markovLogprob(model, X)
 % logp(i)       = log p(X(i, :) | model.pi, model.A)
-% model.pi(j)   = p(S(1) = j)
-% model.A(j, k) = p(S(t) = k | S(t-1) = j)
+% model.pi(j)   = p(S(1) = j)              - dist over starting states -
+% model.A(j, k) = p(S(t) = k | S(t-1) = j) -  state transition matrix  - 
 %
 % where S(t) denotes the state at time step t.
 %
