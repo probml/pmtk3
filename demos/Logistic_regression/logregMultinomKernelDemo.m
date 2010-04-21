@@ -2,7 +2,7 @@
 % with basis function expansion. This is a simplification of
 % logregMultinomKernelMinfuncDemo
 %% Setup Data
-rand('state', 0); randn('state', 0); %#ok
+setSeed(0);
 nClasses = 5;
 nInstances = 100;
 nVars = 2;
