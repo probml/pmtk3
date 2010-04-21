@@ -25,7 +25,7 @@ function [mu, assign, errHist] = kmeansFit(X, K, varargin)
 [maxIter, thresh, plotfn, verbose, mu] = process_options(varargin, ...
     'maxIter' , 100           , ...
     'thresh'  , 1e-3          , ... 
-    'plotfn'  , @(varargin)[] , ... 
+    'plotfn'  , @(varargin)[] , ... % default does nothing
     'verbose' , false         , ...
     'mu'      , []            );    
 N = size(X, 1);
@@ -38,21 +38,22 @@ end
 %% Setup loop
 iter    = 1;
 errHist = zeros(maxIter, 1);
+prevErr = Inf; 
 while true
     dist   = sqDistance(X, mu'); % dist(i, j) = sum((X(i, :)- mu(:, j)').^2)
     assign = minidx(dist, [], 2); 
     mu     = partitionedMean(X, assign, K)';
-    err    = sum(min(partitionedSum(dist, assign, K), [], 2)) / N;
+    currentErr = sum(min(partitionedSum(dist, assign, K), [], 2)) / N;
     %% Display progress
-    errHist(iter) = err;
-    plotfn(X, mu, assign, err, iter); 
-    if verbose, fprintf('iteration %d, err = %f\n', iter, err);  end
+    errHist(iter) = currentErr;
+    plotfn(X, mu, assign, currentErr, iter); 
+    if verbose, fprintf('iteration %d, err = %f\n', iter, currentErr); end
     %% Check convergence
-    if iter > 1 && (convergenceTest(err, errHist(iter-1), thresh) ...
-                ||  iter >= maxIter)
+    if convergenceTest(currentErr, prevErr, thresh)  ||  (iter >= maxIter)
         break
     end
     iter = iter + 1;
+    prevErr = currentErr; 
 end
 errHist = errHist(1:iter);
 end
