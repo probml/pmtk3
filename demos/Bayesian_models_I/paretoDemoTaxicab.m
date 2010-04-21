@@ -28,8 +28,6 @@ plot(ms, ev, 'linewidth', 2)
 plot(ms, ev, 'linewidth', 2)
 set(gca, 'ylim', [-0.1 0.6])
 
-
-
 for i=1:4
   subplot(2,2,i)
   K = Ks(i);
