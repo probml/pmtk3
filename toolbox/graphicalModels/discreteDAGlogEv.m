@@ -1,13 +1,19 @@
-function L = discreteDAGlogEv(X, G, alpha)
+function L = discreteDAGlogEv(X, G, alpha, ns)
 % G is a D*D binary adjacency matrix for a DAG
 % X is an N*D matrix where X(i,j) in {1,..,K}
 % L = log p(X|G) assuming BDeu(alpha) parameterization
 
-if nargin < 3, alpha = 1; end
 [N,D] = size(X);
-K = length(unique(X(:)));
 L = 0;
-ns  = K*ones(1,D); % we assume all node sizes are the same
+if nargin < 3
+    alpha = 1; 
+end
+
+if nargin < 4
+    K = length(unique(X(:)));
+    ns  = K*ones(1,D); % we assume all node sizes are the same
+end
+
 for i=1:D
    ps = parents(G,i); fam = [ps i];
    ns_fam = ns(fam); ns_ps = ns_fam(1:end-1); ns_self = ns_fam(end);
@@ -22,7 +28,7 @@ end
 
 
 function L = logbeta(alpha)
-L = sum(gammaln(alpha)) - gammaln(sum(alpha));
+L = sum(gammaln(alpha), 2) - gammaln(sum(alpha, 2));
 end
 
 
