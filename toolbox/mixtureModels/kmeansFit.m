@@ -13,7 +13,7 @@ function [mu, assign, errHist] = kmeansFit(X, K, varargin)
 %% Optional (named) Inputs
 %
 % 'maxIter'  ...   [100] maximum number of iterations to run
-% 'thresh'   ...   1e-3  convergence threshold 
+% 'thresh'   ...   [1e-3] convergence threshold 
 % 'plotFn'   ...   @plotfn(X, mu, assign, err, iter) called each iteration 
 % 'verbose'  ...   [false] if true, display progress each iteration 
 % 'mu'       ...   initial guess for the cluster centers
