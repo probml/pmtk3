@@ -1,41 +1,58 @@
-function [mu, assign, errHist] = kmeansFit(data, K, varargin)
-% data(i,:) is i'th case
-% mu(:,k) is k'th centroid
-% assign(i) = cluster to which data point i is assigned
-[maxIter, thresh, plotfn, verbose, mu] = process_options(...
-    varargin, 'maxIter', 100, 'thresh', 1e-3,...
-    'plotfn', [], 'verbose', false, 'mu', []);
-
-[N, D] = size(data);
+function [mu, assign, errHist] = kmeansFit(X, K, varargin)
+% Hard cluster data using kmeans.
+%
+%% Inputs
+%
+% X          ...   X(i, :) the ith data case
+% K          ...   the number of clusters to fit
+%% Outputs
+%
+% mu         ...   mu(:, k) is the k'th center
+% assign     ...   assign(i) is the cluster to which data point i is 
+%                  assigned.
+%% Optional (named) Inputs
+%
+% 'maxIter'  ...   [100] maximum number of iterations to run
+% 'thresh'   ...   1e-3  convergence threshold 
+% 'plotFn'   ...   @plotfn(X, mu, assign, err, iter) called each iteration 
+% 'verbose'  ...   [false] if true, display progress each iteration 
+% 'mu'       ...   initial guess for the cluster centers
+%% Example
+% 
+% [mu, assign, errHist] = kmeansFit(randn(1000, 10), 7, 'verbose', true);
+% 
+%% Parse inputs
+[maxIter, thresh, plotfn, verbose, mu] = process_options(varargin, ...
+    'maxIter' , 100           , ...
+    'thresh'  , 1e-3          , ... 
+    'plotfn'  , @(varargin)[] , ... 
+    'verbose' , false         , ...
+    'mu'      , []            );    
+N = size(X, 1);
+%% Initialize
+%  Initialize using K data points chosen at random
 if isempty(mu)
-    % initialize using K data points chosen at random
     perm = randperm(N);
-    mu = data(perm(1:K), :)';
+    mu   = X(perm(1:K), :)';
 end
-Y = data'; % Y(:,i) is i'th case
-done = false;
-iter = 1;
-errHist = zeros(maxIter, 1); 
-
-while ~done
-    dist = sqDistance(Y', mu');   % dist(i,k)
-    assign = minidx(dist, [], 2);
-    %err = 0;
-    %for k=1:K
-    %    members = (assign==k);
-    %    mu(:, k) = mean(data(members, :), 1)';
-    %    err = err + sum(dist(members, k));
-    %end
-    mu = partitionedMean(data, assign, K)';
-    err = sum(min(partitionedSum(dist, assign, K), [], 2))/N; 
+%% Setup loop
+iter    = 1;
+errHist = zeros(maxIter, 1);
+while true
+    dist   = sqDistance(X, mu'); % dist(i, j) = sum((X(i, :)- mu(:, j)').^2)
+    assign = minidx(dist, [], 2); 
+    mu     = partitionedMean(X, assign, K)';
+    err    = sum(min(partitionedSum(dist, assign, K), [], 2)) / N;
+    %% Display progress
     errHist(iter) = err;
-    converged =  iter > 1 && convergenceTest(errHist(iter), errHist(iter-1), thresh);
-    if ~isempty(plotfn), plotfn(data, mu, assign, err, iter); end
-    if verbose, fprintf(1, 'iteration %d, err = %f\n', iter, errHist(iter)); end
-    done = converged || (iter > maxIter);
+    plotfn(X, mu, assign, err, iter); 
+    if verbose, fprintf('iteration %d, err = %f\n', iter, err);  end
+    %% Check convergence
+    if iter > 1 && (convergenceTest(err, errHist(iter-1), thresh) ...
+                ||  iter >= maxIter)
+        break
+    end
     iter = iter + 1;
 end
-errHist = errHist(1:iter-1); 
-
-
+errHist = errHist(1:iter);
 end

@@ -15,8 +15,10 @@ function [M, counts] = partitionedMean(X, y, C)
 %
 % M = zeros(C, d);
 % for c=1:C
-%     M(c, :) = mean(X(y==c, :));
+%     ndx = find(y==c); 
+%     M(c, :) = mean(X(ndx, :));
 % end
+% 
 % counts = histc(y, 1:C);
 %%
 
@@ -29,23 +31,6 @@ M = S*X;                                 % computes the sum, yielding a C-by-d m
 counts = histc(y, 1:C);                  
 M = bsxfun(@rdivide, M, counts);         % divide by counts to get mean
 
-%toc
-
-
-test = false;
-if test
-    tic
-    d = size(X, 2);
-    if nargin < 3
-        C = nunique(y);
-    end
-    M1 = zeros(C, d);
-    for i=1:C
-        M1(i, :) = rowvec(mean(X(y==i, :)));
-    end
-    toc
-    assert(approxeq(M, M1));
-end
 end
 
 
