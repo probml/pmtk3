@@ -6,5 +6,7 @@ figure;
 plotSurface(fn, rangexy);
 shading interp;
 view([-40 60]);
-figure;
+printPmtkFigure('rosenSurf');
+figure();
 plotContour(fn, rangexy);
+printPmtkFigure('rosenContour');
