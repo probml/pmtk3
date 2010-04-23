@@ -14,9 +14,11 @@ for i=1:nsurfaces
     xs = linspace(0, 40, 15)';
     ys = linspace(0, 40, 15)';
     [Xs, Ys] = meshgrid(xs, ys);
-    Z = W(3) + W(2)*Xs + W(3)*Ys + 50*randn;
+    Z = (W(3) + W(2)*Xs + W(3)*Ys + 50*randn)/10;
     surf(xs, ys, Z);
 end
 grid on;
-view([9, 8]);
+axis square;
+set(gca, 'xdir', 'reverse'); 
+view([48, 20]);
 printPmtkFigure('piecewiseLinearSurface'); 
