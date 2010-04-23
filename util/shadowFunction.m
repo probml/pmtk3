@@ -39,7 +39,7 @@ else
 end
 path = fullfile(tempdir(), 'matlabShadow');
 if ~exist(path, 'file')
-    mkdir(fullfile(t, 'matlabShadow'));
+    mkdir(fullfile(tempdir(), 'matlabShadow'));
 end
 writeText(text, fullfile(path, [fname, '.m']));
 providePath(path);

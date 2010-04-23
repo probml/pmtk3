@@ -28,10 +28,11 @@ for i=1:4
     plot(domain,f(domain),lineSpec{:});
     xlabel(['x_',num2str(i)],labelSpec{:});
     ylabel(['y_',num2str(i)],labelSpec{:});
+    set(gca, axisSpec{:}); 
 end
         
 
-set(get(gcf, 'children'), axisSpec{:}); %Set properties in parallel
+
 maximizeFigure();
 
 printPmtkFigure anscombe;

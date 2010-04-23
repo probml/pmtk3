@@ -10,7 +10,7 @@ muC = partitionedMean(Xtrain, ytrain);
 Sw = (Xtrain  - muC(ytrain, :))'*(Xtrain  - muC(ytrain, :));
 muOverall = mean(Xtrain, 1);
 Sb = (ones(C, 1)*muOverall - muC)'*(ones(C, 1)*muOverall - muC);
-W = eig(Sw\Sb);
+[W, D] = eig(Sw\Sb);
 W = W(:, 1:K);
 Z = Xtrain*W;
 end

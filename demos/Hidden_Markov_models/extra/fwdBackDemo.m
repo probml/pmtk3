@@ -16,7 +16,7 @@ nsamples = 1000;
 % check that samples converge to true marginals
 
 samples = hmmSamplePost(initDist, transmat, obslik, nsamples);
-gamma = hmmFwdBack(initDist, transmat, obslik);
+[gamma, j, j, j] = hmmFwdBack(initDist, transmat, obslik);
 path = hmmViterbi(initDist, transmat, obslik)
 
 for t=1:T

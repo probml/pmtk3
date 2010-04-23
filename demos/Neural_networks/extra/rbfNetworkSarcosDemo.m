@@ -1,6 +1,6 @@
 
 
- clear all
+ 
  load('sarcosData.mat')
  setSeed(0);
  
