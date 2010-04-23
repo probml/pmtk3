@@ -1,5 +1,5 @@
 %% Simple Tests of the svmFit interface
-
+%PMTKslow
 %% First we check that the 3 implementations give the same
 % results on a simple binary dataset
 load crabs

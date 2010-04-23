@@ -3,6 +3,7 @@
 %% Generating Models
 % Generate data as per Hastie 2ed, pg 16: two classes, blue and orange,
 % each with a mixture of 10, 2D Gaussians.
+%PMTKslow
 setSeed(42);
 ncenters = 10;
 d = 2;

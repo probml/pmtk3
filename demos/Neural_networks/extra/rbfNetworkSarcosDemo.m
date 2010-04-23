@@ -1,4 +1,5 @@
-
+%% RBF Network
+%PMTKslow
 
  
  load('sarcosData.mat')

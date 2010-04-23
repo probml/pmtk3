@@ -17,7 +17,7 @@ nsamples = 1000;
 
 samples = hmmSamplePost(initDist, transmat, obslik, nsamples);
 [gamma, j, j, j] = hmmFwdBack(initDist, transmat, obslik);
-path = hmmViterbi(initDist, transmat, obslik)
+[path, j, j] = hmmViterbiC(log(initDist), log(transmat), log(obslik))
 
 for t=1:T
   belApprox(:,t) = normalize(hist(samples(t,:),1:K));
