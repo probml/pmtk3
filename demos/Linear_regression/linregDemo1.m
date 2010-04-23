@@ -40,4 +40,5 @@ figure;
 scatter(Xtrain(:,1),ytrain,'b','filled');
 hold on;
 plot(Xtest(:,1), ypredTest, 'k', 'linewidth', 3);
+printPmtkFigure('linregWedge2Line');
 

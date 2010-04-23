@@ -1,11 +1,11 @@
 %% Fisher Iris Data Visualization Demo
 [X,y,classnames,varnames] = fisheririsLoad;
-figure(1);clf
+figure();
 pscatter(X,'y', y);
 suptitle(sprintf('iris data, red=setosa, green=versicolor, blue=virginica'));
 printPmtkFigure fisherIrisPairs
 
-figure(2);clf
+figure();
 for dim=1:4
 subplot(2,2,dim)
 if dim<=2
@@ -20,7 +20,7 @@ end
 printPmtkFigure irisBoxNotch
 
 
-figure(3); clf
+figure();
 for dim=1:4
   [n d] = size(X);
   C = length(classnames);

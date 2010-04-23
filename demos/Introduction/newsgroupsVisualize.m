@@ -24,7 +24,7 @@ for c=1:length(unique(yy))-1
   hh = ndx(end);
   line([1 d], [hh hh], 'linewidth', 3, 'color', 'r');
 end
-
+printPmtkFigure('newsgroupsSpyWithLabels'); 
 
 % Print a sentence (bag of words) chosen at random for each class
 setSeed(1);

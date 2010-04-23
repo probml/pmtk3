@@ -13,4 +13,4 @@ axis([-0.1 1.1 -0.1 1.1]);
 set(gca,'XTick',[],'YTick',[]);
 box on;
 set(gca,'LineWidth',3)
-
+printPmtkFigure('knnVoronoi'); 
