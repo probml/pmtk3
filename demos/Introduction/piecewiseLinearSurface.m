@@ -11,8 +11,8 @@ for i=1:nsurfaces
     [U, S, V] = svd([x-P(1), y-P(2), z-P(3)], 0);
     N = -1/V(end, end)*V(:, end);
     W(1)=N(1); W(2)=N(2); W(3)=-P*N;
-    xs = linspace(0, 40, 20)';
-    ys = linspace(0, 40, 20)';
+    xs = linspace(0, 40, 15)';
+    ys = linspace(0, 40, 15)';
     [Xs, Ys] = meshgrid(xs, ys);
     Z = W(3) + W(2)*Xs + W(3)*Ys + 50*randn;
     surf(xs, ys, Z);
