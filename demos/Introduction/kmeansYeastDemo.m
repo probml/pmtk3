@@ -32,7 +32,7 @@ for c = 1:16
     axis tight
 end
 suptitle('K-Means Clustering of Profiles');
-printPmtkFigure('clusterYeastKmeans16')
+printPmtkFigure('yeastKmeans16')
 
 
 figure;

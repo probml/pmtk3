@@ -2,7 +2,7 @@
 
 setSeed(0);
 
-if 1
+if 0
   load('mnistALL.mat'); % mnist structure
   %train_images: [28x28x60000 uint8]  0 to 255
   %   test_images: [28x28x10000 uint8]
@@ -15,7 +15,7 @@ if 1
   name = 'mnist3'
 end
 
-if 0
+if 1
   load('olivettifaces.mat'); % 0 to 255, from http://www.cs.toronto.edu/~roweis/data.html
   X=faces'; clear faces; % 4096x400  (64x64=4096) 
   % 10 images per person, 40 images
