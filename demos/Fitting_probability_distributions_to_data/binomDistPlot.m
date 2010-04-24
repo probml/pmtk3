@@ -11,4 +11,4 @@ for i=1:4
   set(gca,'xticklabel',xs)
   title(sprintf('theta=%5.3f',theta))
 end
-
+printPmtkFigure('binomDistPlot'); 

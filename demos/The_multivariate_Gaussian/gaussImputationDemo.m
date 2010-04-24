@@ -38,7 +38,7 @@ printPmtkFigure('mvnImputeImputeEM');
 
 figure; hintonDiagram(XimputeTruth(ndx,:));
 title('imputation with true params');
-printPmtkFigure('mvnImputeImputeTruth')
+printPmtkFigure('mvnImputeTruth')
 
 figure; hintonDiagram(Xfull(ndx,:)); title('truth');
 printPmtkFigure('mvnImputeTruth');
