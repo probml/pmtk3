@@ -51,17 +51,19 @@ args = prepareArgs(varargin); % converts struct args to a cell array
     'nfolds'        , 5      , ...        
     'useSErule'     , false  , ...
     'doPlot'        , false  );
-%% set defaults        
-if strcmpi(regType, 'none') && isempty(lambda)
+%% set defaults
+if strcmpi(regType, 'none')
     regType = 'l2';
-    lambda = 0;
+    if isempty(lambda)
+        lambda = 0;
+    end
 end
 if isempty(fitMethod)
     switch lower(regType)
         case 'l1'  , fitMethod = 'lars';
         case 'l2'  , fitMethod = 'qr';
-      case 'scad'  , fitMethod = 'scadLLA';
-      case 'none', fitMethod = 'qr'; lambda = 0;
+        case 'scad'  , fitMethod = 'scadLLA';
+        case 'none', fitMethod = 'qr'; 
     end
 end
 %% preprocess X, (kernelization happens later)
