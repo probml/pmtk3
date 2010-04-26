@@ -1,0 +1,427 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>HMMs and the occasionally Dishonest Casino</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-04-25"><meta name="m-file" content="casinoDemo"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>HMMs and the occasionally Dishonest Casino</h1><!--introduction--><p>This is an example from 'Biological Sequence Analysis: Probabilistic Models Proteins and Nucleic Acids' by Durbin, Eddy, Krogh, &amp; Mitchison, (1998) p54.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Specifying the Model</a></li><li><a href="#3">Observation Model</a></li><li><a href="#4">Transition Matrix</a></li><li><a href="#5">Distribution over Starting States</a></li><li><a href="#6">Sample</a></li><li><a href="#7">Fit via EM (pretending we don't know the hidden states)</a></li><li><a href="#8">Viterbi Path</a></li><li><a href="#9">Sequence of Most Likely States (Max Marginals)</a></li><li><a href="#10">Posterior Samples</a></li></ul></div><p>Suppose a casino uses a fair die most of the time but occasionally switches to and from a loaded die according to Markovian dynamics. We observe the dice rolls but not the type of die. We can use a Hidden Markov Model to predict which die is being used at any given point in a sequence of rolls. In this example, we know both the transition and emission probabilities.</p><h2>Specifying the Model<a name="2"></a></h2><p>Since we are not learning the parameters, we must specify the observation/emission model, the transition matrix, and the distribution over starting states.</p><pre class="codeinput">fair = 1; loaded = 2;
+</pre><h2>Observation Model<a name="3"></a></h2><p>We will use a discrete observation model, one discrete distribution per hidden state of which there are two. We store these state conditional densities in a cell array.</p><pre class="codeinput">setSeed(0);
+obsModel = {[1/6 , 1/6 , 1/6 , 1/6 , 1/6 , 1/6  ]';<span class="keyword">...</span><span class="comment">   % fair die</span>
+            [1/10, 1/10, 1/10, 1/10, 1/10, 5/10 ]'};     <span class="comment">% loaded die</span>
+</pre><h2>Transition Matrix<a name="4"></a></h2><pre class="codeinput">transmat = [0.95 , 0.05;
+           0.10  , 0.90];
+</pre><h2>Distribution over Starting States<a name="5"></a></h2><pre class="codeinput">pi = [0.5, 0.5];
+</pre><h2>Sample<a name="6"></a></h2><p>We now sample a single sequence of 300 dice rolls</p><pre class="codeinput">len = 300; nsamples = 1;
+hidden = mc_sample(pi, transmat, len, nsamples);
+observed = zeros(1, len);
+<span class="keyword">for</span> t=1:len
+   observed(1, t) = sampleDiscrete(obsModel{hidden(t)});
+<span class="keyword">end</span>
+</pre><h2>Fit via EM (pretending we don't know the hidden states)<a name="7"></a></h2><pre class="codeinput">nstates = numel(obsModel);
+modelEM = hmmDiscreteFitEm(observed, nstates);
+</pre><pre class="codeoutput">1	 loglik: -534.047
+2	 loglik: -524.441
+3	 loglik: -524.426
+4	 loglik: -524.412
+5	 loglik: -524.394
+6	 loglik: -524.367
+7	 loglik: -524.325
+8	 loglik: -524.259
+9	 loglik: -524.154
+10	 loglik: -523.991
+11	 loglik: -523.748
+12	 loglik: -523.4
+13	 loglik: -522.938
+14	 loglik: -522.379
+15	 loglik: -521.776
+16	 loglik: -521.204
+17	 loglik: -520.726
+18	 loglik: -520.37
+19	 loglik: -520.127
+20	 loglik: -519.971
+21	 loglik: -519.873
+22	 loglik: -519.813
+23	 loglik: -519.776
+24	 loglik: -519.754
+25	 loglik: -519.741
+26	 loglik: -519.733
+27	 loglik: -519.728
+28	 loglik: -519.726
+29	 loglik: -519.724
+30	 loglik: -519.724
+31	 loglik: -519.724
+Warning: The log likelihood has decreased! 
+32	 loglik: -519.725
+Warning: The log likelihood has decreased! 
+33	 loglik: -519.725
+Warning: The log likelihood has decreased! 
+34	 loglik: -519.726
+Warning: The log likelihood has decreased! 
+35	 loglik: -519.727
+Warning: The log likelihood has decreased! 
+36	 loglik: -519.728
+Warning: The log likelihood has decreased! 
+37	 loglik: -519.729
+Warning: The log likelihood has decreased! 
+38	 loglik: -519.73
+Warning: The log likelihood has decreased! 
+39	 loglik: -519.731
+Warning: The log likelihood has decreased! 
+40	 loglik: -519.732
+Warning: The log likelihood has decreased! 
+41	 loglik: -519.733
+Warning: The log likelihood has decreased! 
+42	 loglik: -519.734
+Warning: The log likelihood has decreased! 
+43	 loglik: -519.735
+Warning: The log likelihood has decreased! 
+44	 loglik: -519.736
+Warning: The log likelihood has decreased! 
+45	 loglik: -519.737
+Warning: The log likelihood has decreased! 
+46	 loglik: -519.738
+Warning: The log likelihood has decreased! 
+47	 loglik: -519.739
+Warning: The log likelihood has decreased! 
+48	 loglik: -519.74
+Warning: The log likelihood has decreased! 
+49	 loglik: -519.741
+Warning: The log likelihood has decreased! 
+50	 loglik: -519.742
+Warning: The log likelihood has decreased! 
+51	 loglik: -519.743
+Warning: The log likelihood has decreased! 
+52	 loglik: -519.745
+Warning: The log likelihood has decreased! 
+53	 loglik: -519.746
+Warning: The log likelihood has decreased! 
+54	 loglik: -519.747
+Warning: The log likelihood has decreased! 
+55	 loglik: -519.748
+Warning: The log likelihood has decreased! 
+56	 loglik: -519.748
+Warning: The log likelihood has decreased! 
+57	 loglik: -519.749
+Warning: The log likelihood has decreased! 
+58	 loglik: -519.75
+Warning: The log likelihood has decreased! 
+59	 loglik: -519.751
+Warning: The log likelihood has decreased! 
+60	 loglik: -519.752
+Warning: The log likelihood has decreased! 
+61	 loglik: -519.753
+Warning: The log likelihood has decreased! 
+62	 loglik: -519.753
+Warning: The log likelihood has decreased! 
+63	 loglik: -519.754
+Warning: The log likelihood has decreased! 
+64	 loglik: -519.754
+Warning: The log likelihood has decreased! 
+65	 loglik: -519.755
+Warning: The log likelihood has decreased! 
+66	 loglik: -519.755
+Warning: The log likelihood has decreased! 
+67	 loglik: -519.755
+Warning: The log likelihood has decreased! 
+68	 loglik: -519.755
+Warning: The log likelihood has decreased! 
+69	 loglik: -519.755
+Warning: The log likelihood has decreased! 
+</pre><h2>Viterbi Path<a name="8"></a></h2><p>We can now try and recover the most likely sequence of hidden states, the Viterbi path.</p><pre class="codeinput">m1.K = length(obsModel{1});
+m1.d = 1;
+m1.T = obsModel{1};
+m2 = m1;
+m2.T = obsModel{2};
+model.emission = {m1,m2};
+model.nstates  = nstates;
+model.pi = pi;
+model.A = transmat;
+viterbiPath = hmmDiscreteViterbi(model, observed);
+</pre><h2>Sequence of Most Likely States (Max Marginals)<a name="9"></a></h2><pre class="codeinput">[gamma, loglik, alpha, beta, localEvidence]  = hmmDiscreteInfer(model, observed);
+<span class="comment">%[gamma, alpha, beta, loglik] = hmmFwdBack(pi, transmat, localEvidence);</span>
+maxmargF = maxidx(alpha); <span class="comment">% filtered (forwards pass only)</span>
+maxmarg = maxidx(gamma);  <span class="comment">% smoothed (forwards backwards)</span>
+</pre><h2>Posterior Samples<a name="10"></a></h2><p>We can also sample from the posterior, fowards filtering, backwards sampling, and compare the mode of these samples to the predictions above.</p><pre class="codeinput">postSamp = mode(hmmSamplePost(pi, transmat, localEvidence, 100), 2)';
+</pre><p>We now display the rolls, the corresponding die used and the Viterbi prediction.</p><pre class="codeinput">    die = hidden;
+    rolls = observed;
+    dielabel = repmat(<span class="string">'F'</span>,size(die));
+    dielabel(die == 2) = <span class="string">'L'</span>;
+    vitlabel = repmat(<span class="string">'F'</span>,size(viterbiPath));
+    vitlabel(viterbiPath == 2) = <span class="string">'L'</span>;
+    maxmarglabel = repmat(<span class="string">'F'</span>,size(maxmarg));
+    maxmarglabel(maxmarg == 2) = <span class="string">'L'</span>;
+    postsamplabel = repmat(<span class="string">'F'</span>,size(postSamp));
+    postsamplabel(postSamp == 2) = <span class="string">'L'</span>;
+    rollLabel = num2str(rolls);
+    rollLabel(rollLabel == <span class="string">' '</span>) = [];
+    <span class="keyword">for</span> i=1:60:300
+        fprintf(<span class="string">'Rolls:\t  %s\n'</span>,rollLabel(i:i+59));
+        fprintf(<span class="string">'Die:\t  %s\n'</span>,dielabel(i:i+59));
+        fprintf(<span class="string">'Viterbi:  %s\n'</span>,vitlabel(i:i+59));
+        fprintf(<span class="string">'MaxMarg:  %s\n'</span>,maxmarglabel(i:i+59));
+        fprintf(<span class="string">'PostSamp: %s\n\n'</span>,postsamplabel(i:i+59));
+    <span class="keyword">end</span>
+</pre><pre class="codeoutput">Rolls:	  664153216162115234653214356634261655234232315142464156663246
+Die:	  LLLLLLLLLLLLLLFFFFFFLLLLLLLLLLLLLLFFFFFFFFFFFFFFFFFFLLLLLLLL
+Viterbi:  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFLLLLLLL
+MaxMarg:  LLFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFLLLLLLL
+PostSamp: LLFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFLLLLLLLL
+
+Rolls:	  266565636564663156346364565143132616331236166543611513332126
+Die:	  LLLLLLLFFFLLLLLFFFFFFFFFFFFFFFFFFFFFFFFFFFFLLLLLLLLLLLLLLLLL
+Viterbi:  LLLLLLLLLLLLLLFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+MaxMarg:  LLLLLLLLLLLLLLLLLLLFLFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFL
+PostSamp: LLLLLLLLLLLLLLLFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFL
+
+Rolls:	  665265615224244342533561235666363263616623353232624646655663
+Die:	  LLLLLLFFFFFFFFFFFFFFFFFFFFFFFLLLLLLLLLLFFFFFLLFFFFFFFFFFFFFF
+Viterbi:  FFFFFFFFFFFFFFFFFFFFFFFFFFFLLLLLLLLLLLLLFFFFFFFFFFFFFFFFFFFF
+MaxMarg:  LLLLLFFFFFFFFFFFFFFFFFFFFFFLLLLLLLLLLLLLFFFFFFFFFFFLLLLLLLLF
+PostSamp: LLLFFFFFFFFFFFFFFFFFFFFFFFLLLLLLLLLLLLLLFFFFFFFFFFFLLLLLLLLF
+
+Rolls:	  121314366424634233242345366123246645235642151466151462214556
+Die:	  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFLLLLFFFFFFFFFFFLLLLLLLLFFFFFFF
+Viterbi:  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+MaxMarg:  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+PostSamp: FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+
+Rolls:	  144461554351345123666266464656612464265626515211166666463346
+Die:	  FFFFFFFFFFFFFFFFFFLLLLFFFFFFFFLLLLLLLLLLLLLFFFLLLLLLLLLLFFLL
+Viterbi:  FFFFFFFFFFFFFFFFFFLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL
+MaxMarg:  FFFFFFFFFFFFFFFFFFLLLLLLLLLLLLLLLLLLLLLLLFFFFFFFLLLLLLLLLLLL
+PostSamp: FFFFFFFFFFFFFFFFFFLLLLLLLLLLLLLLLLLLLLLLFFFFFFFFLLLLLLLLLLLL
+
+</pre><pre class="codeinput">viterbiErr  =  sum(viterbiPath ~= die);
+maxMargSErr =  sum(maxmarg ~= die);
+maxMargFErr =  sum(maxmargF~=die);
+postSampErr    =  sum(postSamp ~= die);
+fprintf(<span class="string">'\nNumber of Errors\n'</span>);
+fprintf(<span class="string">'Viterbi:\t\t\t\t%d/%d\n'</span>,viterbiErr,300);
+fprintf(<span class="string">'Max Marginal Smoothed:  %d/%d\n'</span>,maxMargSErr,300);
+fprintf(<span class="string">'Max Marginal Filtered:  %d/%d\n'</span>,maxMargFErr,300);
+fprintf(<span class="string">'Mode Posterior Samples: %d/%d\n'</span>,postSampErr,300);
+</pre><pre class="codeoutput">
+Number of Errors
+Viterbi:				86/300
+Max Marginal Smoothed:  91/300
+Max Marginal Filtered:  98/300
+Mode Posterior Samples: 89/300
+</pre><p>Here we plot the probabilities and shade in grey the portions of the die sequence where a loaded die was actually used.</p><pre class="codeinput">    figure; hold <span class="string">on</span>;
+    <span class="comment">% fair=1, loaded=2. So die-1=0 for fair, so gray=loaded</span>
+    area(die-1,<span class="string">'FaceColor'</span>,0.75*ones(1,3),<span class="string">'EdgeColor'</span>,ones(1,3));
+    plot(alpha(loaded,:),<span class="string">'LineWidth'</span>,2.5);
+    xlabel(<span class="string">'roll number'</span>);
+    ylabel(<span class="string">'p(loaded)'</span>);
+    set(gca,<span class="string">'YTick'</span>,0:0.5:1);
+    title(sprintf(<span class="string">'filtered'</span>));
+    printPmtkFigure <span class="string">hmmCasinoFiltered</span>
+
+    figure; hold <span class="string">on</span>;
+    area(die-1,<span class="string">'FaceColor'</span>,0.75*ones(1,3),<span class="string">'EdgeColor'</span>,ones(1,3));
+    plot(gamma(loaded,:),<span class="string">'LineWidth'</span>,2.5);
+    xlabel(<span class="string">'roll number'</span>);
+    ylabel(<span class="string">'p(loaded)'</span>);
+    set(gca,<span class="string">'YTick'</span>,0:0.5:1);
+    title(sprintf(<span class="string">'smoothed'</span>));
+    printPmtkFigure <span class="string">'hmmCasinoSmoothed'</span>
+
+    figure; hold <span class="string">on</span>;
+    area(die-1,<span class="string">'FaceColor'</span>,0.75*ones(1,3),<span class="string">'EdgeColor'</span>,ones(1,3));
+    plot(viterbiPath-1, <span class="string">'linewidth'</span>, 2.5);
+    xlabel(<span class="string">'roll number'</span>);
+    ylabel(<span class="string">'MAP state (0=fair,1=loaded)'</span>);
+    set(gca,<span class="string">'YTick'</span>,0:0.5:1);
+    title(sprintf(<span class="string">'Viterbi'</span>));
+    printPmtkFigure <span class="string">hmmCasinoViterbi</span>
+</pre><img vspace="5" hspace="5" src="casinoDemo_01.png" alt=""> <img vspace="5" hspace="5" src="casinoDemo_02.png" alt=""> <img vspace="5" hspace="5" src="casinoDemo_03.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
+##### SOURCE BEGIN #####
+%% HMMs and the occasionally Dishonest Casino
+% This is an example from 
+% 'Biological Sequence Analysis: 
+% Probabilistic Models Proteins and Nucleic Acids' by Durbin, Eddy, Krogh, &
+% Mitchison, (1998) p54.
+%%
+% Suppose a casino uses a fair die most of the time but occasionally
+% switches to and from a loaded die according to Markovian dynamics. We
+% observe the dice rolls but not the type of die. We can use a Hidden
+% Markov Model to predict which die is being used at any given point in a
+% sequence of rolls. In this example, we know both the transition and
+% emission probabilities. 
+%% Specifying the Model
+% Since we are not learning the parameters, we must specify the
+% observation/emission model, the transition matrix, and the distribution 
+% over starting states.
+fair = 1; loaded = 2;
+%% Observation Model  
+% We will use a discrete observation model, one discrete distribution per
+% hidden state of which there are two. We store these state conditional
+% densities in a cell array.
+setSeed(0);
+obsModel = {[1/6 , 1/6 , 1/6 , 1/6 , 1/6 , 1/6  ]';...   % fair die
+            [1/10, 1/10, 1/10, 1/10, 1/10, 5/10 ]'};     % loaded die
+%% Transition Matrix
+% 
+transmat = [0.95 , 0.05;
+           0.10  , 0.90];
+%% Distribution over Starting States      
+pi = [0.5, 0.5];
+%% Sample
+% We now sample a single sequence of 300 dice rolls    
+len = 300; nsamples = 1;
+hidden = mc_sample(pi, transmat, len, nsamples);
+observed = zeros(1, len); 
+for t=1:len
+   observed(1, t) = sampleDiscrete(obsModel{hidden(t)}); 
+end
+%% Fit via EM (pretending we don't know the hidden states)
+nstates = numel(obsModel);
+modelEM = hmmDiscreteFitEm(observed, nstates);
+%% Viterbi Path
+% We can now try and recover the most likely sequence of hidden states, 
+% the Viterbi path. 
+
+m1.K = length(obsModel{1});
+m1.d = 1;
+m1.T = obsModel{1};
+m2 = m1; 
+m2.T = obsModel{2};
+model.emission = {m1,m2};
+model.nstates  = nstates;
+model.pi = pi;
+model.A = transmat; 
+viterbiPath = hmmDiscreteViterbi(model, observed);
+%% Sequence of Most Likely States (Max Marginals)
+[gamma, loglik, alpha, beta, localEvidence]  = hmmDiscreteInfer(model, observed);
+%[gamma, alpha, beta, loglik] = hmmFwdBack(pi, transmat, localEvidence);
+maxmargF = maxidx(alpha); % filtered (forwards pass only)
+maxmarg = maxidx(gamma);  % smoothed (forwards backwards)
+%% Posterior Samples
+% We can also sample from the posterior, fowards filtering, backwards sampling,
+% and compare the mode of these samples to the predictions above. 
+postSamp = mode(hmmSamplePost(pi, transmat, localEvidence, 100), 2)';
+%%
+% We now display the rolls, the corresponding die used and the Viterbi 
+% prediction. 
+    die = hidden;
+    rolls = observed; 
+    dielabel = repmat('F',size(die));
+    dielabel(die == 2) = 'L';
+    vitlabel = repmat('F',size(viterbiPath));
+    vitlabel(viterbiPath == 2) = 'L';
+    maxmarglabel = repmat('F',size(maxmarg));
+    maxmarglabel(maxmarg == 2) = 'L';
+    postsamplabel = repmat('F',size(postSamp));
+    postsamplabel(postSamp == 2) = 'L';
+    rollLabel = num2str(rolls);
+    rollLabel(rollLabel == ' ') = [];
+    for i=1:60:300
+        fprintf('Rolls:\t  %s\n',rollLabel(i:i+59));
+        fprintf('Die:\t  %s\n',dielabel(i:i+59));
+        fprintf('Viterbi:  %s\n',vitlabel(i:i+59));
+        fprintf('MaxMarg:  %s\n',maxmarglabel(i:i+59));
+        fprintf('PostSamp: %s\n\n',postsamplabel(i:i+59));
+    end
+    
+%%
+viterbiErr  =  sum(viterbiPath ~= die);
+maxMargSErr =  sum(maxmarg ~= die);
+maxMargFErr =  sum(maxmargF~=die);
+postSampErr    =  sum(postSamp ~= die);
+fprintf('\nNumber of Errors\n');
+fprintf('Viterbi:\t\t\t\t%d/%d\n',viterbiErr,300);
+fprintf('Max Marginal Smoothed:  %d/%d\n',maxMargSErr,300);
+fprintf('Max Marginal Filtered:  %d/%d\n',maxMargFErr,300);
+fprintf('Mode Posterior Samples: %d/%d\n',postSampErr,300);
+
+%% 
+% Here we plot the probabilities and shade in grey the portions of the die
+% sequence where a loaded die was actually used. 
+    figure; hold on;
+    % fair=1, loaded=2. So die-1=0 for fair, so gray=loaded
+    area(die-1,'FaceColor',0.75*ones(1,3),'EdgeColor',ones(1,3));
+    plot(alpha(loaded,:),'LineWidth',2.5);
+    xlabel('roll number');
+    ylabel('p(loaded)');
+    set(gca,'YTick',0:0.5:1);
+    title(sprintf('filtered'));
+    printPmtkFigure hmmCasinoFiltered
+    
+    figure; hold on;
+    area(die-1,'FaceColor',0.75*ones(1,3),'EdgeColor',ones(1,3));
+    plot(gamma(loaded,:),'LineWidth',2.5);
+    xlabel('roll number');
+    ylabel('p(loaded)');
+    set(gca,'YTick',0:0.5:1);
+    title(sprintf('smoothed'));
+    printPmtkFigure 'hmmCasinoSmoothed'
+    
+    figure; hold on;
+    area(die-1,'FaceColor',0.75*ones(1,3),'EdgeColor',ones(1,3));
+    plot(viterbiPath-1, 'linewidth', 2.5);
+    xlabel('roll number');
+    ylabel('MAP state (0=fair,1=loaded)');
+    set(gca,'YTick',0:0.5:1);
+    title(sprintf('Viterbi'));
+    printPmtkFigure hmmCasinoViterbi
+%%
+##### SOURCE END #####
+--></body></html>

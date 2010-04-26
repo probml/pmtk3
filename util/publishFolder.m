@@ -5,6 +5,11 @@ function publishFolder(folder)
 %
 % publishFolder bayesDemos
 
+if (isempty(mfiles(fullfile(pmtk3Root(), 'demos', folder)))); 
+    fprintf('%s is empty\n', folder); 
+    return
+end
+
 doNotEvalList = {'PMTKinteractive', 'PMTKbroken', 'PMTKreallySlow'};
 globalEval    = true;
 googleRoot    = sprintf('http://code.google.com/p/pmtk3/source/browse/trunk/demos/%s/', folder);

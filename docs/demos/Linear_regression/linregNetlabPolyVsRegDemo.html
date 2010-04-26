@@ -1,0 +1,231 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>Ridge Regression with Polynomial Basis Expansion</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-04-25"><meta name="m-file" content="linregNetlabPolyVsRegDemo"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Ridge Regression with Polynomial Basis Expansion</h1><!--introduction--><p>Compare effect of regularizer strength</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Make the data</a></li><li><a href="#2">Basis function expansion</a></li><li><a href="#3">Plot regularized fit for various lambdas</a></li><li><a href="#4">Now compare logev with train/test error on a dense grid of lambdas</a></li></ul></div><h2>Make the data<a name="1"></a></h2><pre class="codeinput">n = 21;
+<span class="comment">%[xtrain1d, ytrain, xtest1d, ytest] = polyDataMake('-sampling','thibaux','-n',n);</span>
+xtrain = linspace(0,20,n)';
+randn(<span class="string">'state'</span>, 654321);
+xtest = [0:0.1:20]';
+sigma2 = 4;
+w = [-1.5; 1/9];
+fun = @(x) w(1)*x + w(2)*x.^2;
+ytrain = feval(fun, xtrain) + randn(size(xtrain,1),1)*sqrt(sigma2);
+ytestNoisefree = feval(fun, xtest);
+ytest = ytestNoisefree +  randn(size(xtest,1),1)*sqrt(sigma2);
+</pre><h2>Basis function expansion<a name="2"></a></h2><pre class="codeinput">deg = 14;
+[Xtrain] = rescaleData(xtrain);
+Xtrain = degexpand(Xtrain, deg, false);
+[Xtest] = rescaleData(xtest);
+Xtest = degexpand(Xtest, deg, false);
+
+modelLS = linregFit(Xtrain,ytrain, <span class="string">'lambda'</span>, 0);
+fprintf(<span class="string">'%5.3f, '</span>, modelLS.w); fprintf(<span class="string">'\n'</span>);
+
+modelRidge = linregFit(Xtrain, ytrain,<span class="string">'lambda'</span>,  1e-3)
+fprintf(<span class="string">'%5.3f, '</span>, modelRidge.w); fprintf(<span class="string">'\n'</span>);
+</pre><pre class="codeoutput">6.560, -36.934, -109.255, 543.452, 1022.561, -3046.224, -3768.013, 8524.540, 6607.897, -12640.058, -5530.188, 9479.730, 1774.639, -2821.526, 
+modelRidge = 
+        w0: 0.7440
+         w: [14x1 double]
+       Xmu: [1x14 double]
+     Xstnd: [1x14 double]
+    sigma2: 5.7184e+003
+2.128, 0.807, 16.457, 3.704, -24.948, -10.472, -2.625, 4.360, 13.711, 10.063, 8.716, 3.966, -9.349, -9.232, 
+</pre><h2>Plot regularized fit for various lambdas<a name="3"></a></h2><pre class="codeinput">lambdas = [0 0.00001 0.001];
+NL = length(lambdas);
+logev = zeros(1,NL);
+<span class="keyword">for</span> k=1:NL
+    lambda = lambdas(k);
+    [model, logev(k)] = linregNetlabFit(Xtrain, ytrain, lambda);
+    [ypredTest, s2] = linregNetlabPredict(model, Xtest);
+    sig = sqrt(s2);
+
+    figure;
+    scatter(xtrain, ytrain,<span class="string">'b'</span>,<span class="string">'filled'</span>);
+    hold <span class="string">on</span>;
+    plot(xtest, ypredTest, <span class="string">'k'</span>, <span class="string">'linewidth'</span>, 3);
+    plot(xtest, ypredTest + sig, <span class="string">'b:'</span>);
+    plot(xtest, ypredTest - sig, <span class="string">'b:'</span>);
+    title(sprintf(<span class="string">'ln lambda %5.3f'</span>, log(lambda)))
+<span class="keyword">end</span>
+logev
+</pre><pre class="codeoutput">logev =
+      -Inf  -80.3441  -60.3664
+</pre><img vspace="5" hspace="5" src="linregNetlabPolyVsRegDemo_01.png" alt=""> <img vspace="5" hspace="5" src="linregNetlabPolyVsRegDemo_02.png" alt=""> <img vspace="5" hspace="5" src="linregNetlabPolyVsRegDemo_03.png" alt=""> <h2>Now compare logev with train/test error on a dense grid of lambdas<a name="4"></a></h2><pre class="codeinput">lambdas = logspace(-10,1.2,9);
+NL = length(lambdas);
+logev = zeros(1,NL); testMse = zeros(1,NL); trainMse = zeros(1,NL);
+<span class="keyword">for</span> k=1:NL
+    lambda = lambdas(k);
+    [model, logev(k)] = linregNetlabFit(Xtrain, ytrain, lambda);
+    ypredTest = linregNetlabPredict(model, Xtest);
+    ypredTrain = linregNetlabPredict(model, Xtrain);
+
+    testMse(k) = mean((ypredTest - ytest).^2);
+    trainMse(k) = mean((ypredTrain - ytrain).^2);
+<span class="keyword">end</span>
+probs = exp(normalizeLogspace(logev));
+<span class="comment">%bar(probs)</span>
+
+figure; hold <span class="string">on</span>
+ndx =  log(lambdas); <span class="comment">% 1:length(lambdas);</span>
+plot(ndx, trainMse, <span class="string">'bs:'</span>, <span class="string">'linewidth'</span>, 2, <span class="string">'markersize'</span>, 12);
+plot(ndx, testMse, <span class="string">'rx-'</span>, <span class="string">'linewidth'</span>, 2, <span class="string">'markersize'</span>, 12);
+legend(<span class="string">'train mse'</span>, <span class="string">'test mse'</span>)
+xlabel(<span class="string">'log regularizer'</span>)
+printPmtkFigure(<span class="string">'linregL2PolyVsReg-mse'</span>)
+
+figure;
+plot(ndx, log(probs), <span class="string">'ko-'</span>, <span class="string">'linewidth'</span>, 2, <span class="string">'markersize'</span>, 12);
+title(<span class="string">'logevidence'</span>)
+xlabel(<span class="string">'log regularizer'</span>)
+printPmtkFigure(<span class="string">'linregL2PolyVsReg-logev'</span>)
+</pre><img vspace="5" hspace="5" src="linregNetlabPolyVsRegDemo_04.png" alt=""> <img vspace="5" hspace="5" src="linregNetlabPolyVsRegDemo_05.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Ridge Regression with Polynomial Basis Expansion
+% Compare effect of regularizer strength
+
+%% Make the data
+n = 21;
+%[xtrain1d, ytrain, xtest1d, ytest] = polyDataMake('-sampling','thibaux','-n',n);
+xtrain = linspace(0,20,n)';
+randn('state', 654321);
+xtest = [0:0.1:20]';
+sigma2 = 4;
+w = [-1.5; 1/9];
+fun = @(x) w(1)*x + w(2)*x.^2;
+ytrain = feval(fun, xtrain) + randn(size(xtrain,1),1)*sqrt(sigma2);
+ytestNoisefree = feval(fun, xtest);
+ytest = ytestNoisefree +  randn(size(xtest,1),1)*sqrt(sigma2);
+
+%% Basis function expansion
+deg = 14;
+[Xtrain] = rescaleData(xtrain);
+Xtrain = degexpand(Xtrain, deg, false);
+[Xtest] = rescaleData(xtest);
+Xtest = degexpand(Xtest, deg, false);
+
+modelLS = linregFit(Xtrain,ytrain, 'lambda', 0);
+fprintf('%5.3f, ', modelLS.w); fprintf('\n');
+
+modelRidge = linregFit(Xtrain, ytrain,'lambda',  1e-3)
+fprintf('%5.3f, ', modelRidge.w); fprintf('\n');
+
+
+
+%% Plot regularized fit for various lambdas
+lambdas = [0 0.00001 0.001];
+NL = length(lambdas);
+logev = zeros(1,NL);
+for k=1:NL
+    lambda = lambdas(k);
+    [model, logev(k)] = linregNetlabFit(Xtrain, ytrain, lambda);
+    [ypredTest, s2] = linregNetlabPredict(model, Xtest);
+    sig = sqrt(s2);
+    
+    figure; 
+    scatter(xtrain, ytrain,'b','filled');
+    hold on;
+    plot(xtest, ypredTest, 'k', 'linewidth', 3);
+    plot(xtest, ypredTest + sig, 'b:');
+    plot(xtest, ypredTest - sig, 'b:');
+    title(sprintf('ln lambda %5.3f', log(lambda)))
+end
+logev
+
+
+%% Now compare logev with train/test error on a dense grid of lambdas
+lambdas = logspace(-10,1.2,9);
+NL = length(lambdas);
+logev = zeros(1,NL); testMse = zeros(1,NL); trainMse = zeros(1,NL);
+for k=1:NL
+    lambda = lambdas(k);
+    [model, logev(k)] = linregNetlabFit(Xtrain, ytrain, lambda);
+    ypredTest = linregNetlabPredict(model, Xtest);
+    ypredTrain = linregNetlabPredict(model, Xtrain);
+
+    testMse(k) = mean((ypredTest - ytest).^2); 
+    trainMse(k) = mean((ypredTrain - ytrain).^2);
+end
+probs = exp(normalizeLogspace(logev));
+%bar(probs)
+
+figure; hold on
+ndx =  log(lambdas); % 1:length(lambdas);
+plot(ndx, trainMse, 'bs:', 'linewidth', 2, 'markersize', 12);
+plot(ndx, testMse, 'rx-', 'linewidth', 2, 'markersize', 12);
+legend('train mse', 'test mse')
+xlabel('log regularizer')
+printPmtkFigure('linregL2PolyVsReg-mse')
+
+figure;
+plot(ndx, log(probs), 'ko-', 'linewidth', 2, 'markersize', 12);
+title('logevidence')
+xlabel('log regularizer')
+printPmtkFigure('linregL2PolyVsReg-logev')
+
+
+
+##### SOURCE END #####
+--></body></html>

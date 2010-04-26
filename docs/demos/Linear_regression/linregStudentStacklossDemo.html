@@ -1,0 +1,227 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>linregStudentStacklossDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-04-25"><meta name="m-file" content="linregStudentStacklossDemo"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">fit model</a></li><li><a href="#3">format output</a></li></ul></div><pre class="codeinput"><span class="comment">% Reproduce table 1 from "Robust statistical modeling using the T</span>
+<span class="comment">% distribution", Lange et al, JASA 1989</span>
+<span class="comment">% The estimated coefficients are similar</span>
+<span class="comment">% However, this does *not* reproduce the log likelihoods correctly</span>
+<span class="comment">% The reason for this is not clear - is Lange evaluating the expected</span>
+<span class="comment">% complete data loglik instead?</span>
+
+<span class="comment">%PMTKauthor Hannes Bretschneider</span>
+
+load <span class="string">stackloss</span>;
+n = size(X,1);
+X1 = [ones(n,1) X];
+</pre><h2>fit model<a name="2"></a></h2><p>dof=0 means estimate from data dof=100 means effectively use Gaussian model</p><pre class="codeinput">dofs = [100, 8, 4, 3, 2, 1.1, 1, 0.5, 0];
+<span class="keyword">for</span> i = 1:length(dofs)
+    dof = dofs(i);
+    modelEM{i} = linregRobustStudentFitEm(X, y, dof);
+    loglikEM(i) = sum(linregRobustStudentLogprob(modelEM{i}, X, y));
+
+    <span class="comment">% debug - use objective fn from linregRobustStudentFitConstr</span>
+    sigma2 = modelEM{i}.sigma2; w = [modelEM{i}.w0; modelEM{i}.w];
+    sigma = sqrt(sigma2);
+    theta = y - X1*w;
+    nll = sum(1/2*log(dof*pi) + log(gamma(dof/2)) - log(gamma((dof+1)/2)) + <span class="keyword">...</span>
+        log(sigma) + (dof+1)/2*log(1+theta.^2 / (sigma2*dof)));
+    assert(approxeq(nll, -loglikEM(i)))
+
+    modelConstr{i} = linregRobustStudentFitConstr(X, y, dof);
+    loglikConstr(i) = sum(linregRobustStudentLogprob(modelConstr{i}, X, y));
+<span class="keyword">end</span>
+</pre><h2>format output<a name="3"></a></h2><pre class="codeinput">fprintf(<span class="string">'estimated dof, EM %5.3f, constr %5.3f\n'</span>, <span class="keyword">...</span>
+    modelEM{end}.dof, modelConstr{end}.dof);
+ndof = length(dofs);
+table = NaN(ndof,6);
+table(:,1) = dofs';
+table(:,2) = loglikEM';
+<span class="keyword">for</span> i = 1:ndof
+    table(i,3:6) = [modelEM{i}.w0, rowvec(modelEM{i}.w)];
+<span class="keyword">end</span>
+labels = {<span class="string">'dof'</span>, <span class="string">'loglik'</span>, <span class="string">'w0'</span>, <span class="string">'w1'</span>, <span class="string">'w2'</span>, <span class="string">'w3'</span>};
+latextable(table, <span class="string">'Format'</span>, <span class="string">'%5.3f'</span>, <span class="string">'horiz'</span>, labels, <span class="string">'hline'</span>, 1, <span class="keyword">...</span>
+    <span class="string">'name'</span>, <span class="string">'stacklossOutputEm'</span>);
+table
+
+
+table = NaN(ndof,6);
+table(:,1) = dofs';
+table(:,2) = loglikConstr';
+<span class="keyword">for</span> i = 1:ndof
+    table(i,3:6) = [modelConstr{i}.w0, rowvec(modelConstr{i}.w)];
+<span class="keyword">end</span>
+latextable(table, <span class="string">'Format'</span>, <span class="string">'%5.3f'</span>, <span class="string">'horiz'</span>, labels, <span class="string">'hline'</span>, 1, <span class="keyword">...</span>
+    <span class="string">'name'</span>, <span class="string">'stacklossOutputConstr'</span>);
+table
+</pre><pre class="codeoutput">estimated dof, EM 1.149, constr 1.139
+table =
+  Columns 1 through 4
+  100.0000  -52.7174  -40.1107    0.7412
+    8.0000  -52.2855  -40.8600    0.8307
+    4.0000  -51.6974  -40.2090    0.8738
+    3.0000  -51.3496  -39.2918    0.8695
+    2.0000  -50.6477  -38.2816    0.8592
+    1.1000  -50.0374  -38.4724    0.8594
+    1.0000  -50.0832  -38.5928    0.8593
+    0.5000  -51.5809  -40.6280    0.8395
+         0  -50.0325  -38.4241    0.8594
+  Columns 5 through 6
+    1.1872   -0.1406
+    0.8909   -0.1216
+    0.6855   -0.1100
+    0.6061   -0.0996
+    0.5173   -0.0841
+    0.4622   -0.0689
+    0.4607   -0.0670
+    0.5371   -0.0467
+    0.4635   -0.0698
+table =
+  Columns 1 through 4
+  100.0000  -52.7180  -40.0168    0.7379
+    8.0000  -52.2892  -40.0841    0.8320
+    4.0000  -51.6976  -40.0756    0.8737
+    3.0000  -51.3533  -39.8611    0.8694
+    2.0000  -50.6501  -38.6326    0.8588
+    1.1000  -50.0408  -38.7845    0.8588
+    1.0000  -50.0997  -39.2578    0.8575
+    0.5000  -51.5925  -40.3538    0.8391
+         0  -50.0462  -39.0626    0.8583
+  Columns 5 through 6
+    1.1972   -0.1419
+    0.8872   -0.1306
+    0.6856   -0.1115
+    0.6090   -0.0936
+    0.5183   -0.0800
+    0.4632   -0.0651
+    0.4646   -0.0588
+    0.5388   -0.0500
+    0.4650   -0.0619
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
+##### SOURCE BEGIN #####
+
+% Reproduce table 1 from "Robust statistical modeling using the T
+% distribution", Lange et al, JASA 1989
+% The estimated coefficients are similar
+% However, this does *not* reproduce the log likelihoods correctly
+% The reason for this is not clear - is Lange evaluating the expected
+% complete data loglik instead?
+
+%PMTKauthor Hannes Bretschneider
+
+load stackloss;
+n = size(X,1);
+X1 = [ones(n,1) X];
+%% fit model
+% dof=0 means estimate from data
+% dof=100 means effectively use Gaussian model
+dofs = [100, 8, 4, 3, 2, 1.1, 1, 0.5, 0];
+for i = 1:length(dofs)
+    dof = dofs(i);
+    modelEM{i} = linregRobustStudentFitEm(X, y, dof);
+    loglikEM(i) = sum(linregRobustStudentLogprob(modelEM{i}, X, y));
+    
+    % debug - use objective fn from linregRobustStudentFitConstr
+    sigma2 = modelEM{i}.sigma2; w = [modelEM{i}.w0; modelEM{i}.w];
+    sigma = sqrt(sigma2);
+    theta = y - X1*w;
+    nll = sum(1/2*log(dof*pi) + log(gamma(dof/2)) - log(gamma((dof+1)/2)) + ...
+        log(sigma) + (dof+1)/2*log(1+theta.^2 / (sigma2*dof)));
+    assert(approxeq(nll, -loglikEM(i)))
+    
+    modelConstr{i} = linregRobustStudentFitConstr(X, y, dof);
+    loglikConstr(i) = sum(linregRobustStudentLogprob(modelConstr{i}, X, y));
+end
+
+%% format output
+
+fprintf('estimated dof, EM %5.3f, constr %5.3f\n', ...
+    modelEM{end}.dof, modelConstr{end}.dof);
+ndof = length(dofs);
+table = NaN(ndof,6);
+table(:,1) = dofs';
+table(:,2) = loglikEM';
+for i = 1:ndof
+    table(i,3:6) = [modelEM{i}.w0, rowvec(modelEM{i}.w)];
+end
+labels = {'dof', 'loglik', 'w0', 'w1', 'w2', 'w3'};
+latextable(table, 'Format', '%5.3f', 'horiz', labels, 'hline', 1, ...
+    'name', 'stacklossOutputEm');
+table
+
+
+table = NaN(ndof,6);
+table(:,1) = dofs';
+table(:,2) = loglikConstr';
+for i = 1:ndof
+    table(i,3:6) = [modelConstr{i}.w0, rowvec(modelConstr{i}.w)];
+end
+latextable(table, 'Format', '%5.3f', 'horiz', labels, 'hline', 1, ...
+    'name', 'stacklossOutputConstr');
+table
+
+
+##### SOURCE END #####
+--></body></html>

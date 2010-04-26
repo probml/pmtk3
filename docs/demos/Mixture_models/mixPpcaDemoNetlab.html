@@ -1,0 +1,347 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>mixPpcaDemoNetlab</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-04-25"><meta name="m-file" content="mixPpcaDemoNetlab"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> mixPpcaDemoNetlab()
+
+<span class="comment">% Demonstrate density modelling with a PPCA mixture model.</span>
+<span class="comment">% Slightly modified version of demgmm5 from netlab</span>
+
+<span class="keyword">if</span> ~exist(<span class="string">'gmm'</span>)
+   error(<span class="string">'must install netlab from http://www.ncrg.aston.ac.uk/netlab/index.php'</span>)
+<span class="keyword">end</span>
+
+<span class="comment">%data = mkClusterData;</span>
+data = mkAnnulusData;
+
+
+<span class="comment">% Fit mixture of K 1d PPCA models</span>
+Ks = [1 3 10];
+<span class="keyword">for</span> i=1:length(Ks)
+   ncentres = Ks(i);
+   ppca_dim = 1;
+
+   fh1 = figure;
+   plot(data(:, 1), data(:, 2), <span class="string">'o'</span>)
+   set(gca, <span class="string">'Box'</span>, <span class="string">'on'</span>)
+   axis <span class="string">equal</span>
+   hold <span class="string">on</span>
+
+   mix = gmm(2, ncentres, <span class="string">'ppca'</span>, ppca_dim);
+   options = foptions;
+   options(14) = 10;
+   options(1) = -1;  <span class="comment">% Switch off all warnings</span>
+
+   <span class="comment">% Just use 10 iterations of k-means in initialisation</span>
+   <span class="comment">% Initialise the model parameters from the data</span>
+   mix = gmminit(mix, data, options);
+   options(1)  = 1;		<span class="comment">% Prints out error values.</span>
+   options(14) = 30;		<span class="comment">% Number of iterations.</span>
+   [mix, options, errlog] = gmmem(mix, data, options);
+
+
+   <span class="comment">% Now plot the result</span>
+   <span class="keyword">for</span> i = 1:ncentres
+      <span class="comment">% Plot the PC vectors</span>
+      v = mix.U(:,:,i);
+      start=mix.centres(i,:)-sqrt(mix.lambda(i))*(v');
+      endpt=mix.centres(i,:)+sqrt(mix.lambda(i))*(v');
+      linex = [start(1) endpt(1)];
+      liney = [start(2) endpt(2)];
+      line(linex, liney, <span class="string">'Color'</span>, <span class="string">'k'</span>, <span class="string">'LineWidth'</span>, 3)
+      <span class="comment">% Plot ellipses of one standard deviation</span>
+      theta = 0:0.02:2*pi;
+      x = sqrt(mix.lambda(i))*cos(theta);
+      y = sqrt(mix.covars(i))*sin(theta);
+      <span class="comment">% Rotate ellipse axes</span>
+      rot_matrix = [v(1) -v(2); v(2) v(1)];
+      ellipse = (rot_matrix*([x; y]))';
+      <span class="comment">% Adjust centre</span>
+      ellipse = ellipse + ones(length(theta), 1)*mix.centres(i,:);
+      plot(ellipse(:,1), ellipse(:,2), <span class="string">'r-'</span>)
+   <span class="keyword">end</span>
+
+   fname = sprintf(<span class="string">'mixPpcaAnnulus%d'</span>, ncentres);
+   printPmtkFigure(fname)
+<span class="keyword">end</span>
+
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> [X] = mkAnnulusData()
+n = 500;
+r = rand(1,n) + 1;
+theta = rand(1,n)*(2*pi);
+x1 = r .* sin(theta);
+x2 = r .* cos(theta);
+X = [x1(:) x2(:)];
+<span class="keyword">end</span>
+
+
+   <span class="keyword">function</span> data = mkClusterData()
+ndata = 500;
+data = randn(ndata, 2);
+prior = [0.3 0.5 0.2];
+<span class="comment">% Mixture model swaps clusters 1 and 3</span>
+datap = [0.2 0.5 0.3];
+datac = [0 2; 0 0; 2 3.5];
+datacov = repmat(eye(2), [1 1 3]);
+data1 = data(1:prior(1)*ndata,:);
+data2 = data(prior(1)*ndata+1:(prior(2)+prior(1))*ndata, :);
+data3 = data((prior(1)+prior(2))*ndata +1:ndata, :);
+
+<span class="comment">% First cluster has axis aligned variance and centre (2, 3.5)</span>
+data1(:, 1) = data1(:, 1)*0.1 + 2.0;
+data1(:, 2) = data1(:, 2)*0.8 + 3.5;
+datacov(:, :, 3) = [0.1*0.1 0; 0 0.8*0.8];
+
+<span class="comment">% Second cluster has variance axes rotated by 30 degrees and centre (0, 0)</span>
+rotn = [cos(pi/6) -sin(pi/6); sin(pi/6) cos(pi/6)];
+data2(:,1) = data2(:, 1)*0.2;
+data2 = data2*rotn;
+datacov(:, :, 2) = rotn' * [0.04 0; 0 1] * rotn;
+
+<span class="comment">% Third cluster is at (0,2)</span>
+data3(:, 2) = data3(:, 2)*0.1;
+data3 = data3 + repmat([0 2], prior(3)*ndata, 1);
+
+<span class="comment">% Put the dataset together again</span>
+data = [data1; data2; data3];
+
+   <span class="keyword">end</span>
+</pre><pre class="codeoutput">Cycle    1  Error 1513.488303
+Cycle    2  Error 1513.488303
+Cycle    1  Error 1289.612495
+Cycle    2  Error 1287.892724
+Cycle    3  Error 1287.336687
+Cycle    4  Error 1286.882851
+Cycle    5  Error 1286.473095
+Cycle    6  Error 1286.084450
+Cycle    7  Error 1285.703084
+Cycle    8  Error 1285.320025
+Cycle    9  Error 1284.928975
+Cycle   10  Error 1284.525131
+Cycle   11  Error 1284.104556
+Cycle   12  Error 1283.663846
+Cycle   13  Error 1283.199995
+Cycle   14  Error 1282.710398
+Cycle   15  Error 1282.193004
+Cycle   16  Error 1281.646577
+Cycle   17  Error 1281.071065
+Cycle   18  Error 1280.467996
+Cycle   19  Error 1279.840802
+Cycle   20  Error 1279.194998
+Cycle   21  Error 1278.538106
+Cycle   22  Error 1277.879333
+Cycle   23  Error 1277.229026
+Cycle   24  Error 1276.597977
+Cycle   25  Error 1275.996652
+Cycle   26  Error 1275.434437
+Cycle   27  Error 1274.918953
+Cycle   28  Error 1274.455549
+Cycle   29  Error 1274.047018
+Cycle   30  Error 1273.693617
+Maximum number of iterations has been exceeded
+Cycle    1  Error 1186.048426
+Cycle    2  Error 1173.520543
+Cycle    3  Error 1169.441907
+Cycle    4  Error 1166.869418
+Cycle    5  Error 1164.694615
+Cycle    6  Error 1162.678774
+Cycle    7  Error 1160.830123
+Cycle    8  Error 1159.256003
+Cycle    9  Error 1158.042561
+Cycle   10  Error 1157.148090
+Cycle   11  Error 1156.445475
+Cycle   12  Error 1155.828536
+Cycle   13  Error 1155.240789
+Cycle   14  Error 1154.659473
+Cycle   15  Error 1154.084174
+Cycle   16  Error 1153.530572
+Cycle   17  Error 1153.018999
+Cycle   18  Error 1152.560612
+Cycle   19  Error 1152.151926
+Cycle   20  Error 1151.779170
+Cycle   21  Error 1151.425292
+Cycle   22  Error 1151.074791
+Cycle   23  Error 1150.716424
+Cycle   24  Error 1150.345383
+Cycle   25  Error 1149.965381
+Cycle   26  Error 1149.588736
+Cycle   27  Error 1149.231904
+Cycle   28  Error 1148.907764
+Cycle   29  Error 1148.620574
+Cycle   30  Error 1148.367194
+Maximum number of iterations has been exceeded
+</pre><img vspace="5" hspace="5" src="mixPpcaDemoNetlab_01.png" alt=""> <img vspace="5" hspace="5" src="mixPpcaDemoNetlab_02.png" alt=""> <img vspace="5" hspace="5" src="mixPpcaDemoNetlab_03.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
+##### SOURCE BEGIN #####
+function mixPpcaDemoNetlab()
+
+% Demonstrate density modelling with a PPCA mixture model.
+% Slightly modified version of demgmm5 from netlab
+
+if ~exist('gmm')
+   error('must install netlab from http://www.ncrg.aston.ac.uk/netlab/index.php')
+end
+
+%data = mkClusterData;
+data = mkAnnulusData;
+
+
+% Fit mixture of K 1d PPCA models
+Ks = [1 3 10];
+for i=1:length(Ks)
+   ncentres = Ks(i);
+   ppca_dim = 1;
+   
+   fh1 = figure;
+   plot(data(:, 1), data(:, 2), 'o')
+   set(gca, 'Box', 'on')
+   axis equal
+   hold on
+   
+   mix = gmm(2, ncentres, 'ppca', ppca_dim);
+   options = foptions;
+   options(14) = 10;
+   options(1) = -1;  % Switch off all warnings
+   
+   % Just use 10 iterations of k-means in initialisation
+   % Initialise the model parameters from the data
+   mix = gmminit(mix, data, options);
+   options(1)  = 1;		% Prints out error values.
+   options(14) = 30;		% Number of iterations.
+   [mix, options, errlog] = gmmem(mix, data, options);
+   
+   
+   % Now plot the result
+   for i = 1:ncentres
+      % Plot the PC vectors
+      v = mix.U(:,:,i);
+      start=mix.centres(i,:)-sqrt(mix.lambda(i))*(v');
+      endpt=mix.centres(i,:)+sqrt(mix.lambda(i))*(v');
+      linex = [start(1) endpt(1)];
+      liney = [start(2) endpt(2)];
+      line(linex, liney, 'Color', 'k', 'LineWidth', 3)
+      % Plot ellipses of one standard deviation
+      theta = 0:0.02:2*pi;
+      x = sqrt(mix.lambda(i))*cos(theta);
+      y = sqrt(mix.covars(i))*sin(theta);
+      % Rotate ellipse axes
+      rot_matrix = [v(1) -v(2); v(2) v(1)];
+      ellipse = (rot_matrix*([x; y]))';
+      % Adjust centre
+      ellipse = ellipse + ones(length(theta), 1)*mix.centres(i,:);
+      plot(ellipse(:,1), ellipse(:,2), 'r-')
+   end
+   
+   fname = sprintf('mixPpcaAnnulus%d', ncentres);
+   printPmtkFigure(fname)
+end
+
+end
+
+function [X] = mkAnnulusData()
+n = 500;
+r = rand(1,n) + 1;
+theta = rand(1,n)*(2*pi);
+x1 = r .* sin(theta);
+x2 = r .* cos(theta);
+X = [x1(:) x2(:)];
+end
+
+
+   function data = mkClusterData()
+ndata = 500;
+data = randn(ndata, 2);
+prior = [0.3 0.5 0.2];
+% Mixture model swaps clusters 1 and 3
+datap = [0.2 0.5 0.3];
+datac = [0 2; 0 0; 2 3.5];
+datacov = repmat(eye(2), [1 1 3]);
+data1 = data(1:prior(1)*ndata,:);
+data2 = data(prior(1)*ndata+1:(prior(2)+prior(1))*ndata, :);
+data3 = data((prior(1)+prior(2))*ndata +1:ndata, :);
+
+% First cluster has axis aligned variance and centre (2, 3.5)
+data1(:, 1) = data1(:, 1)*0.1 + 2.0;
+data1(:, 2) = data1(:, 2)*0.8 + 3.5;
+datacov(:, :, 3) = [0.1*0.1 0; 0 0.8*0.8];
+
+% Second cluster has variance axes rotated by 30 degrees and centre (0, 0)
+rotn = [cos(pi/6) -sin(pi/6); sin(pi/6) cos(pi/6)];
+data2(:,1) = data2(:, 1)*0.2;
+data2 = data2*rotn;
+datacov(:, :, 2) = rotn' * [0.04 0; 0 1] * rotn;
+
+% Third cluster is at (0,2)
+data3(:, 2) = data3(:, 2)*0.1;
+data3 = data3 + repmat([0 2], prior(3)*ndata, 1);
+
+% Put the dataset together again
+data = [data1; data2; data3];
+
+   end
+   
+
+##### SOURCE END #####
+--></body></html>

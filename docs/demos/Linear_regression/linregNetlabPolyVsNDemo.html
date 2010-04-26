@@ -1,0 +1,188 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>linregNetlabPolyVsNDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-04-25"><meta name="m-file" content="linregNetlabPolyVsNDemo"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% Model selection demo for polynomial regression</span>
+<span class="comment">% This illustartes that if we have more data, Bayes picks a more complex</span>
+<span class="comment">% model</span>
+
+
+Ns = [8 32];
+<span class="keyword">for</span> ni=1:length(Ns)
+  ndata = Ns(ni);
+
+  seed = 2;
+  rand(<span class="string">'state'</span>, seed);
+  randn(<span class="string">'state'</span>, seed);
+
+
+  x1d=rand(ndata,1)*10; <span class="comment">% input points</span>
+  e=randn(ndata,1); <span class="comment">% noise</span>
+  ytrain = (x1d-4).^2 + 5*e; <span class="comment">% actual function</span>
+  plotvals1d = [-2:0.1:12]'; <span class="comment">% uniform grid for plotting/ testing</span>
+  trueOutput = (plotvals1d-4).^2;
+
+
+  figure;
+  degs = [0 1 2 3];
+  <span class="keyword">for</span> m=1:length(degs)
+    deg=degs(m);
+    X = polyBasis(x1d, deg);
+    X = X(:,2:end); <span class="comment">% omit column of 1s</span>
+    Xtest = polyBasis(plotvals1d, deg);
+    Xtest = Xtest(:, 2:end);
+
+    [model, logev(m)] = linregNetlabFitEb(X, ytrain);
+    [mu, sig2] = linregNetlabPredict(model, Xtest);
+    sig = sqrt(sig2);
+
+    <span class="comment">% Plot the data, the original function, and the trained network function.</span>
+    subplot(2,2,m)
+    plot(x1d, ytrain, <span class="string">'ok'</span>)
+    hold <span class="string">on</span>
+    plot(plotvals1d, trueOutput, <span class="string">'g-'</span>);
+    plot(plotvals1d, mu, <span class="string">'-r'</span>)
+    plot(plotvals1d, mu + sig, <span class="string">'b:'</span>);
+    plot(plotvals1d, mu - sig, <span class="string">'b:'</span>);
+    title(sprintf(<span class="string">'m=%d,logev=%5.3f'</span>, m-1, logev(m)))
+
+  <span class="keyword">end</span>
+  str = sprintf(<span class="string">'polybayesEvidence_N%d'</span>, ndata);
+
+  figure;
+  PP=exp(logev);
+  PP=PP/sum(PP);
+  bar(degs, PP)
+  axis([-0.5 length(degs)+0.5 0 1]);
+  set(gca,<span class="string">'FontSize'</span>,16);
+  aa=xlabel(<span class="string">'M'</span>); set(aa,<span class="string">'FontSize'</span>,20);
+  aa=ylabel(<span class="string">'P(M|D)'</span>); set(aa,<span class="string">'FontSize'</span>,20);
+  str = sprintf(<span class="string">'polybayesEvidence_histo_N%d'</span>, ndata);
+  title(sprintf(<span class="string">'N=%d'</span>, ndata))
+
+<span class="keyword">end</span> <span class="comment">% for ni</span>
+</pre><img vspace="5" hspace="5" src="linregNetlabPolyVsNDemo_01.png" alt=""> <img vspace="5" hspace="5" src="linregNetlabPolyVsNDemo_02.png" alt=""> <img vspace="5" hspace="5" src="linregNetlabPolyVsNDemo_03.png" alt=""> <img vspace="5" hspace="5" src="linregNetlabPolyVsNDemo_04.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
+##### SOURCE BEGIN #####
+% Model selection demo for polynomial regression
+% This illustartes that if we have more data, Bayes picks a more complex
+% model
+
+
+Ns = [8 32];
+for ni=1:length(Ns)
+  ndata = Ns(ni);
+  
+  seed = 2;
+  rand('state', seed);
+  randn('state', seed);
+  
+  
+  x1d=rand(ndata,1)*10; % input points
+  e=randn(ndata,1); % noise
+  ytrain = (x1d-4).^2 + 5*e; % actual function
+  plotvals1d = [-2:0.1:12]'; % uniform grid for plotting/ testing
+  trueOutput = (plotvals1d-4).^2;
+  
+  
+  figure;
+  degs = [0 1 2 3];
+  for m=1:length(degs)
+    deg=degs(m);
+    X = polyBasis(x1d, deg);
+    X = X(:,2:end); % omit column of 1s
+    Xtest = polyBasis(plotvals1d, deg);
+    Xtest = Xtest(:, 2:end);
+    
+    [model, logev(m)] = linregNetlabFitEb(X, ytrain);
+    [mu, sig2] = linregNetlabPredict(model, Xtest);
+    sig = sqrt(sig2);
+    
+    % Plot the data, the original function, and the trained network function.
+    subplot(2,2,m)
+    plot(x1d, ytrain, 'ok')
+    hold on
+    plot(plotvals1d, trueOutput, 'g-');
+    plot(plotvals1d, mu, '-r')
+    plot(plotvals1d, mu + sig, 'b:');
+    plot(plotvals1d, mu - sig, 'b:');
+    title(sprintf('m=%d,logev=%5.3f', m-1, logev(m)))
+    
+  end
+  str = sprintf('polybayesEvidence_N%d', ndata);
+  
+  figure;
+  PP=exp(logev);
+  PP=PP/sum(PP);
+  bar(degs, PP)
+  axis([-0.5 length(degs)+0.5 0 1]);
+  set(gca,'FontSize',16);
+  aa=xlabel('M'); set(aa,'FontSize',20);
+  aa=ylabel('P(M|D)'); set(aa,'FontSize',20);
+  str = sprintf('polybayesEvidence_histo_N%d', ndata);
+  title(sprintf('N=%d', ndata))
+  
+end % for ni
+
+##### SOURCE END #####
+--></body></html>
