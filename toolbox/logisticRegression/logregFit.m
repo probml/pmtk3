@@ -23,6 +23,7 @@ function [model, varargout] = logregFit(X, y, varargin)
 % varargout{2}  ... mean loss
 % varargout{3}  ... standard error of varargout{2}
 %%
+y = y(:);
 assert(size(y, 1) >= size(y, 2));
 assert(size(y, 1) == size(X, 1));
 %% process options

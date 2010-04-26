@@ -3,7 +3,8 @@ function model = naiveBayesGaussFitShrunkenCentroids(Xtrain, ytrain, lambda)
 % Xtrain(i,j) =  feature j in case i
 % ytrain in {1,...C}
 % Model is a structure with these fields:
-% mu(c,j), sigma(c,j), classPrior(c), offset(c,j), xbar
+% mu(c,j), sigma(c,j), classPrior(c), offset(c,j), xbar, relevant
+
 %PMTKauthor Robert Tseng
 
   

@@ -1,8 +1,17 @@
 function [model, loglikTrace] = mixGaussMissingFitEm(data, K, varargin)
+% Fit a mixture of Gaussians where the data may have NaN entries
+% Set doMAP = 1 to do MAP estimation (default)
+% Set diagCov = 1 to use and diagonal covariances (does not currently save
+% space)
 
-[maxIter, tol, verbose, muk, Sigmak, mixweight] = process_options(varargin, ...
+%PMTKauthor Kevin Murphy
+%PMTKmodified Hannes Bretschneider
+
+[maxIter, tol, verbose, muk, Sigmak, mixweight, doMAP, diagCov, initEye] =...
+    process_options(varargin, ...
     'maxIter', 100, 'tol', 1e-3, 'verbose', false, ...
-    'mu', [], 'Sigma', [], 'mixweight', []);
+    'mu', [], 'Sigma', [], 'mixweight', [], 'doMAP', 1,...
+    'diagCov', 0, 'initEye', 0);
 %% extract missing data
 [n,d] = size(data); N = n;
 dataMissing = isnan(data);
@@ -10,17 +19,30 @@ missingRows = any(dataMissing,2);
 missingRows = find(missingRows == 1);
 X = data'; % now the columns of X contain the data
 
+if doMAP
+    % set hyper-parameters
+    prior.m0 = zeros(d,1);
+    prior.kappa0 = 0;
+    prior.nu0 = d+2;
+    prior.S0 = (1/K^(1/d))*nanvar(data(:))*eye(d);
+end
+
+
 %% initialize params
 if isempty(muk) || isempty(Sigmak)
     muk = zeros(d,K);
     Sigmak = zeros(d,d,K);
     for k=1:K
-        i=round(n*rand+0.5); %pick a random vector
+        i=round(n*rand); %pick a random vector
         proto = data(i,:)';
         h = isnan(proto); % hidden values
-        proto(h) = nanmeanPMTK(data(:,h));
+        proto(h) = nanmean(data(:,h));
         muk(:,k) = proto;
-        Sigmak(:,:,k) = diag(nanvar(data))/(K^d);
+        if ~initEye
+            Sigmak(:,:,k) = diag(nanvar(data) + 1e-2);%/(K^d);
+        else
+            Sigmak(:,:,k) = eye(d);
+        end
     end
 end
 if isempty(mixweight)
@@ -39,7 +61,21 @@ while ~done
     % E step for Z - compute responsibilities
     model = struct('K', K, 'mu', muk, 'Sigma', Sigmak, 'mixweight', mixweight);
     [z, rik, ll] = mixGaussInfer(model, data); %#ok
-    loglikTrace(iter) = sum(ll); %#ok
+    loglik = sum(ll); %#ok
+    
+    if doMAP
+        % add log prior
+        kappa0 = prior.kappa0; m0 = prior.m0;
+        nu0 = prior.nu0; S0 = prior.S0;
+        logprior = zeros(1,K);
+        for c=1:K
+            Sinv = inv(Sigmak(:,:,c));
+            logprior(c) = logdet(Sinv)*(nu0 + d + 2)/2 - 0.5*trace(Sinv*S0) ...
+                -kappa0/2*(muk(:,c)-m0)'*Sinv*(muk(:,c)-m0);
+        end
+        loglik = loglik + sum(logprior);
+    end
+    loglikTrace(iter) = loglik;
     
     % E step for missing values of X
     % We accumulated the ESS in place to save memory
@@ -67,11 +103,36 @@ while ~done
     %% M step
     rk = sum(rik,1);
     mixweight = normalize(rk);
-    for k=1:K
-        muk(:,k) = muik(:,k)/rk(k);
-        Sigmak(:,:,k) = (Vik(:,:,k) - rk(k)*muk(:,k)*muk(:,k)')/rk(k);
+    %     for k=1:K
+    %         muk(:,k) = muik(:,k)/rk(k);
+    %         Sigmak(:,:,k) = (Vik(:,:,k) - rk(k)*muk(:,k)*muk(:,k)')/rk(k);
+    %     end
+    if doMAP
+        kappa0 = prior.kappa0; m0 = prior.m0;
+        nu0 = prior.nu0; S0 = prior.S0;
+        for c=1:K
+            muk(:,c) = (muik(:,c)+kappa0*m0)./(rk(c)+kappa0);
+            a = (kappa0*rk(c))./(kappa0 + rk(c));
+            b = nu0 + rk(c) + d + 2;
+            Sprior = (muik(:,c)-m0)*(muik(:,c)-m0)';
+            Sk = (Vik(:,:,c) - rk(c)*muk(:,c)*muk(:,c)');
+            if diagCov
+                Sigmak(:,:,c) = diag(diag((S0 + Sk + a*Sprior)./b));
+            else
+                Sigmak(:,:,c) = (S0 + Sk + a*Sprior)./b;
+            end
+        end
+    else
+        for c=1:K
+            muk(:,c) = muik(:,c)/rk(c);
+            if diagCov
+                Sigmak(:,:,c) = diag(diag((Vik(:,:,c) -...
+                    rk(c)*muk(:,c)*muk(:,c)')/rk(c)));
+            else
+                Sigmak(:,:,c) = (Vik(:,:,c) - rk(c)*muk(:,c)*muk(:,c)')/rk(c);
+            end
+        end
     end
-    
     
     %% Convergence check
     if verbose, fprintf('%d: LL = %5.3f\n', iter, loglikTrace(iter)); end
@@ -94,4 +155,8 @@ end
 model.mu = muk;
 model.Sigma = Sigmak;
 model.mixweight= mixweight;
+end
+
+function Sigma = regularize(Sigma, lambda)
+Sigma = lambda*Sigma + (1-lambda)*diag(diag(Sigma));
 end

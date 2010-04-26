@@ -1,4 +1,5 @@
-function [model, bestParam, mu, se] = fitCv(params, fitFn, predictFn, lossFn, X, y,  Nfolds, useSErule, doPlot, plotArgs)
+function [model, bestParam, mu, se] = fitCv(params, fitFn, predictFn, lossFn, X, y,  Nfolds, ...
+  useSErule, doPlot, plotArgs, testFolds)
 % Fit a set of models of different complexity and use cross validation to pick the best
 %
 % Inputs:
@@ -25,23 +26,33 @@ function [model, bestParam, mu, se] = fitCv(params, fitFn, predictFn, lossFn, X,
 
 wstate = warning('query', 'MATLAB:nearlySingularMatrix');
 warning('off', 'MATLAB:nearlySingularMatrix');
-if nargin < 7, Nfolds = 5; end
-if nargin < 8, useSErule = false; end
-if nargin < 9, doPlot = false; end
-if nargin < 10, plotArgs = {}; end
+
+%fitCv(params, fitFn, predictFn, lossFn, X, y,  Nfolds, ...
+%  useSErule, doPlot, plotArgs, folds)
+
+SetDefaultValue(7, 'Nfolds', 5);
+SetDefaultValue(8, 'useSErule', false);
+SetDefaultValue(9, 'doPlot', false);
+SetDefaultValue(10, 'plotArgs', {});
+SetDefaultValue(11, 'testFolds', []);
+
+
 % if params is 1 row vector, it is a probbaly a set of
 % single tuning params
-if size(params, 1)==1 && size(params, 2) > 3
+if size(params, 1)==1 && size(params, 2) > 1
     %warning('fitCV expects each *row* of Ks to containg tuning params')
     params = params(:);
 end
 NM = size(params,1);
 
+
 if NM==1  % single param
    model  = fitFn(X, y, params(1,:));
    bestParam = params(1,:);
-   % use cvEstimate to estimate generalization error of a single model
-   mu = NaN;    se = NaN; 
+   if nargout >= 3
+    [mu, se] =  cvEstimate(@(X, y) fitFn(X, y, bestParam), predictFn, lossFn, X, y,  Nfolds, testFolds);
+   end
+   %mu = NaN;    se = NaN; 
    return;
  
 end
@@ -51,7 +62,7 @@ se = zeros(1,NM);
 if ~isOctave(), w = waitbar(0,'Cross Validating'); end
 for m=1:NM
     param = unwrapCell(params(m, :));
-    [mu(m), se(m)] =  cvEstimate(@(X, y) fitFn(X, y, param), predictFn, lossFn, X, y,  Nfolds);
+    [mu(m), se(m)] =  cvEstimate(@(X, y) fitFn(X, y, param), predictFn, lossFn, X, y,  Nfolds, testFolds);
     if ~isOctave(),  waitbar(m/NM, w, 'Cross Validating'); end
 end
 if ~isOctave(), close(w); end
