@@ -2,9 +2,10 @@
 %PMTKauthor Hannes Bretschneider
 
 %% Load data
-clear all
-load('14cancer.mat') % modified data so X is N*D as usual
 
+load('14cancer.mat') % modified data so X is N*D as usual
+ytrain = colvec(ytrain);
+ytest = colvec(ytest); 
 % on p654, they say "the data from each patient (row) is standardized
 % to have mean 0 and variance 1"
 xtrain_std = standardizeCols(Xtrain')';
@@ -28,7 +29,7 @@ end
 %% Run methods
 % L1 and SVM are very slow, L2 is fairly slow
 
-methods = {'nsc', 'nb', 'rda', 'knn'}; % 'l2logreg', 'svm', 'l1logreg'};
+methods = {'nsc', 'nb', 'rda', 'knn', 'l2logreg', 'svm', 'l1logreg'}; % };
 M = length(methods);
 
 for m=1:M
@@ -78,8 +79,7 @@ for m=1:M
     case 'svm'
       params =  logspace(-1,1,5);
       name{m} = 'SVM';
-      fitFn = @(X, y, param) svmFit(X, y, 'kernel', 'linear', 'C', param, ...
-        'fitFn', @svmlightFit); % default (liblinear) crashes
+      fitFn = @(X, y, param) svmFit(X, y, 'kernel', 'linear', 'C', param); 
       predictFn = @svmPredict;
       noGenesFn = @(model) D; %sum(sum(model.w,1)~=0);
   end

@@ -3,7 +3,7 @@ function model = svmlibLinearFit(X, y, C, ignore1, ignore2, options)
 % Supports only classification with a linear kernel.
 % Download liblinear from 
 % http://www.csie.ntu.edu.tw/~cjlin/liblinear/#download
-
+y = colvec(y); 
 if nargin < 6
     if nunique(y) > 2
         typeSwitch = '-s 4';
