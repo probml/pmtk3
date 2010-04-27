@@ -29,7 +29,7 @@ end
 %% Run methods
 % L1 and SVM are very slow, L2 is fairly slow
 
-methods = {'nsc', 'nb', 'rda', 'knn', 'l2logreg', 'svm', 'l1logreg'}; % };
+methods = {'nsc', 'nb', 'rda', 'knn', 'l2logreg', 'svm', 'l1logreg'}; 
 M = length(methods);
 
 for m=1:M

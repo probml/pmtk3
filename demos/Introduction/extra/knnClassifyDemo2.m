@@ -15,13 +15,15 @@ Ntrain = size(Xtrain,1)
 Ks = [1 5 10 20 50 100 120];
 for ki=1:length(Ks)
   K = Ks(ki);
-  [ypred] = knnClassify(Xtrain, ytrain, Xtest, K);
+  model = knnFit(Xtrain, ytrain, K); 
+  [ypred] = knnPredict(model, Xtest);
   err = find(ypred(:) ~= ytest(:));
   nerrors = length(err);
   errRateTest(ki) = nerrors/Ntest;
  
   % compute error on training set
-  [ypred] = knnClassify(Xtrain, ytrain, Xtrain, K);
+  
+  [ypred] = knnPredict(model, Xtrain);
   err = find(ypred(:) ~= ytrain(:));
   nerrors = length(err);
   errRateTrain(ki) = nerrors/Ntrain;

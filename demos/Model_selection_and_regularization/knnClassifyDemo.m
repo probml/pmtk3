@@ -28,7 +28,8 @@ printPmtkFigure('knnClassifyTestData');
 Ks = [1];
 for ki=1:length(Ks)
   K = Ks(ki);
-  [ypred] = knnClassify(Xtrain, ytrain, Xtest, K);
+  model = knnFit(Xtrain, ytrain, K); 
+  [ypred] = knnPredict(model, Xtest);
   figure;
   plotLabeledData(Xtest, ypred);
   err = find(ypred(:) ~= ytest(:));
@@ -50,7 +51,8 @@ end
 
 XtestGrid = makeGrid2d(Xtrain);
 for K=Ks(:)'
-  ypredGrid = knnClassify(Xtrain, ytrain, XtestGrid, K);
+  model = knnFit(Xtrain, ytrain, K); 
+  ypredGrid = knnPredict(model, XtestGrid);
   figure;
   plotLabeledData(XtestGrid, ypredGrid)
   %axis([min(x1range) max(x1range) min(x2range) max(x2range)])
