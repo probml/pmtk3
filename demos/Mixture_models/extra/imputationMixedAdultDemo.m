@@ -15,7 +15,7 @@ X = X(1:1000,:);
 iscont = (types=='c');
 X(:,iscont) = standardize(X(:,iscont));
 
-setseed(0);
+setSeed(0);
 [N, D] = size(X);
 pc = [0.01, 0.1];
 ntrials = 3;

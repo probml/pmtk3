@@ -1,12 +1,18 @@
 function [L, Lij] = discreteLogprob(model, X)
 % Compute the log probability of the data. X must be in 1:K.
-% model is a structure with a field T, a model.K-by-d stochastic matrix, 
+% model is a structure with a field T, a K-by-d stochastic matrix, 
 %(as returned by discreteFit).
 %
 % X(i, j) is the ith case from the jth distribution.
 %
 % Lij = log p(X(i, j) | params(j))
 % L   = sum(Lij, 2)  % i.e. summed across distributions, (not cases).
+
+if any(isnan(X(:)))
+  [L, Lij] = discreteLogprobMissingData(model, X);
+  return;
+end
+
 d = model.d;
 X = reshape(X, [], d); 
 n = size(X, 1);

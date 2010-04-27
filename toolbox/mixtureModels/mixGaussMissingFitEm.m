@@ -156,7 +156,3 @@ model.mu = muk;
 model.Sigma = Sigmak;
 model.mixweight= mixweight;
 end
-
-function Sigma = regularize(Sigma, lambda)
-Sigma = lambda*Sigma + (1-lambda)*diag(diag(Sigma));
-end

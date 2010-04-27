@@ -3,6 +3,11 @@ function [model, loglikTrace] = mixGaussDiscreteMissingFitEm(data, K, types, var
 % p(x|z=k) = prod_{j in C} N(x_j|mu_{jk},sigma_{jk}) * ...
 %            prod_{j in D} discrete(x_j | beta_{jk})
 
+% Parameter of model are:
+% beta(c,j,k) = p(xj=c|z=k)
+% muk(j,k), sigmak(j,k),
+% mixweight
+
 %PMTKauthor Hannes Bretschneider
 
 [maxIter, tol, verbose, muk, Sigmak, mixweight] =...
