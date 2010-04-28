@@ -10,8 +10,10 @@ BIOTOOLBOXINSTALLED = bioToolboxInstalled();
 STATSTOOLBOXINSTALLED = statsToolboxInstalled();
 
 % for windows users only
+if ispc()
 folder = fullfile(pmtk3Root(), 'toolbox', 'Kernel_methods_for_supervised_learning');
 dirs = {'svmLightWindows', 'liblinear-1.51\windows', 'libsvm-mat-2.9.1'};
 for i=1:length(dirs)
   addtosystempath(fullfile(folder, dirs{i}))
+end
 end
