@@ -40,7 +40,7 @@ for i=1:Nseq
     fprintf('\n');
 end
 %%
-if bioToolboxInstalled
+if bioinfoToolboxInstalled()
     [w, h] = seqlogo(dataStr);
     set(h, 'HandleVisibility', 'on'); 
     printPmtkFigure('seqlogo');

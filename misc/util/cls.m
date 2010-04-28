@@ -1,6 +1,7 @@
 close all;
 close all hidden;
 fclose all;
+clear all
 clear classes;
 clear global;
 clear java;

@@ -37,7 +37,7 @@ for i=1:Nseq
 end
 disp('z true')
 fprintf('%d, ', z); fprintf('\n')
-if bioToolboxInstalled
+if bioinfoToolboxInstalled()
     seqlogo(dataStr)
 end
 zStr = chars(z);
