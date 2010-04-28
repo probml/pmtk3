@@ -17,7 +17,7 @@ plot(xtest, ypredTest, 'k', 'linewidth', 3);
 hold off
 %set(gca,'ylim',[-10 15]);
 set(gca,'xlim',[-1 21]);
-
+%%
 sigma = 1;
 a = w(1);
 b = w(2); 
@@ -45,3 +45,4 @@ ylabel('Y',fontSize{:});
 zlabel('P(Y | X)',fontSize{:});
 %set(gca,'XTick',[0,5,10],'YTick',[0,5,10],'ZTick',0:0.1:0.5);
 set(gca,fontSize{:},'LineWidth',1.5);
+printPmtkFigure('linregWedge2Wedge'); 
