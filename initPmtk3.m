@@ -10,7 +10,6 @@ cd(fileparts(which(mfilename())));
 % Add PMTK3 to the Matlab path
 addpath(genpathPMTK(pwd));
 %%
-%%
 % We store user specific pmtk info in a directory they are sure to have
 % write access to.
 pmtkInfoDir = fullfile(tempdir(), 'pmtkInfo');
@@ -33,7 +32,6 @@ for t=1:numel(toolbox)
     writeText(text, fullfile(pmtkInfoDir, [fname, '.m'])); 
 end
 %%
-
 % for windows users only
 if ispc()
     folder = fullfile(pmtk3Root(), 'toolbox',...
@@ -44,6 +42,4 @@ if ispc()
         addtosystempath(fullfile(folder, dirs{i}))
     end
 end
-
-
 end
