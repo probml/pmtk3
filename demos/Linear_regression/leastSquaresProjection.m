@@ -1,8 +1,8 @@
-function leastSquaresProjection
+function leastSquaresProjection()
 % An illustration of least squares projection
 %
 
-setSeed(3);
+setSeed(2);
 n = 3;
 d = 2;
 W = 0.05*[1; 1];
