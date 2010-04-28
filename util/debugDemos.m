@@ -2,6 +2,8 @@ function errors = debugDemos(subFolder, exclusions)
 % Debug the PMTK demos, by attempting to run them all, saving
 % a list of those which fail. Figures and output are not displayed, use
 % runDemos or runAllDemos if you wish to see the output.
+
+cleaner = onCleanup(@cleanup); % ensures function cleans up even after ctrl-c
 shadowFunction({'pause', 'input', 'keyboard', 'suplabel'});
 cd(tempdir());
 dbclear('if', 'error');
@@ -38,7 +40,7 @@ for dm=1:ndemos
     close all hidden
 end
 fprintf('%d out of %d failed\n', numel(fieldnames(errors)), numel(demos));
-showFigures
+
 for i = 1:numel(excluded)
     htmlData(ndemos+i, 1) = excluded(i);
     htmlData(ndemos+i, 2) = {'SKIP'};
@@ -53,9 +55,18 @@ htmlTable('data', htmlData, ...
     'colNames', ...
     {'Name', 'Status', 'Error Identifier', 'Error Message', 'Time'},...
     'dataColors', htmlTableColors);
-removeShadows();
+
 
 end
+
+function cleanup()
+% called automatically by onCleanup object
+fprintf('\n\ncleaning up ...\n'); 
+showFigures();
+removeShadows();
+end
+
+
 
 function localEval(str)
 % evaluate in this isolated workspace
