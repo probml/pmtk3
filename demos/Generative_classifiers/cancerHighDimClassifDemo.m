@@ -1,7 +1,7 @@
 % Try to reproduce table 18.1 from "Elements of statistical learning" 2nd edn p656
 %PMTKauthor Hannes Bretschneider
 %PMTKslow
-%PMTKreallySlow
+
 %% Load data
 
 load('14cancer.mat') % modified data so X is N*D as usual
@@ -12,11 +12,15 @@ ytest = colvec(ytest);
 xtrain_std = standardizeCols(Xtrain')';
 xtest_std = standardizeCols(Xtest')';
 [N, D] = size(xtrain_std);
+clear Xtest Xtrain 
 
 % we can either explicitly use the same folds as Hastie
-% or we can choose our own (which lets us control
-% computation time)
-if 0
+% or we can choose our own (which lets us control computation time)
+% The dataset is so small that some classes might not be present
+% in any given training fold. The Hastie folds have been carefully
+% chosen to avoid this (although it is really the algorithm's job
+% to handle this eg by using priors).
+if 1
   folds = importdata('cvfolds.txt');
   folds = folds.data(:,2:size(folds.data,2));
   Nfolds = [];
@@ -28,10 +32,11 @@ end
 
 
 %% Run methods
-% L1 and SVM are very slow, L2 is fairly slow
+% L1 is very slow, L2 is somewhat slow
 
 %methods = {'nsc', 'nb', 'rda', 'knn', 'l2logreg', 'svm', 'l1logreg'}; 
-methods = {'nsc', 'nb', 'rda', 'knn', 'l2logreg', 'svm'}; 
+%methods = {'nsc', 'nb', 'rda', 'knn', 'l2logreg', 'svm'}; 
+methods = {'nsc', 'nb', 'rda', 'knn', 'svm'};
 % warning - l1logreg can take upwards of 6 hours to run. 
 M = length(methods);
 
@@ -78,7 +83,7 @@ for m=1:M
       fitFn = @(X, y, param)logregFit(X, y, 'lambda', param,...
         'regType', 'L1', 'fitMethod', 'minFunc');
       predictFn = @logregPredict;
-      noGenesFn = @(model)D;
+      noGenesFn = @(model) sum(sum(model.w,1)~=0);
     case 'svm'
       params =  logspace(-1,1,5);
       name{m} = 'SVM';
@@ -88,7 +93,7 @@ for m=1:M
   end
   
   useSErule=0; doPlot=0; plotArgs= [];
-  [model{m}, bestParam{m}] = fitCv(params,...
+  [model{m}, bestParam(m)] = fitCv(params,...
     fitFn, predictFn, @zeroOneLossFn, xtrain_std, ytrain, ...
     Nfolds, useSErule, doPlot, plotArgs,  folds);
   %ndx = find(err==min(err), 1);
@@ -99,12 +104,12 @@ for m=1:M
 end
 
 %% Print results
-% latextable([lossCv' seCv' lossTest' noGenes'],...
-%     'Horiz', {'CV errors', 'SE', 'Test errors', 'Genes used'},...
-%     'Vert', name)
+latextable([lossTest' noGenes' bestParam'],...
+     'Horiz', {'Test errors', 'Genes used', 'Best Param'},...
+     'Vert', name, 'name', '')
 
 for m=1:M
   fprintf('method %s, test errors %d, ngenes %d, best param %5.3f\n', ...
-    name{m}, lossTest(m), noGenes(m), bestParam{m});
+    name{m}, lossTest(m), noGenes(m), bestParam(m));
 end
 

@@ -61,7 +61,7 @@ function latextable(X,varargin)
 %   'Hline' - numeric array prescribing locations of horizontal lines, 
 %       which operates similar to 'Vline', the default is [0,NaN]
 %   'format' - specifies the numeric format, e.g. %3.1f.
-%   'name' - string specifing the filename
+%   'name' - string specifing the filename. use [] to print to screen.
 %   'save' - string specifing the name to save the supplied setup
 %   'load' - the setup to be loaded, all properties prior to usage are
 %       overwritten, those after are applied.  Note, the 'default' is
@@ -72,6 +72,7 @@ function latextable(X,varargin)
 %   >> latextable(rand(3,3),'Horiz',{'1','2','3'},'Hline',[0,1,NaN]);
 %   >> latextable(rand(3,3),'Hline',[],'save','nolines');
 %   >> latextable(rand(5,5),'load','nolines');
+%    >> latextable(rand(5,5),'name',[]); % Modified by Kevin Murphy
 %
 % PROGRAM OUTLINE:
 % 1 - INITILIZE PROGRAM
@@ -142,11 +143,18 @@ function latextable(X,varargin)
     end
 
 % 7 - OUTPUT DATA TO FILE
-    fid = fopen(a.name,'w'); 
+
+if isempty(a.name) 
+    fprintf('%s\n',['\begin{tabular}{',col,'}']);
+    for i = 1:length(ROWS); fprintf('%s\n',ROWS{i}); end
+    fprintf('%s\n','\end{tabular}');
+else
+  fid = fopen(a.name,'w'); 
     fprintf(fid,'%s\n',['\begin{tabular}{',col,'}']);
     for i = 1:length(ROWS); fprintf(fid,'%s\n',ROWS{i}); end
     fprintf(fid,'%s\n','\end{tabular}');
     fclose(fid);
+end
 
 % 8 - APPLY PREFERENCES
     applypref(a);
@@ -198,7 +206,7 @@ end
 
 % 3 - DETERMINE OUTPUT LOCATION
     % 3.1 - Locate the last used directory
-    if isempty(a.name);
+    if false % isempty(a.name); % modified by KPM
         if ispref('latextable','lastdir'); 
             loc = getpref('latextable','lastdir');
         else

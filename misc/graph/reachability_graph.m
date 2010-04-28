@@ -1,5 +1,5 @@
 function C = reachability_graph(G)
-% REACHABILITY_GRAPH C(i,j) = 1 iff there is a path from i to j in DAG G
+% REACHABILITY_GRAPH C(i,j) = 1 iff there is a path from i to j in graph G
 % C = reachability_graph(G)
 
 if 1

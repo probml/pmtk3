@@ -14,10 +14,16 @@ xbar = mean(Xtrain);
 Nclass = zeros(1,C);
 sse = zeros(1,D);
 centroid = zeros(C,D); % see partitionedMean for a vectorized solution
+mu = mean(Xtrain);
 for c=1:C
-  ndx = find(ytrain==c);
+  ndx = find(ytrain==c); 
   Nclass(c) = length(ndx);
-  centroid(c,:) = mean(Xtrain(ndx,:));
+  % if there may be no examples of any given class, use generic mean
+  if Nclass(c)==0
+    centroid(c,:) = mu;
+  else
+    centroid(c,:) = mean(Xtrain(ndx,:));
+  end
   % pooled standard deviation
   sse = sse + sum( (Xtrain(ndx,:) - repmat(centroid(c,:), [length(ndx) 1])).^2);
 end
@@ -28,7 +34,11 @@ L = zeros(1,C);
 offset = zeros(C,D);
 relevant = false(1,D);
 for c=1:C
- L(c) = sqrt(1/Nclass(c) - 1/N);
+  if Nclass(c)==0
+    L(c) = 0;
+  else
+    L(c) = sqrt(1/(Nclass(c) - 1/N));
+  end
  offset(c,:) = (centroid(c,:) - xbar) ./ (L(c) * (sigma+s0));
  offset(c,:) = softThreshold(offset(c,:), lambda);
  relevant = relevant | offset(c,:) ~= 0;
