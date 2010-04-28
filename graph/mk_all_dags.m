@@ -19,10 +19,10 @@ use_file = true;
 
 fname = sprintf('DAGS%d.mat', N);
 if  use_file && exist(fname, 'file')
-	S = load(fname, '-mat');
-	fprintf('loading %s\n', fname);
-	Gs = S.Gs;
-	return;
+  S = load(fname, '-mat');
+  fprintf('loading %s\n', fname);
+  Gs = S.Gs;
+  return;
 end
 
 % calculate # of distinct dags of size N (Robinson 1973)
@@ -37,47 +37,44 @@ for i = 2:N+1
 end
 fprintf('generating %d DAGs on %d nodes\n', ndags(N+1), N);
 
-m = 2^(N*N);
-Gs = cell(1, ndags(N+1));
-j = 1;
-directed = 1;
-for i=1:m
-  % only keep searching if not all unique dags have been found
-  if j <= ndags(N+1)
-    ind = ind2subv(2*ones(1,N^2), i);
-    dag = reshape(ind-1, N, N);
-    if acyclic(dag, directed)
-      out_of_order = 0;
-      if ~isempty(order)
-        for k=1:N-1
-          if any(dag(order(k+1:end), k))
-            out_of_order = 1;
-            break;
+if 0
+  m = 2^(N*N);
+  Gs = cell(1, ndags(N+1));
+  j = 1;
+  directed = 1;
+  for i=1:m
+    if mod(i,100)==0, fprintf('%d of %d\n', i, m), end;
+    % only keep searching if not all unique dags have been found
+    if j <= ndags(N+1)
+      ind = ind2subv(2*ones(1,N^2), i);
+      dag = reshape(ind-1, N, N);
+      if acyclic(dag, directed)
+        out_of_order = 0;
+        if ~isempty(order)
+          for k=1:N-1
+            if any(dag(order(k+1:end), k))
+              out_of_order = 1;
+              break;
+            end
           end
         end
-      end
-      if ~out_of_order
-        Gs{j} = dag;
-        j = j + 1;
+        if ~out_of_order
+          Gs{j} = dag;
+          j = j + 1;
+        end
       end
     end
   end
-end
-
-if use_file
-	disp(['mk_all_dags: saving to ' fname '!']);
-	save(fname, 'Gs');
-end
-
-
-%% Old code - memory inefficient
-if 0
+  
+else
+  
   m = 2^(N*N);
   ind = ind2subv(2*ones(1,N^2), 1:m);
   Gs = {};
   j = 1;
   directed = 1;
   for i=1:m
+    if mod(i,100)==0, fprintf('%d of %d\n', i, m), end;
     dag = reshape(ind(i,:)-1, N, N);
     if acyclic(dag, directed)
       out_of_order = 0;
@@ -95,6 +92,12 @@ if 0
       end
     end
   end
+end
+
+
+if use_file
+  disp(['mk_all_dags: saving to ' fname '!']);
+  save(fname, 'Gs');
 end
 
 end
