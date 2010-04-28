@@ -1,6 +1,7 @@
-% Try to reproduce table 18.1 from "Elements of statistical learnign" 2nd edn p656
+% Try to reproduce table 18.1 from "Elements of statistical learning" 2nd edn p656
 %PMTKauthor Hannes Bretschneider
-
+%PMTKslow
+%PMTKreallySlow
 %% Load data
 
 load('14cancer.mat') % modified data so X is N*D as usual
@@ -29,7 +30,9 @@ end
 %% Run methods
 % L1 and SVM are very slow, L2 is fairly slow
 
-methods = {'nsc', 'nb', 'rda', 'knn', 'l2logreg', 'svm', 'l1logreg'}; 
+%methods = {'nsc', 'nb', 'rda', 'knn', 'l2logreg', 'svm', 'l1logreg'}; 
+methods = {'nsc', 'nb', 'rda', 'knn', 'l2logreg', 'svm'}; 
+% warning - l1logreg can take upwards of 6 hours to run. 
 M = length(methods);
 
 for m=1:M
