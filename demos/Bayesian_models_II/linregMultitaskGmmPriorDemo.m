@@ -1,8 +1,8 @@
 function linregMultitaskGmmPriorDemo()
-
+% Multitask linear regression demo
 %PMTKauthor Kevin Murphy
 %PMTKmodified Hannes Bretschneider
-
+%PMTKslow
 close all
 seeds = [1 2];
 plotFns = false; % set to false to reduce number of plots
