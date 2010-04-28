@@ -10,3 +10,7 @@
 
 %   Robert Henson, May 2004
 %   Copyright 2004 The MathWorks, Inc. 
+
+%PMTKauthor Robert Henson
+%PMTKurl http://www.mathworks.com/matlabcentral/fileexchange/5051
+%PMTKdate May 2004

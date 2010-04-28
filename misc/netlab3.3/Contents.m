@@ -174,3 +174,5 @@
 %
 %	Copyright (c) Ian T Nabney (1996-2001)
 %
+
+%PMTKauthor Ian Nabney

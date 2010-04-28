@@ -28,3 +28,6 @@
 %   inv_digamma    - Inverse of the digamma function.
 %
 % test_dirichlet_fit,...   Test scripts for above routines.
+
+%PMTKurl http://research.microsoft.com/en-us/um/people/minka/software/fastfit/
+%PMTKauthor Tom Minka
