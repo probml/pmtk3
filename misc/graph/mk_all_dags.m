@@ -1,29 +1,17 @@
-function Gs = mk_all_dags(N, order, use_file, useMemoryEfficient)
+function Gs = mk_all_dags(N, use_file, method)
 % MK_ALL_DAGS generate all DAGs on N variables
 % G = mk_all_dags(N)
-%
-% G = mk_all_dags(N, order) only generates DAGs in which node i has parents from 
-% nodes in order(1:i-1). Default: order=[] (no constraints).
 %
 % G{i} is the i'th dag
 %
 % Note: the number of DAGs is super-exponential in N, so don't call this with N > 4.
 
+%PMTKauthor Kevin Murphy, Robert Tseng, Simon Suyadi
 
-SetDefaultValue(2, 'order',  []);
-SetDefaultValue(3, 'use_file',  true);
-if N > 4
-  SetDefaultValue(4, 'useMemoryEfficient',  true);
-else
-  SetDefaultValue(4, 'useMemoryEfficient',  false);
-end
+SetDefaultValue(2, 'use_file',  true);
+SetDefaultValue(3, 'method', 1)
 
-%PMTKauthor Kevin Murphy
-%PMTKmodified Robert Tseng, Simon Suyadi
-%Modified to use less memory, April 2010
-
-
-
+% Load the answer from disk, if possible
 fname = sprintf('DAGS%d.mat', N);
 if  use_file && exist(fname, 'file')
   S = load(fname, '-mat');
@@ -35,63 +23,10 @@ end
 ND = ndags(N);
 fprintf('generating %d DAGs on %d nodes\n', ND, N);
 
-if useMemoryEfficient
-  m = 2^(N*N);
-  Gs = cell(1, ND);
-  j = 1;
-  %directed = 1;
-  for i=1:m
-    if mod(i,1000)==0, fprintf('%d of %d\n', i, m), end;
-    % only keep searching if not all unique dags have been found
-    if j <= ndags(N+1)
-      ind = ind2subv(2*ones(1,N^2), i);
-      dag = reshape(ind-1, N, N);
-      if pmtkGraphIsDag(dag)
-        out_of_order = 0;
-        if ~isempty(order)
-          for k=1:N-1
-            if any(dag(order(k+1:end), k))
-              out_of_order = 1;
-              break;
-            end
-          end
-        end
-        if ~out_of_order
-          Gs{j} = dag;
-          j = j + 1;
-        end
-      end
-    end
-  end
-  
-else
-  
-  m = 2^(N*N);
-  ind = ind2subv(2*ones(1,N^2), 1:m);
-  Gs = cell(1,ND);
-  j = 1;
-  %directed = 1;
-  for i=1:m
-    if mod(i,1000)==0, fprintf('%d of %d\n', i, m), end;
-    dag = reshape(ind(i,:)-1, N, N);
-    if pmtkGraphIsDag(dag)
-      out_of_order = 0;
-      if ~isempty(order)
-        for k=1:N-1
-          if any(dag(order(k+1:end), k))
-            out_of_order = 1;
-            break;
-          end
-        end
-      end
-      if ~out_of_order
-        Gs{j} = dag;
-        j = j + 1;
-      end
-    end
-  end
+switch method
+  case 1, Gs  = method1(N, ND);
+  case 2, Gs  = method2(N, ND);
 end
-
 
 if use_file
   disp(['mk_all_dags: saving to ' fname '!']);
@@ -99,3 +34,71 @@ if use_file
 end
 
 end
+
+
+function Gs = method1(N, ND)
+%fastest
+IDs = [];
+g = 1;
+% N! * 2^(N^2/2) * (N^2/2)
+allP = perms(1:N);
+nP = length(allP);
+for p=1:nP
+  P = allP(p,:);
+  % there are N(N-1)/2 edges
+  % hence 2^(N(N-1)/2) possible combinations
+  E = N*(N-1)/2;
+  M = 2^E;
+  for m=1:M
+    edges = ind2subv(2*ones(1,E), m)-1;
+    e = 1;
+    dag = (zeros(N, N));
+    for i=1:N
+      for j=i+1:N
+        % edge e
+        if edges(e)
+          dag(P(i), P(j)) = 1;
+        end
+        e = e + 1;
+      end
+    end
+    ind = reshape(dag+1, [1 N^2]);
+    id = subv2ind(2*ones(1,N^2), ind);
+    IDs(g) = id;
+    g = g + 1;
+  end
+end
+
+IDs = unique(IDs);
+Gs = cell(1,ND);
+g = 1;
+nIDs = length(IDs);
+for i=1:nIDs
+  ind = ind2subv(2*ones(1,N^2), IDs(i));
+  dag = reshape(ind-1, N, N);
+  %assert(acyclic(dag, 1)
+  Gs{g} = dag;
+  g = g + 1;
+end
+end
+
+function Gs = method2(N, ND)
+% original method, kept for debugging purposes
+m = 2^(N*N);
+Gs = cell(1, ND);
+j = 1;
+for i=1:m
+  if mod(i,1000)==0, fprintf('%d of %d\n', i, m), end;
+  % only keep searching if not all unique dags have been found
+  if j <= ND
+    ind = ind2subv(2*ones(1,N^2), i);
+    dag = reshape(ind-1, N, N);
+    if pmtkGraphIsDag(dag)
+      Gs{j} = dag;
+      j = j + 1;
+    end
+  end
+end
+end
+
+
