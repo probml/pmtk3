@@ -14,20 +14,20 @@ numDags = length(Gs)
 
 margLik = zeros(numDags, 1);
 for i = 1:numDags
-  mat = Gs{i};
-  if (any(mat(3,:)) || any(mat(:,1)) || any(mat(:,5)))
-    % Do not consider graph where CP has any children and where SEX or
-    % SES has any parent
-    margLik(i) = -inf;
-  elseif ((all(mat(1,:) == 0) && all(mat(:,1) == 0)) || ...
-      (all(mat(2,:) == 0) && all(mat(:,2) == 0)) || ...
-      (all(mat(5,:) == 0) && all(mat(:,5) == 0)) || ...
-      (all(mat(4,:)) == 0 && all(mat(:,4) == 0)))
-    % Assume SEX, IQ, SES, PE are not disconnected nodes
-    margLik(i) = -inf;
-  else
-    margLik(i) = discreteDAGlogEv(X, Gs{i}, alpha, ns);
-  end
+    mat = Gs{i};
+    if (any(mat(3,:)) || any(mat(:,1)) || any(mat(:,5)))
+        % Do not consider graph where CP has any children and where SEX or
+        % SES has any parent
+        margLik(i) = -inf;
+    elseif ((all(mat(1,:) == 0) && all(mat(:,1) == 0)) || ...
+            (all(mat(2,:) == 0) && all(mat(:,2) == 0)) || ...
+            (all(mat(5,:) == 0) && all(mat(:,5) == 0)) || ...
+            (all(mat(4,:)) == 0 && all(mat(:,4) == 0)))
+        % Assume SEX, IQ, SES, PE are not disconnected nodes
+        margLik(i) = -inf;
+    else
+        margLik(i) = discreteDAGlogEv(X, Gs{i}, alpha, ns);
+    end
 end
 
 [margLik, maxInd] = sort(margLik, 'descend');
@@ -38,13 +38,16 @@ Gs = Gs(maxInd);
 %bar(post); title('posterior over DAGs')
 names = {'SEX', 'IQ', 'CP', 'PE', 'SES'};
 for i = 1:2
-  str = sprintf('%d most likely graph, log p(D|m) = %f:\n', i, margLik(i));
-  sprintf(str)
-  disp(Gs{i});
-  if ~isOctave
-    graphviz4Matlab(Gs{i}, '-nodeLabels', names); 
-    title(str)
-    printPmtkFigure('sewellShahDag%d', i);
-  end
+    str = sprintf('%d most likely graph, log p(D|m) = %f:\n', i, margLik(i));
+    sprintf(str)
+    disp(Gs{i});
+    if ~isOctave
+        graphviz4Matlab(Gs{i}, '-nodeLabels', names);
+        sz = get(gca, 'OuterPosition');
+        sz(4) = 0.95*sz(4);
+        set(gca, 'OuterPosition', sz);
+        title(str)
+        printPmtkFigure(sprintf('sewellShahDag%d', i));
+    end
 end
 
