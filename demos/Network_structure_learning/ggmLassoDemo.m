@@ -16,9 +16,8 @@ for i=1:L
     A = precmatToAdjmat(P, 1e-9);
     nedges(i) = sum(A(:))/2;
     ttl=sprintf('lambda=%3.2f, nedges=%d', lambda, nedges(i));
-    g = graphViz4Matlab('-adjMat', A, '-undirected', true, ...
+    g = drawNetwork('-adjMat', A, '-undirected', true, ...
         '-nodeLabels', labels, '-layout', Circlelayout());
-    f=freeze(g); % convert to regular figure
     title(ttl)
     %figure; imagesc(P); colorbar; title(ttl);
     precMat{i} = P;

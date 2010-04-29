@@ -76,7 +76,7 @@ doubleClickFn = @dblcfun;
 
 
 %% Visualize
-h = graphViz4Matlab('-adjMat',matrix,'-nodeLabels',shortClassNames,'-splitLabels',true,'-layout',layout,'-nodeColors',nodeColors,'-edgeColors',edgeColors,'-doubleClickFn',doubleClickFn);
+h = drawNetwork('-adjMat',matrix,'-nodeLabels',shortClassNames,'-splitLabels',true,'-layout',layout,'-nodeColors',nodeColors,'-edgeColors',edgeColors,'-doubleClickFn',doubleClickFn);
 maximizeFigure();
 pause(1);
 tightenAxes(h);
