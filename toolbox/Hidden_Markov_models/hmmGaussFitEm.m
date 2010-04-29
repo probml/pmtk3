@@ -23,8 +23,13 @@ function model = hmmGaussFitEm(X, nstates, varargin)
     'pi0'      , []            ,...   % initial guess for starting state dist
     'transmat0', []            ,...   % initial guess for the transmat
     'emission0', []);                 % initial guess for the emission dists
-X = colvec(X); 
-if ~iscell(X), X = {X}; end
+%X = colvec(X); 
+if ~iscell(X)
+  if isvector(X) % scalar time series
+    X = rowvec(X);
+  end
+  X = {X};
+end
 nobs = numel(X);
 %% Initialize
 stackedData = cell2mat(X')';

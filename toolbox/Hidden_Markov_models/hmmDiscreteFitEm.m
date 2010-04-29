@@ -29,8 +29,13 @@ function model = hmmDiscreteFitEm(X, nstates, varargin)
     'piPseudoCounts'   , []    ,...
     'transPseudoCounts', []    ,...
     'obsPseudoCounts'  , []);
-X = colvec(X);
-if ~iscell(X), X = {X}; end
+%X = colvec(X);
+if ~iscell(X)
+  if isvector(X) % scalar time series
+    X = rowvec(X);
+  end
+  X = {X};
+end
 nobs = numel(X);
 stackedData = cell2mat(X')';
 seqidx      = cumsum([1, cellfun(@(seq)size(seq, 2), X')]);
