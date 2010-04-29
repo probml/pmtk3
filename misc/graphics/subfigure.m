@@ -34,7 +34,7 @@ function varargout = subfigure(varargin)
 % behavior is dissimilar to subplot.
 
 %PMTKauthor Steve Hoelzer
-%PMTKdate  2004-5-13
+%PMTKdate  May 13, 2004
 
 % Process input arguments
 if nargin == 1

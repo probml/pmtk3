@@ -17,7 +17,7 @@ function [P,W,m,nmax] = ggmLassoHtf(S, lambda, varargin)
 
 %PMTKauthor Baback Moghaddam    
 %PMTKemail baback@jpl.nasa.gov
-%PMTKdate 03/07/09
+%PMTKdate February 7, 2009
 
 % graph has p nodes
 p = length(S); 

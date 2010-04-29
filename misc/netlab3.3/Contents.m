@@ -178,4 +178,4 @@
 %PMTKauthor Ian Nabney
 %PMTKtitle netlab3.3: general package for neural nets, pca, etc.
 %PMTKurl http://www.ncrg.aston.ac.uk/netlab/down.php
-%PMTKdate 18-Jun-2004
+%PMTKdate June 18, 2004

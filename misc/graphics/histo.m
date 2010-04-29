@@ -13,7 +13,7 @@ function histo(x,N,odd,scale)
 % ------------------------------------------------------------
 
 %PMTKauthor Anders Holtsberg
-%PMTKdate  14-12-94
+%PMTKdate December 14, 1994
 
 
 if nargin < 2, N = []; end

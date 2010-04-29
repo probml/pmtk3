@@ -5,7 +5,7 @@ function hout=suptitle(str, fs)
 %	after all subplot commands.
 
 %PMTKauthor Drea Thomas  
-%PMTKdate 6/15/95
+%PMTKdate June 15, 1995
 %PMTKemail drea@mathworks.com
 
 % Warning: If the figure or axis units are non-default, this

@@ -13,7 +13,7 @@ function  pscatter(X,varargin)
 %---------------------------------------------------
 
 %PMTKauthor Anders Holtsberg
-%PMTKdate  14-12-94
+%PMTKdate December 14, 1994
 
 % JP LeSage added the vnames capability (www.spatial-econometrics.com)
 % Kevin Murphy changed vnames to be cell array (1 March 2007),

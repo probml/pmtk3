@@ -11,7 +11,7 @@ function [C,lambda,S] = shrinkcov(X)
 
 %PMTKauthor Baback Moghaddam    
 %PMTKemail baback@jpl.nasa.gov     
-%PMTKdate 01/25/09
+%PMTKdate January 25, 2009
 
 [n p] = size(X);
 
