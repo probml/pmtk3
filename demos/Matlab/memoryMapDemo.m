@@ -9,16 +9,15 @@ end
 %% load the mnist data 
 [Xtrain, ytrain, Xtest, ytest] = setupMnist('keepSparse', false);
 %% Save the data to a binary file using fwrite
-% Here we save the data as int16 and int8, but double works as well if our
-% data are not integers. Note, however, that double access can be
+% Here we save the data as int16 and int8, but double works as well if the
+% data is not integer typed. Note, however, that double access can be
 % considerably slower and take up much more memory. 
-
 fname = fullfile(tempdir(), 'mnist.dat'); 
 fid = fopen(fname, 'w'); 
 fwrite(fid, Xtrain, 'int16'); 
 fwrite(fid, ytrain, 'int8'); 
-fwrite(fid, Xtest,  'int16'); 
-fwrite(fid, ytest,  'int8'); 
+fwrite(fid, Xtest,  'int16'); % max int16 value is 32767
+fwrite(fid, ytest,  'int8');  % max int8 value is 127
 fclose(fid); 
 %% Create the memory map
 % For each section of the data, we specify the data type, size, and a name. 
