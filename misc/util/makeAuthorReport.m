@@ -15,13 +15,13 @@ makeDestinationDir();
 
 
 report = formatReport(generateReport());
-%publishReport(report);
+publishReport(report);
 
 
     function report = generateReport()
         % Generate the actual report as a struct
         report = createStruct(searchNames);
-        mfnames = mfiles(pmtk3Root(), 'fullPath', true);
+        mfnames = mfiles(pmtk3Root(), 'useFullPath', true);
         counter = 1;
         for i=1:numel(mfnames)
             file = mfnames{i};
@@ -80,10 +80,12 @@ report = formatReport(generateReport());
             file   = report(i).file;
             cdate  = report(i).date;
             title  = report(i).title;
-            try
-                system(sprintf('copy %s %s',which(file),location));
-            catch ME %#ok
-                fprintf('\nCould not copy %s',file);
+            if isempty(title)
+                try
+                    system(sprintf('copy %s %s',which(file),location));
+                catch ME %#ok
+                    fprintf('\nCould not copy %s',file);
+                end
             end
             if(isequal(author,' ') || isempty(author))
                 hprintf('&nbsp;');
@@ -91,7 +93,7 @@ report = formatReport(generateReport());
                 hprintf(author);
             end
             if isempty(title)
-                lprintf(['./',file],file);
+                lprintf(['./',argout(2, @fileparts, file),'.m'], file);
             else
                 hprintf(title);
             end
