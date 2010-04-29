@@ -96,7 +96,7 @@ winopen(fullfile(location, fname));
             end
             if isempty(title)
                 relativePath = file(length(pmtk3Root())+1:end); 
-                link = [googleRoot, relativePath];
+                link = [googleRoot, strrep(relativePath, '\', '/')];
                 lprintf(link, fnameOnly(file));
                 %lprintf(['./',fnameOnly(file), '.txt'], fnameOnly(file));
             else
