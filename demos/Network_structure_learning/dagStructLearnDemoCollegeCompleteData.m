@@ -41,7 +41,10 @@ for i = 1:2
   str = sprintf('%d most likely graph, log p(D|m) = %f:\n', i, margLik(i));
   sprintf(str)
   disp(Gs{i});
-  graphviz4Matlab(Gs{i}, '-nodeLabels', names);
-  title(str)
+  if ~isOctave
+    graphviz4Matlab(Gs{i}, '-nodeLabels', names); 
+    title(str)
+    printPmtkFigure('sewellShahDag%d', i);
+  end
 end
 
