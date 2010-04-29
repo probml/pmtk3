@@ -13,7 +13,7 @@ function demos = makeRunAllDemos()
     header = {'%% Run Every Demo'};
     footer = {''};
     fulltext = [header;demos;footer];
-    writeText(fulltext,fullfile(pmtk3Root(),'util',fname)); 
+    writeText(fulltext,fullfile(pmtk3Root(),'misc', 'metatools',fname)); 
 
 
 end
