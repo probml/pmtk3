@@ -52,6 +52,8 @@ class(X4000)
 mmap.Data.Xtrain(1, 30:35) = 255;
 mmap.Data.Xtrain(1, 30:35)
 %% Permform usual matlab operations on data
+% However, if Xtest is too big to fit all at once, you will have to
+% caluculate the mean 'online' and load it in chunks. 
 xbar = mean(mmap.Data.Xtest, 2);
 %% Clean up
 clear mmap 
