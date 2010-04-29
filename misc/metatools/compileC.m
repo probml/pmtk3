@@ -2,7 +2,7 @@ function compileC()
 % Try and compile all mexable c-files in the pmtk directory structure.     
     
     cd(pmtk3Root());
-    exclusions = {fullfile(pmtk3Root(), 'foreign\Minka\fastfit'),
+    exclusions = {fullfile(pmtk3Root(), 'foreign\Minka\fastfit');
                   fullfile(pmtk3Root(), 'toolbox\gaussianProcesses\gpml')
                  };
     cfiles = cfilelist();           

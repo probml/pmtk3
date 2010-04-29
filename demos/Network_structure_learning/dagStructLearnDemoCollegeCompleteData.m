@@ -42,10 +42,7 @@ for i = 1:2
     sprintf(str)
     disp(Gs{i});
     if ~isOctave
-        graphviz4Matlab(Gs{i}, '-nodeLabels', names);
-        sz = get(gca, 'OuterPosition');
-        sz(4) = 0.95*sz(4);
-        set(gca, 'OuterPosition', sz);
+        drawNetwork(Gs{i}, '-nodeLabels', names);
         title(str)
         printPmtkFigure(sprintf('sewellShahDag%d', i));
     end
