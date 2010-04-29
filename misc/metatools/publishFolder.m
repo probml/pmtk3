@@ -13,7 +13,7 @@ end
 doNotEvalList = {'PMTKinteractive', 'PMTKbroken', 'PMTKreallySlow'};
 globalEval    = true;
 googleRoot    = sprintf('http://code.google.com/p/pmtk3/source/browse/trunk/demos/%s/', folder);
-dest = fullfile(pmtk3Root(), 'docs', 'demos');
+dest = fullfile(pmtk3Root(), 'docs', 'demoOutput');
 demos = processExamples({}, {}, 0, false, folder);
 
 info = createStruct({'name', 'description', 'doEval', 'localLink', 'googleLink'});

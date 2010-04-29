@@ -1,6 +1,6 @@
 function multitaskRegDemo()
+% Multitask regression demo
 
-close all
 seeds = [1 2 3];
 plotFns = true; % set to false to reduce number of plots
 for seedi=1:length(seeds)
