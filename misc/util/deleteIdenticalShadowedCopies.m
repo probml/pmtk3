@@ -1,10 +1,10 @@
 function deleteIdenticalShadowedCopies()
 % Searches through every m-file and deletes exact duplicates.     
-    [info,mfiles] = mfilelist(pmtk3Root());          %#ok
+    m = mfiles(pmtk3Root());         
     
-    for i=1:numel(mfiles)
+    for i=1:numel(m)
         
-       w = which('-all',mfiles{i});
+       w = which('-all',m{i});
        if(numel(w) == 2 && isequal(getText(w{1}),getText(w{2})))
            
            fprintf('removing...%s\n',w{2});

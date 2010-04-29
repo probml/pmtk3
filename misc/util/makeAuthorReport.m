@@ -1,9 +1,8 @@
 function report = makeAuthorReport(location)
 % Generate an HTML report of the files contributed by other authors.
 
-
-searchTags = {'PMTKauthor','PMTKurl'};
-searchNames = {'author','url'};
+searchTags = {'PMTKauthor','PMTKurl','PMTKdate', 'PMTKtitle'};
+searchNames = {'author', 'url', 'date', 'title'};
 sortKey = 1;  % i.e. by author
 
 
@@ -16,18 +15,18 @@ makeDestinationDir();
 
 
 report = formatReport(generateReport());
-publishReport(report);
+%publishReport(report);
 
 
     function report = generateReport()
         % Generate the actual report as a struct
         report = createStruct(searchNames);
-        [info, mfiles] = mfilelist(pmtk3Root());
+        mfnames = mfiles(pmtk3Root(), 'fullPath', true);
         counter = 1;
-        for i=1:numel(mfiles)
-            file = mfiles{i};
+        for i=1:numel(mfnames)
+            file = mfnames{i};
             increment = false;
-            [tags,lines] = tagfinder(file,searchTags);
+            [tags, lines] = tagfinder(file, searchTags);
             if(~isempty(tags))
                 for j=1:numel(searchTags)
                     tagNDX = findname(searchTags{j},tags);
@@ -52,10 +51,10 @@ publishReport(report);
     function freport = formatReport(report)
         % Format the report
         sortvals = {report.(searchNames{sortKey})};
-        emptyNDX = find(cell2mat(cellfun(@(x)isempty(x),sortvals,'UniformOutput',false)));
+        emptyNDX = find(cell2mat(cellfuncell(@(x)isempty(x),sortvals)));
         emptyReport = report(emptyNDX);
         report(emptyNDX) = [];
-        [val,perm] = sortrows(strvcat(report.(searchNames{sortKey})));          %#ok
+        [val,perm] = sortrows(strvcat(report.(searchNames{sortKey}))); %#ok
         freport = [report(perm),emptyReport];
     end
 
@@ -71,7 +70,7 @@ publishReport(report);
         fprintf(fid,'</head>\n');
         fprintf(fid,'<body>\n\n');
         fprintf(fid,'<br>\n');
-        setupTable(fid,{'AUTHOR','FILE','SOURCE URL'},[45,45,10]);
+        setupTable(fid,{'AUTHOR','FILE/PACKAGE NAME','SOURCE URL', 'DATE'},[40,40,10,10]);
         hprintf = @(txt)fprintf(fid,'\t<td> %s               </td>\n',txt);
         lprintf = @(link,name)fprintf(fid,'\t<td> <a href="%s"> %s </td>\n',link,name);
         for i=1:numel(report)
@@ -79,6 +78,8 @@ publishReport(report);
             author = report(i).author;
             url    = report(i).url;
             file   = report(i).file;
+            cdate  = report(i).date;
+            title  = report(i).title;
             try
                 system(sprintf('copy %s %s',which(file),location));
             catch ME %#ok
@@ -89,11 +90,20 @@ publishReport(report);
             else
                 hprintf(author);
             end
-            lprintf(['./',file],file);
+            if isempty(title)
+                lprintf(['./',file],file);
+            else
+                hprintf(title);
+            end
             if(isequal(url,' ') || isempty(url))
                 hprintf('&nbsp;');
             else
                 lprintf(url,'website');
+            end
+            if(isequal(cdate,' ') || isempty(cdate))
+                hprintf('&nbsp;');
+            else
+                hprintf(cdate);
             end
             fprintf(fid,'</tr>\n');
         end
