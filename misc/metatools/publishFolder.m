@@ -10,6 +10,11 @@ if (isempty(mfiles(fullfile(pmtk3Root(), 'demos', folder))));
     return
 end
 
+[PMLrefs, PMLpages] = pmlCodeRefs();
+PMLrefs = cellfuncell(@genvarname, PMLrefs); 
+PMLlookup = createStruct(PMLrefs, PMLpages); 
+
+
 doNotEvalList = {'PMTKinteractive', 'PMTKbroken', 'PMTKreallySlow'};
 globalEval    = true;
 googleRoot    = sprintf('http://code.google.com/p/pmtk3/source/browse/trunk/demos/%s/', folder);
@@ -26,13 +31,25 @@ end
 perm = sortidx(cellfuncell(@(str)lower(str),{info.name}));
 sortedInfo = info(perm);
 fid = setupHTMLfile(fullfile(folder, 'index.html'), folder);
-setupTable(fid, {'File Name', 'Brief Description',},[20, 60]);
+setupTable(fid, {'File Name', 'Brief Description', 'Page Number(s)'},[20, 50, 10]);
 lprintf = @(link, name)fprintf(fid, '\t<td> <a href="%s"> %s </td>\n', link, name);
 for i=1:numel(sortedInfo) 
     fprintf(fid,'<tr bgcolor="white" align="left">\n');
     fprintf(fid, '<td>%s</td>\n',sortedInfo(i).name);
     %lprintf(sortedInfo(i).googleLink, sortedInfo(i).name);
     lprintf(sortedInfo(i).localLink, sortedInfo(i).description);
+    name = sortedInfo(i).name;
+    if isfield(PMLlookup, name)
+        pgs = PMLlookup.(name); 
+        if numel(pgs) == 1,
+            pgstr = num2str(pgs); 
+        else
+            pgstr = catString(cellfuncell(@num2str,num2cell(pgs)), ', ');
+        end
+       fprintf(fid, '<td>%s</td>\n',  pgstr); 
+    else
+       fprintf(fid, '<td>&nbsp;</td>\n'); 
+    end
     fprintf(fid,'</tr>\n');
 end
 fprintf(fid,'</table>');
