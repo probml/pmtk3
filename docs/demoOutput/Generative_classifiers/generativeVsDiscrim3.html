@@ -1,0 +1,139 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>generativeVsDiscrim3</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-04-29"><meta name="m-file" content="generativeVsDiscrim3"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% Illustration of the generalization error vs size of training set</span>
+<span class="comment">% for naive Bayes and logistic regression.</span>
+domain = 0:0.01:10;
+NB = @(x)x.^(-0.5);
+LR = @(x)(8./(x.^0.8))-2;
+
+linewidth = {<span class="string">'LineWidth'</span>,3};
+hold <span class="string">all</span>;
+set(gca,<span class="string">'XTick'</span>,[],<span class="string">'YTick'</span>,[],<span class="string">'FontSize'</span>,16);
+axis([-0.1,10,-1,10]);
+
+plot(domain,NB(domain),<span class="string">'--r'</span>,linewidth{:});
+plot(domain,LR(domain),<span class="string">'-b'</span>,linewidth{:});
+
+set(gca,<span class="string">'FontSize'</span>,14,<span class="string">'LineWidth'</span>,2);
+xlabel(<span class="string">'size of training set'</span>);
+ylabel(<span class="string">'test error'</span>);
+box <span class="string">on</span>;
+
+<span class="comment">%NB</span>
+annotation(gcf,<span class="string">'textbox'</span>,[0.1702 0.25 0.06392 0.1205],<span class="keyword">...</span>
+    <span class="string">'String'</span>,{<span class="string">'NB'</span>},<span class="keyword">...</span>
+    <span class="string">'FontSize'</span>,20,<span class="keyword">...</span>
+    <span class="string">'FitBoxToText'</span>,<span class="string">'off'</span>,<span class="keyword">...</span>
+    <span class="string">'LineStyle'</span>,<span class="string">'none'</span>,<span class="keyword">...</span>
+    <span class="string">'Color'</span>,<span class="string">'r'</span>);
+
+<span class="comment">% LR</span>
+annotation(gcf,<span class="string">'textbox'</span>,[0.2648 0.4 0.06392 0.1205],<span class="keyword">...</span>
+    <span class="string">'String'</span>,{<span class="string">'LR'</span>},<span class="keyword">...</span>
+    <span class="string">'FontSize'</span>,20,<span class="keyword">...</span>
+    <span class="string">'FitBoxToText'</span>,<span class="string">'off'</span>,<span class="keyword">...</span>
+    <span class="string">'LineStyle'</span>,<span class="string">'none'</span>,<span class="keyword">...</span>
+    <span class="string">'Color'</span>,<span class="string">'b'</span>);
+</pre><img vspace="5" hspace="5" src="generativeVsDiscrim3_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
+##### SOURCE BEGIN #####
+% Illustration of the generalization error vs size of training set
+% for naive Bayes and logistic regression. 
+domain = 0:0.01:10;
+NB = @(x)x.^(-0.5);
+LR = @(x)(8./(x.^0.8))-2;
+
+linewidth = {'LineWidth',3};
+hold all;
+set(gca,'XTick',[],'YTick',[],'FontSize',16);
+axis([-0.1,10,-1,10]);
+
+plot(domain,NB(domain),'REPLACE_WITH_DASH_DASHr',linewidth{:});
+plot(domain,LR(domain),'-b',linewidth{:});
+
+set(gca,'FontSize',14,'LineWidth',2);
+xlabel('size of training set');
+ylabel('test error');
+box on;
+
+%NB
+annotation(gcf,'textbox',[0.1702 0.25 0.06392 0.1205],...
+    'String',{'NB'},...
+    'FontSize',20,...
+    'FitBoxToText','off',...
+    'LineStyle','none',...
+    'Color','r');
+
+% LR
+annotation(gcf,'textbox',[0.2648 0.4 0.06392 0.1205],...
+    'String',{'LR'},...
+    'FontSize',20,...
+    'FitBoxToText','off',...
+    'LineStyle','none',...
+    'Color','b');
+
+
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,189 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>logregL2FitTest</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-04-29"><meta name="m-file" content="logregL2FitTest"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% Test that the minfunc method and IRLS give same result</span>
+
+setSeed(0);
+N = 10; D = 2;
+X = randn(N, D);
+y01 = rand(N,1) &gt; 0.5;
+y12 = canonizeLabels(y01);
+ypm = sign(y01-0.5);
+
+lambda = 0;
+opts.maxIter = 1000;
+opts.TolX   = 1e-6;
+opts.TolFun = 1e-6;
+model1 = logregFit(X, y01, <span class="string">'lambda'</span>, lambda, <span class="string">'standardizeX'</span>, false,<span class="keyword">...</span>
+    <span class="string">'fitOptions'</span>, opts);
+model2 = logregBinaryFitL2IRLS(X, y01,lambda);
+assert(approxeq(model1.w, model2.w))
+</pre><pre class="codeoutput"> Iteration   FunEvals     Step Length    Function Val        Opt Cond
+         1          2    3.06026e-001    6.00879e+000    7.53521e-001
+         2          3    1.00000e+000    5.95831e+000    1.87083e-001
+         3          4    1.00000e+000    5.95404e+000    5.10759e-002
+         4          5    1.00000e+000    5.95362e+000    5.05774e-003
+         5          6    1.00000e+000    5.95361e+000    4.33018e-004
+Directional Derivative below TolX
+ Iteration   FunEvals     Step Length    Function Val        Opt Cond
+         1          2    3.80904e-001    5.08448e+000    2.14447e-001
+         2          3    1.00000e+000    5.07190e+000    1.67437e-001
+         3          4    1.00000e+000    5.06329e+000    6.36376e-002
+         4          5    1.00000e+000    5.06258e+000    1.04711e-002
+         5          6    1.00000e+000    5.06256e+000    2.38390e-003
+         6          7    1.00000e+000    5.06256e+000    1.33509e-004
+Function Value changing by less than TolX
+ Iteration   FunEvals     Step Length    Function Val        Opt Cond
+         1          2    5.96386e-001    5.23983e+000    3.07765e-001
+         2          3    1.00000e+000    5.22624e+000    1.15653e-001
+         3          4    1.00000e+000    5.22165e+000    7.32297e-002
+         4          5    1.00000e+000    5.21984e+000    2.17515e-002
+         5          6    1.00000e+000    5.21977e+000    3.05759e-003
+         6          7    1.00000e+000    5.21977e+000    3.30098e-004
+Directional Derivative below TolX
+ Iteration   FunEvals     Step Length    Function Val        Opt Cond
+         1          2    2.31953e-001    4.33142e+000    2.41260e+000
+         2          3    1.00000e+000    3.31165e+000    1.06094e+000
+         3          4    1.00000e+000    2.67146e+000    8.00455e-001
+         4          5    1.00000e+000    2.06227e+000    3.05406e-001
+         5          6    1.00000e+000    1.68511e+000    3.00941e-001
+         6          7    1.00000e+000    1.43528e+000    3.71956e-001
+         7          8    1.00000e+000    9.09698e-001    2.26396e-001
+         8          9    1.00000e+000    4.29636e-001    1.66947e-001
+         9         10    1.00000e+000    1.90031e-001    4.49825e-002
+        10         11    1.00000e+000    1.00185e-001    2.20033e-002
+        11         12    1.00000e+000    4.87441e-002    9.99086e-003
+        12         13    1.00000e+000    2.47134e-002    4.51303e-003
+        13         14    1.00000e+000    1.23803e-002    2.22857e-003
+        14         15    1.00000e+000    6.22910e-003    1.12585e-003
+        15         16    1.00000e+000    3.12912e-003    6.42101e-004
+        16         17    1.00000e+000    1.58752e-003    3.08154e-004
+        17         18    1.00000e+000    7.94324e-004    1.50708e-004
+        18         19    1.00000e+000    3.99095e-004    6.89962e-005
+        19         20    1.00000e+000    1.99819e-004    3.79823e-005
+        20         21    1.00000e+000    1.01018e-004    3.61576e-005
+        21         22    1.00000e+000    5.53230e-005    2.94963e-005
+        22         23    1.00000e+000    2.65634e-005    4.60353e-006
+        23         24    1.00000e+000    1.57413e-005    5.41299e-006
+        24         25    1.00000e+000    7.13370e-006    1.13571e-006
+        25         26    1.00000e+000    3.90016e-006    7.18142e-007
+Optimality Condition below TolFun
+ Iteration   FunEvals     Step Length    Function Val        Opt Cond
+         1          2    2.52338e-001    4.28689e+000    2.31753e+000
+         2          3    1.00000e+000    3.45954e+000    1.10741e+000
+         3          4    1.00000e+000    2.92406e+000    7.59376e-001
+         4          5    1.00000e+000    2.33157e+000    1.08063e+000
+         5          6    1.00000e+000    1.71967e+000    3.65942e-001
+         6          7    1.00000e+000    1.11272e+000    3.50076e-001
+         7          8    1.00000e+000    6.41300e-001    1.36743e-001
+         8          9    1.00000e+000    3.27404e-001    1.97457e-001
+         9         10    1.00000e+000    1.53656e-001    6.81541e-002
+        10         11    1.00000e+000    9.67651e-002    4.01720e-002
+        11         12    1.00000e+000    4.50741e-002    1.69659e-002
+        12         13    1.00000e+000    2.34993e-002    8.25835e-003
+        13         14    1.00000e+000    1.16855e-002    3.88325e-003
+        14         15    1.00000e+000    5.90470e-003    1.89118e-003
+        15         16    1.00000e+000    2.96018e-003    9.26916e-004
+        16         17    1.00000e+000    1.48653e-003    4.59630e-004
+        17         18    1.00000e+000    7.45172e-004    2.28800e-004
+        18         19    1.00000e+000    3.73452e-004    1.14208e-004
+        19         20    1.00000e+000    1.87037e-004    5.70588e-005
+        20         21    1.00000e+000    9.36419e-005    2.85213e-005
+        21         22    1.00000e+000    4.68670e-005    1.42590e-005
+        22         23    1.00000e+000    2.34511e-005    7.12925e-006
+        23         24    1.00000e+000    1.17322e-005    3.56461e-006
+        24         25    1.00000e+000    5.86857e-006    1.78232e-006
+        25         26    1.00000e+000    2.93522e-006    8.91170e-007
+Optimality Condition below TolFun
+ Iteration   FunEvals     Step Length    Function Val        Opt Cond
+         1          2    3.36059e-001    4.62810e+000    7.93814e-001
+         2          3    1.00000e+000    4.51926e+000    3.27282e-001
+         3          4    1.00000e+000    4.48893e+000    1.21464e-001
+         4          5    1.00000e+000    4.48431e+000    1.70158e-002
+         5          6    1.00000e+000    4.48429e+000    8.32316e-003
+         6          7    1.00000e+000    4.48428e+000    4.18864e-004
+Directional Derivative below TolX
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
+##### SOURCE BEGIN #####
+% Test that the minfunc method and IRLS give same result
+
+setSeed(0); 
+N = 10; D = 2;
+X = randn(N, D);
+y01 = rand(N,1) > 0.5;
+y12 = canonizeLabels(y01);
+ypm = sign(y01-0.5);
+
+lambda = 0;
+opts.maxIter = 1000;
+opts.TolX   = 1e-6;
+opts.TolFun = 1e-6;
+model1 = logregFit(X, y01, 'lambda', lambda, 'standardizeX', false,...
+    'fitOptions', opts);
+model2 = logregBinaryFitL2IRLS(X, y01,lambda);
+assert(approxeq(model1.w, model2.w))
+
+##### SOURCE END #####
+--></body></html>

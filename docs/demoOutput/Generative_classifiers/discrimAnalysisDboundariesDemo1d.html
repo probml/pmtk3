@@ -1,0 +1,156 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>discrimAnalysisDboundariesDemo1d</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-04-29"><meta name="m-file" content="discrimAnalysisDboundariesDemo1d"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Discriminative Analysis Demo 1D</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> discrimAnalysisDboundariesDemo1d
+</pre><h2>Discriminative Analysis Demo 1D<a name="2"></a></h2><pre class="codeinput"><span class="comment">%plotgaussians1d(-1, 3, 1, 1, 0.5)</span>
+<span class="comment">%plotgaussians1d(-1, 3, 1, 1, 0.1)</span>
+figure
+plotgaussians1d(1, -1, 1, 1, 0.5)
+printPmtkFigure <span class="string">dboundaries1dConnected</span>
+figure
+plotgaussians1d(1, -1, 3, 1, 0.5)
+printPmtkFigure <span class="string">dboundaries1dDisconnected</span>
+</pre><pre class="codeoutput">b =
+     0
+b =
+   -2.9919
+    0.4919
+</pre><img vspace="5" hspace="5" src="discrimAnalysisDboundariesDemo1d_01.png" alt=""> <img vspace="5" hspace="5" src="discrimAnalysisDboundariesDemo1d_02.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
+<span class="keyword">function</span> plotgaussians1d(mu1, mu2, s1, s2, pi1)
+pi2 = 1-pi1;
+xs = -5:0.1:5;
+p1 = gausspdf(xs, mu1, s1);
+p2 = gausspdf(xs, mu2, s2);
+plot(xs, pi1*p1, <span class="string">'r-'</span>, <span class="string">'linewidth'</span>, 3);
+hold <span class="string">on</span>
+plot(xs, pi2*p2, <span class="string">'g-'</span>, <span class="string">'linewidth'</span>, 3);
+grid <span class="string">on</span>
+xmin = min(xs); xmax = max(xs);
+syms <span class="string">x</span> <span class="comment">% use symbolic math toolbox</span>
+b  = double(solve(pi1*normpdf(x,mu1,s1) - pi2*normpdf(x,mu2,s2)));
+b = sort(b)
+pmax = max(max(pi1*p1), max(pi2*p2));
+h = line([b(1) b(1)], [0 pmax]); set(h, <span class="string">'color'</span>, <span class="string">'k'</span>, <span class="string">'linewidth'</span>, 3);
+<span class="keyword">if</span> length(b)&gt;1
+  h = line([b(2) b(2)], [0 pmax]); set(h, <span class="string">'color'</span>, <span class="string">'k'</span>, <span class="string">'linewidth'</span>, 3);
+<span class="keyword">end</span>
+
+e = 0;
+<span class="keyword">if</span> length(b)==1
+  h = line([xmin b], [e e]); set(h, <span class="string">'color'</span>, <span class="string">'g'</span>, <span class="string">'linewidth'</span>, 3);
+  h = line([b xmax], [e e]); set(h, <span class="string">'color'</span>, <span class="string">'r'</span>, <span class="string">'linewidth'</span>, 3);
+<span class="keyword">else</span>
+  h = line([b(1) b(2)], [e e]); set(h, <span class="string">'color'</span>, <span class="string">'g'</span>, <span class="string">'linewidth'</span>, 3);
+  h = line([xmin b(1)], [e e]); set(h, <span class="string">'color'</span>, <span class="string">'r'</span>, <span class="string">'linewidth'</span>, 3);
+  h = line([b(2) xmax], [e e]); set(h, <span class="string">'color'</span>, <span class="string">'r'</span>, <span class="string">'linewidth'</span>, 3);
+<span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
+##### SOURCE BEGIN #####
+function discrimAnalysisDboundariesDemo1d
+%% Discriminative Analysis Demo 1D
+%plotgaussians1d(-1, 3, 1, 1, 0.5)
+%plotgaussians1d(-1, 3, 1, 1, 0.1)
+figure
+plotgaussians1d(1, -1, 1, 1, 0.5)
+printPmtkFigure dboundaries1dConnected
+figure
+plotgaussians1d(1, -1, 3, 1, 0.5)
+printPmtkFigure dboundaries1dDisconnected
+end
+function plotgaussians1d(mu1, mu2, s1, s2, pi1)
+pi2 = 1-pi1;
+xs = -5:0.1:5;
+p1 = gausspdf(xs, mu1, s1);
+p2 = gausspdf(xs, mu2, s2);
+plot(xs, pi1*p1, 'r-', 'linewidth', 3);
+hold on
+plot(xs, pi2*p2, 'g-', 'linewidth', 3);
+grid on
+xmin = min(xs); xmax = max(xs);
+syms x % use symbolic math toolbox
+b  = double(solve(pi1*normpdf(x,mu1,s1) - pi2*normpdf(x,mu2,s2)));
+b = sort(b)
+pmax = max(max(pi1*p1), max(pi2*p2));
+h = line([b(1) b(1)], [0 pmax]); set(h, 'color', 'k', 'linewidth', 3);
+if length(b)>1
+  h = line([b(2) b(2)], [0 pmax]); set(h, 'color', 'k', 'linewidth', 3);
+end
+
+e = 0;
+if length(b)==1
+  h = line([xmin b], [e e]); set(h, 'color', 'g', 'linewidth', 3);
+  h = line([b xmax], [e e]); set(h, 'color', 'r', 'linewidth', 3);
+else
+  h = line([b(1) b(2)], [e e]); set(h, 'color', 'g', 'linewidth', 3);
+  h = line([xmin b(1)], [e e]); set(h, 'color', 'r', 'linewidth', 3);
+  h = line([b(2) xmax], [e e]); set(h, 'color', 'r', 'linewidth', 3);
+end
+end
+  
+  
+
+##### SOURCE END #####
+--></body></html>

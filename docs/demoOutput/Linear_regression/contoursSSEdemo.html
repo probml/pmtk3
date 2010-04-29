@@ -1,0 +1,178 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>contoursSSEdemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-04-29"><meta name="m-file" content="contoursSSEdemo"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% Error surface for linear regression model</span>
+<span class="comment">% Based on code by John D'errico</span>
+setSeed(2);
+n = 20;
+x = randn(n,1);
+<span class="comment">%x = (-3:0.5:3)';</span>
+<span class="comment">%n = length(x);</span>
+wtrue = [1 1];
+sigma = 1;
+y = wtrue(1) + wtrue(2)*x + sigma*randn(n,1);
+
+<span class="comment">%{
+</span><span class="comment">figure
+</span><span class="comment">plot(x,y,'o')
+</span><span class="comment">title 'Linear data with noise'
+</span><span class="comment">xlabel 'x'
+</span><span class="comment">ylabel 'y'
+</span><span class="comment">axis([-4 4 -3 5])
+</span><span class="comment">%}
+</span>
+X = [ones(n,1),x];
+w = X\y <span class="comment">% least squares soln</span>
+
+v = -1:.1:3;
+<span class="comment">%v = -5:.5:5;</span>
+nv = length(v);
+[w0,w1] = meshgrid(v);
+w0=w0(:)';
+w1=w1(:)';
+m = length(w0);
+
+SS = sum(((ones(n,1)*w0 + x*w1) - repmat(y,1,m)).^2,1);
+SS = reshape(SS,nv,nv);
+
+figure
+contour(v,v,SS)
+hold <span class="string">on</span>
+plot(w(1),w(2),<span class="string">'rx'</span>, <span class="string">'markersize'</span>, 14, <span class="string">'linewidth'</span>, 3)
+<span class="comment">%plot(wtrue(1),wtrue(2),'bo', 'markersize', 14, 'linewidth', 3)</span>
+<span class="comment">%plot([[-1;3],[1;1]],[[1;1],[-1;3]],'g-')</span>
+hold <span class="string">off</span>
+title <span class="string">'Sum of squares error contours for linear regression'</span>
+axis <span class="string">equal</span>
+axis <span class="string">square</span>
+grid <span class="string">on</span>
+xlabel(<span class="string">'w0'</span>)
+ylabel(<span class="string">'w1'</span>)
+printPmtkFigure(<span class="string">'linRegContoursSSE'</span>);
+
+figure;
+surf(v,v,SS)
+printPmtkFigure(<span class="string">'linregSurfSSE'</span>)
+</pre><pre class="codeoutput">w =
+    1.4530
+    0.9278
+</pre><img vspace="5" hspace="5" src="contoursSSEdemo_01.png" alt=""> <img vspace="5" hspace="5" src="contoursSSEdemo_02.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
+##### SOURCE BEGIN #####
+% Error surface for linear regression model
+% Based on code by John D'errico
+setSeed(2);
+n = 20;
+x = randn(n,1);
+%x = (-3:0.5:3)';
+%n = length(x);
+wtrue = [1 1];
+sigma = 1;
+y = wtrue(1) + wtrue(2)*x + sigma*randn(n,1);
+
+%{
+figure
+plot(x,y,'o')
+title 'Linear data with noise'
+xlabel 'x'
+ylabel 'y'
+axis([-4 4 -3 5])
+%}
+
+X = [ones(n,1),x];
+w = X\y % least squares soln
+
+v = -1:.1:3;
+%v = -5:.5:5;
+nv = length(v);
+[w0,w1] = meshgrid(v);
+w0=w0(:)';
+w1=w1(:)';
+m = length(w0);
+
+SS = sum(((ones(n,1)*w0 + x*w1) - repmat(y,1,m)).^2,1);
+SS = reshape(SS,nv,nv);
+
+figure
+contour(v,v,SS)
+hold on
+plot(w(1),w(2),'rx', 'markersize', 14, 'linewidth', 3)
+%plot(wtrue(1),wtrue(2),'bo', 'markersize', 14, 'linewidth', 3)
+%plot([[-1;3],[1;1]],[[1;1],[-1;3]],'g-')
+hold off
+title 'Sum of squares error contours for linear regression'
+axis equal
+axis square
+grid on
+xlabel('w0')
+ylabel('w1')
+printPmtkFigure('linRegContoursSSE'); 
+
+figure;
+surf(v,v,SS)
+printPmtkFigure('linregSurfSSE')
+
+
+##### SOURCE END #####
+--></body></html>
