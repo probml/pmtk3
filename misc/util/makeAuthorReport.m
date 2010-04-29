@@ -14,9 +14,9 @@ googleRoot = 'http://pmtk3.googlecode.com/svn/trunk';
 
 makeDestinationDir();
 
-
 report = formatReport(generateReport());
 publishReport(report);
+winopen(fullfile(location, fname)); 
 
 
     function report = generateReport()

@@ -1,6 +1,6 @@
 function normalGammaThresholdPlotDemo()
 %% Threshold Plot Demo
-%PMTKauthor author Francois Caron
+%PMTKauthor Francois Caron
 
 %z=-10:.1:10;
 z=-10:0.5:10;

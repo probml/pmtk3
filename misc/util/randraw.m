@@ -3,7 +3,7 @@ function varargout = randraw(distribName, distribParams, varargin)
 %   EFFICIENT RANDOM VARIATES GENERATOR
 % 
 %PMTKurl http://www.mathworks.com/matlabcentral/fileexchange/7309
-%PMTKsauthor Alex Bar-Guy
+%PMTKauthor Alex Bar-Guy
 %
 % See alphabetical list of the supported distributions below (over 50 distributions)
 % 

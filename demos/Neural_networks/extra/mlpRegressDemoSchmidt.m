@@ -1,6 +1,5 @@
-
 % Based on Mark Schmidt's Demo from
-%PMTKurl http://people.cs.ubc.ca/~schmidtm/Software/minFunc/minFunc.html#8
+% http://people.cs.ubc.ca/~schmidtm/Software/minFunc/minFunc.html#8
 setSeed(0);
 nVars = 1;
 nInstances = 400;
