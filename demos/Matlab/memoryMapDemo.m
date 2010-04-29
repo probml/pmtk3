@@ -8,6 +8,7 @@ if isOctave()
 end
 %% load the mnist data 
 [Xtrain, ytrain, Xtest, ytest] = setupMnist('keepSparse', false);
+whos
 %% Save the data to a binary file using fwrite
 % Here we save the data as int16 and int8, but double works as well if the
 % data is not integer typed. Note, however, that double access can be
@@ -32,7 +33,7 @@ mmap = memmapfile(fname, 'Writable', true, 'Format', ...
 % under the 'Data' field. 
 % The first time a region is requested, access can be slow,
 tic
-X4000 = mmap.Data.Xtrain(4000, :);
+X4000 = mmap.Data.Xtrain(4000, :); % 1x784
 y4000 = mmap.Data.ytrain(4000);
 toc
 %% 
