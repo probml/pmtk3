@@ -7,9 +7,10 @@ sortKey = 1;  % i.e. by author
 
 
 if(nargin < 1)
-    location = 'C:\kmurphy\pmtkLocal\doc\authors\';
+    location = fullfile(pmtk3Root(), 'docs');
 end
 fname = 'authors.html';
+googleRoot = 'http://pmtk3.googlecode.com/svn/trunk';
 
 makeDestinationDir();
 
@@ -73,6 +74,7 @@ publishReport(report);
         setupTable(fid,{'AUTHOR','FILE/PACKAGE NAME','SOURCE URL', 'DATE'},[40,40,10,10]);
         hprintf = @(txt)fprintf(fid,'\t<td> %s               </td>\n',txt);
         lprintf = @(link,name)fprintf(fid,'\t<td> <a href="%s"> %s </td>\n',link,name);
+        fnameOnly = @(m)argout(2, @fileparts, m); 
         for i=1:numel(report)
             fprintf(fid,'<tr bgcolor="white" align="left">\n');
             author = report(i).author;
@@ -80,20 +82,23 @@ publishReport(report);
             file   = report(i).file;
             cdate  = report(i).date;
             title  = report(i).title;
-            if isempty(title)
-                try
-                    system(sprintf('copy %s %s',which(file),location));
-                catch ME %#ok
-                    fprintf('\nCould not copy %s',file);
-                end
-            end
+%             if isempty(title)
+%                 try
+%                     system(sprintf('copy %s %s',file, fullfile(location, [fnameOnly(file),'.txt'])));
+%                 catch ME %#ok
+%                     fprintf('\nCould not copy %s',file);
+%                 end
+%             end
             if(isequal(author,' ') || isempty(author))
                 hprintf('&nbsp;');
             else
                 hprintf(author);
             end
             if isempty(title)
-                lprintf(['./',argout(2, @fileparts, file),'.m'], file);
+                relativePath = file(length(pmtk3Root())+1:end); 
+                link = [googleRoot, relativePath];
+                lprintf(link, fnameOnly(file));
+                %lprintf(['./',fnameOnly(file), '.txt'], fnameOnly(file));
             else
                 hprintf(title);
             end
