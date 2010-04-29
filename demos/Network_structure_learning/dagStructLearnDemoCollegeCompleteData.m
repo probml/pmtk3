@@ -31,11 +31,17 @@ for i = 1:numDags
 end
 
 [margLik, maxInd] = sort(margLik, 'descend');
-
+Gs = Gs(maxInd);
 
 %% Printing out results
-for i = 1:3
-  fprintf('%d most likely graph, log p(D|m) = %f:\n', i, margLik(i));
-  disp(Gs{maxInd(i)});
+%figure; post = exp(normalizeLogspace(margLik));
+%bar(post); title('posterior over DAGs')
+names = {'SEX', 'IQ', 'CP', 'PE', 'SES'};
+for i = 1:2
+  str = sprintf('%d most likely graph, log p(D|m) = %f:\n', i, margLik(i));
+  sprintf(str)
+  disp(Gs{i});
+  graphviz4Matlab(Gs{i}, '-nodeLabels', names);
+  title(str)
 end
 
