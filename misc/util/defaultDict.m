@@ -1,12 +1,14 @@
 function d = defaultDict(keys, values, default)
 % A simple default dictionary (hashmap) similar to python's.
-%
+% ** note, this is not an efficient data structure for large numbers of
+%    key-value pairs. 
+% **
 %%
 %% Inputs
-% keys     - a cell array of keys of any data type or a matrix where
-%            each *row* is interpreted as a key.
+% keys     - a cell array of keys of any data type, (even mixed),
+%            or a matrix where each *row* is interpreted as a key.
 %
-% values   - a cell array of values of any data type or a matrix where
+% values   - a cell array of values of any data type, or a matrix where
 %            each *row* is interpreted as a value.
 %
 % default  - a value to return if the requested key is not in the dict.
@@ -15,11 +17,11 @@ function d = defaultDict(keys, values, default)
 %% Output
 % d        - this is just a struct, but to access the values, use
 %            d.get(key), or if you want multiple values given multiple
-%            keys, d.getMany(keys).
+%            keys, d.getMany(keys). See setting values below. 
 %% %% Examples
 %
 %% Simple usage - note we request the value for a non-existent key and get
-%% the default value.
+%% the default value, 42.
 % keys = {'one', 'two', 'three'}';
 % vals = {1, 2, 3}';
 % default = 42;
@@ -36,6 +38,13 @@ function d = defaultDict(keys, values, default)
 %    [ 1]
 %    [ 3]
 %    [42]
+% The result of getMany is always a cell array, you may find unwrapCell()
+% useful: 
+% unwrapCell(ans) = 
+% ans =
+%     1
+%     3
+%    42
 %% Keys can be any data type, and mixed, values can be a matrix where each
 %% row is taken to be a value. 
 % If you want a whole matrix as a value, you need to use cell arrays. 
@@ -63,15 +72,17 @@ function d = defaultDict(keys, values, default)
 % (3) It supports any data type, (and mixed data types) as the keys
 % (4) It returns a default value if the key is not found - no need for
 %     tedious isKey or isfield checks.
+%%
+
 SetDefaultValue(1, 'keys',    {});
 SetDefaultValue(2, 'values',  {});
 SetDefaultValue(3, 'default', 0);
-
+%%
 if ~iscell(keys),   keys   = mat2cellRows(keys);   end
 if ~iscell(values), values = mat2cellRows(values); end
 keys   = colvec(keys);
 values = colvec(values);
-
+%%
 K = cellfuncell(@(c)genvarname(serialize(c)), keys);
 d = createStruct(K, values);
 d.DEFAULT_DICT_DEFAULT = default;
