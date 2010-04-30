@@ -2,12 +2,14 @@
 % Reproduce Bishop fig 10.6
 %%
 function mixGaussVbDemoFaithful
+%% Load Data
 setSeed(0);
 X = load('faithful.txt'); % 272x2
 X = standardizeCols(X);
+%% Run mixGaussVbFit
 K = 6;
 [model, loglikHist] = mixGaussVbFit(X, K, 'maxIter', 200, 'plotFn', @plotFn); 
-%%
+%%  Plot
 figure();
 plot(loglikHist, 'o-', 'linewidth', 3)
 xlabel('iter')

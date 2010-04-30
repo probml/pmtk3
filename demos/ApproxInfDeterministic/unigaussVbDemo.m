@@ -1,4 +1,5 @@
 %% Variational bayes for univariate Gaussian
+% 
 %%
 function unigaussVbDemo()
 % PMTKauthor Robert Tseng
@@ -13,7 +14,6 @@ s = sum(data);
 sSq = sum(data.*data);
 xbar = m;
 sigma2Hat = sSq/N - xbar^2;
-
 %% The true posterior model using normal gamma prior
 % hyper parameters
 a0 = 0; b0 = 0; mu0 = 0; kappa0 = 0;
