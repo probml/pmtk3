@@ -1,6 +1,9 @@
-%% Multi-class Logistic Regression 
-% with basis function expansion. This is a simplification of
-% logregMultinomKernelMinfuncDemo
+%% Multiclass Logistic Regression 
+% In this demo, we fit a multiclass logistic regression model by first
+% performing various basis expansions of the input features. This is a
+% simplification of logregMultinomKernelMinfuncDemo.
+%%
+function logregMultinomKernelDemo()
 %% Setup Data
 setSeed(0);
 nClasses = 5;
@@ -34,12 +37,13 @@ fprintf('Training error using an RBF kernel with scale %d: %2.f%%\n', rbfScale, 
 %% Plot decision boundaries
 plotDecisionBoundary(X, y, @(X)logregPredict(modelLinear, X));
 title('Linear Multinomial Logistic Regression');
-
+%%
 predictFcn = @(Xtest) logregPredict(modelPoly, Xtest); 
 plotDecisionBoundary(X, y, predictFcn);
 title('Kernel-Poly Multinomial Logistic Regression');
-
+%%
 predictFcn = @(Xtest) logregPredict(modelRBF, Xtest); 
 plotDecisionBoundary(X, y, predictFcn);
 title('Kernel-RBF Multinomial Logistic Regression');
-
+%%
+end
