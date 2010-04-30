@@ -104,6 +104,10 @@ end
 function d = set(d, key, value)
 % set a single key value pair
 d.(genvarname(serialize(key))) = value;
+
+% when the dict is mutated, we must update the function handles, as they
+% all implicitly store an old copy of the dictionary in their local
+% workspace, (closure). 
 d.get = @(key)get(d, key);
 d.set = @(key, val)set(d, key, val);
 d.getMany = @(keys)getMany(d, keys);
