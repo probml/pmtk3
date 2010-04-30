@@ -30,6 +30,12 @@ function d = defaultDict(keys, values, default)
 % d.get('foo')
 % ans =
 %    42
+%% Getting multiple values at once
+% d.getMany({'one', 'three', 'twenty'})
+%ans = 
+%    [ 1]
+%    [ 3]
+%    [42]
 %% Keys can be any data type, and mixed, values can be a matrix where each
 %% row is taken to be a value. 
 % If you want a whole matrix as a value, you need to use cell arrays. 
@@ -57,7 +63,6 @@ function d = defaultDict(keys, values, default)
 % (3) It supports any data type, (and mixed data types) as the keys
 % (4) It returns a default value if the key is not found - no need for
 %     tedious isKey or isfield checks.
-%%
 SetDefaultValue(1, 'keys',    {});
 SetDefaultValue(2, 'values',  {});
 SetDefaultValue(3, 'default', 0);
@@ -93,7 +98,7 @@ keys = colvec(keys);
 if ~iscell(keys)
     keys = mat2cellRows(keys);
 end
-V = unwrapCell(cellfuncell(@(k)dict.get(k), keys));
+V = cellfuncell(@(k)dict.get(k), keys);
 end
 
 function d = set(d, key, value)
