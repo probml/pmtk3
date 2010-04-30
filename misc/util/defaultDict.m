@@ -1,8 +1,17 @@
 function d = defaultDict(keys, values, default)
 % A simple default dictionary (hashmap) similar to python's.
+%
 % ** note, this is not an efficient data structure for large numbers of
-%    key-value pairs. 
+%    key-value pairs, (i.e. more than a few thousand). 
 % **
+% 
+%% 
+% If your keys are all strings that are also valid variable names then you
+% are better off just using 
+% 
+% d = createStruct(keys, vals), 
+% d.(key)
+% 
 %%
 %% Inputs
 % keys     - a cell array of keys of any data type, (even mixed),
