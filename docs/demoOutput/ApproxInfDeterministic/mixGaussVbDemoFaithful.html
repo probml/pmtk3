@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>mixGaussVbDemoFaithful</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-04-29"><meta name="m-file" content="mixGaussVbDemoFaithful"><style type="text/css">
+      --><title>Fit a mixture of Gaussians using variational Bayes</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-04-30"><meta name="m-file" content="mixGaussVbDemoFaithful"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,58 +62,16 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> mixGaussVbDemoFaithful
-    <span class="comment">% reproduce Bishop fig 10.6</span>
-
-    close <span class="string">all</span>
-    setSeed(0);
-    X = load(<span class="string">'faithful.txt'</span>); <span class="comment">% 272x2</span>
-    X = standardizeCols(X);
-
-
-    K = 6;
-   [model, loglikHist] = mixGaussVbFit(X, K, <span class="string">'maxIter'</span>, 200, <span class="string">'plotFn'</span>, @plotFn); <span class="comment">%#ok</span>
-
-    figure;
-    plot(loglikHist, <span class="string">'o-'</span>, <span class="string">'linewidth'</span>, 3)
-    xlabel(<span class="string">'iter'</span>)
-    ylabel(<span class="string">'lower bound on log marginal likelihood'</span>)
-    title(<span class="string">'variational Bayes objective for GMM on old faithful data'</span>)
-    printPmtkFigure(<span class="string">'mixGaussVbFaithfulObjVsIter'</span>)
-
-
-<span class="keyword">end</span>
-
-<span class="comment">%%%%%%</span>
-
-<span class="keyword">function</span> plotFn(X, alpha, m, W, v, loglik, iter)
-    figure(1);clf
-    fprintf(<span class="string">'iteration %d, loglik %8.5f\n'</span>, iter, loglik);
-    plot(X(:,1),X(:,2),<span class="string">'o'</span>);
-    D = 2;
-    K = length(alpha);
-    hold <span class="string">on</span>
-    plot(m(:,1), m(:,2),<span class="string">'or'</span>,<span class="string">'linewidth'</span>,2);
-    weight = alpha/sum(alpha);
-    <span class="keyword">for</span> i = 1:K
-      <span class="keyword">if</span> weight(i) &lt; 0.001, <span class="keyword">continue</span>; <span class="keyword">end</span> <span class="comment">% kill off unwanted components</span>
-      MyEllipse(inv(W(:,:,i))/(v(i)-D-1), m(i,:),<span class="string">'style'</span>,<span class="string">'r'</span>,<span class="string">'intensity'</span>,weight(i), <span class="string">'facefill'</span>,.8);
-      text(m(i,1), m(i,2), num2str(i),<span class="string">'BackgroundColor'</span>, [.7 .9 .7]);
-    <span class="keyword">end</span>
-    title(sprintf(<span class="string">'iter %d'</span>, iter))
-    <span class="keyword">if</span> ismember(iter, [1 15 94])
-      figure(1);
-      printPmtkFigure(sprintf(<span class="string">'mixGaussVbFaithful%d'</span>, iter))
-      figure(2); clf; bar(alpha);  title(sprintf(<span class="string">'iter %d'</span>, iter))
-      printPmtkFigure(sprintf(<span class="string">'mixGaussVbFaithfulAlphas%d'</span>, iter))
-      pause
-    <span class="keyword">end</span>
-    pause(0.1);
-<span class="keyword">end</span>
+  </style></head><body><div class="content"><h1>Fit a mixture of Gaussians using variational Bayes</h1><!--introduction--><p>Reproduce Bishop fig 10.6</p><!--/introduction--><pre class="codeinput"><span class="keyword">function</span> mixGaussVbDemoFaithful
+</pre><pre class="codeinput">setSeed(0);
+X = load(<span class="string">'faithful.txt'</span>); <span class="comment">% 272x2</span>
+X = standardizeCols(X);
+K = 6;
+[model, loglikHist] = mixGaussVbFit(X, K, <span class="string">'maxIter'</span>, 200, <span class="string">'plotFn'</span>, @plotFn);
 </pre><pre class="codeoutput">Maximum number of iterations has been exceeded
 Maximum number of iterations has been exceeded
 iteration 1, loglik -1061.46605
-iteration 2, loglik -1046.88281
+</pre><img vspace="5" hspace="5" src="mixGaussVbDemoFaithful_01.png" alt=""> <img vspace="5" hspace="5" src="mixGaussVbDemoFaithful_02.png" alt=""> <pre class="codeoutput">iteration 2, loglik -1046.88281
 iteration 3, loglik -1034.92923
 iteration 4, loglik -1025.04048
 iteration 5, loglik -1019.30772
@@ -127,7 +85,7 @@ iteration 12, loglik -977.61127
 iteration 13, loglik -967.44234
 iteration 14, loglik -954.56281
 iteration 15, loglik -924.03288
-iteration 16, loglik -861.09696
+</pre><img vspace="5" hspace="5" src="mixGaussVbDemoFaithful_03.png" alt=""> <img vspace="5" hspace="5" src="mixGaussVbDemoFaithful_04.png" alt=""> <pre class="codeoutput">iteration 16, loglik -861.09696
 iteration 17, loglik -830.00279
 iteration 18, loglik -814.03161
 iteration 19, loglik -804.30989
@@ -206,56 +164,90 @@ iteration 91, loglik -659.72033
 iteration 92, loglik -634.96389
 iteration 93, loglik -632.50882
 iteration 94, loglik -632.50882
-</pre><img vspace="5" hspace="5" src="mixGaussVbDemoFaithful_01.png" alt=""> <img vspace="5" hspace="5" src="mixGaussVbDemoFaithful_02.png" alt=""> <img vspace="5" hspace="5" src="mixGaussVbDemoFaithful_03.png" alt=""> <p class="footer"><br>
+</pre><img vspace="5" hspace="5" src="mixGaussVbDemoFaithful_05.png" alt=""> <img vspace="5" hspace="5" src="mixGaussVbDemoFaithful_06.png" alt=""> <pre class="codeinput">figure();
+plot(loglikHist, <span class="string">'o-'</span>, <span class="string">'linewidth'</span>, 3)
+xlabel(<span class="string">'iter'</span>)
+ylabel(<span class="string">'lower bound on log marginal likelihood'</span>)
+title(<span class="string">'variational Bayes objective for GMM on old faithful data'</span>)
+printPmtkFigure(<span class="string">'mixGaussVbFaithfulObjVsIter'</span>)
+</pre><img vspace="5" hspace="5" src="mixGaussVbDemoFaithful_07.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
+
+<span class="keyword">function</span> plotFn(X, alpha, m, W, v, loglik, iter)
+figure(1);clf
+fprintf(<span class="string">'iteration %d, loglik %8.5f\n'</span>, iter, loglik);
+plot(X(:,1),X(:,2),<span class="string">'o'</span>);
+D = 2;
+K = length(alpha);
+hold <span class="string">on</span>
+plot(m(:,1), m(:,2),<span class="string">'or'</span>,<span class="string">'linewidth'</span>,2);
+weight = alpha/sum(alpha);
+<span class="keyword">for</span> i = 1:K
+    <span class="keyword">if</span> weight(i) &lt; 0.001, <span class="keyword">continue</span>; <span class="keyword">end</span> <span class="comment">% kill off unwanted components</span>
+    MyEllipse(inv(W(:,:,i))/(v(i)-D-1), m(i,:),<span class="keyword">...</span>
+        <span class="string">'style'</span>, <span class="string">'r'</span>, <span class="string">'intensity'</span>, weight(i), <span class="string">'facefill'</span>, .8);
+    text(m(i,1), m(i,2), num2str(i),<span class="string">'BackgroundColor'</span>, [.7 .9 .7]);
+<span class="keyword">end</span>
+title(sprintf(<span class="string">'iter %d'</span>, iter))
+<span class="keyword">if</span> ismember(iter, [1 15 94])
+    figure(1);
+    snapnow <span class="comment">% for publishing</span>
+    printPmtkFigure(sprintf(<span class="string">'mixGaussVbFaithful%d'</span>, iter))
+    figure(2); clf;
+    bar(alpha);
+    title(sprintf(<span class="string">'iter %d'</span>, iter))
+    snapnow
+    printPmtkFigure(sprintf(<span class="string">'mixGaussVbFaithfulAlphas%d'</span>, iter))
+<span class="keyword">end</span>
+pause(0.1);
+<span class="keyword">end</span>
+</pre><p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
+%% Fit a mixture of Gaussians using variational Bayes
+% Reproduce Bishop fig 10.6
+%%
 function mixGaussVbDemoFaithful
-    % reproduce Bishop fig 10.6
-    
-    close all
-    setSeed(0);
-    X = load('faithful.txt'); % 272x2
-    X = standardizeCols(X);
-    
-
-    K = 6;
-   [model, loglikHist] = mixGaussVbFit(X, K, 'maxIter', 200, 'plotFn', @plotFn); %#ok
-   
-    figure;
-    plot(loglikHist, 'o-', 'linewidth', 3)
-    xlabel('iter')
-    ylabel('lower bound on log marginal likelihood')
-    title('variational Bayes objective for GMM on old faithful data')
-    printPmtkFigure('mixGaussVbFaithfulObjVsIter')
-     
-   
+setSeed(0);
+X = load('faithful.txt'); % 272x2
+X = standardizeCols(X);
+K = 6;
+[model, loglikHist] = mixGaussVbFit(X, K, 'maxIter', 200, 'plotFn', @plotFn); 
+%%
+figure();
+plot(loglikHist, 'o-', 'linewidth', 3)
+xlabel('iter')
+ylabel('lower bound on log marginal likelihood')
+title('variational Bayes objective for GMM on old faithful data')
+printPmtkFigure('mixGaussVbFaithfulObjVsIter')
 end
 
-%%%%%%
-
-function plotFn(X, alpha, m, W, v, loglik, iter) 
-    figure(1);clf
-    fprintf('iteration %d, loglik %8.5f\n', iter, loglik);
-    plot(X(:,1),X(:,2),'o');
-    D = 2;
-    K = length(alpha);
-    hold on
-    plot(m(:,1), m(:,2),'or','linewidth',2);
-    weight = alpha/sum(alpha);
-    for i = 1:K
-      if weight(i) < 0.001, continue; end % kill off unwanted components
-      MyEllipse(inv(W(:,:,i))/(v(i)-D-1), m(i,:),'style','r','intensity',weight(i), 'facefill',.8);
-      text(m(i,1), m(i,2), num2str(i),'BackgroundColor', [.7 .9 .7]);
-    end
+function plotFn(X, alpha, m, W, v, loglik, iter)
+figure(1);clf
+fprintf('iteration %d, loglik %8.5f\n', iter, loglik);
+plot(X(:,1),X(:,2),'o');
+D = 2;
+K = length(alpha);
+hold on
+plot(m(:,1), m(:,2),'or','linewidth',2);
+weight = alpha/sum(alpha);
+for i = 1:K
+    if weight(i) < 0.001, continue; end % kill off unwanted components
+    MyEllipse(inv(W(:,:,i))/(v(i)-D-1), m(i,:),...
+        'style', 'r', 'intensity', weight(i), 'facefill', .8);
+    text(m(i,1), m(i,2), num2str(i),'BackgroundColor', [.7 .9 .7]);
+end
+title(sprintf('iter %d', iter))
+if ismember(iter, [1 15 94])
+    figure(1);
+    snapnow % for publishing
+    printPmtkFigure(sprintf('mixGaussVbFaithful%d', iter))
+    figure(2); clf; 
+    bar(alpha);  
     title(sprintf('iter %d', iter))
-    if ismember(iter, [1 15 94])
-      figure(1);
-      printPmtkFigure(sprintf('mixGaussVbFaithful%d', iter))
-      figure(2); clf; bar(alpha);  title(sprintf('iter %d', iter))
-      printPmtkFigure(sprintf('mixGaussVbFaithfulAlphas%d', iter))
-      pause
-    end
-    pause(0.1);
+    snapnow 
+    printPmtkFigure(sprintf('mixGaussVbFaithfulAlphas%d', iter))
+end
+pause(0.1);
 end
 
 ##### SOURCE END #####

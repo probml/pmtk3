@@ -1,7 +1,6 @@
-
-% reproduce Bishop fig 12.14
+%% Reproduce Bishop fig 12.14
 % Needs BPCAfill package from http://hawaii.sys.i.kyoto-u.ac.jp/~oba/tools/
-
+%%
 setSeed(0);
 
 %n = 100;
@@ -23,13 +22,13 @@ X = W*Z + randn(d,n);
 X = X';
 
 %figure; hintonDiagram(W);  title('truth');
-
+%%
 kmax = d-1;
 [Xfilled,M] = BPCAfill(X, kmax);  
 figure; hintonDiagram(M.W); title('ARD');
 printPmtkFigure('ppcaVBhintonArd')
 
-[Wppca,mu,sigma2,evals,evecs,Xproj,Xrecon]  = ppcaFit(X,kmax);
+[Wppca, mu, sigma2, evals, evecs, Xproj, Xrecon]  = ppcaFit(X, kmax);
 figure; hintonDiagram(Wppca); title('MLE'); 
 printPmtkFigure('ppcaVBhintonMle')
 

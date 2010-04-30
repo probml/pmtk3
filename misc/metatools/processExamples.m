@@ -33,23 +33,23 @@ function [text, excluded] = processExamples(includeTags, excludeTags, pauseTime,
 %
 % EXAMPLES:
 %
-% text = processExamples({},{'PMTKinprogress','PMTKslow','PMTKbroken'})  % used to make testPMTK
-% text = processExamples({},{'PMTKinprogress','PMTKbroken'})                     % used to make runDemos
+% text = processExamples({},{'PMTKinprogress','PMTKslow','PMTKbroken'})    % used to make testPMTK
+% text = processExamples({},{'PMTKinprogress','PMTKbroken'})               % used to make runDemos
 
 if nargin < 1, includeTags = {}; end
 if nargin < 2, excludeTags = {}; end
 if nargin < 3, pauseTime = 0; end
 if nargin < 4, doformat = true; end
-cd(fullfile(pmtk3Root(),'demos'));                                     % change directory to /pmtk/examples/
+cd(fullfile(pmtk3Root(),'demos'));                                         % change directory to /pmtk/examples/
 if nargin == 5 && ~isempty(subFolder)
     cd(subFolder)
 end
-mfnames = mfiles()';                                                    % grab the names of all the mfiles there - including subdirectories if any
-tags = cellfuncell(@tagfinder,mfnames)';                                % get all of the tags in each of these mfiles
+mfnames = mfiles()';                                                       % grab the names of all the mfiles there - including subdirectories if any
+tags = cellfuncell(@tagfinder,mfnames)';                                   % get all of the tags in each of these mfiles
 if isempty(includeTags)
-    include = true(numel(mfnames),1);                                    % if no includeTags, include every file
+    include = true(numel(mfnames),1);                                      % if no includeTags, include every file
 else
-    include = cellfun(@(c)~isempty(intersect(c,includeTags)),tags);     % determine which mfiles to include based on their tags
+    include = cellfun(@(c)~isempty(intersect(c,includeTags)),tags);        % determine which mfiles to include based on their tags
 end
 
 excluded = mfnames(cellfun(@(c)~isempty(intersect(c,excludeTags)),tags));
@@ -62,20 +62,20 @@ if not(doformat)
     text = mfnames(include & not(exclude));
     return;
 end
-mfnames = mfnames(include);                                              % keep only included mfiles
-text = cellfuncell(@(c)sprintf('%s;%spclear(%d);',c(1:end-2),...       % format each example name by removing .m adding ';', spaces, and 'pclear('pauseTime');'
+mfnames = mfnames(include);                                                % keep only included mfiles
+text = cellfuncell(@(c)sprintf('%s;%spclear(%d);',c(1:end-2),...           % format each example name by removing .m adding ';', spaces, and 'pclear('pauseTime');'
     blanks(max(5,42 - length(c))),pauseTime),mfnames)';
-if ~isempty(excludeTags)                                               % if there are exclude tags
-    comments = cellfuncell(@(c)catString(cellfuncell(@(s)regexprep...  % construct comments for mfiles with excludeTags from the tags themselves
+if ~isempty(excludeTags)                                                   % if there are exclude tags
+    comments = cellfuncell(@(c)catString(cellfuncell(@(s)regexprep...      % construct comments for mfiles with excludeTags from the tags themselves
         (s,'#',''),intersect(c,excludeTags)),' & '),tags(include));
-    ndx = find((cellfun(@(c)~isempty(c),comments)));                   % indices into mfiles(include) of files with excludeTags and thus non-empty comments
-    text(ndx) = cellfuncell(@(c)['%',c],text(ndx));                    % add a '%' to the beginning of each mfile name with an excludeTag
+    ndx = find((cellfun(@(c)~isempty(c),comments)));                       % indices into mfiles(include) of files with excludeTags and thus non-empty comments
+    text(ndx) = cellfuncell(@(c)['%',c],text(ndx));                        % add a '%' to the beginning of each mfile name with an excludeTag
     for j=1:numel(ndx)
         i = ndx(j);
-        text{i} = [text{i},' % ',comments{i}];                         % add comments to excluded mfiles
-        text{i} = [text{i}(1:length(mfnames{i})),...                    % remove one extra space so pclear() statements line up
+        text{i} = [text{i},' % ',comments{i}];                             % add comments to excluded mfiles
+        text{i} = [text{i}(1:length(mfnames{i})),...                       % remove one extra space so pclear() statements line up
             text{i}(length(mfnames{i})+2:end)];
     end
 end
-text = [{''};text;{''}];                                               % Add an extra blank line at the top and bottom
+text = [{''};text;{''}];                                                   % Add an extra blank line at the top and bottom
 end

@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>unigaussVbDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-04-29"><meta name="m-file" content="unigaussVbDemo"><style type="text/css">
+      --><title>Variational bayes for univariate Gaussian</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-04-30"><meta name="m-file" content="unigaussVbDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,12 +62,11 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Variational bayes for univariate Gaussian</a></li><li><a href="#3">Make data with mean 0 and unit variance</a></li><li><a href="#4">The true posterior model using normal gamma prior</a></li><li><a href="#5">Initialize VB to fit univariate gaussian</a></li><li><a href="#6">Main loop of VB</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> uniguassVbDemo()
-</pre><h2>Variational bayes for univariate Gaussian<a name="2"></a></h2><pre class="codeinput"><span class="comment">%PMTKauthor Robert Tseng</span>
-<span class="comment">%PMTKmodified Kevin Murphy</span>
-
-setSeed(0);
-</pre><h2>Make data with mean 0 and unit variance<a name="3"></a></h2><pre class="codeinput">N = 10; D = 1;
+  </style></head><body><div class="content"><h1>Variational bayes for univariate Gaussian</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#3">Make data with mean 0 and unit variance</a></li><li><a href="#4">The true posterior model using normal gamma prior</a></li><li><a href="#5">Initialize VB to fit univariate gaussian</a></li><li><a href="#6">Main loop of VB</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> unigaussVbDemo()
+</pre><pre class="codeinput"><span class="comment">% PMTKauthor Robert Tseng</span>
+<span class="comment">% PMTKmodified Kevin Murphy</span>
+</pre><h2>Make data with mean 0 and unit variance<a name="3"></a></h2><pre class="codeinput">setSeed(0);
+N = 10; D = 1;
 data = rand(N, D);
 data = standardizeCols(data);
 m = mean(data);
@@ -178,15 +177,13 @@ p = C * (lambda .^ (alpha-1/2)) .* (exp(-beta * lambda)) .* <span class="keyword
 </pre><p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
-function uniguassVbDemo()
 %% Variational bayes for univariate Gaussian
-
-%PMTKauthor Robert Tseng
-%PMTKmodified Kevin Murphy
-
-setSeed(0);
-
+%%
+function unigaussVbDemo()
+% PMTKauthor Robert Tseng
+% PMTKmodified Kevin Murphy
 %% Make data with mean 0 and unit variance
+setSeed(0);
 N = 10; D = 1;
 data = rand(N, D);
 data = standardizeCols(data);

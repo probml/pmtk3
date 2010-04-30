@@ -1,8 +1,7 @@
-% posterior over model dimensionality 
+%% Plot the posterior over model dimensionality 
 % See also ppcaVBdemo
-
+%%
 setSeed(0);
-
 n = 300;
 d = 10;
 
@@ -20,7 +19,7 @@ Z = randn(d,n);
 X = W*Z + randn(d,n);
 X = X';
 
-[k,p] = laplace_pca(X);
+[k, p] = laplace_pca(X);
 post = exp(normalizeLogspace(p));
 figure; bar(post)
 printPmtkFigure('ppcaEvidenceDemo')

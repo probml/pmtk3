@@ -1,12 +1,10 @@
-function uniguassVbDemo()
 %% Variational bayes for univariate Gaussian
-
-%PMTKauthor Robert Tseng
-%PMTKmodified Kevin Murphy
-
-setSeed(0);
-
+%%
+function unigaussVbDemo()
+% PMTKauthor Robert Tseng
+% PMTKmodified Kevin Murphy
 %% Make data with mean 0 and unit variance
+setSeed(0);
 N = 10; D = 1;
 data = rand(N, D);
 data = standardizeCols(data);

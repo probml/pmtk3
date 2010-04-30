@@ -1,61 +1,67 @@
 function publishFolder(folder)
-% Publish a single demos directory, (called by publishDemos).
+% Publish a single demos directory, (called by publishDemos)
 %
-% Example
+%% Example
 %
 % publishFolder bayesDemos
-
-if (isempty(mfiles(fullfile(pmtk3Root(), 'demos', folder)))); 
-    fprintf('%s is empty\n', folder); 
+%
+%% Settings
+% Demos with these tags have only their text published, they are not run.
+doNotEvalList = {'PMTKinteractive', 'PMTKbroken', 'PMTKreallySlow'};
+globalEval    = true; % if false, no code is evaluated during publishing.
+googleRoot    = sprintf('http://code.google.com/p/pmtk3/source/browse/trunk/demos/%s/', folder);
+dest          = fullfile(pmtk3Root(), 'docs', 'demoOutput');
+%% Make sure the folder is non-empty
+if (isempty(mfiles(fullfile(pmtk3Root(), 'demos', folder))));
+    fprintf('%s is empty\n', folder);
     return
 end
-
+%% Get the PML page references, if any, and create a lookup table. 
 [PMLrefs, PMLpages] = pmlCodeRefs();
-PMLrefs = cellfuncell(@genvarname, PMLrefs); 
-PMLlookup = createStruct(PMLrefs, PMLpages); 
-
-
-doNotEvalList = {'PMTKinteractive', 'PMTKbroken', 'PMTKreallySlow'};
-globalEval    = true;
-googleRoot    = sprintf('http://code.google.com/p/pmtk3/source/browse/trunk/demos/%s/', folder);
-dest = fullfile(pmtk3Root(), 'docs', 'demoOutput');
-demos = processExamples({}, {}, 0, false, folder);
-
+PMLrefs   = cellfuncell(@genvarname, PMLrefs);
+PMLlookup = createStruct(PMLrefs, PMLpages);
+%% Get a list of all of the demos in the folder
+demos = mfiles(fullfile(pmtk3Root(), 'demos', folder));
+%% Gather info about the demos, and then publish. 
 info = createStruct({'name', 'description', 'doEval', 'localLink', 'googleLink'});
 cd(dest);
 for i=1:numel(demos)
     info(i) = mfileInfo(demos{i});
     publishFile(demos{i}, fullfile(dest, folder), info(i).doEval);
 end
-
+%% Write the index page
+%
+%% Sort the demos alphabetically
 perm = sortidx(cellfuncell(@(str)lower(str),{info.name}));
 sortedInfo = info(perm);
+%%
 fid = setupHTMLfile(fullfile(folder, 'index.html'), folder);
-setupTable(fid, {'File Name', 'Brief Description', 'Page Number(s)'},[20, 50, 10]);
+setupTable(fid, {'File Name', 'Brief Description', 'Page Number(s)'}, [20, 50, 10]);
 lprintf = @(link, name)fprintf(fid, '\t<td> <a href="%s"> %s </td>\n', link, name);
-for i=1:numel(sortedInfo) 
+for i=1:numel(sortedInfo)
     fprintf(fid,'<tr bgcolor="white" align="left">\n');
     fprintf(fid, '<td>%s</td>\n',sortedInfo(i).name);
     %lprintf(sortedInfo(i).googleLink, sortedInfo(i).name);
     lprintf(sortedInfo(i).localLink, sortedInfo(i).description);
     name = sortedInfo(i).name;
     if isfield(PMLlookup, name)
-        pgs = PMLlookup.(name); 
+        pgs = PMLlookup.(name);
         if numel(pgs) == 1,
-            pgstr = num2str(pgs); 
+            pgstr = num2str(pgs);
         else
             pgstr = catString(cellfuncell(@num2str,num2cell(pgs)), ', ');
         end
-       fprintf(fid, '<td>%s</td>\n',  pgstr); 
+        fprintf(fid, '<td>%s</td>\n',  pgstr);
     else
-       fprintf(fid, '<td>&nbsp;</td>\n'); 
+        fprintf(fid, '<td>&nbsp;</td>\n');
     end
     fprintf(fid,'</tr>\n');
 end
 fprintf(fid,'</table>');
 closeHTMLfile(fid);
-
+%%
     function info = mfileInfo(mfile)
+        % gather info about the mfile    
         info.name = mfile(1:end-2);
         h = help(mfile);
         if isempty(h)
@@ -69,9 +75,6 @@ closeHTMLfile(fid);
         info.googleLink = [googleRoot, mfile];
     end
 end
-
-
-
 
 function publishFile(mfile, outputDir, evalCode)
 % Publish an m-file to the specified output directory.
