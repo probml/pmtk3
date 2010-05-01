@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>Learn GGM structure using graphical lasso on flow cytometry data</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-04-29"><meta name="m-file" content="ggmLassoDemo"><style type="text/css">
+      --><title>Learn GGM structure using graphical lasso on flow cytometry data</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-05-01"><meta name="m-file" content="ggmLassoDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -77,9 +77,8 @@ precMat = cell(L, 1);
     A = precmatToAdjmat(P, 1e-9);
     nedges(i) = sum(A(:))/2;
     ttl=sprintf(<span class="string">'lambda=%3.2f, nedges=%d'</span>, lambda, nedges(i));
-    g = graphViz4Matlab(<span class="string">'-adjMat'</span>, A, <span class="string">'-undirected'</span>, true, <span class="keyword">...</span>
+    g = drawNetwork(<span class="string">'-adjMat'</span>, A, <span class="string">'-undirected'</span>, true, <span class="keyword">...</span>
         <span class="string">'-nodeLabels'</span>, labels, <span class="string">'-layout'</span>, Circlelayout());
-    f=freeze(g); <span class="comment">% convert to regular figure</span>
     title(ttl)
     <span class="comment">%figure; imagesc(P); colorbar; title(ttl);</span>
     precMat{i} = P;
@@ -93,26 +92,6 @@ precMat = cell(L, 1);
         assert(max(P(:)- PM(:)) &lt; tol);
     <span class="keyword">end</span>
 <span class="keyword">end</span>
-</pre><pre class="codeoutput">Warning: Function
-C:\Users\matt\AppData\Local\Temp\matlabShadow\pause.m
-has the same name as a MATLAB builtin. We
-suggest you rename the function to avoid a
-potential name conflict. 
-Warning: Function
-C:\Users\matt\AppData\Local\Temp\matlabShadow\keyboard.m
-has the same name as a MATLAB builtin. We
-suggest you rename the function to avoid a
-potential name conflict. 
-Warning: Function
-C:\Users\matt\AppData\Local\Temp\matlabShadow\input.m
-has the same name as a MATLAB builtin. We
-suggest you rename the function to avoid a
-potential name conflict. 
-neato - Graphviz version 2.20.3 (Wed Oct  8 06:02:12 UTC 2008) 
-dot - Graphviz version 2.20.3 (Wed Oct  8 06:02:12 UTC 2008) 
-twopi - Graphviz version 2.20.3 (Wed Oct  8 06:02:12 UTC 2008) 
-neato - Graphviz version 2.20.3 (Wed Oct  8 06:02:12 UTC 2008) 
-fdp - Graphviz version 2.20.3 (Wed Oct  8 06:02:12 UTC 2008) 
 </pre><img vspace="5" hspace="5" src="ggmLassoDemo_01.png" alt=""> <p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
@@ -134,9 +113,8 @@ for i=1:L
     A = precmatToAdjmat(P, 1e-9);
     nedges(i) = sum(A(:))/2;
     ttl=sprintf('lambda=%3.2f, nedges=%d', lambda, nedges(i));
-    g = graphViz4Matlab('-adjMat', A, '-undirected', true, ...
+    g = drawNetwork('-adjMat', A, '-undirected', true, ...
         '-nodeLabels', labels, '-layout', Circlelayout());
-    f=freeze(g); % convert to regular figure
     title(ttl)
     %figure; imagesc(P); colorbar; title(ttl);
     precMat{i} = P;

@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>demoRosenConstrained</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-04-29"><meta name="m-file" content="demoRosenConstrained"><style type="text/css">
+      --><title>demoRosenConstrained</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-05-01"><meta name="m-file" content="demoRosenConstrained"><style type="text/css">
 
 body {
   background-color: white;
@@ -108,27 +108,11 @@ ceqgrad = zeros(2,1);
 [fx,gx,Hx] = rosen2d(x(:)');
 H = Hx + lambda.ineqnonlin*2*eye(length(x));
 <span class="keyword">end</span>
-</pre><pre class="codeoutput">Warning: Trust-region-reflective algorithm
-does not solve this type of problem, using
-active-set algorithm. You could also try
-the interior-point or sqp algorithms: set
-the Algorithm option to 'interior-point' or
-'sqp' and rerun. For more help, see
-Choosing the Algorithm in the
-documentation. 
-Objective function derivative:
+</pre><pre class="codeoutput">Objective function derivative:
 Maximum relative discrepancy between derivatives = 1.43051e-008
 fcount = 126
 
 
-Warning: Trust-region-reflective algorithm
-does not solve this type of problem, using
-active-set algorithm. You could also try
-the interior-point or sqp algorithms: set
-the Algorithm option to 'interior-point' or
-'sqp' and rerun. For more help, see
-Choosing the Algorithm in the
-documentation. 
 Objective function derivative:
 Maximum relative discrepancy between derivatives = 1.43051e-008
 Nonlinear inequality constraint derivatives:

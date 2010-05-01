@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>unpairedTestHandednessDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-04-29"><meta name="m-file" content="unpairedTestHandednessDemo"><style type="text/css">
+      --><title>Analysis of binomial differences  on lefthand/righthand data</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-05-01"><meta name="m-file" content="unpairedTestHandednessDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,7 +62,7 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Analysis of binomial differences  on lefthand/righthand data</a></li><li><a href="#2">Effect of sample size</a></li><li><a href="#3">Effect of  alternative prior</a></li><li><a href="#4">Now do a one-sided test</a></li></ul></div><h2>Analysis of binomial differences  on lefthand/righthand data<a name="1"></a></h2><pre class="codeinput">setSeed(0);
+  </style></head><body><div class="content"><h1>Analysis of binomial differences  on lefthand/righthand data</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#3">numerical integration</a></li><li><a href="#4">Effect of sample size</a></li><li><a href="#5">Effect of  alternative prior</a></li><li><a href="#6">Sanity check</a></li><li><a href="#7">Now do a one-sided test</a></li></ul></div><pre class="codeinput">setSeed(0);
 y1 = 9; n1 = 52; y2 = 4; n2 = 48;
 [deltas, post, thetas] = contingencyTableUnpairedDiffPostMc(n1,y1,n2,y2);
 figure; plot(deltas, post, <span class="string">'linewidth'</span>, 3, <span class="string">'color'</span>, <span class="string">'k'</span>);
@@ -73,18 +73,14 @@ hold <span class="string">on</span>
 verticalLine(q(1), <span class="string">'linewidth'</span>, 3);
 verticalLine(q(3), <span class="string">'linewidth'</span>, 3);
 printPmtkFigure(<span class="string">'unpairedTestHandednessDemo'</span>)
-
-pgreaterMC = mean(thetas(:,1)&gt;thetas(:,2));
-
-<span class="comment">%numerical integration</span>
-pgreaterExact = dblquad(@(t1,t2) betaprob(t1, y1+1, n1-y1+1) .* <span class="keyword">...</span>
+</pre><img vspace="5" hspace="5" src="unpairedTestHandednessDemo_01.png" alt=""> <pre class="codeinput">pgreaterMC = mean(thetas(:,1)&gt;thetas(:,2));
+</pre><h2>numerical integration<a name="3"></a></h2><pre class="codeinput">pgreaterExact = dblquad(@(t1,t2) betaprob(t1, y1+1, n1-y1+1) .* <span class="keyword">...</span>
   betaprob(t2, y2+1, n2-y2+1) .* (t1 &gt; t2), <span class="keyword">...</span>
    0, 1, 0, 1);
-
 fprintf(<span class="string">'prob(theta1 &gt; theta2 | data): MC= %5.3f, exact=%5.3f\n'</span>, <span class="keyword">...</span>
   pgreaterMC, pgreaterExact);
 </pre><pre class="codeoutput">prob(theta1 &gt; theta2 | data): MC= 0.909, exact=0.901
-</pre><img vspace="5" hspace="5" src="unpairedTestHandednessDemo_01.png" alt=""> <h2>Effect of sample size<a name="2"></a></h2><pre class="codeinput">sfs = [1 2 3 4 5];
+</pre><h2>Effect of sample size<a name="4"></a></h2><pre class="codeinput">sfs = [1 2 3 4 5];
 Nsf = length(sfs); BF10vsN = zeros(1,Nsf);
 <span class="keyword">for</span> i=1:Nsf
 sf = sfs(i);
@@ -104,28 +100,7 @@ figure; plot(N, BF10vsN, <span class="string">'o-'</span>, <span class="string">
 xlabel(<span class="string">'N'</span>); ylabel(<span class="string">'BF10'</span>)
 printPmtkFigure(<span class="string">'BFhandedness'</span>)
 <span class="keyword">end</span>
-</pre><pre class="codeoutput">Warning: Result may not be exact.
-Coefficient is greater than 1.000000e+015
-and is only accurate to 15 digits 
-Warning: Result may not be exact.
-Coefficient is greater than 1.000000e+015
-and is only accurate to 15 digits 
-Warning: Result may not be exact.
-Coefficient is greater than 1.000000e+015
-and is only accurate to 15 digits 
-Warning: Result may not be exact.
-Coefficient is greater than 1.000000e+015
-and is only accurate to 15 digits 
-Warning: Result may not be exact.
-Coefficient is greater than 1.000000e+015
-and is only accurate to 15 digits 
-Warning: Result may not be exact.
-Coefficient is greater than 1.000000e+015
-and is only accurate to 15 digits 
-Warning: Result may not be exact.
-Coefficient is greater than 1.000000e+015
-and is only accurate to 15 digits 
-</pre><img vspace="5" hspace="5" src="unpairedTestHandednessDemo_02.png" alt=""> <h2>Effect of  alternative prior<a name="3"></a></h2><pre class="codeinput">y1 = 9; n1 = 52; y2 = 4; n2 = 48;
+</pre><img vspace="5" hspace="5" src="unpairedTestHandednessDemo_02.png" alt=""> <h2>Effect of  alternative prior<a name="5"></a></h2><pre class="codeinput">y1 = 9; n1 = 52; y2 = 4; n2 = 48;
 alphas = [1 1];
 logZ = betaln(alphas(1), alphas(2));
 logZl = log(nchoosek(n1,y1) * nchoosek(n2,y2));
@@ -134,15 +109,14 @@ logmarglik1 = logZl + betaln(alphas(1)+y1, alphas(2)+(n1-y1)) -logZ <span class=
   + betaln(alphas(1)+y2, alphas(2)+(n2-y2)) -logZ;
 post = exp(normalizeLogspace([logmarglik0 logmarglik1]))
 BF10 = exp(logmarglik1 - logmarglik0)
-<span class="comment">% Sanity check</span>
-logmarglik1int = log(dblquad(@(t1,t2) binomprob(y1, t1, n1) .* <span class="keyword">...</span>
-  binomprob(y2, t2, n2) ./ beta(1,1),  0, 1, 0, 1));
-assert(approxeq(logmarglik1, logmarglik1int))
 </pre><pre class="codeoutput">post =
     0.7213    0.2787
 BF10 =
     0.3863
-</pre><h2>Now do a one-sided test<a name="4"></a></h2><pre class="codeinput">logmarglik1 = log(dblquad(@(t1,t2) binomprob(y1, t1, n1) .* <span class="keyword">...</span>
+</pre><h2>Sanity check<a name="6"></a></h2><pre class="codeinput">logmarglik1int = log(dblquad(@(t1,t2) binomprob(y1, t1, n1) .* <span class="keyword">...</span>
+  binomprob(y2, t2, n2) ./ beta(1,1),  0, 1, 0, 1));
+assert(approxeq(logmarglik1, logmarglik1int))
+</pre><h2>Now do a one-sided test<a name="7"></a></h2><pre class="codeinput">logmarglik1 = log(dblquad(@(t1,t2) binomprob(y1, t1, n1) .* <span class="keyword">...</span>
   binomprob(y2, t2, n2) .* (t1(:) &gt; t2(:)) ./ beta(1,1),  0, 1, 0, 1) );
 post = exp(normalizeLogspace([logmarglik0 logmarglik1]))
 BF10 = exp(logmarglik1 - logmarglik0)
@@ -154,7 +128,8 @@ BF10 =
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Analysis of binomial differences  on lefthand/righthand data
-
+%
+%%
 setSeed(0);
 y1 = 9; n1 = 52; y2 = 4; n2 = 48;
 [deltas, post, thetas] = contingencyTableUnpairedDiffPostMc(n1,y1,n2,y2);
@@ -166,19 +141,15 @@ hold on
 verticalLine(q(1), 'linewidth', 3);
 verticalLine(q(3), 'linewidth', 3);
 printPmtkFigure('unpairedTestHandednessDemo')
-
+%%
 pgreaterMC = mean(thetas(:,1)>thetas(:,2));
-
-%numerical integration
+%% numerical integration
 pgreaterExact = dblquad(@(t1,t2) betaprob(t1, y1+1, n1-y1+1) .* ...
   betaprob(t2, y2+1, n2-y2+1) .* (t1 > t2), ...
    0, 1, 0, 1);
-  
 fprintf('prob(theta1 > theta2 | data): MC= %5.3f, exact=%5.3f\n', ...
   pgreaterMC, pgreaterExact);
-
 %% Effect of sample size
-
 sfs = [1 2 3 4 5];
 Nsf = length(sfs); BF10vsN = zeros(1,Nsf);
 for i=1:Nsf
@@ -210,7 +181,7 @@ logmarglik1 = logZl + betaln(alphas(1)+y1, alphas(2)+(n1-y1)) -logZ ...
   + betaln(alphas(1)+y2, alphas(2)+(n2-y2)) -logZ;
 post = exp(normalizeLogspace([logmarglik0 logmarglik1]))
 BF10 = exp(logmarglik1 - logmarglik0)
-% Sanity check
+%% Sanity check
 logmarglik1int = log(dblquad(@(t1,t2) binomprob(y1, t1, n1) .* ...
   binomprob(y2, t2, n2) ./ beta(1,1),  0, 1, 0, 1));
 assert(approxeq(logmarglik1, logmarglik1int))

@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>betaCredibleInt</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-04-29"><meta name="m-file" content="betaCredibleInt"><style type="text/css">
+      --><title>Compute beta credible interval</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-05-01"><meta name="m-file" content="betaCredibleInt"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,8 +62,8 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Compute beta credible interval</a></li><li><a href="#2">Monte Carlo approximation</a></li></ul></div><h2>Compute beta credible interval<a name="1"></a></h2><pre class="codeinput"><span class="comment">%Requires stats toolbox</span>
-<span class="comment">%PMTKstats betainv</span>
+  </style></head><body><div class="content"><h1>Compute beta credible interval</h1><!--introduction--><p>Requires stats toolbox PMTKstats betainv</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Monte Carlo approximation</a></li></ul></div><pre class="codeinput">requireStatsToolbox;
+
 S = 47;
 N = 100;
 a = S+1;
@@ -71,7 +71,7 @@ b = (N-S)+1;
 alpha = 0.05;
 l  = betainv(alpha/2, a, b);
 u  = betainv(1-alpha/2, a, b);
-CI = [l,u] <span class="comment">% 0.3749    0.5673</span>
+CI = [l, u] <span class="comment">% 0.3749    0.5673</span>
 </pre><pre class="codeoutput">CI =
     0.3749    0.5673
 </pre><h2>Monte Carlo approximation<a name="2"></a></h2><pre class="codeinput">setSeed(0);
@@ -81,7 +81,7 @@ X = sort(X);
 Xl = X(round(S*alpha/2));
 Xu = X(round(S*(1-alpha/2)));
 CIhat = [Xl Xu]
-CIhat2 = [quantile(X, alpha/2), quantile(X,1-alpha/2)]
+CIhat2 = [quantile(X, alpha/2), quantile(X, 1-alpha/2)]
 </pre><pre class="codeoutput">CIhat =
     0.3727    0.5688
 CIhat2 =
@@ -90,8 +90,11 @@ CIhat2 =
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Compute beta credible interval
-%Requires stats toolbox
-%PMTKstats betainv
+% Requires stats toolbox
+% PMTKstats betainv
+%%
+requireStatsToolbox;
+
 S = 47; 
 N = 100; 
 a = S+1; 
@@ -99,9 +102,7 @@ b = (N-S)+1;
 alpha = 0.05;
 l  = betainv(alpha/2, a, b);
 u  = betainv(1-alpha/2, a, b);
-CI = [l,u] % 0.3749    0.5673
-
-
+CI = [l, u] % 0.3749    0.5673
 %% Monte Carlo approximation
 setSeed(0);
 S = 1000;
@@ -110,7 +111,7 @@ X = sort(X);
 Xl = X(round(S*alpha/2));
 Xu = X(round(S*(1-alpha/2)));
 CIhat = [Xl Xu]
-CIhat2 = [quantile(X, alpha/2), quantile(X,1-alpha/2)]
+CIhat2 = [quantile(X, alpha/2), quantile(X, 1-alpha/2)]
 
 ##### SOURCE END #####
 --></body></html>

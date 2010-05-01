@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>Sequential Bayesian Updating of a Beta-Bernoulli model.</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-04-29"><meta name="m-file" content="bernoulliBetaSequentialUpdate"><style type="text/css">
+      --><title>Sequential Bayesian Updating of a Beta-Bernoulli model.</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-05-01"><meta name="m-file" content="bernoulliBetaSequentialUpdate"><style type="text/css">
 
 body {
   background-color: white;
@@ -80,7 +80,7 @@ xs = linspace(0.001, 0.999, 40);
     model.b = betaPrior(2) + nfail;
     p = exp(betaLogprob(model, xs));
     name = sprintf(<span class="string">'n=%d'</span>, n);
-    plot(xs, p, styles{i}, <span class="string">'LineWidth'</span>, 2, <span class="string">'DisplayName'</span>, name);
+    plot(xs, p, [styles{i}, colors(i)], <span class="string">'LineWidth'</span>, 3, <span class="string">'DisplayName'</span>, name);
 <span class="keyword">end</span>
 axis([0, 1, -0.2, 10.5])
 h = verticalLine(mean(X), <span class="string">'LineStyle'</span>  , <span class="string">'--'</span>    , <span class="keyword">...</span>
@@ -97,7 +97,6 @@ printPmtkFigure <span class="string">betaSeqUpdate</span>
 % In this example we draw samples from a Bernoulli distribution and then
 % sequentially fit a Beta-Bernoulli model, plotting the posterior of the
 % parameters at each iteration. 
-
 %% Sample
 setSeed(0);
 mu = 0.7;  % 70% probability of success
@@ -118,7 +117,7 @@ for i=1:numel(ns)
     model.b = betaPrior(2) + nfail;
     p = exp(betaLogprob(model, xs));
     name = sprintf('n=%d', n);
-    plot(xs, p, styles{i}, 'LineWidth', 2, 'DisplayName', name);
+    plot(xs, p, [styles{i}, colors(i)], 'LineWidth', 3, 'DisplayName', name);
 end
 axis([0, 1, -0.2, 10.5])
 h = verticalLine(mean(X), 'LineStyle'  , 'REPLACE_WITH_DASH_DASH'    , ...

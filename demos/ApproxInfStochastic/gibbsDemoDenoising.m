@@ -2,6 +2,7 @@
 % with an Ising Prior and a Gaussian likelihood
 % Based on code originally written by Brani Vidakovic
 %PMTKslow
+%PMTKreallySlow
 %%
 setSeed(3);
 sigma = 2; % noise level
@@ -85,7 +86,7 @@ for iter =1:maxIter
         colormap gray; 
         axis off;
         title(sprintf('sample %d', iter));
-        %%
+        
         figure();
         imagesc(X);
         colormap gray; 
@@ -94,7 +95,7 @@ for iter =1:maxIter
         title(sprintf('sample %d', iter))
         fname = sprintf('gibbsDemoDenoisingIter%dJ%3.2fS%2.1f', iter, J, sigma);
         printPmtkFigure(fname);
-        %%
+        
     end
 end
 nSamples = (maxIter-burnIn);

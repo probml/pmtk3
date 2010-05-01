@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>betaBinomPostPredDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-04-29"><meta name="m-file" content="betaBinomPostPredDemo"><style type="text/css">
+      --><title>Posterior Predictive Distribution for Beta-Binomial model</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-05-01"><meta name="m-file" content="betaBinomPostPredDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,7 +62,7 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Posterior Predictive Distribution for Beta-Binomial model</a></li><li><a href="#2">Prior Predictive</a></li><li><a href="#3">Posterior Predictive</a></li><li><a href="#4">MAP estimate (Plugin)</a></li></ul></div><h2>Posterior Predictive Distribution for Beta-Binomial model<a name="1"></a></h2><pre class="codeinput">N  = 10;
+  </style></head><body><div class="content"><h1>Posterior Predictive Distribution for Beta-Binomial model</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Prior Predictive</a></li><li><a href="#3">Posterior Predictive</a></li><li><a href="#4">MAP estimate (Plugin)</a></li></ul></div><pre class="codeinput">N  = 10;
 X  = [1 2]';
 N1 = sum(X);
 N0 = N*length(X)-N1;
@@ -97,7 +97,8 @@ printPmtkFigure(<span class="string">'BBpluginpred'</span>);
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 %%  Posterior Predictive Distribution for Beta-Binomial model
-
+%
+%%
 N  = 10;
 X  = [1 2]';
 N1 = sum(X);
@@ -123,7 +124,6 @@ bar(postPred);
 set(gca,'xticklabel', xs);
 title('posterior predictive')
 printPmtkFigure('BBpostpred'); 
-
 %% MAP estimate (Plugin)
 plugin.mu  = (prior.a+N1-1)/(prior.a+N1+prior.b+N0-2);
 plugin.N   = N;

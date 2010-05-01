@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>HMMs and the occasionally Dishonest Casino</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-04-29"><meta name="m-file" content="casinoDemo"><style type="text/css">
+      --><title>HMMs and the occasionally Dishonest Casino</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-05-01"><meta name="m-file" content="casinoDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -108,83 +108,44 @@ modelEM = hmmDiscreteFitEm(observed, nstates);
 29	 loglik: -519.724
 30	 loglik: -519.724
 31	 loglik: -519.724
-Warning: The log likelihood has decreased! 
 32	 loglik: -519.725
-Warning: The log likelihood has decreased! 
 33	 loglik: -519.725
-Warning: The log likelihood has decreased! 
 34	 loglik: -519.726
-Warning: The log likelihood has decreased! 
 35	 loglik: -519.727
-Warning: The log likelihood has decreased! 
 36	 loglik: -519.728
-Warning: The log likelihood has decreased! 
 37	 loglik: -519.729
-Warning: The log likelihood has decreased! 
 38	 loglik: -519.73
-Warning: The log likelihood has decreased! 
 39	 loglik: -519.731
-Warning: The log likelihood has decreased! 
 40	 loglik: -519.732
-Warning: The log likelihood has decreased! 
 41	 loglik: -519.733
-Warning: The log likelihood has decreased! 
 42	 loglik: -519.734
-Warning: The log likelihood has decreased! 
 43	 loglik: -519.735
-Warning: The log likelihood has decreased! 
 44	 loglik: -519.736
-Warning: The log likelihood has decreased! 
 45	 loglik: -519.737
-Warning: The log likelihood has decreased! 
 46	 loglik: -519.738
-Warning: The log likelihood has decreased! 
 47	 loglik: -519.739
-Warning: The log likelihood has decreased! 
 48	 loglik: -519.74
-Warning: The log likelihood has decreased! 
 49	 loglik: -519.741
-Warning: The log likelihood has decreased! 
 50	 loglik: -519.742
-Warning: The log likelihood has decreased! 
 51	 loglik: -519.743
-Warning: The log likelihood has decreased! 
 52	 loglik: -519.745
-Warning: The log likelihood has decreased! 
 53	 loglik: -519.746
-Warning: The log likelihood has decreased! 
 54	 loglik: -519.747
-Warning: The log likelihood has decreased! 
 55	 loglik: -519.748
-Warning: The log likelihood has decreased! 
 56	 loglik: -519.748
-Warning: The log likelihood has decreased! 
 57	 loglik: -519.749
-Warning: The log likelihood has decreased! 
 58	 loglik: -519.75
-Warning: The log likelihood has decreased! 
 59	 loglik: -519.751
-Warning: The log likelihood has decreased! 
 60	 loglik: -519.752
-Warning: The log likelihood has decreased! 
 61	 loglik: -519.753
-Warning: The log likelihood has decreased! 
 62	 loglik: -519.753
-Warning: The log likelihood has decreased! 
 63	 loglik: -519.754
-Warning: The log likelihood has decreased! 
 64	 loglik: -519.754
-Warning: The log likelihood has decreased! 
 65	 loglik: -519.755
-Warning: The log likelihood has decreased! 
 66	 loglik: -519.755
-Warning: The log likelihood has decreased! 
 67	 loglik: -519.755
-Warning: The log likelihood has decreased! 
 68	 loglik: -519.755
-Warning: The log likelihood has decreased! 
 69	 loglik: -519.755
-Warning: The log likelihood has decreased! 
 </pre><h2>Viterbi Path<a name="8"></a></h2><p>We can now try and recover the most likely sequence of hidden states, the Viterbi path.</p><pre class="codeinput">m1.K = length(obsModel{1});
 m1.d = 1;
 m1.T = obsModel{1};

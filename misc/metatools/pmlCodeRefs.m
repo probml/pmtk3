@@ -28,6 +28,7 @@ codename = cell(nrefs, 1);
 pg = cell(nrefs, 1);
 for i=1:nrefs
     toks = tokenize(text{i}, ' ,');
+    toks = filterCell(toks, @(c)~isempty(c)); 
     codename{i} = toks{1};
     pg{i} = cellfun(@str2num, toks(2:end))';
 end

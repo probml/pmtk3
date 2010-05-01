@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>Plot a Dirichlet distribution</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-04-29"><meta name="m-file" content="plotDirichlet3d"><style type="text/css">
+      --><title>Plot a Dirichlet distribution</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-05-01"><meta name="m-file" content="plotDirichlet3d"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,10 +62,10 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h1>Plot a Dirichlet distribution</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">alpha = [10 10 10]</a></li><li><a href="#2">alpha = [0.1 0.1 0.1]</a></li></ul></div><h2>alpha = [10 10 10]<a name="1"></a></h2><pre class="codeinput">xyrange = [0 1 0 1];
+  </style></head><body><div class="content"><h1>Plot a Dirichlet distribution</h1><!--introduction--><p>Here we plot the dirichlet distribution as a function of a three dimensional alpha vector, which we can do as the distribtion lives on a lower dimensional simplex due to the sum to one constraint.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">alpha = [10 10 10]</a></li><li><a href="#3">alpha = [0.1 0.1 0.1]</a></li></ul></div><h2>alpha = [10 10 10]<a name="1"></a></h2><pre class="codeinput">xyrange = [0 1 0 1];
 model.alpha = 10;
 npoints = 200;
-figure();
+</pre><p>The dirichletLogprob function returns NaNs for values that lie outside of the simplex, which plot() ignores giving us the nice simplex plot.</p><pre class="codeinput">figure();
 plotSurface(@(X)exp(dirichletLogprob(model, X)), xyrange, <span class="string">'npoints'</span>, npoints);
 shading <span class="string">interp</span>;
 camlight <span class="string">right</span>;
@@ -74,7 +74,7 @@ set(gca, <span class="string">'xtick'</span>, 0:0.5:1, <span class="string">'yti
 zlabel(<span class="string">'p'</span>);
 title(<span class="string">'alpha = [10 10 10]'</span>);
 printPmtkFigure <span class="string">alpha10</span>;
-</pre><img vspace="5" hspace="5" src="plotDirichlet3d_01.png" alt=""> <h2>alpha = [0.1 0.1 0.1]<a name="2"></a></h2><p>Here we plot the log probability - plots of exp(p) when alpha &lt; 1 are ugly due to numerical error, but for alpha = 0.1, the plots of p and logp look almost identical.</p><pre class="codeinput">model.alpha = 0.1;
+</pre><img vspace="5" hspace="5" src="plotDirichlet3d_01.png" alt=""> <h2>alpha = [0.1 0.1 0.1]<a name="3"></a></h2><p>Here we plot the log probability - plots of exp(logp) when alpha &lt; 1 are ugly due to numerical error, but for alpha = 0.1, the plots of p and logp look very similar, except that exp(logp) is more sharply peaked around the corners.</p><pre class="codeinput">model.alpha = 0.1;
 npoints = 500; <span class="comment">% We need a higher resolution when alpha &lt; 1</span>
 figure();
 plotSurface(@(X)dirichletLogprob(model, X), xyrange, <span class="string">'npoints'</span>, npoints);
@@ -90,10 +90,16 @@ printPmtkFigure <span class="string">alpha0-1</span>;
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Plot a Dirichlet distribution
+% Here we plot the dirichlet distribution as a function of a three
+% dimensional alpha vector, which we can do as the distribtion lives on a 
+% lower dimensional simplex due to the sum to one constraint. 
 %% alpha = [10 10 10]
 xyrange = [0 1 0 1];
 model.alpha = 10;
 npoints = 200; 
+%% 
+% The dirichletLogprob function returns NaNs for values that lie outside of
+% the simplex, which plot() ignores giving us the nice simplex plot. 
 figure();
 plotSurface(@(X)exp(dirichletLogprob(model, X)), xyrange, 'npoints', npoints);
 shading interp;
@@ -104,9 +110,10 @@ zlabel('p');
 title('alpha = [10 10 10]'); 
 printPmtkFigure alpha10;
 %% alpha = [0.1 0.1 0.1]
-% Here we plot the log probability - plots of exp(p) when alpha < 1 are
+% Here we plot the log probability - plots of exp(logp) when alpha < 1 are
 % ugly due to numerical error, but for alpha = 0.1, the plots of
-% p and logp look almost identical. 
+% p and logp look very similar, except that exp(logp) is more sharply
+% peaked around the corners. 
 model.alpha = 0.1;
 npoints = 500; % We need a higher resolution when alpha < 1
 figure();

@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>postDensityIntervals</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-04-29"><meta name="m-file" content="postDensityIntervals"><style type="text/css">
+      --><title>Illustration of central vs high posterior density intervals</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-05-01"><meta name="m-file" content="postDensityIntervals"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,10 +62,8 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> postDensityIntervals
-</pre><pre class="codeinput"><span class="comment">%Illustration of central vs high posterior density intervals.</span>
-
-f = @(x)gausspdf(x, 0, 1) + gausspdf(x, 6, 1);
+  </style></head><body><div class="content"><h1>Illustration of central vs high posterior density intervals</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="keyword">function</span> postDensityIntervals
+</pre><pre class="codeinput">f = @(x)gausspdf(x, 0, 1) + gausspdf(x, 6, 1);
 domain = -4:0.001:10;
 h = plot(domain , f(domain), <span class="string">'-r'</span>, <span class="string">'LineWidth'</span>, 2.5);
 axis([-4, 10, 0, 0.5]);
@@ -101,9 +99,10 @@ printPmtkFigure <span class="string">HDP</span>;
 </pre><p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
+%% Illustration of central vs high posterior density intervals
+%
+%%
 function postDensityIntervals
-%Illustration of central vs high posterior density intervals.
-
 f = @(x)gausspdf(x, 0, 1) + gausspdf(x, 6, 1);
 domain = -4:0.001:10;
 h = plot(domain , f(domain), '-r', 'LineWidth', 2.5);

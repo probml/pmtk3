@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>imputationGeneMicroarrayDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-04-29"><meta name="m-file" content="imputationGeneMicroarrayDemo"><style type="text/css">
+      --><title>imputationGeneMicroarrayDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-05-01"><meta name="m-file" content="imputationGeneMicroarrayDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -97,20 +97,6 @@ datasets = {<span class="string">'yeastStress'</span>, <span class="string">'yea
     <span class="comment">%@(X)imputeMixGauss(X, 5, opts{:})};</span>
   nMethod = length(methodNames);
 </pre><pre class="codeoutput">yeastStress, num fully observed rows 5338
-Warning: Could not find an exact
-(case-sensitive) match for 'setseed'.
-C:\pmtk3\misc\util\setSeed.m is a
-case-insensitive match and will be used
-instead.
-You can improve the performance of your
-code by using exact
-name matches and we therefore recommend
-that you update your
-usage accordingly. Alternatively, you can
-disable this warning using
-warning('off','MATLAB:dispatcher:InexactCaseMatch').
-This warning will become an error in future
-releases. 
 </pre><pre class="codeoutput">yeastCellCycle, num fully observed rows 3222
 </pre><h2>For each percentage of missing, do several trials<a name="3"></a></h2><pre class="codeinput">  <span class="keyword">for</span> pidx = 1:length(pc)
 </pre><pre class="codeinput">    errors = zeros(ntrials, nMethod);

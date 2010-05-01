@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>svmFitTest</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-04-29"><meta name="m-file" content="svmFitTest"><style type="text/css">
+      --><title>svmFitTest</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-05-01"><meta name="m-file" content="svmFitTest"><style type="text/css">
 
 body {
   background-color: white;
@@ -92,9 +92,9 @@ fprintf(<span class="string">'svmLight \t %5.3f \t %5.3f\n'</span>, errorRateSvm
 fprintf(<span class="string">'svmQp \t %5.3f \t %5.3f\n'</span>, errorRateQp, timeQp);
 fprintf(<span class="string">'svmLib \t %5.3f \t %5.3f\n'</span>, errorRateSvmLib, timeSvmLib);
 </pre><pre class="codeoutput">method 	 error 	 time 
-svmLight 	 0.108 	 0.339
-svmQp 	 0.108 	 1.545
-svmLib 	 0.108 	 0.013
+svmLight 	 0.108 	 0.261
+svmQp 	 0.108 	 1.590
+svmLib 	 0.108 	 0.011
 </pre><h2>Example of how to do CV<a name="3"></a></h2><pre class="codeinput">model = svmFit(Xtrain, ytrain, <span class="string">'C'</span>, logspace(-1,1,10));
 yhat  = svmPredict(model, Xtest);
 errorRate = mean(yhat ~= ytest)

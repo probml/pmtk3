@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>linregMultitaskGmmPriorDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-04-29"><meta name="m-file" content="linregMultitaskGmmPriorDemo"><style type="text/css">
+      --><title>linregMultitaskGmmPriorDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-05-01"><meta name="m-file" content="linregMultitaskGmmPriorDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -151,20 +151,6 @@ mse = zeros(T, Nns, Nmethods);
 <span class="keyword">if</span> any(isnan(mse(:))), keyboard, <span class="keyword">end</span>
 </pre><pre class="codeoutput">maxIter =
     20
-Warning: Could not find an exact
-(case-sensitive) match for 'gaussLogProb'.
-C:\pmtk3\toolbox\The_multivariate_Gaussian\gaussLogprob.m
-is a case-insensitive match and will be used
-instead.
-You can improve the performance of your code
-by using exact
-name matches and we therefore recommend that
-you update your
-usage accordingly. Alternatively, you can
-disable this warning using
-warning('off','MATLAB:dispatcher:InexactCaseMatch').
-This warning will become an error in future
-releases. 
 Iteration 18: Log likelihood decreased to -36.76003 from -36.75980
 Iteration 19: Log likelihood decreased to -36.76074 from -36.76003
 Iteration 20: Log likelihood decreased to -36.76185 from -36.76074

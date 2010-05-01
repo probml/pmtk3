@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>Variational bayes for univariate Gaussian</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-04-30"><meta name="m-file" content="unigaussVbDemo"><style type="text/css">
+      --><title>Variational bayes for univariate Gaussian</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-05-01"><meta name="m-file" content="unigaussVbDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -178,6 +178,7 @@ p = C * (lambda .^ (alpha-1/2)) .* (exp(-beta * lambda)) .* <span class="keyword
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Variational bayes for univariate Gaussian
+% 
 %%
 function unigaussVbDemo()
 % PMTKauthor Robert Tseng
@@ -192,7 +193,6 @@ s = sum(data);
 sSq = sum(data.*data);
 xbar = m;
 sigma2Hat = sSq/N - xbar^2;
-
 %% The true posterior model using normal gamma prior
 % hyper parameters
 a0 = 0; b0 = 0; mu0 = 0; kappa0 = 0;

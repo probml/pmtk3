@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>MCMC Sampling from a 2d Gaussians</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-04-29"><meta name="m-file" content="mcmcMvn2d"><style type="text/css">
+      --><title>MCMC Sampling from a 2d Gaussians</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-05-01"><meta name="m-file" content="mcmcMvn2d"><style type="text/css">
 
 body {
   background-color: white;
@@ -83,7 +83,7 @@ S{2}      = metropolisHastings(targetFn, proposal2, xinit, N);
 S{3}            = gibbsSample(fullCondSampler, xinit, N);
 </pre><h2>Plot<a name="6"></a></h2><pre class="codeinput">names = {<span class="string">'MH I'</span>, <span class="string">'MH I .01 '</span>, <span class="string">'gibbs'</span>};
 <span class="keyword">for</span> j=1:length(S)
-    samples = S{j};
+</pre><pre class="codeinput">    samples = S{j};
     ttl = names{j};
     figure;
     gaussPlot2d(mu, Sigma);
@@ -92,8 +92,7 @@ S{3}            = gibbsSample(fullCondSampler, xinit, N);
     title(ttl)
     printPmtkFigure(sprintf(<span class="string">'gauss2d%sSamples'</span>,<span class="keyword">...</span>
         strrep(strrep(names{j},<span class="string">' '</span>,<span class="string">''</span>),<span class="string">'.'</span>,<span class="string">''</span>)));
-
-    figure();
+</pre><img vspace="5" hspace="5" src="mcmcMvn2d_01.png" alt=""> <img vspace="5" hspace="5" src="mcmcMvn2d_04.png" alt=""> <img vspace="5" hspace="5" src="mcmcMvn2d_07.png" alt=""> <pre class="codeinput">    figure();
     <span class="keyword">for</span> i=1:2
         subplot2(2,2,i,1);
         [counts, locs] = hist(samples(:, i), 20);
@@ -115,15 +114,15 @@ S{3}            = gibbsSample(fullCondSampler, xinit, N);
     suptitle(ttl);
     printPmtkFigure(sprintf(<span class="string">'gauss2d%sMarginals'</span>,<span class="keyword">...</span>
         strrep(strrep(names{j},<span class="string">' '</span>,<span class="string">''</span>),<span class="string">'.'</span>,<span class="string">''</span>)));
-    figure();
+</pre><img vspace="5" hspace="5" src="mcmcMvn2d_02.png" alt=""> <img vspace="5" hspace="5" src="mcmcMvn2d_05.png" alt=""> <img vspace="5" hspace="5" src="mcmcMvn2d_08.png" alt=""> <pre class="codeinput">    figure();
     <span class="keyword">for</span> i=1:2
         subplot(1,2,i);
         stem(acf(samples(:,i), 30));
         title(ttl)
     <span class="keyword">end</span>
-<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="mcmcMvn2d_03.png" alt=""> <img vspace="5" hspace="5" src="mcmcMvn2d_06.png" alt=""> <img vspace="5" hspace="5" src="mcmcMvn2d_09.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
 placeFigures();
-</pre><img vspace="5" hspace="5" src="mcmcMvn2d_01.png" alt=""> <img vspace="5" hspace="5" src="mcmcMvn2d_02.png" alt=""> <img vspace="5" hspace="5" src="mcmcMvn2d_03.png" alt=""> <img vspace="5" hspace="5" src="mcmcMvn2d_04.png" alt=""> <img vspace="5" hspace="5" src="mcmcMvn2d_05.png" alt=""> <img vspace="5" hspace="5" src="mcmcMvn2d_06.png" alt=""> <img vspace="5" hspace="5" src="mcmcMvn2d_07.png" alt=""> <img vspace="5" hspace="5" src="mcmcMvn2d_08.png" alt=""> <img vspace="5" hspace="5" src="mcmcMvn2d_09.png" alt=""> <p class="footer"><br>
+</pre><p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 %% MCMC Sampling from a 2d Gaussians
@@ -165,7 +164,7 @@ for j=1:length(S)
     title(ttl)
     printPmtkFigure(sprintf('gauss2d%sSamples',...
         strrep(strrep(names{j},' ',''),'.','')));
-    
+    %%
     figure();
     for i=1:2
         subplot2(2,2,i,1);
@@ -188,12 +187,14 @@ for j=1:length(S)
     suptitle(ttl);
     printPmtkFigure(sprintf('gauss2d%sMarginals',...
         strrep(strrep(names{j},' ',''),'.','')));
+    %%
     figure();
     for i=1:2
         subplot(1,2,i);
         stem(acf(samples(:,i), 30));
         title(ttl)
     end
+    %%
 end
 placeFigures();
 ##### SOURCE END #####

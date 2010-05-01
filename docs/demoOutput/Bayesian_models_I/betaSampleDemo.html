@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>Compute posterior sampling with integration</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-04-29"><meta name="m-file" content="betaSampleDemo"><style type="text/css">
+      --><title>Integration via posterior sampling</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-05-01"><meta name="m-file" content="betaSampleDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,29 +62,47 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h1>Compute posterior sampling with integration</h1><pre class="codeinput">a = 1; b= 5;
-l = 0.3; u = 0.7;
-Pexact = betacdf(u,a,b) - betacdf(l,a,b)
-
-setSeed(1);
-X = betarnd(a,b,1,1000);
-Pmc = mean(X &lt;= u) - mean(X &lt;= l)
-</pre><pre class="codeoutput">Pexact =
-    0.1656
-Pmc =
-    0.1610
+  </style></head><body><div class="content"><h1>Integration via posterior sampling</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Model parameters</a></li><li><a href="#2">Sample Mean</a></li><li><a href="#6">Exact</a></li></ul></div><h2>Model parameters<a name="1"></a></h2><pre class="codeinput">a = 1;
+b = 5;
+l = 0.3;
+u = 0.7;
+</pre><h2>Sample Mean<a name="2"></a></h2><pre class="codeinput">setSeed(1);
+nsamples = [10, 100, 1000, 10000, 100000 1000000];
+<span class="keyword">for</span> i=1:numel(nsamples)
+</pre><pre class="codeinput">    X = betarnd(a, b, 1, nsamples(i));
+    Pmc = mean(X &lt;= u) - mean(X &lt;= l);
+    fprintf(<span class="string">'ns: %d, Pmc = %g\n'</span>, nsamples(i), Pmc);
+</pre><pre class="codeoutput">ns: 10, Pmc = 0.3
+</pre><pre class="codeoutput">ns: 100, Pmc = 0.2
+</pre><pre class="codeoutput">ns: 1000, Pmc = 0.169
+</pre><pre class="codeoutput">ns: 10000, Pmc = 0.1654
+</pre><pre class="codeoutput">ns: 100000, Pmc = 0.16715
+</pre><pre class="codeoutput">ns: 1000000, Pmc = 0.165841
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><h2>Exact<a name="6"></a></h2><pre class="codeinput">Pexact = betacdf(u, a, b) - betacdf(l, a, b);
+fprintf(<span class="string">'Exact: %g\n'</span>, Pexact);
+</pre><pre class="codeoutput">Exact: 0.16564
 </pre><p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
-%% Compute posterior sampling with integration
-
-a = 1; b= 5;
-l = 0.3; u = 0.7;
-Pexact = betacdf(u,a,b) - betacdf(l,a,b)
-
+%% Integration via posterior sampling
+%
+%% Model parameters
+a = 1;
+b = 5;
+l = 0.3;
+u = 0.7;
+%% Sample Mean
 setSeed(1);
-X = betarnd(a,b,1,1000);
-Pmc = mean(X <= u) - mean(X <= l)
-
+nsamples = [10, 100, 1000, 10000, 100000 1000000];
+for i=1:numel(nsamples)
+    X = betarnd(a, b, 1, nsamples(i));
+    Pmc = mean(X <= u) - mean(X <= l);
+    fprintf('ns: %d, Pmc = %g\n', nsamples(i), Pmc); 
+    %%
+end
+%% Exact
+Pexact = betacdf(u, a, b) - betacdf(l, a, b);
+fprintf('Exact: %g\n', Pexact); 
 ##### SOURCE END #####
 --></body></html>

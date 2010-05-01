@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>multinomIndepLogBF</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-04-29"><meta name="m-file" content="multinomIndepLogBF"><style type="text/css">
+      --><title>Multinomial Bayes Factor demo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-05-01"><meta name="m-file" content="multinomIndepLogBF"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,17 +62,13 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">multinomIndepLogBF</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> multinomIndepLogBF()
-</pre><h2>multinomIndepLogBF<a name="2"></a></h2><pre class="codeinput">counts = [<span class="keyword">...</span>
+  </style></head><body><div class="content"><h1>Multinomial Bayes Factor demo</h1><pre class="codeinput"><span class="keyword">function</span> multinomIndepLogBF()
+counts = [<span class="keyword">...</span>
     15 29 14;
     46 83 56];
 [logBF]       = helper(counts)
 pIndepOverDep = exp(logBF)
-</pre><pre class="codeoutput">logBF =
-    3.2754
-pIndepOverDep =
-   26.4529
-</pre><pre class="codeinput"><span class="keyword">end</span>
+<span class="keyword">end</span>
 
 <span class="keyword">function</span> [logBF] = helper(counts)
 Njk = counts;
@@ -101,11 +97,15 @@ assert(approxeq(logBF, logBF2))
 <span class="keyword">function</span> L = logbeta(alpha)
 L = sum(gammaln(alpha)) - gammaln(sum(alpha));
 <span class="keyword">end</span>
+</pre><pre class="codeoutput">logBF =
+    3.2754
+pIndepOverDep =
+   26.4529
 </pre><p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
+%% Multinomial Bayes Factor demo
 function multinomIndepLogBF()
-%% multinomIndepLogBF
 counts = [...
     15 29 14;
     46 83 56];
