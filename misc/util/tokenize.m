@@ -34,7 +34,7 @@ tokens = cell(numel(start+1), 1);
 tokens{1} = str(1:start(1)-1);
 start = [start, length(str)];
 for i=1:numel(finish)
-    tokens{i+1} = str(finish(i)+1:start(i+1)-1);
+    tokens{i+1} = str(finish(i)+1:start(i+1));
 end
-tokens = filterCell(tokens, @(c)~isempty(c));
+tokens = filterCell(tokens, @(c)~isempty(strtrim(c)));
 end
