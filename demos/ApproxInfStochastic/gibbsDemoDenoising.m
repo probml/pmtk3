@@ -58,13 +58,13 @@ X = Xinit;
 maxIter = 100000;
 burnIn = 50000;
 for iter =1:maxIter
-    %% select a pixel at random
+    % select a pixel at random
     ix = ceil( N * rand(1) ); 
     iy = ceil( M * rand(1) );
     pos = iy + M*(ix-1);
     neighborhood = pos + [-1,1,-M,M];
     neighborhood([iy==1,iy==M,ix==1,ix==N]) = [];
-    %% compute local conditional
+    % compute local conditional
     wi = sum( X(neighborhood) );
     p1  = exp(J*wi) * localEvidence(pos,onState);
     p0  = exp(-J*wi) * localEvidence(pos,offState);
@@ -77,8 +77,8 @@ for iter =1:maxIter
     if iter > burnIn
         avgX = avgX+X;
     end
-    %% plotting
-    if rem(iter,10000) == 0,
+    % plotting
+    if rem(iter,10000) == 0
         figure();
         imagesc(X); 
         axis('square'); 

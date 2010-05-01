@@ -9,7 +9,7 @@ function publishFolder(folder)
 warnState = warning('query', 'all'); 
 warning off all
 cleaner = onCleanup(@(x)cleanup(warnState)); 
-shadowFunction({'pause', 'keyboard', 'input', 'placeFigures'});
+shadowFunction({'pause', 'keyboard', 'input', 'placeFigures'}, [], true);
 %% Settings
 % Demos with these tags have only their text published, they are not run.
 doNotEvalList = {'PMTKinteractive', 'PMTKbroken', 'PMTKreallySlow'};
@@ -127,6 +127,6 @@ end
 
 function cleanup(warnState)
     warning(warnState); 
-    removeShadows();
+    removeShadows(true);
 end
 

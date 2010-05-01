@@ -1,4 +1,4 @@
-function shadowFunction(fname, output)
+function shadowFunction(fname, output, quiet)
 % Shadow a function so that when it is called it silently does nothing 
 % rather than its default behaviour. You can optionally specify a value
 % for the shadow to output. 
@@ -13,14 +13,18 @@ function shadowFunction(fname, output)
 % shadowFunction({'clear', 'cls', 'pause', 'keyboard', 'placeFigures', 'input'});
 % removeShadows()
 %
+SetDefaultValue(2, 'output', []); 
+SetDefaultValue(3, 'quiet', false); 
 warning('off', 'MATLAB:dispatcher:nameConflict');
 if iscell(fname)
-    cellfun(@shadowFunction, fname);
+    cellfun(@(f)shadowFunction(f, output, quiet), fname);
     return
 end
+if ~quiet
 fprintf('shadowing %s\n', fname); 
 if endswith(fname, '.m')
     fname = fname(1:end-2);
+end
 end
 
 if nargin < 2

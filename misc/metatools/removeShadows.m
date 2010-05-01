@@ -1,7 +1,10 @@
-function removeShadows()
+function removeShadows(quiet)
 % Remove the shadows created by shadowFunction()
+SetDefaultValue(1, 'quiet', false); 
 delete(fullfile(tempdir(), 'matlabShadow', '*.m'));
 removePath(fullfile(tempdir(), 'matlabShadow')); 
 warning('on', 'MATLAB:dispatcher:nameConflict');
-fprintf('all shadows removed\n'); 
+if ~quiet
+    fprintf('all shadows removed\n'); 
+end
 end
