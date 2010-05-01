@@ -1,5 +1,6 @@
 %%  Posterior Predictive Distribution for Beta-Binomial model
-
+%
+%%
 N  = 10;
 X  = [1 2]';
 N1 = sum(X);
@@ -25,7 +26,6 @@ bar(postPred);
 set(gca,'xticklabel', xs);
 title('posterior predictive')
 printPmtkFigure('BBpostpred'); 
-
 %% MAP estimate (Plugin)
 plugin.mu  = (prior.a+N1-1)/(prior.a+N1+prior.b+N0-2);
 plugin.N   = N;

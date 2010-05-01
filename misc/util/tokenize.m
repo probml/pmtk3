@@ -9,7 +9,7 @@ function tokens = tokenize(str, delimiter)
 % delimiters = ';, '; % split at ;, or space
 % tokenize(str, delimiters)
 % ans = 
-%     'a;'
+%     'a'
 %     'man'
 %     'a'
 %     'plan'
@@ -31,7 +31,7 @@ if isempty(start)
     return
 end
 tokens = cell(numel(start+1), 1);
-tokens{1} = str(1:start(1));
+tokens{1} = str(1:start(1)-1);
 start = [start, length(str)];
 for i=1:numel(finish)
     tokens{i+1} = str(finish(i)+1:start(i+1)-1);

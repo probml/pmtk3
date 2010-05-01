@@ -25,7 +25,7 @@ nrefs = numel(text);
 codename = cell(nrefs, 1);
 pg = cell(nrefs, 1);
 for i=1:nrefs
-    toks = tokenize(text{i}, ',');
+    toks = tokenize(text{i}, ' ,');
     codename{i} = toks{1};
     pg{i} = cellfun(@str2num, toks(2:end))';
 end

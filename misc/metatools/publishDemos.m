@@ -2,8 +2,7 @@ function publishDemos(wikiFile)
 % Publish all of the PMTK3 demos and create the wiki TOC page.
 
 svnAutomatically = false;
-shadowFunction({'pause', 'keyboard', 'input', 'placeFigures'});
-cleaner = onCleanup(@removeShadows);
+
 if nargin == 0
     wikiFile = 'C:\pmtk3wiki\Demos.wiki';
 end
@@ -17,8 +16,6 @@ for i = 1:numel(d)
     end
 end
 
-
-
 googleRoot = 'http://pmtk3.googlecode.com/svn/trunk/docs/demoOutput';
 wikiText = cell(numel(d), 1);
 for i=1:numel(d)
@@ -26,7 +23,7 @@ for i=1:numel(d)
         wikiText{i} = sprintf(' * [%s/%s/index.html %s]',googleRoot, d{i}, d{i});
     end
 end
-wikiText = filterCell(wikiText, @(c)~isempty(c)); 
+wikiText = filterCell(wikiText, @(c)~isempty(c));
 writeText(wikiText, wikiFile);
 if svnAutomatically
     system(sprintf('svn ci %s -m "auto-updated by publishDemos"', wikiFile));
@@ -34,3 +31,4 @@ if svnAutomatically
     system(sprintf('svn ci %s -m "auto-updated by publishDemos"', docdir));
 end
 end
+

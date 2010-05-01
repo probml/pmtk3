@@ -1,7 +1,7 @@
-function healthyLevels()
 %% Josh Tenenbaum's Healthy Levels Game
 % written by Matthew Dunham and Kevin Murphy
-
+%%
+function healthyLevels()
 no = 0; yes = 1;
 data = generateData();     % [cholesterol, insulin]
 [left right bottom top scale1 scale2] = calcDataRange(data,size(data,1));
@@ -12,10 +12,13 @@ genFn = @generalizationUninfPrior;
 priorType = 'uninfPrior';
 
 plotPriorPost();
+%%
 plotGeneralizations();
+%%
 plotPostSamples();
+%%
 plotBayes();
-
+%%
 if 0
     priorFn = @expPrior;
     genFn = @generalizationExpPrior;
@@ -24,7 +27,7 @@ end
 
 placeFigures();
 return;
-
+%%
 %% Distributions
     function p = uninfPrior(h)
         s1 = h(:,1); s2 = h(:,2);
@@ -79,8 +82,7 @@ return;
         d2 = ((y(:,2) < X2min).*abs(y(:,2) - X2min)) + ...
              ((y(:,2) > X2max).*abs(X2max - y(:,2)));
     end
-
-%%%%%%%%%%%%%%
+%%
 %% Plotting Functions
     function plotPriorPost()
         figure;

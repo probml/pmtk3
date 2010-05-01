@@ -1,10 +1,12 @@
+%% Plot a Mixture of Beta Distributions
+%
+%%
 function mixBetaDemo()
-%% Mixture of Beta distributions
-
 N = [20 10];
 alphaPrior = [20 20 ; 30 10];
 M = 2;
 mixprior = [0.5 0.5];
+%%
 for z=1:M
     logmarglik(z) = betaln(alphaPrior(z,1) + N(1), alphaPrior(z,2) + N(2)) - ...
         betaln(alphaPrior(z,1), alphaPrior(z,2));
@@ -13,8 +15,7 @@ mixpost = exp(normalizeLogspace(logmarglik + log(mixprior)));
 for z=1:M
     alphaPost(z,:) = alphaPrior(z,:) + N;
 end
-
-
+%% Plot
 grid = 0.0001:0.01:0.9999;
 post = evalpdf(grid, mixpost, alphaPost);
 prior = evalpdf(grid, mixprior, alphaPrior);
@@ -24,7 +25,7 @@ plot(grid, post, 'b-', 'linewidth', 3)
 legend({'prior', 'posterior'}, 'Location', 'NorthWest')
 title('mixture of Beta distributions')
 printPmtkFigure('mixBetaDemo')
-
+%%
 pbiased = 0;
 for k=1:M
     model.a = alphaPost(k, 1);
@@ -34,7 +35,6 @@ end
 
 %% Compute pbiased using just mixture component 1
 pbiasedSimple = 1-betainc(0.5, alphaPost(1,1), alphaPost(1,2))
-
 end
 
 

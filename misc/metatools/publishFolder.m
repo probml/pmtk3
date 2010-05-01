@@ -5,6 +5,11 @@ function publishFolder(folder)
 %
 % publishFolder bayesDemos
 %
+%%
+warnState = warning('query', 'all'); 
+warning off all
+cleaner = onCleanup(@(x)cleanup(warnState)); 
+shadowFunction({'pause', 'keyboard', 'input', 'placeFigures'});
 %% Settings
 % Demos with these tags have only their text published, they are not run.
 doNotEvalList = {'PMTKinteractive', 'PMTKbroken', 'PMTKreallySlow'};
@@ -118,5 +123,9 @@ for i=1:numel(names)
     fprintf(fid,'\t<th width="%d%%">%s</th>\n', widths(i), names{i});
 end
 fprintf(fid,'</tr>\n');
+end
+
+function cleanup(warnState)
+    warning(warnState); 
 end
 

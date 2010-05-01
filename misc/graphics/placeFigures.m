@@ -1,4 +1,4 @@
-function handles = placeFigures(varargin)
+function varargout = placeFigures(varargin)
 % Optimally lay out existing or new figures on the screen so that they
 % don't overlap.
 % 
@@ -126,7 +126,9 @@ handles = setupVariables();
 [startH,startV] = calcStartLocation(monitor,nrows,figureHeight);
 diffH =  figureWidth + intergapH;      
 diffV = -figureHeight - intergapV;
-
+if nargout ~= 0 
+    varargout{1} = handles;
+end
 counter = 1;
 for d=1:depth
     for col=1:ncols
@@ -321,6 +323,7 @@ end
              end
          end
     end
+
 
 
     

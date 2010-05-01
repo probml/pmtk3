@@ -1,35 +1,22 @@
+%% Gaussian plot with shaded tails 
 % Plot a standard normal distribution and shade in the left and right tails
 % together representing alpha % of the probability mass. 
-% Written by Matthew Dunham
+%%
 function quantileDemo
-    
     scrsz = get(0,'ScreenSize');
     width = 2*scrsz(3)/3;
     height = width/2;
     figure('Position',[(scrsz(3)-width)/2,(scrsz(4)-height)/2,width,height]);
-
-    f = @(x)normpdf(x,0,1);
+    f = @(x)gausspdf(x, 0, 1);
     x = -4:0.1:4;
     y = f(x);
     plot(x,y,'r','LineWidth',2.5);
     axis([-4,4,0,0.5]);
-    set(gca,'XTick',[]);
-    set(gca,'YTick',[]);
-    shade(f,0.001,-4,-1.96,'r');
-    shade(f,0.001,1.96,4,'r');
+    set(gca,'XTick',[], 'Ytick', []);
+    shade(f,0.001, -4,   -1.96, 'r', 0.01);
+    shade(f,0.001, 1.96,  4,    'r', 0.01);
     annotate;
-
-%Shade under the specified function between 'left' and 'right' end points and
-%above 'lower'.
-function shade(func,lower,left,right,color)
-    hold on;
-    res = left:0.001:right;
-    x = repmat(res,2,1);
-    y = [lower*ones(1,length(res)) ; func(res)];
-    line(x,y,'Color',color);
-end
-
-
+%%
 function annotate
      %annotation(gcf,'textbox','String',{'-Z_{\alpha/2}'},'FontSize',13,...
      annotation(gcf,'textbox','String',{'\Phi^{-1}(\alpha/2)'},'FontSize',13,...

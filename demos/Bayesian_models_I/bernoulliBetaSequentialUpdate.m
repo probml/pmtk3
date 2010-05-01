@@ -2,7 +2,6 @@
 % In this example we draw samples from a Bernoulli distribution and then
 % sequentially fit a Beta-Bernoulli model, plotting the posterior of the
 % parameters at each iteration. 
-
 %% Sample
 setSeed(0);
 mu = 0.7;  % 70% probability of success
@@ -23,7 +22,7 @@ for i=1:numel(ns)
     model.b = betaPrior(2) + nfail;
     p = exp(betaLogprob(model, xs));
     name = sprintf('n=%d', n);
-    plot(xs, p, styles{i}, 'LineWidth', 2, 'DisplayName', name);
+    plot(xs, p, [styles{i}, colors(i)], 'LineWidth', 3, 'DisplayName', name);
 end
 axis([0, 1, -0.2, 10.5])
 h = verticalLine(mean(X), 'LineStyle'  , '--'    , ...

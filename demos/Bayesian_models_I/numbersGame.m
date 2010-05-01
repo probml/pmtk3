@@ -1,8 +1,8 @@
-function numbersGame
 %% Josh Tenenbaum's Number Game
 % Written by Kevin Murphy and Matthew Dunham
-
-%% Global Variables
+%%
+function numbersGame
+%% 
 first = 1; last = 100; %Range for the hypothesis space
 hypFn        =  @mathHypothesesSmall;
 priorFn      =  @mathPriorSmall;            
@@ -20,7 +20,7 @@ makePlots();
 % trying these. 
 %% Hypothesis Spaces
 
-% A small hypothesis space
+%% A small hypothesis space
 function hypSpace = mathHypothesesSmall()
     hypSpace = [ evenOdd()
                  predicateBased( @(x)(x == round(sqrt(x)).^2),'squares')
@@ -35,8 +35,7 @@ function hypSpace = mathHypothesesSmall()
     hypSpace = cell2struct(hypSpace,fields,2);
 end
 
-% Tenenbaum's original hypothesis space with 34 mathematical and 5050
-% interval
+%% Tenenbaum's original hypothesis space with 34 mathematical and 5050 interval
 function hypSpace = tenenbaumHypSpace()
     hypSpace = [    evenOdd()
                     predicateBased( @(x)(x == round(sqrt(x)).^2),'squares')

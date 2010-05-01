@@ -1,5 +1,6 @@
-%% Example of parameter updating in a Beta-Binomial model. 
-
+%% Example of parameter updating in a Beta-Binomial model
+%
+%%
 data(1).a  = 2;     data(2).a  = 5;
 data(1).b  = 2;     data(2).b  = 2;
 data(1).N1 = 3;     data(2).N1 = 11;
@@ -12,7 +13,7 @@ figname = {'betaPost', 'betaDemoPost'};
 legendstr = cell(1,3);
 x = linspace(0.001, 0.999, 50); 
 for i = 1:numel(data)
-    % Update
+    %% Update
     prior.a = data(i).a;
     prior.b = data(i).b;
     N = data(i).N0 + data(i).N1;
@@ -22,9 +23,8 @@ for i = 1:numel(data)
     post.b = prior.b + nfail;
     lik.a = flatPrior.a + nsucc;
     lik.b = flatPrior.b + nfail; 
-    
+    %% Plot
     figure; hold on
-    
     Pprior = exp(betaLogprob(prior, x));
     name = sprintf('prior Be(%2.1f, %2.1f)', prior.a, prior.b);
     plot(x, Pprior, 'r-', 'linewidth', 3, 'DisplayName', name);    
@@ -39,4 +39,5 @@ for i = 1:numel(data)
    
     legend('Location', 'NorthEast');
     printPmtkFigure(figname{i});
+    %%
 end

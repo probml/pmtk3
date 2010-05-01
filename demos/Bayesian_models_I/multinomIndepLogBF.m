@@ -1,5 +1,5 @@
+%% Multinomial Bayes Factor demo
 function multinomIndepLogBF()
-%% multinomIndepLogBF
 counts = [...
     15 29 14;
     46 83 56];
