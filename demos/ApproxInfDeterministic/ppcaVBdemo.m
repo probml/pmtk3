@@ -1,4 +1,5 @@
-%% Reproduce Bishop fig 12.14
+%% Bayesian Probabilistic PCA Imputation Demo
+% Reproduce Bishop fig 12.14
 % Needs BPCAfill package from http://hawaii.sys.i.kyoto-u.ac.jp/~oba/tools/
 %%
 setSeed(0);
