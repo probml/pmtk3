@@ -1,4 +1,4 @@
-function [codename, pg] = pmlCodeRefs(codeIndFile)
+function [codename, pg, datestr] = pmlCodeRefs(codeIndFile)
 % Return a list of all of the code files referenced in PML along with
 % the (hard cover) pages on which they are first referenced.
 %
@@ -10,10 +10,12 @@ function [codename, pg] = pmlCodeRefs(codeIndFile)
 %% Output
 % codename - name of the file
 % pg       - a cell array, each entry stores a list of the pages
+% datestr  - a date string indicating the last time the codeIndFile was
+%            modified. 
 if nargin ==0
     codeIndFile =  'C:\kmurphy\dropbox\PML\Text\code.ind';
 end
-
+datestr = getFileModificationDate(codeIndFile); 
 if ~exist(codeIndFile, 'file')
     error('Could not find %s. Check the path and try recompiling the latex source and/or regenerating the index with "makeindex code".', codeIndFile);
 end

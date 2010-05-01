@@ -1,11 +1,11 @@
-function datestr = getFileModificationDate(file)
+function [datestr, time] = getFileModificationDate(file)
 % Return the file modification date for the specified file.
 %
 %% Example 
 
 d = dir(file); 
-datestr = d.date; 
-
+toks = tokenize(d.date, ' '); 
+[datestr, time] = toks{:};
 %{
 [err, raw] = system(sprintf('dir /TC %s', file)); 
 raw = cellfuncell(@strtrim,  tokenize(raw, '\n'));

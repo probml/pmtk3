@@ -3,6 +3,9 @@ function d = defaultDict(keys, values, default)
 %
 % ** note, this is not an efficient data structure for large numbers of
 %    key-value pairs, (i.e. more than a few thousand). 
+%
+%    Consider java.util.Hashmap, (which you can call from Matlab) or
+%    containers.Map.
 % **
 % 
 %% 
