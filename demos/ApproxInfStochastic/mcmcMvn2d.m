@@ -37,7 +37,7 @@ for j=1:length(S)
     title(ttl)
     printPmtkFigure(sprintf('gauss2d%sSamples',...
         strrep(strrep(names{j},' ',''),'.','')));
-    
+    %%
     figure();
     for i=1:2
         subplot2(2,2,i,1);
@@ -60,11 +60,13 @@ for j=1:length(S)
     suptitle(ttl);
     printPmtkFigure(sprintf('gauss2d%sMarginals',...
         strrep(strrep(names{j},' ',''),'.','')));
+    %%
     figure();
     for i=1:2
         subplot(1,2,i);
         stem(acf(samples(:,i), 30));
         title(ttl)
     end
+    %%
 end
 placeFigures();

@@ -12,14 +12,14 @@ img = imread('lettera.bmp');
 img = double(img);
 m = mean(img(:));
 img2 = +1*(img>m) + -1*(img<m); % -1 or +1
-fig1 = figure();
+figure();
 imagesc(img2);
 %%
 colormap gray; axis square; axis off
 printPmtkFigure gibbsDemoDenoisingNoNoise
 %%
 y = img2 + sigma*randn(size(img2)); %y = noise signal
-figure(fig1);clf
+figure();
 imagesc(y);
 colormap gray; 
 axis square; 
@@ -36,7 +36,7 @@ sigmas = [sigma sigma];
 Npixels = M*N;
 localEvidence = zeros(Npixels, 2);
 for k=1:2
-    localEvidence(:,k) = normpdf(y(:), mus(k), sigmas(k));
+    localEvidence(:,k) = gausspdf(y(:), mus(k), sigmas(k).^2);
 end
 guess = maxidx(localEvidence, [], 2);  % start with best local guess
 X = ones(M, N);
@@ -44,13 +44,14 @@ X(guess==offState) = -1;
 X(guess==onState) = +1;
 Xinit = X;
 %%
-fig2 = figure();
+figure();
 imagesc(Xinit);colormap gray; axis square; axis off
 title('initial guess')
 fname = sprintf('gibbsDemoDenoisingInitS%2.1f', sigma);
 printPmtkFigure(fname);
+
 %%
-fig3 = figure();
+figure();
 J = 1;
 avgX = zeros(M,N);
 X = Xinit;
@@ -58,7 +59,8 @@ maxIter = 100000;
 burnIn = 50000;
 for iter =1:maxIter
     %% select a pixel at random
-    ix = ceil( N * rand(1) ); iy = ceil( M * rand(1) );
+    ix = ceil( N * rand(1) ); 
+    iy = ceil( M * rand(1) );
     pos = iy + M*(ix-1);
     neighborhood = pos + [-1,1,-M,M];
     neighborhood([iy==1,iy==M,ix==1,ix==N]) = [];
@@ -77,7 +79,7 @@ for iter =1:maxIter
     end
     %% plotting
     if rem(iter,10000) == 0,
-        figure(fig3); clf;
+        figure();
         imagesc(X); 
         axis('square'); 
         colormap gray; 
@@ -97,7 +99,7 @@ for iter =1:maxIter
 end
 nSamples = (maxIter-burnIn);
 avgX = avgX/nSamples;
-fig4 = figure();
+figure();
 imagesc(avgX);
 colormap gray; 
 axis square; axis off

@@ -1,5 +1,6 @@
-%% MH Sampling from a mixture of two 1d Gaussians using a 1d Gaussian
-%% proposal
+%% MH Sampling from a mixture of two 1d Gaussians 
+% We use a 1d Gaussian proposal.
+%%
 m.mixweight = [0.3, 0.7];
 m.mu = [-50, 50];
 m.K  = 2;

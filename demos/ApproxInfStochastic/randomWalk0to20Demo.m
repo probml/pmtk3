@@ -1,7 +1,8 @@
+%% Perform a random walk on the integers 0:20
+% Visualize the probability of the the states for various time steps,
+% and different initial conditions.
+%%
 function randomWalk0to20Demo
-% Perform a random walk on the integers 0:20 and visualize the probability of
-% the the states for various time steps, and different initial conditions.
-
 T = diag(repmat(0.5, 1, 20), -1) + diag(repmat(0.5, 1, 20), 1);
 T(1, 1) = 0.5; T(21, 21) = 0.5;
 plotPoints = [1, 2, 3, 10, 100, 200, 400];
@@ -21,8 +22,9 @@ for i=1:numel(p0)
     x0 = find(p0{i})-1;
     suptitle(sprintf('Initial Condition X_0 = %d',x0),12);
     printPmtkFigure(sprintf('randomWalk%d', x0));
+    %%
 end
-
+%%
     function stemPlot(pn,titleNum)
         h = stem(pn); hold on;
         set(h,'MarkerFaceColor', 'red', 'MarkerEdgeColor', 'black', 'LineWidth',2);
