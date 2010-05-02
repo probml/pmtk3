@@ -39,14 +39,4 @@ piw = invWishartLogprob(iwModel, S);
 
 logp = pgauss + piw;
 
-
-  
-          
-
-
-
-
-
-
-
 end

@@ -39,7 +39,7 @@ mixweight = normalize(ones(K,1));
 
 try
   [modelGMM, loglikHistGMM] = mixGaussFitEm(X, K,...
-    'mu', mu0, 'Sigma', Sigma, 'mixweight', mixweight);
+    'mu', mu0, 'Sigma', Sigma, 'mixweight', mixweight, 'doMAP', 0);
 catch
   fprintf('MLE failed\n'); NmleFail(dimi) = NmleFail(dimi) + 1;
 end

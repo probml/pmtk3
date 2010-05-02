@@ -2,26 +2,20 @@ function [model, loglikHist] = mixGaussFitEm(data, K, varargin)
 % EM for fitting mixture of K gaussians
 % data(i,:) is i'th case
 % To perform MAP estimation using a vague conjugate prior, use
-%  model = mixGaussFitEm(data, K, 'doMAP', 1)
-%
-% You can optionally call a plotting funciton at each iteration
-% to visualize progress. The function should have this itnerface
-%   plotfn(data,  mu, Sigma, mixweight, post, loglik, iter)
-% where post is N*K.
+%  model = mixGaussFitEm(data, K, 'doMAP', 1) [default]
+% See emAlgo() for other optional arguments.
 %
 % Return arguments:
 % model is a structure containing these fields:
 %   mu(:,) is k'th centroid
 %   Sigma(:,:,k)
 %   mixweight(k)
-%
-% loglikHist is the history of log-likelihood (plus log-prior) vs
-% iteration.
-% The length of this gives the number of iterations.
 
-[maxIter, thresh, plotfn, verbose, mu, Sigma, mixweight, doMAP] = process_options(...
-    varargin, 'maxIter', 100, 'thresh', 1e-3, 'plotfn', [], ...
-    'verbose', false, 'mu', [], 'Sigma', [], 'mixweight', [], 'doMAP', 0);
+
+[maxIter, convTol, plotfn, verbose, mu, Sigma, mixweight, doMAP, overRelaxFactor] = process_options(...
+    varargin, 'maxIter', 100, 'convTol', 1e-4, 'plotfn', [], ...
+    'verbose', false, 'mu', [], 'Sigma', [], 'mixweight', [], 'doMAP', 1, ...
+    'overRelaxFactor', []);
 
 [N,D] = size(data); %#ok
 
@@ -43,8 +37,9 @@ end
 
 % Fit
 model = structure(mu, Sigma, mixweight, prior);
-[model, loglikHist] = emAlgo(model, data, @estep,@mstep, ...
-  'maxIter', maxIter, 'thresh', thresh, 'verbose', verbose, 'plotfn', plotfn);
+[model, loglikHist]  = emAlgo(model, data, @estep,  @mstep, @mstepOR, ...
+  'maxIter', maxIter, 'convTol', convTol, 'verbose', verbose, 'plotfn', plotfn, ...
+    'overRelaxFactor', overRelaxFactor);
 
 
 end
@@ -77,6 +72,42 @@ end
 model = structure(mu, Sigma, mixweight, prior);
 end
  
+
+function [model, valid] = mstepOR(model, modelBO, eta)
+% For over-relaxed EM
+[D, D2, K] = size(modelBO.Sigma); %#ok 
+% Since weights are constrained to sum to one,
+% we do update in softmax parameterization
+mixweight = model.mixweight.*(modelBO.mixweight./ model.mixweight).^eta;
+mixweight = normalize(mixweight);       
+Sigma = zeros(D,D,K);
+mu = zeros(D,K);
+valid = true;
+for c=1:K
+  % Regular update
+  mu(:,c) = model.mu(:,c) + eta*(modelBO.mu(:,c) - model.mu(:,c));
+  %Since Sigma is constrained to positive definite matrices,
+  %the updation of Sigma is done in the Log-Euclidean space.
+  %(ref: "Fast and Simple Calculus on Tensors in the Log-Euclidean
+  %Framework", Vincent Arsigny, Pierre Fillard, Xavier Pennec,
+  %and Nicholas Ayache)
+  try
+    matLogSigma = logm(model.Sigma(:,:,c));
+    matLogSigma_BO = logm(modelBO.Sigma(:,:,c));
+    matLogSigma = matLogSigma + eta*(matLogSigma_BO - matLogSigma);
+    Sigma(:,:,c) = expm(matLogSigma);
+  catch %#ok
+    valid  = false; return;
+  end
+  if ~isposdef(Sigma(:,:,c))
+    valid = false; return;
+  end
+end
+prior = model.prior;
+model = structure(mu, Sigma, mixweight, prior);
+end
+ 
+
   
 function [ess, loglik] = estep(model, data)
 [N,D] = size(data);
@@ -94,9 +125,13 @@ if ~isempty(prior)
   nu0 = prior.nu0; S0 = prior.S0;
   logprior = zeros(1,K);
   for c=1:K
-    Sinv = inv(Sigma(:,:,c));
+    Sinv = inv(model.Sigma(:,:,c));
     logprior(c) = logdet(Sinv)*(nu0 + D + 2)/2 - 0.5*trace(Sinv*S0) ...
-      -kappa0/2*(mu(:,c)-m0)'*Sinv*(mu(:,c)-m0);
+      -kappa0/2*(model.mu(:,c)-m0)'*Sinv*(model.mu(:,c)-m0);
+    % does not include log(Z) term, which is constant
+    %mod2 = struct('mu', m0, 'Sigma', S0, 'dof', nu0, 'k', kappa0);
+    %logp = gaussInvWishartLogprob(mod2, model.mu(:,c), model.Sigma(:,:,c));
+    %assert(approxeq(logp, logprior(c)))
   end
   loglik = loglik + sum(logprior)/N;
 end

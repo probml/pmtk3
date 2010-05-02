@@ -18,7 +18,7 @@ plotfn(model, X, struct('post',mkStochastic(ones(N,K))), -inf, 0);
 % Fit
 [model, loglikHist] = mixGaussFitEm(X, K, ...
   'maxIter', 10, 'plotfn', @plotfn,...
-  'mu', mu, 'Sigma', Sigma, 'mixweight', mixweight); %#ok
+  'mu', mu, 'Sigma', Sigma, 'mixweight', mixweight, 'overRelaxFactor', 2); %#ok
 
 % Plot objective function
 figure;

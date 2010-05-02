@@ -3,16 +3,18 @@ function [model, loglikHist] = mixDiscreteFitEM(X, nmix,  varargin)
 %
 % X(i, j)   - is the ith case from the jth distribution, an integer in 1...C
 % nmix      - the number of mixture components to use
+%  See emAlgo() for optional arguments.
+
 % Returns a struct with fields
-% T(c,d,j) = p(xd=c|z=j) nstates*ndistributions*nmixtures
-% mixweight
+%    T(c,d,j) = p(xd=c|z=j) nstates*ndistributions*nmixtures
+%    mixweight
 
 
 % Setup
 [n, d]  = size(X); %#ok
 nstates = max(X(:));
-[maxIter, thresh, verbose, saveMemory, distPrior, mixPrior] = process_options(varargin,...
-  'maxIter', 100, 'thresh', 1e-3, 'verbose', false, 'saveMemory', false, ...
+[maxIter, convTol, verbose, saveMemory, distPrior, mixPrior] = process_options(varargin,...
+  'maxIter', 100, 'convTol', 1e-3, 'verbose', false, 'saveMemory', false, ...
   'distPrior', ones(nstates, 1), 'mixPrior', ones(1, nmix));
 
 % Initialize
@@ -31,7 +33,7 @@ model = structure(mixweight, T, saveMemory, mixPrior, distPrior);
 
 % Fit
 [model, loglikHist] = emAlgo(model, X, @estep, @mstep, ...
-  'maxIter', maxIter, 'thresh', thresh, 'verbose', verbose);
+  'maxIter', maxIter, 'convTol', convTol, 'verbose', verbose);
 
 end
 
