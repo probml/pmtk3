@@ -13,10 +13,10 @@ nsamples = 1000;
 distPrior = randi(10, [truth.nstates, 1]); % pseudo counts 
 mixPrior = randi(10, [1, truth.nmix]);     % pseduo counts
 %% Fit
-model = mixDiscreteFitEM(X, truth.nmix, distPrior, mixPrior);
+model = mixDiscreteFitEM(X, truth.nmix, 'verbose', true, 'distPrior', distPrior, 'mixPrior', mixPrior);
 %% Compare against the best permutation of the cluster labels.
 ypred = mixDiscreteInfer(model, X);
-allperms = perms(1:model.nmix);
+allperms = perms(1:truth.nmix);
 nperms = size(allperms, 1); 
 errors = zeros(nperms, 1); 
 for i=1:nperms

@@ -4,7 +4,7 @@ function [z, pz, ll] = mixGaussInfer(model, X)
 % ll(i) = log p(X(i,:) | model)  logprob of observed data
 % This can handle NaNs in X
 
-K = model.K;
+K = numel(model.mixweight);
 N = size(X,1);
 logPz = zeros(N, K);
 logmix = log(model.mixweight+eps);

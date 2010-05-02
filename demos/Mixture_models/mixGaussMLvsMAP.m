@@ -6,11 +6,11 @@
 
 N = 100;
 K = 3;
-dims = 10:10:100;
+dims = 10:20:100;
 warning('off', 'MATLAB:nearlySingularMatrix')
 for dimi = 1:length(dims)
   D = dims(dimi);
-  seeds = 1:5;
+  seeds = 1:3;
   NmleFail(dimi) = 0; NmapFail(dimi) = 0;
   Sigma = zeros(D,D,K); 
 

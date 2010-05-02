@@ -7,7 +7,7 @@ keepSparse = false;
 Ntest      = 1000;
 
 if 1
-    Ntrain  = 5000;
+    Ntrain  = 1000;
     Kvalues = [2, 10]; 
 else
     Ntrain  = 1000;
@@ -21,7 +21,7 @@ Xtest  = Xtest  + 1;
 NK     = length(Kvalues);
 logp   = zeros(1, NK);
 bicVal = zeros(1, NK);
-options = {[], [], 'maxiter', 10, 'verbose', true};
+options = {'maxIter', 10, 'verbose', true};
 model = cell(1, NK); 
 for i=1:NK
     K = Kvalues(i);
