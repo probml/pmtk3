@@ -32,7 +32,7 @@ model = structure(mixweight, T, saveMemory, mixPrior, distPrior);
 
 
 % Fit
-[model, loglikHist] = emAlgo(model, X, @estep, @mstep, ...
+[model, loglikHist] = emAlgo(model, X, @estep, @mstep, [], ...
   'maxIter', maxIter, 'convTol', convTol, 'verbose', verbose);
 
 end
