@@ -1,9 +1,7 @@
 function bayesLinRegDemo2d()
-
-% Reproduced fig 3.7 from Bishop's book
-
-
-% We fit the linear model y(x,w) = w0 + w1 x and plot the posterior over w.
+%% Bayesian infernece for simple linear regression with known noise variance
+% The goal is to reproduce fig 3.7 from Bishop's book
+% We fit the linear model f(x,w) = w0 + w1 x and plot the posterior over w.
 
 a0 = -0.3; %Parameters of the actual underlying model that we wish to recover
 a1 = 0.5;  %We will estimate these values with w0 and w1 respectively. 
