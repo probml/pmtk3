@@ -11,7 +11,7 @@ for i=1:1000
 
 [pi, Sigma, mu] = deconstruct(model);
 end
-t = toc
+t = toc/1000
 
 
 tic
@@ -20,7 +20,7 @@ for i=1000
    Sigma = model.Sigma; 
    mu = model.mu;
 end
-t2 = toc
+t2 = toc/1000
 
 
 end
