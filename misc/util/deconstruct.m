@@ -22,10 +22,7 @@ end
 line = fgetl(fid);
 fclose(fid);
 toks = tokenize(line, '=');
-outputstr = toks{1};
-outputstr = strrep(outputstr, '[','');
-outputstr = strrep(outputstr, ']','');
-outputnames = tokenize(outputstr, ', ');
+outputnames = tokenize(toks{1}, ',[] ');
 for i=1:numel(outputnames)
     varargout{i} = S.(outputnames{i});
 end

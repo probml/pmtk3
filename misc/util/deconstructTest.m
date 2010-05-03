@@ -10,6 +10,7 @@ tic
 for i=1:1000
 
 [pi, Sigma, mu] = deconstruct(model);
+
 end
 t = toc/1000
 
