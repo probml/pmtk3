@@ -41,6 +41,7 @@ model = structure(mu, Sigma, mixweight, prior);
   'maxIter', maxIter, 'convTol', convTol, 'verbose', verbose, 'plotfn', plotfn, ...
     'overRelaxFactor', overRelaxFactor);
 
+model.K = K;
 
 end
 
