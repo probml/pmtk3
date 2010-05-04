@@ -1,6 +1,7 @@
+%% Multitask regression demo
+% PMTKslow
+%%
 function multitaskRegDemo()
-% Multitask regression demo
-
 seeds = [1 2 3];
 plotFns = true; % set to false to reduce number of plots
 for seedi=1:length(seeds)
@@ -136,8 +137,7 @@ w0 = zeros(1,T); W = zeros(D,T); sigma2 = zeros(1,T);
 % First fit models independently
 for t=1:T
   lambda = 0.001; % for numerical stability
-  models{t} = linregFitComplex(X, Y(:,t), 'regtype', 'L2', 'lambda', lambda, ...
-    'standardizeX', false);
+  models{t} = linregFit(X, Y(:,t), 'regtype', 'L2', 'lambda', lambda);
   w0(t) = models{t}.w0;
   W(:,t) = models{t}.w(:);
   sigma2(t) = models{t}.sigma2;

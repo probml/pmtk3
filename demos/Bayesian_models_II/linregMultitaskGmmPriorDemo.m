@@ -140,8 +140,7 @@ w0 = zeros(1,T); W = zeros(D,T); sigma2 = zeros(1,T);
 % First fit models independently
 for t=1:T
   lambda = 0.001; % for numerical stability
-  models{t} = linregFitComplex(X, Y(:,t), 'regtype', 'L2', 'lambda', lambda, ...
-    'standardizeX', false);
+  models{t} = linregFit(X, Y(:,t), 'regtype', 'L2', 'lambda', lambda);
   w0(t) = models{t}.w0;
   W(:,t) = models{t}.w(:);
   sigma2(t) = models{t}.sigma2;
@@ -157,7 +156,7 @@ for t=1:T
       mu = mean(W,2);
       S0 = 0.01*eye(D); % setting variance of the prior 
       S0inv = inv(S0);
-      SN = inv(S0inv + (1/sigma2(t))*X'*X);
+      SN = inv(S0inv + (1/sigma2(t))*(X'*X));
       Wmap(:,t) = SN*S0inv*mu + (1/sigma2(t))*SN*X'*y; %#ok
       %Wmap(:,t) = inv(X'*X)*X'*y; %S0=inf
       models{t}.w = Wmap(:,t);

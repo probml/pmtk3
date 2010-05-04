@@ -10,10 +10,10 @@ centers = linspace(min(xtrain), max(xtrain), K)';
 figure; hold on
 for i=1:length(sigmas)
     sigma = sigmas(i);
-    
-    model = linregFitComplex(xtrain, ytrain, ...
-        'kernelFn', @kernelRbfSigma, 'kernelParam', sigma,...
-        'lambda', lambda, 'fitMethod', 'QR','standardizeX',  false);
+    preproc.kernelFn = @(X1, X2)kernelRbfSigma(X1, X2, sigma); 
+    model = linregFit(xtrain, ytrain, 'preproc', preproc, 'lambda', lambda);
+        
+       
     ypred = linregPredict(model, xtest);
     
     subplot2(3,3,i,1)

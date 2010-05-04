@@ -21,19 +21,20 @@ Ktrain =  kernelFn(X, X);
 Xtest = (-10:.1:10)';
 Xtest = mkUnitVariance(centerCols(Xtest)); 
 Ktest = kernelFn(Xtest, X);
-
+preproc.kernelFn = @(X1, X2)kernelRbfSigma(X1, X2, rbfScale);
 for method=1:4
     switch method
         case 1,
-            model = linregFitComplex(X, y, 'regType', 'L2', 'lambda', lambda,...
-                'kernelFn', @kernelRbfSigma,'kernelParam', rbfScale);
+            
+            model = linregFit(X, y, 'regType', 'L2', ...
+                'lambda', lambda, 'preproc', preproc);
             w = model.w;
             yhat = linregPredict(model, Xtest);
             lossStr = sprintf('linregL2');
             fname = 'linregL2';
         case 2,
-            model = linregFitComplex(X, y, 'regType', 'L1', 'lambda', lambda,...
-                'kernelFn', @kernelRbfSigma,'kernelParam', rbfScale);
+            model = linregFit(X, y, 'regType',...
+                'L1', 'lambda', lambda,'preproc', preproc);
             w = model.w;
             SV = find(abs(w) > 1e-5);
             yhat = linregPredict(model, Xtest);
