@@ -1,7 +1,8 @@
-function prostateComparison() 
 %% Compare L1, L2, allSubsets, and OLS linear regression on the prostate data set
-% Reproduced table 3.3 and fig 3.7 on p63 of "Elements of statistical learning" 2e
-
+% Reproduced table 3.3 and fig 3.7 on p63 of "Elements of statistical
+% learning" 2e
+%%
+function prostateComparison() 
 
 setSeed(0);
 saveLatex = false;
@@ -16,8 +17,8 @@ nfolds = 10;
 maxLambda    =  log10(lambdaMaxLasso(Xtrain, ytrain));
 lambdaRange  =  logspace(-2, maxLambda, 30); 
 
-fit = @(regType)linregFitComplex(Xtrain, ytrain,'lambda',...
-      lambdaRange, 'regType', regType, 'doPlot', true, 'nfolds', nfolds);
+fit = @(regType)linregFit(Xtrain, ytrain,'lambda',...
+      lambdaRange, 'regType', regType, 'plotCv', true, 'nfolds', nfolds);
 
 loss = @(yhat, ytest) mean((yhat - ytest).^2);                 
 figureNames   = {'prostateLassoCV', 'prostateRidgeCV'};
@@ -44,7 +45,7 @@ end
        exclude = setdiff(1:D, include);
        X(:, exclude) = 0;
        lambda = eps; % needed to avoid numerical issues caused by 0 entries in X
-       model = linregFitComplex(X, y, 'lambda', lambda); 
+       model = linregFit(X, y, 'lambda', lambda); 
     end
 %%    
 d = size(data.Xtrain, 2); 
@@ -73,7 +74,7 @@ printPmtkFigure('prostateSubsetsCV');
 
 weights(:, 3) = [modelFull.w0; colvec(modelFull.w)];
 %% OLS
-model = linregFitComplex(data.Xtrain, data.ytrain, 'lambda', 0);
+model = linregFit(data.Xtrain, data.ytrain, 'lambda', 0);
 weights(:, 4) = [model.w0; colvec(model.w)];
 yhat = linregPredict(model, data.Xtest);
 mse(4) = loss(yhat, data.ytest); 
