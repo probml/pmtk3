@@ -2,21 +2,22 @@
 % We use a gaussian prior with fixed noise variance
 % We plot the posterior predictive density, and samples from it
 %%
-setSeed(0);
+setSeed(1);
 [xtrain, ytrain, xtest, ytestNoisefree, ytest, sigma2] = ...
   polyDataMake('sampling', 'sparse', 'deg', 2);
 deg = 2;
 addOnes = false;
 Xtrain = degexpand(xtrain, deg, addOnes);
 Xtest  = degexpand(xtest, deg, addOnes);
-%% MLE
-model = linregFit(Xtrain, ytrain); 
-[mu, v] = linregPredict(model, Xtest);
 
-figure;
+%% MLE
+modelMLE = linregFit(Xtrain, ytrain); 
+[mu, v] = linregPredict(modelMLE, Xtest);
+
+fig1=figure;
 hold on;
 plot(xtest, mu,  'k-', 'linewidth', 3, 'displayname', 'prediction');
-plot(xtest, ytestNoisefree,  'b:', 'linewidth', 3, 'displayname', 'truth');
+%plot(xtest, ytestNoisefree,  'b:', 'linewidth', 3, 'displayname', 'truth');
 plot(xtrain,ytrain,'ro','markersize', 14, 'linewidth', 3, ...
      'displayname', 'training data');
 NN = length(xtest);
@@ -24,16 +25,18 @@ ndx = 1:5:NN; % plot subset of errorbars to reduce clutter
 sigma = sqrt(v);
 legend('location', 'northwest'); 
 errorbar(xtest(ndx), mu(ndx), sigma(ndx));
-title('mle');
+title('plugin approximation (MLE)');
+printPmtkFigure('linregPostPredPlugin')
+
 
 %% Bayes
 model = linregFitBayes(Xtrain, ytrain, ...
   'prior', 'gauss', 'alpha', 0.001, 'beta', 1/sigma2);
 [mu, v] = linregPredictBayes(model, Xtest);
-figure;
+fig2=figure;
 hold on;
 plot(xtest, mu,  'k-', 'linewidth', 3, 'displayname', 'prediction');
-plot(xtest, ytestNoisefree,  'b:', 'linewidth', 3, 'displayname', 'truth');
+%plot(xtest, ytestNoisefree,  'b:', 'linewidth', 3, 'displayname', 'truth');
 plot(xtrain,ytrain, 'ro', 'markersize', 14, 'linewidth', 3, ...
     'displayname', 'training data');
 NN = length(xtest);
@@ -41,5 +44,21 @@ ndx = 1:5:NN; % plot subset of errorbars to reduce clutter
 sigma = sqrt(v);
 legend('location', 'northwest'); 
 errorbar(xtest(ndx), mu(ndx), sigma(ndx));
-title('bayes (known variance)');
+title('Posterior predictive (known variance)');
+printPmtkFigure('linregPostPredBayes')
+
+%% Plot samples from posterior predictive
+S = 10;
+ws = gaussSample(struct('mu', model.wN, 'Sigma', model.VN), S);
+figure;
+hold on;
+plot(xtrain,ytrain, 'ro', 'markersize', 14, 'linewidth', 3, ...
+    'displayname', 'training data');
+for s=1:S
+  tmp = modelMLE;  tmp.offset = ws(s,1); tmp.w = ws(s,2:end);
+  [mu] = linregPredict(tmp, Xtest);
+  plot(xtest, mu, 'k-', 'linewidth', 1);
+end
+title('functions samples from posterior')
+printPmtkFigure('linregPostPredSamples')
 
