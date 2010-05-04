@@ -3,6 +3,7 @@ function linregMultitaskGmmPriorDemo()
 %PMTKauthor Kevin Murphy
 %PMTKmodified Hannes Bretschneider
 %PMTKslow
+%PMTKbroken
 close all
 seeds = [1 2];
 plotFns = false; % set to false to reduce number of plots

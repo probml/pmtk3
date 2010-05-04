@@ -1,9 +1,10 @@
 %% Simple Test of linregFit()
-
+%
+%%
 load servo
 lossFn = @(y, yhat)mean((y-yhat).^2);
 %%
-model = linregFitComplex(Xtrain, ytrain, 'lambda', 0, 'standardizeX', false); %ols
+model = linregFit(Xtrain, ytrain, 'preproc', struct('standardizeX', false)); %ols
 yhat = linregPredict(model, Xtest);
 mse = lossFn(yhat, ytest)
 %%
@@ -14,29 +15,10 @@ assert(isequal(w, model.w));
 assert(isequal(w0, model.w0));
 
 %% CV over lambda
-[model, bestLambda] = linregFitComplex(Xtrain, ytrain, 'doPlot', true);
+model = linregFit(Xtrain, ytrain, 'regType', 'L2', 'plotCv', true);
 yhat = linregPredict(model, Xtest);
 mse = lossFn(yhat, ytest)
+set(gca, 'xscale', 'log'); 
 %% 
-w = linregFitL2QR(mkUnitVariance(centerCols(Xtrain)),centerCols(ytrain), bestLambda); 
+w = linregFitL2QR(mkUnitVariance(centerCols(Xtrain)),centerCols(ytrain), model.lambda); 
 assert(isequal(model.w, w));
-%%
-model = linregFitComplex(Xtrain, ytrain, 'kernelFn', @kernelRbfSigma, 'doPlot', true);
-set(gca, 'YScale', 'log');
-yhat = linregPredict(model, Xtest);
-mse = lossFn(yhat, ytest)
-%%
-model = linregFitComplex(Xtrain, ytrain, 'regType', 'L1', ...
-    'doPlot', true, 'fitMethod', 'interiorpoint');
-yhat = linregPredict(model, Xtest);
-mse = lossFn(yhat, ytest)
-
-
-
-%%
-model = linregFitComplex(Xtrain, ytrain, 'regType', 'L1', 'kernelFn', @kernelRbfSigma,...
-    'lambda', 0.5:0.5:4, 'doPlot', true, 'fitMethod', 'interiorpoint', 'kernelParam', 3:0.5:4);
-set(gca, 'YScale', 'log');
-yhat = linregPredict(model, Xtest);
-mse = lossFn(yhat, ytest)
-%%
