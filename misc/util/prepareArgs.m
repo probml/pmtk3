@@ -1,6 +1,6 @@
 function out = prepareArgs(args)
 % Prepare varargin args for process_options by converting a struct in args{1}
-% into a name/value pair cell array. If args{1} is not a strucct, args
+% into a name/value pair cell array. If args{1} is not a struct, args
 % is left unchanged.
 % Example:
 % opts.maxIter = 100;

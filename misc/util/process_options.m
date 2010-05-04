@@ -64,6 +64,7 @@
 
 function [varargout] = process_options(args, varargin)
 
+args = prepareArgs(args); % added to support structured arguments
 % Check the number of input arguments
 n = length(varargin);
 if (mod(n, 2))
