@@ -1,4 +1,4 @@
-function [model, lambdas, muLoss, seLoss] = linregFitSimple(X, y, varargin)
+function [model, lambdas, muLoss, seLoss] = linregFit(X, y, varargin)
 % Fit a linear regression model
 % This takes care of preprocessing the data, computing
 % the offset and variance, and calling cross validation (if necessary).

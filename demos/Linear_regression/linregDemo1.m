@@ -14,7 +14,7 @@ model2 = linregFitComplex(Xtrain, ytrain, 'lambda', 0);
 [ypredTest2, v2] = linregPredict(model2, Xtest);
 assert(approxeq(ypredTest, ypredTest2))
 
-model3 = linregFitSimple(Xtrain, ytrain, 'lambda', 0);
+model3 = linregFit(Xtrain, ytrain, 'lambda', 0);
 [ypredTest3, v3] = linregPredict(model3, Xtest);
 assert(approxeq(model2.w, model3.w))
 assert(approxeq(model2.sigma2, model3.sigma2))

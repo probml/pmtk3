@@ -13,7 +13,7 @@ Xtest = rescaleData(degexpand(xtest, deg, addOnes));
 
 
 %% MLE
-model = linregFitSimple(Xtrain, ytrain, ...
+model = linregFit(Xtrain, ytrain, ...
   'preproc', struct('standardizeX', true));
 [mu, v] = linregPredict(model, Xtest);
 
