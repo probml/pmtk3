@@ -1,7 +1,7 @@
 %% Posterior predictive density for Bayesian linear Regression in 1d with Polynomial Basis 
 % We use a gaussian prior with fixed noise variance
 % We plot the posterior predictive density, and samples from it
-
+%%
 setSeed(0);
 [xtrain, ytrain, xtest, ytestNoisefree, ytest, sigma2] = ...
   polyDataMake('sampling', 'sparse', 'deg', 2);
