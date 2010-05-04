@@ -23,11 +23,10 @@ function tokens = tokenize(str, delimiter)
 if(nargin < 2)
     delimiter = ' ' ;
 end
-if ~isOctave
+try 
     tokens = textscan(str,'%s','delimiter',delimiter, 'bufsize', 100000);
     tokens = tokens{:};
-    return;
-else
+catch %#ok
     delimiter = ['[',delimiter, ']'];
     [start, finish] = regexp(str, delimiter);
     if isempty(start)
@@ -36,10 +35,9 @@ else
     end
     tokens = cell(numel(start+1), 1);
     tokens{1} = str(1:start(1)-1);
-    start = [start, length(str)];
+    start = [start, length(str)+1];
     for i=1:numel(finish)
         tokens{i+1} = str(finish(i)+1:start(i+1)-1);
     end
     tokens = filterCell(tokens, @(c)~isempty(strtrim(c)));
-end
 end
