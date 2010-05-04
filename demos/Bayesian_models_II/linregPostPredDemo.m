@@ -8,21 +8,22 @@ setSeed(0);
 deg = 2;
 addOnes = false;
 Xtrain = degexpand(xtrain, deg, addOnes);
-Xtest = degexpand(xtest, deg, addOnes);
-
+Xtest  = degexpand(xtest, deg, addOnes);
 %% MLE
 model = linregFit(Xtrain, ytrain); 
 [mu, v] = linregPredict(model, Xtest);
 
 figure;
 hold on;
-h = plot(xtest, mu,  'k-', 'linewidth', 3);
-h = plot(xtest, ytestNoisefree,  'b:', 'linewidth', 3);
-h = plot(xtrain,ytrain,'ro','markersize',14,'linewidth',3);
+plot(xtest, mu,  'k-', 'linewidth', 3, 'displayname', 'prediction');
+plot(xtest, ytestNoisefree,  'b:', 'linewidth', 3, 'displayname', 'truth');
+plot(xtrain,ytrain,'ro','markersize', 14, 'linewidth', 3, ...
+     'displayname', 'training data');
 NN = length(xtest);
 ndx = 1:5:NN; % plot subset of errorbars to reduce clutter
 sigma = sqrt(v);
-hh=errorbar(xtest(ndx), mu(ndx), sigma(ndx));
+legend('location', 'northwest'); 
+errorbar(xtest(ndx), mu(ndx), sigma(ndx));
 title('mle');
 
 %% Bayes
@@ -39,6 +40,6 @@ NN = length(xtest);
 ndx = 1:5:NN; % plot subset of errorbars to reduce clutter
 sigma = sqrt(v);
 legend('location', 'northwest'); 
-hh=errorbar(xtest(ndx), mu(ndx), sigma(ndx));
+errorbar(xtest(ndx), mu(ndx), sigma(ndx));
 title('bayes (known variance)');
 
