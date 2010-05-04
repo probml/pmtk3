@@ -11,8 +11,7 @@ Xtrain = degexpand(xtrain, deg, addOnes);
 Xtest = degexpand(xtest, deg, addOnes);
 
 %% MLE
-model = linregFit(Xtrain, ytrain, ...
-  'preproc', struct('standardizeX', true));
+model = linregFit(Xtrain, ytrain); 
 [mu, v] = linregPredict(model, Xtest);
 
 figure;
@@ -28,7 +27,6 @@ title('mle');
 
 %% Bayes
 model = linregFitBayes(Xtrain, ytrain, ...
-  'preproc', struct('standardizeX', true), ...
   'prior', 'gauss', 'alpha', 0.001, 'beta', 1/sigma2);
 [mu, v] = linregPredictBayes(model, Xtest);
 figure;
