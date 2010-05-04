@@ -1,11 +1,13 @@
-function linregSparseEmSynthDemo()
-% Sparse linear regression with EM on synthetic data
+%% Sparse linear regression with EM on synthetic data
 % Similar to fig 8 from "Sparse Bayesian nonparametric regression",
 % Caron and Doucet, ICML08
 % We do not include normalInverseGaussian
 % but we do include normalExpGaussian  (see Griffin and Brown)
 %PMTKslow
 %PMTKreallySlow
+%%
+function linregSparseEmSynthDemo()
+
 
 setSeed(0);
 
@@ -63,15 +65,15 @@ for trial=1:Ntrials
           useEM = true;
         case 'scad'
            % this will use CV to pick lambda
-          model = linregFitComplex(Xtrain, ytrain, 'regType', 'scad');
+          model = linregFit(Xtrain, ytrain, 'regType', 'scad');
           w = model.w;
         case 'ridge'
           % this will use CV to pick lambda
-          model = linregFitComplex(Xtrain, ytrain, 'regType', 'L2');
+          model = linregFit(Xtrain, ytrain, 'regType', 'L2');
           w = model.w;
         case 'laplace'
           % this will use CV to pick lambda
-          model = linregFitComplex(Xtrain, ytrain, 'regType', 'L1');
+          model = linregFit(Xtrain, ytrain, 'regType', 'L1');
           w = model.w;
         otherwise
           w = [];
