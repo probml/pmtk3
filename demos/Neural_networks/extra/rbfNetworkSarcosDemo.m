@@ -54,14 +54,14 @@
    for j=1:nout
      %% ridge
      lambda = 1;
-     model = linregFit(Xtrain(1:ntrain,:), ytrain(1:ntrain,j), 'regtype', 'L2', 'lambda', lambda);
+     model = linregFitComplex(Xtrain(1:ntrain,:), ytrain(1:ntrain,j), 'regtype', 'L2', 'lambda', lambda);
      ypred = linregPredict(model, Xtest);
      SMSE_ridge(traini,j) = sum((ytest(:,j)-ypred).^2)/(Ntest*sigma2(j))
      wSaveRidge(:,j) = model.w(:);
      
      %% RBF
      lambda = 1;
-     model = linregFit(Ktrain(1:ntrain,:), ytrain(1:ntrain,j), 'regtype', 'L2', 'lambda', lambda);
+     model = linregFitComplex(Ktrain(1:ntrain,:), ytrain(1:ntrain,j), 'regtype', 'L2', 'lambda', lambda);
      ypred = linregPredict(model, Ktest);
      SMSE_rbf(traini,j) = sum((ytest(:,j)-ypred).^2)/(Ntest*sigma2(j));
      wSaveRbf(:,j) = model.w(:);

@@ -14,7 +14,7 @@ function mlcompCompiler(fitFn, predictFn, outputDir, fitOpts, predictOpts)
 %
 %% INPUTS:
 %
-% fitFn         - The name of the fit function, i.e. 'linregFit'
+% fitFn         - The name of the fit function, i.e. 'linregFitComplex'
 %                 This function must have this interface:
 %                 model = fitFn(X, y, fitOpts{:})
 % 

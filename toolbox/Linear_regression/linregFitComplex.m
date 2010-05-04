@@ -1,4 +1,4 @@
-function [model, varargout] = linregFit(X, y, varargin)
+function [model, varargout] = linregFitComplex(X, y, varargin)
 % Fit a linear regression model
 %% INPUTS: 
 % regType       ... L1, L2, none, scad

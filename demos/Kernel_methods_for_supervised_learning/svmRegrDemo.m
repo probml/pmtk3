@@ -25,14 +25,14 @@ Ktest = kernelFn(Xtest, X);
 for method=1:4
     switch method
         case 1,
-            model = linregFit(X, y, 'regType', 'L2', 'lambda', lambda,...
+            model = linregFitComplex(X, y, 'regType', 'L2', 'lambda', lambda,...
                 'kernelFn', @kernelRbfSigma,'kernelParam', rbfScale);
             w = model.w;
             yhat = linregPredict(model, Xtest);
             lossStr = sprintf('linregL2');
             fname = 'linregL2';
         case 2,
-            model = linregFit(X, y, 'regType', 'L1', 'lambda', lambda,...
+            model = linregFitComplex(X, y, 'regType', 'L1', 'lambda', lambda,...
                 'kernelFn', @kernelRbfSigma,'kernelParam', rbfScale);
             w = model.w;
             SV = find(abs(w) > 1e-5);

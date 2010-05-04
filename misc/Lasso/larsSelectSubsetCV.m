@@ -22,7 +22,7 @@ for f=1:CVnfolds
     Xtest = X(testfolds{f},:);   ytest = y(testfolds{f},:);
     for s = 1:nss
         vars = [1,allvars(supports(s,:))+1];
-        model = linregFit(Xtrain(:, vars), ytrain,...
+        model = linregFitComplex(Xtrain(:, vars), ytrain,...
             'lambda', lambdaRidge, 'standardizeX', 'false');
         w = model.w; 
         %w = Xtrain(:,vars)\ytrain;

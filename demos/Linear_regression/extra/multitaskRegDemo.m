@@ -136,7 +136,7 @@ w0 = zeros(1,T); W = zeros(D,T); sigma2 = zeros(1,T);
 % First fit models independently
 for t=1:T
   lambda = 0.001; % for numerical stability
-  models{t} = linregFit(X, Y(:,t), 'regtype', 'L2', 'lambda', lambda, ...
+  models{t} = linregFitComplex(X, Y(:,t), 'regtype', 'L2', 'lambda', lambda, ...
     'standardizeX', false);
   w0(t) = models{t}.w0;
   W(:,t) = models{t}.w(:);

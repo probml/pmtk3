@@ -11,7 +11,7 @@ y = [y' k  k k]';
 
 n = length(x);
 Xtrain = x(:);
-modelLS = linregFit(Xtrain, y, 'lambda', 0);% least squares soln
+modelLS = linregFitComplex(Xtrain, y, 'lambda', 0);% least squares soln
 xs = 0:0.1:1;
 Xtest = xs(:);
 yhatLS = linregPredict(modelLS, Xtest);

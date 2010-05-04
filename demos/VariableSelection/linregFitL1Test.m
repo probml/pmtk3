@@ -29,7 +29,7 @@ lambda = 10;
 methods = {'shooting', 'em', 'lars', 'interiorPoint'};
 for i=1:length(methods)
     method = methods{i};
-    model{i} = linregFit(X, y, 'lambda', lambda,'regType', 'L1', 'FitMethod', method);
+    model{i} = linregFitComplex(X, y, 'lambda', lambda,'regType', 'L1', 'FitMethod', method);
     if i > 1
         assert(approxeq(model{i}.w, model{1}.w, 1e-1))
     end

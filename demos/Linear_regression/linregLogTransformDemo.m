@@ -7,7 +7,7 @@ load bodyBrainWeight;
 % y = brain weight in g
 
 %% Original values
-m = linregFit(x, y);
+m = linregFitComplex(x, y);
 yhat = linregPredict(m, x);
 figure; hold on
 plot(x, y, 'o', 'markersize', 10);
@@ -18,7 +18,7 @@ printPmtkFigure('linregLogTransformRaw')
 
 %% Log transform
 x = log(x); y = log(y);
-m = linregFit(x, y);
+m = linregFitComplex(x, y);
 yhat = linregPredict(m, x);
 figure; hold on
 plot(x, y, 'o', 'markersize', 10);

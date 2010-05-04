@@ -19,7 +19,7 @@ for d=1:numel(degrees)
         xtrain = addOnes(degexpand(xtrain, deg)); 
         xtest  = addOnes(degexpand(xtest, deg)); 
         %% Fit 
-        model = linregFit(xtrain, ytrain, 'lambda', lambda, ...
+        model = linregFitComplex(xtrain, ytrain, 'lambda', lambda, ...
             'standardizeX', false);
         %% Predict
         yhatTrain = linregPredict(model, xtrain); 

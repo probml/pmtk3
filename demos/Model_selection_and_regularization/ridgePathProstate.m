@@ -5,7 +5,7 @@ load prostate
  nlambdas = numel(lambdas);
  w = zeros(nlambdas, d);
  for i=1:nlambdas
-     model = linregFit(X, y, 'lambda', lambdas(i));
+     model = linregFitComplex(X, y, 'lambda', lambdas(i));
      w(i, :) = rowvec(model.w);
  end
 dof = dofRidge(X, lambdas);

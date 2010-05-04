@@ -63,15 +63,15 @@ for trial=1:Ntrials
           useEM = true;
         case 'scad'
            % this will use CV to pick lambda
-          model = linregFit(Xtrain, ytrain, 'regType', 'scad');
+          model = linregFitComplex(Xtrain, ytrain, 'regType', 'scad');
           w = model.w;
         case 'ridge'
           % this will use CV to pick lambda
-          model = linregFit(Xtrain, ytrain, 'regType', 'L2');
+          model = linregFitComplex(Xtrain, ytrain, 'regType', 'L2');
           w = model.w;
         case 'laplace'
           % this will use CV to pick lambda
-          model = linregFit(Xtrain, ytrain, 'regType', 'L1');
+          model = linregFitComplex(Xtrain, ytrain, 'regType', 'L1');
           w = model.w;
         otherwise
           w = [];

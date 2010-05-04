@@ -10,7 +10,7 @@ Xtest1 = [ones(size(Xtest,1),1) Xtest];
 ypredTest = Xtest1*w;
 
 %% Use pmtk functions to do same thing
-model2 = linregFit(Xtrain, ytrain, 'lambda', 0);
+model2 = linregFitComplex(Xtrain, ytrain, 'lambda', 0);
 [ypredTest2, v2] = linregPredict(model2, Xtest);
 assert(approxeq(ypredTest, ypredTest2))
 
@@ -40,7 +40,7 @@ printPmtkFigure('linregDemo1')
 [Xtrain, mu, sigma] = standardizeCols(xtrain);
 Xtest = standardizeCols(xtest, mu, sigma);
 
-model = linregFit(Xtrain, ytrain, 'lambda', 0);
+model = linregFitComplex(Xtrain, ytrain, 'lambda', 0);
 ypredTest = linregPredict(model, Xtest);
 
 figure;

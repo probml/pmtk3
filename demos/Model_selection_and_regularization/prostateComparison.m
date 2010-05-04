@@ -16,7 +16,7 @@ nfolds = 10;
 maxLambda    =  log10(lambdaMaxLasso(Xtrain, ytrain));
 lambdaRange  =  logspace(-2, maxLambda, 30); 
 
-fit = @(regType)linregFit(Xtrain, ytrain,'lambda',...
+fit = @(regType)linregFitComplex(Xtrain, ytrain,'lambda',...
       lambdaRange, 'regType', regType, 'doPlot', true, 'nfolds', nfolds);
 
 loss = @(yhat, ytest) mean((yhat - ytest).^2);                 
@@ -44,7 +44,7 @@ end
        exclude = setdiff(1:D, include);
        X(:, exclude) = 0;
        lambda = eps; % needed to avoid numerical issues caused by 0 entries in X
-       model = linregFit(X, y, 'lambda', lambda); 
+       model = linregFitComplex(X, y, 'lambda', lambda); 
     end
 %%    
 d = size(data.Xtrain, 2); 
@@ -73,7 +73,7 @@ printPmtkFigure('prostateSubsetsCV');
 
 weights(:, 3) = [modelFull.w0; colvec(modelFull.w)];
 %% OLS
-model = linregFit(data.Xtrain, data.ytrain, 'lambda', 0);
+model = linregFitComplex(data.Xtrain, data.ytrain, 'lambda', 0);
 weights(:, 4) = [model.w0; colvec(model.w)];
 yhat = linregPredict(model, data.Xtest);
 mse(4) = loss(yhat, data.ytest); 
