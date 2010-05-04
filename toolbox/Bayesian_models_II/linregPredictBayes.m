@@ -13,7 +13,7 @@ else
 end
 
 if nargout >= 2
-if isfield(model, 'beta')
+if isfield(model, 'beta') % known variance
   %  posterior is Gaussian
     sigma2Hat = (1/model.beta)*ones(N,1) + diag(X*VN*X');
 else
