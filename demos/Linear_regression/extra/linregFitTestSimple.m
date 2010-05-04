@@ -16,7 +16,7 @@ assert(isequal(w0, model.w0));
 [model, lambdas, mu, se] = linregFit(Xtrain, ytrain, 'regType', 'L2', 'plotCv', true);
 yhat = linregPredict(model, Xtest);
 mse = lossFn(yhat, ytest)
-
+set(gca, 'xscale', 'log'); 
 w = linregFitL2QR(mkUnitVariance(centerCols(Xtrain)),centerCols(ytrain), model.lambda); 
 assert(isequal(model.w, w));
 

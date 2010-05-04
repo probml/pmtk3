@@ -14,15 +14,18 @@ plot(x, y, 'o', 'markersize', 10);
 plot(x, yhat, '-', 'linewidth', 2);
 xlabel('body weight')
 ylabel('brain weight')
+axis tight
 printPmtkFigure('linregLogTransformRaw')
 
 %% Log transform
-x = log(x); y = log(y);
-m = linregFitComplex(x, y);
+x = log(x); 
+y = log(y);
+m = linregFit(x, y);
 yhat = linregPredict(m, x);
 figure; hold on
 plot(x, y, 'o', 'markersize', 10);
 plot(x, yhat, '-', 'linewidth', 2);
 xlabel('log body weight')
 ylabel('log brain weight')
+axis tight
 printPmtkFigure('linregLogTransformLog')

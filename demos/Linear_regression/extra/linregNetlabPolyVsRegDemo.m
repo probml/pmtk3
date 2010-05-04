@@ -21,10 +21,10 @@ Xtrain = degexpand(Xtrain, deg, false);
 [Xtest] = rescaleData(xtest);
 Xtest = degexpand(Xtest, deg, false);
 
-modelLS = linregFitComplex(Xtrain,ytrain, 'lambda', 0);
+modelLS = linregFit(Xtrain,ytrain, 'lambda', 0);
 fprintf('%5.3f, ', modelLS.w); fprintf('\n');
 
-modelRidge = linregFitComplex(Xtrain, ytrain,'lambda',  1e-3)
+modelRidge = linregFit(Xtrain, ytrain,'lambda',  1e-3)
 fprintf('%5.3f, ', modelRidge.w); fprintf('\n');
 
 
@@ -70,7 +70,7 @@ figure; hold on
 ndx =  log(lambdas); % 1:length(lambdas);
 plot(ndx, trainMse, 'bs:', 'linewidth', 2, 'markersize', 12);
 plot(ndx, testMse, 'rx-', 'linewidth', 2, 'markersize', 12);
-legend('train mse', 'test mse')
+legend('train mse', 'test mse', 'location', 'northwest')
 xlabel('log regularizer')
 printPmtkFigure('linregL2PolyVsReg-mse')
 

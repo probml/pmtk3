@@ -49,7 +49,10 @@ Xraw = X;
 
 %% set defaults
 if strcmpi(regType, 'none')
-    regType = 'l2'; lambda = 0;
+    regType = 'l2'; 
+    if isempty(lambda)
+        lambda = 0;
+    end
 end
 
 % Pick suitable default optimization method
