@@ -31,12 +31,14 @@ model = linregFitBayes(Xtrain, ytrain, ...
 [mu, v] = linregPredictBayes(model, Xtest);
 figure;
 hold on;
-h = plot(xtest, mu,  'k-', 'linewidth', 3);
-h = plot(xtest, ytestNoisefree,  'b:', 'linewidth', 3);
-h = plot(xtrain,ytrain,'ro','markersize',14,'linewidth',3);
+plot(xtest, mu,  'k-', 'linewidth', 3, 'displayname', 'prediction');
+plot(xtest, ytestNoisefree,  'b:', 'linewidth', 3, 'displayname', 'truth');
+plot(xtrain,ytrain, 'ro', 'markersize', 14, 'linewidth', 3, ...
+    'displayname', 'training data');
 NN = length(xtest);
 ndx = 1:5:NN; % plot subset of errorbars to reduce clutter
 sigma = sqrt(v);
+legend('location', 'northwest'); 
 hh=errorbar(xtest(ndx), mu(ndx), sigma(ndx));
-title('bayes');
+title('bayes (known variance)');
 
