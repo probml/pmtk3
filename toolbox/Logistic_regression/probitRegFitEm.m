@@ -12,7 +12,8 @@ end
 done = false;
 i = 1;
 % initial guess 
-model = linregFitComplex(X, y,'lambda', lambda,'fitMethod', 'qr','standardizeX', false)';
+model = linregFit(X, y,'lambda', lambda, ...
+    'preproc', struct('standardizeX', false));
 w(i,:) = model.w;
 
 
@@ -27,7 +28,8 @@ while ~done
    normcdfvect=normcdf(-vect);
    y_latent=vect+sign(y).*normpdfvect./(y01-sign(y).*normcdfvect);
    % M step
-   model = linregFitComplex(X, y_latent, 'lambda', lambda, 'fitMethod', 'qr', 'standardizeX', false);
+   model = linregFit(X, y_latent, 'lambda', lambda, ...
+       'precproc', struct('standardizeX', false));
    w(i,:) = rowvec(model.w);
    % Convergence test
    logpdf(i) = ProbitLoss(w(i,:)',X,y) + (lambda)*sum(w(i,:).^2);

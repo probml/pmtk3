@@ -29,8 +29,8 @@ mixweight = normalize(ones(K,1));
 perm = randperm(K);
 for t = 1:T
     lambda = 0.001;
-    models{t} = linregFitComplex(X, Y(:,t), 'regtype', 'L2', 'lambda', lambda, ...
-        'standardizeX', false);
+    models{t} = linregFit(X, Y(:,t), 'regtype', 'L2', 'lambda', lambda, ...
+        'preproc', struct('standardizeX', false));
     b(t) = models{t}.w0;
     sigma2(t) = models{t}.sigma2;
 end

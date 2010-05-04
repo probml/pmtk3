@@ -15,7 +15,7 @@ for m=1:length(degs)
   addOnes = false;
   Xtrain = rescaleData(degexpand(xtrain, deg, addOnes)); 
   Xtest = rescaleData(degexpand(xtest, deg, addOnes));
-  model = linregFitComplex(Xtrain, ytrain, 'lambda', 0);
+  model = linregFit(Xtrain, ytrain);
   ypredTrain = linregPredict(model, Xtrain);
   ypredTest = linregPredict(model, Xtest);
   

@@ -12,7 +12,8 @@ lambdas = [0 0.00001 0.001];
 NL = length(lambdas);
 for k=1:NL
     lambda = lambdas(k);
-    [model] = linregFitComplex(Xtrain, ytrain, 'lambda', lambda, 'fitMethod', 'QR', 'standardizeX', false);
+    model = linregFit(Xtrain, ytrain, 'lambda', lambda, ...
+        'preproc', struct('standardizeX', false));
     [ypredTest, s2] = linregPredict(model, Xtest);
     sig = sqrt(s2);
     
@@ -31,7 +32,8 @@ NL = length(lambdas);
  testMse = zeros(1,NL); trainMse = zeros(1,NL);
 for k=1:NL
     lambda = lambdas(k);
-    [model] = linregFitComplex(Xtrain, ytrain, 'lambda', lambda, 'fitMethod', 'QR', 'standardizeX', false);
+    [model] = linregFit(Xtrain, ytrain, 'lambda', lambda,...
+        'preproc', struct('standardizeX', false));
     ypredTest = linregPredict(model, Xtest);
     ypredTrain = linregPredict(model, Xtrain);
 
@@ -44,7 +46,7 @@ figure; hold on
 ndx =  log(lambdas); % 1:length(lambdas);
 plot(ndx, trainMse, 'bs:', 'linewidth', 2, 'markersize', 12);
 plot(ndx, testMse, 'rx-', 'linewidth', 2, 'markersize', 12);
-legend('train mse', 'test mse')
+legend('train mse', 'test mse', 'location', 'northwest')
 xlabel('log regularizer')
 printPmtkFigure('linregL2PolyVsReg-mse')
 

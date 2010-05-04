@@ -22,8 +22,8 @@ for f=1:CVnfolds
     Xtest = X(testfolds{f},:);   ytest = y(testfolds{f},:);
     for s = 1:nss
         vars = [1,allvars(supports(s,:))+1];
-        model = linregFitComplex(Xtrain(:, vars), ytrain,...
-            'lambda', lambdaRidge, 'standardizeX', 'false');
+        model = linregFit(Xtrain(:, vars), ytrain,...
+            'lambda', lambdaRidge, 'preproc', struct('standardizeX', false));
         w = model.w; 
         %w = Xtrain(:,vars)\ytrain;
         yhat =  Xtest(:,vars)*w;

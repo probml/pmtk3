@@ -59,7 +59,8 @@ end
 switch(param.model)
     case 'ridge'
         % no EM required
-        model = linregFitComplex(A, y, 'lambda', param.c, 'fitMethod', 'qr','standardizeX', false);
+        model = linregFit(A, y, 'lambda', param.c, ...
+            'preproc', struct('standardizeX', false));
         w = model.w;
         sigma = mean((A*w - y).^2);
         logpostTrace = [];

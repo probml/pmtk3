@@ -19,8 +19,8 @@ for d=1:numel(degrees)
         xtrain = addOnes(degexpand(xtrain, deg)); 
         xtest  = addOnes(degexpand(xtest, deg)); 
         %% Fit 
-        model = linregFitComplex(xtrain, ytrain, 'lambda', lambda, ...
-            'standardizeX', false);
+        model = linregFit(xtrain, ytrain, 'lambda', lambda, ...
+            'preproc', struct('standardizeX', false));
         %% Predict
         yhatTrain = linregPredict(model, xtrain); 
         trainMse(i) = mean((ytrain - yhatTrain).^2);
