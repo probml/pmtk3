@@ -68,6 +68,7 @@ if isempty(fitMethod)
 end
 %% preprocess X, (kernelization happens later)
 pre = struct(); 
+Xraw = X;
 if standardizeX
     [X, pre.Xmu]   = centerCols(X);
     [X, pre.Xstnd] = mkUnitVariance(X);
@@ -144,7 +145,8 @@ fitCv(paramRange, fitfn, @linregPredict, lossFn, X, y, nfolds, useSErule, doPlot
 
 model = catstruct(model, pre);  % add preprocessor info to model
 %%
-yhat = linregPredict(model, X);
+%yhat = linregPredict(model, X);
+yhat = linregPredict(model, Xraw);
 model.sigma2 = var((yhat - y).^2); % MLE
 
 end % end of main function

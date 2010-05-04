@@ -19,7 +19,7 @@ function [model, bestParam, mu, se] = fitCv(params, fitFn, predictFn, lossFn, X,
 %
 % Outputs
 % model  - best model
-% bestNdx - index of best model
+% bestParam - 
 % mu(i) - mean loss for params(i,:)
 % se(i) - standard error for mu(i,:)
 

@@ -10,9 +10,16 @@ Xtest1 = [ones(size(Xtest,1),1) Xtest];
 ypredTest = Xtest1*w;
 
 %% Use pmtk functions to do same thing
-model = linregFit(Xtrain, ytrain, 'lambda', 0);
-[ypredTest2, v] = linregPredict(model, Xtest);
+model2 = linregFit(Xtrain, ytrain, 'lambda', 0);
+[ypredTest2, v2] = linregPredict(model2, Xtest);
 assert(approxeq(ypredTest, ypredTest2))
+
+model3 = linregFitSimple(Xtrain, ytrain, 'lambda', 0);
+[ypredTest3, v3] = linregPredict(model3, Xtest);
+assert(approxeq(model2.w, model3.w))
+assert(approxeq(model2.sigma2, model3.sigma2))
+assert(approxeq(ypredTest, ypredTest3))
+assert(approxeq(v2, v3))
 
 %% Plot
 figure;
