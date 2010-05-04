@@ -26,15 +26,20 @@ doPlot(w_true, w_true, 'true')
 
 %% Fit
 lambda = 10;
-methods = {'shooting', 'em', 'lars', 'interiorPoint'};
+
+methods = { @linregFitL1Shooting         , ...
+            @linregFitLassoEm            , ...
+            @linregFitL1LarsSingleLambda , ...
+            @linregFitL1InteriorPoint
+           };
 for i=1:length(methods)
     method = methods{i};
-    model{i} = linregFitComplex(X, y, 'lambda', lambda,'regType', 'L1', 'FitMethod', method);
+    model{i} = linregFit(X, y, 'lambda', lambda, 'regType', 'L1', 'fitFn', method);
     if i > 1
         assert(approxeq(model{i}.w, model{1}.w, 1e-1))
     end
     subplot(nr, nc, i+1)
-    doPlot(model{i}.w, w_true, method)
+    doPlot(model{i}.w, w_true, funcName(method))
 end
 
 
