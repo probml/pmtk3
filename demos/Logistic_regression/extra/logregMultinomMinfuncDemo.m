@@ -27,7 +27,8 @@ wSoftmax = [wSoftmax zeros(nVars+1,1)];
 opts.maxIter = 2000;
 opts.TolX   = 1e-7;
 opts.TolFun = 1e-7;
-model = logregFit(X0, y, 'lambda', lambda0, 'standardizeX', false, 'fitOptions', opts);
+model = logregFit(X0, y, 'lambda', lambda0, 'fitOptions', opts, ...
+    'preproc', struct('standardizeX', false), 'fitFn', @logregFitL2Minfunc);
 wMAP = model.w; 
 assert(approxeq(wMAP, wSoftmax))
 

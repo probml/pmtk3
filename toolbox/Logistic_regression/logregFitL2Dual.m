@@ -12,9 +12,9 @@ end
 
 %X = R*V';
 [D N] = size(V); %#ok
-pre=logregFit(R, y, 'lambda', lambda,...
-     'regType', 'L2', 'standardizeX', false);
-model.includeOffset = pre.includeOffset;
+pre = logregFit(R, y, 'lambda', lambda,...
+     'regType', 'L2', 'preproc', struct('standardizeX', false));
+model.preproc.includeOffset = pre.preproc.includeOffset;
 model.binary = pre.binary;
 model.ySupport = pre.ySupport;
 model.w = [pre.w(1,:); V*pre.w(2:N+1,:)];
@@ -30,6 +30,7 @@ X = randn(N,D);
 y = sampleDiscrete([0.25 0.25 0.25 0.25], N,1);
 lambda = 1;
 [ model1 ] = logregFitL2Dual( X, y, lambda);
-[ model2 ] = logregFit(X, y, 'regType', 'L2', 'lambda', lambda, 'standardizeX', false);
+[ model2 ] = logregFit(X, y, 'regType', 'L2', 'lambda', lambda, 'preproc',...
+ struct('standardizeX', false));
 assert(approxeq(model1.w, model2.w))
 end

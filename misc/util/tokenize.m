@@ -17,16 +17,21 @@ function tokens = tokenize(str, delimiter)
 %     'canal'
 %     'panama!'
 %
-% Note, Matlab's regexp does a lot of this work automatically if you use
-% 'split' mode, but Octave does not support this, hence the following code.
-
+%%
 if(nargin < 2)
     delimiter = ' ' ;
 end
+
+% We use try catch here since tokenize is used by initPmtk3 before we
+% know if the user is running Octave or Matlab.
 try 
     tokens = textscan(str,'%s','delimiter',delimiter, 'bufsize', 100000);
     tokens = tokens{:};
 catch %#ok
+    % Note, Matlab's regexp does a lot of this work automatically if you use
+    % 'split' mode, but Octave does not support this, hence the following
+    % code.
+    
     delimiter = ['[',delimiter, ']'];
     [start, finish] = regexp(str, delimiter);
     if isempty(start)
@@ -40,4 +45,6 @@ catch %#ok
         tokens{i+1} = str(finish(i)+1:start(i+1)-1);
     end
     tokens = filterCell(tokens, @(c)~isempty(strtrim(c)));
+end
+
 end

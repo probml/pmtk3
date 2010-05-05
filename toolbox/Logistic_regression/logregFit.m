@@ -1,90 +1,101 @@
-function [model, varargout] = logregFit(X, y, varargin)
+function [model, lambdas, muLoss, seLoss] = logregFit(X, y, varargin)
 % Fit a logistic regression model, (supports multiclass)
 %% INPUTS: (specified as name value pairs)
-% regType       ... L1 or L2
+% regType       ... 'L1' or 'L2'
+% nclasses      ... the number of output classes
 % lambda        ... regularizer (can be a range tuned via cv)
-%               each ROW should contain the combination of desired lambdas
-% kernelFn      ... @(X, X1, kernelParam)
-% kernelParam   ... e.g. sigma in an RBF kernel (can be a range tuned via cv)
-% fitMethod     ... regType dependent, e.g. minfunc
+%                   each ROW should contain the combination of desired
+%                   lambdas
+% fitFn         ... regType dependent, e.g. minfunc
+%                   @(objective, winit, lambda, fitOptions, X, y);
+% 
 % fitOptions    ... optional fitMethod args (a struct)
-% standardizeX  ... if true, call mkUnitVariance(center(X))
-% rescaleX      ... if true, call rescaleData(X, scaleXrange(1), scaleXrange(2))
-% scaleXrange   ... [minX, maxX], e.g. [-1 1]
-% nregParams    ... number of auto-generated regularizer params to cv over
-% nkernelParams ... number of auto-generated kernel params to cv over
+% includeOffset ... if true, a column of ones is added to X (default true)
+% preproc       ... a struct, passed to preprocessorApplyToTtrain
+%% cross validation related inputs
+% nlambdas      ... number of auto-generated regularizer params to cv over
 % nfolds        ... number of folds in the cross validation
 % useSErule     ... if true, pick simplest model within one stderr of best
-% includeOffset ... if true, a column of ones is added to X (default true)
-% doPlot        ... if true, plot the cv curve or cv grid
+% plotCv        ... if true, plot the cv curve or cv grid
 %% OUTPUTS:
 % model         ... a struct, which you can pass directly to logregPredict
-% varargout{1}  ... the best parameter values chosen by CV
-% varargout{2}  ... mean loss
-% varargout{3}  ... standard error of varargout{2}
+% lambdas       ... values searched over by CV (best stored in
+%                   model.lambda)
+% muLoss(k)     ... mean loss incurred by lambdas(k)
+% seLoss(k)     ... standard error of muLoss(k)
 %%
 y = y(:);
-assert(size(y, 1) >= size(y, 2));
 assert(size(y, 1) == size(X, 1));
 %% process options
 args = prepareArgs(varargin); % converts struct args to a cell array
 [   nclasses      ...
     regType       ...
     lambda        ...
-    kernelFn      ...
-    kernelParam   ...
-    fitMethod     ...
+    preproc       ...
+    fitFn         ...
     fitOptions    ...
-    standardizeX  ...
-    rescaleX      ...
-    scaleXrange   ...
     nlambdas      ...
-    nkernelParams ...
     nfolds        ...
     useSErule     ...
-    includeOffset ...
-    doPlot        ...
+    plotCv        ...
     ] = process_options(args    , ...
     'nclasses'      , nunique(y), ...
-    'regType'       , 'none'      , ...
+    'regType'       , 'none'    , ...
     'lambda'        ,  []       , ...
-    'kernelFn'      ,  []       , ...
-    'kernelParam'   ,  []       , ...
-    'fitMethod'     ,  ''       , ...
+    'preproc'       ,  []       , ...
+    'fitFn'         ,  ''       , ...
     'fitOptions'    , []        , ...
-    'standardizeX'  , true      , ...
-    'rescaleX'      , false     , ...
-    'scaleXrange'   , [-1,1]    , ...
     'nlambdas'      , 10        , ...
-    'nkernelParams' , 10        , ...
     'nfolds'        , 5         , ...
     'useSErule'     , false     , ...
-    'includeOffset' , true      , ...
-    'doPlot'        , false  );
+    'plotCv'        , false  );
 %% set defaults
-isbinary = nclasses < 3;
-if strcmpi(regType, 'none') && isempty(lambda)
-    regType = 'l2';
-    lambda = 0;
+if isempty(nclasses)
+    nclasses = min(nunique(y), 2);
 end
-if isempty(fitMethod)
-    switch lower(regType)
-        case 'l1'  , fitMethod = 'l1projection';
-        case {'l2', 'none'}  , fitMethod = 'minfunc';
+isbinary = nclasses < 3;
+if strcmpi(regType, 'none')
+    regType = 'l2';
+    if isempty(lambda)
+        lambda = 0;
     end
 end
+if isempty(fitFn)
+    switch lower(regType)
+        case 'l1'
+            fitFn = @L1GeneralProjection;
+        case 'l2'
+            fitFn = @logregFitL2Minfunc;
+    end
+end
+opts = fitOptions;
+if isempty(opts)
+    opts.Display     = 'none';
+    opts.verbose     = false;
+    if size(X, 2) > 100
+        opts.TolFun      = 1e-3;
+        opts.MaxIter     = 200;
+        opts.Method      = 'lbfgs';
+        opts.MaxFunEvals = 2000;
+        opts.TolX        = 1e-3;
+        if strcmpi(funcName(fitFn), 'L1GeneralProjection')
+            opts.order = -1; % Turn on using L-BFGS
+            if size(X, 2) > 1000
+                opts.corrections = 10; %  num. LBFGS corections
+            end
+        end
+    end
+end
+if isempty(lambda)
+    lambda = colvec(linspace(1e-5, 20, nlambdas));
+end
 
-%% preprocess X, (kernelization happens later)
-pre = struct();
-if standardizeX
-    [X, pre.Xmu]   = centerCols(X);
-    [X, pre.Xstnd] = mkUnitVariance(X);
+%% preprocess X
+if ~isfield(preproc, 'includeOffset')
+    preproc.includeOffset = true;
 end
-if rescaleX
-    X = rescale(X, scaleXrange(1), scaleXrange(2));
-    pre.Xscale = scaleXrange;
-end
-%%
+[preproc, X] = preprocessorApplyToTrain(preproc, X);
+%% set objective
 if isbinary
     [y, ySupport] = setSupport(y, [-1 1]);
     objective = @LogisticLossSimple;
@@ -92,92 +103,36 @@ else
     [y, ySupport] = setSupport(y, 1:nclasses);
     objective = @(w, X, y)SoftmaxLoss2(w, X, y, nclasses);
 end
-
-%% construct fit function
-opts = fitOptions;
-if isempty(opts)
-    opts.Display     = 'none';
-    if size(X, 2) > 100
-        opts.TolFun      = 1e-3;
-        opts.verbose     = false;
-        opts.MaxIter     = 200;   opts.Method = 'lbfgs';
-        opts.MaxFunEvals = 2000;  opts.TolX   = 1e-3;
-        opts.Corr = 10; % number of corrections for LBFGS (small to save memory)
-    end
-    
-    if strcmpi(fitMethod, 'l1projection')
-        % for L1GeneralProjection
-        opts.order = -1; % Turn on using L-BFGS
-        opts.corrections = 10; %  num. LBFGS corections
-    end
-end
-
-
-switch lower(fitMethod)
-    case 'minfunc'
-        switch lower(regType)
-            case 'l1' % smooth approximation
-                fitCore = @(X,y,winit,l)minFunc(@penalizedL1, winit(:),opts, @(w)objective(w, X, y), l(:));
-            case {'l2', 'none'}
-                fitCore = @(X,y,winit,l)minFunc(@penalizedL2, winit(:),opts, @(w)objective(w, X, y), l(:));
-        end
-    case 'l1projection'
-        fitCore = @(X,y,winit,l)L1GeneralProjection(objective, winit(:), l(:), opts, X, y);
-    case 'grafting'
-        fitCore = @(X,y,winit,l)L1GeneralGrafting(objective, winit(:), l(:), opts, X, y);
-    otherwise
-        error('unrecognized fitMethod: %s', fitMethod);
-end
-if isempty(kernelFn)
-    fitfn = @(X, y, param)simpleFit(X, y, param, fitCore, nclasses, includeOffset);
+%% construct fit function / optimizer
+fitFn = @(X, y, winit, l)fitFn(objective, winit, l, opts, X, y);
+fitFn = @(X, y, lambda)fitWrapper(X, y, lambda, fitFn, nclasses, ...
+    preproc.includeOffset);
+%%
+if numel(lambda) == 1
+    model = fitFn(X, y, lambda);
 else
-    fitfn = @(X, y, param)kernelizedFit(X, y, param(1), param(2), fitCore, kernelFn, nclasses, includeOffset);
-end
-
-%% constuct parameter space
-if ~isempty(kernelFn) && isempty(kernelParam)
-    switch func2str(kernelFn)
-        case 'kernelRbfSigma'
-            kernelParam = logspace(-1, 1, nkernelParams)';
-        case 'kernelPoly',
-            kernelParam = (1:nkernelParams)';
-        otherwise
-            kernelParam = logspace(-1, 1, nkernelParams)';
+    %% cross validation
+    if plotCv
+        fprintf('cross validating over \n');
+        disp(lambda)
     end
+    lossFn = @(y, yhat)mean((y-yhat).^2);
+    nfolds = min(size(X, 1), nfolds);
+    [model, bestLambda, muLoss, seLoss] = ...
+        fitCv(lambda, fitFn, @logregPredict, lossFn, X, y, nfolds, ...
+        useSErule, plotCv);
 end
-if isempty(lambda)
-    lambda = colvec(linspace(1e-5, 20, nlambdas));
-end
-
-if isempty(kernelParam)
-    paramRange = lambda;
-else
-    paramRange = crossProduct(lambda, kernelParam);
-end
-if doPlot
-    fprintf('cross validating over \n');
-    disp(paramRange)
-end
-%% cross validation
-lossFn = @(y, yhat)mean((y-yhat).^2);
-nfolds = min(size(X, 1), nfolds);
-[model, varargout{1}, varargout{2}, varargout{3}] = ...
-    fitCv(paramRange, fitfn, @logregPredict, lossFn, X, y, nfolds, useSErule, doPlot);
-
-model = catstruct(model, pre);  % add preprocessor info to model
-model.binary = isbinary;
+%%
+lambdas = lambda;
 model.ySupport = ySupport;
+model.preproc = preproc;
 end % end of main function
 
-
-function model = simpleFit(X, y, lambda, fitFn, nclasses, includeOffset)
-% Fit function wrapper
-
+function model = fitWrapper(X, y, lambda, fitFn, nclasses, includeOffset)
+% wrap the fit function - this subfunction will be called repeatedly
+% during cross validation.
+%%
 isbinary = nclasses < 3;
-if includeOffset
-    X = [ones(size(X, 1), 1), X];
-end
-model.includeOffset = includeOffset;
 d = size(X, 2);
 model.lambda = lambda;
 lambda = lambda*ones(d, nclasses-1);
@@ -185,7 +140,7 @@ if includeOffset
     lambda(1, :) = 0; % Don't penalize bias term
 end
 winit  = zeros(d, nclasses-1);
-w = fitFn(X, y, winit, lambda(:));
+w = fitFn(X, y, winit(:), lambda(:));
 if ~isbinary
     w = [reshape(w, [d nclasses-1]) zeros(d, 1)];
 end
@@ -196,39 +151,4 @@ if isbinary
 else
     model.ySupport = 1:nclasses;
 end
-
-
-end
-
-function model = kernelizedFit(X, y, lambda, kernelParam, fitfn, kernelFn, nclasses, includeOffset)
-% Fit function wrapper
-
-isbinary = nclasses < 3;
-K = kernelFn(X, X, kernelParam);
-if includeOffset
-    K = [ones(size(K, 1), 1), K];
-end
-model.includeOffset = includeOffset;
-d = size(K, 2);
-model.lambda = lambda;
-lambda = lambda*ones(d, nclasses-1);
-if includeOffset
-    lambda(1, :) = 0; % Don't penalize bias term
-end
-winit  = zeros(d, nclasses-1);
-w  = fitfn(K, y, winit, lambda(:));
-if ~isbinary
-    w = [reshape(w, [d nclasses-1]) zeros(d, 1)];
-end
-model.w  = w;
-model.basis = X;
-model.kernelFn = kernelFn;
-model.kernelParam = kernelParam;
-model.binary = isbinary;
-if isbinary
-    model.ySupport = [-1 1];
-else
-    model.ySupport = 1:nclasses;
-end
-
 end

@@ -1,5 +1,6 @@
 % Example from Johnson and Albert p87
-
+%
+%% Load data
 stat = load('satData.txt'); 
 % Johnson and Albert p77 table 3.1
 % stat=[pass(0/1), 1, 1, sat_score, grade in prereq]
@@ -8,14 +9,14 @@ stat = load('satData.txt');
 y = stat(:,1);
 N = length(y);
 X = stat(:,4);
+%% Sort data
 perm = sortidx(X, 'ascend');
 X = X(perm);
 y = y(perm);
-
+%% Fit model
 model = logregFit(X, y,'lambda', 0);
 [yhat, prob] = logregPredict(model, X);
-
-% visualize model fit for each training point
+%% visualize model fit for each training point
 figure;
 plot(X, y, 'ko', 'linewidth', 2, 'MarkerSize', 10);
 hold on
@@ -25,6 +26,5 @@ axis_pct
 % draw vertical line at location where SAT score has 2 different label
 h = line([525 525], [0 1]);
 set(h, 'color', 'k', 'linewidth', 2);
-
 printPmtkFigure('logregSATdemo')
 

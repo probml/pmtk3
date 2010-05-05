@@ -38,7 +38,8 @@ for i = 1:Polynomial_Order
 end
 [N,D] = size(XtrainPoly);
 
-model = logregFit(XtrainPoly,ytrain,'lambda', lambda,'standardizeX', false);
+model = logregFit(XtrainPoly,ytrain,'lambda', lambda, 'preproc', ...
+    struct('standardizeX', false));
 wMAP = model.w;
 fn = @(w)LogisticLossSimple(w, addOnes(XtrainPoly), ytrain); 
 [f,g,H] = penalizedL2(wMAP, fn, lambda);

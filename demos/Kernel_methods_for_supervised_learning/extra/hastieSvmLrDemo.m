@@ -119,9 +119,9 @@ for j=1:numel(kernel)
                 
             case 'logreg'
                 %% Fit LR
+                preproc.kernelFn = @(X1, X2)kernel{j}(X1, X2, kernelArgs{j}{2});
                 lrModel = logregFit(Xtrain, ytrain, 'regType', 'l2',...
-                    'lambda', 1/Cvalues(i), 'kernelFn', kernel{j},  ...
-                    kernelArgs{j}{:});
+                    'lambda', 1/Cvalues(i), 'preproc', preproc); 
                 trainError = mean(ytrain~= logregPredict(lrModel, Xtrain));
                 testError  = mean(ytest ~= logregPredict(lrModel, Xtest ));
                 

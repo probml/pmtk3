@@ -9,12 +9,14 @@ function [model, lambdas, muLoss, seLoss] = linregFit(X, y, varargin)
 % lambda        ... regularizer (can be a range tuned via cv)
 % fitFn         ... fit function  [default depends on regType]
 % fitOptions    ... optional  args (a cell array) to fitFn
+%                   @(X, y, lambda, fitOptions{:})
 % preproc       ... a struct, passed to preprocessorApplyToTtrain
-% Parameters relating to cross validation
-%    nlambdas      ... number of auto-generated regularizer params to cv over
-%    nfolds        ... number of folds in the cross validation
-%    useSErule     ... if true, pick simplest model within one stderr of best
-%    plotCv        ... if true, plot the cv curve or cv grid
+% 
+%% Parameters relating to cross validation
+% nlambdas      ... number of auto-generated regularizer params to cv over
+% nfolds        ... number of folds in the cross validation
+% useSErule     ... if true, pick simplest model within one stderr of best
+% plotCv        ... if true, plot the cv curve or cv grid
 %% OUTPUTS:
 % model         ... a struct, which you can pass directly to linregPredict
 % lambdas       ... values searched over by CV

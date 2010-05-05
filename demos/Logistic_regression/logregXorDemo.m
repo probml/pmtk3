@@ -15,7 +15,8 @@ function logregXorDemo()
     
     %% RBF Features
     rbfScale = 1;
-    model = logregFit(X, y, 'lambda', lambda, 'kernelFn', @kernelRbfSigma, 'kernelParam', rbfScale);
+    preproc.kernelFn = @(X1, X2)kernelRbfSigma(X1, X2, rbfScale); 
+    model = logregFit(X, y, 'lambda', lambda, 'preproc', preproc); 
     yhat = logregPredict(model, X);
     errorRate = mean(yhat ~= y);
     fprintf('Error rate using RBF features: %2.f%%\n', 100*errorRate);

@@ -35,8 +35,9 @@ end
 % L1 is very slow, L2 is somewhat slow
 
 %methods = {'nsc', 'nb', 'rda', 'knn', 'l2logreg', 'svm', 'l1logreg'}; 
-%methods = {'nsc', 'nb', 'rda', 'knn', 'l2logreg', 'svm'}; 
-methods = {'nsc', 'nb', 'rda', 'knn', 'svm'};
+methods = {'nsc', 'nb', 'rda', 'knn', 'l2logreg', 'svm'}; 
+%methods = {'nsc', 'nb', 'rda', 'knn', 'svm'};
+
 % warning - l1logreg can take upwards of 6 hours to run. 
 M = length(methods);
 
@@ -45,7 +46,7 @@ for m=1:M
   switch method
     case 'nsc'
       name{m} = 'Nearest shrunken centroids';
-      params = linspace(0, 10, 10);
+      params = linspace(0, 10, 10)';
       fitFn = @naiveBayesGaussFitShrunkenCentroids;
       predictFn = @naiveBayesGaussPredict;
       noGenesFn = @(model)sum(model.relevant);
@@ -57,8 +58,8 @@ for m=1:M
       noGenesFn = @(model)D;
     case 'rda'
       name{m} = 'Regularized discriminant analysis';
-      params = linspace(0, 2, 10);
-      % we don;t have to do multiple SVDs, since we
+      params = linspace(0, 2, 10)';
+      % we don't have to do multiple SVDs, since we
       % are just changing the weighting term
       [U S V] = svd(xtrain_std, 'econ');
       R = U*S;
@@ -67,25 +68,25 @@ for m=1:M
       noGenesFn = @(model)D;
     case 'knn'
       name{m} = 'k-nearest neighbors';
-      params = 1:3;
+      params = (1:3)';
       fitFn = @knnFit;
       predictFn = @knnPredict;
       noGenesFn = @(model)D;
     case 'l2logreg'
       name{m} = 'l2logreg';
-      params = linspace(0, 10, 10);
+      params = linspace(0, 10, 10)';
       fitFn = @(X, y, lambda)logregFitL2Dual(X, y, lambda);
       predictFn = @logregPredict;
       noGenesFn = @(m) D;
     case 'l1logreg'
       name{m} = 'l1-penalized logistic regression';
-      params = linspace(1, 10, 10);
+      params = linspace(1, 10, 10)';
       fitFn = @(X, y, param)logregFit(X, y, 'lambda', param,...
-        'regType', 'L1', 'fitMethod', 'minFunc');
+        'regType', 'L1', 'fitOptions', struct('corrections', 50, 'maxIter', 20));
       predictFn = @logregPredict;
       noGenesFn = @(model) sum(sum(model.w,1)~=0);
     case 'svm'
-      params =  logspace(-1,1,5);
+      params =  logspace(-1,1,5)';
       name{m} = 'SVM';
       fitFn = @(X, y, param) svmFit(X, y, 'kernel', 'linear', 'C', param); 
       predictFn = @svmPredict;

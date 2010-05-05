@@ -1,7 +1,7 @@
 function [preproc, X] = preprocessorApplyToTrain(preproc, X)
 % Apply Preprocessor to training data and memorize parameters
 % preproc is initially a struct with the following fields [default]
-% 
+%
 % standardizeX - if true, makes columsn of X zero mean and unit variance [true]
 % rescaleX - if true, scale columns of X to lie in [-1, +1] [false]
 % kernelFn - if not [], apply kernel fn to X  default []
@@ -25,6 +25,12 @@ if preproc.rescaleX
 end
 
 if ~isempty(preproc.kernelFn)
-  preproc.basis = X;
-  X = preproc.kernelFn(X, preproc.basis);
+    preproc.basis = X;
+    X = preproc.kernelFn(X, preproc.basis);
+end
+
+if isfield(preproc, 'includeOffset') && preproc.includeOffset
+    X = addOnes(X);
+end
+
 end

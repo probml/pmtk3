@@ -17,7 +17,8 @@ rbfScale  = 1;
 %% No Kernel
 modelLinear = logregFit(X, y, 'lambda', lambda);
 %% 
-fitkern = @(k,p)logregFit(X, y, 'lambda', lambda, 'kernelFn', k, 'kernelParam', p); 
+fitkern = @(k, p)logregFit(X, y, 'lambda', lambda, ...
+    'preproc', struct('kernelFn', @(X1, X2)k(X1, X2, p))); 
 %% Polynomial
 modelPoly = fitkern(@kernelPoly, polyOrder); 
 %% RBF

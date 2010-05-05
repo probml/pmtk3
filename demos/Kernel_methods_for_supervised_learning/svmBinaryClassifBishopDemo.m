@@ -18,12 +18,7 @@ Ktrain =  kernelFn(X, X, rbfScale);
 
 logregArgs.lambda = lambda;
 logregArgs.regType = 'L2';
-logregArgs.kernelFn = @kernelRbfSigma;
-logregArgs.kernelParam = rbfScale; 
-
-
-%[model, bestParams, cvMU, cvSigma] = svmlightFitCV(X, y); 
-
+logregArgs.preproc.kernelFn = @(X1, X2)kernelRbfSigma(X1, X2, rbfScale);
 
 %% Train and test
 for method=1:4

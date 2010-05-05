@@ -25,11 +25,11 @@ if nargout > 2
     H = [H -H;-H H];
 end
 
-global computeTrace;
-% Update trace
-if computeTrace
-    global free
-    fr = sign(free(1:p)+free(p+1:end));
-    updateTrace(w,f,sum(fr==1));
-end
+% global computeTrace;
+% % Update trace
+% if computeTrace
+%     global free
+%     fr = sign(free(1:p)+free(p+1:end));
+%     updateTrace(w,f,sum(fr==1));
+% end
 end

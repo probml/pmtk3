@@ -9,9 +9,7 @@ end
 lambdaRange = []; % auto-generated
 includeOffset = true;
 nfolds = 5;
-%fitArgs = {@penalizedL2,  lambdaRange, includeOffset, nfolds};
-fitArgs = {[],  lambdaRange, includeOffset, nfolds};
-mlcompCompiler('logregFit', 'logregPredict', tmpFolder, fitArgs);
+mlcompCompiler('logregFit', 'logregPredict', tmpFolder);
 
 %% Now convert data
 dataFile = fullfile(tmpFolder, 'satData-mlcomp.txt');

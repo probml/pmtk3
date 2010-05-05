@@ -1,5 +1,5 @@
 function [X] = preprocessorApplyToTest(preproc, X)
-% Apply Preprocessor to test data 
+% Apply Preprocessor to test data
 
 if isempty(preproc), return; end
 
@@ -15,4 +15,9 @@ if isfield(preproc, 'Xscale')
 end
 if isfield(preproc, 'kernelFn') && ~isempty(preproc.kernelFn)
     X = preproc.kernelFn(X, preproc.basis);
+end
+if isfield(preproc, 'includeOffset') && preproc.includeOffset
+    X = addOnes(X);
+end
+
 end

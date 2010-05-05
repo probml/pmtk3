@@ -10,7 +10,7 @@
 % This makes hardly any difference to the training error.
 
 options.Display = 'none';
-rand('state',0); randn('state', 0);
+setSeed(0); 
 nClasses = 5;
 %nInstances = 1000;
 nInstances = 100;
@@ -29,17 +29,14 @@ for c = 1:nClasses
       plot(X(y==c,1),X(y==c,2),'.','color',colors(c,:));
    end
 end
-    
 lambda = 1e-2;
-
-% Linear
+%% Linear
 funObj = @(w)SoftmaxLoss2(w,X,y,nClasses);
 fprintf('Training linear multinomial logistic regression model...\n');
 wLinear = minFunc(@penalizedL2,zeros(nVars*(nClasses-1),1),options,funObj,lambda);
 wLinear = reshape(wLinear,[nVars nClasses-1]);
 wLinear = [wLinear zeros(nVars,1)];
-
-% Polynomial
+%% Polynomial
 polyOrder = 2;
 Kpoly = kernelPoly(X,X,polyOrder);
 funObj = @(u)SoftmaxLoss2(u,Kpoly,y,nClasses);
@@ -48,10 +45,8 @@ uPoly = minFunc(@penalizedL2,randn(nInstances*(nClasses-1),1),options,funObj,lam
 %uPoly = minFunc(@penalizedKernelL2_matrix,randn(nInstances*(nClasses-1),1),options,Kpoly,nClasses-1,funObj,lambda);
 uPoly = reshape(uPoly,[nInstances nClasses-1]);
 uPoly = [uPoly zeros(nInstances,1)];
-
-% RBF
+%% RBF
 rbfScale = 1;
-
 Krbf = kernelRbfSigma(X,X,rbfScale);
 funObj = @(u)SoftmaxLoss2(u,Krbf,y,nClasses);
 fprintf('Training kernel(rbf) multinomial logistic regression model...\n');
@@ -59,14 +54,15 @@ uRBF = minFunc(@penalizedL2,randn(nInstances*(nClasses-1),1),options,funObj,lamb
 %uRBF = minFunc(@penalizedKernelL2_matrix,randn(nInstances*(nClasses-1),1),options,Krbf,nClasses-1,funObj,lambda);
 uRBF = reshape(uRBF,[nInstances nClasses-1]);
 uRBF = [uRBF zeros(nInstances,1)];
-
-
-modelRBF = logregFit(X, y, 'kernelFn', @kernelRbfSigma, 'kernelParam', rbfScale,...
-    'lambda', lambda, 'standardizeX', false, 'includeOffset', false, 'fitOptions', struct());
+%% Check against PMTK functions
+preproc.kernelFn = @(X1, X2)kernelRbfSigma(X1, X2, rbfScale);
+preproc.standardizeX = false; 
+preproc.includeOffset = false;
+modelRBF = logregFit(X, y, 'lambda', lambda, 'preproc', preproc,...
+    'fitOptions', struct());
 wRBF = modelRBF.w;
 assert(approxeq(wRBF, uRBF))
-
-% Compute training errors
+%% Compute training errors
 [junk yhat] = max(X*wLinear,[],2);
 trainErr_linear = sum(y~=yhat)/length(y)
 [junk yhat] = max(Kpoly*uPoly,[],2);
