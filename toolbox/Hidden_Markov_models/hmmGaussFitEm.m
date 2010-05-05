@@ -1,110 +1,112 @@
-function model = hmmGaussFitEm(X, nstates, varargin)
+function [model, loglikHist] = hmmGaussFitEm(X, nstates, varargin)
 % Fit an Hmm to Gaussian observations using EM.
 %% Inputs
 % X        - a cell array of observations;
 %            each observation is d-by-seqLength.
-%            
+%
 %
 % nstates  - the number of hidden states.
 %
+%% Optional Inputs
+%
+% pi0, transmat0, emission0 - are used as initial values if specified
+% *** see emAlgo for EM related optional parameters ***
 %% Output
 % model is a struct with fields, pi, A, emission, nstates.
+% model.emission is a cell array of structs - one per emission distribution.
+%
 %%
-[ tol       , ...
-    maxIter   , ...
-    verbose   , ...
-    pi0       , ...
-    transmat0 , ...
-    emission0   ...
-    ] = process_options(varargin ,...
-    'tol'      , 1e-4          ,...
-    'maxIter'  , 100           ,...
-    'verbose'  , true          ,...
-    'pi0'      , []            ,...   % initial guess for starting state dist
-    'transmat0', []            ,...   % initial guess for the transmat
-    'emission0', []);                 % initial guess for the emission dists
-%X = colvec(X); 
+[pi0, transmat0, emission0, EMargs] = process_options(varargin, ...
+    'pi0', [], 'transmat0', [], 'emission0', []);
 if ~iscell(X)
-  if isvector(X) % scalar time series
-    X = rowvec(X);
-  end
-  X = {X};
+    if isvector(X) % scalar time series
+        X = rowvec(X);
+    end
+    X = {X};
 end
-nobs = numel(X);
+%%
+initFn = @(data)init(data, nstates, pi0, transmat0, emission0);
+[model, loglikHist] = emAlgo(X, initFn, @estep, @mstep, [], EMargs{:});
+end
+
+function model = init(data, nstates, pi0, transmat0, emission0)
 %% Initialize
-stackedData = cell2mat(X')';
-seqidx      = cumsum([1, cellfun(@(seq)size(seq, 2), X')]);
-seqidx      = seqidx(1:end-1);
-if isempty(transmat0)
-    transmat = normalize(rand(nstates, nstates), 2); % Each row sums to one
-else
-    transmat = transmat0;
-end
+model.nstates = nstates;
 if isempty(pi0)
-    startDist = normalize(rand(1, nstates));
+    model.pi = normalize(rand(1, nstates));
 else
-    startDist = pi0;
+    model.pi = pi0;
 end
-if isempty(emission0)
-    % Fit on random perturbations of the data, ignoring temporal structure.
+if isempty(transmat0)
+    model.A = normalize(rand(nstates, nstates), 2); % Each row sums to one
+else
+    model.A = transmat0;
+end
+if ~isempty(emission0)
+    model.emission = emission0;
+else % Fit on random perturbations of the data, ignoring temporal structure.
+    stackedData = cell2mat(data')';
     emission = cell(nstates, 1);
     for i=1:nstates
-        data        = stackedData + randn(size(stackedData));
-        emission{i} = gaussFit(data);
+        emission{i} = gaussFit(stackedData + randn(size(stackedData)));
     end
-else
-    emission = emission0;
+    model.emission = emission; 
 end
-%% Setup loop
-it = 1;
-currentLL   = -inf;
-startCounts = zeros(1, nstates);
-transCounts = zeros(nstates, nstates);
-weights     = zeros(size(stackedData, 1), nstates);
-while true
-    previousLL = currentLL;
-    [currentLL, startCounts(:), transCounts(:), weights(:)] = deal(0);
-    for i=1:nobs
-        obs       = X{i}';
-        m.pi      = startDist; m.emission = emission; 
-        m.nstates = nstates  ; m.A        = transmat; 
-        [gamma, loglik, alpha, beta, B] = hmmGaussInfer(m, obs); 
-        currentLL = currentLL + loglik;
-        %% Distribution over starting states
-        startCounts = startCounts + gamma(:, 1)';
-        %% State transition matrix
-        xi_summed = hmmComputeTwoSlice(alpha, beta, transmat, B);
-        transCounts = transCounts + xi_summed;
-        %% Data weights
-        sz  = size(gamma, 2);
-        idx = seqidx(i);
-        ndx = idx:idx+sz-1;
-        weights(ndx, :) = weights(ndx, :) + gamma';
-    end
-    startDist = normalize(startCounts);
-    transmat  = normalize(transCounts, 2);
-    %% Observation distributions
-    for j=1:nstates
-        w    = weights(:, j);
-        n    = sum(w, 1);
-        xbar = sum(bsxfun(@times, stackedData, w))'/n;  % bishop eq 13.20
-        Xc   = bsxfun(@minus, stackedData, xbar');
-        XX   = bsxfun(@times, Xc, w)'*Xc/n;
-        emission{j}.mu    = xbar;
-        emission{j}.Sigma = XX;
-    end
-    %% Check Convergence
-    if verbose, fprintf('%d\t loglik: %g\n', it, currentLL ); end
-    it = it+1;
-    if currentLL < previousLL
-        warning('hmmGaussFitEm:LLdecrease',   ...
-            'The log likelihood has decreased!');
-    end
-    converged = convergenceTest(currentLL, previousLL, tol) || it > maxIter;
-    if converged, break; end
 end
-model.pi = startDist;
-model.A  = transmat;
+
+function [ess, loglik] = estep(model, data)
+%% Compute expected sufficient statistics
+stackedData   = cell2mat(data')';
+seqidx        = cumsum([1, cellfun(@(seq)size(seq, 2), data')]);
+seqidx        = seqidx(1:end-1);
+[nstacked, d] = size(stackedData);
+nstates       = model.nstates;
+startCounts   = zeros(1, nstates);
+transCounts   = zeros(nstates, nstates);
+weights       = zeros(nstacked, nstates);
+loglik = 0;
+A = model.A; 
+nobs = numel(data);
+for i=1:nobs
+    obs = data{i}';
+    [gamma, llobs, alpha, beta, B] = hmmGaussInfer(model, obs);
+    loglik = loglik + llobs;
+    xi_summed = hmmComputeTwoSlice(alpha, beta, A, B);
+    startCounts = startCounts + gamma(:, 1)';
+    transCounts = transCounts + xi_summed;
+    sz  = size(gamma, 2);
+    idx = seqidx(i);
+    ndx = idx:idx+sz-1;
+    weights(ndx, :) = weights(ndx, :) + gamma';
+end
+
+wsum = sum(weights, 1); 
+xbar = bsxfun(@rdivide, stackedData'*weights, wsum); %d-by-nstates
+XX   = zeros(d, d, nstates);
+for j=1:nstates
+    Xc = bsxfun(@minus, stackedData, xbar(:, j)');
+    XX(:, :, j) = bsxfun(@times, Xc, weights(:, j))'*Xc/wsum(j);
+end
+ess.startCounts = startCounts;
+ess.transCounts = transCounts;
+ess.xbar = xbar;
+ess.XX = XX;
+end
+
+function model = mstep(model, ess)
+%% Maximize
+model.pi = normalize(ess.startCounts);
+model.A  = normalize(ess.transCounts, 2);
+xbar = ess.xbar;
+XX   = ess.XX;
+nstates = model.nstates;
+emission = cell(1, nstates);
+for j=1:nstates
+    emission{j}.mu = xbar(:, j);
+    emission{j}.Sigma = XX(:, :, j);
+end
 model.emission = emission;
-model.nstates = nstates;
 end
+
+
+

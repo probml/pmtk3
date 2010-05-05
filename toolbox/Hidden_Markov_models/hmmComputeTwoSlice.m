@@ -20,12 +20,14 @@ end
 xi_summed = zeros(size(transmat));
 for t=T-1:-1:1
     b = beta(:,t+1) .* obslik(:,t+1);
-    tmpXi = normalize((transmat .* (alpha(:,t) * b')));
-    xi_summed = xi_summed + tmpXi;
+    tmpXi = transmat .* (alpha(:,t) * b');
+    xi_summed = xi_summed + tmpXi./sum(tmpXi(:)); % inlined call to normalize
     if computeXi
         xi(:,:,t) = tmpXi;
     end
 end
+
+
 
 
 end

@@ -10,10 +10,10 @@ nsamples = 1000;
 [X, y] = mixDiscreteSample(truth, nsamples); 
 %% Prior
 % use bogus priors just for testing purposes
-distPrior = randi(10, [truth.nstates, 1]); % pseudo counts 
-mixPrior = randi(10, [1, truth.nmix]);     % pseduo counts
+distPrior = sampleDiscrete(normalize(ones(1, 10)), truth.nstates, 1);
+mixPrior  = sampleDiscrete(normalize(ones(1, 10)), 1, truth.nmix);
 %% Fit
-model = mixDiscreteFitEM(X, truth.nmix, 'verbose', true, 'distPrior', distPrior, 'mixPrior', mixPrior);
+[model, llhist] = mixDiscreteFitEM(X, truth.nmix, 'verbose', true, 'distPrior', distPrior, 'mixPrior', mixPrior);
 %% Compare against the best permutation of the cluster labels.
 ypred = mixDiscreteInfer(model, X);
 allperms = perms(1:truth.nmix);
@@ -23,4 +23,4 @@ for i=1:nperms
     errors(i) = sum(y ~= allperms(i, ypred)');
 end
 ypred = allperms(minidx(errors), ypred)';
-errorRate = mean(y~=ypred)
+nerrors = sum(y~=ypred)

@@ -1,4 +1,4 @@
-function [model, loglikHist] = emAlgoAdaptiveOverRelaxed(model, data, estep, mstep, mstepOR, varargin)
+function [model, loglikHist] = emAlgoAdaptiveOverRelaxed(data, init, estep, mstep, mstepOR, varargin)
 % Adaptive over-related EM algorithm
 % Reference: "Adaptive Overrelaxed Bound Optimization Methods",
 % Ruslan Salakhutdinov and Sam Roweis, ICML 2003
@@ -11,6 +11,7 @@ args = varargin;
     args, 'maxIter', 100, 'convTol', 1e-3, 'plotfn', [], 'verbose', false, ...
     'overRelaxFactor', 2);
 
+model = init(data);
 iter = 1;
 done = false;
 eta = 1;
