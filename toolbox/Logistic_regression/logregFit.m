@@ -6,20 +6,19 @@ function [model, lambdas, muLoss, seLoss] = logregFit(X, y, varargin)
 % lambda        ... regularizer (can be a range tuned via cv)
 %                   each ROW should contain the combination of desired
 %                   lambdas
-% fitFn         ... regType dependent, e.g. minfunc
+% fitFn         ... regType dependent, e.g. @L1GeneralProjection
 %                   @(objective, winit, lambda, fitOptions, X, y);
 % 
 % fitOptions    ... optional fitMethod args (a struct)
-% includeOffset ... if true, a column of ones is added to X (default true)
 % preproc       ... a struct, passed to preprocessorApplyToTtrain
 %% cross validation related inputs
 % nlambdas      ... number of auto-generated regularizer params to cv over
 % nfolds        ... number of folds in the cross validation
 % useSErule     ... if true, pick simplest model within one stderr of best
-% plotCv        ... if true, plot the cv curve or cv grid
+% plotCv        ... if true, plot the cv curve 
 %% OUTPUTS:
 % model         ... a struct, which you can pass directly to logregPredict
-% lambdas       ... values searched over by CV (best stored in
+% lambdas       ... values searched over by CV (best value stored in
 %                   model.lambda)
 % muLoss(k)     ... mean loss incurred by lambdas(k)
 % seLoss(k)     ... standard error of muLoss(k)
@@ -89,11 +88,10 @@ end
 if isempty(lambda)
     lambda = colvec(linspace(1e-5, 20, nlambdas));
 end
-
-%% preprocess X
 if ~isfield(preproc, 'includeOffset')
     preproc.includeOffset = true;
 end
+%% preprocess X
 [preproc, X] = preprocessorApplyToTrain(preproc, X);
 %% set objective
 if isbinary
@@ -110,6 +108,8 @@ fitFn = @(X, y, lambda)fitWrapper(X, y, lambda, fitFn, nclasses, ...
 %%
 if numel(lambda) == 1
     model = fitFn(X, y, lambda);
+    muLoss = [];
+    seLoss = [];
 else
     %% cross validation
     if plotCv
@@ -118,9 +118,10 @@ else
     end
     lossFn = @(y, yhat)mean((y-yhat).^2);
     nfolds = min(size(X, 1), nfolds);
+    
     [model, bestLambda, muLoss, seLoss] = ...
         fitCv(lambda, fitFn, @logregPredict, lossFn, X, y, nfolds, ...
-        useSErule, plotCv);
+              useSErule, plotCv);
 end
 %%
 lambdas = lambda;
@@ -137,7 +138,7 @@ d = size(X, 2);
 model.lambda = lambda;
 lambda = lambda*ones(d, nclasses-1);
 if includeOffset
-    lambda(1, :) = 0; % Don't penalize bias term
+    lambda(1, :) = 0; % don't penalize bias term
 end
 winit  = zeros(d, nclasses-1);
 w = fitFn(X, y, winit(:), lambda(:));
