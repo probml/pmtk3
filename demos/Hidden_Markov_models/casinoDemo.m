@@ -19,7 +19,7 @@ fair = 1; loaded = 2;
 % We will use a discrete observation model, one discrete distribution per
 % hidden state of which there are two. We store these state conditional
 % densities in a cell array.
-setSeed(0);
+setSeed(1);
 obsModel = {[1/6 , 1/6 , 1/6 , 1/6 , 1/6 , 1/6  ]';...   % fair die
             [1/10, 1/10, 1/10, 1/10, 1/10, 5/10 ]'};     % loaded die
 %% Transition Matrix
