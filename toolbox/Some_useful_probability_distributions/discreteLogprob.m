@@ -29,7 +29,7 @@ else
     Lij = zeros(n, d);
     logT = log(T + eps); 
     for j=1:d
-        Lij(:, j) = logT(X(:, j), j);
+        Lij(:, j) = logT(X(:, j), j); % loop is faster than sub2ind vectorized solution
     end
     L = sum(Lij, 2);
 end

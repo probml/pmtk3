@@ -96,7 +96,22 @@ while true
         m.pi      = startDist; m.emission = emission;
         m.nstates = nstates  ; m.A        = transmat;
         [gamma, loglik, alpha, beta, B] = hmmDiscreteInfer(m, obs);
-        currentLL = currentLL + loglik;
+        
+        %% add on log prior
+        logprior = sum(sum(log(transmat).*(transPseudoCounts-1))) + ...
+                   gammaln(sum(sum(transPseudoCounts)))           - ...
+                   sum(sum(gammaln(transPseudoCounts)))           + ...
+                   sum(log(startDist).*piPseudoCounts-1)          + ...
+                   gammaln(sum(piPseudoCounts))                   - ...
+                   sum(gammaln(piPseudoCounts));                  
+        for j=1:nstates
+            T = emission{j}.T;
+            logprior = logprior                     + ...
+                   sum(log(T).*obsPseudoCounts-1)   + ...
+                   gammaln(sum(obsPseudoCounts))    - ...
+                   sum(gammaln(obsPseudoCounts));
+        end
+        currentLL = currentLL + loglik + logprior; 
         %% Distribution over starting states
         startCounts = startCounts + gamma(:, 1)';
         %% State transition matrix
@@ -108,11 +123,11 @@ while true
         ndx = idx:idx+sz-1;
         weights(ndx, :) = weights(ndx, :) + gamma';
     end
-    startDist = normalize(startCounts + piPseudoCounts - 1);
-    transmat  = normalize(transCounts + transPseudoCounts - 1, 2);
+    startDist = normalize(startCounts + piPseudoCounts );
+    transmat  = normalize(transCounts + transPseudoCounts , 2);
     %% Observation distributions
     for j=1:nstates
-        emission{j} = discreteFit(colvec(stackedData), obsPseudoCounts, weights(:, j));
+        emission{j} = discreteFit(colvec(stackedData), obsPseudoCounts+1, weights(:, j));
     end
     %% Check Convergence
     if verbose, fprintf('%d\t loglik: %g\n', it, currentLL ); end
