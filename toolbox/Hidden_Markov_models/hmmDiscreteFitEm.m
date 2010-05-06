@@ -42,7 +42,7 @@ seqidx      = cumsum([1, cellfun(@(seq)size(seq, 2), X')]);
 seqidx      = seqidx(1:end-1);
 
 if isempty(piPseudoCounts)
-    piPseudoCounts = 2*ones(1, nstates);
+    piPseudoCounts = ones(1, nstates);
 end
 if isempty(transPseudoCounts)
     transPseudoCounts = ones(nstates, nstates);
@@ -53,7 +53,7 @@ if diff(size(transPseudoCounts))
 end
 nobsStates = nunique(stackedData);
 if isempty(obsPseudoCounts)
-    obsPseudoCounts = 2*ones(nobsStates, 1);
+    obsPseudoCounts = ones(nobsStates, 1);
 end
 
 
