@@ -9,10 +9,10 @@ function [gamma, alpha, beta, loglik] = hmmFwdBack(initDist, transmat, obslik)
 % alpha(i,t)  = p(S(t)=i| y(1:t))
 % beta(i,t) propto p(y(t+1:T) | S(t=i))
 % loglik = log p(y(1:T))
+
 % Matlab Version by Kevin Murphy
 % C Version by Guillaume Alain
 %PMTKauthor Guillaume Alain
-%PMTKurl http://www.cs.ubc.ca/~gyomalin/
 %PMTKmex
 
 

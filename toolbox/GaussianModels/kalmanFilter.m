@@ -1,6 +1,6 @@
-function [x, V, VV, loglik] = kalmanFilter(y, A, C, Q, R, init_x, init_V, varargin)
+function [m, V, loglik] = kalmanFilter(y, A, C, Q, R, init_m, init_V, varargin)
 % Kalman filter.
-% [x, V, VV, loglik] = kalman_filter(y, A, C, Q, R, init_x, init_V, ...)
+% [m, V, loglik] = kalman_filter(y, A, C, Q, R, init_x, init_V, ...)
 %
 % INPUTS:
 % y(:,t)   - the observation at time t
@@ -8,97 +8,93 @@ function [x, V, VV, loglik] = kalmanFilter(y, A, C, Q, R, init_x, init_V, vararg
 % C - the observation matrix
 % Q - the system covariance
 % R - the observation covariance
-% init_x - the initial state (column) vector
+% init_m - the initial state mean (column vector)
 % init_V - the initial state covariance
 %
 % OPTIONAL INPUTS (string/value pairs [default in brackets])
-% 'model' - model(t)=m means use params from model m at time t [ones(1,T) ]
+% For switching linear models:
+% 'model' - model(t)=k means use params from model m at time t [ones(1,T)]
 %     In this case, all the above matrices take an additional final dimension,
-%     i.e., A(:,:,m), C(:,:,m), Q(:,:,m), R(:,:,m).
-%     However, init_x and init_V are independent of model(1).
-% 'u'     - u(:,t) the control signal at time t [ [] ]
-% 'B'     - B(:,:,m) the input regression matrix for model m
+%     i.e., A(:,:,k), C(:,:,k), Q(:,:,k), R(:,:,k).
+%     However, init_m and init_V are independent of model(1).
 %
-% OUTPUTS (where X is the hidden state being estimated)
-% x(:,t) = E[X(:,t) | y(:,1:t)]
-% V(:,:,t) = Cov[X(:,t) | y(:,1:t)]
-% VV(:,:,t) = Cov[X(:,t), X(:,t-1) | y(:,1:t)] t >= 2
+% To condition on observed input variables:
+% 'u'     - u(:,t) covariates for z(:,t) [ 0 ]
+% 'B'     - B(:,:,k) the regression matrix  for u [0]
+% 'r'     - r(:,t) covariates for y(:,t) [ 0 ]
+% 'D'     - D(:,:,k) the regression matrix  for r [0]
+%  
+% So the dynamics and obsevration models are as follows, given m(t)=k
+%  N( z(t) | A(:,:,k) z(t-1) + B(:,:,k) u(:,t), Q(:,:,k))
+%  N( y(:,t) | C(:,:,k) z(t) + D(:,:,k) r(:,t), R(:,:,k))
+%
+%
+% If you want to add a mean offset term to the observation,
+% say offset(:,k), just set r = ones(1,T), and D(:,:,k) = offset(:,k)
+%
+% OUTPUTS (where Z is the hidden state being estimated)
+% m(:,t) = E[Z(:,t) | y(:,1:t)]
+% V(:,:,t) = Cov[Z(:,t) | y(:,1:t)]
 % loglik = sum{t=1}^T log P(y(:,t))
 %
-% If an input signal is specified, we also condition on it:
-% e.g., x(:,t) = E[X(:,t) | y(:,1:t), u(:, 1:t)]
-% If a model sequence is specified, we also condition on it:
-% e.g., x(:,t) = E[X(:,t) | y(:,1:t), u(:, 1:t), m(1:t)]
 
-[os T] = size(y);
+
+%PMTKauthor Kevin Murphy
+%PMTKdate 1998
+%modified 6 May 2010
+
+[os T] = size(y); % os = size of observation space
 ss = size(A,1); % size of state space
 
-% set default params
-model = ones(1,T);
-u = [];
-B = [];
-ndx = [];
+[model, u, B, r, D] = process_options(varargin, ...
+  'model', ones(1,T), 'u', zeros(1,T), 'B', zeros(1,1,1), ...
+  'r', zeros(1,T), 'D', zeros(1,1,1));
 
-args = varargin;
-nargs = length(args);
-for i=1:2:nargs
-  switch args{i}
-    case 'model', model = args{i+1};
-    case 'u', u = args{i+1};
-    case 'B', B = args{i+1};
-    case 'ndx', ndx = args{i+1};
-    otherwise, error(['unrecognized argument ' args{i}])
-  end
-end
-
-if isempty(model)
-  model = ones(1,T);
-end
-
-
-x = zeros(ss, T);
+m = zeros(ss, T);
 V = zeros(ss, ss, T);
-VV = zeros(ss, ss, T);
 
 loglik = 0;
 for t=1:T
-  m = model(t);
+  k = model(t);
   if t==1
-    %prevx = init_x(:,m);
-    %prevV = init_V(:,:,m);
-    prevx = init_x;
+    prevm = init_m;
     prevV = init_V;
-    initial = 1;
   else
-    prevx = x(:,t-1);
+    prevm = m(:,t-1);
     prevV = V(:,:,t-1);
-    initial = 0;
   end
-  if isempty(u)
-    [x(:,t), V(:,:,t), LL, VV(:,:,t)] = ...
-      kalmanUpdate(A(:,:,m), C(:,:,m), Q(:,:,m), R(:,:,m), y(:,t), prevx, prevV, 'initial', initial);
-  else
-    if isempty(ndx)
-      [x(:,t), V(:,:,t), LL, VV(:,:,t)] = ...
-        kalmanUpdate(A(:,:,m), C(:,:,m), Q(:,:,m), R(:,:,m), y(:,t), prevx, prevV, ...
-        'initial', initial, 'u', u(:,t), 'B', B(:,:,m));
-    else
-      i = ndx{t};
-      % copy over all elements; only some will get updated
-      x(:,t) = prevx;
-      prevP = inv(prevV);
-      prevPsmall = prevP(i,i);
-      prevVsmall = inv(prevPsmall);
-      [x(i,t), smallV, LL, VV(i,i,t)] = ...
-        kalmanUpdate(A(i,i,m), C(:,i,m), Q(i,i,m), R(:,:,m), y(:,t), prevx(i), prevVsmall, ...
-        'initial', initial, 'u', u(:,t), 'B', B(i,:,m));
-      smallP = inv(smallV);
-      prevP(i,i) = smallP;
-      V(:,:,t) = inv(prevP);
-    end
-  end
+  [m(:,t), V(:,:,t), LL] = ...
+    kalmanUpdate(A(:,:,k), C(:,:,k), Q(:,:,k), R(:,:,k), y(:,t), prevm, prevV, ...
+    (t==1),   B(:,:,k), u(:,t), D(:,:,k),  r(:,t));
   loglik = loglik + LL;
 end
 
 end
 
+function [mnew, Vnew, loglik] = kalmanUpdate(A, C, Q, R, y, m, V, ...
+  initialSlice, B, u, D, r)
+% One step of predict-update cycle of Kalman filter
+
+computeLoglik = (nargout >= 3);
+
+if initialSlice
+  mpred = m + B*u;
+  Vpred = V;
+else
+  mpred = A*m + B*u;
+  Vpred = A*V*A' + Q;
+end
+
+e = y - C*mpred - D*r; % error (innovation)
+S = C*Vpred*C' + R;
+Sinv = inv(S);
+ss = size(V,1);
+if computeLoglik
+  model.mu = zeros(1, length(e)); model.Sigma = S;
+  loglik = gaussLogprob(model, e(:)');
+end
+K = Vpred*C'*Sinv; % Kalman gain matrix
+mnew = mpred + K*e;
+Vnew = (eye(ss) - K*C)*Vpred;
+
+end
