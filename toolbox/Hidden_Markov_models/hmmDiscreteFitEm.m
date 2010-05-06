@@ -73,7 +73,7 @@ if isempty(model.E)
     % initialize ignoring temporal structure
     stackedData = cell2mat(data')';
     E = repmat(histc(rowvec(stackedData), 1:nObsStates), nstates, 1);
-    model.E = normalize(E + model.EpseudoCounts + 10*randn(size(E)), 2);
+    model.E = normalize(E + model.EpseudoCounts + 5*randn(size(E)), 2);
 end
 end
 
@@ -114,13 +114,9 @@ for i=1:nobs
     ndx = idx:idx+sz-1;
     weights(ndx, :) = weights(ndx, :) + gamma';
 end
-dataCounts = zeros(nstates, nObsStates);
-for j=1:nstates
-    w = weights(:, j);
-    dataCounts(j, :) = bsxfun(@eq, stackedData(:), sparse(1:nObsStates))'*w;
-end
-ess = structure(startCounts, transCounts, dataCounts);
-ess.wsum = sum(weights, 1)'; 
+dataCounts = weights'*bsxfun(@eq, stackedData(:), sparse(1:nObsStates));
+wsum = sum(weights, 1)'; 
+ess = structure(startCounts, transCounts, dataCounts, wsum);
 end
 
 function model = mstep(model, ess)
