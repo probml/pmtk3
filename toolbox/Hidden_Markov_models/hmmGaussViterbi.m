@@ -8,16 +8,10 @@ function path = hmmGaussViterbi(model, X)
 %
 % X    - T-by-D observation
 %
-
-
 pi = model.pi;
 A  = model.A;
 B  = hmmGaussMkLocalEvidence(model, X);
+[path, j1, j2] = hmmViterbiC(log(pi+eps), log(A+eps), log(B+eps)); %#ok<NASGU>
 
-if exist('hmmViterbiC', 'file') == 3
-    [path, j1, j2] = hmmViterbiC(log(pi+eps), log(A+eps), log(B+eps)); %#ok<NASGU>
-else
-  path = hmmViterbi(pi, A, B);
-end
 
 end

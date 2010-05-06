@@ -1,8 +1,15 @@
-function path = hmmViterbi(pi, A, B)
+function [path, j1, j2] = hmmViterbiC(logpi, logA, logB)
 % Find the most-probable (Viterbi) path through the HMM state trellis. 
-% pi(j) = initial state distribution
-% A(i,j) = transition matrix
-% B(k,t) = local evidence
+% logpi(j) = log of initial state distribution
+% logA(i,j) = log of transition matrix
+% logB(k,t) = log of local evidence
+% * we use log of inputs for compatability with .mex version *
+% * called hmmViterbiC since Matlab has an hmmViterbi function already *
+%%
+
+pi = exp(logpi);
+A = exp(logA);
+B = exp(logB); 
 
 [K T] = size(B);
 delta = zeros(K,T);
@@ -25,4 +32,6 @@ for t=T-1:-1:1
     path(t) = psi(path(t+1),t+1);
 end
 
+j1 = []; % for .mex compatability 
+j2 = [];
 end

@@ -17,11 +17,10 @@
 fair = 1; loaded = 2;
 %% Observation Model  
 % We will use a discrete observation model, one discrete distribution per
-% hidden state of which there are two. We store these state conditional
-% densities in a cell array.
+% hidden state of which there are two. 
 setSeed(1);
-obsModel = {[1/6 , 1/6 , 1/6 , 1/6 , 1/6 , 1/6  ]';...   % fair die
-            [1/10, 1/10, 1/10, 1/10, 1/10, 5/10 ]'};     % loaded die
+obsModel = [1/6 , 1/6 , 1/6 , 1/6 , 1/6 , 1/6  ;   % fair die
+           1/10, 1/10, 1/10, 1/10, 1/10, 5/10 ];   % loaded die
 %% Transition Matrix
 % 
 transmat = [0.95 , 0.05;
@@ -31,25 +30,24 @@ pi = [0.5, 0.5];
 %% Sample
 % We now sample a single sequence of 300 dice rolls    
 len = 300; nsamples = 1;
-hidden = mc_sample(pi, transmat, len, nsamples);
+markov.pi = pi;
+markov.A = transmat;
+hidden = markovSample(markov, len, nsamples);
 observed = zeros(1, len); 
 for t=1:len
-   observed(1, t) = sampleDiscrete(obsModel{hidden(t)}); 
+   observed(1, t) = sampleDiscrete(obsModel(hidden(t), :)); 
 end
 %% Fit via EM (pretending we don't know the hidden states)
-nstates = numel(obsModel);
-modelEM = hmmDiscreteFitEm(observed, nstates, 'maxIter', 1000);
+nstates = size(obsModel, 1);
+modelEM = hmmDiscreteFitEm(observed, nstates, ...
+    'maxIter', 1000, 'verbose', true, 'convTol', 1e-7);
 %% Viterbi Path
 % We can now try and recover the most likely sequence of hidden states, 
 % the Viterbi path. 
 
-m1.K = length(obsModel{1});
-m1.d = 1;
-m1.T = obsModel{1};
-m2 = m1; 
-m2.T = obsModel{2};
-model.emission = {m1,m2};
-model.nstates  = nstates;
+model.nObsStates = size(obsModel, 2); 
+model.E = obsModel;
+model.nstates = nstates;
 model.pi = pi;
 model.A = transmat; 
 viterbiPath = hmmDiscreteViterbi(model, observed);

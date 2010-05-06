@@ -35,7 +35,7 @@ while ~done
     loglikHist(iter) = ll; 
     model = mstep(model, ess);
     done = (iter > maxIter) || ( (iter > 1) && ...
-        convergenceTest(loglikHist(iter), loglikHist(iter-1), convTol));
+        convergenceTest(loglikHist(iter), loglikHist(iter-1), convTol, true));
     iter = iter + 1;
 end
 loglikHist = loglikHist(1:iter-1); 

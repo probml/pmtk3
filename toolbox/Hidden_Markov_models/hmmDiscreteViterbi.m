@@ -13,12 +13,6 @@ function path = hmmDiscreteViterbi(model, X)
 pi = model.pi;
 A  = model.A;
 B  = hmmDiscreteMkLocalEvidence(model, X);
-
-
-if exist('hmmViterbiC', 'file') == 3
-    [path, j1, j2] = hmmViterbiC(log(pi+eps), log(A+eps), log(B+eps)); %#ok<NASGU>
-else
-  path = hmmViterbi(pi, A, B);
-end
+[path, j1, j2] = hmmViterbiC(log(pi+eps), log(A+eps), log(B+eps)); %#ok<NASGU>
 
 end

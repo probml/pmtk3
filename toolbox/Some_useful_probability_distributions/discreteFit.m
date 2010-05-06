@@ -1,4 +1,4 @@
-function model = discreteFit(X, alpha, weights, K)
+function model = discreteFit(X, alpha, K)
 % Fit a discrete distribution, or if X is a matrix, a product of discrete
 % distributions.
 %
@@ -8,7 +8,6 @@ function model = discreteFit(X, alpha, weights, K)
 % alpha        - dirichlet alpha, i.e. pseudo counts
 %                (default is all ones vector - i.e. no prior)
 %
-% weights      - optionally weight each data case: useful for EM.
 %
 % model        - a struct with the following fields:
 %
@@ -26,15 +25,7 @@ function model = discreteFit(X, alpha, weights, K)
 
 SetDefaultValue(4, 'K', max(X(:))); 
 d = size(X, 2);
-if nargin < 3 || isempty(weights)
-    counts = histc(X, 1:K); % works even when X is a matrix - no need to loop
-else
-    weights = colvec(weights);
-    counts = zeros(K, d);
-    for c=1:K
-        counts(c, :) = sum(bsxfun(@times, (X == c), weights), 1);
-    end
-end
+counts = histc(X, 1:K); % works even when X is a matrix - no need to loop
 if nargin < 2 || isempty(alpha), alpha = 1; end
 model.T = normalize(bsxfun(@plus, counts, colvec(alpha-1)), 1);
 model.K = K;

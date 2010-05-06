@@ -1,149 +1,135 @@
-function model = hmmDiscreteFitEm(X, nstates, varargin)
+function [model, loglikHist] = hmmDiscreteFitEm(data, nstates, varargin)
 % Fit an Hmm to discrete observations using EM.
 %% Inputs
-% X        - a cell array of observations;
-%            each observation is 1-by-seqLength.
+% data        - a cell array of observations;
+%               each observation is 1-by-seqLength.
+%               If the sequence lengths are the same for all observations
+%               use mat2cellRows(data) to convert to the right format.
 %
+% nstates     - the number of hidden states.
+%% Optional named inputs
 %
-% nstates  - the number of hidden states.
+% 'pi0', 'A0', 'E0' ... initial parameter values, if not
+%                       specified, these are randomly
+%                       initialized.
+%
+% 'piPseudoCounts', 'ApseudoCounts, 'EpseudoCounts'
+%
+% *** see emAlgo for additional EM related inputs ***
 %
 %% Output
-% model is a struct with fields, pi, A, emission, nstates.
+% model is a struct with fields, pi, A, E, nstates, nObsStates
+% pi  ... is the distribution over starting states
+% A   ... is the state transition matrix and is nstates-by-nstates where
+%         each *row* sums to one.
+% E   ... is the matrix of emission probabilities and is
+%         nstates-by-nObsStates so that each *row* sums to one.
+% loglikHist is the log likelihood history
 %%
-[ tol                 , ...
-    maxIter           , ...
-    verbose           , ...
-    pi0               , ...
-    transmat0         , ...
-    emission0         , ...
-    piPseudoCounts    , ...
-    transPseudoCounts , ...
-    obsPseudoCounts     ...
-    ] = process_options(varargin ,...
-    'tol'      , 1e-7          ,...
-    'maxIter'  , 100           ,...
-    'verbose'  , true          ,...
-    'pi0'      , []            ,...   % initial guess for starting state dist
-    'transmat0', []            ,...   % initial guess for the transmat
-    'emission0', []            ,...   % initial guess for the emission dists
-    'piPseudoCounts'   , []    ,...
-    'transPseudoCounts', []    ,...
-    'obsPseudoCounts'  , []);
-%X = colvec(X);
-if ~iscell(X)
-  if isvector(X) % scalar time series
-    X = rowvec(X);
-  end
-  X = {X};
-end
-nobs = numel(X);
-stackedData = cell2mat(X')';
-seqidx      = cumsum([1, cellfun(@(seq)size(seq, 2), X')]);
-seqidx      = seqidx(1:end-1);
-
-if isempty(piPseudoCounts)
-    piPseudoCounts = ones(1, nstates);
-end
-if isempty(transPseudoCounts)
-    transPseudoCounts = ones(nstates, nstates);
-end
-piPseudoCounts = rowvec(piPseudoCounts);
-if diff(size(transPseudoCounts))
-    transPseudoCounts = repmat(rowvec(transPseudoCounts), nstates, 1);
-end
-nobsStates = nunique(stackedData);
-if isempty(obsPseudoCounts)
-    obsPseudoCounts = ones(nobsStates, 1);
-end
-
-
-%% Initialize
-if isempty(transmat0)
-    transmat = normalize(rand(nstates, nstates) + transPseudoCounts -1, 2); % Each row sums to one
-else
-    transmat = transmat0;
-end
-if isempty(pi0)
-    startDist = normalize(rand(1, nstates) + piPseudoCounts - 1);
-else
-    startDist = pi0;
-end
-if isempty(emission0)
-    % init each emission dist on a random partition of the data, ignoring
-    % temporal structure.
-    emission = cell(nstates, 1);
-    dataPart = randsplit(colvec(stackedData), nstates);
-    
-    for i=1:nstates
-        data = dataPart{i};
-        randWeights = normalize(rand(length(data), 1));
-        emission{i} = discreteFit(data, obsPseudoCounts, randWeights, nobsStates);
+if ~iscell(data)
+    if isvector(data) % scalar time series
+        data = rowvec(data);
     end
-else
-    emission = emission0;
+    data = {data};
 end
-%% Setup loop
-it = 1;
-currentLL   = -inf;
-startCounts = zeros(1, nstates);
-transCounts = zeros(nstates, nstates);
-weights     = zeros(length(stackedData), nstates);
-while true
-    previousLL = currentLL;
-    [currentLL, startCounts(:), transCounts(:), weights(:)] = deal(0);
-    for i=1:nobs
-        obs       = colvec(X{i});
-        m.pi      = startDist; m.emission = emission;
-        m.nstates = nstates  ; m.A        = transmat;
-        [gamma, loglik, alpha, beta, B] = hmmDiscreteInfer(m, obs);
-        
-        %% add on log prior
-        logprior = sum(sum(log(transmat).*(transPseudoCounts-1))) + ...
-                   gammaln(sum(sum(transPseudoCounts)))           - ...
-                   sum(sum(gammaln(transPseudoCounts))            );
-               
-        logprior = logprior                                       + ...           
-                   sum(log(startDist).*piPseudoCounts-1)          + ...
-                   gammaln(sum(piPseudoCounts))                   - ...
-                   sum(gammaln(piPseudoCounts)                    );   
-               
-        for j=1:nstates
-            T = emission{j}.T;
-            logprior = logprior                     + ...
-                   sum(log(T).*obsPseudoCounts-1)   + ...
-                   gammaln(sum(obsPseudoCounts))    - ...
-                   sum(gammaln(obsPseudoCounts));
-        end
-        currentLL = currentLL + loglik + logprior; 
-        %% Distribution over starting states
-        startCounts = startCounts + gamma(:, 1)';
-        %% State transition matrix
-        xi_summed = hmmComputeTwoSlice(alpha, beta, transmat, B);
-        transCounts = transCounts + xi_summed;
-        %% Data weights
-        sz  = size(gamma, 2);
-        idx = seqidx(i);
-        ndx = idx:idx+sz-1;
-        weights(ndx, :) = weights(ndx, :) + gamma';
-    end
-    startDist = normalize(startCounts + piPseudoCounts );
-    transmat  = normalize(transCounts + transPseudoCounts , 2);
-    %% Observation distributions
-    for j=1:nstates
-        emission{j} = discreteFit(colvec(stackedData), obsPseudoCounts+1, weights(:, j));
-    end
-    %% Check Convergence
-    if verbose, fprintf('%d\t loglik: %g\n', it, currentLL ); end
-    it = it+1;
-    if currentLL < previousLL
-        warning('hmmDiscreteFitEm:LLdecrease',   ...
-            'The log likelihood has decreased!');
-    end
-    converged = convergenceTest(currentLL, previousLL, tol) || it > maxIter;
-    if converged, break; end
-end
-model.pi = startDist;
-model.A  = transmat;
-model.emission = emission;
+model.nObsStates = nunique(cell2mat(data')');
 model.nstates = nstates;
+[
+    model.pi                      , ...
+    model.A                       , ...
+    model.E                       , ...
+    model.piPseudoCounts          , ...
+    model.ApseudoCounts           , ...
+    model.EpseudoCounts           , ...
+    EMargs                        ] ...
+    = process_options(varargin    , ...
+    'pi0'                         , []                      , ...
+    'A0'                          , []                      , ...
+    'E0'                          , []                      , ...
+    'piPseudoCounts'              , ones(1, nstates)        , ...
+    'ApseudoCounts'               , ones(nstates, nstates)  , ...
+    'EpseudoCounts'               , ones(nstates, model.nObsStates));
+
+model.piPseudoCounts = rowvec(model.piPseudoCounts);
+if diff(size(model.ApseudoCounts))
+    model.aPseudoCounts = repmat(rowvec(model.ApseudoCounts), nstates, 1);
+end
+%%
+initFn = @(data)init(data, model);
+[model, loglikHist] = emAlgo(data, initFn, @estep, @mstep, [], EMargs{:});
+end
+
+function model = init(data, model)
+% Initialize the model
+nstates    = model.nstates;
+nObsStates = model.nObsStates;
+if isempty(model.pi)
+    model.pi = normalize(rand(1, nstates) + model.piPseudoCounts);
+end
+if isempty(model.A)
+    model.A = normalize(rand(nstates, nstates) + model.ApseudoCounts, 2);
+end
+if isempty(model.E)
+    % initialize ignoring temporal structure
+    stackedData = cell2mat(data')';
+    E = repmat(histc(rowvec(stackedData), 1:nObsStates), nstates, 1);
+    model.E = normalize(E + model.EpseudoCounts + 10*randn(size(E)), 2);
+end
+end
+
+
+function [ess, loglik] = estep(model, data)
+% Compute expected sufficient statistics
+nobs         = numel(data);
+nObsStates   = model.nObsStates;
+stackedData  = cell2mat(data')';
+seqidx       = cumsum([1, cellfun(@(seq)size(seq, 2), data')]);
+seqidx       = seqidx(1:end-1);
+nStackedData = length(stackedData);
+nstates      = model.nstates;
+Apc  = model.ApseudoCounts;
+piPc = model.piPseudoCounts;
+Epc  = model.EpseudoCounts;
+A    = model.A;
+pi   = model.pi;
+E    = model.E;
+startCounts  = zeros(1, nstates);
+transCounts  = zeros(nstates, nstates);
+weights      = zeros(nStackedData, nstates);
+loglik = 0;
+for i=1:nobs
+    obs = colvec(data{i});
+    [gamma, obsLL, alpha, beta, B] = hmmDiscreteInfer(model, obs);
+    %% add on log prior
+    logprior = log(A(:)+eps)'*(Apc(:)-1)  + ...
+               log(pi(:)+eps)'*(piPc(:)-1) +...
+               log(E(:)+eps)'*(Epc(:)-1);
+                                      
+    loglik = loglik + obsLL + logprior;
+    %%
+    startCounts = startCounts + gamma(:, 1)';
+    transCounts = transCounts + hmmComputeTwoSlice(alpha, beta, A, B);
+    sz  = size(gamma, 2);
+    idx = seqidx(i);
+    ndx = idx:idx+sz-1;
+    weights(ndx, :) = weights(ndx, :) + gamma';
+end
+dataCounts = zeros(nstates, nObsStates);
+for j=1:nstates
+    w = weights(:, j);
+    dataCounts(j, :) = bsxfun(@eq, stackedData(:), sparse(1:nObsStates))'*w;
+end
+ess = structure(startCounts, transCounts, dataCounts);
+ess.wsum = sum(weights, 1)'; 
+end
+
+function model = mstep(model, ess)
+% Maximization step
+model.pi = normalize(ess.startCounts + model.piPseudoCounts -1);
+model.A  = normalize(ess.transCounts + model.ApseudoCounts -1, 2);
+
+Epc = model.EpseudoCounts - 1; 
+denom = ess.wsum + sum(Epc, 2);
+model.E = bsxfun(@rdivide, ess.dataCounts + Epc, denom);
+
 end
