@@ -46,9 +46,9 @@ model.nstates = nstates;
     'pi0'                         , []                      , ...
     'A0'                          , []                      , ...
     'E0'                          , []                      , ...
-    'piPseudoCounts'              , ones(1, nstates)        , ...
-    'ApseudoCounts'               , ones(nstates, nstates)  , ...
-    'EpseudoCounts'               , ones(nstates, model.nObsStates));
+    'piPseudoCounts'              , 2*ones(1, nstates)        , ...
+    'ApseudoCounts'               , 2*ones(nstates, nstates)  , ...
+    'EpseudoCounts'               , 2*ones(nstates, model.nObsStates));
 
 model.piPseudoCounts = rowvec(model.piPseudoCounts);
 if diff(size(model.ApseudoCounts))
@@ -70,10 +70,7 @@ if isempty(model.A)
     model.A = normalize(rand(nstates, nstates) + model.ApseudoCounts, 2);
 end
 if isempty(model.E)
-    % initialize ignoring temporal structure
-    stackedData = cell2mat(data')';
-    E = repmat(histc(rowvec(stackedData), 1:nObsStates), nstates, 1);
-    model.E = normalize(E + model.EpseudoCounts + 5*randn(size(E)), 2);
+   model.E = normalize(rand(nstates, nObsStates), 2);  
 end
 end
 
