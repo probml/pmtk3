@@ -3,17 +3,5 @@ function B = hmmDiscreteMkLocalEvidence(model, X)
 % at time t. X is a single observation. 
 %
 %%
-
-X = colvec(X); 
-emission  = model.E;
-nstates   = model.nstates;
-seqLength = length(X);
-B = zeros(nstates, seqLength);
-m.d = 1;
-m.K = size(model.E, 2);
-for j=1:nstates
-    m.T = emission(j, :)'; 
-    B(j, :) = exp(discreteLogprob(m, X));
-end
-
+B = model.E(:, X);  % We can simply index directly into the emission probabilities
 end
