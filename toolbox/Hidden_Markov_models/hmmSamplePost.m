@@ -1,7 +1,16 @@
-function [samples] = hmmSamplePost(initDist, transmat, obslik, nsamples)
+function [samples] = hmmSamplePost(model, X, nsamples, varargin)
 % Forwards filtering, backwards sampling for HMMs
 % OUTPUT:
 % samples(t,s) = value of S(t)  in sample s
+
+obslik = process_options(varargin, 'obslik', []); 
+
+
+initDist = model.pi;
+transmat = model.A;
+if isempty(obslik)
+    obslik = hmmMkLocalEvidence(model, X); 
+end
 
 [K T] = size(obslik);
 [loglik, alpha] = hmmFilter(initDist, transmat, obslik);

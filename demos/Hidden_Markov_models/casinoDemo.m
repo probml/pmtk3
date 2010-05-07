@@ -39,27 +39,27 @@ for t=1:len
 end
 %% Fit via EM (pretending we don't know the hidden states)
 nstates = size(obsModel, 1);
-modelEM = hmmDiscreteFitEm(observed, nstates, ...
+modelEM = hmmFit(observed, nstates, 'discrete', ...
     'maxIter', 1000, 'verbose', true, 'convTol', 1e-7, 'nRandomRestarts', 3);
 %% Viterbi Path
 % We can now try and recover the most likely sequence of hidden states, 
 % the Viterbi path. 
 
 model.nObsStates = size(obsModel, 2); 
-model.E = obsModel;
+model.emission = obsModel;
 model.nstates = nstates;
 model.pi = pi;
 model.A = transmat; 
-viterbiPath = hmmDiscreteViterbi(model, observed);
+model.type = 'discrete';
+viterbiPath = hmmEstState(model, observed);
 %% Sequence of Most Likely States (Max Marginals)
-[gamma, loglik, alpha, beta, localEvidence]  = hmmDiscreteInfer(model, observed);
-%[gamma, alpha, beta, loglik] = hmmFwdBack(pi, transmat, localEvidence);
+[gamma, loglik, alpha, beta, localEvidence]  = hmmInferState(model, observed);
 maxmargF = maxidx(alpha); % filtered (forwards pass only)
 maxmarg = maxidx(gamma);  % smoothed (forwards backwards)
 %% Posterior Samples
 % We can also sample from the posterior, fowards filtering, backwards sampling,
 % and compare the mode of these samples to the predictions above. 
-postSamp = mode(hmmSamplePost(pi, transmat, localEvidence, 100), 2)';
+postSamp = mode(hmmSamplePost(model, observed, 100), 2)';
 %%
 % We now display the rolls, the corresponding die used and the Viterbi 
 % prediction. 

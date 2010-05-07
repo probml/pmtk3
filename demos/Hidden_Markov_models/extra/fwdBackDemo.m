@@ -14,8 +14,10 @@ obslik = repmat([0.5 0.3 0.2]', 1, T); % noisy obs
 nsamples = 1000;
 
 % check that samples converge to true marginals
+model.pi = initDist;
+model.A = transmat;
 
-samples = hmmSamplePost(initDist, transmat, obslik, nsamples);
+samples = hmmSamplePost(model, [], nsamples, 'obslik', obslik);
 [gamma, j, j, j] = hmmFwdBack(initDist, transmat, obslik);
 [path, j, j] = hmmViterbiC(log(initDist), log(transmat), log(obslik))
 
