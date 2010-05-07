@@ -90,7 +90,7 @@ function model = initGauss(data, model)
 %% Initialize Gaussian model
 model.d = size(data{1}, 1);
 nstates = model.nstates;
-if isempty(pi)     
+if isempty(model.pi)     
     model.pi = normalize(rand(1, nstates) +  model.piPrior -1); 
 end
 if isempty(model.A)
