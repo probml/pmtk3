@@ -16,7 +16,7 @@ Vsmooth = zeros(ss, ss, T);
 VVsmooth = zeros(ss, ss, T);
 
 % Forward pass
-[mfilt, Vfilt, VVfilt, loglik] = kalmanFilter(y, A, C, Q, R, init_x, init_V, ...
+[mfilt, Vfilt,  loglik] = kalmanFilter(y, A, C, Q, R, init_x, init_V, ...
 					       'model', model, 'u', u, 'B', B, 'r', r, 'D', D);
 
 % Backward pass
@@ -29,7 +29,7 @@ for t=T-1:-1:1
   Vfilt_pred = A(:,:,k)*Vfilt(:,:,t)*A(:,:,k)' + Q(:,:,k); % cov(t+1|t)
   [msmooth(:,t), Vsmooth(:,:,t), VVsmooth(:,:,t)] = ...
     smooth_update(msmooth(:,t+1), Vsmooth(:,:,t+1), mfilt(:,t), Vfilt(:,:,t), ...
-     mfilt_pred, Vfilt_pred, VVfilt(:,:,t), A(:,:,k));
+     mfilt_pred, Vfilt_pred, A(:,:,k));
 end
 
 end
