@@ -19,18 +19,18 @@ function [m, V, loglik] = kalmanFilter(y, A, C, Q, R, init_m, init_V, varargin)
 %     However, init_m and init_V are independent of model(1).
 %
 % To condition on observed input variables:
-% 'u'     - u(:,t) covariates for z(:,t) [ 0 ]
-% 'B'     - B(:,:,k) the regression matrix  for u [0]
-% 'r'     - r(:,t) covariates for y(:,t) [ 0 ]
-% 'D'     - D(:,:,k) the regression matrix  for r [0]
-%  
+% 'u'     - u(:,t) covariates  [ 0 ]
+% 'B'     - B(:,:,k) the regression matrix  for z [0]
+% 'D'     - D(:,:,k) the regression matrix  for y [0]
+% Note that we can set u(:,t)  = y(:,t-1)
+%
 % So the dynamics and obsevration models are as follows, given m(t)=k
 %  N( z(t) | A(:,:,k) z(t-1) + B(:,:,k) u(:,t), Q(:,:,k))
-%  N( y(:,t) | C(:,:,k) z(t) + D(:,:,k) r(:,t), R(:,:,k))
+%  N( y(:,t) | C(:,:,k) z(t) + D(:,:,k) u(:,t), R(:,:,k))
 %
 %
 % If you want to add a mean offset term to the observation,
-% say offset(:,k), just set r = ones(1,T), and D(:,:,k) = offset(:,k)
+% say offset(:,k), just set u = ones(1,T), and D(:,:,k) = offset(:,k)
 %
 % OUTPUTS (where Z is the hidden state being estimated)
 % m(:,t) = E[Z(:,t) | y(:,1:t)]
@@ -46,9 +46,9 @@ function [m, V, loglik] = kalmanFilter(y, A, C, Q, R, init_m, init_V, varargin)
 [os T] = size(y); % os = size of observation space
 ss = size(A,1); % size of state space
 
-[model, u, B, r, D] = process_options(varargin, ...
+[model, u, B,  D] = process_options(varargin, ...
   'model', ones(1,T), 'u', zeros(1,T), 'B', zeros(1,1,1), ...
-  'r', zeros(1,T), 'D', zeros(1,1,1));
+  'D', zeros(1,1,1));
 
 m = zeros(ss, T);
 V = zeros(ss, ss, T);
@@ -65,14 +65,14 @@ for t=1:T
   end
   [m(:,t), V(:,:,t), LL] = ...
     kalmanUpdate(A(:,:,k), C(:,:,k), Q(:,:,k), R(:,:,k), y(:,t), prevm, prevV, ...
-    (t==1),   B(:,:,k), u(:,t), D(:,:,k),  r(:,t));
+    (t==1),   u(:,t),  B(:,:,k), D(:,:,k));
   loglik = loglik + LL;
 end
 
 end
 
 function [mnew, Vnew, loglik] = kalmanUpdate(A, C, Q, R, y, m, V, ...
-  initialSlice, B, u, D, r)
+  initialSlice, u, B, D)
 % One step of predict-update cycle of Kalman filter
 
 computeLoglik = (nargout >= 3);
@@ -85,7 +85,7 @@ else
   Vpred = A*V*A' + Q;
 end
 
-e = y - C*mpred - D*r; % error (innovation)
+e = y - C*mpred - D*u; % error (innovation)
 S = C*Vpred*C' + R;
 Sinv = inv(S);
 ss = size(V,1);

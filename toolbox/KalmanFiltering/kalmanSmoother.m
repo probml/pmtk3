@@ -1,23 +1,27 @@
-function [msmooth, Vsmooth, loglik, VVsmooth] = kalmanSmoother(y, A, C, Q, R, init_x, init_V, varargin)
+function [msmooth, Vsmooth, loglik, VVsmooth, m0smooth, V0smooth, VV0smooth] = ...
+  kalmanSmoother(y, A, C, Q, R, init_mu, init_V, varargin)
 % Kalman/RTS smoother.
-% Input/ output is same as for kalmanFilter 
-% except we also compute
+% Input/ output is same as for kalmanFilter
+% For learning with EM, we also need to compute
 % VVsmooth(:,:,t) = Cov[Z(t+1), Z(t) | y(1:T)] t=1:T-1
+% We follow Matt Beal's thesis and create a dummy node at time 0
+% m0smooth(:) = E[Z(0) | y(1:T)], V0smooth(:,:)  = cov[]
+% VV0smooth = Cov[Z(1), Z(0) | y(1:T)]
 
 [os T] = size(y); % os = size of observation space
 ss = size(A,1); % size of state space
 
-[model, u, B, r, D] = process_options(varargin, ...
+[model, u, B, D] = process_options(varargin, ...
   'model', ones(1,T), 'u', zeros(1,T), 'B', zeros(1,1,1), ...
-  'r', zeros(1,T), 'D', zeros(1,1,1));
+   'D', zeros(1,1,1));
 
 msmooth = zeros(ss, T);
 Vsmooth = zeros(ss, ss, T);
 VVsmooth = zeros(ss, ss, T);
 
 % Forward pass
-[mfilt, Vfilt,  loglik] = kalmanFilter(y, A, C, Q, R, init_x, init_V, ...
-					       'model', model, 'u', u, 'B', B, 'r', r, 'D', D);
+[mfilt, Vfilt,  loglik] = kalmanFilter(y, A, C, Q, R, init_mu, init_V, ...
+					       'model', model, 'u', u, 'B', B,  'D', D);
 
 % Backward pass
 msmooth(:,T) = mfilt(:,T);
@@ -32,6 +36,16 @@ for t=T-1:-1:1
      mfilt_pred, Vfilt_pred, A(:,:,k));
 end
 
+% posterior over dummy initial node
+t = 1;
+k = model(t);
+% init_V = V_0|0, init_mu = mu_0|0
+mfilt_pred = A(:,:,k)*init_m + B(:,:,k)*u(:,t); % mu_1|0
+Vfilt_pred = A(:,:,k)*init_V*A(:,:,k)' + Q(:,:,k); % V_1|0
+J0 = init_V * A' * inv(Vfilt(:,:,1));
+m0smooth = init_m + J0*(msmooth(:,1) - mfilt_pred);
+V0smooth = init_V + J0*(Vsmooth(:,:,1) - Vfilt_pred);
+VV0smooth = J0*Vsmooth(:,1);
 end
 
 
