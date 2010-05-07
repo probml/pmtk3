@@ -3,5 +3,8 @@ function B = hmmDiscreteMkLocalEvidence(model, X)
 % at time t. X is a single observation. 
 %
 %%
+if iscell(X)
+    X = X{1};
+end
 B = model.E(:, X);  % We can simply index directly into the emission probabilities
 end

@@ -8,15 +8,38 @@ function [model, loglikHist] = emAlgo(data, init, estep, mstep, mstepOR, varargi
 % convTol: converhence tolerance [1e-3]
 % verbose: [false]
 % plotFn: function of form plotfn(model, data, ess, ll, iter), default []
+% nRandomRestarts: [1] 
 % overRelaxFactor: if > 1, use adaptive  over-relaxed EM [1]
 %   In this case, mstepOR must be a valid function handle
 %%
-[maxIter, convTol, plotfn, verbose, overRelaxFactor] = ...
-    process_options(varargin , ...
+%
+%% Random Restart 
+[nRandomRestarts, verbose, args] = process_options(varargin, ...
+    'nrandomRestarts', 1, 'verbose', false); 
+if nRandomRestarts > 1
+   models  = cell(1, nRandomRestarts);
+   llhists = cell(1, nRandomRestarts); 
+   bestLL  = zeros(1, nRandomRestarts); 
+   for i=1:nRandomRestarts
+       if verbose
+           fprintf('\n********** Random Restart %d **********\n', i);
+       end
+       [models{i}, llhists{i}] = emAlgo(data, init, estep,...
+           mstep, mstepOR, 'verbose', verbose, args{:});
+       bestLL(i) = llhists{i}(end); 
+   end
+   bestndx = maxidx(bestLL); 
+   model = models{bestndx};
+   loglikHist = llhists{bestndx};
+   return 
+end
+%%
+
+[maxIter, convTol, plotfn, overRelaxFactor] = ...
+    process_options(args     , ...
     'maxIter'        , 100   , ...
     'convTol'        , 1e-4  , ...
     'plotfn'         , []    , ...
-    'verbose'        , false , ...
     'overRelaxFactor', []    );
 
 if ~isempty(overRelaxFactor)
