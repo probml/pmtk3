@@ -25,7 +25,6 @@ fprintf('Now ICM\n')
 [model, LLtrace{2}] = gaussMissingFitICM(Xmiss, 'verbose', verb);
 muHat{2} = model.mu;
 SigmaHat{2} = model.Sigma; 
-
 % third Gibbs
 fprintf('Now Gibbs\n')
 [model, dataSamples, LLtrace{3}] = gaussMissingFitGibbs(Xmiss, 'mu0', nanmeanPMTK(Xmiss), 'Lambda0', diag(nanvar(Xmiss)), 'k0', 0.01, 'dof', d + 2, 'verbose', verb);
