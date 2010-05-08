@@ -24,6 +24,7 @@ end
     'useFullPath'  , false);
 if topOnly
     I = what(source);
+    if numel(I) == 0, m = {}; return; end
     m = I.m;
     if useFullPath
         m = cellfuncell(@(c)fullfile(source, c), m);
