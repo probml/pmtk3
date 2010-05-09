@@ -19,7 +19,8 @@ objTraceMinfunc = output.trace.fval;
 probMinfunc = normcdf(X*wMinfunc);
 objMinfunc2 = ProbitLoss(wMinfunc,X,ypm1) + (lambda)*sum(wMinfunc.^2);
 
-[wEm, logpostTrace] = probitRegFitEm(X, ypm1, lambda);
+[modelEm, logpostTrace] = probitRegFitEm(X, ypm1, lambda, 'verbose', true);
+wEm = modelEm.w;
 probEm = normcdf(X*wEm);
 objEm = ProbitLoss(wEm,X,ypm1) + (lambda)*sum(wEm.^2);
 objTraceEm = -logpostTrace;
