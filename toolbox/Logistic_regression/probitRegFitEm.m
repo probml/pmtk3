@@ -1,8 +1,17 @@
 function [model, loglikHist] = probitRegFitEm(X, y, lambda, varargin)
-% Find MAP estimate (under L2 prior) for binary probit regression using EM
+%% Find MAP estimate (under L2 prior) for binary probit regression using EM
+%
+%% Inputs
 % X(i, :) is i'th case
 % y(i) is in {-1, +1}
-% See emAlgo for additional EM related optional args.
+% lambda is the value of the L2 regularizer
+% * See emAlgo for additional EM related optional args *
+%
+%% Outputs
+%
+% model is a struct with fields, w, lambda
+% loglikHist is the history of the log likelihood
+%
 %%
 % Based on code by Francois Caron, modified by Kevin Murphy
 %%
@@ -16,7 +25,9 @@ objfn   = @(w)-ProbitLoss(w, X, y) + lambda*sum(w.^2);
 initFn  = @(X)init(model, X, linreg);
 estepFn = @(model, data)estep(model, data, objfn); 
 mstepFn = @(model, ess)mstep(model, ess, linreg); 
-[model, loglikHist] = emAlgo([X, y], initFn, estepFn, mstepFn, [], EMargs{:}); 
+[m, loglikHist] = emAlgo([X, y], initFn, estepFn, mstepFn, [], EMargs{:}); 
+model.w = m.w;
+model.lambda = lambda; 
 end
 
 function model = init(model, data, linreg)
