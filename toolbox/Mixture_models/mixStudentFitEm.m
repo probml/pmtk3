@@ -1,101 +1,127 @@
 function [model, loglikHist] = mixStudentFitEm(data, K, varargin)
-% EM for fitting mixture of K Student-t distributions
-% data(i,:) is i'th case
+%% Fit a mixture of K student-t distributions using EM.
+%
+%% Inputs
+% 
+% data     - [n, d]: data(i, :) is the ith case
+% K        - the number of mixture components to use
+%
+%% Optional named inputs
+%
+% 'mu0'      - [d k]:   specify an initial value for mu, instead of 
+%                       initializing using kmeans.
+%
+% 'Sigma0'   - [d d K]: specify an intial value for Sigma instead of
+%                       initializing using kmeans. 
+%
+% 'mixweight0' - [1 K]: specify an initial value for mixweight instead of 
+%                       initializing using kmeans. 
+% 
+% 'dof0'       - [1 K]: specify an initial value for dof, otherwise
+%                       10*ones(1, K) is used. 
+%
+% * see emAlgo for additional EM related optional args *
+%
+%% Outputs
+%
 % model is a structure containing these fields:
-%   mu(:,) is k'th centroid
-%   Sigma(:,:,k)
+%   mu(:, k) is k'th centroid
+%   Sigma(:, :, k)
 %   mixweight(k)
 %   dof(k)
 %   K
+%
 % loglikHist(t) for plotting
-
-
+%%
 %PMTKauthor Robert Tseng
-%PMTKmodified Kevin Murphy
-
-[maxIter, thresh, plotfn, verbose, mu, Sigma, dof, mixweight] = process_options(...
-    varargin, 'maxIter', 100, 'thresh', 1e-3, 'plotfn', [], ...
-    'verbose', false, 'mu', [], 'Sigma', [], 'dof', 4*ones(1,K), 'mixweight', []);
-  
-%if isempty(dof), dof = 10 * rand(K,1); end % start with large dof near Gaussian
-  
-[N,D] = size(data);
-
-if isempty(mu)
-  [mu, Sigma, mixweight] = kmeansInitMixGauss(data, K);
-end
-  
-iter = 1;
-done = false;
-X = data; % X(i,:) is i'th case 
-clear data
-while ~done
-  % E step 
-  % Compute responsibilities
-  model.mu  = mu; model.Sigma = Sigma; model.mixweight = mixweight;
-  model.K = K; model.dof = dof;
-  [z, post, ll] = mixStudentInfer(model, X); %#ok
-  loglikHist(iter) = sum(ll)/N; %#ok
-  R = sum(post, 1); % R(c) = sum_i post(c,i)
-
-  u = zeros(N, K); % E[tau(i) | Zi=k]
-  for c=1:K
-    % E step - compute E[tau(i)]
-    SigmaInv = inv(Sigma(:,:,c));
-    XC = bsxfun(@minus,X,rowvec(mu(:,c)));
-    delta = sum(XC*SigmaInv.*XC,2); %#ok
-    u(:,c) = (dof(c)+D) ./ (dof(c)+delta); % E[tau(i)]
-  end
-    
-  % M step
-  mixweight = normalize(R);
-  for c=1:K
-    % ESS
-    w = u(:,c);
-    Xw = repmat(post(:,c), 1, D) .* X .* repmat(w(:), 1, D);
-    Sw = sum(post(:,c) .* w);
-    SX = sum(Xw, 1)'; % sum_i r_ik u(i) xi, column vector
-    SXX = Xw'*X; % sum_i r_ik u(i) xi xi'
-    
-    % M step
-    mu(:,c) = SX / Sw;
-    Sigma(:,:,c) = (1/R(c))*(SXX - SX*SX'/Sw);
-  end
-  
-   % estimate dof one component at a time
-   for c=1:K
-      model.mu  = mu; model.Sigma = Sigma; model.mixweight = mixweight;
-      model.K = K; model.dof = dof;
-     dof(c) = estimateDofNLL(X, model, c); % ECME
-   end
-   
-  % Converged?
-  if iter == 1
-     done = false;
-  elseif iter >= maxIter
-    done = true;
-  else
-     done =  convergenceTest(loglikHist(iter), loglikHist(iter-1), thresh);
-  end
-  if verbose, fprintf(1, 'iteration %d, loglik = %f\n', iter, loglikHist(iter)); end
-  iter = iter + 1;
-end 
-
-
-model.mu  = mu; model.Sigma = Sigma; model.mixweight = mixweight;
-model.K = K; model.dof = dof;
+%PMTKmodified Kevin Murphy, Matt Dunham
+%%
+[model.mu, model.Sigma, model.dof, model.mixweight, EMargs]...
+    = process_options(varargin , ...
+    'mu0'        , []          , ...
+    'Sigma0'     , []          , ...
+    'dof0'       , []          , ...
+    'mixweight0' , []          );
+%%
+initFn              = @(X)init(model, X, K);
+dofEstimator        = @(model, c)estimateDofNLL(model, data, c); 
+mstepFn             = @(model, ess)mstep(model, ess, dofEstimator);
+[model, loglikHist] = emAlgo(data, initFn, @estep, mstepFn, [], EMargs{:}); 
 end
 
-function dof = estimateDofNLL(X, model, curK)
-% optimize neg log likelihood of observed data
-% using gradient free optimizer.
-nllfn = @(v) NLL(X, model, curK, v);
-dofMax = 1000; dofMin = 0.1;
+function model = init(model, X, K)
+%% Initialize
+if isempty(model.mu) || isempty(model.Sigma) || isempty(model.mixweight)
+    [mu, Sigma, mixweight] = kmeansInitMixGauss(X, K);
+end
+if isempty(model.mu)        , model.mu        = mu;            end
+if isempty(model.Sigma)     , model.Sigma     = Sigma;         end
+if isempty(model.mixweight) , model.mixweight = mixweight;     end
+if isempty(model.dof)       , model.dof       = 10*ones(1, K); end
+model.K = K;
+model.d = size(X, 2); 
+end
+
+function [ess, loglik] = estep(model, X)
+%% Compute expected sufficient statistics
+mu     = model.mu;
+Sigma  = model.Sigma;
+dof    = model.dof; 
+K      = model.K; 
+[N, D] = size(X); 
+
+[z, post, ll] = mixStudentInfer(model, X);
+loglik = sum(ll)/N;
+
+R   = sum(post, 1);
+Sw  = zeros(1, K);
+SX  = zeros(K, D); 
+SXX = zeros(D, D, K); 
+for c=1:K
+    XC           = bsxfun(@minus, X, rowvec(mu(:, c)));
+    delta        = sum((XC/Sigma(:, :, c)).*XC, 2);
+    w            = (dof(c) + D) ./ (dof(c) + delta); 
+    Xw           = msxfun(@times, post(:, c), X, w(:)); 
+    Sw(c)        = post(:, c)'* w;
+    SX(c, :)     = sum(Xw, 1); 
+    SXX(:, :, c) = Xw'*X; 
+end
+ess = structure(R, Sw, SX, SXX); 
+end
+
+function model = mstep(model, ess, dofEstimator)
+%% Maximize
+K     = model.K;
+Sigma = model.Sigma;
+SX    = ess.SX;
+Sw    = ess.Sw;
+SXX   = ess.SXX;
+R     = ess.R; 
+for c=1:K
+    SXc = SX(c, :)';
+    Sigma(:, :, c) = (1./R(c))*(SXX(:, :, c) - SXc*SXc'./Sw(c));
+end
+model.mu        = bsxfun(@rdivide, SX', Sw);
+model.Sigma     = Sigma; 
+model.mixweight = normalize(ess.R); 
+dof             = model.dof; 
+for c=1:K
+    dof(c) = dofEstimator(model, c); % ECME
+end
+model.dof = dof; 
+end
+
+function dof = estimateDofNLL(model, X, curK)
+%% Optimize neg log likelihood of observed data
+%% using gradient free optimizer.
+nllfn = @(v) NLL(model, X, curK, v);
+dofMin = 0.1;
+dofMax = 1000; 
 dof = fminbnd(nllfn, dofMin, dofMax);
 end
 
-function out= NLL(X, model, curK, v)
+function out = NLL(model, X, curK, v)
+%% Negative Log Likelihood
 model.dof(curK) = v;
 out = -sum(mixStudentLogprob(model, X));
 end
-
