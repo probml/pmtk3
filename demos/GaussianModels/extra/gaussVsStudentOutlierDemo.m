@@ -1,30 +1,25 @@
-% Illustrate the robustness of the t-distribution compared to the Gaussian.
-% Written by Matthew Dunham
+%% Illustrate the robustness of the t-distribution compared to the Gaussian.
+%
+%%
 function gaussVsStudentOutlierDemo()
-
-
-warning('off','stats:tlsfit:IterOrEvalLimit');
-
 n = 30;
-seed = 8; randn('state',seed);
+setSeed(8);
 data = randn(n,1);
 outliers = [8 ; 8.75 ; 9.5];
 nn = length(outliers);
 nbins = 7;
-
+%%
 figure;
 plotHist(data,nbins,n);
 plotPDFs(data);
 printPmtkFigure('gaussVsT')
-
+%%
 figure;
 plotHist(data,nbins,n+nn);
 plotHist(outliers,nn,n+nn);
 plotPDFs([data ; outliers]);
 printPmtkFigure('gaussVsToutlier')
-
-%%
-% Bucket the data into nbins, divide the size of each bin by norm and plot
+%% Bucket the data into nbins, divide the size of each bin by norm and plot
 % the normalized histogram. 
 function plotHist(data,nbins,norm)
     hold on;
@@ -38,13 +33,9 @@ function plotPDFs(data)
     Xbar = mean(data);
     sigma = std(data);
     gauss = @(X)normpdf(X,Xbar,sigma);
-    
-    %MLEs = mle(data,'distribution','tlocationscale'); %stats toolbox
-    %mu = MLEs(1); sigma = MLEs(2); dof = MLEs(3)
-    % use pmtk's EM algorithm
+    %% use pmtk's EM algorithm
     model = studentFitEm(data);
     sT = @(X)exp(studentLogprob(model, X));
-    
     hold on;
     x = (-5:0.01:10)';
     h(1) = plot(x,gauss(x),'k:','LineWidth',3);
@@ -57,6 +48,4 @@ function plotPDFs(data)
         legend(h, 'gaussian', 'student T')
     end
 end
-
-
 end

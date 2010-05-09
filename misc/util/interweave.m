@@ -11,6 +11,6 @@ nB = numel(B);
 C = cell(1, nA+nB);
 C(1:2:2*nA-1) = A;
 C(2:2:2*nB) = B;
-C = removeEmpty(C);
+%C = removeEmpty(C);
 
 end

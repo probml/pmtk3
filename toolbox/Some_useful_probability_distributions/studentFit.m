@@ -7,6 +7,6 @@ function [model] = studentFit(X, dof)
 
 % default algorithm is EM
 if nargin < 2, dof = []; end
-model = studentFitEm(X, dof);
+model = studentFitEm(X, 'dof', dof);
 
 end

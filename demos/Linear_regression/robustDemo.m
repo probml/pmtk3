@@ -1,10 +1,10 @@
-% Illustrate the robustness of the student and laplace distributions compared to the Gaussian.
-
+%% Illustrate the robustness of the student and laplace distributions compared to the Gaussian.
+%
+%%
 function robustDemo()
 
-
 n = 30;
-seed = 8; randn('state',seed);
+setSeed(8);
 data = randn(n,1);
 outliers = [8 ; 8.75 ; 9.5];
 nn = length(outliers);
@@ -14,16 +14,15 @@ figure;
 plotHist(data,nbins,n);
 plotPDFs(data);
 printPmtkFigure('robustDemoNoOutliers')
-
+%%
 figure;
 plotHist(data,nbins,n+nn);
 plotHist(outliers,nn,n+nn);
 plotPDFs([data ; outliers]);
 printPmtkFigure('robustDemoOutliers')
 
-%%
-% Bucket the data into nbins, divide the size of each bin by norm and plot
-% the normalized histogram. 
+%% Bucket the data into nbins, divide the size of each bin by norm and plot
+%% the normalized histogram. 
 function plotHist(data,nbins,norm)
     hold on;
     [counts, locations] = hist(data,nbins);
@@ -34,14 +33,11 @@ end
 function plotPDFs(data)
     Xbar = mean(data);
     sigma = std(data);
-    gauss = @(X) normpdf(X,Xbar,sigma);
-    
+    gauss = @(X) normpdf(X, Xbar, sigma);
     model = studentFit(data);
     sT = @(X)exp(studentLogprob(model, X));
-
     model = laplaceFit(data);
-    lap = @(X)exp(laplaceLogprob(model, X));
-    
+    lap = @(X)exp(laplaceLogprob(model, X));   
     hold on;
     x = (-5:0.01:10)';
     h(1) = plot(x,gauss(x),'k:','LineWidth',3);

@@ -11,7 +11,9 @@ X = gaussSample(model, N);
 %[muHat1d, SigmaHat1d, dofHat1d, niter1d] = ...
 %  studentFitEm(X, dof,  useECME, useSpeedup, verbose);
 
-[model1, niter] = studentFitEm(X, 10, true)
+[model1, llhist1] = studentFitEm(X, 'dof', 10, 'useECME', true);
+niter1 = length(llhist1)
 
-[model2, niter2] = studentFitEm(X, [],  true)
+[model2, llhist2] = studentFitEm(X, 'useECME',  true);
+niter2 = length(llhist2)
 
