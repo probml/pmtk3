@@ -22,22 +22,18 @@ function [model, loglikHist] = probitRegFitEm(X, y, lambda, varargin)
 %%
 % Based on code by Francois Caron, modified by Kevin Murphy & Matt Dunham
 %%
-[model.w, model.preproc, EMargs] =  process_options(varargin,...
-    'winit'   , [] ,...
-    'preproc' , [] );
-
-if isempty(model.preproc)
-    % important to standardize to avoid numerical error
-    model.preproc = struct('standardizeX', true);
-end
+[model.w, model.preproc, EMargs] =  process_options(varargin , ...
+    'winit'   , []                                           , ...
+    'preproc' , struct('standardizeX', true)); 
+     % important to standardize to avoid numerical error
 [model.preproc, X] = preprocessorApplyToTrain(model.preproc, X); 
 %%
 objfn   = @(w)-ProbitLoss(w, X, y) + lambda*sum(w.^2);
 estepFn = @(model, data)estep(model, data, objfn); 
-mstepFn = @(model, ess)linregFit(ess.X, ess.Z , ...
+mstepFn = @(model, ess)linregFit(X, ess.Z     , ...
     'lambda'  , lambda                        , ...
     'regType' , 'L2'                          , ...
-    'preproc' , struct('standardizeX', false));
+    'preproc' , struct('standardizeX', false) );
 [m, loglikHist] = emAlgo([X, y], @init, estepFn, mstepFn, [], EMargs{:}); 
 model.w = m.w;
 model.lambda = lambda; 
@@ -56,6 +52,5 @@ X      = data(:, 1:end-1);
 y      = data(:, end);
 u      = X*model.w;
 ess.Z  = u + gausspdf(u, 0, 1)./((y==1) - probit(-u));
-ess.X  = X; 
 loglik = objfn(model.w);
 end
