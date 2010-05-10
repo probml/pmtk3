@@ -1,6 +1,7 @@
 %% Compare logistic regresion and probit regression on the crabs dataset
 %
 %%
+setSeed(0);
 load crabs
 %% Logistic regression
 modelLR = logregFit(Xtrain, ytrain); 
