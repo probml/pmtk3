@@ -22,6 +22,7 @@ function [model, loglikHist] = probitRegFitEm(X, y, lambda, varargin)
 %%
 % Based on code by Francois Caron, modified by Kevin Murphy & Matt Dunham
 %%
+SetDefaultValue(3, 'lambda', 0); 
 [model.w, model.preproc, EMargs] =  process_options(varargin , ...
     'winit'   , []                                           , ...
     'preproc' , struct('standardizeX', true)); 
