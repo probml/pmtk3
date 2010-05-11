@@ -8,7 +8,7 @@ function S = partitionedSum(X, y, C)
 %
 % M  - a C-by-d matrix of sums. 
 %
-% See also - groupMean
+% See also - partitionedMean
 
 
 if nargin < 3

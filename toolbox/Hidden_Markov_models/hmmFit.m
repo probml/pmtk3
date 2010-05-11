@@ -179,9 +179,24 @@ end
 
 function [ess, logprior] = estepDiscreteEmission(model, ess, stackedData)
 % Perform the discrete emission component of the estep.
-weights = ess.weights; 
+%
+% Since we've computed the weights already, we operate with all of
+% observation sequences in one long vector: stackedData. The actual
+% sequence lengths, (which can vary) only affect the computation of pi, A,
+% and weights, not the weighted emission counts: dataCounts. 
+%
+% ess.weights is n-by-nstates, where n is the length of stackedData. S is a
+% n-by-nObsStates sparse binary matrix s.t. S(i, j) = 1 iff 
+% stackedData(i) == j and acts as an indicator function. The weights'*S
+% matrix multiply sums the entries in weights according to S, resulting in
+% an nstates-by-nObsStates dataCounts matrix: dataCounts(h, o) is equal to
+% the weighted (i.e. expected) count of the joint occurance of hidden
+% state h and observed state o, which will be normalized so that rows sum
+% to one in the maximization step. 
 logprior = log(model.emission(:)+eps)'*(model.emissionPrior(:)-1);
-ess.dataCounts = weights'*bsxfun(@eq, stackedData(:), sparse(1:model.nObsStates));
+weights = ess.weights; 
+S = bsxfun(@eq, stackedData(:), sparse(1:model.nObsStates));
+ess.dataCounts = weights'*S; % dataCounts is nstates-by-nObsStates
 ess.wsum = sum(weights, 1)';
 end
 %% MSTEP
