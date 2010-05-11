@@ -34,12 +34,12 @@ estepFn = @(model, data)estep(model, data, objfn);
 mstepFn = @(model, ess)linregFit(X, ess.Z     , ...
     'lambda'  , lambda                        , ...
     'preproc' , struct('standardizeX', false) );
-[m, loglikHist] = emAlgo([X, y], @init, estepFn, mstepFn, [], EMargs{:}); 
+[m, loglikHist] = emAlgo(model, [X, y], @init, estepFn, mstepFn, EMargs{:}); 
 model.w = m.w;
 model.lambda = lambda; 
 end
 
-function model = init(data)
+function model = init(model, data, restartNum) %#ok
 %% Initialize
 X       = data(:, 1:end-1);
 y       = data(:, end);
