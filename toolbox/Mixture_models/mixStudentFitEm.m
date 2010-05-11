@@ -43,14 +43,15 @@ function [model, loglikHist] = mixStudentFitEm(data, K, varargin)
     'dof0'       , []          , ...
     'mixweight0' , []          );
 %%
-initFn              = @(X)init(model, X, K);
+model.K = K; 
 dofEstimator        = @(model, c)estimateDofNLL(model, data, c); 
 mstepFn             = @(model, ess)mstep(model, ess, dofEstimator);
-[model, loglikHist] = emAlgo(data, initFn, @estep, mstepFn, [], EMargs{:}); 
+[model, loglikHist] = emAlgo(model, data, @init, @estep, mstepFn, EMargs{:}); 
 end
 
-function model = init(model, X, K)
+function model = init(model, X, restartNum)%#ok
 %% Initialize
+K = model.K;
 if isempty(model.mu) || isempty(model.Sigma) || isempty(model.mixweight)
     [mu, Sigma, mixweight] = kmeansInitMixGauss(X, K);
 end
@@ -58,7 +59,7 @@ if isempty(model.mu)        , model.mu        = mu;            end
 if isempty(model.Sigma)     , model.Sigma     = Sigma;         end
 if isempty(model.mixweight) , model.mixweight = mixweight;     end
 if isempty(model.dof)       , model.dof       = 10*ones(1, K); end
-model.K = K;
+
 model.d = size(X, 2); 
 end
 
