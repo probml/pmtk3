@@ -7,7 +7,7 @@ function [model, loglikHist] = mixGaussFitEm(data, K, varargin)
 %
 % Return arguments:
 % model is a structure containing these fields:
-%   mu(:,) is k'th centroid
+%   mu(:,k) is k'th centroid
 %   Sigma(:,:,k)
 %   mixweight(k)
 %%
@@ -55,16 +55,9 @@ if isempty(model.mu)
 end
 end
 
-function model = initOld(data, K, mu, Sigma, mixweight, prior)
-% Initialize params
-if isempty(mu)
-    [mu, Sigma, mixweight] = kmeansInitMixGauss(data, K);
-end
-model = structure(mu, Sigma, mixweight, prior);
-end
 
 function model = mstep(model, ess)
-[D, D2, K] = size(ess.Sk); %#ok
+[D, D2, K] = size(ess.Sk); 
 mixweight = normalize(ess.w);
 % Set any zero weights to one before dividing
 % This is valid because w(c)=0 => WY(:,c)=0, and 0/0=0
@@ -94,7 +87,7 @@ end
 
 function [model, valid] = mstepOR(model, modelBO, eta)
 % For over-relaxed EM
-[D, D2, K] = size(modelBO.Sigma); %#ok
+[D, D2, K] = size(modelBO.Sigma);
 % Since weights are constrained to sum to one,
 % we do update in softmax parameterization
 mixweight = model.mixweight.*(modelBO.mixweight./ model.mixweight).^eta;
