@@ -21,11 +21,11 @@ end
 %%
 ess = structure(expVals, expProd, ismissing, missingRows, n);
 estepFn = @(model, data)estep(model, data, ess);
-initFn = @(data)init(data, ismissing); 
-[model, loglikHist] = emAlgo(X, initFn, estepFn, @mstep, [], varargin{:});
+initFn = @(model, data, restartNum)init(model, data, restartNum, ismissing); 
+[model, loglikHist] = emAlgo([], X, initFn, estepFn, @mstep, varargin{:});
 end
 
-function model = init(X, ismissing)
+function model = init(model, X, restartNum, ismissing)
 % Initialize
 data = X';
 nmissing = sum(ismissing(:)); 

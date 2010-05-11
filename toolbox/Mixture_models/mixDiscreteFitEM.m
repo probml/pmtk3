@@ -19,8 +19,9 @@ function [model, loglikHist] = mixDiscreteFitEM(X, nmix,  varargin)
 % loglikHist - log likelihood history
 %% Setup
 
-nstates = max(X(:));
-[maxIter, convTol, verbose, saveMemory] = ...
+model.nstates = max(X(:));
+model.nmix = nmix; 
+[maxIter, convTol, verbose, model.saveMemory] = ...
     process_options(varargin        , ...
     'maxIter'    , 100              , ...
     'convTol'    , 1e-3             , ...
@@ -28,15 +29,16 @@ nstates = max(X(:));
     'saveMemory' , false              );
 
 %% Fit
-initFn = @(X)init(X, nmix, nstates, saveMemory);
-[model, loglikHist] = emAlgo(X, initFn, @estep, @mstep, [], ...
+[model, loglikHist] = emAlgo(model, X, @init, @estep, @mstep, ...
     'maxIter', maxIter, 'convTol', convTol, 'verbose', verbose);
 end
 
-function model = init(X, nmix, nstates, saveMemory)
+function model = init(model, X, restartNum) %#ok
 %% Initialize
 % by randomly partitioning the data, fitting each partition separately
 % and then adding noise.
+nstates = model.nstates; 
+nmix = model.nmix; 
 d = size(X, 2); 
 T = zeros(nstates, d, nmix);
 Xsplit = randsplit(X, nmix);
@@ -46,7 +48,8 @@ for k=1:nmix
 end
 T = normalize(T + 0.2*rand(size(T)), 1); % add noise
 mixweight = normalize(10*rand(1, nmix) + ones(1, nmix));
-model = structure(mixweight, T, saveMemory);
+model.mixweight = mixweight;
+model.T = T; 
 end
 
 
