@@ -1,4 +1,4 @@
-function logp = logmarglikGaussInvWishart(model, X)
+function logp = gaussInvWishartMarginalLogprob(model, X)
 % logp(i) = int_S log p(X(i, :) | model) 
 
 mu    = model.mu;

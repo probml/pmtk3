@@ -197,7 +197,7 @@ end
 ess.xbar = xbar;
 ess.XX = XX;
 ess.wsum = wsum;
-logprior = nstates*sum(logmarglikGaussInvWishart...
+logprior = nstates*sum(gaussInvWishartMarginalLogprob...
     (model.emissionPrior, stackedData));
 end
 
