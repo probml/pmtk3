@@ -55,14 +55,15 @@ if isempty(model.dof)
 else
     dofEstimator = [];
 end
-initFn  = @(X)init(model, X, dof0);
+initFn  = @(model, data, restartNum)init(model, data, restartNum, dof0); 
 estepFn = @(model, X)estep(model, X, useSpeedup);
 mstepFn = @(model, ess)mstep(model, ess, dofEstimator);
-[model, loglikHist] = emAlgo(X, initFn, estepFn, mstepFn, [], EMargs{:});
+[model, loglikHist] = emAlgo(model, X, initFn, estepFn, mstepFn, EMargs{:});
 end % end of studentFitEm
 
-function model = init(model, X, dof0)
+function model = init(model, X, restartNum, dof0)
 %% Initialize
+
 D = size(X, 2);
 if isempty(model.mu)
     model.mu = randn(D, 1);
