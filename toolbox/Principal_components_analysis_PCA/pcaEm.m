@@ -20,8 +20,8 @@ mu = mean(X);
 X = X - repmat(mu, n, 1);
 X = X'; % each *column* is now a centered data case
 %%
-initFn = @(X)init(X, k);
-[model, negMseHist] = emAlgo(X, initFn, @estep, @mstep, [], varargin{:});
+model.k = k;
+[model, negMseHist] = emAlgo(model, X, @init, @estep, @mstep, varargin{:});
 iter = length(negMseHist);
 W = model.W;
 %% post process
@@ -37,7 +37,8 @@ Z = X*W;
 Xrecon = Z*W' + repmat(mu, n, 1);
 end
 
-function model = init(X, k)
+function model = init(model, X, restartNum) %#ok
+k = model.k; 
 model.W = rand(size(X, 1), k);
 end
 
