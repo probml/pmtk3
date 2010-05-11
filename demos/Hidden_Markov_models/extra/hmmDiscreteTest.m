@@ -1,7 +1,7 @@
 %% Simple test of hmmDiscreteFitEm
 % We compare how well the true model can decode a sequence, compared to a
 % model learned via EM using the best permutation of the labels. 
-%PMTKslow
+
 %% Define the generating model
 setSeed(0);
 nHidStates = 4; 
@@ -18,11 +18,11 @@ trueModel.A = [0.6 0.15 0.20 0.05;
 trueModel.pi = [0.8 0.1 0.1 0];
 trueModel.type = 'discrete';
 %% Sample
-len = 10000;
+len = 100;
 [observed, hidden] = hmmSample(trueModel, len);
 hidden = hidden{1};
 %% Learn the model using EM with random restarts
-nrestarts = 10;
+nrestarts = 2;
 modelEM = hmmFit(observed, nHidStates, 'discrete', ...
     'convTol', 1e-5, 'nRandomRestarts', nrestarts, 'verbose', true);
 

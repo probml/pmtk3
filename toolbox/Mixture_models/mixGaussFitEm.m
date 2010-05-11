@@ -32,14 +32,23 @@ end
 
 
 %% Fit
-initFn = @(data)init(data, K, mu, Sigma, mixweight, prior);
-[model, loglikHist]  = emAlgo(data, initFn, @estep,  @mstep, @mstepOR, ...
+%initFn = @(data)init(data, K, mu, Sigma, mixweight, prior);
+model = structure(K, mu, Sigma, mixweight, prior);
+[model, loglikHist]  = emAlgo(model, data, @init, @estep,  @mstep, @mstepOR, ...
     'maxIter', maxIter, 'convTol', convTol, 'verbose', verbose, 'plotfn', plotfn, ...
     'overRelaxFactor', overRelaxFactor);
 model.K = K;
 end
 
-function model = init(data, K, mu, Sigma, mixweight, prior)
+function model = init(model, data, restartNum) %#ok
+% Initialize params
+if isempty(model.mu)
+    [mu, Sigma, mixweight] = kmeansInitMixGauss(data, model.K);
+end
+model = structure(K, mu, Sigma, mixweight, prior);
+end
+
+function model = initOld(data, K, mu, Sigma, mixweight, prior)
 % Initialize params
 if isempty(mu)
     [mu, Sigma, mixweight] = kmeansInitMixGauss(data, K);

@@ -71,23 +71,22 @@ end
 %%
 switch lower(type)
     case 'gauss'
-        initFn = @(data)initGauss(data, model);
         estepFn = @(model, data)estep(model, data, @estepGaussEmission);
-        [model, loglikHist] = emAlgo(data, initFn, estepFn, ...
-                                    @mstepGauss, [], EMargs{:});
+        [model, loglikHist] = emAlgo(model, data, @initGauss, estepFn, ...
+                                    @mstepGauss, EMargs{:});
     case 'discrete'
-        initFn = @(data)initDiscrete(data, model);
         estepFn = @(model, data)estep(model, data, @estepDiscreteEmission);
-        [model, loglikHist] = emAlgo(data, initFn, estepFn,...
-                                    @mstepDiscrete, [], EMargs{:});
+        [model, loglikHist] = emAlgo(model, data, @initDiscrete, estepFn,...
+                                    @mstepDiscrete, EMargs{:});
     otherwise
         error('%s is not a valid output distribution type');
 end
 end
 
 %% INIT
-function model = initGauss(data, model)
+function model = initGauss(model, data, restartNum) %#ok
 %% Initialize Gaussian model
+% Could use mixGaussFit for 1st iteration
 model.d = size(data{1}, 1);
 nstates = model.nstates;
 if isempty(model.pi)     
@@ -107,7 +106,7 @@ if isempty(model.emission)
 end
 end
 
-function model = initDiscrete(data, model)
+function model = initDiscrete(model, data, restartNum) %#ok
 % Initialize the model
 model.d = 1;
 model.nObsStates = nunique(cell2mat(data')');

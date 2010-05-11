@@ -24,13 +24,13 @@ function [m, V, loglik] = kalmanFilter(y, A, C, Q, R, init_m, init_V, varargin)
 % 'D'     - D(:,:,k) the regression matrix  for y [0]
 % Note that we can set u(:,t)  = y(:,t-1)
 %
+% To incorporate offset into observations, set
+% offset(:,k) to non-zero
+%
 % So the dynamics and obsevration models are as follows, given m(t)=k
 %  N( z(t) | A(:,:,k) z(t-1) + B(:,:,k) u(:,t), Q(:,:,k))
-%  N( y(:,t) | C(:,:,k) z(t) + D(:,:,k) u(:,t), R(:,:,k))
+%  N( y(:,t) | C(:,:,k) z(t) + D(:,:,k) u(:,t) + offset(:,k), R(:,:,k))
 %
-%
-% If you want to add a mean offset term to the observation,
-% say offset(:,k), just set u = ones(1,T), and D(:,:,k) = offset(:,k)
 %
 % OUTPUTS (where Z is the hidden state being estimated)
 % m(:,t) = E[Z(:,t) | y(:,1:t)]
@@ -41,14 +41,14 @@ function [m, V, loglik] = kalmanFilter(y, A, C, Q, R, init_m, init_V, varargin)
 
 %PMTKauthor Kevin Murphy
 %PMTKdate 1998
-%modified 6 May 2010
+%modified 10 May 2010
 
 [os T] = size(y); % os = size of observation space
 ss = size(A,1); % size of state space
 
-[model, u, B,  D] = process_options(varargin, ...
+[model, u, B,  D, offset] = process_options(varargin, ...
   'model', ones(1,T), 'u', zeros(1,T), 'B', zeros(1,1,1), ...
-  'D', zeros(1,1,1));
+  'D', zeros(1,1,1), 'offset', zeros(os, T, 1));
 
 m = zeros(ss, T);
 V = zeros(ss, ss, T);
@@ -63,8 +63,9 @@ for t=1:T
     prevm = m(:,t-1);
     prevV = V(:,:,t-1);
   end
+  yt = y(:,t) - offset(:,k);
   [m(:,t), V(:,:,t), LL] = ...
-    kalmanUpdate(A(:,:,k), C(:,:,k), Q(:,:,k), R(:,:,k), y(:,t), prevm, prevV, ...
+    kalmanUpdate(A(:,:,k), C(:,:,k), Q(:,:,k), R(:,:,k), yt, prevm, prevV, ...
     (t==1),   u(:,t),  B(:,:,k), D(:,:,k));
   loglik = loglik + LL;
 end
