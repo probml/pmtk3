@@ -1,13 +1,12 @@
-
-% Reproduce table 1 from "Robust statistical modeling using the T
+%% Reproduce table 1 from "Robust statistical modeling using the T
 % distribution", Lange et al, JASA 1989
 % The estimated coefficients are similar
 % However, this does *not* reproduce the log likelihoods correctly
 % The reason for this is not clear - is Lange evaluating the expected
 % complete data loglik instead?
-
+%
 %PMTKauthor Hannes Bretschneider
-
+%%
 load stackloss;
 n = size(X,1);
 X1 = [ones(n,1) X];
@@ -15,6 +14,8 @@ X1 = [ones(n,1) X];
 % dof=0 means estimate from data
 % dof=100 means effectively use Gaussian model
 dofs = [100, 8, 4, 3, 2, 1.1, 1, 0.5, 0];
+modelEM = cell(1,length(dofs)); 
+loglikEM  = zeros(1, length(dofs)); 
 for i = 1:length(dofs)
     dof = dofs(i);
     modelEM{i} = linregRobustStudentFitEm(X, y, dof);

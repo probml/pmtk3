@@ -2,7 +2,7 @@ function [ model, yhat ] = linregCensoredFitEm( x, y, censored, relTol )
 %LINREGCENSOREDEM Fit a censored model by EM
 % X: N*D matrix
 % y: N*1 vector
-%  censored(i) = true if censroted
+%  censored(i) = true if censoreds
 %   relTol: relative Tolerance to end the iteration. Defaults to 10^-6
 % 
 % yhat(i) = E[z(i)] computed during EM

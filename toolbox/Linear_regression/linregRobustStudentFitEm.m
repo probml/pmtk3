@@ -1,61 +1,65 @@
-function model = linregRobustStudentFitEm(X, y, dof,  includeOffset)
-% Fit linear regression with Student noise model by EM
-
+function [model, loglikHist] = linregRobustStudentFitEm(X, y, dof, varargin)
+%% Fit linear regression with Student noise model by EM
+%
 %PMTKauthor Hannes Bretschneider
-%PMTKmodified Kevin Murphy
-
-if nargin < 4, includeOffset = true; end
-if nargin < 5, relTol = 10^-6; end
-if dof==0, dof = []; end
-
-[N, D] = size(X);
-Xtrain = X;
-if includeOffset
-  X = [ones(N, 1), X];
+%PMTKmodified Kevin Murphy & Matt Dunham
+%%
+SetDefaultValue(3, 'dof', []);
+if dof==0
+    dof = []; 
+end
+model.dof = dof;
+[y, ybar] = centerCols(y);
+dofEstimator = @(model, dof)negloglikFn(model, dof, X, y);
+mstepFn = @(model, ess)mstep(model, ess, dofEstimator);
+[model, loglikHist] = emAlgo(model, [X, y], @init, @estep, mstepFn, varargin{:});
+model.w0  = ybar - mean(X)*model.w;
 end
 
-
-n = length(y);
-w = X\y;
-sigma2 = 1/n*sum((y - X*w).^2);
-iter = 0;
-if isempty(dof)
-  estimateDof = true;
-  dof = 10;  % initial guess
-else
-  estimateDof = false;
+function model = init(model, data, restartNum) %#ok
+%% Initialize
+X = data(:, 1:end-1);
+y = data(:, end);
+model.w = X\y;
+model.estimateDof = isempty(model.dof);
+if model.estimateDof
+    model.dof = 10; % initial guess
+end
+model.sigma2 = mean((y - X*model.w).^2);
 end
 
-converged = false;
-while ~converged
-  iter = iter+1;
-  w_old = w;
-  delta = 1/sigma2*(y - X*w).^2;
-  s = (dof+1)./(dof+delta);
-  S  = diag(sqrt(s));
-  x_weighted = S*X;
-  y_weighted = S*y;
-  w = x_weighted\y_weighted;
-  sigma2 = 1/(n)*sum(s.*(y - X*w).^2);
-  w_diff = max(abs(w_old./w-1));
-  converged =  (w_diff < relTol);
-  
-  if estimateDof
-    % optimize neg log likelihood of observed data (ECME)
-    % using gradient free optimizer.
-    nllfn = @(v) -sum(linregRobustStudentLogprob(...
-      struct('w0', w(1), 'w', w(2:end), 'sigma2', sigma2, 'dof', v, 'includeOffset', includeOffset),...
-      Xtrain, y));
-    dofMax = 100; dofMin = 0.1;
-    dof = fminbnd(nllfn, dofMin, dofMax); 
-  end
+function [ess, loglik] = estep(model, data)
+%% Compute the expected sufficient statistics
+X      = data(:, 1:end-1);
+y      = data(:, end);
+loglik = sum(linregRobustStudentLogprob(model, X, y));
+sigma2 = model.sigma2; 
+w      = model.w;
+dof    = model.dof;
+delta  = (1/sigma2)*(y - X*w).^2;
+s      = (dof+1)./(dof+delta);
+S      = diag(sqrt(s));
+sigma2 = mean(s.*(y - X*w).^2);
+x_weighted = S*X;
+y_weighted = S*y;
+ess        = structure(x_weighted, y_weighted, sigma2);
 end
 
+function model = mstep(model, ess, dofEstimator)
+%% Maximize
+model.w      = ess.x_weighted\ess.y_weighted;
+model.sigma2 = ess.sigma2; 
+dofMax = 100;
+dofMin = 0.1;
+if model.estimateDof
+    % optimize neg log likelihood of observed data (ECME) using gradient
+    % free optimizer.
+    nllfn = @(v)dofEstimator(model, v);
+    model.dof = fminbnd(nllfn, dofMin, dofMax);
+end
+end
 
-model = struct('w', w, 'sigma2', sigma2, 'dof', dof,...
-  'relTol', relTol, 'iterations', iter, 'includeOffset', includeOffset);
-
-model.w0 = model.w(1);
-model.w = model.w(2:end);
-
+function nll = negloglikFn(model, dof, X, y)
+model.dof = dof;
+nll = -sum(linregRobustStudentLogprob(model, X, y));
 end

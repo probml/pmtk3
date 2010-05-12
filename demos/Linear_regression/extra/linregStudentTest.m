@@ -22,7 +22,7 @@ for i = 1:length(NUs)
     tGradDesc = toc;
     % Using EM
     tic;
-    modelEM = linregRobustStudentFitEm(x, y, nu);
+    modelEM = linregRobustStudentFitEm(x, y, nu, 'verbose', true);
     tEM = toc;
     table(i,:) = [tGradDesc sqrt(modelGradDesc.sigma2) modelGradDesc.w0 rowvec(modelGradDesc.w) ...
       tEM sqrt(modelEM.sigma2) rowvec(modelEM.w)];
