@@ -151,9 +151,11 @@ if ~isempty(prior)
     nu0 = prior.nu0; S0 = prior.S0;
     logprior = zeros(1,K);
     for c=1:K
-        Sinv = inv(model.Sigma(:,:,c));
-        logprior(c) = logdet(Sinv)*(nu0 + D + 2)/2 - 0.5*trace(Sinv*S0) ...
-            -kappa0/2*(model.mu(:,c)-m0)'*Sinv*(model.mu(:,c)-m0);
+        %Sinv = inv(model.Sigma(:,:,c));
+        S = model.Sigma(:, :, c); 
+        % note logdet(Sinv) == -logdet(S)
+        logprior(c) = -logdet(S)*(nu0 + D + 2)/2 - 0.5*trace(S\S0) ...
+            -kappa0/2*(model.mu(:,c)-m0)'*(S\(model.mu(:,c)-m0));
         % does not include log(Z) term, which is constant
         %mod2 = struct('mu', m0, 'Sigma', S0, 'dof', nu0, 'k', kappa0);
         %logp = gaussInvWishartLogprob(mod2, model.mu(:,c), model.Sigma(:,:,c));

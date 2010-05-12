@@ -33,8 +33,9 @@ while(~converged)
     for i=missingRows(:)'
         u = dataMissing(i,:); % unobserved entries
         o = ~u; % observed entries
-        Sooinv = inv(Sigma(o,o));
-        X(i,u) = mu(u) + (Sigma(u,o)*Sooinv*((X(i,o)-mu(o)))')'; % plugin posterior mode.
+        %Sooinv = inv(Sigma(o,o));
+        Soo = Sigma(o, o); 
+        X(i,u) = mu(u) + ((Sigma(u,o)/Soo)*((X(i,o)-mu(o)))')'; % plugin posterior mode.
     end
     
     % we store the old values of mu, Sigma just in case the log likelihood decreased and we need to return the last values before the singularity occurred
@@ -52,7 +53,7 @@ while(~converged)
     % Convergence check
     prevLL = currentLL;
     XC = bsxfun(@minus, X, mu);
-    currentLL = sum(-1/2*logdet(2*pi*Sigma) - 1/2*sum((XC*inv(Sigma)).*XC,2));
+    currentLL = sum(-1/2*logdet(2*pi*Sigma) - 1/2*sum((XC/(Sigma)).*XC,2));
     loglikTrace(iter) = currentLL;
     if (currentLL < prevLL)
         warning('warning: EM did not increase objective.  Exiting with last reasonable parameters \n')

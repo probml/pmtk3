@@ -86,9 +86,9 @@ if(~isempty(missingRows))
             muSamples(s - nburnin,:) = muCurr;
             SigmaSamples(:,:,s - nburnin) = SigmaCurr;
             XC = bsxfun(@minus,xCurr,muCurr);
-            lik = sum(-1/2*logdet(2*pi*SigmaCurr) - 1/2*sum((XC*inv(SigmaCurr)).*XC,2));
-            LL(s - nburnin) = - dof*d/2*log(2) - mvtGammaln(d, dof/2) + dof/2*logdet(Lambda0) - (dof + d + 1)/2*logdet(SigmaCurr) - 1/2*trace(Lambda0*inv(SigmaCurr)) ...
-                -1/2*logdet(2*pi*SigmaCurr/k0) - k0/2*(muCurr - mu0)*inv(SigmaCurr)*(muCurr - mu0)' + lik;
+            lik = sum(-1/2*logdet(2*pi*SigmaCurr) - 1/2*sum((XC/SigmaCurr).*XC,2));
+            LL(s - nburnin) = - dof*d/2*log(2) - mvtGammaln(d, dof/2) + dof/2*logdet(Lambda0) - (dof + d + 1)/2*logdet(SigmaCurr) - 1/2*trace(Lambda0/(SigmaCurr)) ...
+                -1/2*logdet(2*pi*SigmaCurr/k0) - k0/2*((muCurr - mu0)/SigmaCurr)*(muCurr - mu0)' + lik;
             if verbose, fprintf('%d: LL = %5.3f\n', s - nburnin, LL(s - nburnin)); end
         end
         

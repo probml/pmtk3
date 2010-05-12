@@ -15,15 +15,15 @@ function [model, loglikHist] = mixGaussMissingFitEm(data, K, varargin)
     'diagCov'     , 0);
 %%
 model.K = K;
-[model, loglikHist] = emAlgo(model, data', @init, @estep, @mstep, EMargs{:}); 
+[model, loglikHist] = emAlgo(model, data', @init, @estep, @mstep, EMargs{:});
 end
 
 function model = init(model, X, restartNum) %#ok
 %% Initialize
-data = X'; 
+data = X';
 ismissing = sparse(isnan(data));
 K = model.K;
-model.d = size(data, 2); 
+model.d = size(data, 2);
 if model.doMap
     model.prior.mu    = zeros(1, d);
     model.prior.k     = 0;
@@ -32,93 +32,116 @@ if model.doMap
 else
     model.prior = [];
 end
-
 if isempty(model.mu) || isempty(model.Sigma) || isempty(model.mixweight)
     dataFilled = data;
-    dataFilled(ismissing) = randn(nnz(ismissing), 1); 
+    dataFilled(ismissing) = randn(nnz(ismissing), 1);
     initModel = mixGaussFitEm(dataFilled, K, 'verbose', false, 'doMap', true);
     if isempty(model.mu)
         model.mu = initModel.mu;
     end
     if isempty(model.Sigma)
-        model.Sigma = initModel.Sigma + repmat(eye(model.d), [1 1 K]); 
+        model.Sigma = initModel.Sigma + repmat(eye(model.d), [1 1 K]);
     end
     if isempty(model.mixweight)
-        model.mixweight = normalize(initModel.mixweight + 0.1); 
+        model.mixweight = normalize(initModel.mixweight + 0.1);
     end
 end
-model.ismissing = ismissing; 
+model.ismissing = ismissing;
 end
-
-
-
 
 function [ess, loglik] = estep(model, data)
-
-K = model.K; 
+%% Compute the expected sufficient statistics
+ismissing = model.ismissing;
+K = model.K;
 d = model.d;
-[z, rik, ll] = mixGaussInfer(model, data); 
-loglik = sum(ll); 
+[z, rik, ll] = mixGaussInfer(model, data);
+loglik = sum(ll);
 if doMAP
-% add log prior
-    prior  = model.prior; 
-    kappa0 = prior.k; 
+    % add log prior
+    prior  = model.prior;
+    kappa0 = prior.k;
     m0     = prior.mu;
-    nu0    = prior.dof; 
+    nu0    = prior.dof;
     S0     = prior.Sigma;
     mu     = model.mu;
-    Sigma  = model.Sigma; 
-    logprior = 0; 
+    Sigma  = model.Sigma;
+    logprior = 0;
     for c=1:K
-        Sinv = inv(Sigma(:, :, c));
+        %Sinv = inv(Sigma(:, :, c));
+        % note logdet(Sinv) == -logdet(S)
+        S = Sigma(:, :, c); 
         logprior = logprior + ...
-            logdet(Sinv)*(nu0 + d + 2)/2 - 0.5*trace(Sinv*S0) ...
-                -kappa0/2*(mu(:, c)-m0)'*Sinv*(mu(:, c)-m0); %#ok<MINV>
+            -logdet(S)*(nu0 + d + 2)/2 - 0.5*trace(S\S0) ...
+            -kappa0/2*(mu(:, c)-m0)'*(S\(mu(:, c)-m0)); 
     end
-    loglik = loglik + logprior; 
+    loglik = loglik + logprior;
 end
-        
-    % E step for missing values of X
-    % We accumulated the ESS in place to save memory
-    muik = zeros(d,K); % muik(:,k) = sum_i r(i,k) E[xi | zi=k, xiv]
-    Vik = zeros(d,d,K); % Vik(:,:,k) = sum_i r(i,k) E[xi xi' | zi=k, xiv]
-    expVals = zeros(d,1); expProd = zeros(d,d); % temporary storage
-    for k=1:K
-        mu=mu(:,k);
-        Sigma=Sigma(:,:,k);
-        for i=1:N
-            u = dataMissing(i,:); % unobserved entries
-            o = ~u; % observed entries
-            Sigmai = Sigma(u,u) - Sigma(u,o) /Sigma(o,o)* Sigma(o,u);
-            expVals(u) = mu(u) + Sigma(u,o)/Sigma(o,o)*(X(o,i)-mu(o));
-            expVals(o) = X(o,i);
-            expProd(u,u) = (expVals(u) * expVals(u)' + Sigmai);
-            expProd(o,o) = expVals(o) * expVals(o)';
-            expProd(o,u) = expVals(o) * expVals(u)';
-            expProd(u,o) = expVals(u) * expVals(o)';
-            muik(:,k) = muik(:,k) + rik(i,k)*expVals;
-            Vik(:,:,k) = Vik(:,:,k) + rik(i,k)*expProd;
-        end
+
+% E step for missing values of X
+% We accumulated the ESS in place to save memory
+muik = zeros(d, K); % muik(:,k) = sum_i r(i,k) E[xi | zi=k, xiv]
+Vik = zeros(d, d, K); % Vik(:,:,k) = sum_i r(i,k) E[xi xi' | zi=k, xiv]
+expVals = zeros(d, 1);
+expProd = zeros(d, d); % temporary storage
+for k=1:K
+    mu=mu(:,k);
+    Sigma=Sigma(:,:,k);
+    for i=1:N
+        u = ismissing(i,:); % unobserved entries
+        o = ~u; % observed entries
+        Sigmai = Sigma(u,u) - Sigma(u,o) /Sigma(o,o)* Sigma(o,u);
+        expVals(u) = mu(u) + Sigma(u,o)/Sigma(o,o)*(X(o,i)-mu(o));
+        expVals(o) = X(o,i);
+        expProd(u,u) = (expVals(u) * expVals(u)' + Sigmai);
+        expProd(o,o) = expVals(o) * expVals(o)';
+        expProd(o,u) = expVals(o) * expVals(u)';
+        expProd(u,o) = expVals(u) * expVals(o)';
+        muik(:,k) = muik(:,k) + rik(i,k)*expVals;
+        Vik(:,:,k) = Vik(:,:,k) + rik(i,k)*expProd;
     end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+end
+rk = sum(rik,1);
+ess = structure(Vik, muik, rk);
 end
 
 function model = mstep(model, ess)
-
+%% Maximize
+Vik   = ess.Vik;
+muik  = ess.muik;
+rk    = ess.rk; 
+mu    = model.mu;
+Sigma = model.Sigma; 
+model.mixweight = normalize(rk);
+if doMAP
+    kappa0 = prior.kappa0; 
+    m0     = prior.m0;
+    nu0    = prior.nu0; 
+    S0     = prior.S0;
+    for c=1:K
+        mu(:,c) = (muik(:,c)+kappa0*m0)./(rk(c)+kappa0);
+        a = (kappa0*rk(c))./(kappa0 + rk(c));
+        b = nu0 + rk(c) + d + 2;
+        Sprior = (muik(:,c)-m0)*(muik(:,c)-m0)';
+        Sk = (Vik(:,:,c) - rk(c)*mu(:,c)*mu(:,c)');
+        if diagCov
+            Sigma(:,:,c) = diag(diag((S0 + Sk + a*Sprior)./b));
+        else
+            Sigma(:,:,c) = (S0 + Sk + a*Sprior)./b;
+        end
+    end
+else
+    for c=1:K
+        mu(:,c) = muik(:,c)/rk(c);
+        if diagCov
+            Sigma(:,:,c) = diag(diag((Vik(:,:,c) -...
+                rk(c)*mu(:,c)*mu(:,c)')/rk(c)));
+        else
+            Sigma(:,:,c) = (Vik(:,:,c) - rk(c)*mu(:,c)*mu(:,c)')/rk(c);
+        end
+    end
+end
+model.mu = mu; 
+model.Sigma = Sigma; 
 end
 
 

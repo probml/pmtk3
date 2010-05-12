@@ -87,13 +87,13 @@ mu       = model.mu;
 Sigma    = model.Sigma;
 dof      = model.dof;
 [N, D]   = size(X);
-SigmaInv = inv(Sigma);
+%SigmaInv = inv(Sigma);
 XC = bsxfun(@minus,X,rowvec(mu));
-delta =  sum(XC*SigmaInv.*XC,2); %#ok we need inv(Sigma) later
+delta =  sum((XC/Sigma).*XC,2);
 w = (dof+D) ./ (dof+delta);      % E[tau(i)]
 if useSpeedup % see McLachlan and Krishnan eqn 5.97-5.98
     aopt = 1/(dof+D);
-    w = det(SigmaInv)^aopt * w;
+    w = (1./det(Sigma))^aopt * w; % det(SigmaInv) == 1/det(Sigma)
 end
 Xw = X .* repmat(w(:), 1, D);
 ess.Sw  = sum(w);
