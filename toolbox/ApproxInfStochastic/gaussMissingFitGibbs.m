@@ -3,7 +3,7 @@ function [model, dataSamples, LL] = gaussMissingFitGibbs(data, varargin)
 % Algorithm consists of a stochastic imputation stage (sampling from conditional given known)
 % and then sampling from the resulting posterior for mu and Sigma given the current state of the samples
 % Optional arguments and their defaults:
-% (mu0, Lambda0, k0, dof) [nanmeanPMTK(data), diag(nanvar(data)), 0.01, size(data,2) + 2] - Parameters defining the NIW prior
+% (mu0, Lambda0, k0, dof) [nanmeanPMTK(data), diag(nanvarPMTK(data)), 0.01, size(data,2) + 2] - Parameters defining the NIW prior
 % nSamples [600] - the number of samples to run the algorithm for
 % nburnin [100] - how many samples are considered burnin?
 % verbose [false]
@@ -26,7 +26,7 @@ if(isempty(mu0))
     mu0 = nanmeanPMTK(data);
 end
 if(isempty(Lambda0))
-    Lambda0 = diag(nanvar(data));
+    Lambda0 = diag(nanvarPMTK(data));
 end
 if(isempty(dof))
     dof = d + 2;

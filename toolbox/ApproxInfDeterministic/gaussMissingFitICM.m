@@ -21,7 +21,7 @@ X = data;
 
 % Initialize params
 mu = nanmeanPMTK(data); %mu = mu(:);
-Sigma = diag(nanvar(data));
+Sigma = diag(nanvarPMTK(data));
 
 iter = 1;
 converged = false;
