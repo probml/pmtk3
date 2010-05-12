@@ -112,12 +112,13 @@ if isempty(model.emission)
         end
         if isempty(model.A) || isempty(model.pi)
            z = colvec(mixGaussInfer(mixModel, stackedData)); 
-           A = accumarray([z(1:end-1), z(2:end)], 1);
-           model.A = normalize(A, 2); 
+           A = accumarray([z(1:end-1), z(2:end)], 1); % count transitions
+           model.A = normalize(A + ones(size(A)), 2); 
            if isempty(model.pi)
-              % seqidx(1:end-1) are the start indices for sequences
+              % seqidx(1:end-1) are the start indices of the sequences
               seqidx = cumsum([1, cellfun(@(seq)size(seq, 2), data')]);
-              model.pi = normalize(histc(z(seqidx(1:end-1)), 1:nstates)); 
+              pi = histc(z(seqidx(1:end-1)), 1:nstates); 
+              model.pi = normalize(pi + ones(size(pi))); 
            end
         end
     else
