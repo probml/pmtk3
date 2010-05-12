@@ -14,11 +14,8 @@ X = mixGaussSample(model, nsamples);
 Xmissing = X;
 Xmissing(1:7:end) = NaN;
 %%
-prior.m0     = zeros(d,1);
-prior.kappa0 = 0;
-prior.nu0    = d+2;
-prior.S0     = eye(d);
-model = mixGaussMissingFit(Xmissing, nmix, 'prior', prior);
+
+model = mixGaussMissingFitEm(Xmissing, nmix, 'doMap', true, 'verbose', true);
 figure; hold on;
 plot(X(:, 1), X(:, 2), '.');
 for i=1:nmix

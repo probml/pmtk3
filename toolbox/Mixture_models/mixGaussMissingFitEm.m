@@ -6,24 +6,25 @@ function [model, loglikHist] = mixGaussMissingFitEm(data, K, varargin)
 %PMTKauthor Kevin Murphy
 %PMTKmodified Hannes Bretschneider
 %%
-[model.mu, model.Sigma, model.mixweight, doMap, model.diagCov, EMargs] = ...
+[model.mu, model.Sigma, model.mixweight, model.doMap, model.diagCov, EMargs] = ...
     process_options(varargin , ...
     'mu0'         , [] , ...
     'Sigma0'      , [] , ...
     'mixweight0'  , [] , ...
-    'doMap'       , [] , ...
+    'doMap'       , true , ...
     'diagCov'     , 0);
 %%
 model.K = K;
-[model, loglikHist] = emAlgo(model, data', @init, @estep, @mstep, EMargs{:});
+[model, loglikHist] = emAlgo(model, data, @init, @estep, @mstep, EMargs{:});
 end
 
-function model = init(model, X, restartNum) %#ok
+function model = init(model, data, restartNum) %#ok
 %% Initialize
-data = X';
+
+d = size(data, 2); 
+model.d = d; 
 ismissing = sparse(isnan(data));
 K = model.K;
-model.d = size(data, 2);
 if model.doMap
     model.prior.mu    = zeros(1, d);
     model.prior.k     = 0;
@@ -53,18 +54,20 @@ function [ess, loglik] = estep(model, data)
 %% Compute the expected sufficient statistics
 ismissing = model.ismissing;
 K = model.K;
-d = model.d;
+[n, d] = size(data); 
+
+mu     = model.mu;
+Sigma  = model.Sigma;
 [z, rik, ll] = mixGaussInfer(model, data);
 loglik = sum(ll);
-if doMAP
+if ~isempty(model.prior)
     % add log prior
     prior  = model.prior;
     kappa0 = prior.k;
-    m0     = prior.mu;
+    m0     = prior.mu(:);
     nu0    = prior.dof;
     S0     = prior.Sigma;
-    mu     = model.mu;
-    Sigma  = model.Sigma;
+   
     logprior = 0;
     for c=1:K
         %Sinv = inv(Sigma(:, :, c));
@@ -84,14 +87,14 @@ Vik = zeros(d, d, K); % Vik(:,:,k) = sum_i r(i,k) E[xi xi' | zi=k, xiv]
 expVals = zeros(d, 1);
 expProd = zeros(d, d); % temporary storage
 for k=1:K
-    mu=mu(:,k);
-    Sigma=Sigma(:,:,k);
-    for i=1:N
+    muk = mu(:,k);
+    Sigmak=Sigma(:,:,k);
+    for i=1:n
         u = ismissing(i,:); % unobserved entries
         o = ~u; % observed entries
-        Sigmai = Sigma(u,u) - Sigma(u,o) /Sigma(o,o)* Sigma(o,u);
-        expVals(u) = mu(u) + Sigma(u,o)/Sigma(o,o)*(X(o,i)-mu(o));
-        expVals(o) = X(o,i);
+        Sigmai = Sigmak(u,u) - Sigmak(u,o) /Sigmak(o,o)* Sigmak(o,u);
+        expVals(u) = muk(u) + Sigmak(u,o)/Sigmak(o,o)*(data(i, o)'-muk(o));
+        expVals(o) = data(i, o)';
         expProd(u,u) = (expVals(u) * expVals(u)' + Sigmai);
         expProd(o,o) = expVals(o) * expVals(o)';
         expProd(o,u) = expVals(o) * expVals(u)';
@@ -106,17 +109,20 @@ end
 
 function model = mstep(model, ess)
 %% Maximize
+K     = model.K; 
+d     = model.d; 
 Vik   = ess.Vik;
 muik  = ess.muik;
 rk    = ess.rk; 
 mu    = model.mu;
 Sigma = model.Sigma; 
 model.mixweight = normalize(rk);
-if doMAP
-    kappa0 = prior.kappa0; 
-    m0     = prior.m0;
-    nu0    = prior.nu0; 
-    S0     = prior.S0;
+diagCov = model.diagCov; 
+if ~isempty(model.prior)
+    kappa0 = model.prior.k; 
+    m0     = model.prior.mu(:);
+    nu0    = model.prior.dof; 
+    S0     = model.prior.Sigma;
     for c=1:K
         mu(:,c) = (muik(:,c)+kappa0*m0)./(rk(c)+kappa0);
         a = (kappa0*rk(c))./(kappa0 + rk(c));

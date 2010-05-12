@@ -24,7 +24,7 @@ Xmiss(missing) = NaN;
 % GMM
 % initialize with true params to see if it helps
 [modelKinitTrue] = mixGaussMissingFitEm(Xmiss, K, ...
-  'mu', trueModel.mu, 'Sigma', trueModel.Sigma, 'mixweight', trueModel.mixweight);
+  'mu0', trueModel.mu, 'Sigma0', trueModel.Sigma, 'mixweight0', trueModel.mixweight);
 [XimputeEMKinitTrue] = mixGaussImpute(modelKinitTrue, Xmiss);
 
 [modelK] = mixGaussMissingFitEm(Xmiss, K);
