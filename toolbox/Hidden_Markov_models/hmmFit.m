@@ -195,7 +195,7 @@ for j=1:nstates
     XX(:, :, j) = bsxfun(@times, Xc, weights(:, j))'*Xc;
 end
 ess.xbar = xbar;
-ess.XX = XX;
+ess.XX   = XX;
 ess.wsum = wsum;
 logprior = 0;
 E = model.emission;
@@ -228,6 +228,7 @@ S = bsxfun(@eq, stackedData(:), sparse(1:model.nObsStates));
 ess.dataCounts = weights'*S; % dataCounts is nstates-by-nObsStates
 ess.wsum = sum(weights, 1)';
 end
+
 %% MSTEP
 function model = mstepGauss(model, ess)
 %% Maximize
