@@ -192,13 +192,18 @@ xbar    = bsxfun(@rdivide, stackedData'*weights, wsum); %d-by-nstates
 XX      = zeros(d, d, nstates);
 for j=1:nstates
     Xc = bsxfun(@minus, stackedData, xbar(:, j)');
-    XX(:, :, j) = bsxfun(@times, Xc, weights(:, j))'*Xc/wsum(j);
+    XX(:, :, j) = bsxfun(@times, Xc, weights(:, j))'*Xc;
 end
 ess.xbar = xbar;
 ess.XX = XX;
 ess.wsum = wsum;
-logprior = nstates*sum(gaussInvWishartMarginalLogprob...
-    (model.emissionPrior, stackedData));
+logprior = 0;
+E = model.emission;
+prior = model.emissionPrior;
+for k = 1:nstates
+    logprior = logprior + gaussInvWishartLogprob(prior, E{k}.mu, E{k}.Sigma);
+end
+
 end
 
 function [ess, logprior] = estepDiscreteEmission(model, ess, stackedData)
@@ -231,26 +236,27 @@ model.A  = normalize(ess.transCounts + model.transPrior -1, 2);
 xbar     = ess.xbar;
 XX       = ess.XX;
 nstates  = model.nstates;
-prior    = model.emissionPrior;
-m0 = prior.mu(:);
-S0 = prior.Sigma;
-v0 = prior.dof;
-k0 = prior.k;
-n  = size(ess.weights, 1);
-kn = k0 + n;
-vn = v0 + n;
-d  = model.d;
 
-emission = cell(1, nstates);
+prior  = model.emissionPrior; 
+kappa0 = prior.k; 
+m0     = prior.mu(:);
+nu0    = prior.dof;
+S0     = prior.Sigma;
+wsum   = ess.wsum; 
+d      = model.d;
+emission = cell(1, nstates); 
 for k=1:nstates
-    xbark   = xbar(:, k);
-    XXk     = XX(:, :, k);
-    xbarkM0 = xbark - m0;
-    Sn      = S0 + n*XXk + (k0*n)./(k0+n).*(xbarkM0*xbarkM0');
-    mn      = (k0*m0 + n*xbark)./kn;
-    %% map estimate
-    emission{k}.mu    = mn;
-    emission{k}.Sigma = Sn ./(vn + d + 2);
+    xbark  = xbar(:, k); 
+    XXk    = XX(:, :, k); 
+    wk     = wsum(k); 
+    mn     = (wk*xbark + kappa0*m0)./(wk + kappa0);
+    a      = (kappa0*wk)./(kappa0 + wk);
+    b      = nu0 + wk + d + 2;
+    Sprior = (xbark-m0)*(xbark-m0)';
+    Sigma  = (S0 + XXk + a*Sprior)./b;
+    assert(isposdef(Sigma)); 
+    emission{k}.mu = mn; 
+    emission{k}.Sigma = Sigma; 
 end
 model.emission = emission;
 end
