@@ -99,10 +99,10 @@ end
 model.d = d;
 nstates = model.nstates;
 if isempty(model.emission)
-    % Fit on random perturbations of the data, ignoring temporal structure.
     stackedData = cell2mat(data')';
     emission = cell(nstates, 1);
-    if restartNum == 1 % we initialize using a mixture of Gaussians
+    if restartNum == 1
+    % initialize using a mixture of Gaussians
         mixModel = mixGaussFitEm(stackedData, nstates, 'verbose', false);
         mu = mixModel.mu;
         Sigma = mixModel.Sigma;
@@ -111,17 +111,18 @@ if isempty(model.emission)
             emission{k}.Sigma = Sigma(:, :, k) + eye(d);
         end
         if isempty(model.A) || isempty(model.pi)
-           z = colvec(mixGaussInfer(mixModel, stackedData)); 
-           A = accumarray([z(1:end-1), z(2:end)], 1); % count transitions
-           model.A = normalize(A + ones(size(A)), 2); 
-           if isempty(model.pi)
-              % seqidx(1:end-1) are the start indices of the sequences
-              seqidx = cumsum([1, cellfun(@(seq)size(seq, 2), data')]);
-              pi = histc(z(seqidx(1:end-1)), 1:nstates); 
-              model.pi = normalize(pi + ones(size(pi))); 
-           end
+            z = colvec(mixGaussInfer(mixModel, stackedData));
+            A = accumarray([z(1:end-1), z(2:end)], 1); % count transitions
+            model.A = normalize(A + ones(size(A)), 2);
+            if isempty(model.pi)
+                % seqidx(1:end-1) are the start indices of the sequences
+                seqidx = cumsum([1, cellfun(@(seq)size(seq, 2), data')]);
+                pi = histc(z(seqidx(1:end-1)), 1:nstates);
+                model.pi = normalize(pi + ones(size(pi)));
+            end
         end
-    else
+    else % restartNum > 1
+    % Fit on random perturbations of the data, ignoring temporal structure.    
         emission = cell(nstates, 1);
         for i=1:nstates
             emission{i} = gaussFit(stackedData + randn(size(stackedData)));
