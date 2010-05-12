@@ -98,9 +98,6 @@ if isempty(model.emissionPrior)
 end
 model.d = d;
 nstates = model.nstates;
-if isempty(model.A)
-    model.A  = normalize(rand(nstates, nstates) + model.transPrior -1, 2);
-end
 if isempty(model.emission)
     % Fit on random perturbations of the data, ignoring temporal structure.
     stackedData = cell2mat(data')';
@@ -113,8 +110,15 @@ if isempty(model.emission)
             emission{k}.mu = mu(:, k)';
             emission{k}.Sigma = Sigma(:, :, k) + eye(d);
         end
-        if isempty(model.pi)
-            model.pi = rowvec(mixModel.mixweight);
+        if isempty(model.A) || isempty(model.pi)
+           z = colvec(mixGaussInfer(mixModel, stackedData)); 
+           A = accumarray([z(1:end-1), z(2:end)], 1);
+           model.A = normalize(A, 2); 
+           if isempty(model.pi)
+              % seqidx(1:end-1) are the start indices for sequences
+              seqidx = cumsum([1, cellfun(@(seq)size(seq, 2), data')]);
+              model.pi = normalize(histc(z(seqidx(1:end-1)), 1:nstates)); 
+           end
         end
     else
         emission = cell(nstates, 1);
@@ -126,6 +130,9 @@ if isempty(model.emission)
 end
 if isempty(model.pi)
     model.pi = normalize(rand(1, nstates) +  model.piPrior -1);
+end
+if isempty(model.A)
+    model.A  = normalize(rand(nstates, nstates) + model.transPrior -1, 2);
 end
 end
 
