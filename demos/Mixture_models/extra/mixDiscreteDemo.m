@@ -10,7 +10,7 @@ nsamples = 1000;
 [X, y] = mixDiscreteSample(truth, nsamples); 
 
 %% Fit
-[model, llhist] = mixDiscreteFitEM(X, truth.nmix, 'verbose', true);
+[model, llhist] = mixDiscreteFitEm(X, truth.nmix, 'verbose', true);
 %% Compare against the best permutation of the cluster labels.
 ypred = mixDiscreteInfer(model, X);
 allperms = perms(1:truth.nmix);
