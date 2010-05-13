@@ -1,4 +1,4 @@
-function [model, loglikHist] = mixDiscreteFitEM(X, nmix,  varargin)
+function [model, loglikHist] = mixDiscreteFitEm(X, nmix,  varargin)
 %% Fit a mixture of products of discrete distributions via EM.
 %
 %% Inputs
