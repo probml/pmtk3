@@ -47,7 +47,7 @@ for i=1:numel(demos)
 end
 demos = demos(keep);
 if isempty(demos)
-    fprintf('no dependant demos could be found\n'); 
+    fprintf('no dependent demos could be found\n'); 
     return;
 end
 
