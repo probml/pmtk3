@@ -20,7 +20,7 @@ if preproc.standardizeX
 end
 
 if preproc.rescaleX
-    X = rescale(X, scaleXrange(1), scaleXrange(2));
+    X = rescaleData(X, scaleXrange(1), scaleXrange(2));
     preproc.Xscale = scaleXrange;
 end
 
