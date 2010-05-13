@@ -27,29 +27,32 @@ switch dataset
    varlabels = varlabels(8:18);
 end
 
-K = 3;
-rotations = {'none', 'varimax'};
-for i=1:length(rotations)
-  %X = zscore(X);
-  [W,Psi,R,stats,Z] = factoran(X, K, 'rotate', rotations{i});
-  f1=figure;
-  [h,ZZ]=biplotPmtk(W, 'varlabels', varlabels,  'Scores',Z);
-  title(sprintf('rotation=%s', rotations{i}))
-  printPmtkFigure(sprintf('faBiplot-%s-%s', dataset, rotations{i}))
-  
-  
-  if 0
-  % Click on some points and plot their names
-  figure(f1);  
-  hold on
-  while 1
-    Xsel = ginput(1);
-    dst = sqdist(Xsel', ZZ(:,1:2)');
-    [junk, closest] = min(dst,[],2);
-    c = closest;
-    h=text(ZZ(c,1), ZZ(c,2), names{c});
-    set(h, 'color', 'b');
+Ks = [2 3];
+for ki=1:length(Ks)
+  K = Ks(ki);
+  rotations = {'none', 'varimax'};
+  for i=1:length(rotations)
+    %X = zscore(X);
+    [W,Psi,R,stats,Z] = factoran(X, K, 'rotate', rotations{i});
+    f1=figure;
+    [h,ZZ]=biplotPmtk(W, 'varlabels', varlabels,  'Scores',Z);
+    title(sprintf('rotation=%s', rotations{i}))
+    printPmtkFigure(sprintf('faBiplot-%s-%s-K%d', dataset, rotations{i}, K))
+    
+    
+    if 0
+      % Click on some points and plot their names
+      figure(f1);
+      hold on
+      while 1
+        Xsel = ginput(1);
+        dst = sqdist(Xsel', ZZ(:,1:2)');
+        [junk, closest] = min(dst,[],2);
+        c = closest;
+        h=text(ZZ(c,1), ZZ(c,2), names{c});
+        set(h, 'color', 'b');
+      end
+    end
+    
   end
-  end
-
 end
