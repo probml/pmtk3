@@ -1,4 +1,4 @@
-%% Simple test of hmmFit with Gaussian observations
+%% Simple test of hmmFitEm with Gaussian observations
 load data45
 data = [train4'; train5'];
 d = 13;
@@ -16,10 +16,10 @@ else
     prior.dof = 15;
 end
 
-model = hmmFit(data, 2, 'gauss', 'verbose', true, 'piPrior', [3 2], ...
+model = hmmFitEm(data, 2, 'gauss', 'verbose', true, 'piPrior', [3 2], ...
     'emissionPrior', prior, 'nRandomRestarts', 3)
 
 
 X = hmmSample(model, 200, 10);
-m2 = hmmFit(X, 5, 'gauss', 'verbose', true);
+m2 = hmmFitEm(X, 5, 'gauss', 'verbose', true);
 

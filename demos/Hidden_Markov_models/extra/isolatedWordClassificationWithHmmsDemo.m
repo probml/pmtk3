@@ -16,7 +16,7 @@ transmat0 = normalize(diag(ones(nstates, 1)) + ...
             diag(ones(nstates-1, 1), 1), 2);
 %%        
 fitArgs = {'pi0', pi0, 'trans0', transmat0, 'verbose', true};
-fitFn   = @(X)hmmFit(X, nstates, 'gauss', fitArgs{:}); 
+fitFn   = @(X)hmmFitEm(X, nstates, 'gauss', fitArgs{:}); 
 model = generativeClassifierFit(fitFn, Xtrain, ytrain); 
 %%
 logprobFn = @hmmLogprob;

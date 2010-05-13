@@ -2,7 +2,7 @@ function path = hmmEstState(model, X)
 % Find the most-probable (Viterbi) path through the HMM state trellis. 
 % X is a discrete observation sequence. 
 %% Inputs:
-% model - a struct as returned by e.g. hmmFit, which must contain
+% model - a struct as returned by e.g. hmmFitEm, which must contain
 % at least the fields, pi and A for the starting state distribution
 % and transition matrix respectively, as well as type, a string in {'gauss',
 % 'discrete'}.

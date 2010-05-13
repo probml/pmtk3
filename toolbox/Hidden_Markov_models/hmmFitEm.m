@@ -1,4 +1,4 @@
-function [model, loglikHist] = hmmFit(data, nstates, type, varargin)
+function [model, loglikHist] = hmmFitEm(data, nstates, type, varargin)
 %% Fit an HMM model via EM
 %
 %% Inputs
