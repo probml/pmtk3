@@ -1,6 +1,6 @@
 function [w, sigma, logpostTrace]=linregFitLassoEm(X, y, lambda)
 % Fits the  lasso model using EM
 
-[w,sigma,logpostTrace] = linregFitSparseEm(X, y, 'laplace', 'lambda', lambda);
+[w,sigma,logpostTrace] = linregSparseFitEm(X, y, 'laplace', 'lambda', lambda);
 end
 

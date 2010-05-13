@@ -61,7 +61,7 @@ for trial=1:Ntrials
         case 'nj'
           % no tuning parameters so no need for CV
           options = {'maxIter', 30, 'verbose', true};
-          [w, sigma, logPostTrace] = linregFitSparseEm(Xtrain, ytrain,  'nj',  options{:});
+          [w, sigma, logPostTrace] = linregSparseFitEm(Xtrain, ytrain,  'nj',  options{:});
           useEM = true;
         case 'scad'
            % this will use CV to pick lambda
@@ -135,7 +135,7 @@ params = crossProduct(scales, shapes);
 Nfolds=3;
 useSErule = false;
 options = {'maxIter', 15, 'verbose', false};
-fitFn = @(X,y,ps) linregFitSparseEm(X,y, prior, 'scale', ps(1), 'shape', ps(2),options{:});
+fitFn = @(X,y,ps) linregSparseFitEm(X,y, prior, 'scale', ps(1), 'shape', ps(2),options{:});
 predictFn = @(w, X) X*w;
 lossFn = @(yhat, y)  sum((yhat-y).^2);
 [w, bestParams, mu, se] = fitCv(params, fitFn, predictFn, lossFn, Xtrain, ytrain,  Nfolds, useSErule);
@@ -145,5 +145,5 @@ scale = bestParams(1);
 shape = bestParams(2);
 options = {'maxIter', 30, 'verbose', true};
 [w, sigma, logPostTrace] = ...
-  linregFitSparseEm(Xtrain, ytrain,  prior,  'scale', scale, 'shape', shape, options{:});
+  linregSparseFitEm(Xtrain, ytrain,  prior,  'scale', scale, 'shape', shape, options{:});
 end
