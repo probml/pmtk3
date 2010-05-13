@@ -68,10 +68,10 @@ wHatLassoEmNG = linregFitSparseEm(Xtrain, ytrain, 'ng', 'shape', 1, 'scale', (0.
 end
 
 wHatGroup =  linregFitGroupLassoProj(Xtrain, ytrain, groups, lambdaGL1);
-wHatGroupEmGL = linregFitSparseEm(Xtrain, ytrain, 'groupLasso', 'lambda', (lambdaGL1), 'groups', groups);
-wHatGroupEmGL1 = linregFitSparseEm(Xtrain, ytrain, 'glaplace', 'lambda', (lambdaGL1), 'groups', groups);
-wHatGroupEmGNG = linregFitSparseEm(Xtrain, ytrain, 'gng', 'lambda', (0.5*lambdaGL1), 'groups', groups);
-wHatGroupEmGNG1 = linregFitSparseEm(Xtrain, ytrain, 'gng1', 'lambda', (0.5*lambdaGL1), 'groups', groups);
+wHatGroupEmGL = linregFitSparseEm(Xtrain, ytrain, 'groupLasso', 'lambda', (lambdaGL1), 'groups', groups, 'verbose', true);
+wHatGroupEmGL1 = linregFitSparseEm(Xtrain, ytrain, 'glaplace', 'lambda', (lambdaGL1), 'groups', groups, 'verbose', true);
+wHatGroupEmGNG = linregFitSparseEm(Xtrain, ytrain, 'gng', 'lambda', (0.5*lambdaGL1), 'groups', groups, 'verbose', true);
+wHatGroupEmGNG1 = linregFitSparseEm(Xtrain, ytrain, 'gng1', 'lambda', (0.5*lambdaGL1), 'groups', groups, 'verbose', true);
 
 %% Plot
 
