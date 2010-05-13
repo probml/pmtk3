@@ -9,7 +9,7 @@ tic;
 toc
 
 tic;
-[W1, Xproj1, evals1, Xrecon1, mu1, iter] = pcaEm(X,k);
+[W1, Xproj1, evals1, Xrecon1, mu1, iter] = pcaFitEm(X,k);
 toc
 iter
 

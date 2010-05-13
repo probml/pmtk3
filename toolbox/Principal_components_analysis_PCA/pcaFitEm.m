@@ -1,4 +1,4 @@
-function [W, Z, evals, Xrecon, mu, iter] = pcaEm(X, k, varargin)
+function [W, Z, evals, Xrecon, mu, iter] = pcaFitEm(X, k, varargin)
 %% Principal component analysis using EM
 %
 %% Inputs
