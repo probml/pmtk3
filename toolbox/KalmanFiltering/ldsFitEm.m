@@ -1,4 +1,4 @@
-function [model, loglikHist] = ldsFit(data, nlatent, varargin)
+function [model, loglikHist] = ldsFitEm(data, nlatent, varargin)
 %% Fit a linear dynamical system model via EM
 % We do not estimate parameters associated with an input/ control sequence.
 % We fix Q=I and R=diagonal.
