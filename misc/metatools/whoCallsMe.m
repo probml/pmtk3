@@ -72,6 +72,17 @@ else
         save(savefile, 'g', 'm', 'map');
     end
 end
+try
+    list = m(g(:, map.(fname)));
+catch ME
+    if recache
+        rethrow(ME)
+    else
+        fprintf('The dependency graph is out of date\n\n'); 
+        [list, m, g, map] = whoCallsMe(fname, 'recache', true, ...
+        'recursive', recursive, 'verbose', verbose);
+    end
+end
 
-list = m(g(:, map.(fname)));
+
 end

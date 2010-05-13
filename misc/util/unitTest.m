@@ -40,12 +40,16 @@ callList = whoCallsMe(fname, 'recursive', recursive, 'recache', recache);
 demos = intersect(callList, mfiles(fullfile(pmtk3Root(), 'demos'), 'removeExt', true));
 keep = [];
 for i=1:numel(demos)
-    tags = tagFinder(demos{i});
+    tags = tagfinder(demos{i});
     if isempty(intersect(excludeTags, tags));
         keep = [keep, i]; %#ok
     end
 end
 demos = demos(keep);
+if isempty(demos)
+    fprintf('no dependant demos could be found\n'); 
+    return;
+end
 
 maxname = max(cellfun(@length, demos));
 errors = {};
@@ -83,11 +87,13 @@ end
 function localEvalc(demo)
 % run the demo in *this* workspace
 close all;
+close all hidden;
 evalc(demo);
 end
 
 function localEval(demo)
 % run the demo in *this* workspace
 close all;
+close all hidden;
 eval(demo);
 end
