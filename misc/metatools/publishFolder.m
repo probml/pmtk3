@@ -1,4 +1,4 @@
-function publishFolder(folder)
+function publishFolder(folder, wikiOnly)
 % Publish a single demos directory, (called by publishDemos)
 %
 %% Example
@@ -6,6 +6,7 @@ function publishFolder(folder)
 % publishFolder bayesDemos
 %
 %%
+SetDefaultValue(2, 'wikiOnly', false); 
 warnState = warning('query', 'all'); 
 warning off all
 cleaner = onCleanup(@(x)cleanup(warnState)); 
@@ -32,7 +33,9 @@ info = createStruct({'name', 'description', 'doEval', 'localLink', 'googleLink'}
 cd(dest);
 for i=1:numel(demos)
     info(i) = mfileInfo(demos{i});
-    publishFile(demos{i}, fullfile(dest, folder), info(i).doEval);
+    if ~wikiOnly
+        publishFile(demos{i}, fullfile(dest, folder), info(i).doEval);
+    end
 end
 %% Write the index page
 %

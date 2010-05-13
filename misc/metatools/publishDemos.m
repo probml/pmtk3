@@ -1,6 +1,8 @@
 function publishDemos(wikiFile)
 % Publish all of the PMTK3 demos and create the wiki TOC page.
 
+wikiOnly = false; % set to true if you only want to create the wiki files
+                  % and not regenerate the published demos themselves. 
 svnAutomatically = false;
 
 if nargin == 0
@@ -12,7 +14,7 @@ dirEmpty = @(d)isempty(mfiles(d,'topOnly', true));
 
 for i = 1:numel(d)
     if ~dirEmpty(d{i})
-        publishFolder(d{i});
+        publishFolder(d{i}, wikiOnly);
     end
 end
 
