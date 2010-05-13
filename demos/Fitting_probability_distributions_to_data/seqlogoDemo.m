@@ -40,7 +40,7 @@ end
 thetaHat = counts/Nseq;
 tmp = thetaHat; tmp(tmp==0) = 1; % log(1)=0
 entropy = -sum(tmp .* log2(tmp), 1);
-sequenceLogo(thetaHat)
+seqlogo(thetaHat)
 
 
 

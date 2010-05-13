@@ -8,16 +8,16 @@ if dof==0, dof = []; end
 
 if isempty(sigma2) && isempty(dof)
   % estimate everything
-  model = linregRobustStudentFitEm(X, y, [], includeOffset);
+  model = linregRobustStudentFitEm(X, y, []);
   %model = linregRobustStudentFitConstr(X, y, [], [], includeOffset);
   %model = linregRobustStudentFitUnconstr(X, y, includeOffset);
 elseif ~isempty(dof) && isempty(sigma2)
   % fixed dof
-  model = linregRobustStudentFitEm(X, y, dof, includeOffset);
+  model = linregRobustStudentFitEm(X, y, dof);
   %model = linregRobustStudentFitConstr(X, y, dof, [], includeOffset);
 elseif  ~isempty(dof) && ~isempty(sigma2)
   % only estimate w - not recommended
-  model = linregRobustStudentFitConstr(X, y, dof, sigma2, includeOffset);
+  model = linregRobustStudentFitConstr(X, y, dof, sigma2);
 else
   error('cannot handle fixed sigma2 but variable dof')
 end
