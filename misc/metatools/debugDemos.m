@@ -66,9 +66,7 @@ showFigures();
 removeShadows();
 end
 
-
-
 function localEval(str)
-% evaluate in this isolated workspace
+% evaluate str in this isolated workspace
 evalc(str);
 end
