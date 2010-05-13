@@ -1,7 +1,7 @@
 %% Demo of factor analysis in 2d
 % Based on http://www.mathworks.com/products/demos/statistics/factorandemo.html
 % Needs stats toolbox
-
+%
 % datasets in stats toolbox are listed here
 % http://www.mathworks.com/access/helpdesk/help/toolbox/stats/bq9uxn4.html
 dataset = 'cars04';
@@ -35,7 +35,7 @@ for ki=1:length(Ks)
     %X = zscore(X);
     [W,Psi,R,stats,Z] = factoran(X, K, 'rotate', rotations{i});
     f1=figure;
-    [h,ZZ]=biplotPmtk(W, 'varlabels', varlabels,  'Scores',Z);
+    biplot(W, 'varLabels', varlabels,  'Scores',Z);
     title(sprintf('rotation=%s', rotations{i}))
     printPmtkFigure(sprintf('faBiplot-%s-%s-K%d', dataset, rotations{i}, K))
     
