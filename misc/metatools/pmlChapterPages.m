@@ -29,9 +29,10 @@ pg = zeros(nchapters, 1);
 name = cell(nchapters, 1);
 for i=1:nchapters 
    toks = tokenize(text{i}, '{}');
-   assert(str2num(toks{5}) == i);
-   name{i} = toks{6};
-   pg(i) = str2num(toks{8});
+   toks = removeEmpty(toks); 
+   assert(str2num(toks{4}) == i);
+   name{i} = toks{5};
+   pg(i) = str2num(toks{6});
 end
 
 

@@ -30,7 +30,7 @@ tocfile        = fullfile(bookSource, 'pml.toc');
 [chpg, chname] = pmlChapterPages(tocfile);
 chname         = pmlProcessChapterNames(chname);
 %%
-currentExtra   = mfiles(fullfile(demosDir), 'removeExt', true); 
+currentExtra   = mfiles(fullfile(demosDir, 'extra'), 'removeExt', true); 
 missing = setdiff(pmlCode, currentExtra); 
 extra   = setdiff(currentExtra, pmlCode); 
 [tomove, idx] = setdiff(pmlCode, missing); 
@@ -46,7 +46,6 @@ for i=1:numel(tomove)
     movefile(source, dest);
     
 end
-
 
 
 
