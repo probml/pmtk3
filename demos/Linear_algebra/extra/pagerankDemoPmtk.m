@@ -1,6 +1,6 @@
-% Demo of the pagerank algorithm, based on code by Cleve Moler
+%% Demo of the pagerank algorithm, based on code by Cleve Moler
 % See also pagerankDemoMoler, pagerankDemoGui, surfer, pagerankpow
-
+%%
 %% 6 node web example
 i = [ 2 6 3 4 4 5 6 1 1];
 j = [ 1 1 2 2 3 3 3 4 6];
@@ -14,14 +14,14 @@ e = ones(n,1);
 I = speye(n,n);
 p = 0.85;
 
-% Find the stationary distribution
+%% Find the stationary distribution
 pi = normalize((I - p*G*D)\e);
 fprintf('exact pi\n');  disp(pi(:)')
 
 figure; bar(pi);printPmtkFigure('smallwebPagerank'); 
 
 
-% Power method
+%% Power method
 fprintf('pi over time using power method\n');
 format compact
 pi = e/n;
@@ -32,7 +32,7 @@ for i=1:10
   disp(pi')
 end
 
-% Matrix free power method
+%% Matrix free power method
 [pi,cnt] = pagerankpow(G);
 fprintf('matrix free power method\n'); disp(pi(:)')
 

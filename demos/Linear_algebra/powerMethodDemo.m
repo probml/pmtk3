@@ -1,5 +1,7 @@
 %% Power Method Demo
-seed = 0; rand('state', seed); randn('state', seed);
+%
+%%
+setSeed(0);
 
 %C = randpd(3);
 

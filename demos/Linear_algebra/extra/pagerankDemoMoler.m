@@ -1,13 +1,14 @@
-function x = pagerankDemoMoler(U,G,p)
-% PAGERANK  Google's PageRank
+%% Google's PageRank
 % pagerank(U,G,p) uses the URLs and adjacency matrix produced by SURFER,
 % together with a damping factory p, (default is .85), to compute and plot
 % a bar graph of page rank, and print the dominant URLs in page rank order.
 % x = pagerank(U,G,p) returns the page ranks instead of printing.
 % See also SURFER, SPY.
-
 %PMTKauthor Cleve Moler
 %PMTKurl http://www.mathworks.com/moler/ncm/pagerank.m
+%%
+function x = pagerankDemoMoler(U,G,p)
+
 if nargin == 0
    [U, G] = surfer();
    x = pagerankDemoMoler(U, G);

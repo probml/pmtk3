@@ -1,7 +1,8 @@
-function pagerankDemoGui
 %% Page Rank Demo
 %PMTKslow
 %PMTKinteractive
+%%
+function pagerankDemoGui
 % PAGERANKDEMO draws the 6-node "tiny web" in Section 2.11 of "Numerical
 % Computing with MATLAB", by Cleve Moler, SIAM, 2004.  It then simulates the
 % computation of Google's PageRank algorithm, by randomly selecting links to

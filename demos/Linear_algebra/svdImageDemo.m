@@ -1,6 +1,6 @@
 %% Visualize low rank approximations of an image
 % based on Cleve Moler's book ch10 p25
-
+%%
 load clown
 r = rank(X);
 disp(r); 
