@@ -1,4 +1,6 @@
 %% Kmeans Model Selection in 1D
+%
+%%
 setSeed(0);
 mix = gmm(1, 3, 'spherical');
 mix.centres = [-1 0 1]';

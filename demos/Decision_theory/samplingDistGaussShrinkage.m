@@ -1,6 +1,6 @@
-% Plot sampling distribution of shrinkage estimators of mean
+%% Plot the sampling distribution of mean shrinkage estimators
 % Based on fig 5.6b of Hoff09 but applied to different data
-
+%%
 k0s = [0 1 2 3];
 
 xrange = -1:0.05:2.5;
@@ -16,8 +16,8 @@ for ki=1:length(k0s)
   w = n / (n + k0);
   v = w^2*sigmaTrue^2/n;
   thetaEst = w*thetaTrue + (1-w)*thetaPrior % since E[xbar] = thetaTrue
-  plot(xrange, gausspdf(xrange, thetaEst, sqrt(v)), styles{ki}, ...
-    'linewidth', 2, 'markersize', 10);
+  plot(xrange, gausspdf(xrange, thetaEst, sqrt(v)), [colors(ki), styles{ki}], ...
+    'linewidth', 3, 'markersize', 10);
   names{ki} = sprintf('postMean%d', k0s(ki));
 end
 title(sprintf('sampling distribution, truth = %2.1f, prior = %2.1f, n = %d', ...
@@ -42,9 +42,10 @@ ratio = mseThetaB ./ mseThetaE;
 figure;
 hold on
 for ki=1:length(k0s)
-  plot(ns, ratio(:,ki), styles{ki}, 'linewidth', 2, 'markersize', 10);
+  plot(ns, ratio(:,ki), [colors(ki), styles{ki}], 'linewidth', 3, 'markersize', 10);
 end
-legend(names)
+axis tight
+legend(names, 'location', 'southeast')
 ylabel('relative MSE');
 xlabel('sample size')
 title('MSE of postmean / MSE of MLE')

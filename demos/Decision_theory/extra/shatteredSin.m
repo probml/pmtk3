@@ -1,4 +1,6 @@
 %% Shattered sin
+%
+%%
 domain = 0:0.0005:1.005;
 f = @(x)sin(50*x);
 

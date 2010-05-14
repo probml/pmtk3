@@ -1,7 +1,8 @@
-function [] = biclusterDemo()
 %% Bicluster Demo
-%PMTKslow  
-%PMTKreallySlow
+% PMTKslow  
+% PMTKreallySlow
+%%
+function [] = biclusterDemo()
 setSeed(0);
 nRow = 100;
 nCol = 30;
@@ -14,7 +15,7 @@ dummyData(5:5:end, 5:5:end) = 1;
 patternDummyRows = 5:5:size(dummyData,1);
 patternDummyCols = 5:5:size(dummyData,2);
 setSeed(1);
-[dummyBcRow, dummyBcCol, dummyRowProb, dummyColProb] = biclusterMultiple(dummyData, 'trace', true, 'plot', false, 'allRowThres', 0.7, 'allColThres', 0.8);
+[dummyBcRow, dummyBcCol, dummyRowProb, dummyColProb] = biclusteringGibbs(dummyData, 'trace', true, 'plot', false, 'allRowThres', 0.7, 'allColThres', 0.8);
 
 h = figure();
 axes('Position', [0.15, 0.15, 0.8, 0.8]);

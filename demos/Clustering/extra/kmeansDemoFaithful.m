@@ -1,5 +1,8 @@
-function kmeansDemoFaithful
 %% Run Kmeans on the old faithful data
+%
+%%
+function kmeansDemoFaithful
+
 
 X = load('faithful.txt');
 X = standardizeCols(X);

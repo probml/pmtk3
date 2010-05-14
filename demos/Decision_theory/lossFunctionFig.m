@@ -1,6 +1,7 @@
+%% Plot various loss functions
+%
+%%
 function lossFunctionFig
-% Plot various loss functions
-
 
 qvals = [0.3,1,2,10];
 for i=1:length(qvals)

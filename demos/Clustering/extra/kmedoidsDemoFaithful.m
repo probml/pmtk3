@@ -1,4 +1,6 @@
-%% Run Kmedoids on the old faithful demo
+%% Run Kmedoids on the old faithful data
+%
+%%
 X = load('faithful.txt');
 X = standardizeCols(X);
 N = size(X,1);

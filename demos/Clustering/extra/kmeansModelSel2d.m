@@ -1,4 +1,6 @@
 %% Kmeans Model Selection in 2D
+%
+%%
 setSeed(0);
 d = 2; ncentres = 3;
 mix = gmm(d, ncentres, 'spherical');

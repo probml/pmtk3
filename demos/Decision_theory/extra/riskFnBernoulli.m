@@ -1,4 +1,6 @@
 %% Bernoulli Risk Function Demo
+%
+%%
 Ns = [1 10 50];
 for i=1:length(Ns)
   n = Ns(i);

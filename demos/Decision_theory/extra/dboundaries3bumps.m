@@ -1,4 +1,6 @@
-% Illustration of decision regions for the 3 class case
+%% Illustration of decision regions for the 3 class case
+%
+%%
 domain = -3:0.01:13;
 sigma = 1.5.^2;
 r1 = gausspdf(domain, 0, sigma);

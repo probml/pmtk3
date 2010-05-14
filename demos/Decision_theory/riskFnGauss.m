@@ -1,5 +1,6 @@
-% Figure B.1 p447 from Bernardo94
-
+%% Reproduce Figure B.1 p447 from Bernardo94
+%
+%%
 ns = [5 20];
 for ni=1:length(ns)
   n = ns(ni);
