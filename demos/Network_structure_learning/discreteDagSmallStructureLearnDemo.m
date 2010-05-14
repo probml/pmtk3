@@ -1,4 +1,6 @@
-% Example from Neapolitan's book "Learning Bayesian networks" p438
+%% Example from Neapolitan's book "Learning Bayesian networks" p438
+%
+%%
 X = [1 1; 1 2; 1 1; 2 2; 1 1; 2 1; 1 1; 2 2];
 %X = [1 1; 1 1; 1 1; 1 1; 2 2; 2 2; 2 2; 2 2];
 alpha = 4;

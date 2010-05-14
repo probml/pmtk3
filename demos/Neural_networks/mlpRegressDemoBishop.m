@@ -1,5 +1,6 @@
-% Reproduced fig 5.3 from Bishop's book
-
+%% Reproduced fig 5.3 from Bishop's book
+%
+%%
 fns = { @(x) x.^2, @(x) sin(x), @(x) abs(x), @(x) (x>0) };
 for fi=1:length(fns)
   fn = fns{fi};

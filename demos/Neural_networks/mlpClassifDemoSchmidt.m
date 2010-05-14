@@ -1,6 +1,8 @@
+%% MLP Classification Demo
 % Based on Mark Schmidt's Demo from
 %http://people.cs.ubc.ca/~schmidtm/Software/minFunc/minFunc.html#9
 %PMTKslow
+%%
 H = [3, 6, 9];
 for hi=1:length(H)
   nhidden = H(hi);
