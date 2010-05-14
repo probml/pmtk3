@@ -1,6 +1,7 @@
+%% Fit a Gamma distribution to the rainfall data by MLE and moment matching
+% Rice (1995) p383
+%%
 function gammaRainfallDemo()
-% Fitting a Gamma distribution to the rainfall data used in Rice (1995) p383
-% We compare methods of moments to MLE
 
 X = dlmread('rainfallData.txt');
 X = X'; X = X(:); % concatenate across rows, not columns
@@ -23,14 +24,14 @@ printPmtkFigure('rainfallDemo');
 end
 
 function [a,b] = gamMLE(X)
-% MLE for Gamma a = shape, b= rate (not scale)
+%% MLE for Gamma a = shape, b= rate (not scale)
 params = gamfit(X); % stats toolbox
 a = params(1);
 b = 1/params(2);
 end
 
 function [a,b] = gamMOM(X)
-% method of moments estimate for Gamma
+%% method of moments estimate for Gamma
 % a = shape, b= rate
 xbar = mean(X);
 s2hat = var(X);

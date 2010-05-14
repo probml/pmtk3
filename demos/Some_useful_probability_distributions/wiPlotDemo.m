@@ -1,4 +1,6 @@
 %% Plot Some Wishart Distributions
+%
+%%
 setSeed(2);
 S = [3.1653, -0.0262; -0.0262, 0.6477];
 dofs = [20 3];

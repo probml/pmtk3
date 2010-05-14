@@ -1,4 +1,6 @@
 %% Plot the pareto distribution
+%
+%%
 figure; hold on;
 k = [0.5 1 2 3];
 [styles, colors] = plotColors();

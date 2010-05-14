@@ -1,5 +1,6 @@
 %% Plot Inverse Gamma Distributions
-
+%
+%%
 as = [1 1.5 2];
 b = 1;
 bs = b*ones(1,length(as));

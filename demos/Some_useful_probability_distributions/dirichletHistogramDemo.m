@@ -1,5 +1,6 @@
 %% Plot Histogram of Samples Generated From a DirichletDist
-
+%
+%%
 alphavec = [0.1, 1.0, 5.0];
 alphavecstr = {'01', '1', '5'};
 K = 5; 

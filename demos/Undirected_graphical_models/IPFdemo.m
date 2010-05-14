@@ -1,6 +1,6 @@
 %% Approximate joint density as a product of two marginals
 % i.e., fit a 2 node disconnedted MRF  X1  X2
-
+%%
 C12 = [25 10 2;
        3  19 1;
        4 3 22];

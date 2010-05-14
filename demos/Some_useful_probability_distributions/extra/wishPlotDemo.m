@@ -1,5 +1,8 @@
-function wishPlotDemo()
 %% Wishart Distribution plots
+%
+%%
+function wishPlotDemo()
+
 setSeed(0);
 nus = [2 5 10];
 S   = [4 3; 3 4];

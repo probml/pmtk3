@@ -1,4 +1,6 @@
 %% Plot a Gamma Distribution
+%
+%%
 %as = [1 1.5 2  1 1.5 2]; bs = [1 1 1 1.5 1.5 1.5];
 as = [1 1.5 2];
 b = 1;
