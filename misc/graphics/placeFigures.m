@@ -97,8 +97,7 @@ function varargout = placeFigures(varargin)
 %                   'ncols',4,'total',10)
 % 
 % 
-% Code by Matthew Dunham
-%
+%%
                                                                                     
 [nrows,ncols,depth,total,square,monitor,newfigs,minwidth,minheight,intergapH,...
 intergapV,gapH,lowergap,uppergap,toolsize] = process_options(varargin,...

@@ -2,7 +2,7 @@ function [model, loglikHist] = linregRobustStudentFitEm(X, y, dof, varargin)
 %% Fit linear regression with Student noise model by EM
 %
 %PMTKauthor Hannes Bretschneider
-%PMTKmodified Kevin Murphy & Matt Dunham
+%PMTKmodified Kevin Murphy, Matt Dunham
 %%
 SetDefaultValue(3, 'dof', []);
 if dof==0

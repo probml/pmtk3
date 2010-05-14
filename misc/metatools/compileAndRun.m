@@ -14,8 +14,7 @@ function varargout = compileAndRun(fname,varargin)
 % If you will call the compiled version multiple times with the same size,
 % type and number of inputs, use the compileRunAndSave() function instead.
 %
-% Matthew Dunham
-% www.cs.ubc.ca/~mdunham
+%%
     
     if(~exist('emlmex','file'))
         error('emlmex could not be found');

@@ -1,4 +1,6 @@
-% Online Kalman Demo
+%% Online Kalman Demo
+%
+%%
 standardize = false; %true;
 
 [xtrain, ytrain] = polyDataMake('sampling','thibaux');

@@ -6,10 +6,7 @@ function [A, z] = normalize(A, dim)
 % dim=1 means each column sums to one
 % dim=2 means each row sums to one
 %
-% Changes Nov 26, 2008 By Matthew Dunham
-% - output variable is now A to allow for in place memory efficient update
-% - repmats replaced with new bsxfun
-
+%%
 if(nargin < 2)               
    z = sum(A(:)); 
   

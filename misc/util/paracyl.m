@@ -5,7 +5,7 @@ function pdf = paracyl(V, X)
 %
 % see mpbdv for details
 %
-%PMTKmodified Matt Dunham 
+% PMTKmodified Matt Dunham 
 % Sped up by a factor of 11
 %
 % PDF is of size length(V)-by-length(X)

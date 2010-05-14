@@ -1,5 +1,6 @@
-% Demonstration of the Central Limit Theorem, based on Bishop 2.6
-% Written by Matthew Dunham
+%% Demonstration of the Central Limit Theorem, based on Bishop 2.6
+%
+%%
 function centralLimitDemo
 
 

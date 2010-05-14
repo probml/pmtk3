@@ -8,7 +8,7 @@ function d = sqDistance(p, q, pSOS, qSOS)
 % pSOS = sum(p.^2, 2) and is calculated if not specified
 % qSOS = sum(q.^2, 2) and is calculated if not specified
 %
-% Matthew Dunham    
+%%
 if(nargin < 4)
     pSOS = sum(p.^2, 2);
     qSOS = sum(q.^2, 2);

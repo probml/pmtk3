@@ -1,5 +1,6 @@
-%% Bayesian lienar regression with uninformative prior applied to
-%% caterpillar data
+%% Bayesian linear regression with an uninformative prior 
+%
+%%
 
 X = dlmread('caterpillar.txt'); % from http://www.ceremade.dauphine.fr/~xian/BCS/caterpillar
 y = log(X(:,11)); % log numner of nests

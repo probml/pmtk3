@@ -37,7 +37,7 @@ function [Xdata,ydata,W] = bolassoMakeData(n,d,r,nDataSets,requireConsistent,noi
 % If nDataSets = 1, X,y are unwrapped yielding numeric matricies not cell
 % arrays.
 %
-%Code by Matthew Dunham
+
 
 if nargin < 6, noise = 0.1; end
 

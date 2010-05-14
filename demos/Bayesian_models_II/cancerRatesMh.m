@@ -1,6 +1,7 @@
-function cancerRatesMh()
 %% Hierarchical Bayesian Estimation of Some Binomial Proportions
 % Johnson and Albert  p67
+%%
+function cancerRatesMh()
 
 %% Data
 % p24

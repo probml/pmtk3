@@ -1,4 +1,4 @@
-%% Analysis of binomial differences  on lefthand/righthand data
+%% Analysis of binomial differences on lefthand/righthand data
 %
 %%
 setSeed(0);

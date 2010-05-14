@@ -6,8 +6,6 @@ function out = htmlTable(varargin)
 %PMTKmodified Matthew Dunham
 %
 %
-% Modified by Matthew Dunham to use process_options for arg management - also
-% added a number of additional options and changed some arg names. 
 %
 %
 % INPUTS:

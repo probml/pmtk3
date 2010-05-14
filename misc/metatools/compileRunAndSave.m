@@ -18,8 +18,7 @@ function varargout = compileRunAndSave(fname,varargin)
     %           to 'myfunction', which returns three outputs.
     %
     %
-    % Matthew Dunham
-    % www.cs.ubc.ca/~mdunham
+%%
 
     if(~exist('emlmex','file'))
         error('Sorry, emlmex could not be found');

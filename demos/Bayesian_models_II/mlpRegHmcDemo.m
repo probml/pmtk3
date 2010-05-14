@@ -1,8 +1,8 @@
+%% Mulitlayer Perceptron HMC Regression Demo
 % Based on Netlan's DEMHMC3
 % We modified the code so the model is as similar as possible
 % to the one in demev1, so we can compare MCMC with Laplace approx
-
-% create the data and do EB on the network
+%% Create the data and do EB on the network
 mlpRegEvidenceDemo;
 
 

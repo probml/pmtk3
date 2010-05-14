@@ -1,5 +1,5 @@
 %% Josh Tenenbaum's Number Game
-% Written by Kevin Murphy and Matthew Dunham
+%
 %%
 function numbersGame
 %% 

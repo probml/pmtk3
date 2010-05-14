@@ -247,7 +247,6 @@ function [selectedVars,Wlsq,varargout] = bolasso(X,y,varargin)
 % * Kfold.m (only when cross validation option selected)
 % *recoverLambdaFromLarsWeights
 %
-% Code by Matthew Dunham
 %
 % VERSION: 2008-08-01
 %%  Setup 

@@ -13,7 +13,7 @@ function publishMethod(mfile,methodName,evalCode)
 %
 % publishMethod LogregDist demoVisualizePredictive
 % 
-% Matthew Dunham
+%%
     
     endTag = '%!';  % Must occur at the end of the function/method to be published
    

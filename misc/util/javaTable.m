@@ -1,8 +1,7 @@
 function javaTable(data,columnNames,tableName)
 %Display the the 2d cell array, data, in a java JTable.
 %
-% Written by Matthew Dunham
-    
+%%    
     if(isempty(data))
         fprintf('\ndata cannot be empty\n');
         return;

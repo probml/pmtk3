@@ -1,8 +1,9 @@
-function bayesLinRegDemo2d()
 %% Bayesian infernece for simple linear regression with known noise variance
 % The goal is to reproduce fig 3.7 from Bishop's book
 % We fit the linear model f(x,w) = w0 + w1 x and plot the posterior over w.
-
+%%
+function bayesLinRegDemo2d()
+setSeed(0);
 a0 = -0.3; %Parameters of the actual underlying model that we wish to recover
 a1 = 0.5;  %We will estimate these values with w0 and w1 respectively. 
 
@@ -12,7 +13,7 @@ priorPrecision = 2.0;   % Fix the prior precision, alpha. We will use a zero-mea
 likelihoodSD = noiseSD; % Assume the likelihood precision, beta, is known.
 likelihoodPrecision = 1/(likelihoodSD)^2; 
 
-%Generate the training points
+%% Generate the training points
 xtrain = -1 + 2*rand(trainingPoints,1);
 model = struct('mu', 0, 'Sigma', noiseSD);
 noise = gaussSample(model, trainingPoints);
@@ -23,14 +24,14 @@ ytrain = a0 + a1*xtrain + noise;
 % iter <= trainingPoints - 1.
 iter = 2; 
 
-%Plot the prior distribution over w0, w1
+%% Plot the prior distribution over w0, w1
 subplot2(iter+2,3,1,2);
 priorMean = [0;0];
 priorSigma = eye(2)./priorPrecision; %Covariance Matrix
 priorPDF = @(W)gausspdf(W,priorMean',priorSigma);
 contourPlot(priorPDF,[]);
 
-%Plot sample lines whose parameters are drawn from the prior distribution.
+%% Plot sample lines whose parameters are drawn from the prior distribution.
 subplot2(iter+2,3,1,3);
 plotSampleLines(priorMean',priorSigma,6,[])
 
@@ -52,18 +53,18 @@ for i=1:iter
   plotSampleLines(mu,sigma,6,[xtrain(1:i),ytrain(1:i)]);  
 end
 
-% Plot likelihood for the last point alone
+%% Plot likelihood for the last point alone
 last = trainingPoints;
 subplot2(2+iter,3,iter+2,1);
 likelyhoodLast = @(W) normpdf(xtrain(last),W*[1;xtrain(last)],likelihoodSD);
 contourPlot(likelyhoodLast,[a0,a1]);
 
-% Plot the posterior over all of the training data. 
+%% Plot the posterior over all of the training data. 
 subplot2(2+iter,3,iter+2,2);
 [postW,mu,sigma] = update([ones(trainingPoints,1),xtrain],ytrain,likelihoodPrecision,priorMean,priorSigma);
 contourPlot(postW,[a0,a1]);
 
-% Plot sample lines whose parameters are drawn from the posterior. 
+%% Plot sample lines whose parameters are drawn from the posterior. 
 subplot2(2+iter,3,iter+2,3);
 plotSampleLines(mu',sigma,6,[xtrain,ytrain]);
 
@@ -79,8 +80,7 @@ title('data space');
 
 printPmtkFigure bayesLinRegPlot2d
 end
-%%%%%%%%%%%
-
+%%
 % Plot the specified number of lines of the form y = w0 + w1*x in [-1,1]x[-1,1] by
 % drawing w0, w1 from a bivariate normal distribution with specified values
 % for mu = mean and sigma = covariance Matrix. Also plot the data points as
@@ -130,8 +130,7 @@ if(length(trueValue) == 2)
     plot(trueValue(1),trueValue(2),'+w');
 end
 end
-%%%%%%%%%%
-
+%%
 % Given the mean = priorMu and covarianceMatrix = priorSigma of a prior
 % Gaussian distribution over regression parameters; observed data, xtrain
 % and ytrain; and the likelihood precision, generate the posterior

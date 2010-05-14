@@ -1,11 +1,8 @@
-function [functionList,classList] = dependsOn(mfile,dirRoot)
+function [functionList, classList] = dependsOn(mfile, dirRoot)
 % Find all of the functions and classes used by mfile that live in the dirRoot
 % directory structure. 
 %
-% Code by Matthew Dunham
-
-
-
+%%
 
 dependencies = depfunTB(mfile);
 

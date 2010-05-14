@@ -1,8 +1,11 @@
+%% Illustration of an arbitrary PDF and its corresponding CDF
+% Reproduces Bishop Figure 1.12 
+%%
 function plotPdfCdfDemo()
 
 
-% Generate Bishop Figure 1.12 showing an arbitray PDF and its corresponding CDF.
-% By Matt Dunham
+
+
 
 pdf = @(x) (normpdf(x,1,2)+normpdf(x,6,1))/2;
 fplot(pdf,[-10,10],'r');

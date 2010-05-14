@@ -1,5 +1,6 @@
-%Illustration of the Neyman-Pearson testing paradigm
-%Code by Matthew Dunham
+%% Illustration of the Neyman-Pearson testing paradigm
+%
+%%
 
 xmin = -4;xmax = 8;
 ymin = 0;ymax = 0.3;

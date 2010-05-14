@@ -5,13 +5,13 @@ function Wbig = interpolateLarsWeights(Wfull,lambdas,X,y)
 % lambdas - desired range
 % X: input data, each row is a case
 % y: input data
-
-% Written by Matthew Dunham, based on code by Skoglund
-
-%We have the values of the weights at each 'critical point' where
-%weights changes sign from lars. Since the weights w.r.t. lambda
-%are piecewise linear, we can just perform linear interpolation to
-%get the weights corresponding to lambdas between these points.
+%
+% based on code by Skoglund
+%%
+% We have the values of the weights at each 'critical point' where
+% weights changes sign from lars. Since the weights w.r.t. lambda
+% are piecewise linear, we can just perform linear interpolation to
+% get the weights corresponding to lambdas between these points.
 
 Wfull = Wfull(end:-1:1,:); %reverse order for interp1q, (now least regularized to most)
 %criticalPoints = recoverLambdaFromLarsWeights(X,y,Wfull)'; %in ascending order of magnitude.

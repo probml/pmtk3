@@ -2,7 +2,7 @@
 % We reproduce the example on p64 of Marin and Robert, 2007
 % This computes logBF(i) = log p(D|X(:,:)) / p(D|X(:,-j)) for each feature j 
 % using a g-prior
-
+%%
 X = dlmread('caterpillar.txt'); 
 % from http://www.ceremade.dauphine.fr/~xian/BCS/caterpillar
 y = log(X(:,11)); % log number of nests

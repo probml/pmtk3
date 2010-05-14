@@ -20,7 +20,8 @@ function [model, loglikHist] = probitRegFitEm(X, y, lambda, varargin)
 % loglikHist is the history of the log likelihood
 %
 %%
-% Based on code by Francois Caron, modified by Kevin Murphy & Matt Dunham
+% Based on code by Francois Caron
+% PMTKmodified Kevin Murphy, Matt Dunham
 %%
 SetDefaultValue(3, 'lambda', 0); 
 [model.w, model.preproc, EMargs] =  process_options(varargin , ...

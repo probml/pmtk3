@@ -1,5 +1,5 @@
 %% Josh Tenenbaum's Healthy Levels Game
-% written by Matthew Dunham and Kevin Murphy
+%
 %%
 function healthyLevels()
 no = 0; yes = 1;

@@ -1,8 +1,8 @@
-% Modified version of demev1 from netlab
+%% Modified version of netlab's demev1
 % We changed the plotting style slightly
 % and got rid of the annoying pause statements, so the script can be run
 % without user intervention
-
+%%
 
 disp('This demonstration illustrates the application of Bayesian')
 disp('re-estimation to determine the hyperparameters in a simple regression')
@@ -61,7 +61,7 @@ disp(' ')
 nin = 1;		% Number of inputs.
 nhidden = 3;		% Number of hidden units.
 nout = 1;		% Number of outputs.
-alpha = 0.01;		% Initial prior hyperparameter. 
+alpha = 0.01;		% Initial prior hyperparameter.
 beta_init = 50.0;	% Initial noise hyperparameter.
 
 % Create and initialize network weight vector.
@@ -74,24 +74,24 @@ options = zeros(1,18);		% Default options vector.
 options(1) = 1;			% This provides display of error values.
 options(2) = 1.0e-7;		% Absolute precision for weights.
 options(3) = 1.0e-7;		% Precision for objective function.
-options(14) = 500;		% Number of training cycles in inner loop. 
+options(14) = 500;		% Number of training cycles in inner loop.
 
 % Train using scaled conjugate gradients, re-estimating alpha and beta.
 for k = 1:nouter
-  net = netopt(net, options, x, t, 'scg');
-  [net, gamma] = evidence(net, x, t, ninner);
-  fprintf(1, '\nRe-estimation cycle %d:\n', k);
-  fprintf(1, '  alpha =  %8.5f\n', net.alpha);
-  fprintf(1, '  beta  =  %8.5f\n', net.beta);
-  fprintf(1, '  gamma =  %8.5f\n\n', gamma);
-  disp(' ')
+    net = netopt(net, options, x, t, 'scg');
+    [net, gamma] = evidence(net, x, t, ninner);
+    fprintf(1, '\nRe-estimation cycle %d:\n', k);
+    fprintf(1, '  alpha =  %8.5f\n', net.alpha);
+    fprintf(1, '  beta  =  %8.5f\n', net.beta);
+    fprintf(1, '  gamma =  %8.5f\n\n', gamma);
+    disp(' ')
 end
 
 fprintf(1, 'true beta: %f\n', 1/(noise*noise));
 
 disp(' ')
-disp('Network training and hyperparameter re-estimation are now complete.') 
-disp('Compare the final value for the hyperparameter beta with the true') 
+disp('Network training and hyperparameter re-estimation are now complete.')
+disp('Compare the final value for the hyperparameter beta with the true')
 disp('value.')
 disp(' ')
 disp('Notice that the final error value is close to the number of data')

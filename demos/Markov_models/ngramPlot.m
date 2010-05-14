@@ -1,5 +1,6 @@
-% Plot unigrams and bigrams of Darwin's "On the origin of
-% species". Written by Matthew Dunham
+% Plot unigrams and bigrams of Darwin's "On the origin of species"
+%
+%%
 
 load ngramData; % use ngramMake to create this
 

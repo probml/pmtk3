@@ -1,5 +1,6 @@
-% change of variables demo
-
+%% change of variables demo
+%
+%%
 mu = [0 0];
 Sigma = eye(2);
 xrange = [-1 1 -1 1]; npoints = 20;

@@ -43,7 +43,7 @@ function [report,errors] = deptoolbox(toolboxname,isroot,visualize)
 % directory and filenames are listed relative to the present working
 % directory. 
 %
-% Code by Matthew Dunham
+%%
 
 if(nargin < 3)
     visualize = false;

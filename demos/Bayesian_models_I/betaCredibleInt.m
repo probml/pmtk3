@@ -1,4 +1,5 @@
 %% Compute beta credible interval
+%
 %%
 S = 47; 
 N = 100; 
