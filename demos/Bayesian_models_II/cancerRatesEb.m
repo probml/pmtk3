@@ -20,8 +20,8 @@ for i=1:d
     aPost(i) = a + data.y(i);
     bPost(i) = b + data.n(i) - data.y(i);
     post.meantheta(i) = aPost(i)/(aPost(i) + bPost(i));
-    post.CItheta(i,:) = betainv([0.025 0.975], aPost(i), bPost(i));
-    post.mediantheta(i) = betainv(0.5, aPost(i), bPost(i));
+    post.CItheta(i,:) = betainvPMTK([0.025 0.975], aPost(i), bPost(i));
+    post.mediantheta(i) = betainvPMTK(0.5, aPost(i), bPost(i));
 end
 thetaPooledMLE = sum(data.y)/sum(data.n)
 %% Plot
