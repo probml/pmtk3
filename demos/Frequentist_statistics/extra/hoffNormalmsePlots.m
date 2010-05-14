@@ -1,4 +1,6 @@
-% Relative MSE plot
+%% Relative MSE plot
+%
+%%
 n = 1:50;
 k0 = 0:3;
 sigmaTrue = 13;

@@ -1,7 +1,9 @@
-function discreteProbDistroFig
-% Some probability distributions on X = {1,2,3,4} First a uniform
-% distribution p(x = k) = 1/4. Second a degenerate distribution p(x) = 1 if
+%% Some probability distributions on X = {1,2,3,4} 
+% First a uniform distribution p(x = k) = 1/4. 
+% Second a degenerate distribution p(x) = 1 if
 % x=1 and 0 otherwise. 
+function discreteProbDistroFig
+
 
 plotHist(1:4);
 printPmtkFigure('unifHist');

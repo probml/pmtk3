@@ -1,5 +1,6 @@
-%% Two hypothetical two-sided power curves. B dominates A.
-
+%% Two hypothetical two-sided power curves: B dominates A
+%
+%%
 figure('Color',[1,1,1]);
 domain = -pi:0.01:pi;
 f1 = @(x)-cos(x)+0.03;
