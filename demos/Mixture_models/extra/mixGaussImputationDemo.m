@@ -1,5 +1,7 @@
-function mixGaussImputationDemo()
 %% Imputation for a mixture of Gaussians
+%
+%%
+function mixGaussImputationDemo()
 %% Make data
 setSeed(1);
 %d = 10; n = 100; pc = 0.5;

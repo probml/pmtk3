@@ -1,6 +1,6 @@
-% Likelihood surface of mixture of 2 Gaussians in 1d
+%% Likelihood surface of mixture of 2 Gaussians in 1d
 % Based on code by Mike Li
-
+%%
 % Generate data
 setSeed(0);
 true_mu1 = -10;

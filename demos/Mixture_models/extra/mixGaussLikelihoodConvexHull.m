@@ -1,13 +1,10 @@
-%Illustration of the likelihood surface created by a GMM with 10 isotropic
-%components in 2d. The centers are marked with a '+' symbol. The three
-%modes are marked with blue triangles. The green line is the convex hull of
-%the centers. 
+%% Illustration of the likelihood surface created by a GMM 
+% The GMM has 10 isotropic components in 2d. The centers are marked with a
+% '+' symbol. The three modes are marked with blue triangles. The green
+% line is the convex hull of the centers. 
 %
-% Requires both the statistics and optimization toolboxes
-%
+%%
 
-
-warning('off', 'optim:fminunc:SwitchingMethod')
 setSeed(39)
 mu = [0.05:0.1:0.95;0.05:0.1:0.95];
 mu(1,:) = mu(1,randperm(10));
@@ -18,7 +15,7 @@ sigma = 0.2*[0.045,0.045,0.045,0.1,0.2,0.25,0.3,0.21,0.15,0.11];
 
 f = @(x)0;
 for i=1:10
-    f = @(x)f(x) + 0.1*gausspdf(x, mu(i,:), sigma(i).*eye(2));
+    f = @(x)f(x) + 0.1*gausspdf(x, mu(i,:)', sigma(i).*eye(2));
 end
 
 stepsize = 0.005;
@@ -39,9 +36,10 @@ contour(x1,y1,z,'-r'); hold on;
 plot(mu(:,1),mu(:,2),'+k','MarkerSize',16);
 
 options = optimset('Display', 'off');
-modes = zeros(3,2);
+options.numDiff = 1;
+modes = zeros(3, 2);
 for i=1:3
-   modes(i,:) =  fminunc(@(x)-f(x),mu(i,:),options);
+   modes(i, :) = minFunc(@(x)-f(x), mu(i, :)', options);
 end
 plot(modes(:,1),modes(:,2),'^b','MarkerSize',12,'MarkerFaceColor','b');
 k = convhull(mu(:,1),mu(:,2));

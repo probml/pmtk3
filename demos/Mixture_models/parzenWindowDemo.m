@@ -1,46 +1,43 @@
+%% Demonstrate a non-parametric (parzen) density estimator in 1D 
+% We use a Gaussian (i.e. rbf) kernel. 
+%%
 function parzenWindowDemo
-% Demonstrate a non-parametric (parzen) density estimator in 1D with a 
-%Gaussian kernel
-%
+
+setSeed(2);
+mix = [0.35,0.65];
+sigma = [0.015,0.01];
+mu = [0.25,0.75];
+n = 50;
+
+%% The true function, we are trying to recover
+f = @(x)mix(1)*gausspdf(x, mu(1), sigma(1)) + mix(2)*gausspdf(x, mu(2), sigma(2));
+%% Generate data
+data = generateData;
+domain = 0:0.001:1;
+%kernel = 'gauss';
+kernel = 'cube';
+switch kernel
+    case 'gauss', hvals = [0.005,0.01,0.1];
+    case 'cube', hvals = [0.01,0.1,0.5];
+end
+for i=1:numel(hvals)
+    hvalstr = num2str(hvals(i)); decloc = strfind(hvalstr, '.'); if(isempty(decloc)), decloc = 0; end;
+    setupFig(hvals(i));
+    plot(domain,f(domain'),'-g','LineWidth',2.5);
+    hold on
+    h=plot(data, 0.1*ones(1,n), '.');
+    set(h,'markersize',14,'color','k');
+    g = kernelize(hvals(i), kernel);
+    plot(domain,g(domain'),'-b','LineWidth',2.5);
+    printPmtkFigure(sprintf('parzen%sH0p%s',strcat(upper(kernel(1)), kernel(2:end)), hvalstr((decloc+1):end)));
+end
+placeFigures('nrows',3,'ncols',1,'square',false);
 
 
-    setSeed(0); 
-    mix = [0.35,0.65];
-    sigma = [0.015,0.01];
-    mu = [0.25,0.75];
-    n = 50;
-    
-    %The true function, we are trying to recover
-    
-    
-    f = @(x)mix(1)*gausspdf(x, mu(1), sigma(1)) + mix(2)*gausspdf(x, mu(2), sigma(2));
-    
-    data = generateData;
-    domain = 0:0.001:1;
-    %kernel = 'gauss';
-    kernel = 'cube';
-    switch kernel
-      case 'gauss', hvals = [0.005,0.01,0.1];
-      case 'cube', hvals = [0.01,0.1,0.5];
-    end
-    for i=1:numel(hvals)
-       hvalstr = num2str(hvals(i)); decloc = strfind(hvalstr, '.'); if(isempty(decloc)), decloc = 0; end;
-       setupFig(hvals(i));
-       plot(domain,f(domain'),'-g','LineWidth',2.5);
-       hold on
-       h=plot(data, 0.1*ones(1,n), '.');
-       set(h,'markersize',14,'color','k');
-       g = kernelize(hvals(i), kernel);
-       plot(domain,g(domain'),'-b','LineWidth',2.5);
-       printPmtkFigure(sprintf('parzen%sH0p%s',strcat(upper(kernel(1)), kernel(2:end)), hvalstr((decloc+1):end)));
-    end
-    placeFigures('nrows',3,'ncols',1,'square',false);
-
-    
     function data = generateData
-    %Generate data from a mixture of gaussians.
+        %Generate data from a mixture of gaussians.
         model1 = struct('mu', mu(1), 'Sigma', sigma(1));
-        model2 = struct('mu', mu(1), 'Sigma', sigma(2));
+        model2 = struct('mu', mu(2), 'Sigma', sigma(2));
         pdf1 = @(n)gaussSample(model1, n);
         pdf2 = @(n)gaussSample(model2, n);
         data = rand(n,1);
@@ -48,20 +45,20 @@ function parzenWindowDemo
         data(nmix1) = pdf1(sum(nmix1));
         data(~nmix1) = pdf2(sum(~nmix1));
     end
-    
-    function g = kernelize(h,kernel)   
-    %Use one gaussian kernel per data point with smoothing parameter h. 
+
+    function g = kernelize(h,kernel)
+        %Use one gaussian kernel per data point with smoothing parameter h.
         g = @(x)0;
         for i=1:n
-          switch kernel
-            case 'gauss', g = @(x)g(x) + (1/n)*gausspdf(x,data(i),h^2);
-            case 'cube', g = @(x)g(x) + (1/n)*unifpdf(x,data(i)-h/2, data(i)+h/2);
-          end
+            switch kernel
+                case 'gauss', g = @(x)g(x) + (1/n)*gausspdf(x,data(i),h^2);
+                case 'cube', g = @(x)g(x) + (1/n)*unifpdf(x,data(i)-h/2, data(i)+h/2);
+            end
         end
     end
-   
+
     function setupFig(h)
-        figure; 
+        figure;
         hold on;
         axis([0,1,0,5]);
         set(gca,'XTick',0:0.5:1,'YTick',[0,5],'box','on','FontSize',16);
@@ -74,6 +71,6 @@ function parzenWindowDemo
         set(gcf,'Position',[left,scrsz(4)/2,width, height]);
         pdfcrop;
     end
-    
+
 
 end

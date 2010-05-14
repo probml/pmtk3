@@ -1,8 +1,9 @@
-function knnDensityEstimationDemo()
-% An illustration of density estimation with k-nearest neighbours.
+%% An illustration of density estimation with k-nearest neighbours.
 % Contrast this with parzenWindowDemo(), where rather than fixing the
 % number of points, K, as we do here, we fix the window size.
-%
+%%
+function knnDensityEstimationDemo()
+
 setSeed(0);
 mix = [0.35,0.65];
 sigma = [0.015,0.01];

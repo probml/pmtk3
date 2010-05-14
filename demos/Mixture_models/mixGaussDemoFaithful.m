@@ -1,5 +1,8 @@
-function mixGaussDemoFaithful
+%% Visualize fitting a mixture of Gaussians to the old faithful dataset
 % reproduce Bishop fig 9.8
+%%
+function mixGaussDemoFaithful
+
 
 setSeed(0);
 K = 2;

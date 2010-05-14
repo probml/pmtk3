@@ -1,7 +1,7 @@
 %% Demonstrate failure of MLE for GMMs in high-D case, whereas MAP works
 %PMKTauthor Hannes Bretschneider
 %PMTKslow
-
+%%
 %% Create data
 
 N = 100;

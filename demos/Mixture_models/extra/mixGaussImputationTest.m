@@ -1,4 +1,6 @@
 %% Simple test of mixGaussMissingFitEM
+%
+%%
 setSeed(1);
 nmix = 5;
 d = 2;

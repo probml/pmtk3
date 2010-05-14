@@ -1,10 +1,10 @@
-function [modelStud modelGauss]=mixStudentBankruptcyDemoHannes()
 %% Fit a mixture of Gaussians and mixture of Students to some data
 % and use the resulting models to classify
 % This example is based on fig 3.3 of Kenneth Lo's PhD thesis,
 % "Statistical methods for high throughput genomics", UBC 2009
 %PMTKauthor Hannes Bretschneider
-
+%%
+function [modelStud, modelGauss] = mixStudentBankruptcyDemoHannes()
 %% Load data
 bank = importdata('bankruptcy.txt');
 Y = bank.data(:,1); % 0,1

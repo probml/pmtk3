@@ -1,5 +1,8 @@
-function mixGaussPlotDemo()
 %% Plot a Mixture of Gaussians
+%
+%%
+function mixGaussPlotDemo()
+
 
 %%
     mu = [0.22 0.45; 0.5 0.5; 0.77 0.55]';

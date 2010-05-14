@@ -1,7 +1,8 @@
+%% Demonstrate density modelling with a PPCA mixture model
+% Slightly modified version of demgmm5 from netlab
+%%
 function mixPpcaDemoNetlab()
 
-% Demonstrate density modelling with a PPCA mixture model.
-% Slightly modified version of demgmm5 from netlab
 
 if ~exist('gmm')
    error('must install netlab from http://www.ncrg.aston.ac.uk/netlab/index.php')

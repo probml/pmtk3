@@ -1,4 +1,4 @@
-%% Comparison of methods for imputing missing values in UCI adult census  data
+%% Comparison of methods for imputing missing values in UCI adult census data
 %
 %PMTKauthor Kevin Murphy
 %%
