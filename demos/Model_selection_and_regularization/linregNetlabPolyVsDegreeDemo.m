@@ -1,6 +1,6 @@
-% Polynomial Basis Expansion
+%% Polynomial Basis Expansion Demo
 % Compare effect of degree for fixed regularizer
-
+%%
 %% Make the data
 n = 21;
 %[xtrain1d, ytrain, xtest1d, ytest] = polyDataMake('-sampling','thibaux','-n',n);

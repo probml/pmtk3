@@ -1,6 +1,8 @@
-function varSelDemo()
 %% Variable Selection Demo
-%PMTKslow
+% PMTKslow
+%%
+function varSelDemo()
+
 methods = {...
     @(X,y) larsSelectSubsetCV(X,y, 'nfolds', 5), ...
     @(X,y) fbmpCore(X,y,'maxNumSearches',5), ...

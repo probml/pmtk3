@@ -1,4 +1,6 @@
 %% Plot the full L2 regularization path for the prostate data set 
+%
+%%
 load prostate
  lambdas = [logspace(4, 0, 20) 0];
  [n, d] = size(X);

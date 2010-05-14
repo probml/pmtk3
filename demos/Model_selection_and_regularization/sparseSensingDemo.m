@@ -1,10 +1,9 @@
 %% Figure 1 from Figueiredo'07,  "Gradient projection for sparse reconstruction"
-%PMTKauthor Figueiredo
-%PMTKurl http://www.lx.it.pt/~mtf/GPSR/
-%PMTKmodified Kevin Murphy 
-%PMTKslow
-% the code to only use l1ls, not the GPSR code
-
+% PMTKauthor Figueiredo
+% PMTKurl http://www.lx.it.pt/~mtf/GPSR/
+% PMTKmodified Kevin Murphy
+% PMTKslow
+%%
 setSeed(0);
 % n is the original signal length
 n = 2^12;
@@ -46,15 +45,15 @@ ndx = setdiff(1:n, zz);
 length(ndx)
 wdebiased = zeros(n,1);
 X = R;
-%wdebiased(ndx) = pinv(X(:,ndx))*y; 
-wdebiased(ndx) = X(:,ndx)\y; 
+%wdebiased(ndx) = pinv(X(:,ndx))*y;
+wdebiased(ndx) = X(:,ndx)\y;
 wfull = X'*y; % since X is orthogonal %pinv(X)*y; % X'*y; % X\y;
 
-      
+
 wsparse = w;
 wdeb = wdebiased;
 wls = wfull;
-   
+
 figure
 scrsz = get(0,'ScreenSize');
 set(gca,'Position',[10 scrsz(4)*0.1 0.9*scrsz(3)/2 3*scrsz(4)/4])
@@ -76,15 +75,15 @@ axis(v)
 title(sprintf('L1 reconstruction (K0 = %g, lambda = %5.3g, MSE = %5.3g)',...
     k,tau,(1/n)*norm(wsparse-f)^2))
 
- subplot(4,1,3)
- plot(wdeb,'LineWidth',1.1)
- set(gca,'FontName','Times')
- set(gca,'FontSize',14)
- top = max(f(:));
- bottom = min(f(:));
- v = [0 n+1 bottom-0.15*(top-bottom)  top+0.15*((top-bottom))];
- axis(v)
- title(sprintf(...
+subplot(4,1,3)
+plot(wdeb,'LineWidth',1.1)
+set(gca,'FontName','Times')
+set(gca,'FontSize',14)
+top = max(f(:));
+bottom = min(f(:));
+v = [0 n+1 bottom-0.15*(top-bottom)  top+0.15*((top-bottom))];
+axis(v)
+title(sprintf(...
     'Debiased (MSE = %0.4g)',(1/n)*norm(wdeb-f)^2))
 
 subplot(4,1,4)

@@ -1,7 +1,6 @@
-% Visualization of error versus amount of regularization
-
-
-%Ficticious bias,variance,error functions
+%% Visualization of error versus amount of regularization
+%
+%% Ficticious bias,variance,error functions
 varFN = @(lambda) 0.012 -(0.025/4)*lambda;
 biasFN  = @(lambda)((2.5.^(1.5*lambda-2.5))/20)+ 0.0012;
 biasvarFN = @(lambda) varFN(lambda) + biasFN(lambda);

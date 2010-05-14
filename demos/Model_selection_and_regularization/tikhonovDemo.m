@@ -1,8 +1,9 @@
-function  tikhonovDemo()
 %% Tikhonov regularization for a piecewise smooth function
 % Based on code by Uri Ascher
+%%
+function  tikhonovDemo()
 setSeed(0);
-lambdas = [0.1 10];
+lambdas = [0.1 2 10];
 for j = 1:numel(lambdas);
     lambda = lambdas(j);
     %% Generate data
@@ -11,6 +12,7 @@ for j = 1:numel(lambdas);
     x = ((1:N)-0.5)./N;
     y = fun(x) + randn(N, 1)*noise;
     %% Form a band diagonal difference matrix
+    % (see also spdiags)
     D = diag(-ones(N, 1)) + diag(ones(N-1, 1), 1);
     D(end, :) = [];
     A = [eye(N); sqrt(lambda)*D];

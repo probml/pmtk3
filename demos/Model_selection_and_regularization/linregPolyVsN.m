@@ -1,4 +1,6 @@
 %% Plot performance of linear regression vs sample size
+%
+%%
 setSeed(0);
 degrees = [1, 2, 15];
 for d=1:numel(degrees)

@@ -1,6 +1,6 @@
-%% Process the 20 newsgroup data from
+%% Process the 20 newsgroup data 
 % http://www.cs.toronto.edu/~roweis/data.html
-
+%%
 load newsgroups % documents, wordlist, newsgroups
 X = documents'; % 16,642 documents by 100 words  (sparse logical  matrix)
 y = newsgroups; % class label, 1..4

@@ -1,10 +1,9 @@
-%% Compute empirical distribution of coefficients
-% draw from a Gaussian ensemble where exactly k0 elements are non-zero
-% The resulting marginal is a good prior for the weights in 
-% a sparse linear regression model
-
+%% Compute empirical distribution of coefficients drawn from a Gaussian ensemble
+% Exactly k0 elements are non-zero. The resulting marginal is a good prior
+% for the weights in a sparse linear regression model
+%
 % Based on code by Baback Moghaddam
-
+%%
 if ~exist('n','var'), n=12; end                 % n = dimension of x (#cols of A)
 if ~exist('m','var'), m=10*n; end               % m = dimension of y (#rows of A)
 if ~exist('nCases','var'), nCases = 20; end    % nCases = no. of MC trials

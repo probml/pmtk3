@@ -1,5 +1,6 @@
 %% Illustration of some subderivatives of a function at point x0.
-
+%
+%%
 figure('Color',[1,1,1]);
 
 blueX = [-1   , 0   , 0.75 , 1.15 ,1.3  , 1.8];

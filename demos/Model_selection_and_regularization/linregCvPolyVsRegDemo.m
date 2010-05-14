@@ -1,6 +1,6 @@
 %% Ridge Regression with Polynomial Basis Expansion
 % Compare effect of regularizer strength
-
+%%
 ns = [21, 100];
 for ni=1:length(ns)
     %% Make the data
