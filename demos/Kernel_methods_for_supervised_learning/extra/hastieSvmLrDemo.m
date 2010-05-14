@@ -1,5 +1,5 @@
 %% Reproduce figures 12.2, 12.3 and 12.5 in Hastie ESL 2nd ed.
-
+%
 %% Generating Models
 % Generate data as per Hastie 2ed, pg 16: two classes, blue and orange,
 % each with a mixture of 10, 2D Gaussians.

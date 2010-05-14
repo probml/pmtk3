@@ -1,7 +1,7 @@
-%% smooth support vector machine regression
-%PMTKauthor Mark Schmidt
-%PMTKurl http://people.cs.ubc.ca/~schmidtm/Software/minFunc/minFunc.html#11
-
+%% Smooth support vector machine regression
+% PMTKauthor Mark Schmidt
+% PMTKurl http://people.cs.ubc.ca/~schmidtm/Software/minFunc/minFunc.html#11
+%%
 nVars = 1;
 nInstances = 50;
 setSeed(0);

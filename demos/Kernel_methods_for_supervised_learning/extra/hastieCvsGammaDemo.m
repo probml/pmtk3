@@ -1,6 +1,7 @@
 %% Plot test error vs C for differnet gammas in an SVM
 % Same as  Figure 12.6 in "The elements of statistical learning" 2e 
 % by Hastie, Tibshirani, Friedman
+%%
 data   = loadHastieMixtureData();
 Xtrain = data.X;
 ytrain = convertLabelsToPM1(data.y);

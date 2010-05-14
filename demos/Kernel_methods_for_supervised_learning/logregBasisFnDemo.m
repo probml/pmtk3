@@ -1,5 +1,6 @@
 %% Logistic Regression with RBF Basis
 %  based on Bishop fig 4.12
+%
 %% Parameters
 mus      = [0 0; -1 -1; 1 1];
 sigma    = 0.05;

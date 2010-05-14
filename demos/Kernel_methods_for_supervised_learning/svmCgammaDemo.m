@@ -1,9 +1,10 @@
-% Plot CV error vs error vs gamma and C for an SVM, plus 1d slices
+%% Plot CV error vs error vs gamma and C for an SVM, plus 1d slices
 % Similar to Figure 12.6 in "The elements of statistical learning" 2e 
 % by Hastie, Tibshirani, Friedman,
 % We also show the 2D % surface similar to figure 7 in
 % http://www.csie.ntu.edu.tw/~cjlin/papers/guide/guide.pdf.
 %PMTKslow
+%%
 %% Load Data
 setSeed(0);
 data = loadHastieMixtureData();

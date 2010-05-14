@@ -1,4 +1,6 @@
 %% Run an svm on a binary dataset
+%
+%%
 load crabs
 %% SVM
 gammas = logspace(-2, 2, 50);

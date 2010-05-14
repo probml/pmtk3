@@ -1,4 +1,6 @@
 %% Compare kernalized L1 logistic regession to an svm. 
+%
+%%
 load crabs
 %% SVM
 gammas = logspace(-2, 2, 30);

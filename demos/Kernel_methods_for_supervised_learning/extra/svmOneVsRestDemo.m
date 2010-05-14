@@ -1,6 +1,7 @@
 %% Test the oneVsRestClassifFit function 
 % by comparing its results to liblinear's built in procedure. 
-%PMTKslow
+% PMTKslow
+%%
 load soy %C=3, N=307, D=35
 setSeed(0);
 [X, Y] = shuffleRows(X, Y);

@@ -1,5 +1,6 @@
-% Demo of an RBF gram matrix
-
+%% Demo of an RBF gram matrix
+%
+%%
 
 setSeed(2);
 mu = [0 0; 0 1; 1 1; 1 0]; 
