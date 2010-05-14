@@ -1,4 +1,6 @@
 %% Simple test of hmmFitEm with Gaussian observations
+%
+%%
 load data45
 data = [train4'; train5'];
 d = 13;

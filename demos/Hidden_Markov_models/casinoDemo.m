@@ -1,9 +1,8 @@
 %% HMMs and the occasionally Dishonest Casino
-% This is an example from 
-% 'Biological Sequence Analysis: 
+% This is an example from 'Biological Sequence Analysis: 
 % Probabilistic Models Proteins and Nucleic Acids' by Durbin, Eddy, Krogh, &
 % Mitchison, (1998) p54.
-%%
+%% Description
 % Suppose a casino uses a fair die most of the time but occasionally
 % switches to and from a loaded die according to Markovian dynamics. We
 % observe the dice rolls but not the type of die. We can use a Hidden

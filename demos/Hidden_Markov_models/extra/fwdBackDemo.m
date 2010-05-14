@@ -1,3 +1,4 @@
+%% Forwards Backwards Algorithm Demo
 K = 3;
 %initDist= [1 0 0]'; % start in state 1
 initDist= normalize(ones(3,1)); % could start anywhere

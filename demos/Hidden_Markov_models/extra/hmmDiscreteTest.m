@@ -1,7 +1,7 @@
 %% Simple test of hmmDiscreteFitEm
 % We compare how well the true model can decode a sequence, compared to a
 % model learned via EM using the best permutation of the labels. 
-
+%%
 %% Define the generating model
 setSeed(0);
 nHidStates = 4; 
