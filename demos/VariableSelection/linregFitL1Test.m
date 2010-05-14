@@ -1,6 +1,10 @@
+%% Linear Regression L1 Fit Tests
+% Check that different fitting methods for lasso regression give same
+% result.
+%%
 function linregFitL1Test()
 
-% check that different fitting methods for lasso regression give same result
+
 
 %% Make some data
 setSeed(0);

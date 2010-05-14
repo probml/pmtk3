@@ -1,7 +1,8 @@
+%% Demo of group lasso compared to vanilla lasso
+% PMTKauthor Mark Schmidt
+%%
 function linregGroupLassoDemo()
 
-% Demo of group lasso compared to vanilla lasso
-%PMTKauthor Mark Schmidt
 
 setSeed(1);
 

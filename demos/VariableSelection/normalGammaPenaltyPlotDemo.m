@@ -1,8 +1,9 @@
-function normalGammaPenaltyPlotDemo()
 %% Plot contours of penalty(w1) + penalty(w2), where penalty(w) = -log p(w)
 % and p(w) = normalGamma(w | delta, c)
-%PMTKauthor Francois Caron
-%PMTKmodified Kevin Murphy
+% PMTKauthor Francois Caron
+% PMTKmodified Kevin Murphy
+%%
+function normalGammaPenaltyPlotDemo()
 
 c = 1;
 pas=.02;

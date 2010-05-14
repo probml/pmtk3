@@ -1,5 +1,8 @@
-function scadPlot()
 %% LLA and LQA approximation - fig 1 of Zou & Li 2008
+%
+%%
+function scadPlot()
+
 z = -10:0.01:10;
 a = 3.7; lambda = 2;
 
