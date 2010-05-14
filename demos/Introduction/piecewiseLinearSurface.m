@@ -1,5 +1,6 @@
 %% Illustration of a piecewise linear surface
-
+%
+%%
 setSeed(10);
 figure(); hold on;
 nsurfaces = 3; 

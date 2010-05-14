@@ -1,4 +1,4 @@
-% Plot the entropy of a Bernoulli random variable
+%% Plot the entropy of a Bernoulli random variable
 %
 %%
 function bernoulliEntropyFig

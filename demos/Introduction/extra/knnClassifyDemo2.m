@@ -1,5 +1,8 @@
-function knnClassifyDemo2()
 %% Classify using KNN
+%
+%%
+function knnClassifyDemo2()
+
 
 %% load data
 tmp = dlmread('knnClassify3CTrain.txt');

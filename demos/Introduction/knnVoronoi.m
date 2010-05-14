@@ -1,6 +1,6 @@
-%% Illustration of the Voronoi tessalation induced by 1-NN 
-% (nearest neighbor).
-
+%% Illustration of the Voronoi tessalation for 1 nearest neighbour
+%
+%%
 setSeed(5); 
 x=rand(25,2);
 [vx, vy] = voronoi(x(:,1),x(:,2));

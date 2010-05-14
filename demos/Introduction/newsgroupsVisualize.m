@@ -1,5 +1,6 @@
 %% Visualize word-document binary matrix
-
+%
+%%
 load newsgroups % documents, wordlist, newsgroups, groupnames
 X = documents'; % 16,642 documents by 100 words  (sparse logical  matrix)
 

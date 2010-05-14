@@ -1,5 +1,6 @@
-%% Demo of pca used to reduce 3d data to 2d
+%% Project 3D data onto a 2D basis using PCA
 % Based on an example by Hamid Bolouri
+%%
 setSeed(0)
 
 n = 100; d = 3;

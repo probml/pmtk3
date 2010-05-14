@@ -1,5 +1,6 @@
 %% K-means clustering for Height Weight data
-
+%
+%%
 rawdata = dlmread('heightWeightDataSimple.txt'); % comma delimited file
 X = [rawdata(:,2) rawdata(:,3)]; % height, weight
 [styles, colors, symbols] = plotColors();
