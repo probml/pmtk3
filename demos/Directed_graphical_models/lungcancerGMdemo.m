@@ -1,5 +1,4 @@
-% Lung cancer network
-
+%% Lung cancer network Example
 % Make DAG
 %     S
 %    / \
@@ -8,11 +7,8 @@
 %    \/   \
 %    v     v
 %   SOB    X
-
+%%
 S = 1; CB = 2; LC = 3; SOB = 4; X = 5;
-
-
-
 %% Make CPDs
 % Specify the conditional probability tables as cell arrays
 % The left-most index toggles fastest, so entries are stored in this order:
@@ -27,8 +23,6 @@ CPD{X} = tabularFactorCreate(reshape([0.98 0.4 0.02 0.6], 2, 2), [LC X]);
 
 jointT = tabularFactorMultiply(CPD);
 jointDGM = jointT.T;
-
-
 %% Convert from DGM to UGM
 % cliques are {S,CB,LC}, {SB,LC,SOB}, {LC,X}
 fac{1} = tabularFactorCreate(ones(2,2,2), [S, CB, LC]);

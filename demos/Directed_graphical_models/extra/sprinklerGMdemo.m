@@ -1,5 +1,5 @@
-% Water sprinkler network
-
+%% Water sprinkler network Example
+%
 % Make DAG
 %    C
 %   / \
@@ -8,7 +8,7 @@
 %   \/
 %   v
 %   W
-
+%%
 C = 1; S = 2; R = 3; W = 4;
 
 G = zeros(4,4);
