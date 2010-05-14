@@ -1,12 +1,13 @@
-function [x,cnt] = pagerankpow(G)
-% PAGERANKPOW  PageRank by power method with no matrix operations.
+%% PageRank by power method with no matrix operations.
 % x = pagerankpow(G) is the PageRank of the graph G.
 % [x,cnt] = pagerankpow(G) also counts the number of iterations.
 % There are no matrix operations.  Only the link structure
 % of G is used with the power method.
+% PMTKauthor Cleve Moler
+% PMTKurl http://www.mathworks.com/moler/ncm/pagerankpow.m
+%%
+function [x,cnt] = pagerankpow(G)
 
-%PMTKauthor Cleve Moler
-%PMTKurl http://www.mathworks.com/moler/ncm/pagerankpow.m
 
 % Link structure
 

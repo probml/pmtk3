@@ -1,6 +1,6 @@
-function pagerankDemo
-% PAGERANKDEMO draws the 6-node "tiny web" in Section 2.11 of "Numerical
-% Computing with MATLAB", by Cleve Moler, SIAM, 2004.  It then simulates the
+%% Draw a 6-node "tiny web" 
+% This is from Section 2.11 of "Numerical Computing with MATLAB"
+% by Cleve Moler, SIAM, 2004.  It then simulates the
 % computation of Google's PageRank algorithm, by randomly selecting links to
 % traverse.  If a link is traversed, the edge and the target node are displayed
 % in red.  If the "random surfer" jumps to an arbitrary page, the target node
@@ -33,10 +33,12 @@ function pagerankDemo
 % process, and then type "1000".  Hit control-C to quit.
 %
 % Copyright 2007, Tim Davis, University of Florida
-
+%
 % Modifed by Kevin Murphy 26 Nov 97: I just changed the node names
 % to numbers, for brevity and ease of comparison to entries in the matrix/vector
-%PMTKinteractive
+% PMTKinteractive
+%%
+function pagerankDemo
 % Initial graph
 Graph = graphinit ;
 rand ('state', 0) ;

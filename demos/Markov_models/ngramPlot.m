@@ -1,4 +1,4 @@
-% Plot unigrams and bigrams of Darwin's "On the origin of species"
+%% Plot unigrams and bigrams of Darwin's "On the origin of species"
 %
 %%
 
