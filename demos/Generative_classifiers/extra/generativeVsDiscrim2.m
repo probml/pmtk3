@@ -1,5 +1,6 @@
 %% Generative vs Discriminative classifier illustration
-
+%
+%%
 figure();
 hold all;
 domain = 0:0.001:1;

@@ -1,7 +1,7 @@
+%% Illustrate benefit of using T distribution instead of plugin estimate
+% We use a naive Bayes classifier with 2 Gaussian features
+%%
 function naiveBayesBayesianDemo()
-%% Illustrate benefit of using T distribution instead of plugin
-% for a naive Bayes classifier with 2 Gaussian features
-
 setSeed(0);
 C = 3;
 [Xtrain, Ytrain] = makeDataHelper([2 5 8]*1);

@@ -1,5 +1,6 @@
-% Generative vs Discriminative classifier illustration
-
+%% Generative vs Discriminative classifier illustration
+%
+%%
 figure;
 hold all;
 

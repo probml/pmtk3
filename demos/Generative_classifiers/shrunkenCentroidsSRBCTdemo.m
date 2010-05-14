@@ -1,6 +1,6 @@
-% Reproduce fig 18.4 from "Elements of statistical learning" 2nd edn
-
- 
+%% Reproduce figure 18.4 from "Elements of statistical learning" 2nd ed.
+%
+%%
 %% Import data
 xtrain = importdata('khan.xtrain');
 xtrain = xtrain';

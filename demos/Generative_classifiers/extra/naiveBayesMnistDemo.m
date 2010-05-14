@@ -1,5 +1,6 @@
-%% naive Bayes classifier for binary MNIST digits
-%PMTKslow
+%% Naive Bayes classifier for binary MNIST digits
+% PMTKslow
+%%
 %Ntrain=5000, 83 errors in 500, rate = 0.166
 
 load('mnistALL') % already randomly shuffled across classes
@@ -16,12 +17,12 @@ Xtest = reshape(mnist.test_images, [28*28 10000])';
 
 % Binarize
 for c=1:10
-   digit=c-1;
-   ndx = find(ytrain==digit);
-   mu = mean(Xtrain(ndx,:));
-   Xtrain(ndx,:) = Xtrain(ndx,:) > repmat(mu,length(ndx),1);
-   ndx = find(ytest==digit);
-   Xtest(ndx,:) = Xtest(ndx,:) > repmat(mu,length(ndx),1);
+    digit=c-1;
+    ndx = find(ytrain==digit);
+    mu = mean(Xtrain(ndx,:));
+    Xtrain(ndx,:) = Xtrain(ndx,:) > repmat(mu,length(ndx),1);
+    ndx = find(ytest==digit);
+    Xtest(ndx,:) = Xtest(ndx,:) > repmat(mu,length(ndx),1);
 end
 % save space
 clear mnist
@@ -33,15 +34,15 @@ Xtest = logical(Xtest);
 trainSize = [1000 5000]; % 10000];
 Ntest = 10000;
 for trial=1:length(trainSize)
-   Ntrain = trainSize(trial);
-   model = naiveBayesBerFit(Xtrain(1:Ntrain,:), ytrain(1:Ntrain)+1);
-   yhat = naiveBayesBerPredict(model, Xtest(1:Ntest,:))-1; % 0..9
-   ndxError = find(yhat ~= ytest(1:Ntest));
-   nerr = length(ndxError)
-   errorRate(trial) = nerr/Ntest %#ok
+    Ntrain = trainSize(trial);
+    model = naiveBayesBerFit(Xtrain(1:Ntrain,:), ytrain(1:Ntrain)+1);
+    yhat = naiveBayesBerPredict(model, Xtest(1:Ntest,:))-1; % 0..9
+    ndxError = find(yhat ~= ytest(1:Ntest));
+    nerr = length(ndxError)
+    errorRate(trial) = nerr/Ntest %#ok
 end
-classConf = classConfMat(ytest(1:Ntest), yhat)/Ntest; 
-  
+classConf = classConfMat(ytest(1:Ntest), yhat)/Ntest;
+
 figure;
 plot(trainSize, errorRate, 'o-', 'linewidth', 3, 'markersize', 10)
 xlabel('training set size')
@@ -57,13 +58,13 @@ title('class confusion matrix')
 
 
 for j=1:min(2,length(ndxError))
-  i=ndxError(j);
-  figure;
-  img = reshape(Xtest(i,:), [28 28]);
-  imagesc(img);
-  colormap(gray)
-  title(sprintf('testcase %d, ytrue = %d, yhat = %d', i, ytest(i), yhat(i)));
-  
+    i=ndxError(j);
+    figure;
+    img = reshape(Xtest(i,:), [28 28]);
+    imagesc(img);
+    colormap(gray)
+    title(sprintf('testcase %d, ytrue = %d, yhat = %d', i, ytest(i), yhat(i)));
+    
 end
 
 

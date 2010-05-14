@@ -1,7 +1,7 @@
-% Try to reproduce table 18.1 from "Elements of statistical learning" 2nd edn p656
+%% Try to reproduce table 18.1 from "Elements of statistical learning" 2nd edn p656
 %PMTKauthor Hannes Bretschneider
 %PMTKslow
-
+%
 %% Load data
 
 load('14cancer.mat') % modified data so X is N*D as usual

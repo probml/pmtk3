@@ -1,5 +1,7 @@
-% Illustration of the generalization error vs size of training set
-% for naive Bayes and logistic regression. 
+%% Illustration of the generalization error vs size of training set
+% We illustrate the theoretical differences between naive Bayes,
+% and logistic regression. 
+%%
 domain = 0:0.01:10;
 NB = @(x)x.^(-0.5);
 LR = @(x)(8./(x.^0.8))-2;
