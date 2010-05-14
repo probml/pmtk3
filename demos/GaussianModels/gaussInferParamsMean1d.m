@@ -1,4 +1,6 @@
 %% Infer the mean of a 1D Gaussian
+%
+%%
 priorVar = [1 5];
 Sigma = 1; % Assumed to be known
 figstr = {'gaussStrongPrior', 'gaussWeakPrior'};

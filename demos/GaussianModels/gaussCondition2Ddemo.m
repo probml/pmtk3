@@ -1,6 +1,8 @@
-%% Conditioning a 2D MVN
+%% Conditioning a 2D Gaussian
+%
 % Take a horizontal slice thru a 2d Gaussian and plot the resulting
 % conditional
+%%
 mu = [0 0]';
 rho = 0.5;
 S = [1 rho; rho 1];

@@ -1,7 +1,8 @@
-% Visualize the effect of change the hyper-params for a 2d GP regression
+%% Visualize the effect of change the hyper-params for a 2d GP regression
 % Reproduces fig 5.1 from Rasmussen and Williams
 %PMTKauthor Carl Rasmussen
 %PMTKslow
+%%
 n = 61^2; D=2;
 [x1,x2]=meshgrid(-3:0.1:3,-3:0.1:3);
 x=[x1(:),x2(:)];

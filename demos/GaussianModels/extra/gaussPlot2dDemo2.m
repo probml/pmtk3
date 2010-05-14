@@ -1,5 +1,8 @@
-function gaussPlot2dDemo()
-%% Plot a 2D Gaussian
+%% Plot a 2D Gaussian and its decorrelated and whitened transformations
+%
+%%
+function gaussPlot2dDemo2()
+
 setSeed(0);
 mu = [1 0]';           % mean (must be row vector for mvnpdf)
 S  = [2 1.5; 1.5 4];   % covariance

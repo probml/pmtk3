@@ -1,5 +1,8 @@
-function gaussImputationGibbsDemo()
 %% Gauss Imputation Demo using Gibbs
+%
+%%
+function gaussImputationGibbsDemo()
+
 
 setSeed(0);
 d = 10;

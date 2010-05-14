@@ -1,6 +1,7 @@
-function gaussImputationDemoColorHintonDiag()
 %% Gauss Imputation Demo
-
+%
+%%
+function gaussImputationDemoColorHintonDiag()
 setSeed(1);
 d = 10;
 mu = randn(d,1); Sigma = randpd(d);

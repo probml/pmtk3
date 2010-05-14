@@ -1,5 +1,7 @@
-function gaussImputationDemoOld()
 %% Gauss Imputation Demo
+%
+%%
+function gaussImputationDemoOld()
 
 setSeed(0);
 d = 10;

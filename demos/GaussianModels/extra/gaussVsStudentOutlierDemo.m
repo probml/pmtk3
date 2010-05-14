@@ -1,4 +1,4 @@
-%% Illustrate the robustness of the t-distribution compared to the Gaussian.
+%% Illustrate the robustness of the t-distribution compared to the Gaussian
 %
 %%
 function gaussVsStudentOutlierDemo()

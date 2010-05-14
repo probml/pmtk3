@@ -1,5 +1,5 @@
 %% Plot an MVN in 2D
-
+%
 %%  
 model = struct('mu', [0 0]', 'Sigma', [2 1.8; 1.8 2]);
 figure; plotContour(@(x)gausspdf(x, model.mu, model.Sigma), [-5 5 -10 10]);

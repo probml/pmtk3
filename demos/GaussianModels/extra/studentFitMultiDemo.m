@@ -1,4 +1,6 @@
 %% Fit multivariate student T distribution usign ECME
+%
+%%
 setSeed(1);
 
 N = 100; D = 2;

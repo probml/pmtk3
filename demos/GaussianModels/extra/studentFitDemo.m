@@ -1,4 +1,4 @@
-%% compare EM to  matlab stats toolbox
+%% compare EM to matlab stats toolbox
 %
 %%
 requireStatsToolbox();

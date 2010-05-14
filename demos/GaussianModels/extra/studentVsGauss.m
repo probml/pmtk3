@@ -1,5 +1,6 @@
 %% Compare Student and Gaussian pdfs
-
+%
+%%
 for useLog = [false true]
 
 dofs = [0.1 1 5];

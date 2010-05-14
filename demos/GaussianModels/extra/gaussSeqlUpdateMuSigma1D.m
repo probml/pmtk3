@@ -1,5 +1,6 @@
 %% Sequential Bayesian updating of (mu,sigma) for a 1D gaussian
-
+%
+%
 %% Prior
 m0 = 0;
 k0 = 0.1;

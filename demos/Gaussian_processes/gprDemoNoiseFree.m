@@ -1,5 +1,6 @@
-%% reproduce fig 2.2 from GP book
-
+%% Reproduce figure 2.2 from GP book
+%
+%%
 setSeed(0);
 L = 1;
 xs = (-5:0.2:5)';

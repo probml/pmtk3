@@ -1,7 +1,7 @@
 %% Visualize the effect of change the hyper-params for a 1d GP regression
 % based on demo_gpr by Carl Rasmussen
-
-% generate data
+%
+%% Generate data
 n = 20;
 rand('state',18);
 randn('state',20);
@@ -16,7 +16,7 @@ hyps = [log(1), log(1), log(0.1);...
   log(0.3),log(1.08),log(0.00005);...
   log(3),log(1.16),log(0.89)];
 
-% compute post pred and plot marginals
+%% compute post pred and plot marginals
 for i=1:size(hyps,1)
   loghyper = hyps(i,:)';
   [mu, S2] = gpr(loghyper, covfunc, x, y, xstar);

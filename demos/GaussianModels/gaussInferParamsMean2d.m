@@ -1,4 +1,5 @@
 %% Bayesian inference of the mean of a 2D Gaussian with fixed Sigma
+%
 %% Sample Data
 setSeed(0);
 muTrue      = [0.5 0.5]'; 

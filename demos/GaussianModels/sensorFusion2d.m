@@ -1,5 +1,8 @@
-function sensorFusion2d()
 %% Sensor Fusion Demo 2D
+%
+%%
+function sensorFusion2d()
+
 Sigmas = {0.01*eye(2), 0.01*eye(2)};
 helper(Sigmas)
 
