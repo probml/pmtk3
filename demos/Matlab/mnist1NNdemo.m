@@ -1,6 +1,7 @@
-% Classify the MNIST digits using a one nearest neighbour classifier
+%% Classify the MNIST digits using a one nearest neighbour classifier
 % and Euclidean distance.
 %PMTKslow
+%%
 
 
 load mnistALL;
