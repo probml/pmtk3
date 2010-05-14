@@ -1,9 +1,10 @@
+%% Kalman Filter Tracking Demo
 % Make a point move in the 2D plane
 % State = (x y xdot ydot). We only observe (x y).
-
+%
 % X(t+1) = F X(t) + noise(Q)
 % Y(t) = H X(t) + noise(R)
-
+%%
 ss = 4; % state size
 os = 2; % observation size
 F = [1 0 1 0; 0 1 0 1; 0 0 1 0; 0 0 0 1]; 
