@@ -1,6 +1,6 @@
 %% Ridge Regression with Polynomial Basis Expansion
 % Compare effect of regularizer strength
-
+%%
 %% Make the data
 n = 21;
 %[xtrain1d, ytrain, xtest1d, ytest] = polyDataMake('-sampling','thibaux','-n',n);

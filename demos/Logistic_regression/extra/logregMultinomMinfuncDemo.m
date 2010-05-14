@@ -1,7 +1,7 @@
 %% Minfunc Logreg Demo
 %PMTKauthor Mark Schmidt
 %PMTKurl  http://people.cs.ubc.ca/~schmidtm/Software/minFunc/minFunc.html
-
+%%
 options.Display = 'none';
 setSeed(1); 
 nClasses = 5;

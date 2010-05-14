@@ -1,5 +1,6 @@
 %% Basic test of syntacttic correctness of  linregFit()
-
+%
+%%
 load servo
 lossFn = @(y, yhat)mean((y-yhat).^2);
 %% Basic OLS

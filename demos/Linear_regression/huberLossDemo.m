@@ -1,5 +1,6 @@
-% Plot the Huber loss fn compared to L1 and L2
+%% Plot the Huber loss fn compared to L1 and L2
 % cf Hastie book 2e p350
+%%
 err = -3:0.1:3;
 L1 = abs(err);
 L2 = err.^2;

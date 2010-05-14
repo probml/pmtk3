@@ -1,7 +1,7 @@
-% Model selection demo for polynomial regression
+%% Model selection demo for polynomial regression
 % This illustartes that if we have more data, Bayes picks a more complex
-% model
-
+% model.
+%%
 
 Ns = [8 32];
 for ni=1:length(Ns)

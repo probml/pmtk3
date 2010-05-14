@@ -1,5 +1,5 @@
 %% From Schmee and Hahn, "A simple method for regression analysis
-%PMTKauthor Hannes Bretschneider
+% PMTKauthor Hannes Bretschneider
 %% Load
 load schmeeHahn;
 

@@ -1,3 +1,6 @@
+%% Sample Polynomial Data
+%
+%%
 function [xtrain, ytrain, xtest, ytestNoisefree, ytestNoisy, sigma2] = polyDataMake(varargin)
 %% Sample Data
 [sampling, deg, n] = process_options(varargin, ...

@@ -1,7 +1,7 @@
-% Sparse linear regression with EM on synthetic data
+%% Sparse linear regression with EM on synthetic data
 %PMTKslow
 %PMTKreallySlow
-
+%%
 setSeed(0);
 
 D=200; % Number of coefficients to estimate

@@ -1,8 +1,6 @@
-
-% compare speed and accuracy of different linregStudent methods
-
+%% Compare speed and accuracy of different linregStudent methods
 %PMTKauthor Yi Huang
-
+%%
 seed = 0; setSeed(seed);
 x = sort(rand(10,1));
 y = 1+2*x + rand(size(x))-.5;

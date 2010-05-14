@@ -1,4 +1,6 @@
 %% Prostate pscatter demo
+%
+%%
 load prostate
 figure;
 pscatter([y X], 'vnames', {names{end}, names{1:end-1}})

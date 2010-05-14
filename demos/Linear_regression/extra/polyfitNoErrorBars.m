@@ -1,4 +1,6 @@
 %% Linear Regression with Polynomial Expansion
+%
+%%
 [xtrain, ytrain, xtest, ytestNoisefree, ytest] = polyDataMake('sampling','thibaux');
 degs = 1:2;
 

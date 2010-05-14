@@ -1,9 +1,6 @@
-% logregDemoGirolami
-% Demo of logistic regression in 2D
+%% 2D Logistic Regression Demo
 % Based on code by Mark Girolami
-
-
-
+%%
 X=load('rip_dat_tr.txt'); % train X(i,:) is sample i
 Xt=load('rip_dat_te.txt'); % test
 Ntrain = size(X,1); Ntest = size(Xt,1);

@@ -1,6 +1,7 @@
-function leastSquaresProjection()
-% An illustration of least squares projection
+%% An illustration of least squares projection
 %
+%%
+function leastSquaresProjection()
 
 setSeed(2);
 n = 3;

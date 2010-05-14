@@ -1,4 +1,5 @@
-%% Linreg Demo
+%% Linear Regression Demo
+%
 %% Make data
 [xtrain, ytrain, xtest, ytestNoisefree, ytest] = polyDataMake('sampling','thibaux');
 Xtrain = xtrain; Xtest = xtest;

@@ -1,4 +1,6 @@
 %% Compare Gauss, Student T, and Laplacian distributions
+%
+%%
 xs = -4:0.2:4;
 v = 1;
 mu = 0;

@@ -1,5 +1,8 @@
-function [X, y, ws, perm] = logregGradeMH()
+%% Metropolis Hastings Logistic Regression Demo
 % Example from Johnson and Albert p87
+%
+%%
+function [X, y, ws, perm] = logregGradeMH()
 
 [X,y] = satDataLoad;
 model = logregBinaryFitL2IRLS(X, y, 1e-8, false);
@@ -16,7 +19,8 @@ targetArgs = {X,y,lambda};
 sigmaMH = 1.5;
 proposalArgs = {sigmaMH*C};
 
-[ws, naccept] = metropolisHastings(@logpost, @proposal, xinit, Nsamples, targetArgs, proposalArgs);
+[ws, naccept] = metropolisHastings(@logpost, @proposal, xinit,...
+    Nsamples, targetArgs, proposalArgs);
 
 % trace plots
 figure

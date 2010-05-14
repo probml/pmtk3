@@ -1,4 +1,6 @@
+%% Logistic Regression on the SAT data
 % Example from Johnson and Albert p87
+%
 %
 %% Load data
 stat = load('satData.txt'); 

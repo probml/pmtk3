@@ -1,5 +1,5 @@
-%% Reproduce table 1 from "Robust statistical modeling using the T
-% distribution", Lange et al, JASA 1989
+%% Reproduce table 1 from "Robust statistical modeling using the T distribution
+% Lange et al, JASA 1989
 % The estimated coefficients are similar
 % However, this does *not* reproduce the log likelihoods correctly
 % The reason for this is not clear - is Lange evaluating the expected

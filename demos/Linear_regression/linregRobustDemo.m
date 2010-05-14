@@ -1,4 +1,6 @@
-%% robust linear regression
+%% Robust linear regression demo
+%
+%%
 function linregRobustDemo()
 
 seed = 0; setSeed(seed);

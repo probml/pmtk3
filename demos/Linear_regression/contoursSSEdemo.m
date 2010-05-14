@@ -1,5 +1,6 @@
-% Error surface for linear regression model
+%% Error surface for linear regression model
 % Based on code by John D'errico
+%%
 setSeed(2);
 n = 20;
 x = randn(n,1);

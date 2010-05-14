@@ -1,5 +1,6 @@
-% check that different fitting methods for ridge regression give same result
-
+%% Check that different fitting methods for ridge regression give same result
+%
+%%
 n = 10;
 X = rand(n,2);
 %X = [ones(n,1) X];

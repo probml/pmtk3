@@ -1,6 +1,9 @@
+%% Compare group lasso solved using EM and projected gradients
+%
+%%
 function linregGroupLassoEmDemo()
 
-% Compare group lasso solved using EM and projected gradients
+
 
 setSeed(1);
 

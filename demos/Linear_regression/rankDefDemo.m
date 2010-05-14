@@ -1,5 +1,7 @@
 %% Rank Deficiency Demo
 % Based on Moler Sec 5-7 p15
+%
+%%
 X = reshape(1:15, [3 5])';
 y = (16:20)';
 w = X\y

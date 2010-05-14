@@ -1,5 +1,6 @@
-% Test that the minfunc method and IRLS give same result
-
+%% Test that the minfunc method and IRLS give same result
+%
+%%
 setSeed(0); 
 N = 10; D = 2;
 X = randn(N, D);
