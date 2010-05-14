@@ -10,7 +10,7 @@ switch class(X)
         axes(distplot);
         ksdensity(X);
         
-        quants = quantile(X, [0.25, 0.50, 0.75]);
+        quants = quantilePMTK(X, [0.25, 0.50, 0.75]);
         % [Q1, med, Q3] = quantile(X, [0.25, 0.50, 0.75]); Again, does not work
         % iqr = Q3 - Q1;
         

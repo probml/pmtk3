@@ -47,14 +47,16 @@ samples.theta  = zeros(Nsamples, d);
 post.meantheta = zeros(d, 1); 
 post.CItheta   = zeros(d, 2);
 thetaMLE       = zeros(d, 1);
+
 for i=1:d
     thetaMLE(i) = data.y(i)/data.n(i);
     as = data.y(i) + samples.K .* samples.m;
     bs = data.n(i) - data.y(i) + samples.K .* (1-samples.m);
     samples.theta(:,i) = betarnd(as, bs);
     post.meantheta(i) = mean(samples.theta(:,i));
-    post.CItheta(i,:) = quantile(samples.theta(:,i), [0.025 0.975]);
-    post.mediantheta(i) = quantile(samples.theta(:,i), [0.5]);
+    post.CItheta(i,:) = quantilePMTK(samples.theta(:,i), [0.025 0.975]);
+    post.mediantheta(i) = quantilePMTK(samples.theta(:,i), [0.5]);
+    
 end
 thetaPooledMLE = sum(data.y)/sum(data.n)
 %% Bar Plot

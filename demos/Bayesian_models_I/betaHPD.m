@@ -1,15 +1,12 @@
 %% Plot CI and HPD for beta posterior
-% Requires Stats toolbox
-% PMTKstats betainv
-%%
-requireStatsToolbox;
+%
 %%
 model.a = 3;
 model.b = 9;
 alpha   = 0.05;
 %%
-l = betainv(alpha/2, model.a, model.b);
-u = betainv(1-alpha/2, model.a, model.b);
+l = betainvPMTK(alpha/2, model.a, model.b);
+u = betainvPMTK(1-alpha/2, model.a, model.b);
 CI = [l,u]
 %%
 [styles, colors, symbols] = plotColors;

@@ -1,5 +1,6 @@
-% reproduce fig 14.23 from Hastie's book p489
+% Reproduce fig 14.23 from Hastie's book p489
 % which embeds digit 3 into 2D and then samples the space
+%%
 if 0
   load usps_all; % data(1:256, 1:1100, 1:10) 
   c = 3;
@@ -24,8 +25,8 @@ XC = X-repmat(mu,size(X,1),1);
 [U,S,V] = svd(XC,0);
 pc = [-U(:,1) -U(:,2)]; % to match fig 14.23 of HTF
 %pc = U*S; pc = [pc(:,1) pc(:,2)];
-pct1 = quantile(pc(:,1), [0.05 0.25 0.5 0.75 0.95]);
-pct2 = quantile(pc(:,2), [0.05 0.25 0.5 0.75 0.95]);
+pct1 = quantilePMTK(pc(:,1), [0.05 0.25 0.5 0.75 0.95]);
+pct2 = quantilePMTK(pc(:,2), [0.05 0.25 0.5 0.75 0.95]);
 
 figure(2);clf
 figure(1);clf

@@ -7,7 +7,7 @@ y1 = 9; n1 = 52; y2 = 4; n2 = 48;
 figure; plot(deltas, post, 'linewidth', 3, 'color', 'k');
 xlabel('\delta'); ylabel('pdf')
 diff = thetas(:,1)-thetas(:,2);
-q = quantile(diff, [0.025 0.5 0.975]);
+q = quantilePMTK(diff, [0.025 0.5 0.975]); 
 hold on
 verticalLine(q(1), 'linewidth', 3);
 verticalLine(q(3), 'linewidth', 3);
