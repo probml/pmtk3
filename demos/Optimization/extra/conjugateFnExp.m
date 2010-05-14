@@ -1,5 +1,8 @@
-function conjugateFnExp
 %% Conjugate Function
+%
+%%
+function conjugateFnExp
+
 
 
 f = @(x)x-(x-x.*log(-x));

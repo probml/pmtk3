@@ -1,6 +1,7 @@
-function steepestDescentDemoRss()
 %% Steepest Descent Demo RSS
-
+%
+%%
+function steepestDescentDemoRss()
 
 % from contoursSSEdemo
 setSeed(2);

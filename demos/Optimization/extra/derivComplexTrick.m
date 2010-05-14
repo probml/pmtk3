@@ -35,11 +35,10 @@
 %             <a href="matlab:eval('dfdx=deriv(f,x,1e-3,''forward2''); fprintf(''The results are in the STACK.\n'')')">>>dfdx=deriv(f,x,1e-3,'forward2');</a>
 %
 % DBE 2006.07.31
-
 %PMTKurl http://www.mathworks.com/matlabcentral/files/11870/deriv.m
 %PMTKauthor Daniel Ellis 
 %PMTKurl www.stanford.edu/~dbe
-
+%%
 function dfdx=derivComplexTrick(f,x,h,method)
 
 DISP=0;  % Flag to turn on/off a plot of the result...this is of marginal utility, therefore the default is ZERO

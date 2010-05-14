@@ -1,5 +1,6 @@
-% An illustration of Newton's method in 1D
-
+%% An illustration of Newton's method in 1D
+%
+%%
 figure('Color',[1,1,1]);
 hold on;
 

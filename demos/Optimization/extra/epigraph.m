@@ -1,6 +1,7 @@
-function epigraph
-% The epigraph of a convex function is a convex set.
+%% Illustration that the epigraph of a convex function is a convex set.
 %
+%%
+function epigraph
 
 f = @(x)(x-4).^2;
 domain = (0:0.01:8);

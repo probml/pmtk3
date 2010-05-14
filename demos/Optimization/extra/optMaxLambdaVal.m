@@ -1,6 +1,7 @@
-function optMaxLambdaVal()
 %% Optimization illustration
-
+%
+%%
+function optMaxLambdaVal()
 f = @(x)x-(x-x.*log(-x));
 domain = -1:0.0005:0;
 figure; hold on;

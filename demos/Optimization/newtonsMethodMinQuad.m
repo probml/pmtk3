@@ -1,5 +1,8 @@
-function newtonsMethodMinQuad
 %% Illustration of a function g and its second order approximation.
+%
+%%
+function newtonsMethodMinQuad
+
 
 figure(); hold on; 
 xmin   = -5;  xmax = 0;

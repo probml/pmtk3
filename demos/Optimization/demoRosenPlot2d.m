@@ -1,5 +1,6 @@
 %% Plot the Rosenbrock function
-
+%
+%%
 rangexy = [-2 2 -1.5 1.5];
 fn = @(x)log(rosen(x)); 
 figure;

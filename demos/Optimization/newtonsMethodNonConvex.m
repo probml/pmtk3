@@ -1,5 +1,8 @@
-function newtonsMethodNonConvex
 %% Illustration of Newton's method for a non convex function. 
+%
+%%
+function newtonsMethodNonConvex
+
 
 figure(); hold on; 
 xmin   = -4;  xmax = 13;

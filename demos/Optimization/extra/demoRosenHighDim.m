@@ -1,6 +1,6 @@
 %% RosenBrock Minfunc Demo
-%PMTKslow
-%{
+% PMTKslow
+%
 % "A note on the extended rosenbrock function" Evol. Comp. 2006
 % claims that for d=4 to 30 dims there are 2 local minima, at [1,1,...1] and
 % and near [-1,1,...,1].
@@ -15,8 +15,8 @@ norm(g)
 % norm(g) when x=[1 1 ... 1] is zero!
 % 
 % So the claim seems dubious...
-%}
-
+%
+%%
 
 x = rand(10,1);
 [f g H] = rosenbrock(x);

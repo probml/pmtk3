@@ -1,3 +1,6 @@
+%% Return values for the rosenbrock function
+%
+%%
 function [f, df, ddf] = rosenbrock(x)
 
 % rosenbrock.m This function returns the function value, partial derivatives

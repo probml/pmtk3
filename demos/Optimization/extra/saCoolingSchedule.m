@@ -1,4 +1,6 @@
 %% Illustration of cooling schedule for simulated annealing
+%
+%%
 initTemp = 1;
 coolingFactor = 0.995;
 for t=1:1000

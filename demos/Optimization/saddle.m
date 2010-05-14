@@ -1,5 +1,8 @@
+%% Illustration of a saddle point
+%
+%%
 function saddle()
-% Illustration of a saddle point
+
 
 
 h = @(x,z) cos(x.^2).*exp(x.^2 - z.^2);

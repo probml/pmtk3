@@ -1,5 +1,8 @@
-function conjugateFnExpLowerBound
 %% Conjugate Function Lower Bound
+%
+%%
+function conjugateFnExpLowerBound
+
 f = @(x) exp(-x);
 domain = 0:0.01:3;
 xi = 1;

@@ -1,4 +1,6 @@
 %% Illustration of the concavity of the log function 
+%
+%%
 figure('Color',[1,1,1]);
 xmin = -1;xmax = 7;
 ymin = -2;ymax = 3;

@@ -1,6 +1,7 @@
+%% Find the mode of a mixture of 2, 1D Gaussians using Simulated Annealing
+%
+%%
 function saDemoMOG()
-% Demo of Simulated Annealing for finding the mode of
-% a mixture of two 1D Gaussians using a Gaussian proposal.
 
 
 sigma_prop = 10;                 % Standard deviation of the Gaussian proposal.

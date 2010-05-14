@@ -1,5 +1,6 @@
 %% Peaks Demo
-
+%
+%%
 %[X,Y,Z] = peaks; % 49x49 surface surface
 [X,Y] = meshgrid(linspace(-2.5,2.5,40),linspace(-3,3,50));
 Z = peaks(X,Y);

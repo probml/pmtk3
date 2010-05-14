@@ -1,5 +1,6 @@
-%Illustration of a convex function
-
+%% Illustration of a convex function
+%
+%%
 
 figure;
 hold all;

@@ -1,5 +1,7 @@
-function demoMinfunc()
 %% Minfunc Rosen Demo
+%
+%%
+function demoMinfunc()
 
 figure;
 %methods = {'sd', 'csd', 'cg', 'bfgs', 'newton', 'bb'};

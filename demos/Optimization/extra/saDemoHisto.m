@@ -1,5 +1,6 @@
 %% Anneal a histogram to illustrate the effect of temperature
-
+%
+%%
 setSeed(0);
 a = rand(10,1);
 subplot(2,2,1)

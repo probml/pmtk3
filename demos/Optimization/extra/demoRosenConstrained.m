@@ -1,3 +1,6 @@
+%% Rosenbrock onstrained optimization demom
+%
+%%
 function demoRosenConstrained()
 
 % minimize 2d rosenbrock st x1^2 + x^2 <= 1

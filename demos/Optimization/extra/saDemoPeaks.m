@@ -1,6 +1,8 @@
-function saDemoPeaks()
 %% Demo of Simulated Annealing 
 % for finding the most probable point of a peaky 2D surface
+%%
+function saDemoPeaks()
+
 
 findMAX = true;
 

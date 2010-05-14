@@ -1,6 +1,7 @@
+%% Illustration of Jensen's inequality
+%
+%%
 function jensensInequalityFigure()
-% Illustration of Jensen's inequality
-
 f = @(x) 0.3*(x-3.5).^2 + 2;
 domain = 0:0.01:6;
 

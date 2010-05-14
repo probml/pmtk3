@@ -1,5 +1,8 @@
+%% 2D Rosenbrock Function
+%
+%%
 function [f g H] = rosen2d(x)
-% 2d Rosenbrock function
+
 if nargin == 0;
    [f g H] = rosen2d(randn(100, 1));
    return

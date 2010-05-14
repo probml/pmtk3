@@ -1,4 +1,6 @@
 %% Bound optimization illustration
+%
+%%
 f1 = @(x) log(gausspdf(x, 0, 0.25^2))'   + 1;
 f2 = @(x) log(gausspdf(x, 1, 0.2^2))'    + 20;
 f3 = @(x) 5*sin(2*(x-0.5))               + ...

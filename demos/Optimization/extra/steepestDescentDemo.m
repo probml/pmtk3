@@ -1,5 +1,8 @@
-function steepestDescentDemo()
 %% Visualize steepest descent optimization
+%
+%%
+function steepestDescentDemo()
+
 fn = @(x) aokiFn(x);
 [x1 x2] = meshgrid(0:0.1:2, -0.5:0.1:3);
 

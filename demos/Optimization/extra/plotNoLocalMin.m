@@ -1,4 +1,6 @@
-%% Ascher notes p4, fig 2.4 on p8
+%% Illustration of a function without a distinct local minimum
+% Ascher notes p4, fig 2.4 on p8
+%%
 f = @(x,y) (x(:,1).^3 - x(:,1).^2 .* x(:,2) + 2 * x(:,2).^2);
 [x, y] = meshgrid(-10:1:10);
 z = reshape(f([x(:), y(:)]), size(x));

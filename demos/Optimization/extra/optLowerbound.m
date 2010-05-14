@@ -1,5 +1,7 @@
-function optLowerbound
 %% Lowerbound illustration
+%
+%%
+function optLowerbound
 
 f = @(x) exp(-x);
 domain = 0:0.01:3;

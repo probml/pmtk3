@@ -1,5 +1,8 @@
-function newtonsMethodMin1d
 %% Illustration of Newton's method for minimizing a 1d function
+%
+%%
+function newtonsMethodMin1d
+
 
 figure(); hold on;
 xmin = 0.1;  xmax = 12;
