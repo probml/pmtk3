@@ -1,9 +1,7 @@
-% pcaFaceDemo
+%% PCA Face Demo
 % Based on code by Mark Girolami
-
-
-%load('olivettifaces.mat'); %64x64 
-%X = faces';
+%%
+requireImageToolbox
 load('facesOlivetti_trainTest.mat');
 h = 112; w = 92;
 
@@ -14,7 +12,7 @@ XtrainImg = zeros(h,w,1,N);
 for i = 1:N
   XtrainImg(:,:,1,i) = reshape(Xtrain(i,:), [h w]);
 end
-warning off; montage(XtrainImg); warning on
+montage(XtrainImg); 
 title(sprintf('first %d training images', N))
 %for i=1:25
 %  subplot(5,5,i)

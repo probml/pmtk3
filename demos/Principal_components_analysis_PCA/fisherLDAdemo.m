@@ -1,5 +1,8 @@
+%% Compare the class separations induced by PCA and Fisher LDA respectively.
+%
+%%
 function fisherLDAdemo()
-% Compare the class separations induced by PCA and Fisher LDA respectively.
+
 %
 %% Generate data
 setSeed(0);

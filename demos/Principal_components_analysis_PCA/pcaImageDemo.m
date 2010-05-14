@@ -1,5 +1,6 @@
+%% PCA Image Demo
 % Based on code by Mark Girolami, but uses eig instead of svd to save memory
-
+%%
 setSeed(0);
 
 if 0

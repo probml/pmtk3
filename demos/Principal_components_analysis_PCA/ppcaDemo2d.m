@@ -1,6 +1,6 @@
-% ppcaDemo2d
+%% Probabilistic PCA in 2D
 % Based on figure 7.6 of the netlab book
-
+%%
 
 seed = 0; randn('state', seed);
 n = 5;

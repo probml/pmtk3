@@ -1,5 +1,7 @@
 %% Time various pca methods w.r.t. n and d
-seed =  0; rand('state', seed);
+%
+%%
+setSeed(0);
 %Ns = 1*[10 50 100];
 %Ds = [10 50 100];
 Ns = 20:20:100;

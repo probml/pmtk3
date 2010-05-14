@@ -1,4 +1,6 @@
-%% PCA EM Test
+%% Compare pcaPmtk and pcaFitEm
+%
+%%
 %setSeed(1);
 n = 100; d = 5;
 X = randn(n,d);

@@ -1,9 +1,10 @@
 %% Demo of factor analysis in 2d
 % Based on http://www.mathworks.com/products/demos/statistics/factorandemo.html
 % Needs stats toolbox
-%
 % datasets in stats toolbox are listed here
 % http://www.mathworks.com/access/helpdesk/help/toolbox/stats/bq9uxn4.html
+%%
+requireStatsToolbox
 dataset = 'cars04';
 switch dataset
   case 'examgrades'
