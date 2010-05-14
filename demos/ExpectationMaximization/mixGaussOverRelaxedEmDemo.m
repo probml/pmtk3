@@ -1,23 +1,21 @@
-%% Demo of over-relaxed EM for fitting Gaussian mixture model
-% We use  data sampled from a GMM
-
-%PMTKauthor  Krishna Nand Keshava Murthy
-
+%% Fit a Gaussian Mixture Model using over-relaxed EM
+% We use synthetic data sampled from a GMM
+% PMTKauthor Krishna Nand, Keshava Murthy
+%%
 ntrials = 2;
 for trial = 1:ntrials
     setSeed(trial);
-    
     D = 15; N = 5000;
     Clusters = 10;
-    mu = rand(D,Clusters); 
-    mixweight = normalize(rand(1,Clusters));
+    mu = rand(D,Clusters);
+    mixweight = normalize(rand(1, Clusters));
     Sigma = zeros(D,D,Clusters);
     for k=1:Clusters
         Sigma(:,:,k) = randpd(D);
     end
-    trueModel = struct('K', Clusters, 'mu', mu, 'Sigma', Sigma, 'mixweight', mixweight);
+    trueModel = struct('K', Clusters, 'mu', mu, 'Sigma', Sigma, ...
+        'mixweight', mixweight);
     [fullData] = mixGaussSample(trueModel, N);
-    
     Ks = [5 10];
     verbose = true;
     eta = {[], 1, 1.25, 2, 5}; % over-relaxation increase factor
@@ -48,4 +46,5 @@ for trial = 1:ntrials
         xlabel('iterations'); ylabel('loglik')
         title(sprintf('K=%d, D=%d, N=%d', K, D, N));
     end
+    %%
 end

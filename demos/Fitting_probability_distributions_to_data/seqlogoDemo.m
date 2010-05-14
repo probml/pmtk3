@@ -1,6 +1,8 @@
 %% DNA Sequence Demo
-
-seed = 0; rand('state', seed); randn('state', seed); 
+%
+% 
+%%
+setSeed(0);
 Nseq = 10;
 Nlocn = 15;
 Nletters = 4;
@@ -30,9 +32,7 @@ for i=1:Nseq
   end
   fprintf('\n');
 end
-
-
-% MLE
+%% MLE
 counts = zeros(4, Nlocn);
 for c=1:4
    counts(c,:) = sum(data==c,1); % sum across sequences
@@ -40,7 +40,9 @@ end
 thetaHat = counts/Nseq;
 tmp = thetaHat; tmp(tmp==0) = 1; % log(1)=0
 entropy = -sum(tmp .* log2(tmp), 1);
-seqlogo(thetaHat)
+if bioinfoToolboxInstalled
+    seqlogo(thetaHat)
+end
 
 
 

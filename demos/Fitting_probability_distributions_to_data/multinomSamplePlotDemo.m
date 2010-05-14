@@ -1,5 +1,6 @@
 %% Plot samples drawn from a multinomial
-
+%
+%%
 setSeed(1);
 nsamples = 4;
 model.N  = 10;

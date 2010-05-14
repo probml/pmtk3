@@ -1,4 +1,6 @@
-%% Plot a Gaussian
+%% Plot a Gaussian PDF and its CDF
+%
+%%
 xs = -3:0.01:3;
 mu = 0; sigma2 = 1;
 p = gausspdf(xs', mu, sigma2);
