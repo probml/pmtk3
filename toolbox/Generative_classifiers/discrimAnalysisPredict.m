@@ -9,16 +9,16 @@ classPrior = model.classPrior;
 Nclasses = length(model.classPrior);
 loglik = zeros(N, Nclasses);
 for c=1:Nclasses
-    switch model.type
-        case 'linear'
-            modelC.mu = model.mu(:, c)'; modelC.Sigma = model.SigmaPooled;
-            loglik(:,c) = gaussLogprob(modelC, Xtest);
-        case 'quadratic'
-            modelC.mu = model.mu(:, c)'; modelC.Sigma = model.Sigma(:, :, c);
-            loglik(:, c) = gaussLogprob(modelC, Xtest);
-        otherwise
-            error(['unrecognized type ' model.type])
-    end
+  switch model.type
+    case 'linear'
+      modelC.mu = model.mu(:, c)'; modelC.Sigma = model.SigmaPooled;
+      loglik(:,c) = gaussLogprob(modelC, Xtest);
+    case 'quadratic'
+      modelC.mu = model.mu(:, c)'; modelC.Sigma = model.Sigma(:, :, c);
+      loglik(:, c) = gaussLogprob(modelC, Xtest);
+    otherwise
+      error(['unrecognized type ' model.type])
+  end
 end
 
 logjoint = bsxfun(@plus, loglik, log(classPrior(:)'));
