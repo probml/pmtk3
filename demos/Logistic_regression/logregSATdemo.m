@@ -20,13 +20,18 @@ model = logregFit(X, y,'lambda', 0);
 [yhat, prob] = logregPredict(model, X);
 %% visualize model fit for each training point
 figure;
-plot(X, y, 'ko', 'linewidth', 2, 'MarkerSize', 10);
+plot(X, y, 'ko', 'linewidth', 2, 'MarkerSize', 7, 'markerfacecolor', 'k');
 hold on
-plot(X, prob, 'rx', 'linewidth', 2,'MarkerSize', 10)
+plot(X, prob, 'ro', 'linewidth', 2,'MarkerSize', 10)
 axis_pct
 
 % draw vertical line at location where SAT score has 2 different label
-h = line([525 525], [0 1]);
-set(h, 'color', 'k', 'linewidth', 2);
+%h = line([525 525], [0 1]);
+%set(h, 'color', 'k', 'linewidth', 2);
+
+% Highlight the two x's with different labels.
+plot(525, 0, 'gx', 'linewidth', 2, 'markersize', 14);
+plot(525, 1, 'gx', 'linewidth', 2, 'markersize', 14);
+
 printPmtkFigure('logregSATdemo')
 

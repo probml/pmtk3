@@ -51,23 +51,14 @@ printPmtkFigure('lungcancerJointBar')
 
 %% Inference
 
-pS = tabularFactorMarginalize(jointT, S); 
-assert(approxeq(pS.T, [0.8; 0.2]))
-
-pSCB = tabularFactorMarginalize(jointT, [S, CB]); 
-
-pCBgivenSOB = tabularFactorConditional(jointT, CB, SOB, 2);
-pCBgivenSOB.T
-%assert(approxeq(pCBgivenSOB.T, [0.5038; 0.4962]));
-
-pCBgivenSOBandX = tabularFactorConditional(jointT, CB, [SOB, X], [2, 2]);
-pCBgivenSOBandX.T
-% explaining away - prob of CB is now lower given X, since LC is more
-% likely
-%assert(approxeq(pCBgivenSOBandX.T, [0.5220; 0.4780])); 
+pLCgivenSOB = tabularFactorConditional(jointT, LC, SOB, 2);
+pLCgivenSOB.T
 
 
-pCBandLCgivenSOBandX = tabularFactorConditional(jointT, [CB,LC], [SOB,X], [2,2]);
+pLCgivenSOBandX = tabularFactorConditional(jointT, LC, [SOB, X], [2, 2]);
+pLCgivenSOBandX.T
+
+
 
 
 
