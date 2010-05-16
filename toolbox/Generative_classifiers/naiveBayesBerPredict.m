@@ -13,7 +13,6 @@ if vectorized
     logT     = log(theta + eps);
     logTnot  = log(1-theta + eps);
     XtestNot = not(Xtest);
-    Xtest    = not(XtestNot); % make sure Xtest is binary
     for c=1:C
         L1            = bsxfun(@times, logT(c, :), Xtest);
         L0            = bsxfun(@times, logTnot(c, :), XtestNot);
