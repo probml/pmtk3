@@ -20,7 +20,7 @@
 % Copyright Brendan J. Frey and Delbert Dueck, Aug 2006. This software
 % may be freely used and distributed for non-commercial purposes.
 %
-%PMTKauthor Brendan J. Frey and Delbert Dueck
+%PMTKauthor Brendan J. Frey, Delbert Dueck
 %PMTKurl http://www.psi.toronto.edu/~frey/apm/kcc.m
 
 % Simplified by Kevin Murphy

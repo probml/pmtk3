@@ -17,7 +17,7 @@ function  pairs(X,vnames,plotsymbol,diagonal)
 
 %PMTKauthor Anders Holtsberg
 %PMTKdate  14-12-94
-%PMTKModified Kevin Murphy
+%PMTKmodified Kevin Murphy
 
 % JP LeSage added the vnames capability
 % Kevin Murphy changed vnames to be cell array (1 March 2007)

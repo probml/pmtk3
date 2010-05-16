@@ -33,7 +33,7 @@ function [ax,hl1,hl2] = plotxx(x1,y1,x2,y2,xlabels,ylabels);
 %
 %Tested with Matlab 5.3.1 and above on PCWIN
 
-%PMTKAuthor: Denis Gilbert
+%PMTKauthor Denis Gilbert
 
 %Maurice Lamontagne Institute, Dept. of Fisheries and Oceans Canada
 %email: gilbertd@dfo-mpo.gc.ca  Web: http://www.qc.dfo-mpo.gc.ca/iml/

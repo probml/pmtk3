@@ -13,7 +13,9 @@ function m = mfiles(source, varargin)
 % mfiles()
 % mfiles('C:\pmtk3');
 % mfiles('C:\pmtk3', 'topOnly', true);
-% mfiles('C:\pmtk3', 'fullPath', true);
+% mfiles('C:\pmtk3', 'useFullPath', true);
+%% See also
+% filelist, cfilelist, dirs
 %%
 if nargin == 0
     source = pwd();

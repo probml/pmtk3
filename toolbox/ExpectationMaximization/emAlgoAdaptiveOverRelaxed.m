@@ -7,7 +7,7 @@ function [model, loglikHist] = emAlgoAdaptiveOverRelaxed(model, data, init, este
 %  [model, valid] = mstepOR(model, modelBO, stepSize);
 % where modelBO contains the new parameters after a regular M step
 
-%PMTKauthor Krishna Nand Keshava Murthy, Kevin Murphy
+%PMTKauthor Krishna Nand, Keshava Murthy, Kevin Murphy
 
 
 args = varargin;

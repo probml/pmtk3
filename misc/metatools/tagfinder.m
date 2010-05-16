@@ -1,7 +1,8 @@
-function [tags, lines] = tagfinder(filename, tagList)
+function [tags, lines, codeLength, text] = tagfinder(filename, tagList)
 % Find all of the tags in the given file. Tags begin with PMTK, contain
 % at least one other character, no spaces, and must reside within an m-file
-% comment. The file must be on the Matlab path.
+% comment. The file must be on the Matlab path, and the tag must be a valid
+% variable name, i.e. cannot contain characters like ':', etc. 
 %
 % INPUT
 %      filename   - the m-file to search
@@ -10,8 +11,11 @@ function [tags, lines] = tagfinder(filename, tagList)
 % OUTPUT
 %   tags  - a cell array of all of the tags found
 %   lines - the remaining text on the same line
-
+%   codeLength - the number of lines of code & comments in the file, (but
+%                not blank spaces)
+%%
 text = getText(filename);
+codeLength = numel(filterCell(cellfuncell(@(s)strtrim(s), text), @(s)~isempty(s)));
 tags = {};
 lines = {};
 for i=1:numel(text)
@@ -48,7 +52,9 @@ for i=1:numel(text)
     end
 end
 
-
+remove = cellfun(@(c)~isvarname(c) || length(c) < 5, tags); 
+tags(remove) = [];
+lines(remove) = []; 
 
 
 

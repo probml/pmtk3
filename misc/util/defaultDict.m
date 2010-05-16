@@ -85,10 +85,11 @@ function d = defaultDict(keys, values, default)
 % (4) It returns a default value if the key is not found - no need for
 %     tedious isKey or isfield checks.
 %%
-
+ws = warning('query', 'MATLAB:printf:BadEscapeSequenceInFormat'); 
+warning('off', 'MATLAB:printf:BadEscapeSequenceInFormat'); 
 SetDefaultValue(1, 'keys',    {});
 SetDefaultValue(2, 'values',  {});
-SetDefaultValue(3, 'default', 0);
+if nargin < 3, default = 0; end
 %%
 if ~iscell(keys),   keys   = mat2cellRows(keys);   end
 if ~iscell(values), values = mat2cellRows(values); end
@@ -101,18 +102,21 @@ d.DEFAULT_DICT_DEFAULT = default;
 d.get = @(key)get(d, key);
 d.set = @(key, val)set(d, key, val);
 d.getMany = @(keys)getMany(d, keys);
-
+warning(ws); 
 end
 
 
 function V = get(dict, key)
 % get a single value given a key
+ws = warning('query', 'MATLAB:printf:BadEscapeSequenceInFormat'); 
+warning('off', 'MATLAB:printf:BadEscapeSequenceInFormat'); 
 K = genvarname(serialize(key));
 if isfield(dict, K)
     V = dict.(K);
 else
     V = dict.DEFAULT_DICT_DEFAULT;
 end
+warning(ws);
 end
 
 function V = getMany(dict, keys)
@@ -126,6 +130,8 @@ end
 
 function d = set(d, key, value)
 % set a single key value pair
+ws = warning('query', 'MATLAB:printf:BadEscapeSequenceInFormat'); 
+warning('off', 'MATLAB:printf:BadEscapeSequenceInFormat'); 
 d.(genvarname(serialize(key))) = value;
 
 % when the dict is mutated, we must update the function handles, as they
@@ -134,5 +140,6 @@ d.(genvarname(serialize(key))) = value;
 d.get = @(key)get(d, key);
 d.set = @(key, val)set(d, key, val);
 d.getMany = @(keys)getMany(d, keys);
+warning(ws); 
 end
 
