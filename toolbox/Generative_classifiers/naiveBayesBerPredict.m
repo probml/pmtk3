@@ -1,42 +1,49 @@
 function [yhat, py] = naiveBayesBerPredict(model, Xtest)
-% Apply a Naive Bayes classifier with Bernoulli features
+% Apply a Naive Bayes classifier with Bernoulli [0 1] features
 % yhat(i) = argmax_c p(y=c|Xtest(i,:), theta(c,:)), in 1:C
 % py(i,c) = p(y=c|xi, params)
 
-theta = model.theta; classPrior = model.classPrior;
-computeProb = (nargout >= 2);
-[Ntest,D] = size(Xtest);
-C  = size(theta,1);
-logPrior = log(classPrior);
-loglik  = zeros(1,C);
-yhat = zeros(Ntest, 1);
-py = zeros(Ntest, 1);
-tic
-for i=1:Ntest
+vectorized = true;
+if vectorized
+    Ntest    = size(Xtest, 1);
+    theta    = model.theta;
+    C        = size(theta, 1);
+    logPrior = log(model.classPrior + eps);
+    logPost  = zeros(Ntest, C);
+    logT     = log(theta + eps);
+    logTnot  = log(1-theta + eps);
+    XtestNot = not(Xtest);
+    Xtest    = not(XtestNot); % make sure Xtest is binary
     for c=1:C
-        thetaC = theta(c,:);
-        bitmask = Xtest(i,:);
-        loglik(c) = sum(bitmask .* log(thetaC) + (1-bitmask) .* log(1-thetaC));
+        L1            = bsxfun(@times, logT(c, :), Xtest);
+        L0            = bsxfun(@times, logTnot(c, :), XtestNot);
+        logPost(:, c) = sum(L0 + L1, 2) + logPrior(c);
     end
-    logPost = loglik + logPrior;
-    yhat(i) = argmax(logPost);
-    if computeProb
-        py(i) = exp(normalizeLogspace(logPost));
+    yhat = maxidx(logPost, [], 2);
+    if nargout >= 2
+        py = exp(normalizeLogspace(logPost));
+    end
+else
+    theta = model.theta;
+    classPrior = model.classPrior;
+    computeProb = (nargout >= 2);
+    [Ntest,D] = size(Xtest);
+    C  = size(theta,1);
+    logPrior = log(classPrior);
+    loglik  = zeros(1,C);
+    yhat = zeros(Ntest, 1);
+    py = zeros(Ntest, 1); 
+    for i=1:Ntest
+        for c=1:C
+            thetaC = theta(c,:);
+            bitmask = Xtest(i,:);
+            loglik(c) = sum(bitmask .* log(thetaC) + (1-bitmask) .* log(1-thetaC));
+        end
+        logPost = loglik + logPrior;
+        yhat(i) = argmax(logPost);
+        if computeProb
+            py(i) = exp(normalizeLogspace(logPost));
+        end
     end
 end
-toc
-tic
-logpostTest = zeros(Ntest, C); 
-logT = log(theta + eps); 
-logTnot = log(1-theta + eps);
-XtestNot = not(Xtest); 
-for c=1:C
-    L1 = bsxfun(@times, logT(c, :), Xtest);
-    L0 = bsxfun(@times, logTnot(c, :), XtestNot);
-    logpostTest(:, c) = sum(L0 + L1, 2) + logPrior(c);
-end
-yhatTest = maxidx(logpostTest, [], 2); 
-toc
-assert(isequal(yhat, yhatTest)); 
-
 end
