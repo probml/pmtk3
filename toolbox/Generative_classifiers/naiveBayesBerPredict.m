@@ -11,17 +11,32 @@ logPrior = log(classPrior);
 loglik  = zeros(1,C);
 yhat = zeros(Ntest, 1);
 py = zeros(Ntest, 1);
+tic
 for i=1:Ntest
-  for c=1:C
-    thetaC = theta(c,:);
-    bitmask = Xtest(i,:);
-    loglik(c) = sum(bitmask .* log(thetaC) + (1-bitmask) .* log(1-thetaC));
-  end
-  logPost = loglik + logPrior;
-  yhat(i) = argmax(logPost);
-  if computeProb
-    py(i) = exp(normalizeLogspace(logPost));
-  end
+    for c=1:C
+        thetaC = theta(c,:);
+        bitmask = Xtest(i,:);
+        loglik(c) = sum(bitmask .* log(thetaC) + (1-bitmask) .* log(1-thetaC));
+    end
+    logPost = loglik + logPrior;
+    yhat(i) = argmax(logPost);
+    if computeProb
+        py(i) = exp(normalizeLogspace(logPost));
+    end
 end
+toc
+tic
+logpostTest = zeros(Ntest, C); 
+logT = log(theta + eps); 
+logTnot = log(1-theta + eps);
+XtestNot = not(Xtest); 
+for c=1:C
+    L1 = bsxfun(@times, logT(c, :), Xtest);
+    L0 = bsxfun(@times, logTnot(c, :), XtestNot);
+    logpostTest(:, c) = sum(L0 + L1, 2) + logPrior(c);
+end
+yhatTest = maxidx(logpostTest, [], 2); 
+toc
+assert(isequal(yhat, yhatTest)); 
 
 end
