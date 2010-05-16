@@ -3,7 +3,7 @@ function I = pmtkTagReport()
 % I is a struct with the following fields:
 %   files............a list of all of the PMTK3 files with at least one tag
 %   tags.............tags{i} are the tags for files{i}
-%   tagtext..........tagtext{i}{j} is remaining text after tag{j} in 
+%   tagtext..........tagtext{i}{j} is the remaining text after tag{j} in 
 %                    files{i}.
 %   codelen..........codelen(i) is the number of non-blank lines in 
 %                    files{i}. If files{i} is a Contents.m files, then 
@@ -23,6 +23,12 @@ function I = pmtkTagReport()
 %                    code by authorlist{j} - sorted in descending order
 %   isauthor.........isauthor(i, j) = true iff authorlist(j) is an author
 %                    of files{i}.
+%   iscontents.......iscontents(i) = true iff files{i} is a Contents.m file
+%   isbinary.........isbinary(i) = true iff files{i} is a Contents.m files
+%                    and there are executable, *.exe, or *.bin files in the 
+%                    containing directory structure. 
+%%
+%
 %% Get a list of all PMTK3 files
 files = mfiles(pmtk3Root(), 'usefullpath', true);
 %% Get the tags, tagtext codelen and full text of all of these files
@@ -42,9 +48,11 @@ codelen = cell2mat(codelen);
 iscontents = cellfun(@(f)isSubstring('Contents.m', f), files);
 codelen(iscontents) = cellfun(@(c)countLinesOfCodeDir(...
     fileparts(c), false, true), files(iscontents));
-
-%% Build tag map
 nfiles = numel(files);
+isbinary = false(nfiles, 1); 
+isbinary(iscontents) = cellfun(@(f)~isempty(filelist(fileparts(f), ...
+    {'*.exe', '*.bin'})), files(iscontents));
+%% Build tag map
 tagmap = struct();
 for i=1:nfiles
     for j=1:numel(tags{i})
@@ -60,13 +68,16 @@ end
 %% Create helper functions
 filendx  = @(f)cellfind(files, f);
 hastag   = @(f, tag)ismember(tag, tags(filendx(f)));
- 
 %% Determine file authors
+excluded = {'Matt Dunham', 'Kevin Murphy'};
 authors = cell(nfiles, 1);
 for i=1:nfiles
     j = cellfind(tags{i}, 'PMTKauthor');
     if ~isempty(j)
-        authors{i} = strtrim(tokenize(tagtext{i}{j}, ','));
+        alist = setdiff(strtrim(tokenize(tagtext{i}{j}, ',')), excluded);
+        if ~isempty(alist)
+           authors{i} = colvec(alist);  
+        end
     end
 end
 authorlist = unique(vertcat(authors{:}));
@@ -81,7 +92,11 @@ contribution = sum(bsxfun(@times, codelen, isauthor), 1)';
 [contribution, perm] = sort(contribution, 'descend'); %#ok
 isauthor = isauthor(:, perm); 
 authorlist = authorlist(perm); 
+
+bincontrib = any(bsxfun(@and, isauthor, isbinary), 1); 
+
 %% Return report
 I = structure(files, tags, tagtext, tagmap, filendx, nfiles,...
-    hastag, codelen, fulltext, authors, authorlist, isauthor, contribution);
+    hastag, codelen, fulltext, authors, authorlist, isauthor,...
+    contribution, iscontents, isbinary, bincontrib);
 end

@@ -7,7 +7,7 @@ function n = countLinesOfCodeDir(d, excludeComments, recursive)
 if nargin < 2, excludeComments = true; end
 if nargin < 3, recursive = true; end
 
-f = filelist(d, {'*.m', '*.c'}, recursive);
+f = filelist(d, {'*.m', '*.c', '*.cpp', '*.h', '*.py'}, recursive);
 counts = cellfun(@(c)countLinesOfCode(c, excludeComments), f); 
 n = sum(counts); 
 
