@@ -6,11 +6,13 @@ function [model] = mixTreeFit(X, K)
 % model.G{k} sparse adjacency matrix
 % model.CPD{k}{i}(u,v) = p(i=v|pa(i)=u) for node i in tree k
 
+%PMTKbroken
+
 values = unique(unique(full(X)));
 N = size(X,1); Maxiter = 30; 
 lls = zeros(Maxiter,1);
 weights = normalize(rand(N,K),2);
-model = m_step(model,X,weigths);
+model = m_step(model,X,weights);
 lls(1) = sum(logprob(model, X));
 for it = 2:Maxiter
    resp = e_step(model, X);

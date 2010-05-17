@@ -1,5 +1,7 @@
-function ll = treeLogprob(G, CPDs,  X)
+function ll = treeLogprob(model, X)
 % LL(n) = log p(X(n,:) | params)
+
+CPDs = model.CPDs; G = model.G;
 [N d] = size(X);
 X = canonizeLabels(X); % 1...K, used to index into CPTs
 ll = zeros(N,1);
