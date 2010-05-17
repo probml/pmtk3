@@ -1,7 +1,6 @@
 %% Denoising of the Letter "A" using Gibbs Sampling
 % with an Ising Prior and a Gaussian likelihood
 % Based on code originally written by Brani Vidakovic
-%PMTKslow
 %PMTKreallySlow
 %%
 setSeed(3);

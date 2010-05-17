@@ -3,7 +3,6 @@
 % Caron and Doucet, ICML08
 % We do not include normalInverseGaussian
 % but we do include normalExpGaussian  (see Griffin and Brown)
-%PMTKslow
 %PMTKreallySlow
 %%
 function linregSparseEmSynthDemo()

@@ -1,5 +1,4 @@
 %% Bicluster Demo
-% PMTKslow  
 % PMTKreallySlow
 %%
 function [] = biclusterDemo()

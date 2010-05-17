@@ -1,5 +1,4 @@
 %% Sparse linear regression with EM on synthetic data
-%PMTKslow
 %PMTKreallySlow
 %%
 setSeed(0);
