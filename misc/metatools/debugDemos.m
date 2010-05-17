@@ -9,7 +9,7 @@ cd(tempdir());
 dbclear('if', 'error');
 dbclear('if', 'warning');
 if nargin < 1, subFolder = ''; end
-if nargin < 2, exclusions = {'PMTKslow', 'PMTKinteractive'}; end
+if nargin < 2, exclusions = {'PMTKslow', 'PMTKinteractive', 'PMTKreallySlow'}; end
 hideFigures();
 [demos, excluded] = processExamples({}, exclusions, 0, false, subFolder);
 maxname = max(cellfun(@length, demos));
