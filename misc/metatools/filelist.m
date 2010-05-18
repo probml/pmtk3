@@ -42,6 +42,7 @@ end
 l = filterCell(l, @(c)~endswith(c, '.') &&...
     ~endswith(c, '..') && ...
     ~endswith(c, '.svn'))';
+l = unique(l);
 end
 
 
