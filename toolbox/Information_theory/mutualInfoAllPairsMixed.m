@@ -22,8 +22,8 @@ function [mi,nbins] = mutualInfoAllPairsMixed(XD,XC,varargin)
 %PMTKauthor Emtiyaz Khan, Ben Marlin
 
 if nargin < 2, XC = []; end
-[levels, method, smoothing] = process_options(varargin, ...
-  'levels', [], 'method', 'quantile', 'smoothing', 0);
+[levels, method, smoothing, useSpeedup] = process_options(varargin, ...
+  'levels', [], 'method', 'quantile', 'smoothing', 0, 'useSpeedup', true);
 
 %% Quantize continuous data
 data.continuous = XC';
@@ -43,7 +43,12 @@ for i=1:size(data.continuous,1)
 end
 y(DC+(1:DD),:) = data.discrete;
 
-%Data sizes and MI array
+if useSpeedup
+  mi = mutualInfoAllPairsDiscrete(y');
+  return;
+end
+
+%% Slow way - Using D^2 for loops...
 [D,N] = size(y);
 mi = zeros(D,D);
 
@@ -51,7 +56,6 @@ for i = 1:D
   cntrs{i} = unique(y(i,:));
 end
 
-%%Compute joint histograms and mutual information
 for i = 1:D
   for j = i+1:D
     % pxy

@@ -1,12 +1,13 @@
 function [mi, nmi] = mutualInfoAllPairsDiscrete(X, values, weights)
 % mi(i,j) = mutual information between X(i) and X(j)
 % nmi = normalize MI, 0 <=nmi <= 1
+% We set mi(i,i)=0
 % X(n,j) is value of case n=1:N, node j=1:d
 % values is set of valid values for each node (e.g., [0 1])
 % weights is an optional N*1 vector of weights per data case 
 %
 % O(N d^2) time to compute p(i,j), N=#cases, d=#nodes.
-% O(d^2 K^2) tome to compute MI, K=#states
+% O(d^2 K^2) time to compute MI, K=#states
 
 %PMTKauthor Sam Roweis
 %PMTKmodified Kevin Murphy
@@ -16,8 +17,8 @@ function [mi, nmi] = mutualInfoAllPairsDiscrete(X, values, weights)
 % There is no loop over n or d.
 
 
-if nargin < 2, values = unique(X(:)); end
-data = X';
+data = double(X');
+if nargin < 2, values = unique(data(:)); end
 [numvar N] = size(data); 
 numval = length(values);
 if nargin < 3, weights = ones(1,N); end
@@ -53,7 +54,7 @@ hi  = -sum(pi.*log(max(pi,minprob)),2);
 hiRep  = hi(:,ones(1,numvar)); % like using repmat
 hij = -sum(sum(pij.*log(max(pij,minprob)),3),4);
 mi = -hij+hiRep+hiRep'; 
-
+mi = setdiag(mi,0);
 if nargout >= 2
   m1 = repmat(hi(:), 1, numvar);
   m2 = repmat(hi(:)', numvar, 1);
