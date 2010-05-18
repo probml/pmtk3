@@ -3,7 +3,9 @@
 
 load newsgroups % documents, wordlist, newsgroups
 X = documents'; % 16,642 documents by 100 words  (sparse logical  matrix)
-[mi, nmi] = pairwiseMIdiscrete(X);
+
+[mi, nmi] = mutualInfoAllPairsDiscrete(X);
+
 mi = setdiag(mi, 0);
 nmi = setdiag(nmi, 0);
 

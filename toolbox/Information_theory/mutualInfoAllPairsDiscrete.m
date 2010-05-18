@@ -1,4 +1,4 @@
-function [mi, nmi] = pairwiseMIdiscrete(X, values, weights)
+function [mi, nmi] = mutualInfoAllPairsDiscrete(X, values, weights)
 % mi(i,j) = mutual information between X(i) and X(j)
 % nmi = normalize MI, 0 <=nmi <= 1
 % X(n,j) is value of case n=1:N, node j=1:d
