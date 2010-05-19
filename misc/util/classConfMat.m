@@ -1,6 +1,5 @@
-
 function M = classConfMat(ytrue, yhat)
-% Make class confusion matrix
+% Make a class confusion matrix
 % M(truth, est) = num times truth gets labeled as est
 C = max(unique(ytrue));
 M = zeros(C,C);

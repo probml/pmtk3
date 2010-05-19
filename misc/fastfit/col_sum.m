@@ -1,5 +1,5 @@
 function s = col_sum(x)
-% COL_SUM   Sum for each column.
+% Same as sum(x, 1)
 % A more readable alternative to sum(x,1).
 s = sum(x,1);
 end
