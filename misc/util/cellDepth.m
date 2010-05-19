@@ -1,5 +1,5 @@
 function d = cellDepth(c)
-% Indicates the maximum depth you need to go before you hit a value
+% Determine the maximum depth of a nested cell array
 % cellDepth({})
 % ans =
 %      0
@@ -13,11 +13,11 @@ function d = cellDepth(c)
 % ans =
 %      3
 
-    if isempty(c) || ~iscell(c), 
-        d = 0; 
-    else
-        d = 1 + max(unwrapCell(cellfuncell(@cellDepth,c)));
-    end
-    
-    
+if isempty(c) || ~iscell(c),
+    d = 0;
+else
+    d = 1 + max(unwrapCell(cellfuncell(@cellDepth,c)));
+end
+
+
 end

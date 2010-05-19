@@ -1,5 +1,5 @@
 function out = cellfuncell(fun, C, varargin)
-% just like cellfun, except it always returns a cell array
+% Just like cellfun, except it always returns a cell array
 % by setting UniformOutput = false, 
 % eg. a=cellfuncell(@(x) upper(x), {'foo','bananas','bar'})
 % returns a{1} = 'FOO', etc.
