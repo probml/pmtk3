@@ -1,4 +1,5 @@
 function [gamma, alpha, beta, loglik] = hmmFwdBack(initDist, transmat, obslik)
+% Calculate p(S(t)=i | y(1:T))
 % INPUT:
 % initDist(i) = p(S(1) = i)
 % transmat(i,j) = p(S(t) = j | S(t-1)=i)

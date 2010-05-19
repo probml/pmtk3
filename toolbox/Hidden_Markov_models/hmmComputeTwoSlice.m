@@ -1,4 +1,5 @@
 function [xi_summed, xi] = hmmComputeTwoSlice(alpha, beta, transmat, obslik)
+% Calculate p(Q(t)=i, Q(t+1)=j | y(1:T)) , t=2:T
 % INPUT:
 % alpha(i,t) computed using forwards
 % beta(i,t) computed using backwards

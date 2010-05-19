@@ -1,4 +1,5 @@
 function [loglik, alpha] = hmmFilter(initDist, transmat, obslik)
+% Calculate p(S(t)=i| y(1:t))
 % INPUT:
 % initDist(i) = p(S(1) = i)
 % transmat(i,j) = p(S(t) = j | S(t-1)=i)
