@@ -1,4 +1,5 @@
 function model = oneVsRestClassifFit(X, y, fitFn)
+%% Fit a binary classifier to multiclass data using one vs the rest
 N = size(X, 1); 
 C = nunique(y);
 for c=1:C

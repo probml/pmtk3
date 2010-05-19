@@ -1,4 +1,5 @@
 function [yhat, f] = svmQPclassifPredict(model, Xtest)
+% Return SVM classification predictions 
 % yhat(i) = -1 or 1
 % f(i) = signed distance to separating hyperplane
 Ktest = model.kernelFn(Xtest, model.X, model.kernelParam); 
