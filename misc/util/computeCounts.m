@@ -1,5 +1,5 @@
 function count = computeCounts(X, sz)
-% COMPUTE_COUNTS Count the number of times each combination of discrete assignments occurs
+% Count the number of times each combination of discrete assignments occurs
 % count = compute_counts(X, sz)
 %
 % data(n,i) is the value of variable i in case t

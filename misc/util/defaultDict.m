@@ -1,8 +1,8 @@
 function d = defaultDict(keys, values, default)
-% A simple default dictionary (hashmap) similar to python's.
+% A simple default dictionary (hashmap) similar to python's
 %
 % ** note, this is not an efficient data structure for large numbers of
-%    key-value pairs, (i.e. more than a few thousand). 
+%    key-value pairs, (i.e. more than a few hundred!). 
 %
 %    Consider java.util.Hashmap, (which you can call from Matlab) or
 %    containers.Map.

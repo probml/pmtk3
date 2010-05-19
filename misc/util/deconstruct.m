@@ -1,13 +1,13 @@
 function varargout = deconstruct(S)
-% Deconstruct a structure from the output arguments only.
+% Deconstruct a structure from the output arguments only
 % See also, structure().
 %% Example
 % mu = zeros(1, 10);
 % Sigma = randpd(10);
-% pi = normalize(ones(1, 10)); 
-% model = structure(mu, Sigma, pi); 
+% pi = normalize(ones(1, 10));
+% model = structure(mu, Sigma, pi);
 %
-% [mu, Sigma, pi] = deconstruct(model); % cannot be called from the command line. 
+% [mu, Sigma, pi] = deconstruct(model); % cannot be called from the command line.
 %
 % *** warning this function is not efficient ***
 stack = dbstack('-completenames');

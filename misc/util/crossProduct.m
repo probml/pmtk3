@@ -1,6 +1,7 @@
 function out = crossProduct(varargin)
-% out = crossProduct(A, B, C, ...) each row of outcontain all combinations of A, B, C, ...
-% Example
+%% Return the cartesian product, (all combinations) of the input lists
+% out = crossProduct(A, B, C, ...) each row of outcontain all combinations
+% of A, B, C, ... Example
 % C = crossProduct(1:2, 2:4, 3:4)
 %     1     2     3
 %     2     2     3

@@ -1,5 +1,5 @@
 function [FPrate, TPrate, AUC, thresholds] = computeROC(confidence, testClass)
-% function [FPrate, TPrate, AUC, thresholds] = computeROC(confidence, testClass)
+%% Compute ROC curve statistics
 %
 % Inputs: 
 %  confidence(i) is proportional to the probability that  testClass(i) is positive
@@ -15,7 +15,9 @@ function [FPrate, TPrate, AUC, thresholds] = computeROC(confidence, testClass)
 % Practical Considerations for Data Mining Researchers" (2003)
 % http://www.hpl.hp.com/techreports/2003/HPL-2003-4.pdf"
 %
-% Vlad Magdin, UBC, 21 Feb 2005
+%PMTKdate February 21, 2005
+%PMTKauthor Vlad Magdin
+% UBC
 
 % break ties in scores
 S = rand('state');

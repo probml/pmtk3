@@ -1,5 +1,5 @@
 function xx = degexpand(x, deg, addOnes)
-% Expands input vectors to contain also powers of input features
+% Expand input vectors to contain also powers of input features
 
 [n,m] = size(x);
 if nargin < 3, addOnes = 0; end
