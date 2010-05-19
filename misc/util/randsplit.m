@@ -1,5 +1,5 @@
 function Xsplit = randsplit(X, k)
-% Split rows of X into k (roughly) equal random partitions.
+% Split rows of X into k (roughly) equal random partitions
 % Xsplit is a k-by-1 cell array. The last cell will have 
 % n - (k-1)*floor(n/k) elements, all others will have floor(n/k).
 

@@ -1,4 +1,6 @@
 function out = prepareArgs(args)
+% Convert a struct into a name/value cell array for use by process_options
+%
 % Prepare varargin args for process_options by converting a struct in args{1}
 % into a name/value pair cell array. If args{1} is not a struct, args
 % is left unchanged.

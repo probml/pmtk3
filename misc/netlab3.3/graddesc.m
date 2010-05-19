@@ -146,7 +146,7 @@ for j = 1:niters
   else
     sd = - grad./norm(grad);	% New search direction.
     fold = fnew;
-    % Do a line search: normalise search direction to have length 1
+    % Do a line search: normalize search direction to have length 1
     [lmin, line_options] = feval('linemin', f, x, sd, fold, ...
       line_options, varargin{:});
     options(10) = options(10) + line_options(10);

@@ -1,5 +1,5 @@
 function [y, minx, rangex] = rescaleData(x, minVal, maxVal, minx, rangex)
-% rescale columns to lie in the range minVal:maxVal (defaults to -1:1)
+% Rescale columns to lie in the range minVal:maxVal (defaults to -1:1)
 
 x = double(x);
 [n d] = size(x);

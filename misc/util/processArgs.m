@@ -1,7 +1,6 @@
 function varargout = processArgs(args,varargin)    
-% Similar to process_options, however, allows for arguments to be passed by
-% the user either as name/value pairs, or positionally, or both. 
-
+% Similar to process_options but allows both positional and named arguments
+%
 % This function also provides optional enforcement of required inputs, and 
 % optional type checking. Argument names, if used, must start with the '-'
 % character and not precede any positional arguments. 

@@ -1,4 +1,5 @@
-% PROCESS_OPTIONS - Processes options passed to a Matlab function.
+%% Process named arguments to a function
+%                 - Processes options passed to a Matlab function.
 %                   This function provides a simple means of
 %                   parsing attribute-value options.  Each option is
 %                   named by a unique string and is given a default

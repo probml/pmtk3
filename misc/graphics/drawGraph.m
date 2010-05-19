@@ -328,7 +328,7 @@ while ~done
 end
 
 
-x = .9*(x-min(x))/drange(x)+.05;  % normalise and push off margins 
+x = .9*(x-min(x))/drange(x)+.05;  % normalize and push off margins 
 if drange(y) == 0, y = .5*ones(size(y)); else, y = .9*(y-min(y))/drange(y)+.05; end
 end
 
@@ -435,7 +435,7 @@ end
 if (isempty(find(x)) & (nargout > 2))   % If coordinates were requested, but not found in 'filename'.
     warning('File does not contain node coordinates.');
 else
-    x = .9*(x-min(x))/drange(x)+.05;  % normalise and push off margins 
+    x = .9*(x-min(x))/drange(x)+.05;  % normalize and push off margins 
     if drange(y) == 0, y = .5*ones(size(y)); else, y = .9*(y-min(y))/drange(y)+.05; end
 end;
 if ~(size(Adj,1)==size(Adj,2))           % Make sure Adj is a square matrix. ? 

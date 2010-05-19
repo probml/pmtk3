@@ -1,5 +1,5 @@
-function quantized = quantize(vars, varargin)
-% QUANTIZE - quantization of continuous variables.
+function quantized = quantizePMTK(vars, varargin)
+% Quantize continuous variables
 %
 % The main purpose of this function is to quantize continuous variables for
 % the use in mutual information calculations. In Y=QUANTIZE(X), rows in X

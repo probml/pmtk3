@@ -1,4 +1,5 @@
 function [X, mu, sigma2] = polyBasis(x, d, mu, sigma2)
+%% Polynomial basis expansion of degree d
 % function [X] = polyBasis(x, d)
 % x(i) -> [1 x(i) x(i)^2 ... x(i)^d] stored in rows of X
 % We put highest powers first, to be consistent with Matlab's convention (see polyfit)

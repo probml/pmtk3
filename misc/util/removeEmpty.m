@@ -1,4 +1,4 @@
 function c = removeEmpty(c)
-    
-   c = c(cellfun(@(a)~isempty(a),c)); 
+% Remove all empty cells from a cell array
+c = c(cellfun(@(a)~isempty(a),c));
 end

@@ -1,8 +1,9 @@
 function func = protect(varargin)
+% Wrap a function handle guarding against a specific value, e.g. []
 % Takes in a function handle and returns a protected version that when
 % executed, returns the default value whenever guard(input) is true and
 % otherwise evaluates normally. The default guard is @isempty and the
-% default value is 0. 
+% default value is 0.
 
 
 % Example:
@@ -11,7 +12,7 @@ function func = protect(varargin)
 % ans =
 %         0    5.5000   11.0000   16.5000         0
 
-    [fn,default,guard] = process_options(varargin,'*func',@(x)x,'default',0,'guard',@isempty);
+[fn,default,guard] = process_options(varargin,'*func',@(x)x,'default',0,'guard',@isempty);
     function out = wrapper(in)
         if guard(in)
             out = default;
@@ -19,7 +20,7 @@ function func = protect(varargin)
             out = fn(in);
         end
     end
-    func = @wrapper;
+func = @wrapper;
 end
 
 
