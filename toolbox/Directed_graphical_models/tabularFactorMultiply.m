@@ -1,4 +1,5 @@
 function TF = tabularFactorMultiply(varargin)
+% Multiply tabular factors
 % T = multiplyFactors(fac1, fac2, fac3, ...)
 % Each factor is a struct as returned by tabularFactorCreate and has
 % fields T, domain, sizes.

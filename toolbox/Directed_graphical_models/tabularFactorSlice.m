@@ -1,4 +1,5 @@
 function Tsmall = tabularFactorSlice(Tbig, visVars, visValues)
+% Slice a tabular factor
 % Return Tsmall(hnodes) = Tbig(visNodes=visValues, hnodes=:)
 % visVars are global names, which are looked up in the domain
 if isempty(visVars),

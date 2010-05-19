@@ -1,3 +1,4 @@
 function [TF, Z] = tabularFactorNormalize(TF)
-	[TF.T, Z] = normalize(TF.T);
+% Normalize a tabular factor
+[TF.T, Z] = normalize(TF.T);
 end
