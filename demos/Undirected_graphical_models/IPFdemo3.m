@@ -7,7 +7,7 @@ N = 3;
 
 % Some count data
 C = reshape([53 414 11 37 0 16 4 139], [2 2 2]);
-C = normalise(C);
+C = normalize(C);
 Cpot = tabularFactorCreate(C, 1:N);
 counts = cell(1, NC);
 for c=1:NC

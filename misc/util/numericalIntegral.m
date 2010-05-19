@@ -1,5 +1,5 @@
 function val = numericalIntegral(f, range, tol)
-% Evalaute integral using quad, dblquad or triple quad.
+% Evalaute an integral using quad, dblquad or triple quad
 % f must be a function that takes an n*1, n*2 or n*3 matrix
 % and returns the function value at the specified points.
 % range is [x1min x1max x2min x2max x3min x3max]

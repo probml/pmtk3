@@ -1,5 +1,5 @@
 function [A, z] = normalize(A, dim)
-% NORMALIZE Make the entries of a (multidimensional) array sum to 1
+% Make the entries of a (multidimensional) array sum to 1
 % [A, z] = normalize(A) normalize the whole array, where z is the normalizing constant
 % [A, z] = normalize(A, dim)
 % If dim is specified, we normalise the specified dimension only.

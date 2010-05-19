@@ -1,5 +1,5 @@
 function d = ndimsPMTK(M)
-% ndimsPMTK Like the built-in ndims, except handles [] and vectors properly
+% Like the built-in ndims, except handles [] and vectors properly
 % 
 % The behavior is best explained by examples
 % - M = [],          ndimsPMTK(M) = 0,    ndims(M) = 2

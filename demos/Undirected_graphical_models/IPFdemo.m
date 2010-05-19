@@ -4,7 +4,7 @@
 C12 = [25 10 2;
        3  19 1;
        4 3 22];
-C12 = normalise(C12);
+C12 = normalize(C12);
 C1 = sum(C12,2);
 C2 = sum(C12, 1);
 
