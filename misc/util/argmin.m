@@ -1,5 +1,5 @@
 function indices = argmin(v)
-% Return the index vector of the largest element in the multidim array v
+% Return the index vector of the smallest element in the multidim array v
 %
 % Returns the first minimum in the case of ties.
 % Example:
