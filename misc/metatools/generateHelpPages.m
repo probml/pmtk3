@@ -24,6 +24,9 @@ end
 wikiText = filterCell(wikiText, @(c)~isempty(c));
 wikiText =  [{'== Toolboxes =='
             ''
+            'This page lists each folder within the toolbox directory (there is one folder per book chapter). '
+            'Click on the link to see the list of files in that folder, with a brief description. Click on the file to see its source code, including comments on how to use it.'
+            ''
             ''
              };
             wikiText
