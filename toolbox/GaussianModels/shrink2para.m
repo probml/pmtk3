@@ -1,5 +1,5 @@
-function [sigma,shrinkage]=shrink2para(x,shrink)
-
+function [sigma, shrinkage]=shrink2para(x,shrink)
+% Shrink towards a 2 parameter matrix
 % function sigma=cov2para(x)
 % x (t*n): t iid observations on n random variables
 % sigma (n*n): invertible covariance matrix estimator

@@ -1,8 +1,7 @@
 function [C,lambda,S] = shrinkcov(X)
-%
-% [C,lambda,S] = shrinkcov(X);
-%
 % Ledoit-Wolf optimal shrinkage estimator for cov(X)  
+%
+% 
 %
 %  C = lambda*T + (1-lambda)*S
 %

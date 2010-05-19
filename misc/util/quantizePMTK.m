@@ -124,7 +124,7 @@ for i=1:length(type_cont)
         quantized(:,ii) = mj(uj);
     elseif (strcmp(method,'quantiles'))
         qvals = (1:(nlev-1))./nlev;
-        thresh = quantile(vars(:,ii),qvals);
+        thresh = quantilePMTK(vars(:,ii),qvals);
         % remove duplicate bins
         thresh = unique(thresh);
         intv=zeros(length(vars(:,ii)),1);
