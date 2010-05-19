@@ -1,9 +1,9 @@
 function m = sqdist(p, q, A)
-% SQDIST      Squared Euclidean or Mahalanobis distance.
+% Calculate the squared Euclidean or Mahalanobis distance
 % SQDIST(p,q)   returns m(i,j) = (p(:,i) - q(:,j))'*(p(:,i) - q(:,j)).
 % SQDIST(p,q,A) returns m(i,j) = (p(:,i) - q(:,j))'*A*(p(:,i) - q(:,j)).
+%PMTKauthor Tom Minka
 
-% Written by Tom Minka
 
 [d, pn] = size(p);
 [d, qn] = size(q);

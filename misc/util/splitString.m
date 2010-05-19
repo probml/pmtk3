@@ -1,5 +1,5 @@
 function S = splitString(varargin)
-% Split a string into multiple lines based on camel case.
+% Split a string into multiple lines based on camel case
 %
 % Inputs
 %

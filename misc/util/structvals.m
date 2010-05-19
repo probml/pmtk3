@@ -1,6 +1,6 @@
 function varargout = structvals(S, order)
-% Extract the values of a structure into the output argument list in
-% alphabetical order. You can optionally specify a cell array listing the
+% Extract the values of a structure into an output argument list
+% in alphabetical order. You can optionally specify a cell array listing the
 % fieldnames in the order you want them returned. 
 %
 % Example 

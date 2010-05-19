@@ -1,6 +1,6 @@
 function [y, initSupport] = setSupport(labels, newSupport, initSupport)
-% Transform the support the labels from one space to another, i.e.
-% from say [0, 1] to [-1 1] or {'setosa', 'versicolor', virginica'} to
+% Transform the support the labels from one space to another
+% i.e. from say [0, 1] to [-1 1] or {'setosa', 'versicolor', virginica'} to
 % 1:3. 
 %
 % This is a generalization of canonizeLabels to arbitary spaces. 

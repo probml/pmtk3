@@ -1,5 +1,5 @@
 function [X, knots] = splineBasis(x, K)
-
+%% Spline basis function expansion
 if nargin < 2, K = 100; end
 
 knots = linspace(min(x), max(x), K);

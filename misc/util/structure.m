@@ -1,5 +1,5 @@
 function S = structure(varargin)
-% Create a struct directly from variables, without having to provide names.
+% Create a struct directly from variables, without having to provide names
 % The current names of the variables are used as the structure fields.
 %
 % *** does not support anonymous variables as in structure(25, 2+3), etc ***

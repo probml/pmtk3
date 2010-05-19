@@ -1,6 +1,5 @@
 function M = softeye(K, p)
-% SOFTEYE Make a stochastic matrix with p on the diagonal, and the
-% remaining mass distributed uniformly M = softeye(K, p)
+% Make a stochastic matrix with p on the diagonal, and the remaining mass distributed uniformly
 %
 % M is a K x K matrix.
 

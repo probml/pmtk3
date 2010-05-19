@@ -1,5 +1,5 @@
 function showImmediateToolboxDependencies(fname)
-%% Display the immediate toolbox dependencies 
+%% Display the immediate toolbox dependencies of a function
 if nargin == 0;
     fname = currentlyOpenFile(true);
 end

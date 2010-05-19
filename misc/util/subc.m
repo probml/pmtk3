@@ -1,5 +1,5 @@
 function a = subc(b,ndx)
-% see sub()
+% Subscript the cell array return value of a function directly
 a = b{ndx};
 
 end
