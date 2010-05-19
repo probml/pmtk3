@@ -1,4 +1,5 @@
-function  [H,H1] = graystep(B, d)
+function  H = graystep(B, d)
+%% Cycle a logical vector d steps through the Gray cyclic binary codes
 %  H = graystep(B, d)  takes row  B  of logical values  (0  or  1)
 %  through one step forward,  if  d ~= 0 ,  or otherwise backward,
 %  through the  Gray Cyclic Binary Codes.  Only one element of  H
@@ -13,16 +14,23 @@ function  [H,H1] = graystep(B, d)
 %  is adapted from  J. Boothroyd's Algorithm #246  on  p. 701 of
 %  Comm. ACM vol. 7 (1964).               W. Kahan,  8 July 2007
 
-H = (B(:)' ~= 0) ;  n = length(H) ;  j = n+1 ;  d = (d ~= 0) ;
+H = (B(:)' ~= 0);
+n = length(H);
+j = n+1;
+d = (d ~= 0);
 for i = n:-1:1
-    if  H(i) ,  d = ~(d) ;  j = i ;  end
+    if  H(i)
+        d = ~(d);
+        j = i;
+    end
 end  %...  for  i ...  so  H(j)  is first element not  0
-if  d ,  H(1) = ~(H(1)) ;
-  else
-    if  (j < n) ,  H(j+1) = ~(H(j+1)) ;  else  H(n) = ~(H(n)) ;  end
-  end  %...  if  d
-
-
-
-
+if  d
+    H(1) = ~(H(1));
+else
+    if  (j < n)
+        H(j+1) = ~(H(j+1));
+    else
+        H(n) = ~(H(n));
+    end
+end  %...  if  d
 end

@@ -1,6 +1,6 @@
 function varargout = extractArgs(indices,args)
-% Extract specified arguments values from the output of processArgs also
-% returning the unused name/value pairs in a cell array. 
+% Extract specified arguments / values from the output of processArgs
+% also returning the unused name/value pairs in a cell array. 
 %
 % When processArgs is called with exactly one output, the output contains
 % all of the name value pairs in a single cell array. The values are either

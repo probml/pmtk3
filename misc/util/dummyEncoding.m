@@ -1,5 +1,5 @@
 function X_ind = dummyEncoding(X, nStates)
-% Convert a matrix of categorical features to binary form.
+% Convert a matrix of categorical features to binary form
 % Each X(:, j) is expanded into a binary matrix of size n-by-nStates(j).
 % These matrices are then concatinated horizontally forming an
 % n-by-sum(nStates) binary matrix.
