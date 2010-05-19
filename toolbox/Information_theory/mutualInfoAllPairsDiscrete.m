@@ -17,7 +17,8 @@ function [mi, nmi] = mutualInfoAllPairsDiscrete(X, values, weights)
 % There is no loop over n or d.
 
 
-data = double(X');
+data = full(double(X')); % now columns contain cases
+clear X
 if nargin < 2, values = unique(data(:)); end
 [numvar N] = size(data); 
 numval = length(values);

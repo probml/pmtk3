@@ -17,7 +17,8 @@ function [mi,nbins] = mutualInfoAllPairsMixed(XD,XC,varargin)
 % - mi is the estimated mutual information for all pairs of variables
 % - nbins is the number of histogram bins chosen for each continuous dimension
 %
-% Note: if data is all discrete, mutualInfoAllPairsDiscrete is much faster!
+% Note: if data is all discrete, this is equivalent to
+% mutualInfoAllPairsDiscrete 
 
 %PMTKauthor Emtiyaz Khan, Ben Marlin
 
@@ -58,13 +59,10 @@ end
 
 for i = 1:D
   for j = i+1:D
-    % pxy
     pxy = hist3(y([i,j],:)',cntrs([i,j])) + smoothing;
     pxy = pxy./sum(sum(pxy));
-    px  = sum(pxy,1);
-    
+    px  = sum(pxy,1);   
     py  = sum(pxy,2);
-    % mutual information
     mi(i,j) = sum(sum(pxy.*(log(pxy) - bsxfun(@plus, log(px), log(py)))));
   end
 end
