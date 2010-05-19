@@ -1,5 +1,5 @@
 function Kc = kernelCentering(K, Ktest)
-% Center a kernel matrix.
+% Center a kernel matrix
 % Kc = kernelCentering(K) returns size n*n
 % Kc = kernelCentering(Ktrain, Ktest) returns size ntest * ntrain
 

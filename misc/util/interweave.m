@@ -1,5 +1,5 @@
 function C = interweave(A, B)
-%% Combine two cell arrays into one, alternating elements from each. 
+%% Combine two cell arrays into one, alternating elements from each
 % * C is a row vector
 % * Empty elements are removed
 % * If length(A) ~= length(B), the remaining elements are added to the end.
