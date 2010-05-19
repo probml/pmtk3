@@ -1,6 +1,4 @@
 function c = cellwrap(c)
-    
-    if ~iscell(c),c = {c}; end
-        
-    
+% Ensure that the input is a cell array
+if ~iscell(c),c = {c}; end
 end

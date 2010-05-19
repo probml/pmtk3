@@ -2,7 +2,7 @@ function v = collapseCell(c)
 % Collapse a nested cell array as much as possible
 %
 % Example:
-% cellValues({1,2,3,{4,5,6,{7,8,9,{10,11,12}}},13,14,{15,16,{17,18,19}}})'
+% collapseCell({1,2,3,{4,5,6,{7,8,9,{10,11,12}}},13,14,{15,16,{17,18,19}}})'
 %ans =
 %     1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18    19
 
