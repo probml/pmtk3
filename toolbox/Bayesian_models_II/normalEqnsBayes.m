@@ -1,6 +1,6 @@
 function [wn, Sn] = normalEqnsBayes(X, y, Lam0, w0, sigma)
-% numerically stable solution to posterior mean and covariance under
-% Gaussian prior N(w | w0, Lam0^{-1}), where sigma is noise std
+% Numerically stable solution to posterior mean and covariance 
+% under Gaussian prior N(w | w0, Lam0^{-1}), where sigma is noise std
 % wn is the ridge (MAP) estimate, Sn is its covariance
 
 

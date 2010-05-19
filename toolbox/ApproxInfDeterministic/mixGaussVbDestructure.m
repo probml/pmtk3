@@ -1,5 +1,6 @@
 function [alpha, beta, entropy, invW, logDirConst, logLambdaTilde, logPiTilde,  logWishartConst, m, v, W] ...
   = mixGaussVbDestructure(params)
+%% Destructure the parameters from mixGaussVbFit
 alpha = params.alpha;
 beta = params.beta;
 m = params.m;

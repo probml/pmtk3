@@ -1,5 +1,5 @@
 function S = mc_sample(prior, trans, len, numex)
-% SAMPLE_MC Generate random sequences from a Markov chain.
+% Generate random sequences from a Markov chain
 % STATE = SAMPLE_MC(PRIOR, TRANS, LEN) generates a sequence of length LEN.
 %
 % STATE = SAMPLE_MC(PRIOR, TRANS, LEN, N) generates N rows each of length LEN.

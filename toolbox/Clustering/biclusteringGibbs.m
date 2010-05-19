@@ -1,5 +1,6 @@
-function [biclusterRows, biclusterCols, rowPostProb, colPostProb, traceRow, traceCol] = biclusterMultiple(data, varargin)
-% Performs biclustering using Gibbs Sampling.  Reference:
+function [biclusterRows, biclusterCols, rowPostProb, colPostProb, traceRow, traceCol] = biclusteringGibbs(data, varargin)
+% Performs biclustering using Gibbs Sampling. 
+% Reference:
 %@misc{sheng2003biclustering,
 %  title={{Biclustering microarray data by Gibbs sampling}},
 %  author={Sheng, Q. and Moreau, Y. and De Moor, B.},
