@@ -12,8 +12,8 @@ dag(z,z)=1;
 
 [d, pre, post, cycle, f, pred] = dfs(dag, [], 1);
 assert(isequal(d, [1 2 9 4 3 10]))
-assert(isequal(f, [8 7 12 5 6 11])
-assert(cycle)
+assert(isequal(f, [8 7 12 5 6 11]))
+assert(cycle==1)
 
 % Now give it an undirected cyclic graph
 G = mk_2D_lattice(2,2,0);

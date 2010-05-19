@@ -1,6 +1,6 @@
 function showFigures()
-% This function undoes the effect of hideFigures - see
-% it for details.
+% This function undoes the effect of hideFigures 
+%- see it for details.
 
 
 set(0, 'defaultFigureVisible', 'on');

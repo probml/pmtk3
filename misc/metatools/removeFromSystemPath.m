@@ -1,6 +1,6 @@
 function removeFromSystemPath(keyword)
-% Remove all of the paths that contain the keyword, (ignoring case) from
-% the system path for the duration of the Matlab session. 
+% Remove all of the system paths that contain the keyword, (ignoring case)
+% from the system path for the duration of the Matlab session. 
 %
 %% Example
 % removeFromSystemPath('graphviz')

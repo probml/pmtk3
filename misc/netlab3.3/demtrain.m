@@ -1,4 +1,4 @@
-function demtrain(action);
+function demtrain(action)
 %DEMTRAIN Demonstrate training of MLP network.
 %
 %	Description
