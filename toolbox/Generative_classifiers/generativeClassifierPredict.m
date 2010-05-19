@@ -1,5 +1,5 @@
 function [yhat, post] = generativeClassifierPredict(logprobFn, model, Xtest)
-% Return the predicted class labels. 
+% Return the predicted class labels
 %% Inputs
 %
 % logprobFn - a function handle: logp = logprobFn(classConditionals{c}, Xtest)

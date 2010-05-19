@@ -1,5 +1,5 @@
 function [yhat, post] = discrimAnalysisPredict(model, Xtest)
-%  apply Bayes rule with Gaussian class-conditioanl densities.
+% Apply Bayes rule with Gaussian class-conditioanl densities.
 % Computes post(i,c) = P(y=c|x(i,:), params)
 % and yhat(i) = arg max_c post(i,c)
 

@@ -1,4 +1,5 @@
 function params = discrimAnalysisFit(X, y, type)
+%% Discriminative Analaysis
 % Input:
 % X is an n x d matrix
 % y is an n-vector specifying the class label (in range 1..C)

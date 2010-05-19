@@ -1,5 +1,5 @@
 function [yhat, yprob] = knnPredict(model, Xtest)
-% k-nearest neighbors classifier
+% K-nearest neighbors classifier
 % (ties broken by picking lowest class)
 % ypredProb(m, :) is the empirical distribution over classes
 
