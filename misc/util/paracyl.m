@@ -1,5 +1,5 @@
 function pdf = paracyl(V, X)
-% Parabolic cylinder function
+% A more efficient implementation of the parabolic cylinder function
 % Input:   x --- Argument of Dv(x)
 %          v --- Order of Dv(x)
 %

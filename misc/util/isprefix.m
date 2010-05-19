@@ -1,5 +1,5 @@
 function p = isprefix(short, long)
-% Return true if the first input is a prefix of the second
+% Return true iff the first input is a prefix of the second
 % The second arg may also be a cell array of strings, in which case, each
 % is tested. CASE SENSITIVE!
 %

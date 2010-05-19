@@ -1,5 +1,5 @@
 function google(varargin)
-% Opens google in your default browser and searches for the specified query
+% Open google in your default browser and search for the specified query
 %
 %
 % Example:

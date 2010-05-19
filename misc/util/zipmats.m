@@ -1,5 +1,5 @@
 function z = zipmats(varargin)
-% Zip up multiple numeric vectors
+% Zip up multiple numeric vectors into one cell array
 % Takes in an arbitrary number, K, of numeric vectors, v1, v2,...vj,...,vk
 % all of the same size, N-by-1, (or 1-by-N) and returns a cell array z,
 % such that z{i}(j) = vj(i) for all i in 1:N and all j in 1:K.
