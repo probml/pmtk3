@@ -1,6 +1,6 @@
 function v = nanvarPMTK(X, w, dim)
-% Replacement for the stats toolbox nanvar function. Unlike nanvar, this
-% does not support weighted variance.
+% Replacement for the stats toolbox nanvar function
+% However, unlike nanvar, this does not support weighted variance.
 
 if nargin < 2
     w = 0;
