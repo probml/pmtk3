@@ -21,7 +21,7 @@ dirEmpty = @(d)isempty(mfiles(d,'topOnly', true));
 googleRoot = 'http://pmtk3.googlecode.com/svn/trunk/docs/helpPages';
 wikiText = cell(numel(d), 1);
 for i=1:numel(d)
-    if ~dirEmpty(d{i})
+    if exist(fullfile(dest, [d{i}, '.html']), 'file')
         wikiText{i} = sprintf(' * [%s/%s.html %s]',googleRoot, d{i}, d{i});
     end
 end
