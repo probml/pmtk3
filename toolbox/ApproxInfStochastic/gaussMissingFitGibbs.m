@@ -7,8 +7,7 @@ function [model, dataSamples, LL] = gaussMissingFitGibbs(data, varargin)
 % nSamples [600] - the number of samples to run the algorithm for
 % nburnin [100] - how many samples are considered burnin?
 % verbose [false]
-
-% Written by Cody Severinski and Kevin Murphy
+%PMTKauthor Cody Severinski, Kevin Murphy
 
 [mu0, Lambda0, k0, dof, nSamples, nburnin, verbose] = process_options(varargin, ...
     'mu0', [], 'Lambda0', [], 'k0', 0.01, 'dof', [], 'nSamples', 600, 'nburnin', 100, 'verbose', false);
@@ -66,7 +65,7 @@ if(~isempty(missingRows))
                 model.mu = muCond; model.Sigma = varCond;
                 xSample = gaussSample(model); % Sample the unobserved
             catch ME
-                varCond = round2(varCond, sqrt(eps));
+                varCond = roundto(varCond, sqrt(eps));
                 xSample = gaussSample(muCond, varCond);
             end
             xCurr(i,u) = xSample;

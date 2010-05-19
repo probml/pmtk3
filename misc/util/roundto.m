@@ -1,3 +1,4 @@
 function A = roundto(A, d)
-   A = round(A./d)*d; 
+% Round entries of matrix to the specified precision
+A = round(A./d)*d;
 end

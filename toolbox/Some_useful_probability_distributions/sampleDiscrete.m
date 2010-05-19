@@ -1,5 +1,5 @@
 function M = sampleDiscrete(prob, r, c)
-% SAMPLE_DISCRETE Like the built in 'rand', except we draw from a non-uniform discrete distrib.
+% Like the built in 'rand', except we draw from a non-uniform discrete distrib
 % M = sample_discrete(prob, r, c)
 %
 % Example: sample_discrete([0.8 0.2], 1, 10) generates a row vector of 10 random integers from {1,2},
