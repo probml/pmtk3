@@ -1,7 +1,7 @@
 function generateHelpPages()
 %% Generate the help documentation listing files and one line desriptions.
 
-wikiFile = 'C:\pmtk3wiki\helpPages.wiki';
+wikiFile = 'C:\pmtk3wiki\synopsisPages.wiki';
 dest = fullfile(pmtk3Root(), 'docs', 'synopsis'); 
 %% Toolbox
 d = dirs(fullfile(pmtk3Root(), 'toolbox')); 
@@ -14,7 +14,7 @@ end
 generateHelpTable(fullfile(pmtk3Root(), 'misc', 'util'), fullfile(dest, 'util.html'));
 %% Meta Tools
 generateHelpTable(fullfile(pmtk3Root(), 'misc', 'metatools'), fullfile(dest, 'metatools.html'));
-googleRoot = 'http://pmtk3.googlecode.com/svn/trunk/docs/helpPages';
+googleRoot = 'http://pmtk3.googlecode.com/svn/trunk/docs/synopsis';
 wikiText = cell(numel(d), 1);
 for i=1:numel(d)
     if exist(fullfile(dest, [d{i}, '.html']), 'file')
