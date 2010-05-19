@@ -349,7 +349,7 @@ for ipage = 1:size(data,3),
         HTML = [HTML sprintf('\n</TR>')]; %#ok close data row
     end;
 end;
-HTML = [HTML sprintf('</TABLE><br>')];  % close table
+HTML = [HTML sprintf('</TABLE><br><br>')];  % close table
 
 % Save to html file
 if (dosave),
