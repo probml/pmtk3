@@ -1,8 +1,9 @@
 function [tags, lines, codeLength, text] = tagfinder(filename, tagList)
-% Find all of the tags in the given file. Tags begin with PMTK, contain
-% at least one other character, no spaces, and must reside within an m-file
-% comment. The file must be on the Matlab path, and the tag must be a valid
-% variable name, i.e. cannot contain characters like ':', etc. 
+% Find all of the tags in the given file
+% Tags begin with PMTK, contain at least one other character, no spaces,
+% and must reside within an m-file comment. The file must be on the Matlab
+% path, and the tag must be a valid variable name, i.e. cannot contain
+% characters like ':', etc. 
 %
 % INPUT
 %      filename   - the m-file to search

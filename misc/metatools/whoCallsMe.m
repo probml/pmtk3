@@ -1,4 +1,5 @@
 function [list, m, g, map] = whoCallsMe(fname, varargin)
+% Find out who calls a certain function
 % Return a list of all of the mfiles on the current path that call
 % the specified fname. This is a simple inverted map of the standard
 % dependency report. 
