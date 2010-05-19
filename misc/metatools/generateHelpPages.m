@@ -2,7 +2,7 @@ function generateHelpPages()
 %% Generate the help documentation listing files and one line desriptions.
 
 wikiFile = 'C:\pmtk3wiki\helpPages.wiki';
-dest = fullfile(pmtk3Root(), 'docs', 'helpPages'); 
+dest = fullfile(pmtk3Root(), 'docs', 'synopsis'); 
 %% Toolbox
 d = dirs(fullfile(pmtk3Root(), 'toolbox')); 
 for i=1:numel(d)
