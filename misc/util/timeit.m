@@ -44,8 +44,9 @@ function t = timeit(f)
 %       g = @() imdilate(bw, se);
 %       timeit(g)
 %
-% http://www.mathworks.com/matlabcentral/files/18798/timeit.m
-%   Steve Eddins
+%PMTKurl http://www.mathworks.com/matlabcentral/files/18798/timeit.m
+%PMTKauthor Steve Eddins
+%PMTKdate February 17, 2008
 %   $Revision: 1.4 $  $Date: 2008/02/17 22:06:01 $
 
 t_rough = roughEstimate(f);

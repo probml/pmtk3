@@ -1,6 +1,5 @@
 function indices = argmax(v)
-% ARGMAX Return as a subscript vector the location of the largest element of a multidimensional array v.
-% indices = argmax(v)
+% Return the index vector of the largest element in the multidim array v
 %
 % Returns the first maximum in the case of ties.
 % Example:

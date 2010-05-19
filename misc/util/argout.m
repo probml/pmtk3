@@ -1,5 +1,5 @@
 function out = argout(n, fn, varargin)
-% Return the nth output of fn(varargin{:}); 
+% Given a function handle and its inputs, return its nth output
 % 
 %% Inputs
 % n        - the number of the desired output argument, e.g. 2

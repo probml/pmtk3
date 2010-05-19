@@ -1,6 +1,5 @@
 function [p, nerrs] = bestPermutation(source, target)
-% Permute the labels in source to minimize the number of mismatches with
-% target. 
+% Permute labels to minimize the number of mismatches with a target
 %
 %% Example
 % p = bestPermutation([1 1 1 2 2 2 3 3 3], [2 2 3 1 1 1 3 3 2])

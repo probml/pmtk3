@@ -1,5 +1,6 @@
-function [canonized,support] = canonizeLabels(labels,support)
-% Transform labels to 1:K. The size of canonized is the same as labels but every
+function [canonized, support] = canonizeLabels(labels,support)
+%% Transform labels to 1:K
+% The size of canonized is the same as labels but every
 % label is transformed to its corresponding entry in 1:K. If labels does not
 % span the support, specify the support explicitly as the 2nd argument. 
 %
