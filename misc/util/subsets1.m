@@ -1,5 +1,5 @@
-function sub_s=subsets1(s,k)
-% SUBSETS1 creates sub-sets of a specific from a given set
+function sub_s=subsets1(s, k)
+% Creates sub-sets of a specific size from a given set
 % SS = subsets1(S, k)
 %
 % S is the given set
@@ -18,7 +18,8 @@ function sub_s=subsets1(s,k)
 % ans =
 %      2     3     4
 %
-% Written by Raanan Yehezkel, 2004
+%PMTKauthor Raanan Yehezkel
+%PMTKdate 2004
 
 if k<0 % special case
    error('subset size must be positive');

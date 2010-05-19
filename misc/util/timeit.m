@@ -1,5 +1,5 @@
 function t = timeit(f)
-%TIMEIT Measure time required to run function.
+% Measure time required to run function
 %   T = TIMEIT(F) measures the time (in seconds) required to run 
 %   F, which is a function handle.  
 %

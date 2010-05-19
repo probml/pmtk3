@@ -1,8 +1,9 @@
 function z = zipmats(varargin)
+% Zip up multiple numeric vectors
 % Takes in an arbitrary number, K, of numeric vectors, v1, v2,...vj,...,vk
-% all of the same size, N-by-1, (or 1-by-N) and returns a cell array z, 
+% all of the same size, N-by-1, (or 1-by-N) and returns a cell array z,
 % such that z{i}(j) = vj(i) for all i in 1:N and all j in 1:K.
-% 
+%
 % Example:
 % z = zipmats(1:3 , 4:6 , 7:9 , 100:102)  % extends to any number of inputs
 % celldisp(z)
@@ -13,5 +14,5 @@ function z = zipmats(varargin)
 % z{3} =
 %      3     6     9   102
 
-    z = mat2cellRows(cell2mat(cellfuncell(@(c)colvec(c),varargin)));   % how many cell functions can we use at once!
+z = mat2cellRows(cell2mat(cellfuncell(@(c)colvec(c), varargin)));  
 end

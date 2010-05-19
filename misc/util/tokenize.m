@@ -1,5 +1,5 @@
 function tokens = tokenize(str, delimiter)
-% tokenize a string
+% Tokenize a string
 % If delmiter is more than one character, it is assumed that you want
 % to tokenize based on multiple delimiters - if not use regexp instead.
 %

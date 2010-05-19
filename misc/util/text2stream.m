@@ -1,6 +1,6 @@
 function [stream, cleanString] = text2stream(string)
-% Converts a charachter array to a array of integer corresponding to
-% the letters and spaces in the string.
+% Converts a charachter array to an array of integers
+% corresponding to the letters and spaces in the string.
 
 string = lower(string);
 letters = double('a':'z');

@@ -1,5 +1,5 @@
-function D = tridiag(A,B,C, useSparse)
-% tridiag Make a tri-diagonal matrix from a matrix or from 3 vectors
+function D = tridiag(A, B, C, useSparse)
+% Make a tri-diagonal matrix from a matrix or from 3 vectors
 % 
 % D = tridiag(A) sets all elements of A outside the tridiagonal to 0
 % If A is sparse, D will also be sparse.

@@ -1,5 +1,5 @@
 function T = sumv(T, sum_over)
-% sumv(T, dims)  Sum multidimensional array T over dimensions 'dims' and squeeze the result
+% Sum multidimensional array T over dimensions 'dims' and squeeze the result
 % This is like the built-in sum, but you can pass a vector of dimensions to sum over
 % Example
 % T = reshape(1:8, [2 2 2])

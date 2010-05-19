@@ -1,5 +1,5 @@
 function index = subv2ind(siz,sub)
-%SUBV2IND   Linear index from subscript vector.
+% Calculate the linear index from a subscript vector
 % SUBV2IND(SIZ,SUB) returns an equivalent single index corresponding to a
 % subscript vector for an array of size SIZ.
 % If SUB is a matrix, with subscript vectors as rows, then the result is a 
