@@ -1,5 +1,5 @@
 function m = mfiles(source, varargin)
-% list all mfiles in the specified directory structure.
+% List all mfiles in the specified directory structure
 %
 %% Optional Inputs
 % 'topOnly'    - if true, (default = false), do not descend into

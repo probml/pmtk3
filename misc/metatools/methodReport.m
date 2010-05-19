@@ -1,6 +1,6 @@
 function  methodReport(varargin)
-% Generate a report showing which classes implement and inherit which
-% methods. Does not inlcude class constructors. By default, it only shows
+% Generate a report showing which classes implement and inherit which methods.
+% Does not inlcude class constructors. By default, it only shows
 % classes that are either abstract or contribute a new method. 
 
 %

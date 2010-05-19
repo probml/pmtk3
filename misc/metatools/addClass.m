@@ -1,6 +1,5 @@
 function addClass(varargin)
-% Creates a class template, adding required methods and properties given its 
-% possibly abstract super classes. 
+% Create a class template from its possibly abstract superclasses
 %
 % INPUTS: 
 %

@@ -1,6 +1,6 @@
 function [missing, extra] = pmlMoveExtraCode(bookSource, demosDir)
-% Allocate code in demos/extra to the various chapters according to the
-% pml latex extraCode index. 
+% Allocate code in demos/extra to the various chapters 
+% according to the pml latex extraCode index. 
 %
 %% Inputs
 %  bookSource    - path to the PML latex source containing e.g. pml.tex

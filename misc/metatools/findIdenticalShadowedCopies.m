@@ -1,14 +1,14 @@
 function f = findIdenticalShadowedCopies()
-% Searches through every m-file and deletes exact duplicates.     
-    m = mfiles(pmtk3Root());        
-    f = {}; 
-    for i=1:numel(m)
-       w = which('-all',m{i});
-       if(numel(w) == 2 && isequal(getText(w{1}),getText(w{2})))
-           f = [f, w{2}]; %#ok
-       end
-        
+% Searches through every m-file and finds exact duplicates
+m = mfiles(pmtk3Root());
+f = {};
+for i=1:numel(m)
+    w = which('-all',m{i});
+    if(numel(w) == 2 && isequal(getText(w{1}),getText(w{2})))
+        f = [f, w{2}]; %#ok
     end
-    f = f';
     
+end
+f = f';
+
 end

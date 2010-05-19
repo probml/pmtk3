@@ -1,4 +1,6 @@
 function ch = pmlGetChapter(chpg, pg)
+% Return the chapter name from which the specified page occurs
+%
 % Given a list of the chapter starting pages, and a list of page numbers,
 % return a representative chapter. If the pages are from different
 % chapters, select the first, (unless this is chapter 1).

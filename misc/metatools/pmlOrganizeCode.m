@@ -1,8 +1,8 @@
 function [missing, extra, copyProblems, missingExtra] = pmlOrganizeCode(bookSource, dest, demosOnly, includeCodeSol)
-% Organize the PMTK code files referenced in PML into folders according to
-% the chapter in which they are referenced. If a file is referenced in
-% more than one chapter, the first chapter is used unless this is chapter
-% 1, the introduction. Files are copied, not moved. 
+% Organize the PMTK code files referenced in PML into folders 
+% according to the chapter in which they are referenced. If a file is
+% referenced in more than one chapter, the first chapter is used unless
+% this is chapter 1, the introduction. Files are copied, not moved. 
 %
 %% Input
 %

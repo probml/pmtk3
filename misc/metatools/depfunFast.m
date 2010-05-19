@@ -1,5 +1,5 @@
 function filelist = depfunFast(fn,recursive)
-%DEPFUNFAST - Variation on depfun which skips toolbox files
+% Variation on the built-in depfun function, which skips toolbox files
 %
 % filelist = mydepfun(fn)
 % filelist = mydepfun(fn,recursive)

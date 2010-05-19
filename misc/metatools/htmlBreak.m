@@ -1,5 +1,5 @@
 function str = htmlBreak(str)
-% Convert new line chars to <br> for html
+% Convert new line chars to html breaks
 
 
 str = regexprep(str, '\\n', '<br>');

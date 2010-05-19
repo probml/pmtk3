@@ -1,12 +1,9 @@
 function out = htmlTable(varargin)
-%HTMLTABLE Display a Matlab cell array or numeric matrix in html. 
+% Display a Matlab cell array or numeric matrix as an html table
 %
 %PMTKauthor Gus Brown
 %PMTKurl http://www.mathworks.com/matlabcentral/fileexchange/18329
-%PMTKmodified Matthew Dunham
-%
-%
-%
+%PMTKmodified Matt Dunham
 %
 % INPUTS:
 %        'data'          the data to display, an array or cell array         

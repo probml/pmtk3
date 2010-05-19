@@ -1,6 +1,7 @@
 function [table, M] = parsePMLtypoFile(fname)
-% Parse the PML typos file and generate an html table listing the unique
-% e-mail addresses and the number of each type of error found.
+% Parse the PML typos file and generate an html table 
+% listing the unique e-mail addresses and the number of each type of error
+% found.
 %
 %  **** Download the file as a csv ****
 %

@@ -1,6 +1,6 @@
 function [missing, pg] = pmlMissingCodeReport(bookSource, includeCodeSol)
-% Generate an html report of all of the code referenced in pml that
-% cannot be found in PMTK. 
+% Display an html table of files referenced in PML but not in PMTK
+
 %% Input
 %
 % bookSource      - path to the PML latex source containing e.g. pml.tex

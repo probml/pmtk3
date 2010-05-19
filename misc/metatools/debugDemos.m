@@ -1,4 +1,6 @@
 function errors = debugDemos(subFolder, exclusions)
+% Run all fast PMTK3 demos hiding all figures and demo output
+%
 % Debug the PMTK demos, by attempting to run them all, saving
 % a list of those which fail. Figures and output are not displayed, use
 % runDemos or runAllDemos if you wish to see the output.

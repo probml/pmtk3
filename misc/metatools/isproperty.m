@@ -1,4 +1,5 @@
 function p = isproperty(class,prop)
-   props = properties(class);
-   p = ismember(prop,props);
+% Return true iff a specified class has a specific property
+props = properties(class);
+p = ismember(prop,props);
 end

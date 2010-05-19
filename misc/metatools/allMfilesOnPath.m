@@ -1,6 +1,5 @@
 function m = allMfilesOnPath()
-% Returns a cell array of the names of every (non-matlab) m-file on
-% the current path. 
+% Return a list of all of the non-built-in .m files on the matlab path
 p = mypath();
 m = {};
 for i=1:numel(p)

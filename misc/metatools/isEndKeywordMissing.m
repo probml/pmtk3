@@ -1,6 +1,6 @@
 function answer = isEndKeywordMissing(fname)
-% Return true if the syntactically optional end keyword is missing from 
-% the end of the function. 
+% Return true if the syntactically optional end keyword is missing 
+% from the end of the function. 
 
 if ~isfunction(fname)
     answer = false;

@@ -1,3 +1,4 @@
+%% Clear and close everything
 close all;
 close all hidden;
 fclose all;

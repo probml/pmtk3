@@ -1,6 +1,5 @@
 function hideFigures()
-% Hide all future generated figures until the showFigures() function is
-% run.
+% Hide all future generated figures until the showFigures() function is run
 
 fprintf('figure display has been turned off\n'); 
 set(0, 'defaultFigureVisible', 'off');

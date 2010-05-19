@@ -1,7 +1,7 @@
 function classes = getClasses(varargin)
-% Get a list of all of the classes below the specified directory that are 
-% on the Matlab path. You can optionally specify directories to ignore. By
-% default, the util and unitTests directories are ignored.
+% Get a list of all of the classes below the specified directory 
+% that are  on the Matlab path. You can optionally specify directories to
+% ignore. By default, the util and unitTests directories are ignored.
     
 [source,ignoreDirs,topOnly] = process_options(varargin,'source',pwd(),'ignoreDirs',{},'topOnly',false);
 

@@ -1,6 +1,6 @@
 function m = findAllFilesWithTag(tag, returnFullPath)
-% Find all of the files in the PMTK directory structure that have the specified
-% tag.
+% Find all of the files in the PMTK directory structure with a certain tag
+% See also pmtkTagReport
 %%
 if nargin < 2, returnFullPath = false; end
 if tag(1) == '%', tag(1) = []; end

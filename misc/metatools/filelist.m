@@ -1,5 +1,5 @@
 function l = filelist(directory, filemask, recursive)
-%% Return a list of all files in the specfified directory structure.
+% Return a list of all files of the specified type in a directory structure
 %  * .svn files and directories are ignored
 %  * directories are not included in the list even for *.* - see dirs()
 % 

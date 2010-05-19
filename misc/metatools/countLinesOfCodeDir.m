@@ -1,7 +1,6 @@
 function n = countLinesOfCodeDir(d, excludeComments, recursive, filemask)
-% Count the total number of lines of code in all of the functions in
-% directory d. If recursive is true, (default) include subdirectories as
-% well. 
+% Count the total lines of code in all functions in a directory structure
+% If recursive is true, (default) include subdirectories as well. 
 % 
 
 if nargin < 2, excludeComments = true; end
