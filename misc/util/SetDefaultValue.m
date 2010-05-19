@@ -1,5 +1,5 @@
 function SetDefaultValue(position, argName, defaultValue)
-% Initialise a missing or empty value in the caller function.
+% Initialize a missing or empty value in the caller function
 % 
 % SETDEFAULTVALUE(POSITION, ARGNAME, DEFAULTVALUE) checks to see if the
 % argument named ARGNAME in position POSITION of the caller function is
@@ -16,7 +16,7 @@ function SetDefaultValue(position, argName, defaultValue)
 % $Author: Richie Cotton $  $Date: 2010/03/23 $
 %PMTKauthor Richie Cotton
 %PMTKurl http://www.mathworks.com/matlabcentral/fileexchange/27056-set-default-values
-
+%PMTKdate March 23, 2010
 if evalin('caller', 'nargin') < position || ...
       isempty(evalin('caller', argName))
    assignin('caller', argName, defaultValue);

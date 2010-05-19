@@ -1,5 +1,5 @@
 function M = setdiag(M, v)
-% SETDIAG Set the diagonal of a matrix to a specified scalar/vector.
+% Set the diagonal of a matrix to a specified replicated scalar or vector
 % M = setdiag(M, v)
 
 n = size(M,1);

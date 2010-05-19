@@ -1,5 +1,5 @@
 function m = serialize(v, n)
-% SERIALIZE create matlab code from a variable 
+% Create a string representation S, of a variable v, s.t. eval(S) = v
 %  
 %   matcode = SERIALIZE(x) generates matlab code of x
 %   matcode = SERIALIZE(x, n) generates matlab code of x retaining n digits

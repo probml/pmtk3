@@ -1,5 +1,7 @@
 function setSeed(seed)
-
+% Set the random seed
+% We don't use the new RandStream class for compatibility with Octave and
+% older versions of Matlab.
 if nargin == 0; seed = 0; end
 global RNDN_STATE  RND_STATE
 
