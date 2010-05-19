@@ -64,6 +64,10 @@
 
 % Copyright (C) Oliver Woodford 2008-2009
 
+%PMTKauthor Oliver Woodford
+%PMTKdate 2008-2009
+%PMTKurl http://www.mathworks.com/matlabcentral/fileexchange/23629
+
 % The idea of using ghostscript is inspired by Peder Axensten's SAVEFIG
 % (fex id: 10889) which is itself inspired by EPS2PDF (fex id: 5782).
 % The idea for using pdftops came from the MATLAB newsgroup (id: 168171).
