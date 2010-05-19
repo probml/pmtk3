@@ -1,5 +1,5 @@
 function s = catStruct(s1,s2)
-% combines two structs into one with the fields and values from both.
+% Combine two structs into one with the fields and values from both
 if(numel(intersect(fieldnames(s1),fieldnames(s2)))>0)
     error('Names are not unique');
 end
