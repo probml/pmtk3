@@ -20,7 +20,7 @@ for i=1:D
    psz = prod(ns_ps); % number of parent states
    counts_ijk = computeCounts(X(:,fam), ns_fam);
    counts_ijk = reshape(counts_ijk,  [psz ns_self]);
-   prior_ijk = (alpha/(psz*ns_self))*myones(ns_fam);% BDeu prior
+   prior_ijk = (alpha/(psz*ns_self))*onesPMTK(ns_fam);% BDeu prior
    prior_ijk = reshape(prior_ijk(:), [psz ns_self]);
    L = L + sum(logbeta(counts_ijk + prior_ijk) - logbeta(prior_ijk));
 end

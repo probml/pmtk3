@@ -1,6 +1,5 @@
 function T = reshapePMTK(T, sizes)
-% reshapePMTK Like the built-in reshape, except reshapePMTK(T,n) == reshape(T,[n 1])
-% T = reshapePMTK(T, sizes)
+% Like the built-in reshape, except reshapePMTK(T,n) == reshape(T,[n 1])
 
 if isempty(sizes)
     return;

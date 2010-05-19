@@ -1,5 +1,5 @@
 function [Xtest, xrange, yrange, X, Y] = makeGrid2d(data)
-% make a 2d grid of points that spans the range of the training data
+% Make a 2d grid of points that spans the range of the training data
 % data(:,1:2) are the x,y coords of training point i
 
 x0 = min(data(:,1));

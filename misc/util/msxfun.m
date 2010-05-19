@@ -1,6 +1,6 @@
 function C = msxfun(fn, varargin)
-%% Just like bsxfun, except this takes in more than two matrices.
-% (Performs binary reduction, just like python's reduce fuction)
+%% Perform binary reduction on multiple arrays using bsxfun
+% (similar to python's reduce fuction)
 % For three matrices, the following two code snippets are equivalent
 % msxfun(fn, X1, X2, X3)
 % bsxfun(fn, bsxfun(fn, X1, X2), X3)

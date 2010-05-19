@@ -1,4 +1,5 @@
 function [pdf,pdd] = mpbdv(v,x)
+%% Parabolic cylinder function
 %       =========================================================
 %       Purpose: This program computes the parabolic cylinder
 %                functions Dv(x) and their derivatives using
@@ -19,6 +20,8 @@ function [pdf,pdd] = mpbdv(v,x)
 %
 % Slightly modified by Mahieddine. M. ICHIR
 %
+%PMTKauthor Ben Barrowes, M. Mahieddine
+%PMTKurl https://sourceforge.net/projects/f2matlab/
 
 dv  = [];
 dp  = [];

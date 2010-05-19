@@ -1,11 +1,12 @@
 function [val,idx] = minK(A,k)
-% Just like built in min except we return the k smallest along the 2nd 
-% dimension so that if A is m-by-n val is m-by-k. 
+%% Efficiently return the K smallest elements along the 2nd dimension
+% Just like built in min except we return the k smallest along the 2nd
+% dimension so that if A is m-by-n val is m-by-k.
 %
-%    
-% Sorting requires O(nlog(n)) time, whereas calling min k times requires O(n*k) time. 
-% Therefore we pick the appropriate method based on relative size of k and
-% log(n).
+%
+% Sorting requires O(nlog(n)) time, whereas calling min k times requires
+% O(n*k) time. Therefore we pick the appropriate method based on relative
+% size of k and log(n).
 
 sz = size(A);
 if(sz(2) == 1)

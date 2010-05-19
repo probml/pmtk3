@@ -13,12 +13,12 @@ for i=1:d
    pa = parents(G, i);
    if isempty(pa) % no parent
       cnt = computeCounts(X(:,i), sz(i));
-      prior  = (dirichlet/numel(cnt))*myones(size(cnt)); %BDeu
+      prior  = (dirichlet/numel(cnt))*onesPMTK(size(cnt)); %BDeu
       CPDs{i} = normalize(cnt+prior);
    else
       j = pa;
       cnt = computeCounts(X(:,[j i]), sz([j i])); % parent then child
-      prior  = (dirichlet/numel(cnt))*myones(size(cnt)); %BDeu
+      prior  = (dirichlet/numel(cnt))*onesPMTK(size(cnt)); %BDeu
       CPDs{i} = mkStochastic(cnt+prior);
    end  
 end

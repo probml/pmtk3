@@ -12,7 +12,7 @@ assert(length(sz) == size(X, 2));
 P = prod(sz);
 indices = subv2ind(sz, X); % each row of data' is a case 
 count = hist(indices, 1:P);
-count = myreshape(count, sz);
+count = reshapePMTK(count, sz);
 
 % test on contingency table
 if 0

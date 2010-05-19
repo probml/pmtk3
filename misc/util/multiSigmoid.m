@@ -1,10 +1,10 @@
-function [P]=multiSigmoid(X,w)
-%#eml    
+function [P] = multiSigmoid(X, w)
 % Softmax function
+%#eml    
 % X is n*d
 % w is d*(C-1) last column is all 0s
 % P is n*C
-
+%
 % Based on code by Balaji Krishnapuram
 
 [N,d]=size(X);        %X->Nxd
