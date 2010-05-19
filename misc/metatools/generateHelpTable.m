@@ -4,6 +4,8 @@ function generateHelpTable(directory, outputFile)
 if nargin < 2, outputFile = ''; end
 files        = filelist(directory, '*.m', true);
 files        = setdiff(files, listPackageFiles(directory)); 
+files        = files(sortidx(lower(files))); 
+if isempty(files), return; end
 descriptions = colvec(cellfuncell(@helpline, files)); 
 fnames       = colvec(cellfuncell(@(c)c(length(directory)+2:end-2), files)); 
 flinks       = cellfuncell(@(c)c(length(pmtk3Root())+2:end), files); 

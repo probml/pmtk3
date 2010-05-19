@@ -43,6 +43,7 @@ l = filterCell(l, @(c)~endswith(c, '.') &&...
     ~endswith(c, '..') && ...
     ~endswith(c, '.svn'))';
 l = unique(l);
+l = l(sortidx(lower(l))); 
 end
 
 
