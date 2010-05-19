@@ -1,5 +1,5 @@
 function  indices = partitionData(data, pc)
-% PARTITIONDATA Partition a vector of data into sets of different sizes
+% Partition a vector of data into sets of different sizes
 % function  indices = partitionData(data, pc)
 %
 % Example:
@@ -12,15 +12,15 @@ perm = data;
 Ndata = length(data);
 ndx = 1;
 for i=1:Npartitions
-  Nbin(i) = fix(Ndata*pc(i));
-  low(i) = ndx;
-  if i==Npartitions
-    high(i) = Ndata;
-  else
-    high(i) = low(i)+Nbin(i)-1;
-  end
-  indices{i} = perm(low(i):high(i));
-  ndx = ndx+Nbin(i);
+    Nbin(i) = fix(Ndata*pc(i));
+    low(i) = ndx;
+    if i==Npartitions
+        high(i) = Ndata;
+    else
+        high(i) = low(i)+Nbin(i)-1;
+    end
+    indices{i} = perm(low(i):high(i));
+    ndx = ndx+Nbin(i);
 end
 
 

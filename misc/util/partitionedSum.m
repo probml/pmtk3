@@ -1,6 +1,5 @@
 function S = partitionedSum(X, y, C)
-% Group the rows of X according to the class labels in y and take the 
-% sum of each group. 
+% Group the rows of X according to the class labels in y and sum each group
 %
 % X  - an n-by-d matrix of doubles
 % y  - an n-by-1 vector of ints in 1:C

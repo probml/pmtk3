@@ -1,5 +1,5 @@
 function N = nunique(X, dim)
-% Count the unique elements of X along the specified dimension (default 1).
+% Efficiently count the unique elements of X along the specified dimension
 % Like length(unique(X(:, j)) or length(unique(X(i, :)) but vectorized.
 % Supports multidimensional arrays, e.g. nunique(X, 3).
 %

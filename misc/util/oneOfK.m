@@ -1,8 +1,9 @@
 function [yy,map] = oneOfK(y, K)
-% Convert class labels to a one of K encoding. The class labels are first
-% converted to 1:K. The number of class labels is automatically
-% infered. If K is explicitly specified, the class support is forced to be
-% contiguous. The output map stores the unique elements of y. 
+% Convert class labels to a one of K encoding 
+% The class labels are first converted to 1:K. The number of class labels
+% is automatically infered. If K is explicitly specified, the class support
+% is forced to be contiguous. The output map stores the unique elements of
+% y. 
 % 
 % INPUT: 
 %

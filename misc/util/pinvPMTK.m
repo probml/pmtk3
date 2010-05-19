@@ -1,5 +1,5 @@
 function B = pinvPMTK(A)
-% Same as built-in pinv, but shorter because omits error checking etc.
+% Same as built-in pinv, but shorter because omits error checking etc
 [U, S, V] = svd(A, 0); % if m>n, only compute first n cols of U
 s = diag(S);
 r = sum(s > tol); % rank
