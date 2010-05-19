@@ -14,10 +14,6 @@ end
 generateHelpTable(fullfile(pmtk3Root(), 'misc', 'util'), fullfile(dest, 'util.html'));
 %% Meta Tools
 generateHelpTable(fullfile(pmtk3Root(), 'misc', 'metatools'), fullfile(dest, 'metatools.html'));
-
-
-
-dirEmpty = @(d)isempty(mfiles(d,'topOnly', true));
 googleRoot = 'http://pmtk3.googlecode.com/svn/trunk/docs/helpPages';
 wikiText = cell(numel(d), 1);
 for i=1:numel(d)
@@ -41,7 +37,5 @@ wikiText =  [{'== Toolboxes =='
             sprintf(' * [%s/%s.html %s]', googleRoot, 'metatools', 'metatools');
             }];
             
-
 writeText(wikiText, wikiFile); 
-
 end
