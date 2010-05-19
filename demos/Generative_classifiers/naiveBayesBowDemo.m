@@ -58,6 +58,12 @@ for i=1:N
   M{i,3} = Mw{i,2}; M{i,4} = Mp(i,2);
   M{i,5} = Miw{i}; M{i,6} = Mi(i); 
 end
+
+MM = [Mw(:, 1), mat2cellRows(Mp(:, 1)), ...
+  Mw(:,2),  mat2cellRows(Mp(:, 2)), ...
+   Miw(:),  mat2cellRows(Mi(:))];
+assert(isequal(M, MM))
+
 colLabels = {'class 1', 'prob', 'class 2', 'prob', 'highest MI', 'MI'};
 latextable(M, 'horiz', colLabels, 'Hline',[1], 'format', '%5.3f');
 
