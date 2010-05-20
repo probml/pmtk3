@@ -5,7 +5,7 @@ function bigO
 
 
 domain = 0:0.01:6;
-f = @(x) 0.5*x +  2*normpdf(x,1,0.5) + normpdf(x,2.5,0.2) + 0.2*sin(x);
+f = @(x) 0.5*x + 2*gausspdf(x,1,0.5.^2)' + gausspdf(x,2.5,0.2.^2)' + 0.2*sin(x);
 g1 = @(x) 2*x/3 +  0.3*sin(1.1*x) + 0.7;
 g2 = @(x)0.5*g1(x);
 intersect = find(abs(f(domain) - g1(domain)) < 0.05);
