@@ -16,7 +16,7 @@ pimaNan(miss == 0) = NaN;
 
 
 mu = nanmeanPMTK(pimaNan)';
-Sigma = nancov(pimaNan);
+
 
 titles = {'glu','bp','skin','bmi'};
 

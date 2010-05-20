@@ -20,9 +20,9 @@ end
 row = (size(a, 1) == 1);
 
 a = a(:);
-y = gamrnd(repmat(a, 1, n),1);
+%y = gamrnd(repmat(a, 1, n),1);
 % randgamma is faster
-%y = randgamma(repmat(a, 1, n));
+y = randgamma(repmat(a, 1, n));
 r = col_sum(y);
 r(find(r == 0)) = 1;
 r = y./repmat(r, size(y, 1), 1);
