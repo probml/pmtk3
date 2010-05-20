@@ -5,7 +5,7 @@ standardize = false; %true;
 
 [xtrain, ytrain] = polyDataMake('sampling','thibaux');
 if standardize
-  [xtrain] = standardizeCols(xtrain);
+    [xtrain] = standardizeCols(xtrain);
 end
 
 N = length(xtrain);
@@ -16,10 +16,10 @@ stderr = zeros(2,N+1);
 stderr(:,1) = [sqrt(V(1,1)); sqrt(V(2,2))];
 sigma2 = 1;
 for i=1:N
-  A = eye(2); C = [1 xtrain(i,:)]; Q = zeros(2,2); R = sigma2;
-  y = ytrain(i);
-  [w(:,i+1), V] = kalmanUpdate(A, C, Q, R, y, w(:,i), V);
-  stderr(:,i+1) = [sqrt(V(1,1)); sqrt(V(2,2))];
+    A = eye(2); C = [1 xtrain(i,:)]; Q = zeros(2,2); R = sigma2;
+    y = ytrain(i);
+    [w(:,i+1), V] = kalmanSmoother(y, A, C, Q, R, w(:,i), V);
+    stderr(:,i+1) = [sqrt(V(1,1)); sqrt(V(2,2))];
 end
 figure; hold on
 h=plot(w(1,:), 'ko', 'linewidth', 2);
