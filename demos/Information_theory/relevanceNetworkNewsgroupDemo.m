@@ -2,7 +2,7 @@
 % (See also chowliuTreeDemo)
 
 load newsgroups % documents, wordlist, newsgroups
-X = documents'; % 16,642 documents by 100 words  (sparse logical  matrix)
+%X is 16,642 documents by 100 words  (sparse logical  matrix)
 
 [mi, nmi] = mutualInfoAllPairsDiscrete(X);
 
