@@ -39,7 +39,7 @@ contour(x1,x2,Z,50)
 hold on
 h=plot(1,1,'bo'); set(h,'markersize',10,'markerfacecolor','b');
 
-%{
+
 global xhist
 xhist = [];
 
@@ -56,5 +56,5 @@ hold on;
 plot(xhist(1,:), xhist(2,:), 'ro-');
 title(sprintf('%s, fx=%5.3f, %d iter, %d fn', ...
   options.Method, fx, output.iterations, output.funcCount))
-%}
+
 end
