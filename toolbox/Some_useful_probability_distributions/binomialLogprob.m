@@ -13,11 +13,11 @@ else
 end
 logp = nchoosekln(N, X) + X.*log(M) + (N - X).*log1p(-M);
 
-test = false;
-if test
-    logp2 = log(binopdf(X, N, M));
-    assert(approxeq(logp, logp2)); 
-end
+
+
+%logp2 = log(binopdf(X, N, M));
+%assert(approxeq(logp, logp2)); 
+
 
 
 end
