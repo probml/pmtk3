@@ -57,7 +57,6 @@ for i=1:d
     post.meantheta(i) = mean(samples.theta(:,i));
     post.CItheta(i,:) = quantilePMTK(samples.theta(:,i), [0.025 0.975]);
     post.mediantheta(i) = quantilePMTK(samples.theta(:,i), [0.5]);
-    
 end
 thetaPooledMLE = sum(data.y)/sum(data.n)
 %% Bar Plot
