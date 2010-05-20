@@ -23,7 +23,7 @@ Zscore = w ./ stderr;
 dof = n-d-1;
 pval = 1-tcdf(abs(Zscore),dof) + tcdf(-abs(Zscore),dof);
 alpha = 0.95;
-tc = tinv(1-(1-alpha)/2, dof); 
+tc = tinvPMTK(1-(1-alpha)/2, dof); 
 confint = [w-tc*stderr w+tc*stderr];
 
 names2 = {'intercept', names{:}};

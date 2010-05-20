@@ -34,7 +34,7 @@ s2 = (y-yhat)'*(y-yhat);
 dof = n-d-1;
 stderr = sqrt(diag(C)*s2/dof);
 alpha = 0.95;
-tc = tinv(1-(1-alpha)/2, dof); % quantiles of a T
+tc = tinvPMTK(1-(1-alpha)/2, dof); % quantiles of a T
 credint = [what-tc*stderr what+tc*stderr];
 
 for i=1:(d+1)

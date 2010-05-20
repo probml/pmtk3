@@ -9,8 +9,8 @@ muHat = mean(D);
 S2 = var(D); % unbiased
 nu = N-1;
 SS = sqrt(S2/N);
-L = muHat + SS*tinv(alpha/2,nu);
-U = muHat - SS*tinv(alpha/2,nu);
+L = muHat + SS*tinvPMTK(alpha/2,nu);
+U = muHat - SS*tinvPMTK(alpha/2,nu);
 muCI = [L, U] % 263.8416  289.9478
 
 sigma2HatMLE = var(D,1);

@@ -22,8 +22,8 @@ mun = (k0*mu0+n*xbar)/kn;
 vn = v0+n;
 s2n = (v0*s0 + n*s2 + k0*mu0^2 + n*xbar^2 -kn*mun^2)/vn;
 %% credible interval for mu
-low = mun + tinv(0.025, vn)*sqrt(s2n/kn) %23.5706
-high = mun + tinv(1-0.025, vn)*sqrt(s2n/kn) %28.8537
+low = mun + tinvPMTK(0.025, vn)*sqrt(s2n/kn) %23.5706
+high = mun + tinvPMTK(1-0.025, vn)*sqrt(s2n/kn) %28.8537
 %% generate posterior samples
 S = 1000;
 sigma2 =  (1+kn)*s2n/kn;
