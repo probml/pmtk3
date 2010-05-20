@@ -18,7 +18,7 @@ sigmas = [sigma sigma];
 Npixels = M*N;
 localEvidence = ones(Npixels, 2);
 for k=1:2
-    localEvidence(:,k) = normpdf(y(:), mus(k), sigmas(k));
+    localEvidence(:,k) = uniGaussPdf(y(:), mus(k), sigmas(k).^2);
 end
 guess = maxidx(localEvidence, [], 2);
 X = ones(M, N);
