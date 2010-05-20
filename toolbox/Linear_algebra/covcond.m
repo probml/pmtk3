@@ -1,4 +1,6 @@
 function [Sig,Lam] = covcond(c,a)
+% Generate a covariance matrix and its inverse with a given cond number
+% C and first direction A.
 %COVCOND covariance matrix with given condition number
 % [Sig,Lam] = covcond(C,A) generates covariance matrix and its
 % inverse with given cond number C and first direction A.

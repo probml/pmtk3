@@ -1,8 +1,8 @@
 function y = logdet(A)
-% log(det(A)) where A is positive-definite.
+% Compute log(det(A)) where A is positive-definite
 % This is faster and more stable than using log(det(A)).
-
-% Written by Tom Minka
+%
+%PMTKauthor Tom Minka
 % (c) Microsoft Corporation. All rights reserved.
 try
     U = chol(A);
