@@ -1,4 +1,5 @@
-function [w,b] = perceptronFit(X, y)
+function [w, b] = perceptronFit(X, y)
+%% Classic perceptron algorithm
 % X(i,:) for case i
 % y(i) = -1 or +1
 %PMTKauthor Thomas Hoffman
@@ -10,18 +11,18 @@ w = zeros(d,1);
 b = zeros(1,1);
 max_iter = 100;
 for iter=1:max_iter
-  errors = 0;
-  for i=1:n
-    if ( labels(i) * ( w' * features(:,i) + b ) <= 0 )
-      w = w + labels(i) * features(:,i);
-      b = b + labels(i);
-      errors = errors + 1;
+    errors = 0;
+    for i=1:n
+        if ( labels(i) * ( w' * features(:,i) + b ) <= 0 )
+            w = w + labels(i) * features(:,i);
+            b = b + labels(i);
+            errors = errors + 1;
+        end
     end
-  end
-  fprintf('Iteration %d, errors = %d\n', iter, errors);
-  if (errors==0)
-    break;
-  end
+    fprintf('Iteration %d, errors = %d\n', iter, errors);
+    if (errors==0)
+        break;
+    end
 end
 
 
