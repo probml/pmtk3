@@ -27,7 +27,7 @@ stepSize = 0.1;
   linspace(min(ypredTest),max(ypredTest),300));
 [r,c]=size(x);
 
-func = @(X,Y)normpdf(Y,a + b*X,sigma);
+func = @(X,Y)uniGaussPdf(Y,a + b*X,sigma.^2);
 
 p = func(x(:),y(:));
 p = reshape(p, r, c);
