@@ -9,12 +9,12 @@ for Ni=1:length(Ns)
     setSeed(0);
     X = rand(1,N) < theta;
     estimator = @(X) mean(X);
-    mle = estimator(X);
+    bmle = estimator(X);
     mleBoot = zeros(1,B);
     for b=1:B
-        Xb = rand(1,N) < mle;
+        Xb = rand(1,N) < bmle;
         mleBoot(b) = estimator(Xb);
-        ndx = unidrnd(N,1,N);
+        ndx = unidrndPMTK(N,1,N);
         Xnonparam = X(ndx);
         mleBootNP(b) = estimator(Xnonparam);
     end
@@ -22,7 +22,7 @@ for Ni=1:length(Ns)
     hist(mleBoot)
     set(gca,'xlim',[0 1])
     ttl = sprintf('Boot: true = %3.2f, n=%d, mle = %3.2f, se = %5.3f\n', ...
-        theta, N, mle, std(mleBoot)/sqrt(B));
+        theta, N, bmle, std(mleBoot)/sqrt(B));
     title(ttl)
     printPmtkFigure(sprintf('bootstrapDemoBer%d', N));
     
@@ -40,7 +40,9 @@ printPmtkFigure(sprintf('bootstrapDemoBerNP%d', N));
     N1 = length(find(X==1));
     N0 = length(find(X==0));
     alpha1 = 1; alpha0 = 1;
-    Xpost = betarnd(N1+alpha1, N0+alpha0,1,B);
+    model.a = N1+alpha1;
+    model.b = N0+alpha0;
+    Xpost = betaSample(model, [1, B]); 
     figure;
     hist(Xpost);
     set(gca,'xlim',[0 1])
