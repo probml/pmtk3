@@ -67,7 +67,7 @@ for k=1:patternColSize
 end
 
 setSeed(2);
-[uniBcRow, uniBcCol, uniRowProb, uniColProb] = biclusterMultiple(uniData, 'plot', false, 'allRowThres', 0.7, 'allColThres', 0.8);
+[uniBcRow, uniBcCol, uniRowProb, uniColProb] = biclusteringGibbs(uniData, 'plot', false, 'allRowThres', 0.7, 'allColThres', 0.8);
 figure();
 %subplot('Position', [0.15, 0.15, 0.2, 0.8]);
 subplot('Position', [0.15, 0.15, 0.8, 0.8]);
@@ -174,7 +174,7 @@ for j=1:truecount
 end
 
 setSeed(3);
-[multBcRow, multBcCol, multRowPost, multColPost] = biclusterMultiple(data, 'plot', false, 'allRowThres', 0.7, 'allColThres', 0.8);
+[multBcRow, multBcCol, multRowPost, multColPost] = biclusteringGibbs(data, 'plot', false, 'allRowThres', 0.7, 'allColThres', 0.8);
 
 %figure();
 %colormap('gray');
