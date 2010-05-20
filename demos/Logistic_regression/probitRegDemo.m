@@ -18,12 +18,12 @@ funObj = @(w)ProbitLoss(w,X,ypm1);
 options.display = 'off';
 [wMinfunc, objMinfunc, exitflaf, output] = minFunc(@penalizedL2,zeros(D,1),options,funObj,lambda);
 objTraceMinfunc = output.trace.fval;
-probMinfunc = normcdf(X*wMinfunc);
+probMinfunc = gausscdf(X*wMinfunc);
 objMinfunc2 = ProbitLoss(wMinfunc,X,ypm1) + (lambda)*sum(wMinfunc.^2);
 
 [modelEm, logpostTrace] = probitRegFitEm(X, ypm1, lambda, 'verbose', true);
 wEm = modelEm.w;
-probEm = normcdf(X*wEm);
+probEm = gausscdf(X*wEm);
 objEm = ProbitLoss(wEm,X,ypm1) + (lambda)*sum(wEm.^2);
 objTraceEm = -logpostTrace;
 
