@@ -41,7 +41,7 @@ for k=1:nmetrics
     for m=1:nmethods
         mu = mean(metrics(:,:,k,m));
         se = std(metrics(:,:,k,m))/sqrt(ntrials);
-        h(m) = errorbar(ds, mu, se, styles{m});
+        h(m) = errorbar(ds, mu, se, [styles{m}, colors(m)]);
         %set(h(m), 'color', colors(m));
     end
     legend(methodNames)

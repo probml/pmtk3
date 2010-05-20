@@ -38,7 +38,7 @@ in = [bestSelectedVars];
 %out = setdiff(1:d, in);
 w = zeros(d,1);
 %w(in) = X(:,in)\y;
-model = linregFitL2(X(:, in), y, lambdaRidge, 'QR', false);
+model = linregFit(X(:, in), y, 'lambda', lambdaRidge, 'preproc', struct('standardizeX', false));
 w(in) = model.w; 
 end
 
