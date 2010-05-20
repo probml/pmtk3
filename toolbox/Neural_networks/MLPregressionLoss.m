@@ -1,5 +1,5 @@
 function [f,g] = MLPregressionLoss(w,X,y,nHidden)
-
+%% MLP regression loss function
 [nInstances,nVars] = size(X);
 
 % Form Weights

@@ -1,5 +1,5 @@
 function [y] = MLPregressionPredict(w,X,nHidden)
-
+%% Return MLP predictions
 [nInstances,nVars] = size(X);
 
 % Form Weights
