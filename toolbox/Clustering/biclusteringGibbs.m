@@ -49,7 +49,7 @@ function [biclusterRows, biclusterCols, rowPostProb, colPostProb, traceRow, trac
     maskedRow = setdiff(1:nRow, activeRow); maskedCol = setdiff(1:nCol, activeCol);
     currRow = zeros(1, nRow); currCol = zeros(1, nCol);
     currRow(maskedRow) = NaN; currCol(maskedCol) = NaN;
-    currRow(activeRow) = unidrnd(2,1,length(activeRow)) - 1; currCol(activeCol) = unidrnd(2,1,length(activeCol)) - 1;
+    currRow(activeRow) = unidrndPMTK(2,1,length(activeRow)) - 1; currCol(activeCol) = unidrndPMTK(2,1,length(activeCol)) - 1;
     % Error: we do not want the initialization to affect the counts
     %rowCount = currRow; colCount = currCol;
     rowCount = zeros(1, nRow); colCount = zeros(1, nCol);

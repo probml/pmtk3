@@ -17,7 +17,7 @@ for sparsityNdx=1:length(sparsities)
    
 for trial=1:3
    nnz = ceil(D*sparsity);
-   ndx = unidrnd(D,1,nnz);
+   ndx = unidrndPMTK(D,1,nnz);
    w_true = zeros(D,1);
    w_true(ndx) = randn(nnz,1);
    

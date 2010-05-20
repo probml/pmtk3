@@ -26,7 +26,7 @@ for sparsityNdx=1:length(sparsities)
 for trial=1:Ntrials
   fprintf('\n\n starting trial %d of %d\n\n', trial, Ntrials);
    nnz = ceil(D*sparsity);
-   ndx = unidrnd(D,1,nnz);
+   ndx = unidrndPMTK(D,1,nnz);
    w_true = zeros(D,1);
    w_true(ndx) = 1*randn(nnz,1);
    weightsTrue{trial} = w_true;
