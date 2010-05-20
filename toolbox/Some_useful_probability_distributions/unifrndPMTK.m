@@ -1,5 +1,6 @@
 function r = unifrndPMTK(a, b, varargin)
 %% Replacement for the stats unifrnd function 
+% Just samples uniformly between a and b
 if nargin < 3
     sz = [1, 1];
 elseif nargin == 3

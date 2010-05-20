@@ -3,8 +3,8 @@
 %%
 r=2;
 S=5000;
-xs = unifrnd(-r,r,S,1);
-ys = unifrnd(-r,r,S,1);
+xs = unifrndPMTK(-r,r,S,1);
+ys = unifrndPMTK(-r,r,S,1);
 rs = xs.^2 + ys.^2;
 inside = (rs <= r^2);
 samples = 4*(r^2)*inside;
