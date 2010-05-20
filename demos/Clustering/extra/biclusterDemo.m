@@ -9,6 +9,7 @@ dummyData = zeros(nRow, nCol);
 nLevels = 3;
 
 %% First a really simple example
+
 fprintf('First discover a bicluster in a really simple example -- binary data\n')
 dummyData(5:5:end, 5:5:end) = 1;
 patternDummyRows = 5:5:size(dummyData,1);
@@ -47,19 +48,19 @@ printPmtkFigure('dummyBiclusterData');
 
 %% Now a more difficult example
 fprintf('\n\nNow we try a more difficult example, similar to the example from Fig. 2 in Shen et al (2003): Biclustering Microarray Data in Gibbs Sampling\n')
-uniData = unidrnd(nLevels, [nRow, nCol]);
+uniData = unidrndPMTK(nLevels, [nRow, nCol]);
 % now we embed the pattern
 patternRowSize = 25;
 patternColSize = 8;
 sharp = 0.95;
 
 p = rand(nLevels,patternColSize)*(1-sharp); % a sharp multinomial distributions
-idx = sub2ind(size(p), unidrnd(nLevels, 1, patternColSize), 1:patternColSize);
+idx = sub2ind(size(p), unidrndPMTK(nLevels, 1, patternColSize), 1:patternColSize);
 p(idx) = sharp;
 p = normalize(p, 1);
 
-patternUniRows = randsample(nRow, patternRowSize);
-patternUniCols = randsample(nCol, patternColSize);
+patternUniRows = unidrndPMTK(nRow, patternRowSize);
+patternUniCols = unidrndPMTK(nCol, patternColSize);
 fprintf('True rows: %s\n', mat2str(sort(patternUniRows')))
 fprintf('True columns: %s\n', mat2str(sort(patternUniCols')))
 for k=1:patternColSize
@@ -138,7 +139,7 @@ clear data
 nRow = 200;
 nCol = 40;
 setSeed(103);
-data = unidrnd(nLevels, [nRow, nCol]);
+data = unidrndPMTK(nLevels, [nRow, nCol]);
 truecount = 3;
 patternRowSizeVec = [40, 25, 35];
 patternColSizeVec = [7, 10, 8];
@@ -155,14 +156,14 @@ for j=1:truecount
   %patternCols{j} = randsample(nCol, patternColSize);
   patternRows{j} = rowperm(1:patternRowSize);
   patternCols{j} = colperm(1:patternColSize);
-  rowOverlap = unidrnd(5); colOverlap = unidrnd(3);
+  rowOverlap = unidrndPMTK(5); colOverlap = unidrndPMTK(3);
   rowperm = rowperm((patternRowSize - rowOverlap + 1):end);
   colperm = colperm((patternColSize - colOverlap + 1):end);
   fprintf('True rows: %s\n', mat2str(sort(patternRows{j}')))
   fprintf('True columns: %s\n', mat2str(sort(patternCols{j}')))
 
   p = rand(nLevels,patternColSize)*(1-sharp); % a sharp multinomial distributions
-  idx = sub2ind(size(p), unidrnd(nLevels, 1, patternColSize), 1:patternColSize);
+  idx = sub2ind(size(p), unidrndPMTK(nLevels, 1, patternColSize), 1:patternColSize);
   p(idx) = sharp;
   p = normalize(p, 1);
 
