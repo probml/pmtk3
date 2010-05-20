@@ -28,7 +28,7 @@ printPmtkFigure('newsgroupsSpyWithLabels');
 %% Print a sentence (bag of words) chosen at random for each class
 setSeed(1);
 for c=1:length(unique(yy))
-  fprintf('words in sentences from class %s\n\n', groupnames{c});
+  fprintf('words in sentences from class %s\n\n', classlabels{c});
   for t=1:3
     % pick a random document from this class and print its words
     ndx = find(yy==c);
