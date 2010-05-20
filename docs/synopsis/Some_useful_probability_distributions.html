@@ -6,21 +6,21 @@
 <TR>
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/betaLogprob.m">betaLogprob</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>logp(i) = log p( X(i) | model.a, model.b)</font></TD>
 </TR><TR>
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/betaprob.m">betaprob</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/betaprob.m">betaprob</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>p(i) =  p( t(i) | a, b)</font></TD>
 </TR><TR>
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/betaSample.m">betaSample</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Return n samples from a beta distribution with parameters model.a,</font></TD>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/betaSample.m">betaSample</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Return n samples from a beta distribution</font></TD>
 </TR><TR>
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/binomialLogprob.m">binomialLogprob</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>logp(i) = log p( X(i) | model.mu, model.N)</font></TD>
 </TR><TR>
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/binomprob.m">binomprob</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/binomprob.m">binomprob</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>p(i) = p( X(i) | mu, N)</font></TD>
 </TR><TR>
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/chi2Sample.m">chi2Sample</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Sample n samples, from a chi^2 distribution with model.dof degrees of</font></TD>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/chi2Sample.m">chi2Sample</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Sample n samples from a chi^2 distribution</font></TD>
 </TR><TR>
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/dirichletLogprob.m">dirichletLogprob</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>logp(i) = log p(X(i, :) | model.alpha)</font></TD>
 </TR><TR>
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/dirichletSample.m">dirichletSample</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>S(1:n, :) ~ dir(model.alpha)</font></TD>
 </TR><TR>
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/discreteFit.m">discreteFit</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Fit a discrete distribution, or if X is a matrix, a product of discrete</font></TD>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/discreteFit.m">discreteFit</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Fit a discrete distribution, or if X is a matrix, a product of discrete distributions</font></TD>
 </TR><TR>
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/discreteLogprob.m">discreteLogprob</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Compute the log probability of the data. X must be in 1:K.</font></TD>
 </TR><TR>
@@ -32,11 +32,11 @@
 </TR><TR>
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/gaussInvWishartLogprob.m">gaussInvWishartLogprob</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>logp(i) = p(m(:, i), S(:, :, i) | model)</font></TD>
 </TR><TR>
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/invChi2Sample.m">invChi2Sample</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>See Gelman p580</font></TD>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/invChi2Sample.m">invChi2Sample</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Sample from an inverse Chi^2 distribution</font></TD>
 </TR><TR>
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/invGammaLogprob.m">invGammaLogprob</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>logp(i) = log p(X(i) | model.a, model.b)</font></TD>
 </TR><TR>
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/invGammaSample.m">invGammaSample</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Sample from an inverse gamma distribution with parameters model.a,</font></TD>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/invGammaSample.m">invGammaSample</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Sample from an inverse gamma distribution</font></TD>
 </TR><TR>
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/invWishartLogprob.m">invWishartLogprob</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>logp(i) = log p(S(:, :, i) | model)</font></TD>
 </TR><TR>
@@ -48,9 +48,9 @@
 </TR><TR>
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/laplaceLogprob.m">laplaceLogprob</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>L(i) = log p(X(i)|model)</font></TD>
 </TR><TR>
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/laplaceNeglogpdf.m">laplaceNeglogpdf</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/laplaceNeglogpdf.m">laplaceNeglogpdf</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Laplace negative log pdf</font></TD>
 </TR><TR>
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/laplaceNeglogpdfDeriv.m">laplaceNeglogpdfDeriv</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/laplaceNeglogpdfDeriv.m">laplaceNeglogpdfDeriv</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Derivative of the laplace logpdf function</font></TD>
 </TR><TR>
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/laplaceSample.m">laplaceSample</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>X(1:n, j) ~ laplace(model.mu(j), model.b(j))</font></TD>
 </TR><TR>
@@ -58,29 +58,29 @@
 </TR><TR>
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/mvtGammaln.m">mvtGammaln</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>returns the log of multivariate gamma(n, alpha) value.</font></TD>
 </TR><TR>
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/noncentraltpdf.m">noncentraltpdf</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>location a, scale b, dof v</font></TD>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/noncentraltpdf.m">noncentraltpdf</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Noncentral T PDF</font></TD>
 </TR><TR>
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/normalExpGammaNeglogpdf.m">normalExpGammaNeglogpdf</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>gamma^2 = c = scale</font></TD>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/normalExpGammaNeglogpdf.m">normalExpGammaNeglogpdf</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Normal exponential gamma negative logpdf</font></TD>
 </TR><TR>
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/normalExpGammaNeglogpdfDeriv.m">normalExpGammaNeglogpdfDeriv</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>gamma^2 = c = scale</font></TD>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/normalExpGammaNeglogpdfDeriv.m">normalExpGammaNeglogpdfDeriv</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Derivative of normal exponential gamma negative logpdf function</font></TD>
 </TR><TR>
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/normalGammaNeglogpdf.m">normalGammaNeglogpdf</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/normalGammaNeglogpdf.m">normalGammaNeglogpdf</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Nomral gamma negative logpdf</font></TD>
 </TR><TR>
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/normalGammaNeglogpdfDeriv.m">normalGammaNeglogpdfDeriv</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/normalGammaNeglogpdfDeriv.m">normalGammaNeglogpdfDeriv</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Derivative of the normal gamma negative logpdf function</font></TD>
 </TR><TR>
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/normalJeffreysNeglogpdf.m">normalJeffreysNeglogpdf</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/normalJeffreysNeglogpdf.m">normalJeffreysNeglogpdf</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Normal Jeffery's Negative logpdf</font></TD>
 </TR><TR>
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/normalJeffreysNeglogpdfDeriv.m">normalJeffreysNeglogpdfDeriv</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/normalJeffreysNeglogpdfDeriv.m">normalJeffreysNeglogpdfDeriv</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Derivative of the normal Jeffrey's negative logpdf function</font></TD>
 </TR><TR>
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/paretoLogprob.m">paretoLogprob</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>logp(i) = log p(X(i) | model.m, model.K);</font></TD>
 </TR><TR>
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/poissonLogprob.m">poissonLogprob</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>logp(i) = sum_j log p(X(i, j) | model.lambda(j))</font></TD>
 </TR><TR>
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/randgamma.m">randgamma</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>RANDGAMMA   Sample from Gamma distribution</font></TD>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/randgamma.m">randgamma</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Sample from Gamma distribution</font></TD>
 </TR><TR>
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/sampleDiscrete.m">sampleDiscrete</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Like the built in 'rand', except we draw from a non-uniform discrete distrib</font></TD>
 </TR><TR>
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/sampleUniform.m">sampleUniform</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Like the stats unifrnd function. Just samples n uniformly distributed</font></TD>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/sampleUniform.m">sampleUniform</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Like the stats unifrnd function.</font></TD>
 </TR><TR>
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/Some_useful_probability_distributions/studentCondition.m">studentCondition</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>p(xh|xv=visValues)</font></TD>
 </TR><TR>

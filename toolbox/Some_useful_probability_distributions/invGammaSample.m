@@ -1,8 +1,8 @@
 function X = invGammaSample(model, n)
-% Sample from an inverse gamma distribution with parameters model.a,
-% model.b.
+% Sample from an inverse gamma distribution 
+% with parameters model.a, model.b.
 % *** requires stats toolbox ***
-
+requireStatsToolbox
 a = model.a;
 b = model.b;
 v = 2*a;

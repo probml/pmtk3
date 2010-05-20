@@ -1,5 +1,5 @@
 function x = randgamma(a)
-% RANDGAMMA   Sample from Gamma distribution
+% Sample from Gamma distribution
 % 
 % X = RANDGAMMA(A) returns a matrix, the same size as A, where X(i,j)
 % is a sample from a Gamma(A(i,j)) distribution.

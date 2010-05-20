@@ -1,6 +1,6 @@
 function S = chi2Sample(model, n)
-% Sample n samples, from a chi^2 distribution with model.dof degrees of
-% freedom.
+% Sample n samples from a chi^2 distribution 
+% with model.dof degrees of freedom.
 dof = model.dof;
 if ~isequal(length(dof), n)
     dof = repmat(dof, n);

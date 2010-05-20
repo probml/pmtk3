@@ -1,6 +1,6 @@
 function S = betaSample(model, n)
-% Return n samples from a beta distribution with parameters model.a,
-% model.b. 
+% Return n samples from a beta distribution
+% with parameters model.a, model.b. 
 %S = colvec(randraw('Beta', [model.a, model.b], n));
 
 if nargin < 2, n = 1; end

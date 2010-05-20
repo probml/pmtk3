@@ -1,4 +1,5 @@
-function out=pen_normalgamma(w,shape, scale)
+function out=normalGammaNeglogpdf(w,shape, scale)
+% Nomral gamma negative logpdf
 lambda = shape;
 gamma = sqrt(2*scale);
 warning off

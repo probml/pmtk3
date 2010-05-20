@@ -1,4 +1,5 @@
 function out=laplaceNeglogpdfDeriv(w,scale)
-  gamma = sqrt(2*scale);
+% Derivative of the laplace logpdf function
+gamma = sqrt(2*scale);
 out=gamma;
 end

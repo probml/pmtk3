@@ -1,6 +1,5 @@
 function model = discreteFit(X, alpha, K)
-% Fit a discrete distribution, or if X is a matrix, a product of discrete
-% distributions.
+% Fit a discrete distribution, or if X is a matrix, a product of discrete distributions
 %
 % X(i, j)        is the ith case, assumed to be from the jth distribution.
 %                X must be in 1:K.
