@@ -1,5 +1,5 @@
 function w = linregFitGroupLassoProj(X, y, groups, lambda, winit)
-
+%% Fits the group lasso model
 nVars = size(X,2);
 if nargin < 5, winit = zeros(nVars,1); end
 nGroups = max(groups);
