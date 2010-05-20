@@ -19,7 +19,7 @@ k0 = fix(sparsity*n);
 % Generate a bunch of random sparse weight vectors
 for c = 1:nCases   % ------------------------------------- MC loop
    %x0 = randn(n,1);         % Gaussian x
-   x0 = unifrnd(-1,1,n,1);
+   x0 = unifrndPMTK(-1,1,n,1);
    %x0 = 3*(2*rand(n,1)-1);  % Uniform x
    %x0 = sign(randn(n,1));   % Binary x
    idx = randperm(n);

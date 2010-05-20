@@ -8,7 +8,7 @@ pimaNan = pima;
 [n,p] = size(pima);
 
 probMissing = 0.3;
-miss = unifrnd(0,1,size(pima));
+miss = unifrndPMTK(0,1,size(pima));
 miss(miss < probMissing) = 0;
 pimaNan(miss == 0) = NaN;
 % pimaNanImg = pimaNan;
