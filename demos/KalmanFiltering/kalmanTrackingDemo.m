@@ -29,7 +29,7 @@ end
 
 setSeed(9);
 T = 15;
-[x,y] = kalmanSample(F, H, Q, R, initx, T);
+[x,y] = kalmanSample(F, H, Q, R, initmu, T);
 
 [xfilt, Vfilt,  loglik] = kalmanFilter(y, F, H, Q, R, initmu, initV);
 [xsmooth, Vsmooth] = kalmanSmoother(y, F, H, Q, R, initmu, initV);
