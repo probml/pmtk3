@@ -23,11 +23,12 @@ ignoredWarnings = {
    'MATLAB:RandStream:ReadingInactiveLegacyGeneratorState'  % caused by setSeed
    'MATLAB:dispatcher:nameConflict'                         % caused by shadowFunction
                   };
-dbstat    = dbstatus();
+                            
+dbstat = dbstatus();
 % ensures function cleans up even after ctrl-c
 cleaner = onCleanup(@(x)cleanup(warnState, pwd, dbstat));
 shadowFunction({'pause', 'input', 'keyboard', 'suplabel'});
-cd(tempdir());
+cd(tempdir()); 
 dbclear('if', 'error');
 dbclear('if', 'warning');
 if nargin < 1, subFolder = ''; end
@@ -37,13 +38,15 @@ if nargin < 2
 end
 hideFigures();
 [demos, excluded] = processExamples({}, exclusions, 0, false, subFolder);
-maxname = max(cellfun(@length, demos));
-ndemos = numel(demos);
-demos = cellfuncell(@(s)s(1:end-2), demos);
-errors = struct();
+demos    = sort(demos);
+excluded = sort(excluded); 
+maxname  = max(cellfun(@length, demos));
+ndemos   = numel(demos);
+demos    = cellfuncell(@(s)s(1:end-2), demos);
+errors   = struct();
 warnings = struct();
 htmlData = cell(ndemos+numel(excluded), 5);
-htmlTableColors   = repmat({'lightgreen'}, ndemos, 5);
+htmlTableColors = repmat({'lightgreen'}, ndemos, 5);
 %%
 for dm=1:ndemos
     try

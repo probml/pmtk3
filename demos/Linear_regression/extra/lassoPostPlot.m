@@ -13,18 +13,17 @@ taus= [2.5 2 1 0.5];
 figure; hold on
 [styles, colors, symbols] =  plotColors;
 
-
 for i=1:length(taus)
    tau = taus(i);
    muPlus = bols - tau*v2;
    muMinus = bols + tau*v2;
-   a = normcdf(-muMinus/v)/normpdf(0,muMinus,v);
-   b = normcdf(muPlus/v)/normpdf(0, muPlus, v);
+   a = gausscdf(-muMinus/v)/gausspdf(0,muMinus,v);
+   b = gausscdf(muPlus/v)/gausspdf(0, muPlus, v);
    w = a/(a+b);
    beta = -1:0.1:5;
    post = w*gaussTrunc(beta, muMinus, v, false) + ...
       (1-w)*gaussTrunc(beta, muPlus, v, true);
-   plot(beta, post, styles{i}, 'linewidth', 2, 'markersize', 8);
+   plot(beta, post, [styles{i}, colors(i)], 'linewidth', 3, 'markersize', 8);
    legendStr{i} = sprintf('tau = %3.1f', tau);
    
    prior = (tau/2)*exp(-abs(beta));
@@ -39,9 +38,11 @@ end
 
 
 function p = gaussTrunc(t, m, s, plus)
+s = s.^2; 
+t = t(:);
 if plus
-   p = normpdf(t, m, s)/normcdf(m/s) .* (t >= 0);
+   p = gausspdf(t, m, s)/gausscdf(m/s) .* (t >= 0);
 else
-   p = normpdf(t, m, s)/normcdf(-m/s) .* (t < 0);
+   p = gausspdf(t, m, s)/gausscdf(-m/s) .* (t < 0);
 end
 end
