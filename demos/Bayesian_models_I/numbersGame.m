@@ -67,8 +67,8 @@ function prior = tenenbaumPrior(hypSpace)
      lambda = 2/3;
      math = (2/3)*ones(1,34);
      sizes = [hypSpace.size];
-     sizes = sizes(35:end);
-     ints = gampdf(sizes,2,10);
+     sizes = sizes(35:end);     
+     ints = exp(gammalogprob(struct('a', 2, 'b', 10), sizes));
      ints = (1/3)*ints;
      prior = [math ints];
      prior = prior ./ sum(prior);
@@ -354,13 +354,7 @@ function visualizePredictive(inconcept,data,hypSpace)
 end
 
 
-% Plot a gamma distribution with shape=2 and rate=10. 
-function plotGamma()
-    figure;
-    pdf = @(x)gampdf(x,2,10);
-    fplot(pdf,[0,100,0,0.04]);
-    title('Gamma( x | 2,10 )');
-end
+
 
 %% Hypothesis Building Functions
 
