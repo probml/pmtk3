@@ -42,7 +42,7 @@ mu = priorMean;
 sigma = priorSigma;
 for i=1:iter
   subplot2(2+iter,3,i+1,1);
-  likelihood = @(W) normpdf(xtrain(i),W*[1;xtrain(i)],likelihoodSD);
+  likelihood = @(W) uniGaussPdf(xtrain(i),W*[1;xtrain(i)],likelihoodSD.^2);
   contourPlot(likelihood,[a0,a1]);
   
   subplot2(2+iter,3,i+1,2);
@@ -56,7 +56,7 @@ end
 %% Plot likelihood for the last point alone
 last = trainingPoints;
 subplot2(2+iter,3,iter+2,1);
-likelyhoodLast = @(W) normpdf(xtrain(last),W*[1;xtrain(last)],likelihoodSD);
+likelyhoodLast = @(W) uniGaussPdf(xtrain(last),W*[1;xtrain(last)],likelihoodSD.^2);
 contourPlot(likelyhoodLast,[a0,a1]);
 
 %% Plot the posterior over all of the training data. 
