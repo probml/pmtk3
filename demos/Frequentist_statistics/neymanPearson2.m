@@ -25,8 +25,9 @@ xIntersectIdx = argmin(abs(xrange - 2.3));
 upperEnd = max(f2(1:xIntersectIdx));
 yrange = 0:lineRes:max(f2(xrange(1:xIntersectIdx)));
 ypoints = [yrange; yrange];
-offset = 0.2; % since the plotting of the pdf curve and the norminv function do not completely agree, this helps a bit
-xpoints = [norminv(yrange, 4, sigma) - offset; xrange(xIntersectIdx)*ones(1, length(yrange))];
+offset = 0.17; 
+xpoints = [gaussinv(yrange, 4, sigma.^2) - offset; 
+           xrange(xIntersectIdx)*ones(1, length(yrange))];
 line(xpoints, ypoints, 'Color', 'r'); 
 
 lineRes = 0.1;
