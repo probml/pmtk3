@@ -19,15 +19,15 @@ else
   end
 end
 
-w = warning;
-warning off
+%w = warning;
+%warning off
 if row
   p = log(data) * (a-1)';
 else
   p = (a-1)' * log(data);
 end
 p = p + gammaln(sum(a)) - sum(gammaln(a));
-warning(w)
+%warning(w)
 
 if row
   [N,K] = size(data);

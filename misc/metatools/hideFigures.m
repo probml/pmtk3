@@ -23,6 +23,7 @@ figfile = { 'function h = figure(varargin)'
     'else'
     '    h = builtin(''figure'', varargin{:}, ''visible'', ''off'');'
     'end'
+    'end'
     };
 
 axesfile = { 'function h = axes(varargin)'
@@ -31,6 +32,7 @@ axesfile = { 'function h = axes(varargin)'
     '    h = varargin{1};'
     'else'
     '    h = builtin(''axes'', varargin{:}, ''visible'', ''off'');'
+    'end'
     'end'
     };
 

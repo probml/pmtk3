@@ -3,7 +3,7 @@ function out=normalExpGammaNeglogpdfDeriv(z,shape,scale)
 % gamma^2 = c = scale
 lambda = shape;
 gamma = sqrt(scale);
-warning off
+%warning off
 out=(lambda+0.5)/gamma...
       .*paracyl(-2*(lambda+1),abs(z)/gamma)...
       ./paracyl(-2*(lambda+1/2),abs(z)/gamma);
@@ -19,5 +19,5 @@ end
 assert(approxeq(out(:), out2(:)))
 end
 
-warning on
+%warning on
 end
