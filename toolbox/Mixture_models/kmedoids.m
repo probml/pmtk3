@@ -1,3 +1,4 @@
+% K-medoids algorithm
 % [idx,dpsim]=kmedoids(S,k,nruns,maxits)
 %
 % Input:

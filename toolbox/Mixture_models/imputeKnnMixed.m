@@ -1,11 +1,10 @@
 function Ximpute = imputeKnnMixed( X, K, varargin )
-%KNNIMPUTE Impute missing continuous/ discrete values by knn
+% Impute missing continuous/ discrete values by knn
 % types is a string, where types(j) = 'c' or 'd'
 % For continuuous features, we use Euclidean distance.
 % For discrete features, we use Hamming distance.
 % Once we have found the nearest neighbors, we impute
 % using the mean (for cts) or the mode (for discrete)
-
 %PMTKauthor Hannes Bretschneider
 
 D = size(X,2);

@@ -1,6 +1,6 @@
 function [X, y] = mixGaussSample(model, nsamples)
-% Sample n samples from a mixture of multivariate gaussians all with the 
-% same dimensionality.
+% Sample n samples from a mixture of multivariate gaussians
+% all with the same dimensionality.
 %
 % model is a struct with the fields mu, Sigma, and mixweight.  
 % mu(:,c)       -  a d-by-C matrix, with mu(:, c) = the mean of component c.

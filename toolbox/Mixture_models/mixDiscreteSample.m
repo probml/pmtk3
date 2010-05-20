@@ -1,6 +1,6 @@
 function [X, y] = mixDiscreteSample(model, nsamples)
-% Sample nsamples from a mixture of discrete distributions. X(i, :) is the
-% ith sample generated from mixture y(i). 
+% Sample nsamples from a mixture of discrete distributions. 
+% X(i, :) is the ith sample generated from mixture y(i). 
 %
 %% INPUTS:
 % model is a struct with fields T, nmix, d, nstates, mixweight

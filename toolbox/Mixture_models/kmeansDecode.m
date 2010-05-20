@@ -1,4 +1,5 @@
 function Xhat = kmeansDecode(assign, mu)
+% Kmeans decoding
 % assign(i) is the codeword index for case i
 % mu(:,k) is the k'th code vector
 % Xhat(i,:) is the reconstruction
