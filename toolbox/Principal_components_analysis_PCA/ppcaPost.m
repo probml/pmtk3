@@ -1,5 +1,5 @@
 function [postMean, postCov] = ppcaPost(X, W, mu, sigma2, evals, evecs)
-% Probabilistic PCA - computer posterior on Z
+% Probabilistic PCA - compute posterior on Z
 % postMean(i,:) = E[Z|X(i,:)]
 % postCov(:,:) is the same for all i
 

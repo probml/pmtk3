@@ -1,5 +1,5 @@
 function [f,g] = MLPbinaryLoss(w,X,y,nHidden)
-%% MLP binary loss function function
+%% MLP binary loss function
 [nInstances,nVars] = size(X);
 
 % Form Weights

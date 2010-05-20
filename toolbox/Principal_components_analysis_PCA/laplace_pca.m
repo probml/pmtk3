@@ -1,5 +1,5 @@
 function [k,p] = laplace_pca(data, e, d, n)
-% LAPLACE_PCA   Estimate latent dimensionality by Laplace approximation.
+% Estimate latent dimensionality by Laplace approximation.
 %
 % k = LAPLACE_PCA([],e,d,n) returns an estimate of the latent dimensionality
 % of a dataset with eigenvalues e, original dimensionality d, and size n.

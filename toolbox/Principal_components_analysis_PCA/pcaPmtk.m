@@ -1,4 +1,5 @@
 function [B, Z, evals, Xrecon, mu] = pcaPmtk(X, K, method)
+% An efficient PCA implementation
 % X is n*d - rows are examples, columns are features
 % If K is not specified, we use the maximum possible value (min(n,d))
 % B is d*K (the basis vectors)

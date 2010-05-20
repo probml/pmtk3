@@ -1,6 +1,5 @@
 function [C, ss, M, X,Ye] = ppca_mv(Ye,d,dia)
-%
-% implements probabilistic PCA for data with missing values, 
+% Implements probabilistic PCA for data with missing values
 % using a factorizing distribution over hidden states and hidden observations.
 %
 %  - The entries in Ye that equal NaN are assumed to be missing. - 
