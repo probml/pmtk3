@@ -1,5 +1,5 @@
 function model = linregRobustLaplaceFitLinprog(X, y)
-% minimize the L1 norm of the residuals using linear programming 
+% Minimize the L1 norm of the residuals using linear programming 
 % We assume X is an N*D  matrix, with no column of 1s
 % model.w = [w0 w1 ... wD], where w0 is the bias
 

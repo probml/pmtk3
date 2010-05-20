@@ -1,5 +1,5 @@
 function model = linregRobustStudentFitConstr(X, y, dof, sigma2, includeOffset)
-% constrained gradient-based optimization of linear regression with Student T noise model
+% Constrained gradient-based optimization of linear regression with Student T noise model
 % We assume X is an N*D matrix; we will optionall add a column of 1s internally.
 % Set dof=[] or 0 (or omit it) if it is unknown.
 % Set sigma2=[] or 0 (or omit it) if is unknown.
