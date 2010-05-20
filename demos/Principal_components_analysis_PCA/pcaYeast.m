@@ -22,13 +22,13 @@ title('scree plot')
 figure; plot(X'); set(gca,'xticklabel',times);
 title('raw data')
 
-styles = plotColors;
+[styles, colors, symbols] = plotColors;
 figure;
 K = size(B,2);
 %nBasis = 2;
 nBasis = 7
 for i=1:nBasis
-    plot(times, B(:,i), styles{i});
+    plot(times, B(:,i), [styles{i}, colors(i)], 'linewidth', 2);
     hold on
     str{i} = sprintf('pc %d', i);
 end
