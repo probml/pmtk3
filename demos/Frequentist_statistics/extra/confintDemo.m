@@ -14,13 +14,14 @@ U = muHat - SS*tinvPMTK(alpha/2,nu);
 muCI = [L, U] % 263.8416  289.9478
 
 sigma2HatMLE = var(D,1);
-LL = N*sigma2HatMLE/chi2inv(1-alpha/2,nu);
-UU = N*sigma2HatMLE/chi2inv(alpha/2,nu);
+LL = N*sigma2HatMLE/chi2invPMTK(1-alpha/2,nu);
+UU = N*sigma2HatMLE/chi2invPMTK(alpha/2,nu);
 sigma2CI = [LL UU] % 418.75       1603.96
 sigmaCI = sqrt([LL, UU])  % 20.46         40.05
 
 %% stats toolbox
 [pHat, pCI] = mle(D, 'distribution', 'normal')
+%pHat = [mean(D), std(D, 1)];
 assert(approxeq(pHat, [muHat sqrt(sigma2HatMLE)]))
 assert(approxeq(pCI, [muCI(:) sigmaCI(:)]))
 
