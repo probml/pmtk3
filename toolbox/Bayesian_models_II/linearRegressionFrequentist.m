@@ -21,7 +21,8 @@ Sigma = pinv(X'*X)*sigma2; % covariance matrix of w
 stderr = sqrt(diag(Sigma));
 Zscore = w ./ stderr;
 dof = n-d-1;
-pval = 1-tcdf(abs(Zscore),dof) + tcdf(-abs(Zscore),dof);
+pval = 1-tcdfPMTK(abs(Zscore),dof) + tcdfPMTK(-abs(Zscore),dof);
+assert(approxeq(pval, pval2)); 
 alpha = 0.95;
 tc = tinvPMTK(1-(1-alpha)/2, dof); 
 confint = [w-tc*stderr w+tc*stderr];
