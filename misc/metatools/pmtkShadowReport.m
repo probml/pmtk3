@@ -6,7 +6,7 @@ shadows   = {};
 identical = {};
 fonly = @(f)argout(2, @fileparts, f);
 files = cellfuncell(fonly, files); 
-
+files = unique(files); 
 for i=1:numel(files)
     f = files{i};
     if strcmpi(f, 'Contents')
