@@ -14,7 +14,7 @@ if model.binary
     yhat = p > 0.5;  % now in [0 1]
     yhat = setSupport(yhat, model.ySupport, [0 1]); % restore initial support 
 else
-    p = softmax(X*model.w);
+    p = softmaxPmtk(X*model.w);
     yhat = maxidx(p, [], 2);
     C = size(p, 2); % now in 1:C
     yhat = setSupport(yhat, model.ySupport, 1:C); % restore initial support

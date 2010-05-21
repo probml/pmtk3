@@ -8,7 +8,7 @@ nr = 1;
 nc = numel(T);
 for i=1:numel(T)
     subplot(nr, nc, i)
-    bar(softmax(eta./T(i))); 
+    bar(softmaxPmtk(eta./T(i))); 
     title(sprintf('T = %g', T(i)));
 end
 printPmtkFigure('softmaxDemo2'); 

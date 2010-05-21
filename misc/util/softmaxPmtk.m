@@ -1,4 +1,4 @@
-function mu = softmax(eta)
+function mu = softmaxPmtk(eta)
 % Softmax function
 tmp = exp(eta);
 denom = sum(tmp, 2);

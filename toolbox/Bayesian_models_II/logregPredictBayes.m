@@ -1,4 +1,4 @@
-function [yhat, p] = logregPredict(model, X)
+function [yhat, p] = logregPredictBayes(model, X)
 % p(i, j) = p(y=j | X(i,:), model)
 % yhat max_j p(i, j) - same space as model.ySupport
 % A column of 1s is added if this was done at training time
@@ -25,7 +25,7 @@ if model.binary
     yhat = p > 0.5;  % in [0 1]
     yhat = setSupport(yhat, model.ySupport, [0 1]); 
 else
-    p = softmax(X*model.w);
+    p = softmaxPmtk(X*model.w);
     yhat = maxidx(p, [], 2);
     C = size(p, 2);
     yhat = setSupport(yhat, model.ySupport, 1:C);
