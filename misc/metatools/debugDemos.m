@@ -22,6 +22,7 @@ warnState = warning('query', 'all');
 ignoredWarnings = {
    'MATLAB:RandStream:ReadingInactiveLegacyGeneratorState'  % caused by setSeed
    'MATLAB:dispatcher:nameConflict'                         % caused by shadowFunction
+   'MATLAB:Axes:NegativeDataInLogAxis'                      % erroneous log axis warning
                   };
                             
 dbstat = dbstatus();
@@ -34,7 +35,7 @@ dbclear('if', 'warning');
 if nargin < 1, subFolder = ''; end
 if nargin < 2
     %exclusions = {'PMTKslow', 'PMTKinteractive', 'PMTKreallySlow'};
-    exclusions = {'PMTKinteractive'};
+    exclusions = {'PMTKinteractive', 'PMTKreallySlow'};
 end
 hideFigures();
 [demos, excluded] = processExamples({}, exclusions, 0, false, subFolder);
