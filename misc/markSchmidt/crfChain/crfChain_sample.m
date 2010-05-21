@@ -21,10 +21,10 @@ y = zeros(nNodes,1);
 
 for s = 1:nSamples
     % Backward Pass
-    y(nNodes) = sampleDiscreteSchmidt(alpha(nNodes,:));
+    y(nNodes) = sampleDiscrete(alpha(nNodes,:));
     for n = nNodes-1:-1:1
         pot_ij = alpha(n,:)'.*edgePot(:,y(n+1));
-        y(n) = sampleDiscreteSchmidt(pot_ij./sum(pot_ij));
+        y(n) = sampleDiscrete(pot_ij./sum(pot_ij));
     end
     samples(:,s) = y;
 end

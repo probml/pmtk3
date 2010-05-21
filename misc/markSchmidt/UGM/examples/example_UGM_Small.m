@@ -8,10 +8,10 @@ nodePot = [1 3
 
 nSamples = 100;
 for s = 1:nSamples
-   samples(1,s) = sampleDiscreteSchmidt(nodePot(1,:)/sum(nodePot(1,:))); 
-   samples(2,s) = sampleDiscreteSchmidt(nodePot(2,:)/sum(nodePot(2,:))); 
-   samples(3,s) = sampleDiscreteSchmidt(nodePot(3,:)/sum(nodePot(3,:))); 
-   samples(4,s) = sampleDiscreteSchmidt(nodePot(4,:)/sum(nodePot(4,:))); 
+   samples(1,s) = sampleDiscrete(nodePot(1,:)/sum(nodePot(1,:))); 
+   samples(2,s) = sampleDiscrete(nodePot(2,:)/sum(nodePot(2,:))); 
+   samples(3,s) = sampleDiscrete(nodePot(3,:)/sum(nodePot(3,:))); 
+   samples(4,s) = sampleDiscrete(nodePot(4,:)/sum(nodePot(4,:))); 
 end
 figure(1);
 imagesc(samples');

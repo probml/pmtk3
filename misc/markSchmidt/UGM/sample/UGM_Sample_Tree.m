@@ -88,7 +88,7 @@ for s = 1:maxIter
         n = order(o);
         
         if parent(o) == 0
-            y(n) = sampleDiscreteSchmidt(nodeBel(n,:));
+            y(n) = sampleDiscrete(nodeBel(n,:));
         else
             e = parentEdge(o);
             marg = nodeBel(n,:);
@@ -100,7 +100,7 @@ for s = 1:maxIter
                 join = edgeBel(:,y(parent(o)),e)';
             end
             cond = join./marg;
-            y(n) = sampleDiscreteSchmidt(cond/sum(cond));
+            y(n) = sampleDiscrete(cond/sum(cond));
         end
     end
     samples(:,s) = y;

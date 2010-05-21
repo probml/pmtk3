@@ -164,7 +164,7 @@ for i = 1:nInstances
     for s = 1:length(nStates)
         prob_s = rand(nStates(s),1);
         prob_s = prob_s/sum(prob_s);
-        X(i,s) = sampleDiscreteSchmidt(prob_s);
+        X(i,s) = sampleDiscrete(prob_s);
     end
 end
 

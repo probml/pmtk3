@@ -34,5 +34,5 @@ for w = 2:nWords
     end
 
     pot = pot/sum(pot);
-    y(w,1) = sampleDiscreteSchmidt(pot)-1;
+    y(w,1) = sampleDiscrete(pot)-1;
 end
