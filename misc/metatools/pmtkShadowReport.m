@@ -5,9 +5,10 @@ main      = {};
 shadows   = {};
 identical = {};
 fonly = @(f)argout(2, @fileparts, f);
+files = cellfuncell(fonly, files); 
 
 for i=1:numel(files)
-    f = fonly(files{i});
+    f = files{i};
     if strcmpi(f, 'Contents')
         continue;
     end
@@ -23,6 +24,7 @@ for i=1:numel(files)
     main      = insertEnd(w{1}, main);
     shadows   = insertEnd(w(2:end), shadows);
 end
+ 
 pmtkRed  = '#990000';
 R = [main', shadows', identical'];
 htmlTable('data', R, 'colNames', {'Main File', 'Shadows', 'Identical?'}, ...
@@ -58,7 +60,13 @@ f2 = filterCell(f2, @(c)~isempty(c));
 if isequal(f1, f2)
     tf = 'true';
 else
-    tf = 'false';
+    if strcmp(f1{end}, 'end') && isequal(f1(1:end-1), f2)
+        tf = 'true';
+    elseif strcmp(f2{end}, 'end') && isequal(f1, f2(1:end-1))
+        tf = 'true';
+    else
+        tf = 'false';
+    end
 end
 
 end
