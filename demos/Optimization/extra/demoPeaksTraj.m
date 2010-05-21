@@ -15,6 +15,7 @@ hold on
 opts = optimset('fminsearch');
 %opts.OutputFcn = @optimplot;
 opts.Display = 'iter';
+opts.LargeScale = 'off';
 [Xfinal, fval, exitFlag, output] = fminsearch(@(x) peaks(x(1),x(2)), [0 0], opts);
 title('fminsearch')
 
@@ -26,6 +27,7 @@ xlabel('x'); ylabel('y');
 hold on
 
 opts = optimset('fminunc');
+opts.LargeScale = 'off';
 %opts.OutputFcn = @optimplot;
 opts.Display = 'iter';
 Xfinal = fminunc(@(x) peaks(x(1),x(2)), [0 0], opts);
