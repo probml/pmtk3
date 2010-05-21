@@ -1,4 +1,4 @@
-function [w,wp,m] = LassoShooting(X, y, lambda,varargin)
+function [w,wp,m] = LassoShootingPmtk(X, y, lambda,varargin)
 % This function computes the Least Squares parameters
 % with a penalty on the L1-norm of the parameters
 %

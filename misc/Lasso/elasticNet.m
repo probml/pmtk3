@@ -6,7 +6,7 @@ function beta = elasticNet(X, y, lambda1, lambda2, lassoSolver, varargin)
 % See also elasticNetPath 
 
 if nargin < 5
-  lassoSolver = @LassoShooting;
+  lassoSolver = @LassoShootingPmtk;
 end
 [n d] = size(X);
 S = sqrt(1+lambda2);

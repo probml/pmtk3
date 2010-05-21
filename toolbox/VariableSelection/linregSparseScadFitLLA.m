@@ -1,4 +1,4 @@
-function [ w, loglik ] = linregSparseScadFit( X, y, lambda, varargin )
+function [ w, loglik ] = linregSparseScadFitLLA( X, y, lambda, varargin )
 % Fits a linear model with a SCAD penalty
 %PMTKauthor Hannes Bretschneider
 
@@ -13,7 +13,7 @@ iter = 1;
 done = false;
 while ~done
   wOld = w;
-  w = LassoShooting(X, y, derivPenalty(abs(w), alpha, lambda), 'w0', w);
+  w = LassoShootingPmtk(X, y, derivPenalty(abs(w), alpha, lambda), 'w0', w);
   NLL(iter) = objFunc(X, y, w, alpha, lambda); %#ok
   
   if iter>1
