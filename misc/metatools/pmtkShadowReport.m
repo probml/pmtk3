@@ -28,7 +28,8 @@ R = [main', shadows', identical'];
 htmlTable('data', R, 'colNames', {'Main File', 'Shadows', 'Identical?'}, ...
     'colNameColors', {pmtkRed, pmtkRed, pmtkRed}, ...
     'title', 'PMTK Shadowed Files', ...
-    'dataAlign', 'left')
+    'dataAlign', 'left', 'caption', '(identical means identical ignoring comments and spaces)', ...
+    'captionLoc', 'top'); 
 
 end
 
@@ -48,9 +49,17 @@ if ~exist(main, 'file') || ~exist(shadow, 'file')
     tf = 'unknown';
     return;
 end
-if isequal(getText(main), getText(shadow))
+f1 = removeComments(getText(main));
+f2 = removeComments(getText(shadow));
+f1 = cellfuncell(@(c)strrep(c, ' ', ''), f1);
+f2 = cellfuncell(@(c)strrep(c, ' ', ''), f2);
+f1 = filterCell(f1, @(c)~isempty(c)); 
+f2 = filterCell(f2, @(c)~isempty(c)); 
+if isequal(f1, f2)
     tf = 'true';
 else
     tf = 'false';
 end
+
 end
+
