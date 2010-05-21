@@ -126,5 +126,5 @@ if (~holding) hold off; end
 end
 function m = conf2mahal(c, d)
 
-m = chi2inv(c, d); % matlab stats toolbox
+m = chi2invPMTK(c, d); 
 end
