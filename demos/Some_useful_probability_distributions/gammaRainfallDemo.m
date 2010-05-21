@@ -25,9 +25,11 @@ end
 
 function [a,b] = gamMLE(X)
 %% MLE for Gamma a = shape, b= rate (not scale)
-params = gamfit(X); % stats toolbox
-a = params(1);
-b = 1/params(2);
+
+[a, s] = gamma_fit(X); 
+b = 1/s;
+
+
 end
 
 function [a,b] = gamMOM(X)
