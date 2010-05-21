@@ -18,9 +18,9 @@ Polynomial_Order = polyOrders(trial);
 lambda = 1/100;
 
 %Limits and grid size for contour plotting
-Range=1.3;
+R=1.3;
 Step=0.1;
-[xs,ys]=meshgrid(-Range:Step:Range,-Range:Step:Range);
+[xs,ys]=meshgrid(-R:Step:R,-R:Step:R);
 [ngrid, ngrid]=size(xs);
 grid = [reshape(xs,ngrid*ngrid,1) reshape(ys,ngrid*ngrid,1)];
 
