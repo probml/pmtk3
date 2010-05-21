@@ -6,12 +6,12 @@ dest = fullfile(pmtk3Root(), 'docs', 'synopsis');
 %% Toolbox
 d = dirs(fullfile(pmtk3Root(), 'toolbox')); 
 for i=1:numel(d)
-   generateHelpTable(fullfile(pmtk3Root(), 'toolbox', d{i}), ...
+   generateSynopsisTable(fullfile(pmtk3Root(), 'toolbox', d{i}), ...
                      fullfile(dest, sprintf('%s.html', d{i})));
     
 end
 %% Util
-generateHelpTable(fullfile(pmtk3Root(), 'misc', 'util'), fullfile(dest, 'util.html'));
+generateSynopsisTable(fullfile(pmtk3Root(), 'misc', 'util'), fullfile(dest, 'util.html'));
 %% Meta Tools
 generateSynopsisTable(fullfile(pmtk3Root(), 'misc', 'metatools'), fullfile(dest, 'metatools.html'));
 googleRoot = 'http://pmtk3.googlecode.com/svn/trunk/docs/synopsis';
