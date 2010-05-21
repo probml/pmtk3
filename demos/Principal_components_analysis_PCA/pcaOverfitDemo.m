@@ -31,8 +31,8 @@ Ks = round(linspace(1, rank(Xtrain), 5))
 for ki=1:length(Ks)
   k = Ks(ki);
   [V] = pcaPmtk(Xtrain, k);
-  Ztest = Xtest*V;
-  XtestRecon = Ztest*V';
+  Zt = Xtest*V;
+  XtestRecon = Zt*V';
   err = (XtestRecon - Xtest);
   mse(ki) = sqrt(mean(err(:).^2));
   
