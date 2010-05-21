@@ -30,7 +30,7 @@ end
 
 if use_file
   disp(['mk_all_dags: saving to ' fname '!']);
-  save(fname, 'Gs');
+  %save(fname, 'Gs');
 end
 
 end
