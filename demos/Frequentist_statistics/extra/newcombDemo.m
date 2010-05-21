@@ -27,7 +27,7 @@ high = mun + tinvPMTK(1-0.025, vn)*sqrt(s2n/kn) %28.8537
 %% generate posterior samples
 S = 1000;
 sigma2 =  (1+kn)*s2n/kn;
-rep = trnd(vn, S, n)*sqrt(sigma2) + mun;
+rep = randraw('t', vn, [S, n])*sqrt(sigma2) + mun; 
 figure()
 hist(D);
 title('Newcombs speed of light data')
