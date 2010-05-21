@@ -67,7 +67,7 @@ function [y] = meanFieldSample(nodeBel)
 [nNodes,maxStates] = size(nodeBel);
 y = zeros(nNodes,1);
 for n = 1:nNodes
-    y(n) = sampleDiscrete(nodeBel(n,:));
+    y(n) = sampleDiscreteSchmidt(nodeBel(n,:));
 end
 end
 
@@ -96,7 +96,7 @@ for n = 1:nNodes
     end
 
     % Sample State;
-    y(n) = sampleDiscrete(pot./sum(pot));
+    y(n) = sampleDiscreteSchmidt(pot./sum(pot));
 end
 
 end

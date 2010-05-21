@@ -49,7 +49,7 @@ for i = 1:burnIn+maxIter
         end
 
         % Sample State;
-        y(n) = sampleDiscrete(pot./sum(pot));
+        y(n) = sampleDiscreteSchmidt(pot./sum(pot));
     end
     
     if i > burnIn

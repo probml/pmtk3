@@ -1,4 +1,4 @@
-function [samples] = crfChian_infer(nodePot,edgePot,nSamples)
+function [samples] = crfChain_sample(nodePot,edgePot,nSamples)
 
 [nNodes,nStates] = size(nodePot);
 
@@ -21,10 +21,10 @@ y = zeros(nNodes,1);
 
 for s = 1:nSamples
     % Backward Pass
-    y(nNodes) = sampleDiscrete(alpha(nNodes,:));
+    y(nNodes) = sampleDiscreteSchmidt(alpha(nNodes,:));
     for n = nNodes-1:-1:1
         pot_ij = alpha(n,:)'.*edgePot(:,y(n+1));
-        y(n) = sampleDiscrete(pot_ij./sum(pot_ij));
+        y(n) = sampleDiscreteSchmidt(pot_ij./sum(pot_ij));
     end
     samples(:,s) = y;
 end

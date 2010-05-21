@@ -1,4 +1,4 @@
-function [y] = sampleDiscrete(p)
+function [y] = sampleDiscreteSchmidt(p)
 % Returns a sample from a discrete probability mass function indexed by p
 U = rand;
 u = 0;
