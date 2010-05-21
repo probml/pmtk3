@@ -45,7 +45,8 @@ for i=imputeRows
     xCurr(i,o) = data(i,o);
 end
 
-SigmaCurr = iwishrnd(Lambda0, dof);
+%SigmaCurr = iwishrnd(Lambda0, dof);
+SigmaCurr = invWishartSample(struct('Sigma', (Lambda0), 'dof', k0+n));
 model.mu = mu0; model.Sigma = SigmaCurr / k0;
 muCurr = gaussSample(model);
 if(~isempty(missingRows))
@@ -78,7 +79,8 @@ if(~isempty(missingRows))
         xbar = mean(xCurr);
         muPost = (n*xbar + k0*mu0) / (n + k0);
         LambdaPost = Lambda0 + n*cov(xCurr,1) + n*k0/(n+k0) * (xbar - mu0)*(xbar - mu0)';
-        SigmaCurr = iwishrnd(LambdaPost, k0 + n);
+        %SigmaCurr = iwishrnd(LambdaPost, k0 + n);
+        SigmaCurr = invWishartSample(struct('Sigma', LambdaPost, 'dof', k0+n));
         model.mu = muPost; model.Sigma = SigmaCurr/ (k0 + n);
         muCurr = gaussSample(model);
         if(s > nburnin)
