@@ -2,10 +2,10 @@
 %
 %%
 setSeed(0);
-degrees = [1, 2, 15];
+degrees = [1, 2, 25];
 for d=1:numel(degrees)
     deg = degrees(d);
-    lambda = 1e-3;
+    lambda = 0; %1e-3;
     ns = linspace(10, 200, 10);
     Nns = length(ns);
     testMse = zeros(1, Nns); 
@@ -41,6 +41,7 @@ for d=1:numel(degrees)
     title(sprintf('truth=degree 2, model = degree %d', deg));
     set(gca,'ylim',[0 22]);
     box on;
+    horizontalLine(sigma2, 'color', 'k', 'linewidth', 3);
     %line([0 max(ns)], [sigma2 sigma2],'color', 'k', 'linewidth', 3);
     printPmtkFigure(sprintf('polyfitN%d', deg));
 end
