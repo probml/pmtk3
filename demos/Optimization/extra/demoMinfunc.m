@@ -47,10 +47,11 @@ options = [];
 %options.derivativeCheck = 'on';
 options.display = 'none';% 'verbose';
 options.maxFunEvals = maxIter;
-options.outputFn = @optimstore;
+options.outputFcn = @optimstore;
 options.Method = method;
 
 [x, fx, exitflag, output] = minFunc(f,x0,options);
+
 
 hold on;
 plot(xhist(1,:), xhist(2,:), 'ro-');
