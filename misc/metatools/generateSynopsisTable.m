@@ -1,4 +1,4 @@
-function generateHelpTable(directory, outputFile)
+function generateSynopsisTable(directory, outputFile)
 %% Create an html table of files and one line descriptions for a directory.
 %
 if nargin < 2, outputFile = ''; end
