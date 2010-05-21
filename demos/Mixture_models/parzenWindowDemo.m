@@ -49,10 +49,11 @@ placeFigures('nrows',3,'ncols',1,'square',false);
     function g = kernelize(h,kernel)
         %Use one gaussian kernel per data point with smoothing parameter h.
         g = @(x)0;
+        unif = @(x, a, b)exp(uniformLogprob(structure(a, b), x));
         for i=1:n
             switch kernel
                 case 'gauss', g = @(x)g(x) + (1/n)*gausspdf(x,data(i),h^2);
-                case 'cube', g = @(x)g(x) + (1/n)*unifpdf(x,data(i)-h/2, data(i)+h/2);
+                case 'cube', g = @(x)g(x) + (1/n)*unif(x,data(i)-h/2, data(i)+h/2);
             end
         end
     end
