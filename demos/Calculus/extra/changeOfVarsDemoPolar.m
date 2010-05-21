@@ -8,7 +8,7 @@ xrange = [-1 1 -1 1]; npoints = 20;
   linspace(xrange(3), xrange(4), npoints)');
 [nr] = size(X1,1); nc = size(X2,1);
 X = [X1(:) X2(:)];
-pxy = gaussPdf(X, mu, Sigma); 
+pxy = gausspdf(X, mu, Sigma); 
 
 r = sqrt(X(:,1).^2 + X(:,2).^2);
 t = atan(X(:,2) ./ X(:,1));
