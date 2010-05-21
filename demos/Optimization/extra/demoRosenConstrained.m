@@ -8,7 +8,7 @@ function demoRosenConstrained()
 
 xstart = [-1 2];
  % Hessian is ignored by quasi-Newton so we use interior point
-opts = optimset('DerivativeCheck', 'on', 'Display', 'off', 'GradObj', 'on');
+opts = optimset('DerivativeCheck', 'on', 'Display', 'off', 'GradObj', 'on', 'Algorithm', 'interior-point');
 
 % basic usage - numerical gradient for constraints
 opts = optimset(opts, 'GradConstr', []);

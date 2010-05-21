@@ -1,6 +1,7 @@
 %% Rosenbrock 2D demo
 %
 %%
+requireOptimToolbox;
 xstart = [-1 2];
 
 % basic usage with anonymous function and numerical derivatives

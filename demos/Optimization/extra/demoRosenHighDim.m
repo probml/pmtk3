@@ -1,5 +1,6 @@
-%% RosenBrock Minfunc Demo
-% PMTKslow
+%
+% RosenBrock Minfunc Demo
+%PMTKinteractive
 %
 % "A note on the extended rosenbrock function" Evol. Comp. 2006
 % claims that for d=4 to 30 dims there are 2 local minima, at [1,1,...1] and
@@ -17,7 +18,7 @@ norm(g)
 % So the claim seems dubious...
 %
 %%
-
+requireOptimToolbox
 x = rand(10,1);
 [f g H] = rosenbrock(x);
 figure;spy(H)
@@ -35,7 +36,7 @@ opts = optimset('display', 'off', 'DerivativeCheck', 'on');
 options{1} = optimset(opts, 'GradObj', 'on', 'Hessian', 'on'); % analtyic Hessian
 options{2} = optimset(opts, 'GradObj', 'on', 'Hessian', []); % dense numerical Hessian
 options{3} = optimset(opts, 'GradObj', 'on', 'HessPattern', H); % sparse numerical Hessian
-options{4} = optimset(opts, 'GradObj', [], 'HessPattern', H); % numerical gradient and Hessian
+options{4} = optimset(opts, 'GradObj', [], 'HessPattern', H, 'LargeScale', 'off'); % numerical gradient and Hessian
 
 clear t final
 for i=1:length(options)
