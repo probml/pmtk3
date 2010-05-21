@@ -65,7 +65,7 @@ for t=1:Nlocn
 end
 prob = nvec./repmat(sum(nvec,1),4,1);
 figure;
-bar(entropy(prob));
+bar(matrixEntropy(prob));
 title('entropy vs position')
 %%
 postC = sum(postZ(1:4,:));

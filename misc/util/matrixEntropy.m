@@ -1,6 +1,5 @@
-function H = entropy(v, scale)
+function H = matrixEntropy(v, scale)
 % Calculate the entropy of a stochastic matrix
-% H = entropy(v)
 % If v is a matrix, H(j) = entropy(v(:,j)) ie each column should sum to one
 %
 % H = entropy(v,1) means we scale the result so that it lies in [0,1]

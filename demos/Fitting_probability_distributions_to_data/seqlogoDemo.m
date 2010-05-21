@@ -39,7 +39,7 @@ for c=1:4
 end
 thetaHat = counts/Nseq;
 tmp = thetaHat; tmp(tmp==0) = 1; % log(1)=0
-entropy = -sum(tmp .* log2(tmp), 1);
+matrixEntropy = -sum(tmp .* log2(tmp), 1);
 if bioinfoToolboxInstalled
     seqlogo(thetaHat)
 end
