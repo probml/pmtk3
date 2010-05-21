@@ -33,10 +33,10 @@ if 1
         delta = deltas(i);
         c = cs(i);
         logp = normalExpGammaNeglogpdf(xs, delta, c);
-        str{i} = sprintf('%s=%3.2f, %s=%3.2f', '\delta', delta, 'c', c);
-        plot(xs, logp, [colors(i), styles{i}], 'linewidth', 3);
+        plot(xs, logp, [colors(i), styles{i}], 'linewidth', 3, ...
+            'displayname', sprintf('%s=%3.2f, %s=%3.2f', '\delta', delta, 'c', c));
     end
-    legend(str,'location','southeast')
+    legend('location','southeast')
     title('-log pdf of NEG distribution')
     printPmtkFigure('NEGLog')
 end
