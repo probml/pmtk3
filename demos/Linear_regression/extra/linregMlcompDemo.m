@@ -1,4 +1,4 @@
-%% Run logregSATdemo on the mlcomp system
+%% Run linear regression on the mlcomp system
 % See also mlcompLocalDemo
 %% we first compile some code that will run on the mlcomp server
 if 0
@@ -9,13 +9,11 @@ end
 lambdaRange = []; % auto-generated
 includeOffset = true;
 nfolds = 5;
-mlcompCompiler('logregFit', 'logregPredict', tmpFolder);
+mlcompCompiler('linregFit', 'linregPredict', tmpFolder);
 
 %% Now convert data
-dataFile = fullfile(tmpFolder, 'satData-mlcomp.txt');
-stat = load('satData.txt'); 
-y = stat(:,1);
-X = stat(:,4);
+dataFile = fullfile(tmpFolder, 'prostate-mlcomp.txt');
+load prostate
 mlcompWriteData(X, y, dataFile)
  
 % Now we run it

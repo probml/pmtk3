@@ -29,7 +29,7 @@ y1 = 9*sf; n1 = 52*sf; y2 = 4*sf; n2 = 48*sf;
 N(i) = n1+n2;
 alphas = [1 1];
 logZ = betaln(alphas(1), alphas(2));
-logZl = log(nchoosek(n1,y1) * nchoosek(n2,y2));
+logZl = (nchoosekln(n1,y1) + nchoosekln(n2,y2));
 logmarglik0 = logZl + betaln(alphas(1)+y1+y2, alphas(2)+(n1-y1)+(n2-y2)) -logZ;
 logmarglik1 = logZl + betaln(alphas(1)+y1, alphas(2)+(n1-y1)) -logZ ...
   + betaln(alphas(1)+y2, alphas(2)+(n2-y2)) -logZ;
