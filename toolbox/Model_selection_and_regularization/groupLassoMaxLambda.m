@@ -16,3 +16,5 @@ funObj1 = @(w)SquaredError(w,X,y);
 [f,g] = funObj1(w);
 grad_norms = sqrt(accumarray(groups(groups~=0),g(groups~=0).^2));
 maxLambda = max(grad_norms);
+
+end
