@@ -49,7 +49,7 @@ if(nargin < 3)
     visualize = false;
 end
 
-currentDirectory = '.'; 
+currentDirectory = pwd; 
 report = [];
 errors = struct; errors.filename = {}; errors.errmsg = {}; errors.errid = {};
 mfiles = findAllMfiles(currentDirectory);
