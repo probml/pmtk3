@@ -1,7 +1,8 @@
 %% DNA Sequence Demo
 %
-% 
+%PMTKneedsBioToolbox seqlogo
 %%
+requireBioinfoToolbox
 setSeed(0);
 Nseq = 10;
 Nlocn = 15;

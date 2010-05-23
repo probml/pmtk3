@@ -1,7 +1,9 @@
 %% Yeast Clustergram Demo
-%PMTKneedsStatsToolbox pdist
+%PMTKneedsStatsToolbox pdist, linkage, dendrogram, cluster
+%PMTKneedsBioToolbox clustergram, redgreencmap
 %%
 requireStatsToolbox
+requireBioinfoToolbox
 load('yeastData310.mat') % 'X', 'genes', 'times');
 
 

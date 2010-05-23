@@ -3,7 +3,9 @@
 %   Z(t)|w ~ Discrete(w(:)), k in {1,2,3,4,k}
 %   theta(:,t) | Z(t)=k ~ Dir(alpha(:,k))
 %   x(i,t) | theta(:,t) ~ Discrete(theta(:,t))
-%PMTKbio seqlogo
+%PMTKneedsBioToolbox seqlogo
+%%
+requireBioinfoToolbox
 %% Data generation
 setSeed(0);
 Nseq = 10;
