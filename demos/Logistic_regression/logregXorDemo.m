@@ -17,6 +17,7 @@ printPmtkFigure('logregXorLinear')
 rbfScale = 1;
 polydeg  = 2;
 protoTypes = [1 1; 1 5; 5 1; 5 5];
+%protoTypes = [1 5; 5 5];
 kernels = {@(X1, X2)kernelRbfSigma(X1, X2, rbfScale)
            @(X1, X2)kernelRbfSigma(X1, protoTypes, rbfScale)
            @(X1, X2)kernelPoly(X1, X2, polydeg)};
