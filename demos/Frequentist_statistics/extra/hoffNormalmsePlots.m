@@ -1,6 +1,7 @@
 %% Relative MSE plot
-%
+%PMTKneedsStatsToolbox ksdensity
 %%
+requireStatsToolbox
 n = 1:50;
 k0 = 0:3;
 sigmaTrue = 13;

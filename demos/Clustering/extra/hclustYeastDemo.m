@@ -1,6 +1,9 @@
 %% Hierarchical Clustering Demo
-%
+%PMTKneedsStatsToobox clustergram, pdist, linkage
+%PMTKneedsBioToolbox cluster
 %%
+requireStatsToolbox
+requireBioinfoToolbox
 load('yeastData310.mat') % 'X', 'genes', 'times');
 
 corrDist = pdist(X, 'corr');

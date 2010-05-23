@@ -1,7 +1,8 @@
 %% Gauss Imputation Demo
-%
+%PMTKneedsStatsToolbox regstats
 %%
 function gaussImputationDemo()
+requireStatsToolbox
 %% Make data
 setSeed(1);
 d = 10; n = 100; pcMissing = 0.5;

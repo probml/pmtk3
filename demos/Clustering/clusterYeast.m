@@ -1,6 +1,7 @@
 %% Yeast Clustergram Demo
-%
+%PMTKneedsStatsToolbox pdist
 %%
+requireStatsToolbox
 load('yeastData310.mat') % 'X', 'genes', 'times');
 
 

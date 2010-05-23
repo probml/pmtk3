@@ -1,7 +1,8 @@
 %% Imputation for a mixture of Gaussians
-%
-%%
+%PMTKneedsStatsToolbox regstats
+%% 
 function mixGaussImputationDemo()
+requireStatsToolbox
 %% Make data
 setSeed(1);
 %d = 10; n = 100; pc = 0.5;

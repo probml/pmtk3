@@ -1,5 +1,5 @@
 %% Agglomerative Clustering Demo
-%
+%PMTKneedsStatsToolbox dendrogram, cophenet, linkage
 % Based on http://www.mathworks.com/access/helpdesk/help/toolbox/stats/index.html
 %%
 requireStatsToolbox

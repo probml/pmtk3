@@ -60,8 +60,8 @@ figure(4);clf
 for kk=1:9
     figure(3); Xsel = ginput(1);
     text(Xsel(1), Xsel(2), sprintf('%d', kk), 'fontsize', 24);
-    dst = sqdist(Xsel', Z(:,1:2)');
-    [junk, closest] = min(dst,[],2);
+    distance = sqdist(Xsel', Z(:,1:2)');
+    [junk, closest] = min(distance,[],2);
     figure(4);subplot(3,3,kk);
     i = closest;
     plot(times, X(i,:), '-');

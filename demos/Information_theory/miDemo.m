@@ -1,5 +1,6 @@
 %% Demonstration of computing pairwise mutual information
-
+%PMTKneedsStatsToolbox hist3
+requireStatsToolbox
 load newsgroups 
 tic; [mi] = mutualInfoAllPairsDiscrete(X);toc
 tic; [mi2] = mutualInfoAllPairsMixed(X); toc

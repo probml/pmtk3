@@ -1,7 +1,7 @@
 %% compare EM to matlab stats toolbox
-%
+%PMTKneedsStatsToolbox mle
 %%
-requireStatsToolbox();
+requireStatsToolbox
 %% same data as gaussVsStudentOutlierDemo
 n = 30;
 setSeed(8);

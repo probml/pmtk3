@@ -4,10 +4,11 @@
 % We do not include normalInverseGaussian
 % but we do include normalExpGaussian  (see Griffin and Brown)
 %PMTKreallySlow
+%PMTKneedsStatsToolbox boxplot
 %%
 function linregSparseEmSynthDemo()
 
-
+requireStatsToolbox
 setSeed(0);
 
 D=100; % Number of coefficients to estimate

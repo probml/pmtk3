@@ -39,10 +39,10 @@ sigma2 = 1; % by construction of the arcsin transform
 B = sigma2/(sigma2 + max(0, s2-sigma2)); % EB
 shrunkTransformed = xbar + (1-B)*(x-xbar); 
 shrunk = 0.5*(sin(shrunkTransformed/sqrt(n))+1); % untransform
-MLE = Y;
+
 %% Plot Shrinkage Estimates
 figure;
-plot(MLE, ones(1, d) ,'o');
+plot(Y, ones(1, d) ,'o');
 hold on
 plot(shrunk, 0*ones(1, d), 'o');
 for i=1:d
@@ -54,8 +54,8 @@ printPmtkFigure shrinkageDemoBaseballParams;
 figure;
 ndx = 1:5;
 h = bar([p(ndx)'; 
-MLE(ndx)'; shrunk(ndx)']');
+Y(ndx)'; shrunk(ndx)']');
 legend({'true', 'MLE', 'shrunk'})
 [im_hatch, colorlist] = applyhatch_pluscolor(gcf,'\-x.', 1);
-title(sprintf('MSE MLE = %6.4f, MSE shrunk = %6.4f', mse(p,MLE), mse(p,shrunk)));
+title(sprintf('MSE MLE = %6.4f, MSE shrunk = %6.4f', mse(p,Y), mse(p,shrunk)));
 printPmtkFigure shrinkageDemoBaseballPred; 

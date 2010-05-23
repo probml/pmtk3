@@ -1,6 +1,7 @@
 %% Analysis of binomial differences on lefthand/righthand data
-%
+%PMTKneedsStatsToolbox ksdensity
 %%
+requireStatsToolbox
 setSeed(0);
 y1 = 9; n1 = 52; y2 = 4; n2 = 48;
 [deltas, post, thetas] = contingencyTableUnpairedDiffPostMc(n1,y1,n2,y2);

@@ -1,6 +1,8 @@
 %% Plot posterior on difference in rates given paired contingency table
 % MC approx to figure 1a of Shi and Bai 2008
+%PMTKneedsStatsToolbox ksdensity
 %%
+requireStatsToolbox
 setSeed(1);
 ns = [20 20 10 50 30];
 n10s = [0 1 2 20 28];

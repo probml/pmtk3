@@ -1,7 +1,7 @@
 %% Bayesian linear regression with an uninformative prior 
-%
+%PMTKneedsStatsToolbox regress
 %%
-
+requireStatsToolbox
 X = dlmread('caterpillar.txt'); % from http://www.ceremade.dauphine.fr/~xian/BCS/caterpillar
 y = log(X(:,11)); % log numner of nests
 X = X(:,1:10);

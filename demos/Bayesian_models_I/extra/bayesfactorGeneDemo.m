@@ -1,7 +1,9 @@
 %% Bayes Factor Gene Demo
-%
+%PMTKneedsStatsToolbox ttest2
 %%
 function bayesfactorGeneDemo()
+
+requireStatsToolbox
 %load('bayesFactorGeneData.mat');
 %ngenes = size(Xtreat,1);
 

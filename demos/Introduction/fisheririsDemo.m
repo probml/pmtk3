@@ -1,6 +1,7 @@
 %% Fisher Iris Data Visualization Demo
-%
+%PMTKneedsStatsToolbox boxplot
 %%
+requireStatsToolbox
 [X,y,classnames,varnames] = fisheririsLoad;
 figure();
 pscatter(X,'y', y);

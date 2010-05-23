@@ -1,6 +1,7 @@
 %% Larsen and Marx p332
-%
-%%
+% PMTKneedsStatsToolbox mle
+%% 
+requireStatsToolbox
 D = [249 254 243 268 253 269 287 241 273 306 303 280 260 256 278 344 304 283 310];
 N = length(D);
 alpha = 0.05;

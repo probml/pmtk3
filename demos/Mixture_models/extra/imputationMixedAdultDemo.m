@@ -1,8 +1,9 @@
 %% Comparison of methods for imputing missing values in UCI adult census data
 %PMTKslow
 %PMTKauthor Kevin Murphy
+%PMTKneedsStatsToolbox boxplot
 %%
-
+requireStatsToolbox
 setSeed(0);
 adult = adultDataPreprocess;
 

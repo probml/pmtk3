@@ -1,6 +1,7 @@
 %% Plot Some Wishart Distributions
-%
+%PMTKneedsStatsToolbox ksdensity
 %%
+requireStatsToolbox
 setSeed(2);
 S = [3.1653, -0.0262; -0.0262, 0.6477];
 dofs = [20 3];
@@ -37,23 +38,21 @@ for i=1:length(dofs)
     title(sprintf('%s_1','\sigma^2'));
     %%
     subplot(2, 2, 2);
-    if statsToolboxInstalled()
-        n = 1000;
-        Rs = wishartSample(wiModel, n);
-        for s=1:n
-            Rs(:, :, s) = cov2cor(Rs(:, :, s));
-        end
-        [f, xi] = ksdensity(squeeze(Rs(1, 2, :)));
-        plot(xi, f, 'linewidth', 2.5);
-        title(sprintf('%s(1, 2)','\rho'));
-    else
-        fprintf('This demo requires the MATLAB stats toolbox.\n');
+    
+    n = 1000;
+    Rs = wishartSample(wiModel, n);
+    for s=1:n
+        Rs(:, :, s) = cov2cor(Rs(:, :, s));
     end
+    [f, xi] = ksdensity(squeeze(Rs(1, 2, :)));
+    plot(xi, f, 'linewidth', 2.5);
+    title(sprintf('%s(1, 2)','\rho'));
+    
     %%
     xs = {(0.1:0.1:40)', (0.1:0.1:10)'};
     subplot(2, 2, 4);
     plot(xs{i}, exp(gammaLogprob(marg2, xs{i})), 'linewidth', 2.5);
     title(sprintf('%s_2','\sigma^2'));
-    printPmtkFigure(sprintf('WiDof%dPlot', dofs(i))); 
+    printPmtkFigure(sprintf('WiDof%dPlot', dofs(i)));
 end
-placeFigures(); 
+placeFigures();

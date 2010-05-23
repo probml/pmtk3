@@ -1,6 +1,8 @@
 %% Sparse linear regression with EM on synthetic data
 %PMTKreallySlow
+%PMTKneedsStatsToolbox boxplot
 %%
+requireStatsToolbox
 setSeed(0);
 
 D=200; % Number of coefficients to estimate
