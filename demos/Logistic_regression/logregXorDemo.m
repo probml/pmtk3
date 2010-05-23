@@ -16,10 +16,13 @@ printPmtkFigure('logregXorLinear')
 %% Basis Expansions
 rbfScale = 1;
 polydeg  = 2;
+%protoTypes = [1 1; 1 5; 5 1; 5 5; -1 -1];
+protoTypes = [-1 -1; 1 1];
 kernels = {@(X1, X2)kernelRbfSigma(X1, X2, rbfScale)
+           @(X1, X2)kernelRbfSigma(X1, protoTypes, rbfScale)
            @(X1, X2)kernelPoly(X1, X2, polydeg)};
-fnames  = {'logregXorRbf', 'logregXorPoly'};
-titles  = {'rbf', 'poly'};
+fnames  = {'logregXorRbf', 'logregXorRbfProto', 'logregXorPoly'};
+titles  = {'rbf', 'rbf prototypes', 'poly'};
 
 for i=1:numel(kernels)
     preproc.kernelFn = kernels{i};
