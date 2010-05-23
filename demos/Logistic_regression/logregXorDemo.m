@@ -1,6 +1,6 @@
 %% Apply L2 Logistic Regression to the XOR problem
-% We show how an RBF expansion of the features and a polynomial expansion
-% 'solves' it, while using raw features does not.
+% We show how RBF, and polynomial expansions of the features 'solve' it,
+% while using raw features does not.
 %%
 function logregXorDemo()
 [X, y] = createXORdata();
