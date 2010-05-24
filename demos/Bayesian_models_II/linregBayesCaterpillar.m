@@ -9,7 +9,6 @@ X = X(:,1:10);
 X1 = [ones(n,1), X];
 
 
-if 1
 %% plot the data
 figure;
 for i=1:9
@@ -50,7 +49,6 @@ end
 assert(approxeq(b, what))
 assert(approxeq(bint, credint))
 
-end
 
 %% Gaussian inverse gamma prior
 a0 = 0; b0 = 0;
