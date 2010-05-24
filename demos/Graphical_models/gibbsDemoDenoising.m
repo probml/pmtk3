@@ -1,11 +1,11 @@
 %% Denoising of the Letter "A" using Gibbs Sampling
 % with an Ising Prior and a Gaussian likelihood
 % Based on code originally written by Brani Vidakovic
-%PMTKreallySlow
+% PMTKreallySlow
 %%
 setSeed(3);
 sigma = 2; % noise level
-%% Input matrix consisting of letter A. 
+% Input matrix consisting of letter A. 
 % The body of letter A is made of 1's while the background is made of -1's.
 img = imread('lettera.bmp');
 [M,N] = size(img);

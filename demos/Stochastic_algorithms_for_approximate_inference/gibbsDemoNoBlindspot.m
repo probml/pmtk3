@@ -9,7 +9,7 @@ load('imageWithoutHole.mat') % defines y
 %load('imageWithBlackHole.mat') % defines y
 %load('imageWithWhiteHole.mat') % defines y
 
-%% observation model
+% observation model
 offState = 1;  onState = 2;
 mus = zeros(1, 2);
 mus(offState) = -1; mus(onState) = +1;
@@ -33,12 +33,12 @@ avgX = zeros(M,N);
 X = Xinit;
 maxIter = 100000;
 for iter =1:maxIter
-    %% select a pixel at random
+    % select a pixel at random
     ix = ceil( N * rand(1) ); iy = ceil( M * rand(1) );
     pos = iy + M*(ix-1);
     neighborhood = pos + [-1,1,-M,M];
     neighborhood([iy==1,iy==M,ix==1,ix==N]) = [];
-    %% compute local conditional
+    % compute local conditional
     wi = sum( X(neighborhood) );
     if any(isnan(localEvidence(pos,:)))
         error('no evidence at %d, %d', ix, iy)
@@ -52,11 +52,11 @@ for iter =1:maxIter
         X(pos) = -1;
     end
     avgX = avgX+X;
-    %% plotting
-    if rem(iter,1000) == 0,
+    % plotting
+    if rem(iter,10000) == 0,
         figure(fig);
         imagesc(X);  axis('square'); colormap gray; axis off;
         title(sprintf('sample %d', iter));
-        %%
+        %
     end
 end
