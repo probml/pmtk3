@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>gibbsDemoNoBlindspot</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-05-24"><meta name="m-file" content="gibbsDemoNoBlindspot"><style type="text/css">
+      --><title>Denoising an Image Using Gibbs Sampling</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-05-24"><meta name="m-file" content="gibbsDemoNoBlindspot"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,14 +62,16 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Denoising an Image Using Gibbs Sampling</a></li><li><a href="#3">observation model</a></li><li><a href="#4">select a pixel at random</a></li><li><a href="#5">compute local conditional</a></li><li><a href="#6">plotting</a></li></ul></div><h2>Denoising an Image Using Gibbs Sampling<a name="1"></a></h2><p>Here we use an Ising Prior and a Gaussian likelihood.</p><pre class="codeinput"><span class="comment">%PMTKreallySlow</span>
+  </style></head><body><div class="content"><h1>Denoising an Image Using Gibbs Sampling</h1><p>Here we use an Ising Prior and a Gaussian likelihood.</p><pre class="codeinput"><span class="comment">%PMTKreallySlow</span>
 </pre><pre class="codeinput">setSeed(4);
 sigma = 1; <span class="comment">% noise level</span>
 
 load(<span class="string">'imageWithoutHole.mat'</span>) <span class="comment">% defines y</span>
 <span class="comment">%load('imageWithBlackHole.mat') % defines y</span>
 <span class="comment">%load('imageWithWhiteHole.mat') % defines y</span>
-</pre><h2>observation model<a name="3"></a></h2><pre class="codeinput">offState = 1;  onState = 2;
+
+<span class="comment">% observation model</span>
+offState = 1;  onState = 2;
 mus = zeros(1, 2);
 mus(offState) = -1; mus(onState) = +1;
 sigmas = [sigma sigma];
@@ -92,11 +94,13 @@ avgX = zeros(M,N);
 X = Xinit;
 maxIter = 100000;
 <span class="keyword">for</span> iter =1:maxIter
-</pre><h2>select a pixel at random<a name="4"></a></h2><pre class="codeinput">    ix = ceil( N * rand(1) ); iy = ceil( M * rand(1) );
+    <span class="comment">% select a pixel at random</span>
+    ix = ceil( N * rand(1) ); iy = ceil( M * rand(1) );
     pos = iy + M*(ix-1);
     neighborhood = pos + [-1,1,-M,M];
     neighborhood([iy==1,iy==M,ix==1,ix==N]) = [];
-</pre><h2>compute local conditional<a name="5"></a></h2><pre class="codeinput">    wi = sum( X(neighborhood) );
+    <span class="comment">% compute local conditional</span>
+    wi = sum( X(neighborhood) );
     <span class="keyword">if</span> any(isnan(localEvidence(pos,:)))
         error(<span class="string">'no evidence at %d, %d'</span>, ix, iy)
     <span class="keyword">end</span>
@@ -109,13 +113,15 @@ maxIter = 100000;
         X(pos) = -1;
     <span class="keyword">end</span>
     avgX = avgX+X;
-</pre><h2>plotting<a name="6"></a></h2><pre class="codeinput">    <span class="keyword">if</span> rem(iter,1000) == 0,
-</pre><pre class="codeinput">        figure(fig);
+    <span class="comment">% plotting</span>
+    <span class="keyword">if</span> rem(iter,10000) == 0,
+        figure(fig);
         imagesc(X);  axis(<span class="string">'square'</span>); colormap <span class="string">gray</span>; axis <span class="string">off</span>;
         title(sprintf(<span class="string">'sample %d'</span>, iter));
-</pre><pre class="codeinput">    <span class="keyword">end</span>
-</pre><pre class="codeinput"><span class="keyword">end</span>
-</pre><p class="footer"><br>
+        <span class="comment">%</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="gibbsDemoNoBlindspot_01.png" alt=""> <img vspace="5" hspace="5" src="gibbsDemoNoBlindspot_02.png" alt=""> <p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Denoising an Image Using Gibbs Sampling
@@ -129,7 +135,7 @@ load('imageWithoutHole.mat') % defines y
 %load('imageWithBlackHole.mat') % defines y
 %load('imageWithWhiteHole.mat') % defines y
 
-%% observation model
+% observation model
 offState = 1;  onState = 2;
 mus = zeros(1, 2);
 mus(offState) = -1; mus(onState) = +1;
@@ -153,12 +159,12 @@ avgX = zeros(M,N);
 X = Xinit;
 maxIter = 100000;
 for iter =1:maxIter
-    %% select a pixel at random
+    % select a pixel at random
     ix = ceil( N * rand(1) ); iy = ceil( M * rand(1) );
     pos = iy + M*(ix-1);
     neighborhood = pos + [-1,1,-M,M];
     neighborhood([iy==1,iy==M,ix==1,ix==N]) = [];
-    %% compute local conditional
+    % compute local conditional
     wi = sum( X(neighborhood) );
     if any(isnan(localEvidence(pos,:)))
         error('no evidence at %d, %d', ix, iy)
@@ -172,12 +178,12 @@ for iter =1:maxIter
         X(pos) = -1;
     end
     avgX = avgX+X;
-    %% plotting
-    if rem(iter,1000) == 0,
+    % plotting
+    if rem(iter,10000) == 0,
         figure(fig);
         imagesc(X);  axis('square'); colormap gray; axis off;
         title(sprintf('sample %d', iter));
-        %%
+        %
     end
 end
 
