@@ -35,8 +35,8 @@ function [missing, extra, copyProblems, missingExtra] = pmlOrganizeCode(bookSour
 % missingExtra   - a cell array of files with \extraCode refs in pml that
 %                  cannot be found. 
 %% Set Defaults
-%SetDefaultValue(1, 'bookSource', 'C:\kmurphy\dropbox\PML\Text');
-SetDefaultValue(1, 'bookSource', 'C:\Users\matt\Desktop\may1backup'); 
+SetDefaultValue(1, 'bookSource', 'C:\kmurphy\dropbox\PML\Text');
+%SetDefaultValue(1, 'bookSource', 'C:\Users\matt\Desktop\may1backup'); 
 SetDefaultValue(2, 'dest',  'C:\users\matt\Desktop\PMLcode');
 SetDefaultValue(3, 'demosOnly', true);
 SetDefaultValue(4, 'includeCodeSol', false);
@@ -103,7 +103,7 @@ for i=1:numel(extra)
     end
 end
 %% Organize the extra files
-[missingExtra, extra] = pmlMoveExtraCode(bookSource, dest);
+%[missingExtra, extra] = pmlMoveExtraCode(bookSource, dest); 
 %% Check that we have accounted for all of the demos
 copiedFiles = cellfuncell(@(c)c(1:end-2), mfiles(dest));
 assert(isequal(sort(copiedFiles), sort(PMTKdemos)));

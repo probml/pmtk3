@@ -3144,7 +3144,7 @@ catch %#ok
     errors = [errors, {'wishPlotDemo'}]; 
 end
 
-
+writeText(errors, 'octaveErrorReport.txt'); 
 end
 
 

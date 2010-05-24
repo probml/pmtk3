@@ -1,7 +1,7 @@
 function publishDemos(wikiFile)
 % Publish all of the PMTK3 demos and create the wiki TOC page.
 
-wikiOnly = false; % set to true if you only want to create the wiki files
+wikiOnly = true; % set to true if you only want to create the wiki files
                   % and not regenerate the published demos themselves. 
 svnAutomatically = false;
 
