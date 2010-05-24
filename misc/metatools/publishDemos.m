@@ -1,25 +1,27 @@
 function publishDemos(wikiFile)
 % Publish all of the PMTK3 demos and create the wiki TOC page.
+% See publishFolder, pmlCodeRefs, pmlChapterRefs
+%%
 
-wikiOnly = true; % set to true if you only want to create the wiki files
-                  % and not regenerate the published demos themselves. 
+
+wikiOnly = true;     % set true if you only want to regenerate the wiki and 
+                     % index.html pages, and not republish. 
+                
 svnAutomatically = false;
 
-if nargin == 0
-    wikiFile = 'C:\pmtk3wiki\Demos.wiki';
-end
+if nargin == 0,  wikiFile = 'C:\pmtk3wiki\Demos.wiki'; end
+googleRoot = 'http://pmtk3.googlecode.com/svn/trunk/docs/demoOutput';
+%%
 cd(fullfile(pmtk3Root(), 'demos'));
 d = dirs();
-dirEmpty = @(d)isempty(mfiles(d,'topOnly', true));
+dirEmpty = @(d)isempty(mfiles(d, 'topOnly', true));
 
 for i = 1:numel(d)
     if ~dirEmpty(d{i})
         publishFolder(d{i}, wikiOnly);
     end
 end
-
-googleRoot = 'http://pmtk3.googlecode.com/svn/trunk/docs/demoOutput';
-wikiText = cell(numel(d), 1);
+wikiText   = cell(numel(d), 1);
 for i=1:numel(d)
     if ~dirEmpty(d{i})
         wikiText{i} = sprintf(' * [%s/%s/index.html %s]',googleRoot, d{i}, d{i});

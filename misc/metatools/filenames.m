@@ -8,5 +8,9 @@ function f = filenames(files)
 % f = 
 %    'bar1'    'bar2'
 %% 
-f = cellfuncell(@(f)argout(2, @fileparts, f), files); 
+if iscell(files)
+    f = cellfuncell(@(f)argout(2, @fileparts, f), files); 
+else
+   f = argout(2, @fileparts, files);  
+end
 end
