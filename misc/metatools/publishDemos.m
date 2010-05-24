@@ -1,10 +1,11 @@
 function publishDemos(wikiFile)
 % Publish all of the PMTK3 demos and create the wiki TOC page.
-% See publishFolder, pmlCodeRefs, pmlChapterRefs
+% See publishFolder, pmlCodeRefs, pmlChapterRefs for settings that might
+% affect this function. 
 %%
 
 
-wikiOnly = true;     % set true if you only want to regenerate the wiki and 
+wikiOnly = false;     % set true if you only want to regenerate the wiki and 
                      % index.html pages, and not republish. 
                 
 svnAutomatically = false;

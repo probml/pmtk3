@@ -16,7 +16,7 @@ shadowFunction({'pause', 'keyboard', 'input', 'placeFigures'}, [], true);
 doNotEvalList = {'PMTKinteractive', 'PMTKbroken', 'PMTKreallySlow'};
 globalEval    = true; % if false, no code is evaluated during publishing.
 googleRoot    = sprintf('http://code.google.com/p/pmtk3/source/browse/trunk/demos/%s/', folder);
-dest          = fullfile(pmtk3Root(), 'docs', 'demoOutput2');
+dest          = fullfile(pmtk3Root(), 'docs', 'demoOutput');
 %% Make sure the folder is non-empty
 if (isempty(mfiles(fullfile(pmtk3Root(), 'demos', folder))));
     fprintf('%s is empty\n', folder);
