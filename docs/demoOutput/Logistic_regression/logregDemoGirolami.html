@@ -1,0 +1,224 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>2D Logistic Regression Demo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-05-24"><meta name="m-file" content="logregDemoGirolami"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>2D Logistic Regression Demo</h1><!--introduction--><p>Based on code by Mark Girolami</p><!--/introduction--><pre class="codeinput">X=load(<span class="string">'rip_dat_tr.txt'</span>); <span class="comment">% train X(i,:) is sample i</span>
+Xt=load(<span class="string">'rip_dat_te.txt'</span>); <span class="comment">% test</span>
+Ntrain = size(X,1); Ntest = size(Xt,1);
+ytrain = X(:,3);
+X(:,3)=[];
+ytest = Xt(:,3);
+Xt(:,3)=[];
+Xtrain = X; Xtest = Xt; clear <span class="string">X</span> <span class="string">Xt</span>
+
+figure
+
+polyOrders = [1 3];
+<span class="keyword">for</span> trial=1:length(polyOrders)
+Polynomial_Order = polyOrders(trial);
+lambda = 1/100;
+
+<span class="comment">%Limits and grid size for contour plotting</span>
+R=1.3;
+Step=0.1;
+[xs,ys]=meshgrid(-R:Step:R,-R:Step:R);
+[ngrid, ngrid]=size(xs);
+grid = [reshape(xs,ngrid*ngrid,1) reshape(ys,ngrid*ngrid,1)];
+
+<span class="comment">% Polynomial Basis expansion</span>
+XtrainPoly = ones(Ntrain,1);
+XtestPoly = ones(Ntest,1);
+gridPoly = ones(ngrid*ngrid,1);
+<span class="keyword">for</span> i = 1:Polynomial_Order
+    XtrainPoly = [XtrainPoly Xtrain.^i];
+    XtestPoly = [XtestPoly Xtest.^i];
+    gridPoly = [gridPoly grid.^i];
+<span class="keyword">end</span>
+[N,D] = size(XtrainPoly);
+
+model = logregFit(XtrainPoly,ytrain,<span class="string">'lambda'</span>, lambda, <span class="string">'preproc'</span>, <span class="keyword">...</span>
+    struct(<span class="string">'standardizeX'</span>, false));
+wMAP = model.w;
+fn = @(w)LogisticLossSimple(w, addOnes(XtrainPoly), ytrain);
+[f,g,H] = penalizedL2(wMAP, fn, lambda);
+C = inv(H);
+<span class="comment">%[wMAP, C] = logregFitFminunc(ytrain, XtrainPoly, lambda);</span>
+
+[trainPredLabels] = logregPredict(model, XtrainPoly);
+[testPredLabels] = logregPredict(model, XtestPoly);
+fprintf(<span class="string">'\n\n 0-1 error using MAP Value\n'</span>);
+Train_Error = 100 - 100*sum(trainPredLabels == ytrain)/Ntrain
+Test_Error = 100 - 100*sum(testPredLabels == ytest)/Ntest
+
+<span class="comment">% plot the data points and show the contour of P(C=1|x)</span>
+subplot2(2,2,trial,1)
+Posterior = 1./(1+exp(-addOnes(gridPoly)*wMAP));
+contour(xs,ys,reshape(Posterior,[ngrid,ngrid]));
+hold <span class="string">on</span>
+plot(Xtrain(find(ytrain==1),1), Xtrain(find(ytrain==1),2),<span class="string">'r.'</span>);
+plot(Xtrain(find(ytrain==0),1), Xtrain(find(ytrain==0),2),<span class="string">'o'</span>);
+title(sprintf(<span class="string">'P(C=1|x) for degree %d'</span>, Polynomial_Order))
+
+<span class="comment">% plot P(C=1|x)=0.5 i.e. the separating line</span>
+subplot2(2,2,trial,2)
+[cc,hh]=contour(xs,ys,reshape(Posterior,[ngrid,ngrid]),[0.5 0.5]);
+set(hh,<span class="string">'linewidth'</span>,4,<span class="string">'color'</span>,<span class="string">'k'</span>);
+hold <span class="string">on</span>
+plot(Xtrain(find(ytrain==1),1), Xtrain(find(ytrain==1),2),<span class="string">'r.'</span>);
+plot(Xtrain(find(ytrain==0),1), Xtrain(find(ytrain==0),2),<span class="string">'o'</span>);
+title(sprintf(<span class="string">'Decision boundary for degree %d'</span>, Polynomial_Order))
+
+<span class="keyword">end</span> <span class="comment">% trial</span>
+</pre><pre class="codeoutput">
+
+ 0-1 error using MAP Value
+Train_Error =
+   13.2000
+Test_Error =
+   11.4000
+
+
+ 0-1 error using MAP Value
+Train_Error =
+   12.4000
+Test_Error =
+    9.7000
+</pre><img vspace="5" hspace="5" src="logregDemoGirolami_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
+##### SOURCE BEGIN #####
+%% 2D Logistic Regression Demo
+% Based on code by Mark Girolami
+%%
+X=load('rip_dat_tr.txt'); % train X(i,:) is sample i
+Xt=load('rip_dat_te.txt'); % test
+Ntrain = size(X,1); Ntest = size(Xt,1);
+ytrain = X(:,3);
+X(:,3)=[];
+ytest = Xt(:,3);
+Xt(:,3)=[];
+Xtrain = X; Xtest = Xt; clear X Xt
+
+figure
+
+polyOrders = [1 3];
+for trial=1:length(polyOrders)
+Polynomial_Order = polyOrders(trial);
+lambda = 1/100;
+
+%Limits and grid size for contour plotting
+R=1.3;
+Step=0.1;
+[xs,ys]=meshgrid(-R:Step:R,-R:Step:R);
+[ngrid, ngrid]=size(xs);
+grid = [reshape(xs,ngrid*ngrid,1) reshape(ys,ngrid*ngrid,1)];
+
+% Polynomial Basis expansion
+XtrainPoly = ones(Ntrain,1);
+XtestPoly = ones(Ntest,1);
+gridPoly = ones(ngrid*ngrid,1);
+for i = 1:Polynomial_Order
+    XtrainPoly = [XtrainPoly Xtrain.^i];
+    XtestPoly = [XtestPoly Xtest.^i];
+    gridPoly = [gridPoly grid.^i];
+end
+[N,D] = size(XtrainPoly);
+
+model = logregFit(XtrainPoly,ytrain,'lambda', lambda, 'preproc', ...
+    struct('standardizeX', false));
+wMAP = model.w;
+fn = @(w)LogisticLossSimple(w, addOnes(XtrainPoly), ytrain); 
+[f,g,H] = penalizedL2(wMAP, fn, lambda);
+C = inv(H);
+%[wMAP, C] = logregFitFminunc(ytrain, XtrainPoly, lambda);
+
+[trainPredLabels] = logregPredict(model, XtrainPoly);
+[testPredLabels] = logregPredict(model, XtestPoly);
+fprintf('\n\n 0-1 error using MAP Value\n');
+Train_Error = 100 - 100*sum(trainPredLabels == ytrain)/Ntrain
+Test_Error = 100 - 100*sum(testPredLabels == ytest)/Ntest
+
+% plot the data points and show the contour of P(C=1|x)
+subplot2(2,2,trial,1)
+Posterior = 1./(1+exp(-addOnes(gridPoly)*wMAP));
+contour(xs,ys,reshape(Posterior,[ngrid,ngrid]));
+hold on
+plot(Xtrain(find(ytrain==1),1), Xtrain(find(ytrain==1),2),'r.');
+plot(Xtrain(find(ytrain==0),1), Xtrain(find(ytrain==0),2),'o');
+title(sprintf('P(C=1|x) for degree %d', Polynomial_Order))
+
+% plot P(C=1|x)=0.5 i.e. the separating line
+subplot2(2,2,trial,2)
+[cc,hh]=contour(xs,ys,reshape(Posterior,[ngrid,ngrid]),[0.5 0.5]);
+set(hh,'linewidth',4,'color','k');
+hold on
+plot(Xtrain(find(ytrain==1),1), Xtrain(find(ytrain==1),2),'r.');
+plot(Xtrain(find(ytrain==0),1), Xtrain(find(ytrain==0),2),'o');
+title(sprintf('Decision boundary for degree %d', Polynomial_Order))
+
+end % trial
+
+
+
+
+##### SOURCE END #####
+--></body></html>

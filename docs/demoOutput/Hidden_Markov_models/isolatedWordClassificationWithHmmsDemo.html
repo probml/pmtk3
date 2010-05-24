@@ -1,0 +1,167 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>Classifying a speech signal with an HMM as "four" or "five"</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-05-24"><meta name="m-file" content="isolatedWordClassificationWithHmmsDemo"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Classifying a speech signal with an HMM as "four" or "five"</h1><!--introduction--><p>Xtrain{i} is a 13 x T(i) sequence of MFCC data, where T(i) is the length</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Initial Guess</a></li></ul></div><pre class="codeinput">load <span class="string">data45</span>;
+nstates = 5;
+setSeed(0);
+Xtrain = [train4'; train5'];
+ytrain = [repmat(4, numel(train4), 1) ; repmat(5, numel(train5), 1)];
+[Xtrain, ytrain] = shuffleRows(Xtrain, ytrain);
+Xtest = test45';
+ytest = labels';
+[Xtest, ytest] = shuffleRows(Xtest, ytest);
+</pre><h2>Initial Guess<a name="2"></a></h2><pre class="codeinput">pi0 = [1, 0, 0, 0, 0];
+transmat0 = normalize(diag(ones(nstates, 1)) + <span class="keyword">...</span>
+            diag(ones(nstates-1, 1), 1), 2);
+</pre><pre class="codeinput">fitArgs = {<span class="string">'pi0'</span>, pi0, <span class="string">'trans0'</span>, transmat0, <span class="string">'verbose'</span>, true};
+fitFn   = @(X)hmmFitEm(X, nstates, <span class="string">'gauss'</span>, fitArgs{:});
+model = generativeClassifierFit(fitFn, Xtrain, ytrain);
+</pre><pre class="codeoutput">1	 loglik: -133231
+2	 loglik: -80395.3
+3	 loglik: -75090.1
+4	 loglik: -73681.8
+5	 loglik: -72915.3
+6	 loglik: -72588.1
+7	 loglik: -72386.1
+8	 loglik: -72251.5
+9	 loglik: -72125.3
+10	 loglik: -71998.8
+11	 loglik: -71878.2
+12	 loglik: -71778.3
+13	 loglik: -71641.5
+14	 loglik: -71571
+15	 loglik: -71534
+16	 loglik: -71507.8
+17	 loglik: -71488.3
+18	 loglik: -71473.3
+19	 loglik: -71460.9
+20	 loglik: -71449.2
+21	 loglik: -71435.6
+22	 loglik: -71419.2
+23	 loglik: -71400.6
+24	 loglik: -71383.4
+25	 loglik: -71370.7
+26	 loglik: -71363.1
+27	 loglik: -71359.4
+1	 loglik: -151188
+2	 loglik: -97819.8
+3	 loglik: -89179.6
+4	 loglik: -87160.1
+5	 loglik: -85897.4
+6	 loglik: -84968
+7	 loglik: -84127.5
+8	 loglik: -83196
+9	 loglik: -81999.8
+10	 loglik: -81236.7
+11	 loglik: -80842
+12	 loglik: -80494.6
+13	 loglik: -80262.8
+14	 loglik: -80214.6
+15	 loglik: -80189
+16	 loglik: -80164.9
+17	 loglik: -80135.3
+18	 loglik: -80071.2
+19	 loglik: -80008
+20	 loglik: -79980.2
+21	 loglik: -79970.5
+22	 loglik: -79966.8
+</pre><pre class="codeinput">logprobFn = @hmmLogprob;
+[yhat, post] = generativeClassifierPredict(logprobFn, model, Xtest);
+</pre><pre class="codeinput">nerrors = sum(yhat ~= ytest);
+display(nerrors);
+</pre><pre class="codeoutput">nerrors =
+     0
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Classifying a speech signal with an HMM as "four" or "five"
+% Xtrain{i} is a 13 x T(i) sequence of MFCC data, where T(i) is the length
+%%
+load data45; 
+nstates = 5;
+setSeed(0); 
+Xtrain = [train4'; train5'];
+ytrain = [repmat(4, numel(train4), 1) ; repmat(5, numel(train5), 1)];
+[Xtrain, ytrain] = shuffleRows(Xtrain, ytrain);
+Xtest = test45'; 
+ytest = labels'; 
+[Xtest, ytest] = shuffleRows(Xtest, ytest); 
+%% Initial Guess
+pi0 = [1, 0, 0, 0, 0];
+transmat0 = normalize(diag(ones(nstates, 1)) + ...
+            diag(ones(nstates-1, 1), 1), 2);
+%%        
+fitArgs = {'pi0', pi0, 'trans0', transmat0, 'verbose', true};
+fitFn   = @(X)hmmFitEm(X, nstates, 'gauss', fitArgs{:}); 
+model = generativeClassifierFit(fitFn, Xtrain, ytrain); 
+%%
+logprobFn = @hmmLogprob;
+[yhat, post] = generativeClassifierPredict(logprobFn, model, Xtest);
+%%
+nerrors = sum(yhat ~= ytest);
+display(nerrors);
+
+
+##### SOURCE END #####
+--></body></html>

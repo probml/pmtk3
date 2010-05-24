@@ -1,0 +1,151 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>Apply L2 Logistic Regression to the XOR problem</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-05-24"><meta name="m-file" content="logregXorDemo"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Apply L2 Logistic Regression to the XOR problem</h1><!--introduction--><p>We show how RBF, and polynomial expansions of the features 'solve' it, while using raw features does not.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#3">Linear Features</a></li><li><a href="#4">Basis Expansions</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> logregXorDemo()
+</pre><pre class="codeinput">[X, y] = createXORdata();
+lambda = 1e-2;
+</pre><h2>Linear Features<a name="3"></a></h2><pre class="codeinput">model = logregFit(X, y, <span class="string">'lambda'</span>, lambda);
+yhat = logregPredict(model, X);
+errorRate = mean(yhat ~= y);
+fprintf(<span class="string">'Error rate using raw features: %2.f%%\n'</span>, 100*errorRate);
+plotDecisionBoundary(X, y, @(X)logregPredict(model, X));
+title(<span class="string">'linear'</span>);
+printPmtkFigure(<span class="string">'logregXorLinear'</span>)
+</pre><pre class="codeoutput">Error rate using raw features: 49%
+</pre><img vspace="5" hspace="5" src="logregXorDemo_01.png" alt=""> <h2>Basis Expansions<a name="4"></a></h2><pre class="codeinput">rbfScale = 1;
+polydeg  = 2;
+protoTypes = [1 1; 1 5; 5 1; 5 5];
+<span class="comment">%protoTypes = [1 5; 5 5];</span>
+kernels = {@(X1, X2)kernelRbfSigma(X1, X2, rbfScale)
+           @(X1, X2)kernelRbfSigma(X1, protoTypes, rbfScale)
+           @(X1, X2)kernelPoly(X1, X2, polydeg)};
+fnames  = {<span class="string">'logregXorRbf'</span>, <span class="string">'logregXorRbfProto'</span>, <span class="string">'logregXorPoly'</span>};
+titles  = {<span class="string">'rbf'</span>, <span class="string">'rbf prototypes'</span>, <span class="string">'poly'</span>};
+<span class="keyword">for</span> i=1:numel(kernels)
+    preproc.kernelFn = kernels{i};
+    preproc.standardizeX = false;
+    model = logregFit(X, y, <span class="string">'lambda'</span>, lambda, <span class="string">'preproc'</span>, preproc);
+    yhat = logregPredict(model, X);
+    errorRate = mean(yhat ~= y);
+    fprintf(<span class="string">'Error rate using %s features: %2.f%%\n'</span>, titles{i}, 100*errorRate);
+    predictFcn = @(Xtest)logregPredict(model, Xtest);
+    plotDecisionBoundary(X, y, predictFcn);
+    <span class="keyword">if</span> i==2
+       hold <span class="string">on</span>;
+       plot(protoTypes(:, 1), protoTypes(:, 2), <span class="string">'*k'</span>, <span class="string">'linewidth'</span>, 2, <span class="string">'markersize'</span>, 10)
+    <span class="keyword">end</span>
+    title(titles{i});
+    printPmtkFigure(fnames{i})
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">Error rate using rbf features:  0%
+Error rate using rbf prototypes features:  0%
+Error rate using poly features:  0%
+</pre><img vspace="5" hspace="5" src="logregXorDemo_02.png" alt=""> <img vspace="5" hspace="5" src="logregXorDemo_03.png" alt=""> <img vspace="5" hspace="5" src="logregXorDemo_04.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Apply L2 Logistic Regression to the XOR problem
+% We show how RBF, and polynomial expansions of the features 'solve' it,
+% while using raw features does not.
+%%
+function logregXorDemo()
+[X, y] = createXORdata();
+lambda = 1e-2;
+%% Linear Features
+model = logregFit(X, y, 'lambda', lambda);
+yhat = logregPredict(model, X);
+errorRate = mean(yhat ~= y);
+fprintf('Error rate using raw features: %2.f%%\n', 100*errorRate);
+plotDecisionBoundary(X, y, @(X)logregPredict(model, X));
+title('linear');
+printPmtkFigure('logregXorLinear')
+%% Basis Expansions
+rbfScale = 1;
+polydeg  = 2;
+protoTypes = [1 1; 1 5; 5 1; 5 5];
+%protoTypes = [1 5; 5 5];
+kernels = {@(X1, X2)kernelRbfSigma(X1, X2, rbfScale)
+           @(X1, X2)kernelRbfSigma(X1, protoTypes, rbfScale)
+           @(X1, X2)kernelPoly(X1, X2, polydeg)};
+fnames  = {'logregXorRbf', 'logregXorRbfProto', 'logregXorPoly'};
+titles  = {'rbf', 'rbf prototypes', 'poly'};
+for i=1:numel(kernels)
+    preproc.kernelFn = kernels{i};
+    preproc.standardizeX = false; 
+    model = logregFit(X, y, 'lambda', lambda, 'preproc', preproc);
+    yhat = logregPredict(model, X);
+    errorRate = mean(yhat ~= y);
+    fprintf('Error rate using %s features: %2.f%%\n', titles{i}, 100*errorRate);
+    predictFcn = @(Xtest)logregPredict(model, Xtest);
+    plotDecisionBoundary(X, y, predictFcn);
+    if i==2
+       hold on; 
+       plot(protoTypes(:, 1), protoTypes(:, 2), '*k', 'linewidth', 2, 'markersize', 10)
+    end
+    title(titles{i});
+    printPmtkFigure(fnames{i})
+end
+end
+##### SOURCE END #####
+--></body></html>

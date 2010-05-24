@@ -1,0 +1,177 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>Water sprinkler network Example</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-05-24"><meta name="m-file" content="sprinklerGMdemo"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Water sprinkler network Example</h1><!--introduction--><p>Make DAG    C   / \  v  v  S  R   \/   v   W</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Make CPDs</a></li><li><a href="#3">Convert from DGM to UGM</a></li><li><a href="#4">Display joint</a></li><li><a href="#5">Inference</a></li></ul></div><pre class="codeinput">C = 1; S = 2; R = 3; W = 4;
+
+G = zeros(4,4);
+G(C,[S R]) = 1;
+G(S,W)=1;
+G(R,W)=1;
+</pre><h2>Make CPDs<a name="2"></a></h2><p>Specify the conditional probability tables as cell arrays The left-most index toggles fastest, so entries are stored in this order: (1,1,1), (2,1,1), (1,2,1), (2,2,1), etc.</p><pre class="codeinput">CPD{C} = tabularFactorCreate(reshape([0.5 0.5], 2, 1), [C]);
+CPD{R} = tabularFactorCreate(reshape([0.8 0.2 0.2 0.8], 2, 2), [C R]);
+CPD{S} = tabularFactorCreate(reshape([0.5 0.9 0.5 0.1], 2, 2), [C S]);
+CPD{W} = tabularFactorCreate(reshape([1 0.1 0.1 0.01 0 0.9 0.9 0.99], 2, 2, 2), [S R W]);
+
+jointF = tabularFactorMultiply(CPD);
+jointDGM = jointF.T;
+</pre><h2>Convert from DGM to UGM<a name="3"></a></h2><pre class="codeinput">fac{1} = tabularFactorCreate(ones(2, 2, 2), [C S R]);
+fac{1} = tabularFactorMultiply(fac{1}, CPD{1}, CPD{2}, CPD{3});
+fac{2} = CPD{4};
+jointF = tabularFactorMultiply(fac)
+joint = jointF.T;
+assert(approxeq(joint, jointDGM))
+</pre><pre class="codeoutput">jointF = 
+         T: [4-D double]
+    domain: [1 2 3 4]
+     sizes: [2 2 2 2]
+</pre><h2>Display joint<a name="4"></a></h2><pre class="codeinput">lab=cellfun(@(x) {sprintf(<span class="string">'%d '</span>,x)}, num2cell(ind2subv([2 2 2 2],1:16),2));
+figure;
+<span class="comment">%bar(joint.T(:))</span>
+bar(joint(:))
+set(gca,<span class="string">'xtick'</span>,1:16);
+xticklabelRot(lab, 90, 10, 0.01)
+title(<span class="string">'joint distribution of water sprinkler UGM'</span>)
+</pre><img vspace="5" hspace="5" src="sprinklerGMdemo_01.png" alt=""> <h2>Inference<a name="5"></a></h2><pre class="codeinput">false = 1;
+true = 2;
+mW = tabularFactorMarginalize(jointF, W);
+assert(approxeq(mW.T(true), 0.6471))
+
+mSW = tabularFactorMarginalize(jointF, [S, W]);
+assert(approxeq(mSW.T(true,true), 0.2781))
+
+mSgivenW = tabularFactorConditional(jointF, S, W, true);
+assert(approxeq(mSgivenW.T(true), 0.4298));
+
+mSgivenWR = tabularFactorConditional(jointF, S, [W R], [true,true]);
+assert(approxeq(mSgivenWR.T(true), 0.1945)); <span class="comment">% explaining away</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Water sprinkler network Example
+%
+% Make DAG
+%    C
+%   / \
+%  v  v
+%  S  R
+%   \/
+%   v
+%   W
+%%
+C = 1; S = 2; R = 3; W = 4;
+
+G = zeros(4,4);
+G(C,[S R]) = 1;
+G(S,W)=1;
+G(R,W)=1;
+
+%% Make CPDs
+% Specify the conditional probability tables as cell arrays
+% The left-most index toggles fastest, so entries are stored in this order:
+% (1,1,1), (2,1,1), (1,2,1), (2,2,1), etc.
+CPD{C} = tabularFactorCreate(reshape([0.5 0.5], 2, 1), [C]);
+CPD{R} = tabularFactorCreate(reshape([0.8 0.2 0.2 0.8], 2, 2), [C R]);
+CPD{S} = tabularFactorCreate(reshape([0.5 0.9 0.5 0.1], 2, 2), [C S]);
+CPD{W} = tabularFactorCreate(reshape([1 0.1 0.1 0.01 0 0.9 0.9 0.99], 2, 2, 2), [S R W]);
+
+jointF = tabularFactorMultiply(CPD);
+jointDGM = jointF.T;
+
+
+%% Convert from DGM to UGM
+fac{1} = tabularFactorCreate(ones(2, 2, 2), [C S R]);
+fac{1} = tabularFactorMultiply(fac{1}, CPD{1}, CPD{2}, CPD{3});
+fac{2} = CPD{4};
+jointF = tabularFactorMultiply(fac)
+joint = jointF.T;
+assert(approxeq(joint, jointDGM))
+
+%% Display joint
+lab=cellfun(@(x) {sprintf('%d ',x)}, num2cell(ind2subv([2 2 2 2],1:16),2));
+figure;
+%bar(joint.T(:))
+bar(joint(:))
+set(gca,'xtick',1:16);
+xticklabelRot(lab, 90, 10, 0.01)
+title('joint distribution of water sprinkler UGM')
+
+%% Inference
+false = 1; 
+true = 2;
+mW = tabularFactorMarginalize(jointF, W);
+assert(approxeq(mW.T(true), 0.6471))
+
+mSW = tabularFactorMarginalize(jointF, [S, W]);
+assert(approxeq(mSW.T(true,true), 0.2781))
+
+mSgivenW = tabularFactorConditional(jointF, S, W, true);
+assert(approxeq(mSgivenW.T(true), 0.4298));
+
+mSgivenWR = tabularFactorConditional(jointF, S, [W R], [true,true]);
+assert(approxeq(mSgivenWR.T(true), 0.1945)); % explaining away
+
+
+
+##### SOURCE END #####
+--></body></html>

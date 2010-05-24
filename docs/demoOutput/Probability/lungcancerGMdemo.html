@@ -1,0 +1,197 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>Lung cancer network Example</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-05-24"><meta name="m-file" content="lungcancerGMdemo"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Lung cancer network Example</h1><!--introduction--><p>Make DAG     S    / \   v  v  CB  LC    \/   \    v     v   SOB    X</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Make CPDs</a></li><li><a href="#3">Convert from DGM to UGM</a></li><li><a href="#4">Display joint</a></li><li><a href="#5">Inference</a></li></ul></div><pre class="codeinput">S = 1; CB = 2; LC = 3; SOB = 4; X = 5;
+</pre><h2>Make CPDs<a name="2"></a></h2><p>Specify the conditional probability tables as cell arrays The left-most index toggles fastest, so entries are stored in this order: (1,1,1), (2,1,1), (1,2,1), (2,2,1), etc.</p><pre class="codeinput">CPD{S} = tabularFactorCreate(reshape([0.8 0.2], 2, 1), [S]);
+CPD{CB} = tabularFactorCreate(reshape([0.95 0.75  0.05 0.25], 2, 2), [S CB]);
+CPD{LC} = tabularFactorCreate(reshape([0.99995 0.997 0.00005 0.003], 2, 2), [S LC]);
+<span class="comment">%CPD{SOB} = tabularFactorCreate(reshape([0.95 0.9 0.5 0.25  0.05 0.1 0.5 0.75], 2, 2, 2), [CB LC SOB]);</span>
+CPD{SOB} = tabularFactorCreate(reshape([0.95 0.5 0.5 0.25  0.05 0.5 0.5 0.75], 2, 2, 2), [CB LC SOB]);
+CPD{X} = tabularFactorCreate(reshape([0.98 0.4 0.02 0.6], 2, 2), [LC X]);
+<span class="comment">%CPD{X} = tabularFactorCreate(reshape([0.98 0.8 0.02 0.2], 2, 2), [LC X]);</span>
+
+jointT = tabularFactorMultiply(CPD);
+jointDGM = jointT.T;
+</pre><h2>Convert from DGM to UGM<a name="3"></a></h2><p>cliques are {S,CB,LC}, {SB,LC,SOB}, {LC,X}</p><pre class="codeinput">fac{1} = tabularFactorCreate(ones(2,2,2), [S, CB, LC]);
+fac{1} = tabularFactorMultiply(fac{1}, CPD{1}, CPD{2}, CPD{3});
+fac{2} = CPD{SOB};
+fac{3} = CPD{X};
+
+jointT = tabularFactorMultiply(fac);
+joint = jointT.T;
+assert(approxeq(joint, jointDGM))
+</pre><h2>Display joint<a name="4"></a></h2><pre class="codeinput">lab=cellfun(@(x) {sprintf(<span class="string">'%d '</span>,x)}, num2cell(ind2subv([2 2 2 2 2],1:32)-1,2));
+figure;
+<span class="comment">%bar(joint.T(:))</span>
+bar(joint(:))
+set(gca,<span class="string">'xtick'</span>,1:32);
+xticklabelRot(lab, 90, 8, 0.025)
+title(<span class="string">'joint distribution of lung cancer network'</span>)
+ylabel(<span class="string">'probability truncated at 0.2'</span>)
+set(gca,<span class="string">'ylim'</span>,[0 0.2]) <span class="comment">% zoom in</span>
+
+printPmtkFigure(<span class="string">'lungcancerJointBar'</span>)
+</pre><img vspace="5" hspace="5" src="lungcancerGMdemo_01.png" alt=""> <h2>Inference<a name="5"></a></h2><pre class="codeinput">pS = tabularFactorMarginalize(jointT, S);
+assert(approxeq(pS.T, [0.8; 0.2]))
+
+pSCB = tabularFactorMarginalize(jointT, [S, CB]);
+
+pCBgivenSOB = tabularFactorConditional(jointT, CB, SOB, 2);
+pCBgivenSOB.T
+<span class="comment">%assert(approxeq(pCBgivenSOB.T, [0.5038; 0.4962]));</span>
+
+pCBgivenSOBandX = tabularFactorConditional(jointT, CB, [SOB, X], [2, 2]);
+pCBgivenSOBandX.T
+<span class="comment">% explaining away - prob of CB is now lower given X, since LC is more</span>
+<span class="comment">% likely</span>
+<span class="comment">%assert(approxeq(pCBgivenSOBandX.T, [0.5220; 0.4780]));</span>
+
+
+pCBandLCgivenSOBandX = tabularFactorConditional(jointT, [CB,LC], [SOB,X], [2,2]);
+</pre><pre class="codeoutput">ans =
+   0.503755057427698
+   0.496244942572303
+ans =
+   0.522007205881772
+   0.477992794118229
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Lung cancer network Example
+% Make DAG
+%     S
+%    / \
+%   v  v
+%  CB  LC
+%    \/   \
+%    v     v
+%   SOB    X
+%%
+S = 1; CB = 2; LC = 3; SOB = 4; X = 5;
+%% Make CPDs
+% Specify the conditional probability tables as cell arrays
+% The left-most index toggles fastest, so entries are stored in this order:
+% (1,1,1), (2,1,1), (1,2,1), (2,2,1), etc.
+
+CPD{S} = tabularFactorCreate(reshape([0.8 0.2], 2, 1), [S]);
+CPD{CB} = tabularFactorCreate(reshape([0.95 0.75  0.05 0.25], 2, 2), [S CB]);
+CPD{LC} = tabularFactorCreate(reshape([0.99995 0.997 0.00005 0.003], 2, 2), [S LC]);
+%CPD{SOB} = tabularFactorCreate(reshape([0.95 0.9 0.5 0.25  0.05 0.1 0.5 0.75], 2, 2, 2), [CB LC SOB]);
+CPD{SOB} = tabularFactorCreate(reshape([0.95 0.5 0.5 0.25  0.05 0.5 0.5 0.75], 2, 2, 2), [CB LC SOB]);
+CPD{X} = tabularFactorCreate(reshape([0.98 0.4 0.02 0.6], 2, 2), [LC X]);
+%CPD{X} = tabularFactorCreate(reshape([0.98 0.8 0.02 0.2], 2, 2), [LC X]);
+
+jointT = tabularFactorMultiply(CPD);
+jointDGM = jointT.T;
+%% Convert from DGM to UGM
+% cliques are {S,CB,LC}, {SB,LC,SOB}, {LC,X}
+fac{1} = tabularFactorCreate(ones(2,2,2), [S, CB, LC]);
+fac{1} = tabularFactorMultiply(fac{1}, CPD{1}, CPD{2}, CPD{3});
+fac{2} = CPD{SOB};
+fac{3} = CPD{X};
+
+jointT = tabularFactorMultiply(fac);
+joint = jointT.T;
+assert(approxeq(joint, jointDGM))
+
+%% Display joint
+lab=cellfun(@(x) {sprintf('%d ',x)}, num2cell(ind2subv([2 2 2 2 2],1:32)-1,2));
+figure;
+%bar(joint.T(:))
+bar(joint(:))
+set(gca,'xtick',1:32);
+xticklabelRot(lab, 90, 8, 0.025)
+title('joint distribution of lung cancer network')
+ylabel('probability truncated at 0.2')
+set(gca,'ylim',[0 0.2]) % zoom in
+
+printPmtkFigure('lungcancerJointBar')
+
+
+%% Inference
+
+pS = tabularFactorMarginalize(jointT, S); 
+assert(approxeq(pS.T, [0.8; 0.2]))
+
+pSCB = tabularFactorMarginalize(jointT, [S, CB]); 
+
+pCBgivenSOB = tabularFactorConditional(jointT, CB, SOB, 2);
+pCBgivenSOB.T
+%assert(approxeq(pCBgivenSOB.T, [0.5038; 0.4962]));
+
+pCBgivenSOBandX = tabularFactorConditional(jointT, CB, [SOB, X], [2, 2]);
+pCBgivenSOBandX.T
+% explaining away - prob of CB is now lower given X, since LC is more
+% likely
+%assert(approxeq(pCBgivenSOBandX.T, [0.5220; 0.4780])); 
+
+
+pCBandLCgivenSOBandX = tabularFactorConditional(jointT, [CB,LC], [SOB,X], [2,2]);
+
+
+
+
+
+##### SOURCE END #####
+--></body></html>
