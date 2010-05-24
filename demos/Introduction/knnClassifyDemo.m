@@ -27,7 +27,7 @@ axis(range)
 printPmtkFigure('knnClassifyTestData'); 
 
 %% Classify and plot predictions on test data
-Ks = [1];
+Ks = [1 5];
 for ki=1:length(Ks)
   K = Ks(ki);
   model = knnFit(Xtrain, ytrain, K); 
@@ -46,9 +46,7 @@ for ki=1:length(Ks)
 end
 
 
-
-
-%% Plot  predicted class  across a grid of points
+%% Plot  predicted class  across a 2d grid of points
 % cf HTF fig 2.2
 
 XtestGrid = makeGrid2d(Xtrain);
@@ -64,6 +62,28 @@ for K=Ks(:)'
   C = 3;
   printPmtkFigure(sprintf('knnClassifyGridC%dK%d.eps', 3, K))
 end
+
+%% Plot error vs K
+Ks = [1 5 10 20 50 100 120];
+for ki=1:length(Ks)
+  K = Ks(ki);
+  model = knnFit(Xtrain, ytrain, K); 
+  [ypred] = knnPredict(model, Xtest);
+  err = find(ypred(:) ~= ytest(:));
+  nerrors = length(err);
+  errRateTest(ki) = nerrors/Ntest;
+ 
+  % compute error on training set
+  [ypred] = knnPredict(model, Xtrain);
+  err = find(ypred(:) ~= ytrain(:));
+  nerrors = length(err);
+  errRateTrain(ki) = nerrors/Ntrain;
+end
+
+figure; 
+plot(Ks, errRateTrain, 'ro-', Ks, errRateTest, 'k*:', 'linewidth', 2);
+legend('train', 'test')
+xlabel('K'); ylabel('misclassification rate')
 
 end
 
