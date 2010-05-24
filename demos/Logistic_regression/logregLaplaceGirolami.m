@@ -1,11 +1,9 @@
-% logregLaplaceDemoGirolami
-% Example of the laplace approximation for logistic regression
+%% Example of the laplace approximation for logistic regression
 % Based on code written by Mark Girolami
-
-
+%%
 setSeed(0);
 
-% We generate data from two Gaussians:
+%% We generate data from two Gaussians:
 % x|C=1 ~ gauss([1,5], I)
 % x|C=0 ~ gauss([-5,1], 1.1I)
 N=30;
@@ -18,7 +16,7 @@ X = [class1_std*randn(N,2)+mu1;2*class2_std*randn(N,2)+mu2];
 t = [ones(N,1);zeros(N,1)];
 alpha=100; %Variance of prior (alpha=1/lambda)
 
-%Limits and grid size for contour plotting
+%% Limits and grid size for contour plotting
 Range=8;
 Step=0.1;
 [w1,w2]=meshgrid(-Range:Step:Range,-Range:Step:Range);
@@ -43,11 +41,11 @@ contour(w1,w2,reshape(-Log_Joint,[n,n]),30);
 title('Log-Unnormalised Posterior')
 hold on
 
-%Identify the parameters w1 & w2 which maximise the posterior (joint)
+% Identify the parameters w1 & w2 which maximise the posterior (joint)
 [i,j]=max(Log_Joint);
 plot(W(j,1),W(j,2),'.','MarkerSize',40);
 
-%Compute the Laplace Approximation
+% Compute the Laplace Approximation
 model = logregBinaryFitL2IRLS(X, t, 1/alpha, false);
 wMAP = model.w;
 C = model.C; 
@@ -58,14 +56,9 @@ contour(w1,w2,reshape(-Log_Laplace_Posterior,[n,n]),30);
 hold on
 plot(W(j,1),W(j,2),'.','MarkerSize',40);
 title('Laplace Approximation to Posterior')
-
-
-% logregLaplaceDemoPred
-% Plot the predictive distribution for logistic regression
-
-f2 = figure();
-
 % wMAP
+% Plot the predictive distribution for logistic regression
+f2 = figure();
 subplot(2,2,1)
 grid = W; % grid of x1, x2 valyes
 pred = 1./(1+exp(-grid*wMAP));
