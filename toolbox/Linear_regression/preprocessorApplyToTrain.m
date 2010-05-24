@@ -20,8 +20,11 @@ if preproc.standardizeX
 end
 
 if preproc.rescaleX
-    X = rescaleData(X, scaleXrange(1), scaleXrange(2));
-    preproc.Xscale = scaleXrange;
+    if ~isfield(preproc, 'Xscale')
+       preproc.Xscale = [-1 1]; 
+    end
+    X = rescaleData(X, preproc.Xscale(1), preproc.Xscale(2));
+    
 end
 
 if ~isempty(preproc.kernelFn)

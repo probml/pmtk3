@@ -1,7 +1,9 @@
 %% Simple Tests of the svmFit interface
 %PMTKslow
+%PMTKneedsOptimToolbox quadprog
 %% First we check that the 3 implementations give the same
 % results on a simple binary dataset
+requireOptimToolbox
 load crabs
 
 model = svmFit(Xtrain, ytrain);

@@ -1,8 +1,8 @@
 %% Robust linear regression demo
-%
+%PMTKneedsOptimToolbox linprog
 %%
 function linregRobustDemo()
-
+requireOptimToolbox
 seed = 0; setSeed(seed);
 x = sort(rand(10,1));
 y = 1+2*x + rand(size(x))-.5;

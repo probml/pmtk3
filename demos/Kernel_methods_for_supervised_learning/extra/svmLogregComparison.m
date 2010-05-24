@@ -10,9 +10,10 @@ SVMmodel = svmFit(Xtrain, ytrain, 'kernel', 'rbf', ...
 yhat = svmPredict(SVMmodel, Xtest);
 svmNerrors = sum(yhat ~= ytest) %0
 %% LR L1
-lambdaL1 = 3e-7; SigmaL1 = 8.5; % see logregKernelCrabsDemo for cross validation
+lambdaL1 = 1e-3; SigmaL1 = 0.5;
 args.lambda = lambdaL1;
 args.preproc.kernelFn = @(X1, X2)kernelRbfSigma(X1, X2, SigmaL1);
+args.preproc.rescaleX = true;
 args.regType = 'L1';
 LRL1model = logregFit(Xtrain, ytrain, args);
 yhat = logregPredict(LRL1model, Xtest);

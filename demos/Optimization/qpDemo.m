@@ -1,5 +1,6 @@
 %% Solve a simple quadratic program
-
+%PMTKneedsOptimToolbox quadprog
+requireOptimToolbox
 H = 2*eye(2);
 g = -[3,0.25];
 A = [1 1; 1 -1; -1 1; -1 -1];

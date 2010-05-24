@@ -4,6 +4,7 @@
 %biclusterDemo;                          pclear(2); % PMTKreallySlow
 %cancerHighDimClassifDemo;               pclear(2); % PMTKslow
 %demoMinfuncHighdim;                     pclear(2); % PMTKslow
+%demoRosenHighDim;                       pclear(2); % PMTKinteractive
 %gibbsDemoDenoising;                     pclear(2); % PMTKreallySlow
 %gibbsDemoNoBlindspot;                   pclear(2); % PMTKreallySlow
 %gpDemoChangeHparams2d;                  pclear(2); % PMTKslow
@@ -20,7 +21,9 @@
 %mnist1NNdemo;                           pclear(2); % PMTKslow
 %multitaskRegDemo;                       pclear(2); % PMTKslow
 %naiveBayesMnistDemo;                    pclear(2); % PMTKslow
+%pagerankDemo;                           pclear(2); % PMTKinteractive
 %pcaOverfitDemo;                         pclear(2); % PMTKslow
+%pcaYeast;                               pclear(2); % PMTKinteractive
 %rbfNetworkSarcosDemo;                   pclear(2); % PMTKslow
 %sparseSensingDemo;                      pclear(2); % PMTKslow
 %svmCgammaDemo;                          pclear(2); % PMTKslow
@@ -74,7 +77,6 @@ demoMinfunc;                             pclear(2);
 demoPeaksTraj;                           pclear(2);
 demoRosen2d;                             pclear(2);
 demoRosenConstrained;                    pclear(2);
-demoRosenHighDim;                        pclear(2);
 demoRosenPlot2d;                         pclear(2);
 demoSteepestDescent;                     pclear(2);
 demoSteepestDescentRosen;                pclear(2);
@@ -256,7 +258,6 @@ normalGammaThresholdPlotDemo;            pclear(2);
 numbersGame;                             pclear(2);
 optLowerbound;                           pclear(2);
 optMaxLambdaVal;                         pclear(2);
-pagerankDemo;                            pclear(2);
 pagerankDemoMoler;                       pclear(2);
 pagerankDemoPmtk;                        pclear(2);
 pagerankpow;                             pclear(2);
@@ -275,7 +276,6 @@ pcaEmTest;                               pclear(2);
 pcaFaceDemo;                             pclear(2);
 pcaImageDemo;                            pclear(2);
 pcaTimingTest;                           pclear(2);
-pcaYeast;                                pclear(2);
 peaksPlotDemo;                           pclear(2);
 piecewiseLinearSurface;                  pclear(2);
 plotDirichlet3d;                         pclear(2);
@@ -298,6 +298,7 @@ probitVsLogregCrabsDemo;                 pclear(2);
 prostateComparison;                      pclear(2);
 prostateScatterDemo;                     pclear(2);
 prostateSubsets;                         pclear(2);
+qpDemo;                                  pclear(2);
 quantileDemo;                            pclear(2);
 randomWalk0to20Demo;                     pclear(2);
 rankDefDemo;                             pclear(2);

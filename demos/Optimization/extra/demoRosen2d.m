@@ -1,5 +1,5 @@
 %% Rosenbrock 2D demo
-%
+%PMTKneedsOptimToolbox fminunc
 %%
 requireOptimToolbox;
 xstart = [-1 2];

@@ -1,7 +1,7 @@
 %
-% RosenBrock Minfunc Demo
+% RosenBrock Demo
 %PMTKinteractive
-%
+%PMTKneedsOptimToolbox
 % "A note on the extended rosenbrock function" Evol. Comp. 2006
 % claims that for d=4 to 30 dims there are 2 local minima, at [1,1,...1] and
 % and near [-1,1,...,1].

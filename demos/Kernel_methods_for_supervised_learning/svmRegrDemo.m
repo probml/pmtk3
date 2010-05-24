@@ -1,6 +1,7 @@
 %% SVM Regression Demo
-%
+% PMTKneedsOptimToolbox quadprog
 %%
+requireOptimToolbox
 nVars = 1;
 nInstances = 50;
 setSeed(0);

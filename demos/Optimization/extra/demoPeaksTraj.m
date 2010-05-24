@@ -1,5 +1,5 @@
 %% Peaks Demo
-%
+%PMTKneedsOptimToolbox fminunc
 %%
 %[X,Y,Z] = peaks; % 49x49 surface surface
 requireOptimToolbox;

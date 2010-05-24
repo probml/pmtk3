@@ -1,7 +1,15 @@
 %% Run Every Demo
 
 
+%biclusterDemo;                          pclear(2); % PMTKreallySlow
+%demoRosenHighDim;                       pclear(2); % PMTKinteractive
+%gibbsDemoDenoising;                     pclear(2); % PMTKreallySlow
+%gibbsDemoNoBlindspot;                   pclear(2); % PMTKreallySlow
 %linregMultitaskGmmPriorDemo;            pclear(2); % PMTKbroken
+%linregSparseEmSynthDemo;                pclear(2); % PMTKreallySlow
+%linregSparseEmSynthDemoOld;             pclear(2); % PMTKreallySlow
+%pagerankDemo;                           pclear(2); % PMTKinteractive
+%pcaYeast;                               pclear(2); % PMTKinteractive
 agglomDemo;                              pclear(2);
 anscombe;                                pclear(2);
 bayesfactorGeneDemo;                     pclear(2);
@@ -16,7 +24,6 @@ betaMCdemo;                              pclear(2);
 betaPlotDemo;                            pclear(2);
 betaSampleDemo;                          pclear(2);
 biasVarModelComplexity;                  pclear(2);
-biclusterDemo;                           pclear(2);
 bigO;                                    pclear(2);
 bimodalDemo;                             pclear(2);
 binomDistPlot;                           pclear(2);
@@ -52,7 +59,6 @@ demoMinfuncHighdim;                      pclear(2);
 demoPeaksTraj;                           pclear(2);
 demoRosen2d;                             pclear(2);
 demoRosenConstrained;                    pclear(2);
-demoRosenHighDim;                        pclear(2);
 demoRosenPlot2d;                         pclear(2);
 demoSteepestDescent;                     pclear(2);
 demoSteepestDescentRosen;                pclear(2);
@@ -101,8 +107,6 @@ generativeVsDiscrim3;                    pclear(2);
 generativeVsDiscrim;                     pclear(2);
 ggmFitDemo;                              pclear(2);
 ggmLassoDemo;                            pclear(2);
-gibbsDemoDenoising;                      pclear(2);
-gibbsDemoNoBlindspot;                    pclear(2);
 gmmSingularity;                          pclear(2);
 gpDemoChangeHparams2d;                   pclear(2);
 gprDemoChangeHparams;                    pclear(2);
@@ -168,8 +172,6 @@ linregPostPredDemo;                      pclear(2);
 linregRbfDemo;                           pclear(2);
 linregRobustDemo;                        pclear(2);
 linregSparseEmBiscuitsDemo;              pclear(2);
-linregSparseEmSynthDemo;                 pclear(2);
-linregSparseEmSynthDemoOld;              pclear(2);
 linregStudentStacklossDemo;              pclear(2);
 linregStudentTest;                       pclear(2);
 linregWedgeDemo2;                        pclear(2);
@@ -249,7 +251,6 @@ normalGammaThresholdPlotDemo;            pclear(2);
 numbersGame;                             pclear(2);
 optLowerbound;                           pclear(2);
 optMaxLambdaVal;                         pclear(2);
-pagerankDemo;                            pclear(2);
 pagerankDemoMoler;                       pclear(2);
 pagerankDemoPmtk;                        pclear(2);
 pagerankpow;                             pclear(2);
@@ -269,7 +270,6 @@ pcaFaceDemo;                             pclear(2);
 pcaImageDemo;                            pclear(2);
 pcaOverfitDemo;                          pclear(2);
 pcaTimingTest;                           pclear(2);
-pcaYeast;                                pclear(2);
 peaksPlotDemo;                           pclear(2);
 piecewiseLinearSurface;                  pclear(2);
 plotDirichlet3d;                         pclear(2);
@@ -292,6 +292,7 @@ probitVsLogregCrabsDemo;                 pclear(2);
 prostateComparison;                      pclear(2);
 prostateScatterDemo;                     pclear(2);
 prostateSubsets;                         pclear(2);
+qpDemo;                                  pclear(2);
 quantileDemo;                            pclear(2);
 randomWalk0to20Demo;                     pclear(2);
 rankDefDemo;                             pclear(2);
