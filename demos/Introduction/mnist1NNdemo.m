@@ -1,9 +1,8 @@
-%% Classify the MNIST digits using a one nearest neighbour classifier
-% and Euclidean distance.
-%PMTKslow
+%% Classify the MNIST digits using a one nearest neighbour classifier and Euclidean distance
+%
 %%
-
-
+% PMTKslow
+%%
 load mnistALL;
 if 0
   % test on all data- 255 seconds, 3.09% error
@@ -34,7 +33,7 @@ tic
 XtrainSOS = sum(Xtrain.^2,2);
 XtestSOS  = sum(Xtest.^2,2);
 
-%% fully vectorized solution takes too much memory so we will classify in batches
+% fully vectorized solution takes too much memory so we will classify in batches
 % nbatches must be an even divisor of ntest, increase if you run out of memory 
 if ntest > 1000
   nbatches = 50;
