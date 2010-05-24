@@ -66,15 +66,15 @@ lambdaGL1 = lambdaL1;
 %% Fit 
 if 0
 wHatLasso =  linregFitL1InteriorPoint(Xtrain, ytrain,  lambdaL1); 
-wHatLassoEmL = linregSparseFitEm(Xtrain, ytrain, 'laplace', 'lambda', lambdaL1);
-wHatLassoEmNG = linregSparseFitEm(Xtrain, ytrain, 'ng', 'shape', 1, 'scale', (0.5*lambdaL1)^2/2);
+wHatLassoEmL = linregFitSparseEm(Xtrain, ytrain, 'laplace', 'lambda', lambdaL1);
+wHatLassoEmNG = linregFitSparseEm(Xtrain, ytrain, 'ng', 'shape', 1, 'scale', (0.5*lambdaL1)^2/2);
 end
 
 wHatGroup =  linregFitGroupLassoProj(Xtrain, ytrain, groups, lambdaGL1);
-wHatGroupEmGL = linregSparseFitEm(Xtrain, ytrain, 'groupLasso', 'lambda', (lambdaGL1), 'groups', groups, 'verbose', true);
-wHatGroupEmGL1 = linregSparseFitEm(Xtrain, ytrain, 'glaplace', 'lambda', (lambdaGL1), 'groups', groups, 'verbose', true);
-wHatGroupEmGNG = linregSparseFitEm(Xtrain, ytrain, 'gng', 'lambda', (0.5*lambdaGL1), 'groups', groups, 'verbose', true);
-wHatGroupEmGNG1 = linregSparseFitEm(Xtrain, ytrain, 'gng1', 'lambda', (0.5*lambdaGL1), 'groups', groups, 'verbose', true);
+wHatGroupEmGL = linregFitSparseEm(Xtrain, ytrain, 'groupLasso', 'lambda', (lambdaGL1), 'groups', groups, 'verbose', true);
+wHatGroupEmGL1 = linregFitSparseEm(Xtrain, ytrain, 'glaplace', 'lambda', (lambdaGL1), 'groups', groups, 'verbose', true);
+wHatGroupEmGNG = linregFitSparseEm(Xtrain, ytrain, 'gng', 'lambda', (0.5*lambdaGL1), 'groups', groups, 'verbose', true);
+wHatGroupEmGNG1 = linregFitSparseEm(Xtrain, ytrain, 'gng1', 'lambda', (0.5*lambdaGL1), 'groups', groups, 'verbose', true);
 
 %% Plot
 

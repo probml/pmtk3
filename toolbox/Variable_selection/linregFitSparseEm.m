@@ -1,4 +1,4 @@
-function [w, sigma, loglikHist]=linregSparseFitEm(X, y, prior, varargin)
+function [w, sigma, loglikHist]=linregFitSparseEm(X, y, prior, varargin)
 % Use EM to fit linear  regression  with sparsity promoting prior
 % See the paper "Sparse Bayesian nonparametric regression"
 % by F. Caron and A. Doucet, ICML2008.
