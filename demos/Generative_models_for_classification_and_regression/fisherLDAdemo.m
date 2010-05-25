@@ -32,7 +32,7 @@ plot(mu(1), mu(2), 'k*', 'markerSize', 15, 'linewidth', 3)
 %% Calculate projections
 wMean = (muMale - muFemale)';
 wFisher = fisherLDA(X,Y);
-[wPCA] = pcaPMTK(X, 1);
+[wPCA] = pcaPmtk(X, 1);
 %% Plot a line between the means
 h1 = line([muMale(1) muFemale(1)], [muMale(2) muFemale(2)]);
 set(h1,'linewidth',3, 'color', 'k');

@@ -5,7 +5,7 @@ xs = -4:0.2:4;
 v = 1;
 mu = 0;
 
-pr{1} = gaussPdf(xs, mu, sqrt(v));
+pr{1} = gausspdf(xs, mu, sqrt(v));
 
 % variance of laplace = 2b^2
 b = sqrt(v/2);

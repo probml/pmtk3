@@ -35,9 +35,10 @@ dbclear('if', 'warning');
 if nargin < 1, subFolder = ''; end
 if nargin < 2
     %exclusions = {'PMTKslow', 'PMTKinteractive', 'PMTKreallySlow'};
-    exclusions = {'PMTKinteractive', 'PMTKreallySlow'};
+    exclusions = {'PMTKinteractive', 'PMTKreallySlow', 'PMTKslow'};
 end
 hideFigures();
+fprintf('skipping demos with these tags: %s\n', catString(exclusions, ', ')); 
 [demos, excluded] = processExamples({}, exclusions, 0, false, subFolder);
 demos    = sort(demos);
 excluded = sort(excluded); 

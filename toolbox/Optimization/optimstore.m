@@ -3,7 +3,7 @@ function stop = optimstore(x, optimValues, state)
 global xhist fhist funcounthist
 xhist = [xhist x];
 fhist = [fhist optimValues.fval];
-funcounthist = [funcounthist optimValues.funcount];
+funcounthist = [funcounthist optimValues.funccount];
 stop = false;
 
 end
