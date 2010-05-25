@@ -13,6 +13,7 @@ function publishMethod(mfile,methodName,evalCode)
 %
 % publishMethod LogregDist demoVisualizePredictive
 % 
+% PMTKneedsMatlab 2008
 %%
     
     endTag = '%!';  % Must occur at the end of the function/method to be published

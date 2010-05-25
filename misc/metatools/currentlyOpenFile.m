@@ -2,6 +2,7 @@ function fname = currentlyOpenFile(fullPath)
 % Return the name of the file currently open in the editor. 
 % If fullPath is true, (default = false), the full absolute path is 
 % returned.
+% PMTKneedsMatlab 
 
 
 SetDefaultValue(1, 'fullPath', false); 

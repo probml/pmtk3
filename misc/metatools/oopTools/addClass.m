@@ -15,6 +15,7 @@ function addClass(varargin)
 % EXAMPLE:
 %
 % createClass('MvnDist',fullfile(PMTKroot(),'models'),'MultivarDist','model')
+% PMTKneedsMatlab 2008
 
     [className,superClasses,objName,allowOverwrite,saveDir] = process_options(varargin,'*className','','superClasses',{},'objName','model','allowOverwrite',true,'saveDir',fullfile(PMTKroot(),'models'));
     if exist(fullfile(saveDir,className),'file') && ~allowOverwrite

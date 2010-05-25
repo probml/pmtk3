@@ -14,6 +14,7 @@ function varargout = compileAndRun(fname,varargin)
 % If you will call the compiled version multiple times with the same size,
 % type and number of inputs, use the compileRunAndSave() function instead.
 %
+% PMTKneedsMatlab 2008
 %%
     
     if(~exist('emlmex','file'))

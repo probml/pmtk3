@@ -18,7 +18,7 @@ function varargout = compileRunAndSave(fname,varargin)
 %           to 'myfunction', which returns three outputs.
 %
 %
-%%
+% PMTKneedsMatlab 
 
 if(~exist('emlmex','file'))
     error('Sorry, emlmex could not be found');

@@ -1,5 +1,6 @@
 function m = protectedMethods(className,localOnly)
 % Return a list of protected methods in a class
+% PMTKneedsMatlab 2008
 if nargin < 2, localOnly = true; end
 meths = cellfuncell(@(c)c.Name, meta.class.fromName(className).Methods);
 keep = false(numel(meths,1));

@@ -1,5 +1,6 @@
 function generateSynopses()
 %% Generate the synopses listing files and one line desriptions
+% PMTKneedsMatlab
 
 wikiFile = 'C:\pmtk3wiki\synopsisPages.wiki';
 dest = fullfile(pmtk3Root(), 'docs', 'synopsis'); 

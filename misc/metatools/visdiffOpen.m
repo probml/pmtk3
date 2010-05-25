@@ -1,6 +1,6 @@
 function visdiffOpen()
 %% Open Matlab's file comparison tool comparing the first two open docs
-
+% PMTKneedsMatlab 
 
 files = currentlyOpenFiles(); 
 if numel(files) < 2

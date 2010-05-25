@@ -2,6 +2,7 @@ function publishDemos(wikiFile)
 % Publish all of the PMTK3 demos and create the wiki TOC page.
 % See publishFolder, pmlCodeRefs, pmlChapterRefs for settings that might
 % affect this function. 
+% PMTKneedsMatlab 
 %%
 
 

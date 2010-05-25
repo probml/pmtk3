@@ -27,6 +27,7 @@ function m = methodInfo(className,methodName, full)
 % m.methodText              - the whole method text
 % m.tags                    - any tags found in the method text
 % m.tagVals                 - the 'values' of any tags found - i.e. the text following them.
+% PMTKneedsMatlab 2008
 
 
 if nargin < 3, full = false; end

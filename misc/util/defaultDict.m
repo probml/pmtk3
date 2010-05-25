@@ -84,6 +84,7 @@ function d = defaultDict(keys, values, default)
 % (3) It supports any data type, (and mixed data types) as the keys
 % (4) It returns a default value if the key is not found - no need for
 %     tedious isKey or isfield checks.
+% PMTKslow
 %%
 ws = warning('query', 'MATLAB:printf:BadEscapeSequenceInFormat'); 
 warning('off', 'MATLAB:printf:BadEscapeSequenceInFormat'); 

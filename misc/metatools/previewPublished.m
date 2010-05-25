@@ -5,6 +5,7 @@ function previewPublished(fname, evalCode, outputDir)
 % text is published. 
 %% Example
 % publishPreview mixGaussVbDemoFaithful
+% PMTKneedsMatlab 
 close all;
 SetDefaultValue(2, 'evalCode', true);
 SetDefaultValue(3, 'outputDir', tempdir()); 

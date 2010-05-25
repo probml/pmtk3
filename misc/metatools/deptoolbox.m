@@ -42,7 +42,7 @@ function [report,errors] = deptoolbox(toolboxname,isroot,visualize)
 % Note, dependencies are listed relative to the specified toolbox
 % directory and filenames are listed relative to the present working
 % directory. 
-%
+% PMTKneedsMatlab 
 %%
 
 if(nargin < 3)

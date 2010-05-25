@@ -5,6 +5,7 @@ function publishFolder(folder, wikiOnly)
 %
 % publishFolder bayesDemos
 %
+% PMTKneedsMatlab
 %%
 SetDefaultValue(2, 'wikiOnly', false); 
 warnState = warning('query', 'all'); 

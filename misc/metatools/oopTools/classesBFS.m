@@ -1,6 +1,7 @@
 function [classes,adjmat] = classesBFS(varargin)
 % Return a list of classes in breadth first search order    
 % Same inputs as getClasses    
+% PMTKneedsMatlab 2008
    
     
     classes = getClasses(varargin{:});

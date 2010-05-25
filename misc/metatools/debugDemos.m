@@ -17,6 +17,7 @@ function [errors, warnings] = debugDemos(subFolder, exclusions)
 %
 % warnings - a struct whose fields are the demos with warnings and whos
 %            values are the warning messages
+% PMTKneedsMatlab 
 %%
 warnState = warning('query', 'all');
 ignoredWarnings = {

@@ -1,6 +1,7 @@
 function generatePmtkStats()
 %% Generate an html page showing PMTK3 statistics such as LOC by directory.
 %
+% PMTKneedsMatlab 
 %% Settings
 excludeComments             = false;
 directories                 = {'toolbox', 'misc', 'demos'};

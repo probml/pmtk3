@@ -1,5 +1,6 @@
 function tf = isabstract(className)
 % Return true iff the class is abstract    
+% PMTKneedsMatlab 2008
     
     if hasTag(which(className),'%PMTKabstract')
         tf = true; return;

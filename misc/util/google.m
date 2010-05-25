@@ -5,6 +5,7 @@ function google(varargin)
 % Example:
 %
 % google matlab interface to graphViz
+% PMTKneedsMatlab 
 %%
 query = catString(varargin, ' ');
 web('-browser', sprintf('http://www.google.ca/search?hl=en&source=hp&q=%s&btnG=Google+Search&meta=&aq=f&oq=', query));

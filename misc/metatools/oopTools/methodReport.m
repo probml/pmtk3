@@ -12,6 +12,7 @@ function  methodReport(varargin)
 % 'N'   for new         (local definition new to this branch of the tree
 % '*'   not finished    (implemented, but not yet finished)
 % '--'  does not have access to the method at all
+% PMTKneedsMatlab 2008
 
 
     ABSTRACT     = 'A';

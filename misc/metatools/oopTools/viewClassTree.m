@@ -3,6 +3,7 @@ function  h = viewClassTree(varargin)
 % Same args as getClasses 
 % Needs graphViz4Matlab
 % Classes must use classdef syntax not old style
+% PMTKneedsMatlab 2008
 
 args = process_options(varargin,'source',pwd(),'ignoreDirs',{'unitTests',fullfile('util','graphs','graphlayout')},'topOnly',false,'topClass',[]);
 [topClass,unusedArgs] = extractArgs(4,args);
