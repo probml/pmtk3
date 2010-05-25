@@ -4,7 +4,8 @@ function BF = bayesianTtest(x1, x2, mu_delta, sigma2_delta)
 % delta = mu1-mu2, and sigma2 is the common variance.
 % See The Bayesian Two-Sample t Test , M. Gönen and W. Johnson and Y. Lu and P. Westfall,
 % The American Statistician, 59(3), 252:257, 2005
-
+% PMTKneedsStatsToolbox noncentraltpdf
+%%
 m1 = mean(x1); n1 = length(x1); ss1 = sum((x1-m1).^2);
 m2 = mean(x2); n2 = length(x2); ss2 = sum((x2-m2).^2);
 nd = 1/((1/n1) + (1/n2));

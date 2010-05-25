@@ -3,7 +3,7 @@ function [mi,nbins] = mutualInfoAllPairsMixed(XD,XC,varargin)
 %[mi,nbins] = mutualInfoAllPairs(XD,XC,levels,method,smoothing)
 % XD is N*DD discrete data (can be [])
 % XC is N*DC cts data (can be [])
-%
+% PMTKneedsStatsToolbox hist3
 % optional arguments:
 % - levels is a scalar giving the number of quatization levels to use for continuous data. 
 %   The same number of levels is used for all data dimensions. Set levels to empty [] to use

@@ -1,6 +1,6 @@
 function quantized = quantizePMTK(vars, varargin)
 % Quantize continuous variables
-%
+% PMTKneedsStatsToolbox grpstats
 % The main purpose of this function is to quantize continuous variables for
 % the use in mutual information calculations. In Y=QUANTIZE(X), rows in X
 % represent different samples, and columns represent different variables. Y
