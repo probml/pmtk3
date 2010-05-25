@@ -25,7 +25,7 @@ while ~stop
     if ~isempty(outputFn)
         optimValues.iteration = k;
         optimValues.fval = fx;
-        optimValues.funcount = k;
+        optimValues.funccount = k;
         state = 'iter';
         stop = stop | outputFn(x, optimValues, state);
     end

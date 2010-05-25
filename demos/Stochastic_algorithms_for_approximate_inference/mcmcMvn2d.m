@@ -16,6 +16,7 @@ margExact   = {marg1, marg2};
 %% 
 targetFn  = @(x) gaussLogprobUnnormalized(model,x);
 xinit     = gaussSample(model);
+S = cell(1, 3); 
 %% MH 1
 proposal1 = @(x) gaussSample(struct('mu', x,'Sigma', 1*eye(2)));
 S{1}      = metropolisHastings(targetFn, proposal1, xinit, N);
