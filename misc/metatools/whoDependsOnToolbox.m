@@ -24,7 +24,13 @@ if ~exist(tbdir, 'file')
 end
 [l, m, G] = whoCallsMe('whoCallsMe', 'recursive', false, 'recache', recache);
 usesTB    = @(f)any(strncmp(tbdir, depfun(f, '-toponly', '-quiet'), length(tbdir)));
-tbdep     = cellfun(usesTB, m);
+try
+    tbdep = cellfun(usesTB, m);
+catch ME 
+    fprintf('There was an error generating the report - try recaching...\n');
+    f = {};
+    return
+end
 G         = [[G, tbdep(:)]; zeros(1, length(G)+1)]; % call graph
 R         = expm(sparse(G)); % reachability graph
 f         = m(R(1:end-1, end) > 0);
