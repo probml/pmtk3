@@ -2,10 +2,10 @@ function model = linregRobustLaplaceFitLinprog(X, y)
 % Minimize the L1 norm of the residuals using linear programming 
 % We assume X is an N*D  matrix, with no column of 1s
 % model.w = [w0 w1 ... wD], where w0 is the bias
-
-%PMTKauthor John D'Errico
-%PMTKmodified Kevin Murphy
-%PMTKurl http://www.mathworks.com/matlabcentral/fileexchange/loadFile.do?objectId=8553&objectType=FILE
+% PMTKneedsOptimToolbox
+% PMTKauthor John D'Errico
+% PMTKmodified Kevin Murphy
+% PMTKurl http://www.mathworks.com/matlabcentral/fileexchange/loadFile.do?objectId=8553&objectType=FILE
 
 [N,D] = size(X);
 D1 = D+1;

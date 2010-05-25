@@ -1,10 +1,10 @@
 function model = svmQPregFit(X, y, C, kernelParam, kernelFn, e)
 % Support vector regression
 % One norm epsilon insensitive loss funciton
-
-%PMTKauthor Steve Gunn
-%PMTKurl http://www.isis.ecs.soton.ac.uk/resources/svminfo/
-%PMTKmodified Kevin Murphy
+% PMTKneedsOptimToolbox
+% PMTKauthor Steve Gunn
+% PMTKurl http://www.isis.ecs.soton.ac.uk/resources/svminfo/
+% PMTKmodified Kevin Murphy
 
 if nargin < 3 || isempty(C), C = 1; end
 if nargin < 4 || isempty(kernelParam), kernelParam = 1/size(X, 2); end
