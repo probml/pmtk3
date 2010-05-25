@@ -5,7 +5,7 @@ function publishDemos(wikiFile)
 %%
 
 
-wikiOnly = false;     % set true if you only want to regenerate the wiki and 
+wikiOnly = true;     % set true if you only want to regenerate the wiki and 
                      % index.html pages, and not republish. 
                 
 svnAutomatically = false;
