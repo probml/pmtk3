@@ -3,9 +3,8 @@
 %   Z(t)|w ~ Discrete(w(:)), k in {1,2,3,4,k}
 %   theta(:,t) | Z(t)=k ~ Dir(alpha(:,k))
 %   x(i,t) | theta(:,t) ~ Discrete(theta(:,t))
-%PMTKneedsBioToolbox seqlogo
 %%
-requireBioinfoToolbox
+
 %% Data generation
 setSeed(0);
 Nseq = 10;
@@ -39,9 +38,7 @@ for i=1:Nseq
 end
 disp('z true')
 fprintf('%d, ', z); fprintf('\n')
-if bioinfoToolboxInstalled()
-    seqlogo(dataStr)
-end
+seqlogoPmtk(dataStr)
 zStr = chars(z);
 if 0
     figure

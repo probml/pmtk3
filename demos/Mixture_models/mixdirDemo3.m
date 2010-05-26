@@ -1,11 +1,9 @@
 %% Biosequence analysis Demo
-%PMTKneedsBioToolbox seqlogo
 %   t  = locn
 %   Z(t)|w ~ Discrete(w(:)), k in {1,2,3,4,k}
 %   theta(:,t) | Z(t)=k ~ Dir(alpha(:,k))
 %   x(i,t) | theta(:,t) ~ Discrete(theta(:,t))
 %%
-requireBioinfoToolbox
 %% Data generation
 setSeed(1);
 Nseq = 10;
@@ -40,13 +38,13 @@ for i=1:Nseq
     fprintf('\n');
 end
 %%
-if bioinfoToolboxInstalled()
-    [W, h] = seqlogo(dataStr);
-    set(h, 'HandleVisibility', 'on'); 
-    printPmtkFigure('seqlogo');
-else
-    fprintf('This demo requires the bioinformatics toolbox.\n'); 
-end
+
+
+W = seqlogoPmtk(dataStr); 
+printPmtkFigure('seqlogo');
+
+
+
 %%
 zStr = chars(z);
 figure();
