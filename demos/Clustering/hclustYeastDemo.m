@@ -1,6 +1,6 @@
 %% Hierarchical Clustering Demo
-%PMTKneedsStatsToobox clustergram, pdist, linkage
-%PMTKneedsBioToolbox cluster
+%PMTKneedsStatsToobox cluster, pdist, linkage
+%PMTKneedsBioToolbox clustergram
 %%
 requireStatsToolbox
 requireBioinfoToolbox
