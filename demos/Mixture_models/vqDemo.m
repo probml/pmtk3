@@ -2,21 +2,16 @@
 %
 %%
 setSeed(0);
-load clown;
-A = X;
+load clown; % X is 200x320 image
 figure;
-imagesc(A); colormap(gray); title('original')
+imagesc(X); colormap(gray); title('original')
 printPmtkFigure('vqDemoClownOrig');
-[nrows ncols ncolors] = size(A);
-data = reshape(A, [nrows*ncols ncolors]); % data(i,:) = rgb value for pixel i
-%K = 8;
-for K=[2,4]
-    mu = kmeansFit(data, K);
-    % Apply codebook to quantize test image
-    B = X; % test = train
-    [nrows ncols ncolors] = size(B);
-    data = reshape(B, [nrows*ncols ncolors]);
-    compressed = kmeansEncode(data, mu);
+[nrows ncols ncolors] = size(X);
+data = reshape(X, [nrows*ncols ncolors]); % data(i,:) = rgb value for pixel i
+for K=[2]
+    [mu, compressed, errHist] = kmeansFit(data, K);
+    compressed2 = kmeansEncode(data, mu);
+    assert(isequal(compressed, compressed2))
     decompressed = kmeansDecode(compressed, mu);
     Qimg = reshape(decompressed, [nrows ncols ncolors]);
     figure;

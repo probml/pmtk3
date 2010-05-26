@@ -28,12 +28,16 @@ function [mu, assign, errHist] = kmeansFit(X, K, varargin)
     'plotfn'  , @(varargin)[] , ... % default does nothing
     'verbose' , false         , ...
     'mu'      , []            );    
-N = size(X, 1);
+[N,D] = size(X);
 %% Initialize
 %  Initialize using K data points chosen at random
 if isempty(mu)
     perm = randperm(N);
-    mu   = X(perm(1:K), :)';
+    % in the unlikely event of a tie,
+    % we want to ensure the means are different.
+    v = var(X);
+    noise = gaussSample(struct('mu',[0], 'Sigma', 0.01*diag(v)), K);
+    mu   = X(perm(1:K), :)' + noise';
 end
 %% Setup loop
 iter    = 1;
