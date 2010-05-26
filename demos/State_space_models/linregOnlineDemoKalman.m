@@ -1,4 +1,4 @@
-%% Online Kalman Demo
+%% Online Bayesian linear regression using Kalman filter
 %
 %%
 standardize = false; %true;

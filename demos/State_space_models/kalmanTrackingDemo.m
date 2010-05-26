@@ -1,5 +1,4 @@
-%% Kalman Filter Tracking Demo
-% Make a point move in the 2D plane
+%% Kalman Filter Tracking  Demo: move point in 2d plane 
 % State = (x y xdot ydot). We only observe (x y).
 %
 % X(t+1) = F X(t) + noise(Q)

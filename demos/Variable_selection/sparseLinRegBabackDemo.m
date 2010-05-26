@@ -1,4 +1,4 @@
-%% Sparse Linear Regression Demo
+%% Demo of what constitutes plausible sparsity prior for linear regression
 % MODEL: y = Ax + noise; s.t.  card(x) = k
 %
 % =============================================================================
@@ -66,7 +66,10 @@
 % Baback Moghaddam          baback@jpl.nasa.gov         02/11/08
 % -------------------------------------------------------------------------
 % NOTE: this script needs Raanan Yehezkel's "subsets1.m" function
-%%
+
+%PMTKauthor Baback Moghaddam
+%PMTKdate 11 feb 2008
+
 
 if ~exist('n','var'), n=12; end                 % n = dimension of x (#cols of A)
 if ~exist('m','var'), m=10*n; end               % m = dimension of y (#rows of A)
