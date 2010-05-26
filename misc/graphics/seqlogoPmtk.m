@@ -64,6 +64,7 @@ for i=1:numel(rows) % rows(1) is the lowest row in the figure
             if height < thresh
                 continue;
             end
+            % store each letter image in its own axes
             ax = axes('parent', fig, 'position', letterpos);
             image(letters{j});
             axis(ax, 'off');
