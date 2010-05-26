@@ -1,6 +1,6 @@
 function varargout = seqlogoPmtk(p, ssCorr)
 %% A replacement function for the bioinformatics seqlogo function
-% Unlike seqlogo, this only support nucleotides, i.e. ACGT, not amino acids
+% Unlike seqlogo, this only supports nucleotides, i.e. ACGT, not amino acids
 %% Input
 %
 % p        - an nsequences-by-npositions character array of with chars 
