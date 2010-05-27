@@ -30,10 +30,6 @@ Some files are tagged as follows:<br><br>
 </TR><TR>
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/containingDirectory.m">containingDirectory</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Return the containing directory of the file</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
 </TR><TR>
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/countLinesOfCode.m">countLinesOfCode</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Count the number of lines of code in a function.</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
-</TR><TR>
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/countLinesOfCodeDir.m">countLinesOfCodeDir</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Count the total lines of code in all functions in a directory structure</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
-</TR><TR>
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/currentlyOpenFile.m">currentlyOpenFile</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Return the name of the file currently open in the editor.</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>M</font></TD>
 </TR><TR>
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/currentlyOpenFiles.m">currentlyOpenFiles</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Return a cell array of currently open files</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>M</font></TD>
@@ -52,51 +48,69 @@ Some files are tagged as follows:<br><br>
 </TR><TR>
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/dirs.m">dirs</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Return list of the directories in the specified directory.</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
 </TR><TR>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/docTools/countLinesOfCode.m">docTools\countLinesOfCode</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Count the number of lines of code in a function.</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
+</TR><TR>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/docTools/countLinesOfCodeDir.m">docTools\countLinesOfCodeDir</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Count the total lines of code in all functions in a directory structure</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
+</TR><TR>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/docTools/exportsvn.m">docTools\exportsvn</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Export and zip up a local svn repository ignoring .svn files</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
+</TR><TR>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/docTools/exportToGoogleCode.m">docTools\exportToGoogleCode</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Export package from svn, uploading the zip to the google code repository</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
+</TR><TR>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/docTools/findAllFilesWithTag.m">docTools\findAllFilesWithTag</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Find all of the files in the PMTK directory structure with a certain tag</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
+</TR><TR>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/docTools/generateAuthorReport.m">docTools\generateAuthorReport</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Generate the html contributing author reports</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>M</font></TD>
+</TR><TR>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/docTools/generatePmtkStats.m">docTools\generatePmtkStats</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Generate an html page showing PMTK3 statistics such as LOC by directory.</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>M</font></TD>
+</TR><TR>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/docTools/generateSynopses.m">docTools\generateSynopses</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Generate the synopses listing files and one line desriptions</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>M</font></TD>
+</TR><TR>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/docTools/generateSynopsisTable.m">docTools\generateSynopsisTable</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Create an html table of files and one line descriptions for a directory.</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>M</font></TD>
+</TR><TR>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/docTools/getTagText.m">docTools\getTagText</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Return the text appearing after the tag in file f.</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
+</TR><TR>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/docTools/googleCodeLink.m">docTools\googleCodeLink</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Return the html link to fname on the PMTK3 google code repository.</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
+</TR><TR>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/docTools/hasTag.m">docTools\hasTag</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Return true if the file has the specified tag.</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
+</TR><TR>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/docTools/helpline.m">docTools\helpline</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Return the first line of comments from a file.</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
+</TR><TR>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/docTools/htmlBreak.m">docTools\htmlBreak</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Convert new line chars to html breaks</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
+</TR><TR>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/docTools/htmlTable.m">docTools\htmlTable</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Display a Matlab cell array or numeric matrix as an html table</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
+</TR><TR>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/docTools/htmlTagKey.m">docTools\htmlTagKey</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Return the html text for the demo/synopsis tag legend table</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
+</TR><TR>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/docTools/htmlTagString.m">docTools\htmlTagString</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Generate the html tag string for the demo/ synopsis tables</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
+</TR><TR>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/docTools/listAuthoredFiles.m">docTools\listAuthoredFiles</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>List all matlab files with PMTKauthor tags that are not part of packages.</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
+</TR><TR>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/docTools/listPackageFiles.m">docTools\listPackageFiles</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Return a list of all package m files in the directory structure.</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
+</TR><TR>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/docTools/pmtkTagReport.m">docTools\pmtkTagReport</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Gather info on all of the tags in the PMTK3 system.</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
+</TR><TR>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/docTools/previewPublished.m">docTools\previewPublished</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Preview what the published result of the demo will look like</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>M</font></TD>
+</TR><TR>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/docTools/publishDemos.m">docTools\publishDemos</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Publish all of the PMTK3 demos and create the wiki TOC page.</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>M</font></TD>
+</TR><TR>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/docTools/publishFolder.m">docTools\publishFolder</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Publish a single demos directory, (called by publishDemos)</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>M</font></TD>
+</TR><TR>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/docTools/tagfinder.m">docTools\tagfinder</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Find all of the tags in the given file</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
+</TR><TR>
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/editc.m">editc</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Open all of the specified files for editting</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
-</TR><TR>
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/exportsvn.m">exportsvn</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Export and zip up a local svn repository ignoring .svn files</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
-</TR><TR>
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/exportToGoogleCode.m">exportToGoogleCode</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Export package from svn, uploading the zip to the google code repository</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
 </TR><TR>
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/filelist.m">filelist</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Return a list of all files of the specified type in a directory structure</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
 </TR><TR>
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/filenames.m">filenames</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Takes in a cell array of paths and returns only the file names</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
 </TR><TR>
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/findAllFilesWithTag.m">findAllFilesWithTag</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Find all of the files in the PMTK directory structure with a certain tag</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
-</TR><TR>
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/findIdenticalShadowedCopies.m">findIdenticalShadowedCopies</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Searches through every m-file and finds exact duplicates</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
 </TR><TR>
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/funcName.m">funcName</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Just like built in func2str except it removes @() prefixes and ()</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
 </TR><TR>
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/generateAuthorReport.m">generateAuthorReport</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Generate the html contributing author reports</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>M</font></TD>
-</TR><TR>
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/generatePmtkStats.m">generatePmtkStats</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Generate an html page showing PMTK3 statistics such as LOC by directory.</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>M</font></TD>
-</TR><TR>
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/generateSynopses.m">generateSynopses</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Generate the synopses listing files and one line desriptions</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>M</font></TD>
-</TR><TR>
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/generateSynopsisTable.m">generateSynopsisTable</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Create an html table of files and one line descriptions for a directory.</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>M</font></TD>
-</TR><TR>
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/getFileModificationDate.m">getFileModificationDate</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Return the file modification date for the specified file.</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
-</TR><TR>
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/getTagText.m">getTagText</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Return the text appearing after the tag in file f.</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
 </TR><TR>
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/getText.m">getText</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Extract the text from a file. The output is a cell array - each cell is a line</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
 </TR><TR>
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/googleCodeLink.m">googleCodeLink</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Return the html link to fname on the PMTK3 google code repository.</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
-</TR><TR>
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/hasTag.m">hasTag</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Return true if the file has the specified tag.</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
-</TR><TR>
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/helpline.m">helpline</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Return the first line of comments from a file.</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
-</TR><TR>
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/hideFigures.m">hideFigures</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Hide all future generated figures until the showFigures() function is run</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
-</TR><TR>
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/htmlBreak.m">htmlBreak</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Convert new line chars to html breaks</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
-</TR><TR>
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/htmlTable.m">htmlTable</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Display a Matlab cell array or numeric matrix as an html table</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
-</TR><TR>
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/htmlTagKey.m">htmlTagKey</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Return the html text for the demo/synopsis tag legend table</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
-</TR><TR>
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/htmlTagString.m">htmlTagString</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Generate the html tag string for the demo/ synopsis tables</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
 </TR><TR>
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/isbuiltin.m">isbuiltin</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Return true iff the specified function is built in.</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
 </TR><TR>
@@ -105,10 +119,6 @@ Some files are tagged as follows:<br><br>
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/isfunction.m">isfunction</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Return true if the specified file is a matlab function, (not a script).</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
 </TR><TR>
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/javaTable.m">javaTable</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Display a cell array of strings in a java JTable</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>M</font></TD>
-</TR><TR>
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/listAuthoredFiles.m">listAuthoredFiles</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>List all matlab files with PMTKauthor tags that are not part of packages.</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
-</TR><TR>
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/listPackageFiles.m">listPackageFiles</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Return a list of all package m files in the directory structure.</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
 </TR><TR>
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/makeRunAllDemos.m">makeRunAllDemos</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Generate the runAllDemos script</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
 </TR><TR>
@@ -176,17 +186,9 @@ Some files are tagged as follows:<br><br>
 </TR><TR>
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/pmtkShadowReport.m">pmtkShadowReport</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Generate an hmtl report of the shadowd files in PMTK</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
 </TR><TR>
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/pmtkTagReport.m">pmtkTagReport</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Gather info on all of the tags in the PMTK3 system.</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
-</TR><TR>
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/previewPublished.m">previewPublished</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Preview what the published result of the demo will look like</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>M</font></TD>
-</TR><TR>
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/processExamples.m">processExamples</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Examine all of the PMTK demos and return a cell array of formatted names</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
 </TR><TR>
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/providePath.m">providePath</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Like builtin addpath function, but checks if p is already on the path</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
-</TR><TR>
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/publishDemos.m">publishDemos</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Publish all of the PMTK3 demos and create the wiki TOC page.</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>M</font></TD>
-</TR><TR>
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/publishFolder.m">publishFolder</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Publish a single demos directory, (called by publishDemos)</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>M</font></TD>
 </TR><TR>
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/removeComments.m">removeComments</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Remove comments from a cell array storing mfile text.</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
 </TR><TR>
@@ -207,8 +209,6 @@ Some files are tagged as follows:<br><br>
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/showImmediateToolboxDependencies.m">showImmediateToolboxDependencies</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Display the immediate toolbox dependencies of a function</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
 </TR><TR>
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/statsToolboxDependencies.m">statsToolboxDependencies</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Generate an html table showing all of the stats toolbox functions used</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
-</TR><TR>
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/tagfinder.m">tagfinder</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Find all of the tags in the given file</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
 </TR><TR>
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/misc/metatools/unitTest.m">unitTest</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Run all of the demos that depend on fname.</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
 </TR><TR>

@@ -23,10 +23,15 @@ for i=1:numel(d)
     end
 end
 wikiText = filterCell(wikiText, @(c)~isempty(c));
-wikiText =  [{'== Toolboxes =='
+wikiText =  ['auto-enerated by generateSynopses'
+             ''
+             ''
+             'This page lists the main folders within PMTK. Click on the link to see the list of files in that folder, with a brief description. Click on the file to see its'
+             'source code, including comments on how to use it.'
+             ''
+            {'== toolbox =='
             ''
-            'This page lists each folder within the toolbox directory (there is one folder per book chapter). '
-            'Click on the link to see the list of files in that folder, with a brief description. Click on the file to see its source code, including comments on how to use it.'
+            'Most of the main PMTK functions are here. There is one folder per book chapter.'
             ''
             ''
              };
@@ -34,7 +39,9 @@ wikiText =  [{'== Toolboxes =='
             {
             ''
             ''
-            '== Other =='
+            '== misc =='
+            'Some miscellaneous functions are stored here. util are generally useful matlab functions, metatools are functions related to "meta" issues, such as'
+            'automatically creating this documentation. Other misc folders are included in pmtk but are not listed here.'
             ''
             ''
             sprintf(' * [%s/%s.html %s]', googleRoot, 'util', 'util');
