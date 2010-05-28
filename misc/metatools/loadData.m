@@ -6,7 +6,7 @@ function D = loadData(dataset)
 % D = loadData('prostate');
 %%
 googleRoot = ' http://pmtkdata.googlecode.com/svn/trunk';
-fetcher = which('fetchfile.pl');
+
 %%
 
 dataset = filenames(dataset);
@@ -14,15 +14,20 @@ dataset = filenames(dataset);
 if exist([dataset, '.mat'], 'file') == 2
     D = load([dataset, '.mat']);
 else % fetch it
-    fprintf('downloading %s, please wait...', dataset);
+    fprintf('downloading %s...', dataset);
     source = sprintf('%s/%s/%s.zip', googleRoot, dataset, dataset);
     dest   = fullfile(pmtk3Root(), 'data', [dataset, '.zip']);
-    status = perl(fetcher, source, dest);
-    if isempty(status)
+    ok = downloadFile(source, dest);
+    destFolder = fullfile(fileparts(dest), dataset);
+    unzip(dest, destFolder);
+    delete(dest);
+    addpath(destFolder)
+    D = load([dataset, '.mat']);
+    if ok
+        fprintf('done\n')
+    else
         fprintf('\n\n');
         error('loadData:fileNotFound', 'The %s data set could not be located', dataset);
-    else
-        fprintf('done\n');
     end
 end
 end
