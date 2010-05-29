@@ -3,7 +3,7 @@
 %%
 function gammaRainfallDemo()
 
-X = dlmread('rainfallData.txt');
+X = loadData('rainfall'); 
 X = X'; X = X(:); % concatenate across rows, not columns
 X = X(1:end-5); % removing trailing 0s
 [a(1), b(1)] = gamMOM(X);

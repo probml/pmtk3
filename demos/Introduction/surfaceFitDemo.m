@@ -1,7 +1,7 @@
 %% Fit linear and quadratic surfaces to data
 % Based on code by Romain Thibaux <thibaux@eecs.berkeley.edu>
 %%
-load moteData; % X,y
+loadData('moteData'); % X,y
 
 N = size(X,1);
 for useQuad = 0:1

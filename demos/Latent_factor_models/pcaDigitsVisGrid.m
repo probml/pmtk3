@@ -2,13 +2,13 @@
 % Reproduce fig 14.23 from Hastie's book p489
 %%
 if 0
-    load usps_all; % data(1:256, 1:1100, 1:10)
+    loadData('uspsAll'); % data(1:256, 1:1100, 1:10)
     c = 3;
     n = size(data,2);
     X = double(data(:,:,c))'; % n x 256
     figure(3);clf;montageKPM(reshape(X', [16 16 n]))
 else
-    X = load('digits3HTF.txt'); % 658 x 256 - row order, not column!
+    X = loadData('digits3Htf'); % 658 x 256 - row order, not column!
     X = reshape(X, [658 16 16]);
     X = permute(X, [3 2 1]); % 16 x 16 x 658
     %figure(3);clf;montageKPM(X)

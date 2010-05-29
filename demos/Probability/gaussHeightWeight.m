@@ -1,7 +1,7 @@
 %% Gauss Height Weight Demo in 2d
 %
 %%
-rawdata = dlmread('heightWeightDataSimple.txt'); % comma delimited file
+rawdata = loadData('heightWeight'); % comma delimited file
 data.Y = rawdata(:,1); % 1=male, 2=female
 data.X = [rawdata(:,2) rawdata(:,3)]; % height, weight
 maleNdx = find(data.Y == 1);

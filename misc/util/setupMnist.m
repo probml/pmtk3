@@ -12,7 +12,7 @@ function [Xtrain,ytrain,Xtest,ytest] = setupMnist(varargin)%binary, Ntrain, Ntes
         
 if nargout < 3, Ntest = 0; end
 
-load mnistALL
+loadData('mnistAll');
 Xtrain = reshape(mnist.train_images(:,:,1:Ntrain),28*28,Ntrain)';
 Xtest = reshape(mnist.test_images(:,:,1:Ntest),28*28,Ntest)';
 ytrain = (mnist.train_labels);

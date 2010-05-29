@@ -4,12 +4,9 @@
 function knnClassifyDemo()
 
 %% load data
-tmp = dlmread('knnClassify3CTrain.txt');
-Xtrain = tmp(:,1:2); ytrain = tmp(:,3);
-tmp = dlmread('knnClassify3CTest.txt');
-Xtest = tmp(:,1:2); ytest = tmp(:,3);
+loadData('knnClassify3c');
 Ntest = size(Xtest,1);
-Ntrain = size(Xtrain,1)
+Ntrain = size(Xtrain,1);
 
 
 %% Plot data

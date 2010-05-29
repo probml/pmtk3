@@ -4,7 +4,7 @@
 function kmeansDemoFaithful
 
 
-X = load('faithful.txt');
+X = loadData('faithful');
 X = standardizeCols(X);
 figure; plot(X(:,1), X(:,2), '.', 'markersize', 10)
 title('old faithful data')

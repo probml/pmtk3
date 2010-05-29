@@ -12,7 +12,7 @@ SetDefaultValue(2, 'use_file',  true);
 SetDefaultValue(3, 'method', 1)
 
 % Load the answer from disk, if possible
-fname = sprintf('DAGS%d.mat', N);
+fname = sprintf('dags%d.mat', N);
 if  use_file && exist(fname, 'file')
   S = load(fname, '-mat');
   fprintf('loading %s\n', fname);

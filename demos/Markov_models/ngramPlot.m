@@ -2,7 +2,7 @@
 %
 %%
 
-load ngramData; % use ngramMake to create this
+loadData('ngramData');; % use ngramMake to create this
 if(0) % Plot bigram frequencies
     bigramFig = figure;
     axes1 = axes('Parent',bigramFig,...

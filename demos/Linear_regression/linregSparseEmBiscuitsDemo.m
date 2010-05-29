@@ -3,7 +3,7 @@
 %%
 
 
-load biscuits.mat
+loadData('biscuits');
 ings = [1:4]; % fat, sucrose, flour, water
 for dim=1:length(ings)
    ing = ings(dim);

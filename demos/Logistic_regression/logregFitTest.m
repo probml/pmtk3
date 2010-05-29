@@ -1,7 +1,7 @@
 %% Simple tests of logregFit
 %
 %%
-load crabs
+loadData('crabs');
 %%
 model = logregFit(Xtrain, ytrain, 'lambda', 0);
 yhat  = logregPredict(model, Xtest);

@@ -3,7 +3,7 @@
 %
 % Data from http://www.ncrg.aston.ac.uk/GTM/3PhaseData.html
 %%
-load oilflow3class
+loadData('oilFlow3class');
 ndx = 1:1000;
 X = DataTrn(ndx,:); % 1000x12
 y = DataTrnLbls(ndx,:); % 1000x3

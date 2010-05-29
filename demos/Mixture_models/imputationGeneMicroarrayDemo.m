@@ -11,7 +11,7 @@ requireStatsToolbox
 datasets = {'yeastStress', 'yeastCellCycle'};
 for di=1:length(datasets)
     dataName = datasets{di};
-    load(dataName)
+    loadData(dataName)
     if strcmpi(dataName, 'yeastStress')
         % extract the 15 columns used in the Ouyang, Welsh, Georgopolous paper
         % These are features that are not too correlated (unlike cell cycle)

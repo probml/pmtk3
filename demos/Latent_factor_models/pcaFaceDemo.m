@@ -2,7 +2,7 @@
 % Based on code by Mark Girolami
 %%
 requireImageToolbox
-load('facesOlivetti_trainTest.mat');
+loadData('facesOlivetti');
 h = 112; w = 92;
 
 % plot the first 25 faces as a single image

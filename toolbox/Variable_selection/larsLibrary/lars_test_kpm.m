@@ -2,11 +2,11 @@ clear all
 
 if 1
   % p65 of Hastie et al
-  load('prostate.mat');
+  loadData('prostate');
   ndx = find(istrain);
   y = y(ndx); X = X(ndx,:);
 else
-  load('diabetes.mat');
+  loadData('diabetes');
   X = diabetes.x;
   y = diabetes.y;
   [n p] = size(X);

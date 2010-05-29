@@ -2,7 +2,7 @@
 %PMTKslow
 %%s
  
- load('sarcosData.mat')
+ loadData('sarcosData')
  setSeed(0);
  
  % Standardize the inputs so they have zero mean and unit variance on the

@@ -2,7 +2,7 @@
 %
 %%
 % Data source: Tommi Jaakkola
-load data45;
+loadData('data45');
 
 figure; 
 if signalToolboxInstalled

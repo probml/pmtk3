@@ -11,7 +11,7 @@
 % microarrayDemoMathworks 
 % PMTKinteractive
 %%
-load 'yeastData310.mat';
+loadData('yeastData310');
 
 [B, Z, evals, Xrecon, mu] = pcaPmtk(X);
 

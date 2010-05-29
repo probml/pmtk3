@@ -2,7 +2,7 @@
 % PMTKslow
 % see svmCrabsDemo
 %% Load data
-load crabs
+loadData('crabs');
 %%
 %% Here we cross validate over both lambda and Sigma
 lambda     = logspace(-7, -4, 20); 

@@ -9,7 +9,7 @@ setSeed(0);
 %X=faces'; clear faces; % 4096x400  (64x64=4096)
 
 if 1
-  load('mnistALL.mat'); % mnist structure
+  loadData('mnistAll'); % mnist structure
   %train_images: [28x28x60000 uint8]  0 to 255
   %   test_images: [28x28x10000 uint8]
   %  train_labels: [60000x1 uint8]

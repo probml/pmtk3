@@ -2,7 +2,8 @@
 %PMTKauthor Cody Severinski
 %%
 setSeed(0);
-pima = csvread('pimatr.csv',1,0);
+D = loadData('pimatr');
+pima = D.data; 
 pima = pima(:,3:6);
 pimaNan = pima;
 [n,p] = size(pima);

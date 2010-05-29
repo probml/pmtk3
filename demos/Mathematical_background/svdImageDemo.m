@@ -1,7 +1,7 @@
 %% Visualize low rank approximations of an image
 % based on Cleve Moler's book ch10 p25
 %%
-load clown
+loadData('clown'); 
 r = rank(X);
 disp(r); 
 [U, S, V] = svd(X, 0);

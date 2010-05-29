@@ -1,7 +1,7 @@
 %% Plot the full L1 regularization path for the prostate data set
 %
 %%
-load prostate
+loadData('prostate');
 w = lars(X, y, 'lasso')
 lambdas = recoverLambdaFromLarsWeights(X, y, w);
 figure;

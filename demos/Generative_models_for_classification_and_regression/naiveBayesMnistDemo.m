@@ -3,7 +3,7 @@
 %%
 %Ntrain=5000, 83 errors in 500, rate = 0.166
 
-load('mnistALL') % already randomly shuffled across classes
+loadData('mnistAll') % already randomly shuffled across classes
 % train_images: [28x28x60000 uint8]
 % test_images: [28x28x10000 uint8]
 % train_labels: [60000x1 uint8]

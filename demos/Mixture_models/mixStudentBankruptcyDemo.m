@@ -4,7 +4,7 @@
 function mixStudentBankruptcyDemo()
 
 setSeed(0);
-bank = importdata('bankruptcy.txt');
+bank = loadData('bankruptcy');
 Y = bank.data(:,1); % 0,1
 X = bank.data(:,2:3);
 [N, D] = size(X);

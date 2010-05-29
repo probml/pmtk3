@@ -1,8 +1,10 @@
 %% 2D Logistic Regression Demo
 % Based on code by Mark Girolami
 %%
-X=load('rip_dat_tr.txt'); % train X(i,:) is sample i
-Xt=load('rip_dat_te.txt'); % test
+
+D = loadData('rip');
+X = D.rip_dat_tr;
+Xt = D.rip_dat_te;
 Ntrain = size(X,1); Ntest = size(Xt,1);
 ytrain = X(:,3);
 X(:,3)=[];

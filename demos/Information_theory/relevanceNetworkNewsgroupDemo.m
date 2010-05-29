@@ -1,7 +1,7 @@
 %% Make a 'relevance network' from the small 20-newsgroup data
 % (See also chowliuTreeDemo)
 
-load newsgroups % documents, wordlist, newsgroups
+loadData('newsgroups'); % documents, wordlist, newsgroups
 %X is 16,642 documents by 100 words  (sparse logical  matrix)
 
 [mi, nmi] = mutualInfoAllPairsDiscrete(X);

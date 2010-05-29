@@ -2,18 +2,9 @@
 %
 %%
 %% Import data
-xtrain = importdata('khan.xtrain');
-xtrain = xtrain';
-ytrain = importdata('khan.ytrain');
-ytrain = ytrain';
-xtest = importdata('khan.xtest');
-xtest = xtest';
-fid = fopen('khan.ytest');
-ytest = textscan(fid, '%n', 'delimiter', ' ',...
-    'treatAsEmpty', 'NA');
-fclose(fid);
-ytest = ytest{1};
-xtest = xtest(~isnan(ytest),:);
+loadData('srbct');
+
+Xtest = Xtest(~isnan(ytest), :);
 ytest = ytest(~isnan(ytest));
 
 
@@ -27,9 +18,9 @@ lDelta = length(Deltas);
 nTrain = length(ytrain);
 nTest = length(ytest);
 for i=1:lDelta
-    model = fitFn(xtrain, ytrain, Deltas(i));
-    yhatTrain = predictFn(model, xtrain);
-    yhatTest = predictFn(model, xtest);
+    model = fitFn(Xtrain, ytrain, Deltas(i));
+    yhatTrain = predictFn(model, Xtrain);
+    yhatTest = predictFn(model, Xtest);
     errTrain(i) = sum(zeroOneLossFn(yhatTrain, ytrain))/nTrain;
     errTest(i) = sum(zeroOneLossFn(yhatTest, ytest))/nTest;
     numgenes(i) = sum(model.relevant);
@@ -46,7 +37,7 @@ legend('Training', 'Test');
 nFolds = 10;
 useSErule = false;
 [bestModel, bestDelta, errCV, se] = fitCv(Deltas, fitFn, predictFn,...
-    @zeroOneLossFn, [xtrain;xtest], [ytrain;ytest], nFolds, useSErule); 
+    @zeroOneLossFn, [Xtrain;Xtest], [ytrain;ytest], nFolds, useSErule); 
 
   figure;
 lambda = Deltas;
@@ -76,7 +67,7 @@ printPmtkFigure('shrunkenCentroidsErrVsLambda')
   
 %% Plot centroids
 centShrunk = bestModel.offset;
-model = fitFn(xtrain, ytrain, 0);
+model = fitFn(Xtrain, ytrain, 0);
 centUnshrunk = model.offset;
 
 [numGroups D] = size(centShrunk);

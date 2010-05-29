@@ -1,7 +1,7 @@
 %% Run PCA on the height weight data
 %
 %%
-data = load('heightWeightDataSimple.txt'); % data(:,1) = class, 2 = height, 3 = weight
+data = loadData('heightWeight'); % data(:,1) = class, 2 = height, 3 = weight
 X = data(:,2:3);
 
 X = standardize(X);

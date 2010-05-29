@@ -1,7 +1,7 @@
 %% Prostate pscatter demo
 %
 %%
-load prostate
+loadData('prostate');
 figure;
 pscatter([y X], 'vnames', {names{end}, names{1:end-1}})
 svi = unique(X(:,5))

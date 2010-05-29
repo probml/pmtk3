@@ -4,7 +4,7 @@
 setSeed(0);
 
 if 0
-  load('mnistALL.mat'); % mnist structure
+  loadData('mnistAll'); % mnist structure
   %train_images: [28x28x60000 uint8]  0 to 255
   %   test_images: [28x28x10000 uint8]
   %  train_labels: [60000x1 uint8]
@@ -17,7 +17,7 @@ if 0
 end
 
 if 1
-  load('olivettifaces.mat'); % 0 to 255, from http://www.cs.toronto.edu/~roweis/data.html
+  loadData('olivettiFaces'); % 0 to 255, from http://www.cs.toronto.edu/~roweis/data.html
   X=faces'; clear faces; % 4096x400  (64x64=4096) 
   % 10 images per person, 40 images
   y = repmat((1:40),10,1); y = y(:);
@@ -30,7 +30,7 @@ end
 %%%%%%%
 
 if 0
-  X = load('digits3HTF.txt'); % 658 x 256 - row order, not column!
+  X = loadData('digits3Htf'); % 658 x 256 - row order, not column!
   %http://www-stat.stanford.edu/~tibs/ElemStatLearn/data.html
   h  = 16; w = 16;
   [n d] = size(X)
@@ -40,7 +40,7 @@ if 0
 end
 
 if 0
-  load('usps_all.mat'); % data: [256x1100x10 uint8]
+  X = loadData('uspsAll'); % data: [256x1100x10 uint8]
   % http://www.cs.toronto.edu/~roweis/data.html
   X = double(data(:,:,3))';
   h = 16; w = 16;
@@ -48,7 +48,7 @@ end
 
 if 0
   % use all 10 classes at once - gives hard to interpret bases
-  load('mnistALL.mat'); % mnist structure
+  loadData('mnistAll'); % mnist structure
   %train_images: [28x28x60000 uint8]  0 to 255
   %   test_images: [28x28x10000 uint8]
   %  train_labels: [60000x1 uint8]
@@ -59,13 +59,6 @@ if 0
   X = double(reshape(mnist.train_images(:,:,ndx),[d n]))';
 end
 
-if 0
-  % this version of the data gives very bad looking results
-  %vision.cis.udel.edu/cv/homeworks/hw4.pdf 
-  load('facesOlivetti_trainTest.mat'); % scaled 0 to 1, see makeFacesOlivetti
-  [n d] = size(X)
-  h = 112; w = 92;
-end
 
 % Visualize a random subset of the data as a single image
 perm = randperm(n);

@@ -1,7 +1,7 @@
 %% Quadratic Discriminative Analysis On the Fisher Iris Data
 %
 %%
-load fisheriris
+loadData('fisherIris')
 X = meas(51:end, 1:2);  % for illustrations use 2 species, 2 features
 labels = species(51:end);
 [y, support] = canonizeLabels(labels);

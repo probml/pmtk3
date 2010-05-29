@@ -52,7 +52,7 @@ if ~isOctave() % We're not quite ready for Octave
         knnClassifyDemo;
         pcaDemo2d;
         close all
-        mixGaussFitEm(load('faithful.txt'), 2, 'verbose', true);
+        mixGaussFitEm(loadData('faithful'), 2, 'verbose', true);
         mlpRegressDemoBishop;
         demoSteepestDescentRosen;
         close all

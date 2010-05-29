@@ -2,7 +2,7 @@
 % Requires the neural network toolbox
 %PMTKslow
 %%
-load binaryImages;     % 7 binary images, each 150x150
+loadData('binaryImages');     % 7 binary images, each 150x150
 newsize   = 30;          % new size 30x30
 nimages   = 7;
 occlusion = 0.5;

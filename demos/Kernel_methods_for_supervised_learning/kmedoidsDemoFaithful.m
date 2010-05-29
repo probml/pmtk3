@@ -1,7 +1,7 @@
 %% Run Kmedoids on the old faithful data
 %
 %%
-X = load('faithful.txt');
+X = loadData('faithful');
 X = standardizeCols(X);
 N = size(X,1);
 Y = X'; % Y(:,i)

@@ -4,7 +4,7 @@
 %% First we check that the 3 implementations give the same
 % results on a simple binary dataset
 requireOptimToolbox
-load crabs
+loadData('crabs'); 
 
 model = svmFit(Xtrain, ytrain);
 yhat  = svmPredict(model, Xtest);
@@ -56,7 +56,7 @@ errorRate = mean(yhat ~= ytest)
 
 
 %% REGRESSION
-load prostate
+loadData('prostate');
 %%
 model = svmFit(Xtrain, ytrain);
 yhat = svmPredict(model, Xtest);
@@ -78,7 +78,7 @@ model = svmFit(Xtrain, ytrain, 'kernel', 'linear', 'C', logspace(-2,2,100));
 yhat = svmPredict(model, Xtest);
 error = mean((yhat - ytest).^2)
 %% MULTICLASS
-load soy
+loadData('soy')
 setSeed(0);
 [X, Y] = shuffleRows(X, Y);
 Xtrain = X(1:250, :); ytrain = Y(1:250); 

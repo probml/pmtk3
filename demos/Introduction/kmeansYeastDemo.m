@@ -1,10 +1,11 @@
 %% Cluster yeast data using Kmeans
 %PMTKneedBioToolbox redgreencmap
 %% 
-load('yeastData310.mat') % 'X', 'genes', 'times');
-
-
 requireBioinfoToolbox
+loadData('yeastData310') % 'X', 'genes', 'times');
+
+
+
 figure;imagesc(X);colormap(redgreencmap)
 xlabel('time')
 set(gca,'xticklabel',times)

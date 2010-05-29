@@ -6,7 +6,7 @@ function prostateComparison()
 
 setSeed(0);
 saveLatex = false;
-data = load('prostate.mat');
+data = loadData('prostate');
 [Xtrain, ytrain] = shuffleRows(data.Xtrain, data.ytrain);  % there is an ordering effect
 
 Xtest   = data.Xtest;   

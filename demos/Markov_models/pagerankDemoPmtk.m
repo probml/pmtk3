@@ -38,7 +38,7 @@ fprintf('matrix free power method\n'); disp(pi(:)')
 
 
 %% Now run it on the Harvard web site
-load harvard500
+loadData('harvard500');
 figure;spy(G);
 printPmtkFigure('harvard500spy'); 
 tic

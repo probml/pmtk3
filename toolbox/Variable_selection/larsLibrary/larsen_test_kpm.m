@@ -1,8 +1,8 @@
 % fig 3 of Zou and Hastie JRSSB 2005
 
-clear; close all; clc;
 
-load('prostate.mat');
+
+loadData('prostate');
 ndx = find(istrain);
 y = y(ndx); X = X(ndx,:);
 

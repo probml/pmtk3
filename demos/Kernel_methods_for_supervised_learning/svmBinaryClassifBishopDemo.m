@@ -5,7 +5,7 @@
 % http://research.microsoft.com/~cmbishop/PRML/webdatasets/datasets.htm
 %
 requireOptimToolbox
-load bishop2class
+loadData('bishop2class');
 y = Y(:);
 
 %X = mkUnitVariance(centerCols(X));

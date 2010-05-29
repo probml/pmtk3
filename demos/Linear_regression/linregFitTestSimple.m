@@ -1,7 +1,7 @@
 %% Basic test of syntacttic correctness of  linregFit()
 %
 %%
-load servo
+loadData('servo');
 lossFn = @(y, yhat)mean((y-yhat).^2);
 %% Basic OLS
 model = linregFit(Xtrain, ytrain, 'preproc', struct('standardizeX', false)); %ols

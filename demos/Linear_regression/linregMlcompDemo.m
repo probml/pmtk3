@@ -13,7 +13,7 @@ mlcompCompiler('linregFit', 'linregPredict', tmpFolder);
 
 %% Now convert data
 dataFile = fullfile(tmpFolder, 'prostate-mlcomp.txt');
-load prostate
+loadData('prostate');
 mlcompWriteData(X, y, dataFile)
  
 % Now we run it

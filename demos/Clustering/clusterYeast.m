@@ -4,7 +4,7 @@
 %%
 requireStatsToolbox
 requireBioinfoToolbox
-load('yeastData310.mat') % 'X', 'genes', 'times');
+loadData('yeastData310') % 'X', 'genes', 'times');
 
 
 corrDist = pdist(X, 'corr');

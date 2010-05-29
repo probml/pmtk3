@@ -1,7 +1,7 @@
 %% Visualize word-document binary matrix
 %
 %%
-load  XwindowsDocData % xtrain is 900x600 doc by words  (sparse logical  matrix)
+loadData('XwindowsDocData');% xtrain is 900x600 doc by words  (sparse logical  matrix)
 
 %% Visualize raw data
 X = xtrain;

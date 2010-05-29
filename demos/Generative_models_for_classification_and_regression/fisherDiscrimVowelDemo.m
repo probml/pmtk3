@@ -1,7 +1,7 @@
 %% Reproduce fig 4.11 of "Elements of statistical learning" 2e
 %
 %%
-load vowel_train; % from http://www-stat.stanford.edu/~tibs/ElemStatLearn/datasets/vowel.train
+loadData('vowelTrain'); % from http://www-stat.stanford.edu/~tibs/ElemStatLearn/datasets/vowel.train
 [N,D] = size(Xtrain);
 C = max(ytrain);
 

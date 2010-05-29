@@ -8,12 +8,12 @@ requireStatsToolbox
 dataset = 'cars04';
 switch dataset
   case 'examgrades'
-    load examgrades % 120x5
+    loadData('examGrades'); % 120x5
     X = grades;
     varlabels = {'lit1', 'lit2', 'math1', 'math2', 'general'};
   case 'car'
     %load carsmall % 100 rows, several features
-    load carbig % 406 rows, several features
+    loadData('carBig'); % 406 rows, several features
     %X = [Acceleration Displacement Horsepower MPG Weight];
     X = [Acceleration Cylinders Displacement Horsepower MPG Weight];
     ndx = all(~isnan(X),2);
@@ -23,7 +23,7 @@ switch dataset
   case 'cars04'
     %http://www.amstat.org/publications/jse/datasets/04cars.txt
     %http://www.stat.cmu.edu/~cshalizi/350/lectures/10/cars-fixed04.dat
-   load 04cars; % X is 387*18
+   loadData('04cars'); % X is 387*18
    X = X(:, 8:18); % use cts features, not binary
    varlabels = varlabels(8:18);
 end

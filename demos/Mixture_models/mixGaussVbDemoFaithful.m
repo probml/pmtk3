@@ -4,7 +4,7 @@
 function mixGaussVbDemoFaithful
 %% Load Data
 setSeed(0);
-X = load('faithful.txt'); % 272x2
+X = loadData('faithful'); % 272x2
 X = standardizeCols(X);
 %% Run mixGaussVbFit
 K = 6;

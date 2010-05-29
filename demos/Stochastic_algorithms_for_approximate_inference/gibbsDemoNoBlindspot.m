@@ -5,7 +5,7 @@
 setSeed(4);
 sigma = 1; % noise level
 
-load('imageWithoutHole.mat') % defines y
+loadData('imageWithoutHole') % defines y
 %load('imageWithBlackHole.mat') % defines y
 %load('imageWithWhiteHole.mat') % defines y
 

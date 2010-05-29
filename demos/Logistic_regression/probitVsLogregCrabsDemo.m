@@ -2,7 +2,7 @@
 %
 %%
 setSeed(0);
-load crabs
+loadData('crabs');
 %% Logistic regression
 modelLR = logregFit(Xtrain, ytrain); 
 yhat = logregPredict(modelLR, Xtest); 

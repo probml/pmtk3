@@ -7,7 +7,7 @@
 %
 %PMTKauthor Hannes Bretschneider
 %%
-load stackloss;
+loadData('stackloss');
 n = size(X,1);
 X1 = [ones(n,1) X];
 %% fit model

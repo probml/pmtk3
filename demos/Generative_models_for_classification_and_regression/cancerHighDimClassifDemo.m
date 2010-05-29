@@ -4,7 +4,7 @@
 %
 %% Load data
 
-load('14cancer.mat') % modified data so X is N*D as usual
+loadData('14cancer') % modified data so X is N*D as usual
 ytrain = colvec(ytrain);
 ytest = colvec(ytest); 
 % on p654, they say "the data from each patient (row) is standardized
@@ -21,7 +21,7 @@ clear Xtest Xtrain
 % chosen to avoid this (although it is really the algorithm's job
 % to handle this eg by using priors).
 if 1
-  folds = importdata('cvfolds.txt');
+  folds = loadData('cancerCv'); 
   folds = folds.data(:,2:size(folds.data,2));
   Nfolds = [];
 else

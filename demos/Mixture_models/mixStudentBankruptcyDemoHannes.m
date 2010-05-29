@@ -6,7 +6,7 @@
 %%
 function [modelStud, modelGauss] = mixStudentBankruptcyDemoHannes()
 %% Load data
-bank = importdata('bankruptcy.txt');
+bank = loadData('bankruptcy');
 Y = bank.data(:,1); % 0,1
 X = bank.data(:,2:3);
 

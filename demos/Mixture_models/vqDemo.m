@@ -2,7 +2,7 @@
 %
 %%
 setSeed(0);
-load clown; % X is 200x320 image
+loadData('clown'); % X is 200x320 image
 figure;
 imagesc(X); colormap(gray); title('original')
 printPmtkFigure('vqDemoClownOrig');

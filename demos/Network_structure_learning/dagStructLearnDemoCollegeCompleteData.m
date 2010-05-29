@@ -2,8 +2,9 @@
 % Iterate through all 5 node DAG and calculate the marginal likelihood to
 % determine the most likely strucutre to explain the college data.
 %%
-data = importdata('sewellShahData.txt');
-X = data.data(:,2:size(data.data,2)) + 1;
+
+loadData('sewellShah');
+X = X(:,2:end) + 1;
 [N, D] = size(X);
 ns = [2 4 2 2 4];
 alpha = 5;

@@ -5,7 +5,7 @@ seed = 0; randn('state', seed);
 %X=[randn(100,2)+2.*ones(100,2);2.*randn(100,2)-2.*ones(100,2)];
 
 
-data = load('heightWeightDataSimple.txt'); % data(:,1) = class, 2 = height, 3 = weight
+data = loadData('heightWeight'); % data(:,1) = class, 2 = height, 3 = weight
 X = data(:,2:3);
 X = standardize(X);
 figure;

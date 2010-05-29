@@ -7,7 +7,7 @@
 %%
 %% Load Data
 setSeed(0);
-data = loadHastieMixtureData();
+data = loadData('hastieMixture'); 
 y = convertLabelsToPM1(data.y);
 [X, y] = shuffleRows(data.X, y); % data is ordered
 %% Plot 1D CV Slices

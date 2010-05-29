@@ -3,7 +3,7 @@
 % PMTKneedsStatsToolbox boxplot
 %%
 requireStatsToolbox
-load morley.mat
+loadData('morley');
 for notched = [false true]
 %notched = true;
 

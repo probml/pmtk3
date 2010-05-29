@@ -4,7 +4,7 @@
 % PMTKneedsOptimToolbox quadprog
 %%
 requireOptimToolbox
-load soy %C=3, N=307, D=35
+loadData('soy'); %C=3, N=307, D=35
 setSeed(0);
 [X, Y] = shuffleRows(X, Y);
 Xtrain = X(1:250, :); ytrain = Y(1:250);

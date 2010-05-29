@@ -16,7 +16,7 @@ sigma = 1;
 y = X*w + sigma*randn(N,1);
 
 %{
-load('prostate.mat') % from prostateDataMake
+loadData('prostate') % from prostateDataMake
 [N,D] = size(X);
 sigma = 1;
 %}

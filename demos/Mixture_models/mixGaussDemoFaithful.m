@@ -6,7 +6,7 @@ function mixGaussDemoFaithful
 
 setSeed(0);
 K = 2;
-X = load('faithful.txt');
+X = loadData('faithful');
 X = standardizeCols(X);
 [N,D] = size(X);
 
