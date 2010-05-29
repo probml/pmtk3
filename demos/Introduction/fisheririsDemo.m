@@ -3,6 +3,7 @@
 %%
 requireStatsToolbox
 [X,y,classnames,varnames] = fisheririsLoad;
+
 figure();
 pscatter(X,'y', y);
 suptitle(sprintf('iris data, red=setosa, green=versicolor, blue=virginica'));
