@@ -2,7 +2,7 @@
 % Same as  Figure 12.6 in "The elements of statistical learning" 2e 
 % by Hastie, Tibshirani, Friedman
 %%
-data   = loadHastieMixtureData();
+data   = loadData('hastieMixture');
 Xtrain = data.X;
 ytrain = convertLabelsToPM1(data.y);
 Xtest  = data.xnew;

@@ -3,7 +3,14 @@ function stop = optimstore(x, optimValues, state)
 global xhist fhist funcounthist
 xhist = [xhist x];
 fhist = [fhist optimValues.fval];
-funcounthist = [funcounthist optimValues.funccount];
+if isfield(optimValues, 'funcount')
+    funcount = optimValues.funcount;
+elseif isfileld(optimValues, 'funccount')
+    funcount = optimValues.funccount;
+else
+    funcount = NaN;  
+end
+funcounthist = [funcounthist funcount];
 stop = false;
 
 end
