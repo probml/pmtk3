@@ -5,7 +5,7 @@ xhist = [xhist x];
 fhist = [fhist optimValues.fval];
 if isfield(optimValues, 'funcount')
     funcount = optimValues.funcount;
-elseif isfileld(optimValues, 'funccount')
+elseif isfield(optimValues, 'funccount')
     funcount = optimValues.funccount;
 else
     funcount = NaN;  
