@@ -31,7 +31,7 @@ else % try and fetch it
     if ok
         try
             destFolder = fullfile(fileparts(dest), dataset);
-            unzip(dest, destFolder);
+            unzip(dest, fileparts(dest));
             delete(dest);
             addpath(destFolder)
             D = load([dataset, '.mat']);
