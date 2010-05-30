@@ -14,6 +14,7 @@ function [tags, lines, codeLength, text] = tagfinder(filename, tagList)
 %   lines - the remaining text on the same line
 %   codeLength - the number of lines of code & comments in the file, (but
 %                not blank spaces)
+%   text  - the full text of the file
 %%
 text = getText(filename);
 codeLength = numel(filterCell(cellfuncell(@(s)strtrim(s), text), @(s)~isempty(s)));

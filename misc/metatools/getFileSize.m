@@ -1,4 +1,4 @@
-function s = getFileSize(f)
+function [s, b] = getFileSize(f)
 % Return the size of a file as a formatted string
 % The size is in bytes if less than a KB, KB if less than a MB, MB if less
 % than a GB, otherwise GB. The string includes the units. If the file
@@ -15,8 +15,9 @@ if isempty(f)
     s = f;
     return
 end
-d = dir(f);
-kb = d.bytes/1024;
+d  = dir(f);
+b  = d.bytes; 
+kb = b/1024;
 mb = kb/1024;
 gb = mb/1024;
 if gb > 1
@@ -26,7 +27,7 @@ elseif mb > 1
 elseif kb > 1
     s = sprintf('%.1f KB', kb);
 else
-    s = sprintf('%d B', d.bytes);
+    s = sprintf('%d B', b);
 end
 
 

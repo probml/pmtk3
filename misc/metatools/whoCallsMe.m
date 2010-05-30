@@ -57,13 +57,17 @@ else
     g = false(numel(m));
     for i=1:numel(m)
         from = map.(m{i});
-        toAll = depfunFast(m{i}, recursive);
+        try
+            toAll = depfunFast(m{i}, recursive);
+        catch %#ok
+            toAll = {};
+        end
         for j=1:numel(toAll)
             [path, f] = fileparts(toAll{j});
             if isfield(map, f)
                 to = map.(f);
                 g(from, to) = true;
-            end
+            end   
         end
     end
     g = setdiag(g, 0);
