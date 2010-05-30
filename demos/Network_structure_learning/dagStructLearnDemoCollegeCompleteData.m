@@ -1,6 +1,7 @@
 %% Posterior over 5-node DAGs on Sewell-Shah college data
 % Iterate through all 5 node DAG and calculate the marginal likelihood to
 % determine the most likely strucutre to explain the college data.
+%PMTKslow
 %%
 
 loadData('sewellShah');
