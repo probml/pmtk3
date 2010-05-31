@@ -1,4 +1,4 @@
-function exportsvn(source, dest, exclusions, removeExistingZips)
+function exportsvn(source, dest, exclusions)
 % Export and zip up a local svn repository ignoring .svn files
 %   SOURCE:  path to the root directory of the svn source
 %   DEST:    path to destination including zip file name
@@ -9,7 +9,7 @@ function exportsvn(source, dest, exclusions, removeExistingZips)
 % exportsvn('C:\pmtk3', 'C:\users\matt\Desktop\pmtk3.zip', {'docs'})
 
 if nargin < 3, exclusions = {}; end
-if nargin < 4, removeExistingZips = false; end
+
 destpath = fileparts(dest);
 system(sprintf('svn export %s %s', source, fullfile(destpath, 'tmp')));
 for i=1:numel(exclusions)
@@ -20,12 +20,7 @@ for i=1:numel(exclusions)
     end
 end
 
-if removeExistingZips
-    zips = filelist(fullfile(destpath, 'tmp', '*'), '*.zip', true);
-    for i=1:numel(zips)
-       delete(zips{i});  
-    end
-end
+
 zip(dest, fullfile(destpath, 'tmp', '*'));
 system(sprintf('rmdir /Q /S %s', fullfile(destpath, 'tmp')));
 end
