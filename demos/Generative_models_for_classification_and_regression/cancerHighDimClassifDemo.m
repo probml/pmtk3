@@ -21,7 +21,6 @@ clear Xtest Xtrain
 % chosen to avoid this (although it is really the algorithm's job
 % to handle this eg by using priors).
 if 1
-  folds = loadData('cancerCv'); 
   folds = folds.data(:,2:size(folds.data,2));
   Nfolds = [];
 else

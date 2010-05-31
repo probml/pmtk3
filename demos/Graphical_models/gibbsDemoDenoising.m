@@ -7,7 +7,8 @@ setSeed(3);
 sigma = 2; % noise level
 % Input matrix consisting of letter A. 
 % The body of letter A is made of 1's while the background is made of -1's.
-img = imread('lettera.bmp');
+data = loadData('letterA'); 
+img = data.A; 
 [M,N] = size(img);
 img = double(img);
 m = mean(img(:));
