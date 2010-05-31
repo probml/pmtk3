@@ -18,14 +18,7 @@ else
     fprintf(2, 'FAILED\n\nPMTK3 has not been properly initialized\nand may not work correctly. Please try\nrunning initPmtk3() again or report\nthe problem.\n\n') %#ok<PRTCAL>
     return
 end
-%% Data
-fprintf('Checking for PMTK3 data..........');
-if exist('crabs.mat', 'file') == 2
-    fprintf('PASSED\n');
-else
-    fprintf(2, 'FAILED\n\nPMTK data, used by many demos, cannot be found.\nPlease download it from <a href = "http://code.google.com/p/pmtkdata/">here</a> and add it\nto your search path, with e.g.\naddpath(genpath(C:\\pmtkData))\n\n');
-    return
-end
+
 %% graphViz4Matlab
 if ~isOctave
     fprintf('Checking for graphViz4Matlab.....' );
