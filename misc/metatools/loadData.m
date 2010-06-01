@@ -1,19 +1,25 @@
-function varargout = loadData(dataset)
+function varargout = loadData(dataset, destnRoot)
 %% Load the specified dataset into the struct D, downloading it if necessary
+%% from pmtkdata.googlecode.com
 %
 % If you specify an output, as in D = loadData('foo'), all of the variables
 % in the .mat file are stored in the struct D, (unless there is only one).
 %
 % Otherwise, these variables are loaded directly into the calling
 % workspace, just like the built in load() function, as in loadData('foo');
-%% Example:
+%
+%% Examples:
 %
 % D = loadData('prostate'); % store data in struct D
-%%
+%
 % loadData('prostate');     % load data directly into calling workspace
-%%
+%
 % s = loadData('sat')       % s is a matrix since there is only one variable
-%%
+%
+% s = loadData('sat', 'C:/mydir')
+
+if nargin < 2, destnRoot = fullfile(pmtk3Root(), 'data'); end
+ 
 if isOctave(),  warning('off', 'Octave:load-file-in-path'); end
 googleRoot = ' http://pmtkdata.googlecode.com/svn/trunk';
 %%
@@ -23,7 +29,7 @@ if exist([dataset, '.mat'], 'file') == 2
 else % try and fetch it
     fprintf('downloading %s...', dataset);
     source = sprintf('%s/%s/%s.zip', googleRoot, dataset, dataset);
-    dest   = fullfile(pmtk3Root(), 'data', [dataset, '.zip']);
+    dest   = fullfile(destnRoot, [dataset, '.zip']);
     if ~isPerlInstalled()
         error('loadData:noPerl', 'This script requires perl, please install it, or download the data set manually from <a href ="%s">here.</a>', source);
     end
