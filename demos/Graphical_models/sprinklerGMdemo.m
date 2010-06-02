@@ -47,18 +47,32 @@ xticklabelRot(lab, 90, 10, 0.01)
 title('joint distribution of water sprinkler UGM')
 
 %% Inference
-false = 1; 
-true = 2;
+model.Tfac = CPD;
+model.domain = [C, S, R, W];
+model.G = G; 
+
+FALSE = 1; 
+TRUE  = 2;
 mW = tabularFactorMarginalize(jointF, W);
-assert(approxeq(mW.T(true), 0.6471))
+mWve = variableElimination(model, W); % do the same thing with variable elimination
+assert(approxeq(mW.T(TRUE), 0.6471))
+assert(approxeq(mWve.T(TRUE), 0.6471))
 
 mSW = tabularFactorMarginalize(jointF, [S, W]);
-assert(approxeq(mSW.T(true,true), 0.2781))
+mSWve = variableElimination(model, [S, W]); 
+assert(approxeq(mSW.T(TRUE, TRUE), 0.2781))
+assert(approxeq(mSWve.T(TRUE, TRUE), 0.2781))
 
-mSgivenW = tabularFactorConditional(jointF, S, W, true);
-assert(approxeq(mSgivenW.T(true), 0.4298));
+mSgivenW = tabularFactorConditional(jointF, S, W, TRUE);
+mSgivenWve = variableElimination(model, S, W, TRUE);
+assert(approxeq(mSgivenW.T(TRUE), 0.4298));
+assert(approxeq(mSgivenWve.T(TRUE), 0.4298));
 
-mSgivenWR = tabularFactorConditional(jointF, S, [W R], [true,true]);
-assert(approxeq(mSgivenWR.T(true), 0.1945)); % explaining away
+mSgivenWR = tabularFactorConditional(jointF, S, [W R], [TRUE, TRUE]);
+mSgivenWRve = variableElimination(model, S, [W R], [TRUE, TRUE]);
+assert(approxeq(mSgivenWR.T(TRUE), 0.1945)); % explaining away
+assert(approxeq(mSgivenWRve.T(TRUE), 0.1945));
+
+%%
 
 
