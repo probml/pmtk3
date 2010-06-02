@@ -17,7 +17,7 @@ G            = model.G;
 globalDomain = model.domain;
 nstates      = cellfun(@(t)t.sizes(end), factors);
 %% Find a good elimination ordering
-moralG    = moralizeGraph(G); % marry parents, make graph symmetric 
+moralG    = moralizeGraph(G); % marry parents, and make graph symmetric 
 ordering  = globalDomain(bestFirstElimOrder(moralG, nstates));
 hiddenNdx = argout(2, @setdiff, ordering, union(queryVars, visVars));
 elim      = ordering(sort(hiddenNdx));
@@ -40,7 +40,7 @@ TF = tabularFactorMultiply(factors);
 end
 
 function F = eliminate(F, v)
-% Eliminate variable v from the factors F
+%% Eliminate variable v from the factors F
 inscope = cellfun(@(f)ismember(v, f.domain), F); 
 psi     = tabularFactorMultiply(F(inscope)); 
 onto    = setdiff(psi.domain, v); 
