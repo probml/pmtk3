@@ -20,19 +20,19 @@ G(R,W)=1;
 % Specify the conditional probability tables as cell arrays
 % The left-most index toggles fastest, so entries are stored in this order:
 % (1,1,1), (2,1,1), (1,2,1), (2,2,1), etc.
-CPD{C} = tabularFactorCreate(reshape([0.5 0.5], 2, 1), [C]);
-CPD{R} = tabularFactorCreate(reshape([0.8 0.2 0.2 0.8], 2, 2), [C R]);
-CPD{S} = tabularFactorCreate(reshape([0.5 0.9 0.5 0.1], 2, 2), [C S]);
-CPD{W} = tabularFactorCreate(reshape([1 0.1 0.1 0.01 0 0.9 0.9 0.99], 2, 2, 2), [S R W]);
+CPDs{C} = tabularFactorCreate(reshape([0.5 0.5], 2, 1), [C]);
+CPDs{S} = tabularFactorCreate(reshape([0.5 0.9 0.5 0.1], 2, 2), [C S]);
+CPDs{R} = tabularFactorCreate(reshape([0.8 0.2 0.2 0.8], 2, 2), [C R]);
+CPDs{W} = tabularFactorCreate(reshape([1 0.1 0.1 0.01 0 0.9 0.9 0.99], 2, 2, 2), [S R W]);
 
-jointF = tabularFactorMultiply(CPD);
+jointF = tabularFactorMultiply(CPDs);
 jointDGM = jointF.T;
 
 
 %% Convert from DGM to UGM
 fac{1} = tabularFactorCreate(ones(2, 2, 2), [C S R]);
-fac{1} = tabularFactorMultiply(fac{1}, CPD{1}, CPD{2}, CPD{3});
-fac{2} = CPD{4};
+fac{1} = tabularFactorMultiply(fac{1}, CPDs{1}, CPDs{2}, CPDs{3});
+fac{2} = CPDs{4};
 jointF = tabularFactorMultiply(fac)
 joint = jointF.T;
 assert(approxeq(joint, jointDGM))
@@ -47,7 +47,7 @@ xticklabelRot(lab, 90, 10, 0.01)
 title('joint distribution of water sprinkler UGM')
 
 %% Inference
-model.Tfac = CPD;
+model.Tfac = CPDs;
 model.domain = [C, S, R, W];
 model.G = G; 
 
