@@ -72,17 +72,22 @@ function str = getSourceString(S, googlePath)
 % We look for both PMTKsource and PMTKcreated tags
 str = {};
 if isfield(S, 'PMTKsource')
-    [source, islink] = convertLinksToHtml(S.PMTKsource);
-    
-       str = sprintf('Source: %s', source);
-    
+    source = convertLinksToHtml(S.PMTKsource);
+    if ~isempty(source)
+        str = sprintf('Source: %s', source);
+    end
 end
 
 if isfield(S, 'PMTKcreated')
-   if ~isempty(str), str = [str, '<br> '];  end
+   if ~isempty(str), str = [str, '<br>'];  end
    cstr = strtrim(S.PMTKcreated);
    if endswith(cstr, '.m')
-        cstr = convertLinksToHtml(sprintf('%s/%s', googlePath, cstr), cstr);
+        w = which(cstr); 
+        if startswith(w, pmtk3Root()) && ~startswith(w, fullfile(pmtk3Root, 'data'))
+            cstr = googleCodeLink(cstr, cstr);
+        else
+            cstr = convertLinksToHtml(sprintf('%s/%s', googlePath, cstr), cstr);
+        end
    end
    str = [str, sprintf('Created by: %s', cstr)];
 end
