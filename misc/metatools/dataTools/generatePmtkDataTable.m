@@ -3,51 +3,50 @@ function generatePmtkDataTable(dataSource)
 % The html table is stored in the dataSource directory.
 % dataSource is the location of the pmtkData local copy of the svn
 % repository.
-
-
+% PMTKneedsMatlab 
+%%
 if nargin == 0
     dataSource = 'C:\pmtkData\';
 end
-
-dataSets = dirs(dataSource);
-perm     = sortidx(lower(dataSets));
-dataSets = dataSets(perm);
 googleRoot = ' http://pmtkdata.googlecode.com/svn/trunk';
-colNames = {'NAME', 'FILESIZE (KB)', 'DESCRIPTION', 'TYPE', 'NCASES', 'NDIMS', 'SOURCE'};
-n = numel(dataSets);
-
+dataSets   = dirs(dataSource);
+perm       = sortidx(lower(dataSets)); % sort by name
+dataSets   = dataSets(perm);
+n          = numel(dataSets);
+%%
+colNames   = {'NAME' , 'FILESIZE (KB)', 'DESCRIPTION', 'X TYPE', 'Y TYPE',...
+              'NCASES', 'NDIMS', 'SOURCE', 'CONTRIBUTED BY'};
+NAME   = 1;
+FSIZE  = 2; 
+DESC   = 3; 
+XTYPE  = 4; 
+YTYPE  = 5; 
+NCASES = 6; 
+NDIMS  = 7;
+SRC    = 8; 
+CONTBY = 9;
+%%
 htmlData = cell(n, numel(colNames));
-for i=1:n
-    meta = fullfile(dataSource, dataSets{i}, [dataSets{i}, '-meta.txt']);
-    zip  = fullfile(dataSource, dataSets{i}, [dataSets{i}, '.zip']);
-    link = sprintf('<a href="%s/%s/%s.zip">%s</a>', googleRoot, dataSets{i}, dataSets{i}, dataSets{i}); 
-    htmlData{i, 1} = link; 
-            
-    [tags, lines] = tagfinder(meta);
-    info = dir(zip); 
-    sz = sprintf('%d', ceil(info.bytes/(1024))); 
-    htmlData{i, 2} = sz; 
+for ds=1:n
+    dname = dataSets{ds}; 
+    S = getTagStruct(dataSource, dname); 
     
-    S = createStruct(tags, lines);
-    if isfield(S, 'PMTKdescription')
-        htmlData{i, 3} = S.PMTKdescription;
-    end
-    if isfield(S, 'PMTKtype')
-        htmlData{i, 4} = S.PMTKtype;
-    end
-    if isfield(S, 'PMTKncases')
-        htmlData{i, 5} = S.PMTKncases;
-    end
-    if isfield(S, 'PMTKndims')
-        htmlData{i, 6} = S.PMTKndims;
-    end
+    htmlData{ds, NAME}   = sprintf('<a href="%s/%s/%s.zip">%s</a>', googleRoot, dname, dname, dname); 
+    htmlData{ds, FSIZE}  = fileSize(dataSource, dname); 
+    htmlData{ds, DESC}   = getData(S, 'PMTKdescription'); 
+    htmlData{ds, XTYPE}  = getData(S, 'PMTKtypeX');
+    htmlData{ds, YTYPE}  = getData(S, 'PMTKtypeY');
+    htmlData{ds, NCASES} = getData(S, 'PMTKncases');
+    htmlData{ds, NDIMS}  = getData(S, 'PMTKndims');
+    htmlData{ds, SRC}    = getSourceString(S, sprintf('%s/%s', googleRoot, dname));
+    htmlData{ds, CONTBY} = getData(S, 'PMTKcontributedBy');
     
-    if isfield(S, 'PMTKsource')
-        htmlData{i, 7} = S.PMTKsource;
+    if isempty(htmlData{ds, XTYPE}) && isempty(htmlData{ds, YTYPE})
+        htmlData{ds, XTYPE} = getData(S, 'PMTKtype'); % backwards compatibility
     end
 end
+%% Generate html table
 pmtkRed  = '#990000';
-
 header = [...
     sprintf('<font align="left" style="color:%s"><h2>PMTK Data</h2></font>\n', pmtkRed),...
     sprintf('<br>Revision Date: %s<br>\n', date()),...
@@ -66,5 +65,48 @@ htmlTable('data'          , htmlData       , ...
           'colnames'      , colNames       , ...
           'colNameColors' , colNameColors  , ...
           'header'        , header         );
+end
 
+function str = getSourceString(S, googlePath)
+%% Deal with the source column as a special case 
+% We look for both PMTKsource and PMTKcreated tags
+str = {};
+if isfield(S, 'PMTKsource')
+    [source, islink] = convertLinksToHtml(S.PMTKsource);
+    
+       str = sprintf('Source: %s', source);
+    
+end
+
+if isfield(S, 'PMTKcreated')
+   if ~isempty(str), str = [str, '<br> '];  end
+   cstr = strtrim(S.PMTKcreated);
+   if endswith(cstr, '.m')
+        cstr = convertLinksToHtml(sprintf('%s/%s', googlePath, cstr), cstr);
+   end
+   str = [str, sprintf('Created by: %s', cstr)];
+end
+end
+
+function S = getTagStruct(source, dataSet)
+%% Return a struct from tags to data for the given data set
+metaFile = fullfile(source, dataSet, [dataSet, '-meta.txt']);
+[tags, lines] = tagfinder(metaFile);
+S = createStruct(tags, lines);
+end
+
+function data = getData(S, tag)
+%% Check if the tag is present, and if so, return the data
+if isfield(S, tag)
+    data = S.(tag);
+else
+    data = {};
+end
+end
+
+function sz = fileSize(source, dataSet)
+%% Return the size of the local data set zip file in KB as a formatted string
+zip  = fullfile(source, dataSet, [dataSet, '.zip']);
+info = dir(zip); 
+sz = sprintf('%d', ceil(info.bytes/(1024))); 
 end
