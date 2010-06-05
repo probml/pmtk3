@@ -1,6 +1,6 @@
 function [mi,nbins] = mutualInfoAllPairsMixed(XD,XC,varargin)
 % compute the mutual information between discrete and cts variables. 
-%[mi,nbins] = mutualInfoAllPairs(XD,XC,levels,method,smoothing)
+%[mi,nbins] = mutualInfoAllPairs(XD,XC,[levels,method,smoothing])
 % XD is N*DD discrete data (can be [])
 % XC is N*DC cts data (can be [])
 % PMTKneedsStatsToolbox hist3
@@ -23,8 +23,9 @@ function [mi,nbins] = mutualInfoAllPairsMixed(XD,XC,varargin)
 %PMTKauthor Emtiyaz Khan, Ben Marlin
 
 if nargin < 2, XC = []; end
-[levels, method, smoothing, useSpeedup] = process_options(varargin, ...
-  'levels', [], 'method', 'quantile', 'smoothing', 0, 'useSpeedup', true);
+[levels, method, smoothing, useSpeedup, maxLevels] = process_options(varargin, ...
+  'levels', [], 'method', 'quantiles', 'smoothing', 0, 'useSpeedup', true,...
+  'maxLevels', 20);
 
 %% Quantize continuous data
 data.continuous = XC';
@@ -34,11 +35,13 @@ data.discrete = XD';
 y     = zeros(DC+DD,N);
 for i=1:size(data.continuous,1)
   if(isempty(levels))
+    % Use Scott's (1979) method "On optimal and data-based histograms"
     l = floor(N^(1/3)*(max(data.continuous(i,:))-min(data.continuous(i,:)))/(3.5*std(data.continuous(i,:))));
     l = max(l,2);
   else
     l = max(round(levels),2);
   end
+  l = min(l, maxLevels); % for speed
   nbins(i)=l;
   y(i,:) = quantizePMTK(data.continuous(i,:)','levels',l,'method',method);
 end

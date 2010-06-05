@@ -1,4 +1,5 @@
-%% Demonstration of computing pairwise mutual information
+%% Computing pairwise mutual information, timing comparison
+
 %PMTKneedsStatsToolbox hist3
 requireStatsToolbox
 loadData('newsgroups');

@@ -56,10 +56,14 @@
 % useful for functions with options that invoke other functions
 % with options; all options can be passed to the outer function and
 % its unprocessed arguments can be passed to the inner function.
+%
+% You can also pass in a struct with named fields
+% eg  func(x, y, struct('u', 0, 'v', 1))
+
 
 %PMTKauthor Mark Paskin
 %PMTKurl http://ai.stanford.edu/~paskin/software.html
-
+%PMTKmodified Matt Dunham 
 
 % Copyright (C) 2002 Mark A. Paskin
 

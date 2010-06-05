@@ -18,7 +18,7 @@ adj(nNodes,1) = 1;
 adj = adj+adj';
 edgeStruct = UGM_makeEdgeStruct(adj,nStates);
 
-if 0
+if 1
 clf;
 labels = {'UBCLoop','UniversityBoulevard','AgronomyRoad',...
     'EastMall','MainMall','HawthorneLane','StadiumRoad',...
@@ -72,8 +72,8 @@ ylabel('Number of People');
 title('Conditional Samples');
 colorbar
 
-fprintf('(paused)\n');
-pause
+%fprintf('(paused)\n');
+%pause
 
 cutset = 1;
 optimalDecoding = UGM_Decode_Cutset(nodePot,edgePot,edgeStruct,cutset);
@@ -90,8 +90,8 @@ ylabel('Number of People');
 title('Samples from Joint');
 colorbar
 
-fprintf('(paused)\n');
-pause
+%fprintf('(paused)\n');
+%pause
 
 %% Extended Problem
 
@@ -150,14 +150,14 @@ adj(131,81) = 1;
 
 adj = adj+adj';
 
-if 0
+if 1
 clf;
 for i = 1:nNodes
     labels{1,i} = 's';
 end
-labels{1} = 'Hub';
-labels{70} = 'Hub';
-labels{81} = 'Hub';
+labels{1} = 'H';
+labels{70} = 'H';
+labels{81} = 'H';
 drawGraph(adj,'labels',labels);
 end
 
