@@ -1,32 +1,25 @@
-function model = mrfFit(model, y, varargin)
+function model = mrf2Fit(model, y, varargin)
 % Fit pairwise MRF using ML/MAP estimation with L2 prior
 % model = mrfFit(model, y, ...)
 % y is Ncases*Nnodes (y(i,n)  in 1..nStates(n))
 %
 % Optional parameters
 %
-% tied = 1: nodes tied, edges tied
-% tied = 0: neither tied
-% tied = [0 1]: nodes untied, edges tied
-% tied = [1 0]: nodes tied, edges untied
-%
-% ising = 0: full potentials
-% ising = 1: diag(v,v,...,v)
-% ising = 2: diag(v1, v2, ..., vD)
-%
 % lambdaNode, lambdaEdge : strength of L2 regularizers
 
-[tied, ising, lambdaNode, lambdaEdge] = process_options(varargin, ...
-  'tied', 1, 'ising', 1, 'lambdaNode', 1e-5, 'lambdaEdge', 1e-5);
+[lambdaNode, lambdaEdge] = process_options(varargin, ...
+   'lambdaNode', 1e-5, 'lambdaEdge', 1e-5);
 
 edgeStruct = model.edgeStruct;
-infoStruct = UGM_makeMRFInfoStruct(edgeStruct,ising,tied);
+infoStruct = UGM_makeMRFInfoStruct(edgeStruct, model.ising, model.tied);
 
 % Initialize weights
 [w,v] = UGM_initWeights(infoStruct);
 
 % Make Objective function
-wv = [w(:);v(:)];
+%wv = [w(:);v(:)];
+wv = [w(infoStruct.wLinInd);v(infoStruct.vLinInd)];
+
 funObj = @(wv)UGM_MRFLoss(wv,y,edgeStruct,infoStruct, model.infFun, model.infArgs{:});
 
 % Set up regularization parameters
@@ -39,14 +32,16 @@ regFunObj = @(wv)penalizedL2(wv,funObj,lambdaFull);
 
 
 % Optimize
-options.verbose = 0;
+options.display = 'off';
 [wv] = minFunc(regFunObj,wv, options);
 [w,v] = UGM_splitWeights(wv,infoStruct);
+
+model.w = w; 
+model.v = v;
 
 % Now make potentials
 model.nodePot = UGM_makeMRFnodePotentials(w,edgeStruct,infoStruct);
 model.edgePot = UGM_makeMRFedgePotentials(v,edgeStruct,infoStruct);
 
-model.w = w; 
-model.v = v;
+
 end

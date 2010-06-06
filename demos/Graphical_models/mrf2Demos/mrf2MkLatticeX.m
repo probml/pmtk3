@@ -1,4 +1,4 @@
-function [model] = mkXlatticeMrf(X, method,  methodArgs)
+function [model] = mrf2MkLatticeX(X, method,  methodArgs)
 % Make a 2d lattice MRF suitable for denoising a particular image
 % Based on http://www.cs.ubc.ca/~schmidtm/Software/UGM/graphCuts.html
 
@@ -25,7 +25,7 @@ for e = 1:edgeStruct.nEdges
   edgePot(:,:,e) = [pot_same 1;1 pot_same];
 end
 
-model = mrfCreate(adj, nStates, 'nodePot', nodePot, ...
+model = mrf2Create(adj, nStates, 'nodePot', nodePot, ...
   'edgePot', edgePot, 'method', method,  methodArgs{:});
 
 end

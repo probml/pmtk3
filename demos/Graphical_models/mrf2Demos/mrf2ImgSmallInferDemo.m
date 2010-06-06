@@ -2,7 +2,8 @@
 % Based on
 % http://www.cs.ubc.ca/~schmidtm/Software/UGM/linprog.html
 
-%PMTKrequireStatsToolbox
+%PMTKrequireOptimToolbox linprog is called by UGM_Decode_LinProg
+%PMTKrequireOptimToolbox bintprog is called by UGM_Decode_IntProg
 
 %% Get model and data
 % We use a small 16x16 subset of the 32x32 image because intprog is slow
@@ -21,7 +22,7 @@ title('noisy');printPmtkFigure('mrfImgSmallNoisy')
 
 
 %% Independent Decoding
-[model] = mkXlatticeMrf(X, 'dummy', {});
+[model] = mrf2MkLatticeX(X, 'dummy', {});
 [junk IndDecoding] = max(model.nodePot,[],2);
 figure; imagesc(reshape(IndDecoding,nRows,nCols));
  colormap gray; title('Independent Decoding');
@@ -50,9 +51,9 @@ methodArgs{end+1} = {'maxIter', 100};
 for i=1:length(methods)
   method = methods{i};
   args = methodArgs{i};
-  [model] = mkXlatticeMrf(X, method, args);
-  zhat = mrfEstJoint(model);
-  energy = mrfEnergy(model, zhat);
+  [model] = mrf2MkLatticeX(X, method, args);
+  zhat = mrf2Map(model);
+  energy = mrf2Energy(model, zhat);
   figure; imagesc(reshape(zhat,nRows,nCols));
   colormap gray;
   title(sprintf('MAP estimate using %s, E=%5.3f', method, energy));

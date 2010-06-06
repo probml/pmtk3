@@ -1,4 +1,4 @@
-function map = mrfEstJoint(model, clamped)
+function map = mrf2Map(model, clamped)
 % Compute posterior mode (MAP estimate)
 % clamped is an optional 1*D vector, where
 % clamped(i) = 0 means node i is not observed

@@ -1,6 +1,13 @@
+- if you change line 62 of example_UGM_Condition from @UGM_Decode_Tree
+to @UGM_Decode_Chain, it breaks, even though the model is a chain.
+The reason is that conditioning on one node results in 57 edge
+potentials but 59 node potentials (for a chain of length 60).
+The tree code can handle this but not the chain code.
+
 - UGM_Decode_ICMrestart : it used to ignore the nRestarts argument.
      Also, now on the first try it uses the max of the nodePot as its
      initial guess (same as UGM_Decode_ICM)
 
 - IGM_Infer_TRBP: the C version is missing, so I modified the .m file
  so it doesn't call the C version
+

@@ -6,7 +6,6 @@ nEdges = size(edgePot,3);
 edgeEnds = edgeStruct.edgeEnds;
 
 [clampedNP,clampedEP,clampedES,edgeMap] = UGM_makeClampedPotentials(nodePot,edgePot,edgeStruct,clamped);
-
 clampedNodeLabels = decodeFunc(clampedNP,clampedEP,clampedES);
 
 % Construct node beliefs

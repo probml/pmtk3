@@ -1,8 +1,7 @@
 %% Demonstrate inference in pairwise mrf using 4 node network
-
-%% Setup model
 % Based on http://www.cs.ubc.ca/~schmidtm/Software/UGM/small.html
 
+%% Setup model
 nNodes = 4;
 adj = zeros(nNodes);
 adj(1,2) = 1;
@@ -20,17 +19,18 @@ nodePot = [1 3
 
 edgePot = [2 1 ; 1 2];
 
-model = mrfCreate(adj, nStates, 'nodePot', nodePot, 'edgePot', edgePot);
+model = mrf2Create(adj, nStates, 'nodePot', nodePot, ...
+  'edgePot', edgePot, 'method', 'Exact');
 
 
 %% Unconditional inference 
 
-map =  mrfEstJoint(model);
+map =  mrf2Map(model);
 
-[nodeBel, edgeBel, logZ] =  mrfInferMarginals(model);
+[nodeBel, edgeBel, logZ] =  mrf2InferMarginals(model);
 
 setSeed(0);
-samples = mrfSample(model, 100);
+samples = mrf2Sample(model, 100);
 %figure; imagesc(samples); colormap(gray)
 
 %% Conditional inference
@@ -40,7 +40,6 @@ clamped = zeros(nNodes,1);
 clamped(1) = 2;
 clamped(3) = 2;
 
-[nodeBel, edgeBel, logZ] =  mrfInferMarginals(model, clamped);
-nodeBel
+[nodeBel, edgeBel, logZ] =  mrf2InferMarginals(model, clamped)
 
 

@@ -17,14 +17,12 @@ title('noisy');printPmtkFigure('mrfImgRgbNoisy')
 %}
 
 %% Independent Decoding
-%{
-[model] = mkXrgbLatticeMrf(X, y, 'dummy');
+[model] = mrf2MkLatticeXrgb(X, y, 'dummy');
 [junk IndDecoding] = max(model.nodePot,[],2);
 figure; imagesc(reshape(IndDecoding,nRows,nCols));
 colormap([1 1 1;1 0 0;0 1 0;0 0 1]);
  title('Independent Decoding');
 printPmtkFigure('mrfImgRgbIndep')
-%}
 
 %% MAP estimation
 
@@ -46,9 +44,9 @@ methodArgs{end+1} = {'maxIter', 100};
 for i=1:length(methods)
   method = methods{i};
   args = methodArgs{i};
-  [model] = mkXrgbLatticeMrf(X, y, method, args);
-  zhat = mrfEstJoint(model);
-  energy = mrfEnergy(model, zhat);
+  [model] = mrf2MkLatticeXrgb(X, y, method, args);
+  zhat = mrf2Map(model);
+  energy = mrf2Energy(model, zhat);
   figure; imagesc(reshape(zhat,nRows,nCols));
   colormap([1 1 1;1 0 0;0 1 0;0 0 1]);
   title(sprintf('MAP estimate using %s, E=%5.3f', method, energy));
@@ -75,10 +73,9 @@ methodArgs{end+1} = {'maxIter', 100};
 for i=1:length(methods)
   method = methods{i};
   args = methodArgs{i};
-  [model] = mkXrgbLatticeMrf(X, y, method, args);
+  [model] = mrf2MkLatticeXrgb(X, y, method, args);
   
-  [nodeBel]  = mrfInferMarginals(model);
-  %zhat = mrfEstMarginals(model);
+  [nodeBel]  = mrf2InferMarginals(model);
   [junk zhat] = max(nodeBel,[],2);
   figure; imagesc(reshape(zhat,nRows,nCols)); 
   colormap([1 1 1;1 0 0;0 1 0;0 0 1]);

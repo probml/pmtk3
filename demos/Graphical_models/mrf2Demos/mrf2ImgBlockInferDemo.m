@@ -2,6 +2,8 @@
 % Based on
 % http://www.cs.ubc.ca/~schmidtm/Software/UGM/block.html
 
+%PMTKslow
+
 %% Get model and data
 setSeed(0);
 load X.mat % binary image of an 'X'
@@ -15,7 +17,7 @@ title('clean');
 figure; imagesc(X); colormap('gray');
 title('noisy');
 
-blocks = mrfImgMkTwoBlocks(nRows, nCols);
+blocks = mrf2ImgMkTwoBlocks(nRows, nCols);
 
 
 %% MAP estimation
@@ -32,9 +34,9 @@ methodArgs{end+1} = {'blocks', blocks};
 for i=1:length(methods)
   method = methods{i};
   args = methodArgs{i};
-  [model] = mkXlatticeMrf(X, method, args);
-  zhat = mrfEstJoint(model);
-  energy = mrfEnergy(model, zhat);
+  [model] = mrf2MkLatticeX(X, method, args);
+  zhat = mrf2Map(model);
+  energy = mrf2Energy(model, zhat);
   figure; imagesc(reshape(zhat,nRows,nCols));
   colormap gray;
   title(sprintf('MAP estimate using %s, E=%5.3f', method, energy));
@@ -66,15 +68,14 @@ methodArgs{end+1} = {'blocks', blocks, 'burnIn', 10, 'nSamples', 10};
 for i=1:length(methods)
   method = methods{i};
   args = methodArgs{i};
-  [model] = mkXlatticeMrf(X, method, args);
+  [model] = mrf2MkLatticeX(X, method, args);
   
-  [nodeBel]  = mrfInferMarginals(model);
+  [nodeBel]  = mrf2InferMarginals(model);
   p1 = nodeBel(:,2);  
   figure; imagesc(reshape(p1,nRows,nCols)); colormap gray;
   title(sprintf('mean of marginals using %s', method));
   printPmtkFigure(sprintf('mrfImgMeanOfMarginals%s', method))
   
-  %zhat = mrfEstMarginals(model);
   [junk zhat] = max(nodeBel,[],2);
   figure; imagesc(reshape(zhat,nRows,nCols)); colormap gray;
   title(sprintf('max of marginals using %s', method));

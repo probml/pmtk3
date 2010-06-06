@@ -4,7 +4,7 @@
 %% Setup model
 nNodes = 60;
 adj = chainAdjMatrix(nNodes);
-nStates = 7;
+nStates = 7*ones(1,nNodes);
 
 initial = [.3 .6 .1 0 0 0 0];
 nodePot = zeros(nNodes,nStates);
@@ -19,20 +19,20 @@ edgePot = [.08 .9 .01 0 0 0 .01
   0 0 0 .01 .01 .97 .01
   0 0 0 0 0 0 1];
 
-method = 'Chain';
-%method = 'Tree';
-model = mrfCreate(adj, nStates, 'nodePot', nodePot, 'edgePot', edgePot, ...
+% Conditional inferenec fails using Chain due to a bug
+%method = 'Chain';
+method = 'Tree';
+model = mrf2Create(adj, nStates, 'nodePot', nodePot, 'edgePot', edgePot, ...
   'method', method);
   
 %% Unconditional inference
 
-map =  mrfEstJoint(model)
+map =  mrf2Map(model)
 
-[nodeBel, edgeBel, logZ] =  mrfInferMarginals(model);
-nodeBel
+[nodeBel, edgeBel, logZ] =  mrf2InferMarginals(model);
 
 setSeed(0);
-samples = mrfSample(model, 100);
+samples = mrf2Sample(model, 100);
 figure; imagesc(samples); colorbar;
 
 %% Conditional inference
@@ -41,12 +41,11 @@ figure; imagesc(samples); colorbar;
 clamped = zeros(nNodes,1);
 clamped(10) = 6;
 
-map =  mrfEstJoint(model, clamped)
+map =  mrf2Map(model, clamped)
 
-[nodeBel, edgeBel, logZ] =  mrfInferMarginals(model, clamped);
-nodeBel
+[nodeBel, edgeBel, logZ] =  mrf2InferMarginals(model, clamped);
 
 setSeed(0);
-samples = mrfSample(model, 100, clamped);
+samples = mrf2Sample(model, 100, clamped);
 figure; imagesc(samples); colorbar;
 

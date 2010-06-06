@@ -1,4 +1,4 @@
-function [model] = mkXrgbLatticeMrf(Xrgb, y, method,  methodArgs)
+function [model] = mrf2MkLatticeXrgb(Xrgb, y, method,  methodArgs)
 % Make a 2d lattice MRF suitable for denoising a particular image
 % Based on http://www.cs.ubc.ca/~schmidtm/Software/UGM/alphaBeta.html
 
@@ -52,7 +52,7 @@ nodePot = UGM_makeCRFNodePotentials(X,w,edgeStruct,infoStruct);
 edgePot = UGM_makeCRFEdgePotentials(Xedge,v,edgeStruct,infoStruct);
 end
 
-model = mrfCreate(adj, nStates, 'nodePot', nodePot, ...
+model = mrf2Create(adj, nStates, 'nodePot', nodePot, ...
   'edgePot', edgePot, 'method', method,  methodArgs{:});
 
 end

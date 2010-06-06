@@ -1,19 +1,28 @@
-function model = mrfCreate(adj, nStates, varargin)
+function model = mrf2Create(adj, nStates, varargin)
 % Make a Markov random field with pairwise potentials
 % Wrapper to Mark Schmidt's UGM library
 %  which is available from http://www.cs.ubc.ca/~schmidtm/Software/UGM
 %
 % model = mrfCreate(adj, nstates, 'nodePot', nodePot, 'edgePot', edgePot, ...
-%                    'method', methodName, ...)
+%                    'tied', 1, 'ising', 1, 'method', methodName, ...)
 %  adj(i,j) if there is an i-j edge 
 %  nStates(i) number of discrete values (default 1)
 %
 % Optional arguments
 %
-%  nodePot(i,:) potential for node i (default random)
+%  nodePot(i,:) potential for node i 
 %
-%  edgePot(:,:,e) potential for edge e (default random)
+%  edgePot(:,:,e) potential for edge e 
 %     If you just specify a K*K matrix, it will be replicated across edges
+%
+% tied = 1: nodes tied, edges tied
+% tied = 0: neither tied
+% tied = [0 1]: nodes untied, edges tied
+% tied = [1 0]: nodes tied, edges untied
+%
+% ising = 0: full potentials
+% ising = 1: diag(v,v,...,v)
+% ising = 2: diag(v1, v2, ..., vD)
 %
 %  method - name of inference engine, can be one of the following:
 %
@@ -79,19 +88,30 @@ function model = mrfCreate(adj, nStates, varargin)
 %        Must specify burnIn, nSamples, varProb (prob of picking variational proposal)        
 %        Can be slow
 
-[nodePot, edgePot, method, maxIter, cutset, nRestarts, burnIn, nSamples, varProb, blocks] =...
+[nodePot, edgePot, tied, ising, method, maxIter, cutset, nRestarts, burnIn, nSamples, varProb, blocks] =...
   process_options(varargin, ...
-  'nodePot', [], 'edgePot', [], 'method', 'dummy', 'maxIter', 0, ...
+  'nodePot', [], 'edgePot', [], 'tied', 1, 'ising', 1, 'method', 'dummy', 'maxIter', 0, ...
   'cutset', [], 'nRestarts', 1, 'burnIn', 0, 'nSamples', 0, 'varProb', 0, 'blocks', []);
 
 model.adj = adj;
 model.nStates = nStates;
 model.edgeStruct = UGM_makeEdgeStruct(adj,nStates);
+model.tied = tied;
+model.ising = ising;
+model.nNodes = size(adj, 1);
+model.nEdges = model.edgeStruct.nEdges; 
+if ~isempty(edgePot) && size(edgePot,3)==1
+  % replicate edge potential
+   edgePot = repmat(edgePot, [1 1 model.nEdges]);
+end
+model.nodePot = nodePot;
+model.edgePot = edgePot;
+model.edgeStruct.maxIter = maxIter;
 
-% Make ICM always call ICMrestart
+% Make ICM call ICMrestart
 if strcmpi(method, 'icm'), method = 'ICMrestart'; end
 
-%% Default functions
+%% Default methods
 model.methodName = method;
 model.decodeFun = str2func(sprintf('UGM_Decode_%s', method));
 model.decodeArgs = {};
@@ -99,7 +119,7 @@ model.infFun = str2func(sprintf('UGM_Infer_%s', method));
 model.infArgs = {};
 model.sampleFun = str2func(sprintf('UGM_Sample_%s', method));
 model.sampleArgs = {};
-model.edgeStruct.maxIter = maxIter;
+
 
 
 %% Deal with exceptional cases
@@ -165,30 +185,6 @@ switch method
 end
  
 
-%% Make random potentials, if necessary
-model.nNodes = size(adj, 1);
-edgeEnds = model.edgeStruct.edgeEnds;
-model.nEdges = size(edgeEnds,1);
-K = max(nStates);
-if isempty(nodePot)
-  nodePot = zeros(model.nNodes, K);
-  for i=1:model.nNodes
-    nodePot(i,:) = rand(1,nStates(i));
-  end
-end
-if isempty(edgePot)
-  edgePot = zeros(K, K, model.nEdges);
-  for e=1:model.nEdges
-     n1 = edgeEnds(e,1);
-     n2 = edgeEnds(e,2);
-    edgePot(:,:,e) = rand(nStates(n1), nStates(n2));
-  end
-elseif size(edgePot,3)==1
-  % replicate edge potential
-   edgePot = repmat(edgePot, [1 1 model.nEdges]);
-end
 
-model.nodePot = nodePot;
-model.edgePot = edgePot;
 
 end

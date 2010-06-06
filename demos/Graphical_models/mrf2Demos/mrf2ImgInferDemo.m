@@ -20,7 +20,7 @@ title('noisy');printPmtkFigure('mrfImgNoisy')
 
 
 %% Independent Decoding
-[model] = mkXlatticeMrf(X, 'dummy', {});
+[model] = mrf2MkLatticeX(X, 'dummy', {});
 [junk IndDecoding] = max(model.nodePot,[],2);
 figure; imagesc(reshape(IndDecoding,nRows,nCols));
  colormap gray; title('Independent Decoding');
@@ -31,10 +31,10 @@ printPmtkFigure('mrfImgIndep')
 methods = {};
 methodArgs = {};
 
-%{
 methods{end+1} = 'GraphCut';
 methodArgs{end+1} = {};
 
+%{
 methods{end+1} = 'ICM';
 methodArgs{end+1} = {'nRestarts', 100};
 
@@ -52,9 +52,9 @@ methodArgs{end+1} = {'maxIter', 100};
 for i=1:length(methods)
   method = methods{i};
   args = methodArgs{i};
-  [model] = mkXlatticeMrf(X, method, args);
-  zhat = mrfEstJoint(model);
-  energy = mrfEnergy(model, zhat);
+  [model] = mrf2MkLatticeX(X, method, args);
+  zhat = mrf2Map(model);
+  energy = mrf2Energy(model, zhat);
   figure; imagesc(reshape(zhat,nRows,nCols));
   colormap gray;
   title(sprintf('MAP estimate using %s, E=%5.3f', method, energy));
@@ -68,12 +68,14 @@ end
 methods = {};
 methodArgs = {};
 
-%{
-methods{end+1} = 'Gibbs';
-methodArgs{end+1} = {'burnIn', 100, 'nSamples', 1000};
 
 methods{end+1} = 'MeanField';
 methodArgs{end+1} = {'maxIter', 100};
+
+
+%{
+methods{end+1} = 'Gibbs';
+methodArgs{end+1} = {'burnIn', 100, 'nSamples', 1000};
 
 methods{end+1} = 'LBP';
 methodArgs{end+1} = {'maxIter', 100};
@@ -89,16 +91,18 @@ methodArgs{end+1} = {'burnIn', 100, 'nSamples', 1000, 'varProb', 0.25};
 for i=1:length(methods)
   method = methods{i};
   args = methodArgs{i};
-  [model] = mkXlatticeMrf(X, method, args);
+  [model] = mrf2MkLatticeX(X, method, args);
   
-  [nodeBel]  = mrfInferMarginals(model);
+  [nodeBel]  = mrf2InferMarginals(model);
   p1 = nodeBel(:,2);  
   figure; imagesc(reshape(p1,nRows,nCols)); colormap gray;
   title(sprintf('mean of marginals using %s', method));
   printPmtkFigure(sprintf('mrfImgMeanOfMarginals%s', method))
   
-  %zhat = mrfEstMarginals(model);
+
   [junk zhat] = max(nodeBel,[],2);
+  zhat1 = mrf2MapMarginals(model);
+  assert(isequal(zhat, zhat1))
   figure; imagesc(reshape(zhat,nRows,nCols)); colormap gray;
   title(sprintf('max of marginals using %s', method));
   printPmtkFigure(sprintf('mrfImgMaxOfMarginals%s', method))
@@ -121,8 +125,8 @@ nSamples = 1000;
 for i=1:length(methods)
   method = methods{i};
   args = methodArgs{i};
-  [model] = mkXlatticeMrf(X, method, args);
-  X = mrfSample(model, nSamples);
+  [model] = mrf2MkLatticeX(X, method, args);
+  X = mrf2Sample(model, nSamples);
   figure;
   for j = 1:9
     subplot(3,3,j);

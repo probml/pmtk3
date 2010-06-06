@@ -24,18 +24,18 @@ title('Samples based on independent model');
 nNodes = size(y,2);
 adj = chainAdjMatrix(nNodes);
 nStates = 2*ones(1,nNodes);
-model = mrfCreate(adj, nStates, 'method', 'Chain');
+model = mrf2Create(adj, nStates, 'method', 'Chain');
 
 % Sample from model with random params
 nSamples = 100;
-samples = mrfSample(model, nSamples);
+samples = mrf2Sample(model, nSamples);
 figure;
 imagesc(samples); colormap(gray);
 title('Samples from untrained MRF model');
 
 %% Fit model
-model = mrfFit(model, y);
-samples = mrfSample(model, nSamples);
+model = mrf2Fit(model, y);
+samples = mrf2Sample(model, nSamples);
 figure;
 imagesc(samples); colormap(gray);
 title('Samples from trained MRF model');

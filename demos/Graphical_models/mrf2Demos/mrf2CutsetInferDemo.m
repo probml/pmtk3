@@ -11,7 +11,7 @@ end
 adj(nNodes,1) = 1;
 adj = adj+adj';
 
-if 1
+if 0
 labels = {'UBCLoop','UniversityBoulevard','AgronomyRoad',...
     'EastMall','MainMall','HawthorneLane','StadiumRoad',...
     'AgronomyRoad','UniversityBoulevard','NitobeMemorial',...
@@ -48,17 +48,17 @@ for s1 = 1:nStates
 end
 
 cutset = 1;
-model = mrfCreate(adj, nStates, 'nodePot', nodePot, 'edgePot', edgePot, ...
-  'method', 'Cutset', 'methodArgs', {cutset});
+model = mrf2Create(adj, nStates, 'nodePot', nodePot, 'edgePot', edgePot, ...
+  'method', 'Cutset', 'cutset', cutset);
   
 %% Unconditional inference
 
-map =  mrfEstJoint(model)-1
+map =  mrf2Map(model)-1
 
-[nodeBel, edgeBel, logZ] =  mrfInferMarginals(model);
+[nodeBel, edgeBel, logZ] =  mrf2InferMarginals(model);
 
 setSeed(0);
-samples = mrfSample(model, 100);
+samples = mrf2Sample(model, 100);
 figure; imagesc(samples); colorbar;
 
 %% Setup model with multiple loops
@@ -118,7 +118,7 @@ adj(131,81) = 1;
 
 adj = adj+adj';
 
-if 1
+if 0
 clf;
 for i = 1:nNodes
     labels{1,i} = 's';
@@ -147,14 +147,14 @@ end
 
 cutset = [1 70 81];
 
-model = mrfCreate(adj, nStates, 'nodePot', nodePot, 'edgePot', edgePot, ...
-  'method', 'Cutset', 'methodArgs', {cutset});
+model = mrf2Create(adj, nStates, 'nodePot', nodePot, 'edgePot', edgePot, ...
+  'method', 'Cutset', 'cutset', cutset);
   
 %% Unconditional inference
-map =  mrfEstJoint(model)-1
+map =  mrf2Map(model)-1
 
-[nodeBel, edgeBel, logZ] =  mrfInferMarginals(model);
+[nodeBel, edgeBel, logZ] =  mrf2InferMarginals(model);
 
 setSeed(0);
-samples = mrfSample(model, 100);
+samples = mrf2Sample(model, 100);
 figure; imagesc(samples); colorbar;

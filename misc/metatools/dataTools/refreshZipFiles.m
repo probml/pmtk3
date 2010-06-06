@@ -12,7 +12,7 @@ function refreshZipFiles(dataSource, list)
 % refreshZipFiles('C:\pmtkData', {'alarmNetwork', 'anscombe'});
 %%
 
-SetDefaultValue(1, 'dataSource', 'C:\pmtkData'); 
+SetDefaultValue(1, 'dataSource', 'C:/kmurphy/GoogleCode/pmtkData'); 
 
 
 if nargin < 2
