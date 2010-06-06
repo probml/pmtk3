@@ -1,0 +1,6 @@
+- UGM_Decode_ICMrestart : it used to ignore the nRestarts argument.
+     Also, now on the first try it uses the max of the nodePot as its
+     initial guess (same as UGM_Decode_ICM)
+
+- IGM_Infer_TRBP: the C version is missing, so I modified the .m file
+ so it doesn't call the C version

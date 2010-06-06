@@ -5,14 +5,22 @@ function samples = mrfSample(model, N, clamped)
 % and clamped(i) = k means node is clamped to state k
 
 if nargin < 3, clamped = []; end
+
+if isempty(model.sampleFun)
+  fprintf('method %s does not support sampling\n', model.methodName);
+  return;
+end
+
+% override num samples specified when mrf was created
 edgeStruct = model.edgeStruct;
 edgeStruct.maxIter = N;
+
 if isempty(clamped)
   samples = feval(model.sampleFun, model.nodePot, model.edgePot, ...
-    edgeStruct, model.methodArgs{:});
+    edgeStruct, model.sampleArgs{:});
 else
   samples = UGM_Sample_Conditional(model.nodePot, model.edgePot, ...
-    edgeStruct, clamped, model.sampleFun, model.methodArgs{:});
+    edgeStruct, clamped, model.sampleFun, model.sampleArgs{:});
 end
 samples = samples';
 end

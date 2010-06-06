@@ -24,6 +24,7 @@ figure(1);
 imagesc(Xrgb);
 title('Original X');
 
+
 figure(2);
 Xrgb = Xrgb + randn(size(Xrgb))/2;
 if(exist('imshow')~=0)

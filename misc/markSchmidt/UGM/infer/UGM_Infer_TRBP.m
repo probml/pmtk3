@@ -12,6 +12,7 @@ if weightType == 0
     mu = ones(nEdges,1); % Ordinary BP
 elseif weightType == 1
     % Generate Random Spanning Trees until all edges are covered
+    fprintf('generating random spanning trees\n');
     [nNodes,maxState] = size(nodePot);
     edgeEnds = edgeStruct.edgeEnds;
     
@@ -25,12 +26,13 @@ elseif weightType == 1
         end
     end
     mu = edgeAppears/i;
+    fprintf('done\n');
 elseif weightType == 2
     %nEdges == nNodes*(nNodes-1)/2
     mu = ((nNodes-1)/nEdges)*ones(nEdges,1);
 end
 
-if edgeStruct.useMex
+if 0 % edgeStruct.useMex
     [nodeBel,edgeBel,logZ] = UGM_Infer_TRBPC(nodePot,edgePot,int32(edgeStruct.edgeEnds),int32(edgeStruct.nStates),int32(edgeStruct.V),int32(edgeStruct.E),edgeStruct.maxIter,mu);
 else
     [nodeBel, edgeBel, logZ] = Infer_TRBP(nodePot,edgePot,edgeStruct,mu);

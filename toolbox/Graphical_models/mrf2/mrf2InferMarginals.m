@@ -5,11 +5,17 @@ function [nodeBel, edgeBel, logZ] = mrfInferMarginals(model, clamped)
 % and clamped(i) = k means node is clamped to state k
 
 if nargin < 2, clamped = []; end
+
+if isempty(model.infFun)
+  fprintf('method %s does not support inference\n', model.methodName);
+  return;
+end
+
 if isempty(clamped)
   [nodeBel, edgeBel,logZ]  = feval(model.infFun, model.nodePot, model.edgePot, ...
-    model.edgeStruct, model.methodArgs{:});
+    model.edgeStruct, model.infArgs{:});
 else
   [nodeBel, edgeBel, logZ] = UGM_Infer_Conditional(model.nodePot, model.edgePot, ...
-    model.edgeStruct, clamped(:), model.infFun, model.methodArgs{:});
+    model.edgeStruct, clamped(:), model.infFun, model.infArgs{:});
 end
 end

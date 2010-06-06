@@ -19,7 +19,7 @@ maxState = max(nStates);
 if nargin < 5
     [junk y] = max(nodePot,[],2);
 end
-UGM_ConfigurationPotential(y,nodePot,edgePot,edgeStruct.edgeEnds);
+%UGM_ConfigurationPotential(y,nodePot,edgePot,edgeStruct.edgeEnds);
 
 % Do Alpha-Beta swaps until convergence
 while 1
@@ -30,7 +30,7 @@ while 1
             swapPositions = find(y==s1 | y==s2);
             if ~isempty(swapPositions)
                 % Find optimal re-arrangement of nodes assigned to s1 or s2
-                fprintf('Swapping %d and %d\n',s1,s2);
+                %fprintf('Swapping %d and %d\n',s1,s2);
                 clamped = y;
                 clamped(swapPositions) = 0;
                 [clampedNP,clampedEP,clampedES] = UGM_makeClampedPotentials(nodePot,edgePot,edgeStruct,clamped);

@@ -7,10 +7,10 @@ function map = mrfEstJoint(model, clamped)
 if nargin < 2, clamped = []; end
 if isempty(clamped)
   map  = feval(model.decodeFun, model.nodePot, model.edgePot, ...
-    model.edgeStruct, model.methodArgs{:});
+    model.edgeStruct, model.decodeArgs{:});
 else
   map = UGM_Decode_Conditional(model.nodePot, model.edgePot, ...
-    model.edgeStruct, clamped, model.decodeFun, model.methodArgs{:});
+    model.edgeStruct, clamped, model.decodeFun, model.decodeArgs{:});
 end
 map = map(:)';
 end
