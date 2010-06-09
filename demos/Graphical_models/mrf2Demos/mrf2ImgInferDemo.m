@@ -7,7 +7,7 @@
 
 %% Get model and data
 setSeed(0);
-load X.mat % binary image of an 'X'
+X = loadData('Ximg');
 Xclean = X;
 X = Xclean + 0.5*randn(size(Xclean));
 [nRows, nCols] = size(Xclean);

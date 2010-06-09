@@ -112,7 +112,8 @@ pause
 
 % December 1915 is row 239
 clamped = zeros(nNodes,1);
-clamped(1:2) = 2;
+%clamped(1:2) = 2;
+clamped(3:4) = 2;
 
 condDecode = UGM_Decode_Conditional(nodePot,edgePot,edgeStruct,clamped,@UGM_Decode_Chain)
 condNodeBel = UGM_Infer_Conditional(nodePot,edgePot,edgeStruct,clamped,@UGM_Infer_Chain)

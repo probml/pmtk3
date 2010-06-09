@@ -5,10 +5,14 @@ function model = crf2Fit(model, Xnode, Xedge, y, varargin)
 % Xn is Ncases*NnodeFeatures*Nnodes
 % Xe is Ncases*NedgeFeatures*Nedges
 %
-% Optional parameters, same as mrfFit
+% Optional parameters:
+ % loss : one of
+ % CRFloss - MLE/ MAP
+ % PL - pseudo likelihood
+ % PLsubmod: PL with submodularity constraint
 
-[lambdaNode, lambdaEdge] = process_options(varargin, ...
-  'lambdaNode', 1e-5, 'lambdaEdge', 1e-5);
+[lambdaNode, lambdaEdge, loss] = process_options(varargin, ...
+  'lambdaNode', 0, 'lambdaEdge', 0, 'method', 'CRFloss');
 
 edgeStruct = model.edgeStruct;
 infoStruct = UGM_makeCRFInfoStruct(Xnode, Xedge, edgeStruct,...
@@ -21,8 +25,26 @@ infoStruct = UGM_makeCRFInfoStruct(Xnode, Xedge, edgeStruct,...
 %wv = [w(:);v(:)];
 wv = [w(infoStruct.wLinInd);v(infoStruct.vLinInd)];
 
-funObj = @(wv)UGM_CRFLoss(wv,Xnode,Xedge,y,edgeStruct,infoStruct,...
-  model.infFun, model.infArgs{:});
+minimizer = @(obj, wv, opt) minFunc(obj, wv, opt);
+
+switch loss
+  case 'CRFloss'
+    funObj = @(wv)UGM_CRFLoss(wv,Xnode,Xedge,y,edgeStruct,infoStruct,...
+      model.infFun, model.infArgs{:});
+  case 'PL',
+    funObj = @(wv)UGM_CRFpseudoLoss(wv,Xnode,Xedge,y,edgeStruct,infoStruct);  
+  case 'PLsubmod',
+    % constrain edge weights v to be positive
+    if model.ising==0
+      error('cannot enforce submodularity with this method unless ising=1 or 2')
+    end
+    UB = inf(size(wv));
+    LB = [-inf(size(w(infoStruct.wLinInd)));zeros(size(v(infoStruct.vLinInd)))];
+    funObj = @(wv)UGM_CRFpseudoLoss(wv,Xnode,Xedge,y,edgeStruct,infoStruct);
+    minimizer = @(obj, wv, opt) minConf_TMP(funObj,wv,LB,UB,opt);
+  otherwise
+    error(['unrecognized loss ' loss])
+end
 
 
 % Set up regularization parameters
@@ -36,7 +58,8 @@ regFunObj = @(wv)penalizedL2(wv,funObj,lambdaFull);
 
 % Optimize
 options.display = 'off';  
-[wv] = minFunc(regFunObj,wv, options);
+%[wv] = minFunc(regFunObj,wv, options);
+[wv] = minimizer(regFunObj,wv, options);
 [w,v] = UGM_splitWeights(wv,infoStruct);
 
 model.w = w; 

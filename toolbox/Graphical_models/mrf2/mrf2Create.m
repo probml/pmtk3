@@ -109,7 +109,13 @@ model.edgePot = edgePot;
 model.edgeStruct.maxIter = maxIter;
 
 % Make ICM call ICMrestart
-if strcmpi(method, 'icm'), method = 'ICMrestart'; end
+if strcmpi(method, 'icm') && nRestarts>1
+  method = 'ICMrestart';
+end
+% Correct mis-spellings
+if strcmpi(method, 'graphcuts')
+  method = 'GraphCut';
+end
 
 %% Default methods
 model.methodName = method;
