@@ -19,6 +19,7 @@ for i = 1:4
 subplot(2,2,i);
 imagesc(reshape(X(i,1,:),nRows,nCols));
 colormap gray
+
 end
 suptitle('Examples of Noisy Xs');
 

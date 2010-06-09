@@ -1,5 +1,5 @@
 function testPmtk3()
-%% Test that PMTK3 is correctly installed and working on your system
+%% Minimal test that PMTK3 is correctly installed and working on your system
 %
 %% Paths
 fprintf('Checking PMTK3 paths.............');
@@ -30,43 +30,35 @@ if ~isOctave
     end
 end
 %% Test code
-if ~isOctave() % We're not quite ready for Octave
-    fprintf('Testing selected code............\n\n\n\n');
-    try
-        linregFitTestSimple;
-        logregL2FitTest;
-        newcombDemo
-        close all
-        gprDemoNoiseFree;
-        discrimAnalysisDboundariesDemo;
-        testSprinklerDemo;
-        close all
-        hmmDiscreteTest;
-        knnClassifyDemo;
-        pcaDemo2d;
-        close all
-        mixGaussFitEm(loadData('faithful'), 2, 'verbose', true);
-        mlpRegressDemoBishop;
-        demoSteepestDescentRosen;
-        close all
-        gammaRainfallDemo;
-        kalmanTrackingDemo;
-        bernoulliBetaSequentialUpdate;
-        close all
-        mcmcMvn2d
-        close all;
-        fprintf('\n\nTesting selected code............PASSED\n\n\n\n');
-    catch
-        close all;
-        clc;
-        fprintf(2, 'One or more test demos did not run\ncorrectly, please report the problem.\n\n');
-        return
-    end
-    
-    fprintf('\nALL TESTS PASSED\n\n');
-    
+if isOctave()
+  fprintf('warning: pmtk3 has not yet been made fully octave compliant\n')
 end
 
+fprintf('Testing selected code............\n\n\n\n');
+%try
+linregFitTestSimple;
+logregL2FitTest;
+newcombDemo
+close all
+gprDemoNoiseFree;
+discrimAnalysisDboundariesDemo;
+testSprinklerDemo;
+close all
+hmmDiscreteTest;
+knnClassifyDemo;
+pcaDemo2d;
+close all
+mixGaussFitEm(loadData('faithful'), 2, 'verbose', true);
+mlpRegressDemoBishop;
+demoSteepestDescentRosen;
+close all
+gammaRainfallDemo;
+kalmanTrackingDemo;
+bernoulliBetaSequentialUpdate;
+close all
+mcmcMvn2d
+close all;
+fprintf('all tests passed\n');
 
 end
 

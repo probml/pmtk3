@@ -69,7 +69,7 @@ end
 filendx  = @(f)cellfind(files, f);
 hastag   = @(f, tag)ismember(tag, tags(filendx(f)));
 %% Determine file authors
-excluded = {'Matt Dunham', 'Kevin Murphy'};
+excluded = {'Matt Dunham', 'Kevin Murphy', 'Mark Schmidt'};
 authors = cell(nfiles, 1);
 for i=1:nfiles
     j = cellfind(tags{i}, 'PMTKauthor');
