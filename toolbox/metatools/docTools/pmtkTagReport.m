@@ -1,4 +1,4 @@
-function I = pmtkTagReport()
+function I = pmtkTagReport(root)
 %% Gather info on all of the tags in the PMTK3 system.
 % I is a struct with the following fields:
 %   files............a list of all of the PMTK3 files with at least one tag
@@ -29,8 +29,9 @@ function I = pmtkTagReport()
 %                    containing directory structure. 
 %%
 %
-%% Get a list of all PMTK3 files
-files = mfiles(pmtk3Root(), 'usefullpath', true);
+if nargin < 1, root = pmtk3Root(); end
+%% Get a list of all  files
+files = mfiles(root(), 'usefullpath', true);
 %% Get the tags, tagtext codelen and full text of all of these files
 [tags, tagtext, codelen, fulltext]  ...
     = cellfun(@tagfinder, files, 'uniformoutput', false);
