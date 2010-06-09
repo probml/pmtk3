@@ -1,7 +1,0 @@
-fprintf('All results should be zero\n');
-pochhammer(5.6,0)
-pochhammer(1e4,3) - 27.63132109093154778328
-pochhammer(1e4,1e3) - 9258.70469397627827724045
-pochhammer(1e5,3) - 34.538806394660688260
-pochhammer(1e6,3) - 41.44653467389032232
-pochhammer(0.1,100) - 357.3415591371226056543663
