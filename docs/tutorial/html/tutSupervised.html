@@ -1,0 +1,151 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>Tutorial on supervised learning using pmtk3</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-06-10"><meta name="m-file" content="tutSupervised"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Tutorial on supervised learning using pmtk3</h1><!--introduction--><p>We provide a description of the main methods for fitting and using univariate conditional density models of the form <img src="tutSupervised_eq42833.png" alt="$p(y|x,\theta)$"> and <img src="tutSupervised_eq35640.png" alt="$p(y,x|\theta)$"> where y in R for regression and y in {1,...,C} for classification, and where x is some kind of feature vector.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Models</a></li><li><a href="#2">Methods</a></li><li><a href="#3">Creating a model</a></li><li><a href="#6">Using a model for prediction</a></li></ul></div><h2>Models<a name="1"></a></h2><p>The following is a list of pmtk models that are designed for supervised learning.</p><pre>* 'linreg' (linear regression)
+* 'logreg' (logistic regression  binary and multiclass)
+* 'mlp' (multilayer perceptron, aka feedforward neural network)
+* 'naiveBayesBer' (NB with Bernoulli features)
+* 'naiveBayesGauss' (NB with Gaussian features)
+* 'discrimAnalysis' (LDA or QDA)
+* 'RDA' (regularized LDA)</pre><h2>Methods<a name="2"></a></h2><p>Below we describe the main 'methods' that can be applied to these models. Note that these are just Matlab functions, but we will sometimes call them methods since they behave like object-oriented methods.</p><p>Note also that <b>not all models support all methods</b>. To find out if a model of type foo supports method bar, just type <tt>help fooBar</tt>. If you get an error, then you know that foo does not implement bar.</p><h2>Creating a model<a name="3"></a></h2><p>To create a model of type 'foo', use one of the following</p><pre>model = fooCreate(...) % manually specified parameters
+model = fooFit(X, y, ...) % Compute ML or MAP estimate of params
+model = fooFitBayes(X, y, ...) % Compute posterior on params</pre><p>where</p><pre>*  '...' refers to optional arguments (see below)
+* X  is an N*D design matrix containing the training data,
+where N is the number of training cases and D is the number of features.
+* y is an N*1 response vector, which can be real-valued (regression),
+   0/1 or -1/+1 (binary classification), or 1:C (multi-class).</pre><p>The resulting model is a Matlab structure, rather than an object. However, we will sometimes call it an object, since it behaves like one. In the case of fooCreate and fooFit, the parameters are point estimates. In the case of fooFitBayes, the parameters are represented as distributions; this is often represented parametrically in terms of the hyper-parameters. The details will be explained below when we look at specific model classes.</p><h2>Using a model for prediction<a name="6"></a></h2><p>Once the model has been created, you can use it to make predictions (using a plug-in estimate of the parameters) as follows</p><pre>[yhat, py] = fooPredict(model, Xtest)</pre><p>Here yhat is an Ntest*1 vector of predicted responses of the same type as ytrain, where Ntest is the number of rows in Xtest. For regression this is the predicted mean, for classification this is the predicted mode. The meaning of py depends on the model, as follows:</p><pre> * For regression, py is an Ntest*1 vector of predicted variances.
+ * For binary classification, py is an Ntest*1 vector of the probability of being in class 1.
+ * For multi-class, py is an Ntest*C matrix, where py(i,c) = p(y=c|Xtest(i,:),params)</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.9<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Tutorial on supervised learning using pmtk3
+% We provide a description of the main methods for fitting and using univariate
+% conditional density models of the form $p(y|x,\theta)$ and $p(y,x|\theta)$
+% where y in R for regression and y in {1,...,C} for classification,
+% and where x is some kind of feature vector. 
+%
+%% Models
+% The following is a list of pmtk models that are designed for 
+% supervised learning.
+%
+%  * 'linreg' (linear regression)
+%  * 'logreg' (logistic regression  binary and multiclass)
+%  * 'mlp' (multilayer perceptron, aka feedforward neural network)
+%  * 'naiveBayesBer' (NB with Bernoulli features)
+%  * 'naiveBayesGauss' (NB with Gaussian features)
+%  * 'discrimAnalysis' (LDA or QDA)
+%  * 'RDA' (regularized LDA)
+%
+%
+%% Methods
+% Below we describe the main 'methods' that can be applied to these models.
+% Note that these are just Matlab functions, but we will sometimes call
+% them methods since they behave like object-oriented methods.
+%
+% Note also that *not all models support all methods*.
+% To find out if a model of type foo supports method bar,
+% just type |help fooBar|. If you get an error, then you know
+% that foo does not implement bar.
+%
+%% Creating a model
+% To create a model of type 'foo', use one of the following
+%%
+%  model = fooCreate(...) % manually specified parameters
+% model = fooFit(X, y, ...) % Compute ML or MAP estimate of params
+% model = fooFitBayes(X, y, ...) % Compute posterior on params
+%%
+% where
+%
+%  *  '...' refers to optional arguments (see below)
+%  * X  is an N*D design matrix containing the training data,
+%  where N is the number of training cases and D is the number of features.
+%  * y is an N*1 response vector, which can be real-valued (regression),
+%     0/1 or -1/+1 (binary classification), or 1:C (multi-class).
+%
+% The resulting model is a Matlab structure, rather than an object.
+% However, we will sometimes call it an object, since it behaves like one.
+% In the case of fooCreate and fooFit, the parameters are point estimates.
+% In the case of fooFitBayes, the parameters are represented as
+% distributions; this is often represented parametrically in terms
+% of the hyper-parameters. The details will be explained below
+% when we look at specific model classes.
+%
+%% Using a model for prediction
+% Once the model has been created, you can use it to make predictions
+% (using a plug-in estimate of the parameters) as follows
+%
+%%
+%  [yhat, py] = fooPredict(model, Xtest)
+%%
+% Here yhat is an Ntest*1 vector of predicted responses of the same type
+% as ytrain, where Ntest is the number of rows in Xtest.
+% For regression this is the predicted mean, for classification this is the predicted mode.
+% The meaning of py depends on the model, as follows:
+%   
+%   * For regression, py is an Ntest*1 vector of predicted variances.
+%   * For binary classification, py is an Ntest*1 vector of the probability of being in class 1.
+%   * For multi-class, py is an Ntest*C matrix, where py(i,c) = p(y=c|Xtest(i,:),params)
+%
+##### SOURCE END #####
+--></body></html>

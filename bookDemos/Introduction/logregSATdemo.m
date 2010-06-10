@@ -16,7 +16,7 @@ perm = sortidx(X, 'ascend');
 X = X(perm);
 y = y(perm);
 %% Fit model
-model = logregFit(X, y,'lambda', 0);
+model = logregFit(X, y);
 [yhat, prob] = logregPredict(model, X);
 %% visualize model fit for each training point
 figure;

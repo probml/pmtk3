@@ -1,3 +1,4 @@
+
 %% Fit a mixture of Gaussians using variational Bayes
 % Reproduce Bishop fig 10.6
 %%

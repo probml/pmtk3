@@ -15,8 +15,9 @@ lambdas = [0 0.00001 0.001];
 NL = length(lambdas);
 for k=1:NL
     lambda = lambdas(k);
-    model = linregFit(Xtrain, ytrain, 'lambda', lambda, ...
-        'preproc', struct('standardizeX', false));
+   %model = linregFit(Xtrain, ytrain, 'lambda', lambda, ...
+   %     'preproc', struct('standardizeX', false));
+    model = linregFit(Xtrain, ytrain, 'lambda', lambda);
     [ypredTest, s2] = linregPredict(model, Xtest);
     sig = sqrt(s2);
     
@@ -29,14 +30,13 @@ for k=1:NL
     title(sprintf('ln lambda %5.3f', log(lambda + eps)))
 end
 
-%% Now compare logev with train/test error on a dense grid of lambdas
+%% Now compute train/test error for each  lambda
 lambdas = logspace(-10,1.2,9);
 NL = length(lambdas);
  testMse = zeros(1,NL); trainMse = zeros(1,NL);
 for k=1:NL
     lambda = lambdas(k);
-    [model] = linregFit(Xtrain, ytrain, 'lambda', lambda,...
-        'preproc', struct('standardizeX', false));
+    [model] = linregFit(Xtrain, ytrain, 'lambda', lambda);
     ypredTest = linregPredict(model, Xtest);
     ypredTrain = linregPredict(model, Xtrain);
 
