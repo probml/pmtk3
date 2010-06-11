@@ -1,18 +1,21 @@
-function S = gaussSample(model, n)
+function S = gaussSample(arg1, arg2, arg3)
 % Returns n samples (in the rows) from a multivariate Gaussian distribution 
 %
-% Example:
-% model.mu = zeros(1, 10); model.Sigma = randpd(10); 
+% Examples:
+% S = gaussSample(mu, Sigma, 10)
 % S = gaussSample(model, 100)
 % S = gaussSample(struct('mu',[0], 'Sigma', eye(1)), 3)         
 
-      
-      mu = model.mu; Sigma = model. Sigma; 
-      if nargin < 2, n = 1; end
-      
-      A = chol(Sigma, 'lower');
-      Z = randn(length(mu), n);
-      S = bsxfun(@plus, mu(:), A*Z)'; 
-    
-    
+switch nargin
+  case 3,  mu = arg1; Sigma = arg2; n = arg3;
+  case 2, model = arg1; mu = model.mu; Sigma = model. Sigma; n = arg2;
+  otherwise
+    error('bad num args')
+end
+
+A = chol(Sigma, 'lower');
+Z = randn(length(mu), n);
+S = bsxfun(@plus, mu(:), A*Z)';
+
+
 end

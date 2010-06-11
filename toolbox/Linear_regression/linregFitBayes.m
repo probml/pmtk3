@@ -7,6 +7,8 @@ function [model, logev] = linregFitBayes(X, y, varargin)
 % prior ... 'uninf' means use Jeffrey's prior on w and beta
 %           'vb' means use variational Bayes with vague NGamGam prior 
 %           'gauss' means use N(0, (1/alpha) I) prior on w, beta is fixed
+%           'zellner' means use N(0, 1/g*inv(X'*X)) Ga(sigma|0,0)
+%             Must specify g
 % beta ...   precision of measurement noise
 % alpha  ... scalar precision of Gaussian
 % preproc       ... a struct, passed to preprocessorApplyToTtrain
@@ -20,29 +22,40 @@ function [model, logev] = linregFitBayes(X, y, varargin)
 
 [N, D] = size(X);
 %args = prepareArgs(varargin); % converts struct args to a cell array
-[prior, preproc,  beta, alpha] = ...
+[prior, preproc,  beta, alpha, g, addOnes] = ...
   process_options(varargin , ...
-  'prior', [], ...
-  'preproc', [], ...      
+  'prior', 'uninf', ...
+  'preproc', preprocessorCreate(), ...      
   'beta', [], ...
-  'alpha', [] ...
- );
+  'alpha', [], ...
+  'g', [], ...
+  'addOnes', true);
 
 
 Xraw = X; 
 [preproc, X] = preprocessorApplyToTrain(preproc, X);
-addOnes = false;
 if addOnes
   X = [ones(N,1) X];
 else
   [y, ybar] = centerCols(y);
 end
 
-switch prior
-  case 'uninf', [model, logev] = linregFitBayesJeffreysPrior(X, y, addOnes);
-  case 'vb', [model, logev] = linregFitVb(X, y, addOnes);
-  case 'gauss', [model, logev] = linregFitBayesGaussPrior(X, y, alpha, beta, addOnes);
+if nargout >= 2
+  switch lower(prior)
+    case 'uninf', [model, logev] = linregFitBayesJeffreysPrior(X, y, addOnes);
+    case 'vb', [model, logev] = linregFitVb(X, y, addOnes);
+    case 'gauss', [model, logev] = linregFitBayesGaussPrior(X, y, alpha, beta, addOnes);
+    case 'zellner', [model, logev] = linregFitBayesZellnerPrior(X, y,g, addOnes);
+  end
+else
+  switch lower(prior)
+    case 'uninf', [model] = linregFitBayesJeffreysPrior(X, y, addOnes);
+    case 'vb', [model] = linregFitVb(X, y, addOnes);
+    case 'gauss', [model] = linregFitBayesGaussPrior(X, y, alpha, beta, addOnes);
+    case 'zellner', [model] = linregFitBayesZellnerPrior(X, y,g, addOnes);
+  end
 end
+
 
 model.preproc = preproc;
 if addOnes

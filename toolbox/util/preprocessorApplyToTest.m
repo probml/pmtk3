@@ -1,9 +1,8 @@
 function [X] = preprocessorApplyToTest(preproc, X)
-% Apply Preprocessor to test data
+% Transform the test data in the same way as the training data
 
 if isempty(preproc), return; end
 
-% Transform the test data in the same way as the training data
 if isfield(preproc, 'Xmu')
     X = centerCols(X, preproc.Xmu);
 end
@@ -16,8 +15,10 @@ end
 if isfield(preproc, 'kernelFn') && ~isempty(preproc.kernelFn)
     X = preproc.kernelFn(X, preproc.basis);
 end
-if isfield(preproc, 'includeOffset') && preproc.includeOffset
+if isfield(preproc, 'addOnes') && preproc.addOnes
     X = addOnes(X);
 end
-
+if isfield(preproc, 'poly') && ~isempty(preproc.poly)
+    X = degexpand(X, preproc.poly, false);
+end
 end

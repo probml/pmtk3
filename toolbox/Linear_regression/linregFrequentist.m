@@ -1,4 +1,4 @@
-function [w, stderr, pval, R2, sigma2, confint, Zscore] = linearRegressionFrequentist(y, XX, names, useLatex)
+function [w, stderr, pval, R2, sigma2, confint, Zscore] = linregFrequentist(y, XX, names, useLatex)
 % simulate  R's lm function for a simple linear regression model
 % Each row ox X is a training case, excluding the 1 term
 

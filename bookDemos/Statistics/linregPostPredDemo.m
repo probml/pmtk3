@@ -55,7 +55,7 @@ hold on;
 plot(xtrain,ytrain, 'ro', 'markersize', 14, 'linewidth', 3, ...
     'displayname', 'training data');
 for s=1:S
-  tmp = modelMLE;  tmp.offset = ws(s,1); tmp.w = ws(s,2:end);
+  tmp = modelMLE;  tmp.w0 = ws(s,1); tmp.w = ws(s,2:end)';
   [mu] = linregPredict(tmp, Xtest);
   plot(xtest, mu, 'k-', 'linewidth', 1);
 end

@@ -24,6 +24,9 @@ funObj = @(w) penalizedL2(w, @LogisticLossSimple, lambda, X, y);
 [nll, g, H] = funObj(wN); %#ok
 VN = inv(H); %H = hessian of neg log lik
 
-model.post = structure(wN, VN);
+model.postType = 'laplace';
+model.wN = wN;
+model.VN = VN;
+
 
 end

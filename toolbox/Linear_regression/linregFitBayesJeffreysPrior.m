@@ -11,7 +11,9 @@ Rinv = inv(R);
 model.VN = Rinv*Rinv';
   
 % Posterior on sigma2
-s2 = norm(y-X*model.wN);
+%yhat = X*model.wN;;
+%s2 = (y-yhat)'*(y-yhat);
+s2 = norm(y-X*model.wN)^2;
 model.aN = (N-D)/2;
 model.bN = s2/2;
 
