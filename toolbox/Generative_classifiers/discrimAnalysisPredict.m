@@ -1,5 +1,5 @@
 function [yhat, post] = discrimAnalysisPredict(model, Xtest)
-% Apply Bayes rule with Gaussian class-conditioanl densities.
+% Apply Bayes rule with Gaussian class-conditional densities.
 % Computes post(i,c) = P(y=c|x(i,:), params)
 % and yhat(i) = arg max_c post(i,c)
 
@@ -9,13 +9,15 @@ classPrior = model.classPrior;
 Nclasses = length(model.classPrior);
 loglik = zeros(N, Nclasses);
 for c=1:Nclasses
-  switch model.type
+  switch lower(model.type)
     case 'linear'
-      modelC.mu = model.mu(:, c)'; modelC.Sigma = model.SigmaPooled;
-      loglik(:,c) = gaussLogprob(modelC, Xtest);
+      loglik(:,c) = gaussLogprob(model.mu(:,c), model.SigmaPooled, Xtest);
     case 'quadratic'
-      modelC.mu = model.mu(:, c)'; modelC.Sigma = model.Sigma(:, :, c);
-      loglik(:, c) = gaussLogprob(modelC, Xtest);
+      loglik(:, c) = gaussLogprob(model.mu(:,c), model.Sigma(:,:,c), Xtest);
+    case 'rda'
+      beta = model.beta(:,c);
+      gamma = -1/2*model.mu(:,c)'*beta;
+      loglik(:,c) = exp(Xtest*beta + gamma);
     otherwise
       error(['unrecognized type ' model.type])
   end

@@ -4,7 +4,7 @@
 %
 %% Load data
 
-loadData('14cancer') % modified data so X is N*D as usual
+loadData('14cancer') % Xtrain is 144*16063, Xtest is 54*16063
 ytrain = colvec(ytrain);
 ytest = colvec(ytest); 
 % on p654, they say "the data from each patient (row) is standardized
@@ -34,8 +34,9 @@ end
 % L1 is very slow, L2 is somewhat slow
 
 %methods = {'nsc', 'nb', 'rda', 'knn', 'l2logreg', 'svm', 'l1logreg'}; 
-methods = {'nsc', 'nb', 'rda', 'knn', 'l2logreg', 'svm'}; 
+%methods = {'nsc', 'nb', 'rda', 'knn', 'l2logreg', 'svm'}; 
 %methods = {'nsc', 'nb', 'rda', 'knn', 'svm'};
+methods = {'rda'}; 
 
 % warning - l1logreg can take upwards of 6 hours to run. 
 M = length(methods);
@@ -57,13 +58,16 @@ for m=1:M
       noGenesFn = @(model)D;
     case 'rda'
       name{m} = 'Regularized discriminant analysis';
-      params = linspace(0, 2, 10)';
+      %params = linspace(0, 2, 10)';
+       params = linspace(0, 2, 5)';
       % we don't have to do multiple SVDs, since we
       % are just changing the weighting term
       [U S V] = svd(xtrain_std, 'econ');
       R = U*S;
-      fitFn = @(X, y, gamma)RDAfit(X, y, gamma, 'R', R, 'V', V);
-      predictFn = @RDApredict;
+      %fitFn = @(X, y, gamma)RDAfit(X, y, gamma, 'R', R, 'V', V);
+      %predictFn = @RDApredict;
+      fitFn = @(X,y, lambda) discrimAnalysisFit(X, y, 'rda', lambda, R, V);
+      predictFn = @discrimAnalysisPredict;
       noGenesFn = @(model)D;
     case 'knn'
       name{m} = 'k-nearest neighbors';
