@@ -9,8 +9,9 @@ function [model] = logregFitBayes(X, y, varargin)
 % We set lambda to be small to give a weak prior
 
 [lambda, preproc] = process_options(varargin, ...
-  'lambda', 1e-5, 'preproc', preprocessorCreate());
+  'lambda', 1e-5, 'preproc', preprocessorCreate('addOnes', false));
 
+preproc
 [model.preproc, X] = preprocessorApplyToTrain(preproc, X);
 
 model = logregFitBayesLaplace(X, y, lambda);

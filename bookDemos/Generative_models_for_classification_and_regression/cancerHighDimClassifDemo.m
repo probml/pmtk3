@@ -36,7 +36,7 @@ end
 %methods = {'nsc', 'nb', 'rda', 'knn', 'l2logreg', 'svm', 'l1logreg'}; 
 %methods = {'nsc', 'nb', 'rda', 'knn', 'l2logreg', 'svm'}; 
 %methods = {'nsc', 'nb', 'rda', 'knn', 'svm'};
-methods = {'rda'}; 
+methods = {'diag', 'nb'}; 
 
 % warning - l1logreg can take upwards of 6 hours to run. 
 M = length(methods);
@@ -55,6 +55,12 @@ for m=1:M
       params = 1;
       fitFn = @(X, y, param)naiveBayesGaussFit(X, y);
       predictFn = @naiveBayesGaussPredict;
+      noGenesFn = @(model)D;
+    case 'diag'
+      name{m} = 'Diagonal QDA';
+      params = 1;
+      fitFn = @(X, y, param) discrimAnalysisFit(X, y, 'diag');
+      predictFn = @discrimAnalysisPredict;
       noGenesFn = @(model)D;
     case 'rda'
       name{m} = 'Regularized discriminant analysis';

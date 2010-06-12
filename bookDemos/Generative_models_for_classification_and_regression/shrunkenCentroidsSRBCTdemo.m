@@ -1,36 +1,37 @@
 %% Reproduce figure 18.4 from "Elements of statistical learning" 2nd ed.
 %
-%%
-%% Import data
+
 loadData('srbct');
 
 Xtest = Xtest(~isnan(ytest), :);
 ytest = ytest(~isnan(ytest));
 
-
-fitFn = @(X,y,lam)  naiveBayesGaussFitShrunkenCentroids(X, y, lam);
-predictFn = @(model, X)  naiveBayesGaussPredict(model, X);
+fitFn = @(X,y,lam)  discrimAnalysisFit(X, y, 'shrunkenCentroids', lam);
+predictFn = @(model, X)  discrimAnalysisPredict(model, X);
 
 
 %% Error rates in the training and test sets for varying Delta
-Deltas = linspace(0, 8, 50);
-lDelta = length(Deltas);
+lambdas = linspace(0, 8, 20);
 nTrain = length(ytrain);
 nTest = length(ytest);
-for i=1:lDelta
-    model = fitFn(Xtrain, ytrain, Deltas(i));
+for i=1:length(lambdas)
+    model = fitFn(Xtrain, ytrain, lambdas(i));
     yhatTrain = predictFn(model, Xtrain);
     yhatTest = predictFn(model, Xtest);
     errTrain(i) = sum(zeroOneLossFn(yhatTrain, ytrain))/nTrain;
     errTest(i) = sum(zeroOneLossFn(yhatTest, ytest))/nTest;
-    numgenes(i) = sum(model.relevant);
+    numgenes(i) = sum(model.shrunkenCentroids(:) ~= 0);
 end
 
 figure;
-plot(Deltas, errTrain, 'go-', Deltas, errTest, 'bo:',...
-  'MarkerSize', 4, 'linewidth', 2)
-legend('Training', 'Test');
- 
+plot(Deltas, errTrain, 'gx-', lambdas, errTest, 'bo--',...
+  'MarkerSize', 10, 'linewidth', 2)
+legend('Training', 'Test', 'Location', 'northwest');
+xlabel('Amount of shrinkage')
+ylabel('misclassification rate')
+title('SRBCT data')
+
+
 %% Cross validation
 % We have to combine train and test sets to get the same
 % CV curve as in Hastie fig 18.4...
@@ -66,9 +67,9 @@ line([bestDelta bestDelta], [0 1]);
 printPmtkFigure('shrunkenCentroidsErrVsLambda')
   
 %% Plot centroids
-centShrunk = bestModel.offset;
+centShrunk = bestModel.shrunkenCentroids;
 model = fitFn(Xtrain, ytrain, 0);
-centUnshrunk = model.offset;
+centUnshrunk = model.shrunkenCentroids;
 
 [numGroups D] = size(centShrunk);
 for g=1:numGroups

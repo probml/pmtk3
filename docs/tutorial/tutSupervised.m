@@ -6,7 +6,7 @@
 % pmtk for solving supervised learning problems (i.e., univariate
 % conditional density estimation).
 %
-%{
+
 %% Models
 % The following is a list of pmtk models that are designed for 
 % supervised learning (in alphabetical order).
@@ -367,7 +367,7 @@ for i=1:numel(kernels)
 end
 
 % We discuss how to choose the parameters of the kernel functions below.
-%
+
 %% Overfitting, regularization and MAP estimation
 % Using maximum likelihood to train a model  often results in overfitting.
 % This means that the model fits the training set well, but is overly complex
@@ -469,8 +469,63 @@ legend('train mse', 'test mse', 'location', 'northwest')
 xlabel('log regularizer')
 %%
 % We can apply L2 regularization to logistic regression and neural
-% networks just as easily. For generative models such as naive Bayes and
-% discriminant analysis, Gaussian priors are not appropriate (since the
-% parameters do not live in $\real^D$); however, analogous regularization
+% networks just as easily.
+%
+%% Discriminant analysis
+% For generative models such as naive Bayes and
+% discriminant analysis, Gaussian priors (corresponding to L2 regularization)
+% are not appropriate (since the
+% parameters do not live in $R^D$); however, analogous regularization
 % techniques can be devised (and are recommended).
-%}
+%
+% For example, when fitting a discriminant analysis model using
+% a shared full covariance, we will encounter numerical problems
+% when N < D. However, we can use a Wishart prior to compute a MAP
+% estimate of $\Sigma$. This is called regularized discriminant analysis,
+% and can be fit using |discrimAnalysisFit(X, y, 'rda', lambda)|,
+% where |lambda| controls the amount of regularization.
+% See <http://pmtk3.googlecode.com/svn/trunk/docs/demoOutput/Generative_models_for_classification_and_regression/cancerHighDimClassifDemo.html cancerHighDimClassifDemo>
+% for an example.
+%
+% Another example is discriminant analysis with a shared diagonal
+% covariance (a special case of naive Bayes). In this case, 
+% there are O(D) parameters for the covariance, but O(C D) for the mean. To
+% prevent overfitting, we can shrink the class-conditional means towards
+% the overall mean; this technique is called nearest shrunken centroids. We
+% can fit this model using |discrimAnalysisFit(X, y, 'shrunkenCentroids',
+% lambda)|. We given an example of this below (from
+% <http://pmtk3.googlecode.com/svn/trunk/docs/demoOutput/Generative_models_for_classification_and_regression/shrunkenCentroidsSRBCTdemo.html shrunkenCentroidsSRBCTdemo>),
+% where we apply the method to
+% the SRBCT gene microarray dataset, which has N=144 training examples,
+% D=16063 features and C=4 classes.
+%%
+loadData('srbct');
+
+Xtest = Xtest(~isnan(ytest), :);
+ytest = ytest(~isnan(ytest));
+
+fitFn = @(X,y,lam)  discrimAnalysisFit(X, y, 'shrunkenCentroids', lam);
+predictFn = @(model, X)  discrimAnalysisPredict(model, X);
+
+lambdas = linspace(0, 8, 20);
+nTrain = length(ytrain);
+nTest = length(ytest);
+for i=1:length(lambdas)
+    model = fitFn(Xtrain, ytrain, lambdas(i));
+    yhatTrain = predictFn(model, Xtrain);
+    yhatTest = predictFn(model, Xtest);
+    errTrain(i) = sum(zeroOneLossFn(yhatTrain, ytrain))/nTrain;
+    errTest(i) = sum(zeroOneLossFn(yhatTest, ytest))/nTest;
+    numgenes(i) = sum(model.shrunkenCentroids(:) ~= 0);
+end
+
+figure;
+plot(Deltas, errTrain, 'gx-', lambdas, errTest, 'bo--',...
+  'MarkerSize', 10, 'linewidth', 2)
+legend('Training', 'Test', 'Location', 'northwest');
+xlabel('Amount of shrinkage')
+ylabel('misclassification rate')
+title('SRBCT data')
+%%
+%% Cross validation
+

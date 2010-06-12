@@ -1,5 +1,7 @@
-function model = naiveBayesBerFit(Xtrain, ytrain, pseudoCount)
-% Fit a naive Bayes classifier with binary features using MAP/ML estimation
+function model = naiveBayesFit(Xtrain, ytrain, pseudoCount)
+% Fit a naive Bayes classifier  using MAP/ML estimation
+% We current assume binary features.
+% For Gaussian feautres, use discrimAnalysisFit(X, y, 'diag').
 % Xtrain(i,j) = 0 or 1, for bit j in case i
 % ytrain in {1,...C}
 % pseudoCount is optional strength of symmetric beta prior for the features

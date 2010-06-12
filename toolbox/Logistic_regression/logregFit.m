@@ -41,7 +41,7 @@ args = prepareArgs(varargin); % converts struct args to a cell array
     'nclasses'      , nunique(y), ...
     'regType'       , 'none'    , ...
     'lambda'        ,  []       , ...
-    'preproc'       ,  []       , ...
+    'preproc'       ,  preprocessorCreate()       , ...
     'fitFn'         ,  ''       , ...
     'fitOptions'    , []        , ...
     'nlambdas'      , 10        , ...
@@ -88,9 +88,9 @@ end
 if isempty(lambda)
     lambda = colvec(linspace(1e-5, 20, nlambdas));
 end
-if ~isfield(preproc, 'includeOffset')
-    preproc.includeOffset = true;
-end
+%if ~isfield(preproc, 'includeOffset')
+%    preproc.includeOffset = true;
+%end
 %% preprocess X
 [preproc, X] = preprocessorApplyToTrain(preproc, X);
 %% set objective
@@ -104,7 +104,7 @@ end
 %% construct fit function / optimizer
 fitFn = @(X, y, winit, l)fitFn(objective, winit, l, opts, X, y);
 fitFn = @(X, y, lambda)fitWrapper(X, y, lambda, fitFn, nclasses, ...
-    preproc.includeOffset);
+    preproc.addOnes);
 %%
 if numel(lambda) == 1
     model = fitFn(X, y, lambda);

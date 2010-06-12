@@ -14,6 +14,10 @@ for c=1:Nclasses
       loglik(:,c) = gaussLogprob(model.mu(:,c), model.SigmaPooled, Xtest);
     case 'quadratic'
       loglik(:, c) = gaussLogprob(model.mu(:,c), model.Sigma(:,:,c), Xtest);
+    case 'diag'
+      loglik(:, c) = gaussLogprob(model.mu(:,c), model.SigmaDiag(:,c), Xtest);
+    case 'shrunkencentroids'
+      loglik(:, c) = gaussLogprob(model.mu(:,c), model.SigmaPooledDiag, Xtest);
     case 'rda'
       beta = model.beta(:,c);
       gamma = -1/2*model.mu(:,c)'*beta;
@@ -27,5 +31,6 @@ logjoint = bsxfun(@plus, loglik, log(classPrior(:)'));
 logpost  = bsxfun(@minus, logjoint, logsumexp(logjoint, 2));
 post = exp(logpost);
 yhat = maxidx(post,[],2);
+
 
 end
