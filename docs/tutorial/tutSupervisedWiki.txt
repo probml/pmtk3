@@ -1,0 +1,181 @@
+#summary Tutorial on supervised learning using pmtk3
+
+Here is a draft of the Matlab-generated version of this page:
+[http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutSupervised.html]
+
+
+= Overview =
+
+To create a model of type 'foo', use one of the following
+{{{
+model = fooCreate(...) % manually specified parameters
+model = fooFit(X, y, ...) % ML or MAP parameter estimation
+}}}
+where '...' refers to optional arguments,
+and 'foo' is a string such as
+  * 'linreg' (linear regression)
+  * 'logreg' (logistic regression  binary and multiclass)
+  * 'mlp' (multilayer perceptron, aka feedforward neural network)
+  * 'naiveBayesBer' (NB with Bernoulli features)
+  * 'naiveBayesGauss' (NB with Gaussian features)
+  * 'discrimAnalysis' (LDA or QDA)
+  * 'RDA' (regularized LDA)
+
+Here X is an N*D design matrix, where N is the number
+of training cases and D is the number of features.
+y is an N*1 response vector, which can be real-valued (regression),
+0/1 or -1/+1 (binary classification), or 1:C (multi-class).
+
+Once the model has been fit, you can make predictions on test data
+(using a plug-in estimate of the parameters) as follows
+{{{
+[yhat, py] = fooPredict(model, Xtest)
+}}}
+
+Here yhat is an Ntest*1 vector of predicted responses of the same type
+as ytrain, where Ntest is the number of rows in Xtest. For regression this is the predicted mean, for classification this is the predicted mode. The meaning of py depends on the model, as follows:
+   
+   * For regression, py is an Ntest*1 vector of predicted variances.
+   * For binary classification, py is an Ntest*1 vector of the probability of being in class 1.
+   * For multi-class, py is an Ntest*C matrix, where py(i,c) = p(y=c|Xtest(i,:),params)
+
+Below we consider some specific examples.
+
+= Linear regression =
+
+We can fit a linear regression model, and use it to make predictions on a test set, as follows
+{{{
+[model] = linregFit(X, y);
+[yhat, v] = linregPredict(model, X)
+}}}
+
+See the following demos for examples of  this code in action:
+
+ * [http://pmtk3.googlecode.com/svn/trunk/docs/demoOutput/Linear_regression/linregDemo1.html linregDemo1] Fit a linear regression model in 1d.
+
+ * [http://pmtk3.googlecode.com/svn/trunk/docs/demoOutput/Linear_regression/linregPolyVsDegree.html linregPolyVsDegree] Fit a polynomial regression model in 1d.
+
+
+= Logistic regression =
+
+We can fit a logistic regression model, and use it to make predictions on a test set, as follows
+{{{
+[model] = logregFit(X, y);
+[yhat, py] = logregPredict(model, X)
+}}}
+
+In the binary case, y(i) can be in {-1,+1}  or {0,1} or {1,2}; the predicted value yhat will be converted to the same 'domain' as the training data. In the multiclass case, y(i) should be in {1,..,C} or {0,...,C-1}; again the output will be converted to the same form.
+The number of classes is inferred from the number of unique values in y. If the training set is very small, you should specify nclasses directly.
+
+
+See the following demos for examples of  this code in action:
+ 
+ * [http://pmtk3.googlecode.com/svn/trunk/docs/demoOutput/Introduction/logregSATdemo.html logregSATdemo] Fit a binary logistic regression model to 1d data.
+
+A handy way to plot decision boundaries for 2d data is the following:
+
+{{{
+plotDecisionBoundary(X, y, @(X)logregPredict(model, X));
+}}}
+
+This is illustrated in the following demo:
+
+ * [http://pmtk3.googlecode.com/svn/trunk/docs/demoOutput/Introduction/logregXorLinearDemo.html logregXorLinearDemo] Fit a  logistic regression model to 2d XOR data (not linearly separable).
+
+We will discuss ways to fit nonlinear decision boundaries later.
+
+
+= L2 regularization  = 
+
+Using maximum likelihood to train a model often results in overfitting. So it is very common to use regularization, or MAP estimation, instead. We can use various kinds of prior. The simplest and most widely used is the spherical Gaussian prior, which corresponds to using L2 regularization. We can fit an L2-regularized linear or logistic regression model as follows (where lambda is ths strength of the regularizer, or equivalently, the precision of the Gaussian prior):
+
+{{{
+[model] = linregFit(X, y, 'lambda', lambda,  'regType', 'L2');
+[model] = linregFit(X, y, 'lambda', lambda); % L2 is default
+[model] = logregFit(X, y, 'lambda', lambda, 'regType', 'L2');
+}}}
+
+(In the linear regression context, this technique is known as ridge regression.)
+See the following demos for examples of  this code in action:
+
+ * [http://pmtk3.googlecode.com/svn/trunk/docs/demoOutput/Introduction/linregPolyVsReg.html linregPolyVsReg] Show the effect of changing the regularization parameter in ridge regression.
+
+= Bayesian inference = 
+
+MAP estimation corresponds to a point estimate of the parameters. If we want to know how much we can trust this estimate, we should compute the posterior over the parameters. This requires specifying a prior. One approach is to use an uninformative or Jeffreys prior. We can do this in pmtk as follows
+
+{{{
+[model] = linregFitBayes(X, y, 'prior', 'uninf');
+}}}
+
+We can then examine  the posterior  of the parameters using
+{{{
+post = linregParamPost(model) % not yet written
+}}}
+
+When we make predictions, we integrate out the parameters rather than using a plugin approximation, using
+
+{{{
+[mu, v] = linregPredictBayes(model, X)
+}}}
+
+ This gives a more accurate reflection of our uncertainty, as is illustrated below.
+
+ * [http://pmtk3.googlecode.com/svn/trunk/docs/demoOutput/Statistics/linregPostPredDemo.html linregPostPredDemo] Compare posterior predictive density to plugin approximation for linear regression model in 1d.
+
+
+= Cross validation = 
+
+Let us return to MAP estimation for a moment. It is very important to choose the strength of the regularizer correctly: if it is too large, the fitted function will underfit, but if it is too slow, it will overfit. A very common method for selecting such 'tuning paramaters' is cross validation (CV). In pmtk, you can specify a matrix of lambda values (one per row); the fit function will try them all and pick the one that CV estimates as the best. To save you the effort of thinking of a good set of lambda values, you can alternatively specify just the number of values to try, and the fit function will try to come up with a good range. here are some examples:
+
+{{{
+[model] = linregFit(X, y, 'lambda', [0.1;1;10], 'regType', 'L2');
+[model] = logregFit(X, y, 'nlambdas', 10, 'regType', 'L2');
+}}}
+
+You can control how many folds CV uses by passing in 'nfolds'. If you are searching over a 1d or 2d grid of values, you can set 'plotCV' to true to see a plot of the CV-estimated risk as a function of the tuning parameters. If you set 'useSErule' to true, fit will use the one-standard-error rule to choose the best lambda; in this case, fit assumes that the values of lambda are sorted such that the first row is the least complex model, and the last row is the most complex model. For fine-grained control, call the 'cvEstimate' function directly.
+
+See the following demos for examples of  this code in action:
+
+ * [http://pmtk3.googlecode.com/svn/trunk/docs/demoOutput/Decision_theory/linregCvPolyVsRegDemo.html linregCvPolyVsRegDemo] Compare CV estimate of future error with test error, and illustrate one standard error rule for ridge regression. We already saw an example of this above where we illustrated polynomial regression.
+
+= Empirical and variational Bayes = 
+
+An alternative to cross validation, that is particularly appealing when there are many tuning parameters to choose between, is to use  Bayesian inference to infer the hyper-parameters (i.e., the parameters of the prior). Alternatively we can optimize the hyper-parameters wrt the marginal likelihood; this is known as empirical Bayes (EB) or type-II maximum likelihood. In general, these procedures are computationally expensive, but one can devise efficient approximations in many cases. One approach that is implemented in pmtk is to use variational Bayes (VB) to infer the posterior on the hyper-parameters; this is very similar to EB, and can be done as follows:
+
+{{{
+[model] = linregFitBayes(X, y, 'prior', 'vb')
+}}}
+
+The resulting model is automatically tuned, without needing to use cross validation!
+Here is a demo of this
+  
+  * Demo to be added...
+
+= Preprocessing and standardization =
+
+We are free to preprocess the data in any way we choose before fitting the model. In pmtk, you can create a preprocessor (pp) 'object', and then pass it to the fitting function; the pp will  be applied to the training data before fitting the model, and will be applied again to the test data. The advantage of this approach is that the pp is stored inside the model, which makes sense, since it is part of the model definition.
+
+One very common form of preprocessing is to standardize the data. This is particularly important when using regularization methods such as L2, since the corresponding prior assumes all the parameters have comparable magnitude, which will only be true if the features have comparable magnitude. In pmtk, we can do this as follows. First create a pp object which standardizes our data, then pass it to the fitting function:
+
+{{{
+pp = preprocessorCreate('standardizeX', true);
+model = linregFit(Xtrain, ytrain, 'preproc', pp)  % applies pp to Xtrain internally
+yhat = linregPredict(Xtest) % applies pp to Xtest internally
+}}}
+
+= Kernels = 
+
+A more interesting form of preprocessing is basis function expansion. This replaces the original features with a larger set, thus permitting us to fit nonlinear models. A popular approach is to use kernel functions, and to define the new feature vector as follows: phi(x) = (K(x,mu(1)), ..., K(x,mu(D))), where the mu(j) are 'prototypes'.  and K(x,x') is a 'kernel function', which in this context just means a function of two arguments. A common example is the Gaussian or RBF kernel, K(x,x') = N(x|x', sigma2), where sigma2 is the 'bandwidth'. Often we take the prototypes to be the training vectors, but we don't have to. Here is an example of how to make such a model:
+
+{{{
+preproc.kernelFn = @(X1, X2)kernelRbfSigma(X1, X2, 0.1);
+preproc.standardizeX = false; 
+model = logregFit(X, y, 'lambda', lambda, 'preproc', preproc);
+}}}
+
+(Note that we can create the pp structure directly, rather than calling `preprocessorCreate`.) Below we show an example of fitting a logistic regression model with 3 different kernels to data that is not linearly separable in the original feature space:
+
+ * [http://pmtk3.googlecode.com/svn/trunk/docs/demoOutput/Introduction/logregXorDemo.html logregXorDemo] Kernelized logistic regression applied to the binary XOR problem.
+
+.

@@ -13,7 +13,7 @@ if 0
   pp = preprocessorCreate();
 else
   Xtrain = xtrain; Xtest = xtest;
-  pp = preprocessorCreate('rescaleX', true, 'poly', deg);
+  pp = preprocessorCreate('rescaleX', true, 'poly', deg, 'addOnes', true);
 end
 
 

@@ -1,8 +1,8 @@
 function [model, logev] = linregFitBayes(X, y, varargin)
 % Bayesian inference for a linear regression model
-% The model is p(y|x) = N(y | w0 + w'*x, (1/beta))
+% The model is p(y|x) = N(y | w'*[1 x], (1/beta))
 % so beta is the precision of the measurement  noise
-% We deal with w0 separately, performing point estimation.
+%
 % INPUTS:
 % prior ... 'uninf' means use Jeffrey's prior on w and beta
 %           'vb' means use variational Bayes with vague NGamGam prior 
@@ -20,54 +20,37 @@ function [model, logev] = linregFitBayes(X, y, varargin)
 %
 % logev is  the log marginal likelihood
 
-[N, D] = size(X);
-%args = prepareArgs(varargin); % converts struct args to a cell array
-[prior, preproc,  beta, alpha, g, addOnes] = ...
+
+[prior, preproc,  beta, alpha, g] = ...
   process_options(varargin , ...
   'prior', 'uninf', ...
-  'preproc', preprocessorCreate(), ...      
+  'preproc', preprocessorCreate('addOnes', true, 'standardizeX', false), ...      
   'beta', [], ...
   'alpha', [], ...
-  'g', [], ...
-  'addOnes', true);
+  'g', []);
 
-
-Xraw = X; 
 [preproc, X] = preprocessorApplyToTrain(preproc, X);
-if addOnes
-  X = [ones(N,1) X];
-else
-  [y, ybar] = centerCols(y);
-end
+
+% if we added 1s to the first column, we should adjust the regularziers
+addOnes = preproc.addOnes; 
 
 if nargout >= 2
   switch lower(prior)
     case 'uninf', [model, logev] = linregFitBayesJeffreysPrior(X, y, addOnes);
     case 'vb', [model, logev] = linregFitVb(X, y, addOnes);
     case 'gauss', [model, logev] = linregFitBayesGaussPrior(X, y, alpha, beta, addOnes);
-    case 'zellner', [model, logev] = linregFitBayesZellnerPrior(X, y,g, addOnes);
+    case 'zellner', [model, logev] = linregFitBayesZellnerPrior(X, y, g, addOnes);
   end
 else
   switch lower(prior)
     case 'uninf', [model] = linregFitBayesJeffreysPrior(X, y, addOnes);
     case 'vb', [model] = linregFitVb(X, y, addOnes);
     case 'gauss', [model] = linregFitBayesGaussPrior(X, y, alpha, beta, addOnes);
-    case 'zellner', [model] = linregFitBayesZellnerPrior(X, y,g, addOnes);
+    case 'zellner', [model] = linregFitBayesZellnerPrior(X, y, g, addOnes);
   end
 end
 
-
 model.preproc = preproc;
-if addOnes
-  %model.offset = model.wN(1);
-  %model.wN = model.wN(2:end);
-  model.addOnes = true;
-else
-  model.offset = 0;
-  model.addOnes = false;
-  yhat = linregPredictBayes(model, mean(Xraw));
-  model.offset  = ybar - yhat;
-end
 
 end % end of main function
 

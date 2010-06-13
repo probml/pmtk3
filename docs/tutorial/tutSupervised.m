@@ -130,9 +130,9 @@ X = X(:,1:10);
 [modelB] = linregFitBayes(X, y, 'prior', 'uninf') % uninformative Jeffreys prior
 %%
 % Here wN, vN, aN and bN are parameters of the posterior,
-% which as the following form:
+% which has the following form:
 %%
-% $$p(w,1/sigma^2|D)  = N(w|wN, VN) Ga(1/sigma^2|aN,bN)$$
+% $$p(w,\sigma^2|D)  = N(w|w_N, V_N) IG(\sigma^2|a_N,b_N)$$
 %%
 %% Parameter inference
 % If you fit by the model by ML/MAP estimation, you can examine the
@@ -145,7 +145,7 @@ X = X(:,1:10);
 % Instead you can compute summaries of the marginal posterior
 % of each parameter, as follows:
 %%
-%  post = fooParamBayes(model)
+%  post = fooParamsBayes(model)
 %
 % This computes the marginals of each parameter, and displays
 % the posterior mean, standard deviation and 95% credible interval
@@ -155,7 +155,7 @@ X = X(:,1:10);
 % a little * next to it.
 % For example, here is the output for the linear regression model
 %%
-linregParamBayes(modelB, 'display', true);
+linregParamsBayes(modelB, 'display', true);
 %%
 % We see that coefficients  0, 1, 2, 4, 5 are "significant"
 % by this measure. (Other methods of testing significance, based on Bayes factors, can also be
@@ -176,11 +176,15 @@ fprintf('\n');
 %%
 % We see that the MLE is the same as the posterior mean,
 % and the 95% frequentist confidence interval is the same as the 95% Bayesian credible interval.
-% (If you don't have the stats toolbox, you can use |linregFrequentist|
+% (If you don't have the stats toolbox, you can use |linregParamsFrequentist|
 % instead, which does more or less the same thing.)
 %
 % In general, a Bayesian and frequentist analysis may not give the same
-% results. In pmtk, all inference is Bayesian.
+% results. In pmtk, all inference is Bayesian (except for
+% |linregParamsFrequentist|), because this is the optimal thing to do.
+% However, pmtk supports some non-Bayesian  estimation methods
+% (i.e, where we optimize a loss function that is not some function of the
+% posterior), as we will see below.
 
 %% Using a model for prediction
 % In machine learning, we usually care more about prediction than in trying
@@ -347,7 +351,7 @@ errorRate = mean(yhat ~= y)
 % and K(x,\mu) is a 'kernel function', which in this context just means a function of two arguments.
 % A common example is the Gaussian or RBF kernel
 %%
-% $$K(x,\mu) = \exp(-\frac{||x-\my||^2}{2\sigma^2})$$
+% $$K(x,\mu) = \exp(-\frac{||x-\mu||^2}{2\sigma^2})$$
 %%
 % where $\sigma$ is the 'bandwidth'. (The quantity $1/sigma$ is known as
 % the scale or precision.)
@@ -367,12 +371,13 @@ clear all; close all
 rbfScale = 1;
 polydeg  = 2;
 protoTypes = [1 1; 1 5; 5 1; 5 5];
-kernels = {@(X1, X2)kernelRbfSigma(X1, protoTypes, rbfScale)
+protoTypesStnd = standardizeCols(protoTypes);
+kernels = {@(X1, X2)kernelRbfSigma(X1, protoTypesStnd, rbfScale)
            @(X1, X2)kernelRbfSigma(X1, X2, rbfScale)
            @(X1, X2)kernelPoly(X1, X2, polydeg)};
 titles  = {'rbf', 'rbf prototypes', 'poly'};
 for i=1:numel(kernels)
-    preproc = preprocessorCreate('kernelFn', kernels{i});
+    preproc = preprocessorCreate('kernelFn', kernels{i}, 'standardizeX', true, 'addOnes', true);
     model = logregFit(X, y, 'preproc', preproc);
     yhat = logregPredict(model, X);
     errorRate = mean(yhat ~= y);
@@ -404,7 +409,7 @@ close all; clear all;
 [xtrain, ytrain, xtest, ytestNoisefree, ytest] = polyDataMake('sampling','thibaux');
 deg = 14;
 Xtrain = xtrain; Xtest = xtest;
-pp = preprocessorCreate('rescaleX', true, 'poly', deg);
+pp = preprocessorCreate('rescaleX', true, 'poly', deg, 'addOnes', true);
 model = linregFit(Xtrain, ytrain, 'preproc', pp);
 [ypredTest] = linregPredict(model, Xtest);
 figure;
@@ -515,7 +520,7 @@ xlabel('log regularizer')
 % and can be fit using |discrimAnalysisFit(X, y, 'rda', lambda)|,
 % where |lambda| controls the amount of regularization.
 % See <http://pmtk3.googlecode.com/svn/trunk/docs/demoOutput/Generative_models_for_classification_and_regression/cancerHighDimClassifDemo.html cancerHighDimClassifDemo>
-% for an example.
+% for an example. (We don't run this demo here since it is a bit slow.)
 %
 % Another example is discriminant analysis with a shared diagonal
 % covariance (a special case of naive Bayes). In this case, 

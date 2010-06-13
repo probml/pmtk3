@@ -1,6 +1,7 @@
-function [w, stderr, pval, R2, sigma2, confint, Zscore] = linregFrequentist(y, XX, names, useLatex)
-% simulate  R's lm function for a simple linear regression model
-% Each row ox X is a training case, excluding the 1 term
+function [w, stderr, pval, R2, sigma2, confint, Zscore] = linregParamsFrequentist(y, XX, names, useLatex)
+% Frequentist inference for regression weights in a linear regression model.
+% This is similar to  R's lm function or Matlab's regress function.
+% Each row ox X is a training case, excluding the first column of 1s
 
 [n d] = size(XX);
 

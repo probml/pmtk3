@@ -1,5 +1,5 @@
 function [model] = linregFit(X, y, varargin)
-% Fit a linear regression model
+% Fit a linear regression model by MLE or MAP estimation
 % INPUTS
 % X             ... N*D design matrix
 % y             ... N*1 response vector
@@ -7,7 +7,6 @@ function [model] = linregFit(X, y, varargin)
 % regType       ... L1, L2, none, scad
 % lambda        ... regularizer 
 % fitOptions    ... optional  args (a cell array) to fitFn
-%                   @(X, y, lambda, fitOptions{:})
 % preproc       ... a struct, passed to preprocessorApplyToTtrain
 % 
 % OUTPUTS:
@@ -56,8 +55,9 @@ end
 
 model.w   = w;
 model.preproc  = preproc;
-yhat = linregPredict(model, Xraw);
+yhat = X*w;
 model.sigma2 = var((yhat - y).^2); % MLE of noise variance
+
 
 end % end of main function
 

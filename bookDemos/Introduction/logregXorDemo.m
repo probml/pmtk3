@@ -17,14 +17,14 @@ printPmtkFigure('logregXorLinear')
 rbfScale = 1;
 polydeg  = 2;
 protoTypes = [1 1; 1 5; 5 1; 5 5];
-%protoTypes = [1 5; 5 5];
-kernels = {@(X1, X2)kernelRbfSigma(X1, protoTypes, rbfScale)
+protoTypesStnd = standardizeCols(protoTypes);
+kernels = {@(X1, X2)kernelRbfSigma(X1, protoTypesStnd, rbfScale)
            @(X1, X2)kernelRbfSigma(X1, X2, rbfScale)
            @(X1, X2)kernelPoly(X1, X2, polydeg)};
 fnames  = {'logregXorRbf', 'logregXorRbfProto', 'logregXorPoly'};
 titles  = {'rbf', 'rbf prototypes', 'poly'};
 for i=1:numel(kernels)
-    preproc = preprocessorCreate('kernelFn', kernels{i});
+    preproc = preprocessorCreate('kernelFn', kernels{i}, 'standardizeX', true, 'addOnes', true);
     model = logregFit(X, y, 'lambda', lambda, 'preproc', preproc);
     yhat = logregPredict(model, X);
     errorRate = mean(yhat ~= y);

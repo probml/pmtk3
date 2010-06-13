@@ -5,39 +5,34 @@ setSeed(0);
 N = 100; D = 2;
 X = randn(N,D);
 w = randn(D,1);
-y01 = double((X*w>0));
+p = 0;
+y01 = flipBits(double((X*w>0)), p); % add some label noise
 ypm1 = sign(y01-0.5);
+ 
+if statsToolboxInstalled
+  wGlm = glmfit(X,y01,'binomial','link','probit','constant','on');
+  N = size(X,1);
+  probGlm = gausscdf([ones(N,1) X]*wGlm);
+end
 
-%wGlm =glmfit(X,y01,'binomial','link','probit','constant','off')
-%probGlm = normcdf(X*wGlm);
+lambda = 1e-1;
 
-lambdas = [1e-1]; % 1e-3];
-for lambda=lambdas(:)'
-   
-funObj = @(w)ProbitLoss(w,X,ypm1);
-options.display = 'off';
-[wMinfunc, objMinfunc, exitflaf, output] = minFunc(@penalizedL2,zeros(D,1),options,funObj,lambda);
-objTraceMinfunc = output.trace.fval;
-probMinfunc = gausscdf(X*wMinfunc);
-objMinfunc2 = ProbitLoss(wMinfunc,X,ypm1) + (lambda)*sum(wMinfunc.^2);
+[modelMinfunc, objTraceMinfunc] = probitRegFit(X, ypm1, 'lambda', lambda, 'method', 'minfunc');
+[yhatMinfunc, probMinfunc] = probitRegPredict(modelMinfunc, X);
 
-[modelEm, logpostTrace] = probitRegFitEm(X, ypm1, lambda, 'verbose', true);
-wEm = modelEm.w;
-probEm = gausscdf(X*wEm);
-objEm = ProbitLoss(wEm,X,ypm1) + (lambda)*sum(wEm.^2);
-objTraceEm = -logpostTrace;
-
+[modelEm, objTraceEm] = probitRegFit(X, ypm1, 'lambda', lambda, 'method', 'em');
+[yhatEm, probEm] = probitRegPredict(modelEm, X);
 
 
 figure;plot(probMinfunc, probEm, 'o')
 xlabel('minfunc'); ylabel('em');
 title(sprintf('probit regression with L2 regularizer of %5.3f', lambda))
 
-%figure;plot(probMinfunc, probGlm, 'o')
-%xlabel('minfunc'); ylabel('glm');
 
-%figure;plot(probGlm, probEm, 'o')
-%xlabel('glmfit'); ylabel('em');
+if statsToolboxInstalled
+  figure;plot(probGlm, probEm, 'o')
+  xlabel('glmfit'); ylabel('em');
+end
 
 figure;
 plot(objTraceEm, 'r-o', 'linewidth', 2);
@@ -45,12 +40,11 @@ hold on
 plot(objTraceMinfunc, 'k:s', 'linewidth', 2);
 legend('em', 'minfunc')
 title(sprintf('probit regression with L2 regularizer of %5.3f', lambda))
-ylabel('penalized NLL')
+ylabel('logpost')
 xlabel('iter')
 printPmtkFigure('probitRegDemoNLL')
 
-end
 
 
- 
- 
+
+

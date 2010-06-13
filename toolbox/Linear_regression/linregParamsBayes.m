@@ -38,7 +38,7 @@ if doDisplay
 
   fprintf('coeff & mean & stddev & 95pc CI & sig\n');
   for i=1:D
-    if model.addOnes, j=i-1; else j=i; end
+    if model.preproc.addOnes, j=i-1; else j=i; end
     L = credint(i,1); U = credint(i,2);
     sig = (L<0 && U<0) || (L>0 && U>0);
     if sig, sigStr = '*'; else sigStr = ''; end
@@ -48,7 +48,7 @@ if doDisplay
   fprintf('\n');
   
   if 0
-  if model.addOnes, coeff = 0:(D-1); else coeff=1:D; end
+  if model.preproc.addOnes, coeff = 0:(D-1); else coeff=1:D; end
   T = [coeff(:) what(:) stderr(:) credint(:,1) credint(:,2)];
   latextable(T, 'Horiz', {'coeff', 'mean', 'stderr', 'lower', 'upper'}, ...
     'Hline', 1, 'format', '%5.3f')

@@ -15,10 +15,10 @@ end
 if isfield(preproc, 'kernelFn') && ~isempty(preproc.kernelFn)
     X = preproc.kernelFn(X, preproc.basis);
 end
-if isfield(preproc, 'addOnes') && preproc.addOnes
-    X = addOnes(X);
-end
 if isfield(preproc, 'poly') && ~isempty(preproc.poly)
     X = degexpand(X, preproc.poly, false);
+end
+if isfield(preproc, 'addOnes') && preproc.addOnes
+    X = addOnes(X);
 end
 end
