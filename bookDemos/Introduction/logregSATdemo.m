@@ -5,8 +5,9 @@
 stat = loadData('sat');  y = stat(:,1); X = stat(:,4);
 
 %% Fit model
-pp =  preprocessorCreate('standardizeX',true);
-model = logregFit(X, y, 'preproc', pp);
+%pp =  preprocessorCreate('standardizeX',false,'addOnes',true);
+%model = logregFit(X, y, 'preproc', pp);
+model = logregFit(X, y);
 [yhat, prob] = logregPredict(model, X);
 
 %% visualize model fit for each training point

@@ -4,11 +4,10 @@ function [yhat, p] = logregPredict(model, X)
 % A column of 1s is added if this was done at training time
 % This works for both binary and multiclass and kernelized logistic
 % regression.
-%% Transform the test data in the same way as the training data
+
 if isfield(model, 'preproc')
     [X] = preprocessorApplyToTest(model.preproc, X);
 end
-%%
 if model.binary
     p = sigmoid(X*model.w);
     yhat = p > 0.5;  % now in [0 1]

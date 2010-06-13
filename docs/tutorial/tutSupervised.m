@@ -13,7 +13,8 @@
 % We have classified the models based on whether they can be used for
 % classification, regression or both; whether they are generative models of
 % the form $p(y,x|\theta)$ or discriminative models of the form $p(y|x,\theta)$;
-% and whether they are parametric (so $\theta$ has fixed size) or non-parametric.
+% and whether they are parametric (so $\theta$ has fixed size) or
+% non-parametric (so $\theta$ grows as the training set gets larger).
 % Note that, in the classification setting, we assume $y \in \{1,...C\}$,
 % where C is a relatively small number of classes. 
 % Structured-output classifiers based on conditional random fields will be
@@ -30,7 +31,7 @@
 % <td> Param/non</td>
 % <tr>
 % <td> discrimAnalysis
-% <td> Discriminant analysis (linear, quadratic, regularized) 
+% <td> Discriminant analysis (linear, quadratic, regularized, shrunken) 
 % <td> Classif
 % <td> Gen
 % <td> Param
@@ -124,17 +125,25 @@ y = log(X(:,11)); % log number of nests
 X = X(:,1:10);
 [model] = linregFit(X, y) % MLE
 %%
-% Or we can use Bayesian methods
+% Or we can use Bayesian methods to compute the posterior
+%%
 [modelB] = linregFitBayes(X, y, 'prior', 'uninf') % uninformative Jeffreys prior
 %%
-%% Examining the model's parameters
+% Here wN, vN, aN and bN are parameters of the posterior,
+% which as the following form:
+%%
+% $$p(w,1/sigma^2|D)  = N(w|wN, VN) Ga(1/sigma^2|aN,bN)$$
+%%
+%% Parameter inference
 % If you fit by the model by ML/MAP estimation, you can examine the
 % parameters by typing |model.params|, where |params| is the name of the
 % parameter you are interested in (this varies from model to model,
 % as we saw above).
 %
 % If you fit the model by Bayesian inference, you can examine
-% summaries of the posterior using
+% the hyper-parameters, but these are hard to interpret.
+% Instead you can compute summaries of the marginal posterior
+% of each parameter, as follows:
 %%
 %  post = fooParamBayes(model)
 %
@@ -166,7 +175,7 @@ end
 fprintf('\n');
 %%
 % We see that the MLE is the same as the posterior mean,
-% and the 95% confidence interval is the same as the 95% credible interval.
+% and the 95% frequentist confidence interval is the same as the 95% Bayesian credible interval.
 % (If you don't have the stats toolbox, you can use |linregFrequentist|
 % instead, which does more or less the same thing.)
 %
@@ -185,8 +194,9 @@ fprintf('\n');
 %  [yhat, py] = fooPredict(model, Xtest) % plugin approximation
 %  [yhat, py] = fooPredictBayes(model, Xtest) % posterior predictive
 %%
-% Here yhat is an Ntest*1 vector of predicted responses of the same type
-% as ytrain, where Ntest is the number of rows in Xtest.
+% Here Xtest is an Ntest*D matrix of test inputs,
+% and yhat is an Ntest*1 vector of predicted responses of the same type
+% as ytrain.
 % For regression this is the predicted mean, for classification this is the
 % predicted mode (most probable class label).
 % The meaning of py depends on the model, as follows:
@@ -197,8 +207,11 @@ fprintf('\n');
 %
 % The difference between |predict| and |predictBayes| is as follows.
 % |predict| computes $p(y|x,\hat{\theta})$, which "plugs in" a point estimate
-% of the parameters, where |predictBayes| computes $\int p(y|x,\theta)
-% p(\theta) d\theta$ ; this is called the (posterior) predictive density.
+% of the parameters, while |predictBayes| computes
+%%
+% $$p(y|x,D) = \int p(y|x,\theta) p(\theta|D) d\theta$
+%%
+% This is called the (posterior) predictive density.
 % In practice, the Bayesian approach results in similar (often identical)
 % values for yhat, but quite different values for py. In particular, the
 % uncertainty is reflected more accurately in the Bayesian approach, as we
@@ -209,7 +222,7 @@ fprintf('\n');
 % As an example, consider fitting a linear regression model to some 1d data
 % using MLE and Bayesian methods (using |linregPostPredLinearDemo|),
 % and then plotting the predictions on a test set (which is just a grid of
-% point in the interval [-7,7])
+% points in the interval [-7,7])
 %%
 setSeed(1);
 [xtrain, ytrain, xtest] =  polyDataMake('sampling', 'sparse', 'deg', 2);
@@ -233,9 +246,10 @@ for i=1:length(fitMethods)
   title(names{i});
 end
 %%
-% We see that the main difference is that in the plugin case, the predicted
+% The predicted means (black lines) are the same, but  in the plugin case, the predicted
 % variance is constant, whereas in the Bayesian case, the predicted
-% variance increases as we move further away from the training data.
+% variance increases as we move further away from the training data, as it
+% should, since our uncertainty increases as we extrapolate further.
 %
 
 
@@ -256,7 +270,9 @@ hold on
 plot(X, prob, 'ro', 'linewidth', 2,'MarkerSize', 10)
 
 %%
-% Now we fit the model using Bayesian inference with an noninformative
+% We see that the probability of passing the class smoothly increases as
+% the SAT score goes up.
+% Now let us fit the model using Bayesian inference with an noninformative
 % Gaussian prior. By default, the fitting procedure uses a Laplace
 % approximation to the posterior. To approximate the predictive density, we
 % can plugin in the posterior mean:
@@ -266,7 +282,7 @@ plot(X, prob, 'ro', 'linewidth', 2,'MarkerSize', 10)
 %%
 % However, this gives essentially the same result as plugging in the MLE.
 % To get a measure of confidence in this prediction, we can sample values
-% of w from their (approximate) posterior, use each such sample to make a
+% of w from their posterior (which we have approximated by a Gaussian), use each such sample to make a
 % prediction, and then compute empirical quantiles of this distribution to
 % get a 95% credible interval.
 % This is done using |logregPredictBayes| and gives the results shown below
@@ -293,7 +309,7 @@ end
 %% Visualizing the decision boundaires
 % When comparing classification methods, it is useful to apply them to 2d
 % datasets and to plot the regions of space that get mapped to each class;
-% these are called decision regions, and the boundaries are called decision
+% these are called decision regions, and the boundaries between them are called decision
 % boundaries. We can do this using the |plotDecisionBoundary(X, y, predFn)|
 % function, where predFn(X) takes a test matrix and computes the MAP
 % estimate of the labels for each row.
@@ -308,6 +324,7 @@ plotDecisionBoundary(X, y, @(X)logregPredict(model, X));
 yhat = logregPredict(model, X);
 errorRate = mean(yhat ~= y)
 
+%%
 % We see that the method performs at chance level, because the data is not
 % linearly separable. We give a simple fix to this problem below, when we
 % discuss basis function expansion.
@@ -316,43 +333,46 @@ errorRate = mean(yhat ~= y)
 % We are free to preprocess the data in any way we choose before fitting the model.
 % In pmtk, you can create a preprocessor (pp) 'object', and then pass it to the fitting function;
 % the pp will  be applied to the training data before fitting the model, and will be applied again to the test data.
-% The advantage of this approach is that the pp is stored inside the model, which makes sense,
-% since it is an integral part of the model.
+% The advantage of this approach is that the pp is stored inside the model,
+% which reduces the chance of applying inconsistent transformations to
+% training and test data.
 %
 % One common form of preprocessing is basis function expansion.
-% This replaces the original features with a larger set, thus permitting us to fit nonlinear models.
-% A popular approach is to use kernel functions, and to define the new feature vector as follows:
+% This replaces the original features with a larger set, thus providing an easy way to fit nonlinear models.
+% A popular approach is to define the new feature vector as follows:
 %%
 % $$\phi(x) = (K(x,\mu_1), ..., K(x,mu_D))$$
 %%
 % where the $\mu_j$ are 'prototypes'
-% and K(x,x') is a 'kernel function', which in this context just means a function of two arguments.
+% and K(x,\mu) is a 'kernel function', which in this context just means a function of two arguments.
 % A common example is the Gaussian or RBF kernel
 %%
-% $$K(x,x') = \exp(-\frac{||x-x'||^2}{2\sigma^2})$$
+% $$K(x,\mu) = \exp(-\frac{||x-\my||^2}{2\sigma^2})$$
 %%
-% where $\sigma$ is the 'bandwidth'.
-% Another common example is the polynomial kerne
+% where $\sigma$ is the 'bandwidth'. (The quantity $1/sigma$ is known as
+% the scale or precision.)
+% Another common example is the polynomial kernel
 %%
-% $$K(x,x') = (1+x^T x')^d$$
+% $$K(x,\mu) = (1+x^T \mu)^d$$
 %%
 % where d is the degree.
-% Often we take the prototypes to be the training vectors, but we don't have to.
+% Often we take the prototypes $\mu_j$ to be the training vectors (rows of $X$), but we don't have to.
 %
 % Below we show an example where we fit the XOR data using kernelized
-% logistic regression, with various kernels and prototypes. 
+% logistic regression, with various kernels and prototypes
+% (from |logregXorDemo|).
 %%
 clear all; close all
 [X, y] = createXORdata();
 rbfScale = 1;
 polydeg  = 2;
 protoTypes = [1 1; 1 5; 5 1; 5 5];
-kernels = {@(X1, X2)kernelRbfSigma(X1, X2, rbfScale)
-           @(X1, X2)kernelRbfSigma(X1, protoTypes, rbfScale)
+kernels = {@(X1, X2)kernelRbfSigma(X1, protoTypes, rbfScale)
+           @(X1, X2)kernelRbfSigma(X1, X2, rbfScale)
            @(X1, X2)kernelPoly(X1, X2, polydeg)};
 titles  = {'rbf', 'rbf prototypes', 'poly'};
 for i=1:numel(kernels)
-    preproc.kernelFn = kernels{i};
+    preproc = preprocessorCreate('kernelFn', kernels{i});
     model = logregFit(X, y, 'preproc', preproc);
     yhat = logregPredict(model, X);
     errorRate = mean(yhat ~= y);
@@ -365,8 +385,13 @@ for i=1:numel(kernels)
     end
     title(titles{i});
 end
-
-% We discuss how to choose the parameters of the kernel functions below.
+%%
+% In the first example, we use an RBF kernel with centers at 4
+% manually chosen points, shown with black stars.
+% In the second and third examples, we use an RBF and polynomial kernel,
+% centered at all the training data. This only leaves the kernel parameters
+% ($\sigma$ and $d$) to be specified.
+% Below we discuss how to choose the kernel parameters automatically.
 
 %% Overfitting, regularization and MAP estimation
 % Using maximum likelihood to train a model  often results in overfitting.
@@ -375,6 +400,7 @@ end
 % illustrate in the context of polynomial regression in 1d, as shown below (based on
 % |linregPolyVsReg|)
 %%
+close all; clear all;
 [xtrain, ytrain, xtest, ytestNoisefree, ytest] = polyDataMake('sampling','thibaux');
 deg = 14;
 Xtrain = xtrain; Xtest = xtest;
@@ -393,9 +419,10 @@ plot(xtest, ypredTest, 'k', 'linewidth', 3);
 %
 % Using Bayesian inference with an uninformative prior does not help, since
 % the mean of the posterior predictive distribution can be obtained by
-% plugging in the posterior mean parameter, which is equal to the MLE:
+% plugging in the posterior mean parameter, which is equal to the MLE
+% (since the prior is uninformative):
 %%
-% $$ E[y|x,D] = E[ E[y|x,w]| D] = E[ x^T  w | D] = x^T E[w|D]$$
+% $$ E[y|x,D] = E[ E[y|x,w]| D] = E[ x^T  w | D] = x^T E[w|D] = x^T \hat{w}$$
 %%
 %
 % What we need is an informative prior, that encodes our preference for
@@ -439,7 +466,7 @@ for k=1:NL
     scatter(xtrain, ytrain,'b','filled');
     hold on;
     plot(xtest, ypredTest, 'k', 'linewidth', 3);
-    title(sprintf('lambda %5.3f', log10(lambda)))
+    title(sprintf('log(lambda)=%5.3f', log10(lambda)))
 end
 
 %%
@@ -475,12 +502,15 @@ xlabel('log regularizer')
 % For generative models such as naive Bayes and
 % discriminant analysis, Gaussian priors (corresponding to L2 regularization)
 % are not appropriate (since the
-% parameters do not live in $R^D$); however, analogous regularization
-% techniques can be devised (and are recommended).
+% parameters do not live in $R^D$). However, analogous regularization
+% techniques can be devised (and are strongly recommended).
 %
-% For example, when fitting a discriminant analysis model using
-% a shared full covariance, we will encounter numerical problems
-% when N < D. However, we can use a Wishart prior to compute a MAP
+% For example, when fitting a discriminant analysis model 
+% we will encounter numerical problems
+% when estimating $\Sigma$ when N < D, even if we use
+% a tied  covariance matrix (i.e., one shared across classes, a metho
+% known as linear discriminant analysis).
+% A simple solution is to use a Wishart prior to compute a MAP
 % estimate of $\Sigma$. This is called regularized discriminant analysis,
 % and can be fit using |discrimAnalysisFit(X, y, 'rda', lambda)|,
 % where |lambda| controls the amount of regularization.
@@ -499,6 +529,7 @@ xlabel('log regularizer')
 % the SRBCT gene microarray dataset, which has N=144 training examples,
 % D=16063 features and C=4 classes.
 %%
+close all; clear all;
 loadData('srbct');
 
 Xtest = Xtest(~isnan(ytest), :);
@@ -520,7 +551,7 @@ for i=1:length(lambdas)
 end
 
 figure;
-plot(Deltas, errTrain, 'gx-', lambdas, errTest, 'bo--',...
+plot(lambdas, errTrain, 'gx-', lambdas, errTest, 'bo--',...
   'MarkerSize', 10, 'linewidth', 2)
 legend('Training', 'Test', 'Location', 'northwest');
 xlabel('Amount of shrinkage')

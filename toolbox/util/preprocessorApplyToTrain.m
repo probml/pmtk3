@@ -2,7 +2,14 @@ function [preproc, X] = preprocessorApplyToTrain(preproc, X)
 % Apply Preprocessor to training data and store updated
 % parameters inside pp object for use at test time
 
-
+% For backwards compatibility, we replicate the
+% behavior of preprocessorCreate
+if ~isfield(preproc, 'standardizeX'), preproc.standardizeX = false; end
+if ~isfield(preproc, 'rescaleX'), preproc.rescaleX = false; end
+if ~isfield(preproc, 'kernelFn'), preproc.kernelFn = []; end
+if ~isfield(preproc, 'poly'), preproc.poly = []; end 
+if ~isfield(preproc, 'addOnes'), preproc.addOnes = false; end
+  
 if preproc.standardizeX
     [X, preproc.Xmu]   = centerCols(X);
     [X, preproc.Xstnd] = mkUnitVariance(X);

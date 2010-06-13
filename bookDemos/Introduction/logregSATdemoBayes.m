@@ -5,8 +5,9 @@
 
 stat = loadData('sat');  y = stat(:,1); X = stat(:,4);
 
-pp =  preprocessorCreate('standardizeX',true, 'addOnes', true);
-model = logregFitBayes(X, y, 'preproc', pp);
+%pp =  preprocessorCreate('standardizeX',false, 'addOnes', true);
+%model = logregFitBayes(X, y, 'preproc', pp);
+model = logregFitBayes(X, y);
 [yhat, prob, pCI] = logregPredictBayes(model, X);
 
 figure;

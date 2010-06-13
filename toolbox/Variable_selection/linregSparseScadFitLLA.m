@@ -1,13 +1,13 @@
 function [ w, loglik ] = linregSparseScadFitLLA( X, y, lambda, varargin )
 % Fits a linear model with a SCAD penalty
+% We assume lambda is a scalar
 %PMTKauthor Hannes Bretschneider
 
 [maxIter, convTol, alpha] = process_options(varargin, ...
    'maxIter', 100, 'convTol', 1e-3, 'alpha', 3.7);
 
 % Initialize with Lasso
-w = linregFitL1InteriorPoint(X, y, lambda);
-
+w = l1_ls(X,y,lambda);
 
 iter = 1;
 done = false;
