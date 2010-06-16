@@ -21,19 +21,33 @@ for c=1:3
 end
 labels = z;
 labels(labels==3) = 2; % merge 2 and 3
+y = labels'; 
+
+%% Try fitting simple  model in original feature space
+model = logregFit(X, y);
+plotDecisionBoundary(X, y, @(Xtest)logregPredict(model, Xtest));
+printPmtkFigure logregBasisFnOriginal
+
+%% Try fitting simple polynomial model
+pp =  preprocessorCreate('poly', 2, 'rescaleX', true, 'addOnes', true);
+model = logregFit(X, y, 'lambda', 1e-3, 'preproc', pp);
+plotDecisionBoundary(X, y, @(Xtest)logregPredict(model, Xtest));
+printPmtkFigure logregBasisFnPoly
+
 %% Map to RBF basis
 Gtrain = kernelRbfSigma(X, centres, sigmaRbf); % gram matrix
-%% Fit in transformed space
-y = labels'; 
 model = logregFit(Gtrain, y, 'lambda',  lambda);
+
 %% Plot in the original space
 plotDecisionBoundary(X, y, @(Xtest)logregPredict(model, kernelRbfSigma(Xtest, centres, sigmaRbf)));
 hold on; axis square
 plot(centres(:, 1), centres(:, 2), 'k+', 'MarkerSize', 12, 'LineWidth', 3);
 set(gca, 'XTick', -1:1, 'YTick', -1:1);
 printPmtkFigure basisFnOriginal
+
 %% Plot in the transformed space
 plotDecisionBoundary(Gtrain, y, @(Xtest)logregPredict(model, Xtest));
 axis square
 set(gca, 'XTick', 0:0.1:0.4, 'YTick', 0:0.1:0.4);
 printPmtkFigure basisFnTransformed
+

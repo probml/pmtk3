@@ -1,7 +1,7 @@
 %% DNA Sequence Demo
 %
-%%
-setSeed(0);
+close all; clear all
+setSeed(1);
 Nseq = 10;
 Nlocn = 15;
 Nletters = 4;
@@ -40,6 +40,6 @@ thetaHat = counts/Nseq;
 tmp = thetaHat; tmp(tmp==0) = 1; % log(1)=0
 matrixEntropy = -sum(tmp .* log2(tmp), 1);
 seqlogoPmtk(thetaHat)
-
+printPmtkFigure('seqlogo')
 
 

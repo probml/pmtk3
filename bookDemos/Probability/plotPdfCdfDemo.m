@@ -12,6 +12,7 @@ fplot(pdf,[-10,10],'r');
 
 cdf = @(x) quad(pdf,-3.99,x)/5 + 0.01; % /5 + 0.01 is a hack to super impose it overtop the pdf.
 
+figure;
 hold on;
 fplot(cdf,[-10,10],'b');
 

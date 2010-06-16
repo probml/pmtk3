@@ -6,6 +6,7 @@ function logregXorDemo()
 [X, y] = createXORdata();
 lambda = 1e-2;
 %% Linear Features
+if 0
 model = logregFit(X, y, 'lambda', lambda);
 yhat = logregPredict(model, X);
 errorRate = mean(yhat ~= y);
@@ -13,25 +14,39 @@ fprintf('Error rate using raw features: %2.f%%\n', 100*errorRate);
 plotDecisionBoundary(X, y, @(X)logregPredict(model, X));
 title('linear');
 printPmtkFigure('logregXorLinear')
-%% Basis Expansions
+end
+
+pp = {}; fnames = {}; titles = {};
+%% Kernel basis Expansions
+if 1
 rbfScale = 1;
 polydeg  = 2;
 protoTypes = [1 1; 1 5; 5 1; 5 5];
+%protoTypes = [1 1; 5 5];
 protoTypesStnd = standardizeCols(protoTypes);
 kernels = {@(X1, X2)kernelRbfSigma(X1, protoTypesStnd, rbfScale)
            @(X1, X2)kernelRbfSigma(X1, X2, rbfScale)
            @(X1, X2)kernelPoly(X1, X2, polydeg)};
-fnames  = {'logregXorRbf', 'logregXorRbfProto', 'logregXorPoly'};
-titles  = {'rbf', 'rbf prototypes', 'poly'};
+fnames  = {'logregXorRbf', 'logregXorRbfProto', 'logregXorPolyKernel'};
+titles  = {'rbf prototypes', 'rbf all', 'poly kernel'};
 for i=1:numel(kernels)
-    preproc = preprocessorCreate('kernelFn', kernels{i}, 'standardizeX', true, 'addOnes', true);
-    model = logregFit(X, y, 'lambda', lambda, 'preproc', preproc);
+  pp{i} = preprocessorCreate('kernelFn', kernels{i}, 'standardizeX', true, 'addOnes', true);
+end
+end
+%% Polynomial basis
+deg = 10;
+pp{end+1} =  preprocessorCreate('poly', deg, 'rescaleX', true, 'addOnes', true);
+fnames{end+1} = 'logregXorPoly';
+titles{end+1} = sprintf('poly%d', deg);
+%% Fit and predict
+for i=1:numel(pp)
+    model = logregFit(X, y, 'lambda', lambda, 'preproc', pp{i});
     yhat = logregPredict(model, X);
     errorRate = mean(yhat ~= y);
     fprintf('Error rate using %s features: %2.f%%\n', titles{i}, 100*errorRate);
     predictFcn = @(Xtest)logregPredict(model, Xtest);
     plotDecisionBoundary(X, y, predictFcn);
-    if i==2
+    if  i==1
        hold on; 
        plot(protoTypes(:, 1), protoTypes(:, 2), '*k', 'linewidth', 2, 'markersize', 10)
     end

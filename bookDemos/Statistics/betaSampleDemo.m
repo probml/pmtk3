@@ -1,4 +1,4 @@
-%% Integration via posterior sampling
+%% Monte Carlo approximation to a probability of being in an interval
 %
 %% Model parameters
 a = 1;

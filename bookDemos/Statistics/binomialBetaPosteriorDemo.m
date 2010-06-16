@@ -35,7 +35,7 @@ for i = 1:numel(data)
     
     Ppost = exp(betaLogprob(post, x)); 
     name = sprintf('post Be(%2.1f, %2.1f)', post.a, post.b);
-    plot(x, Ppost, 'b-', 'linewidth', 3, 'DisplayName', name);
+    plot(x, Ppost, 'b-.', 'linewidth', 3, 'DisplayName', name);
    
     legend('Location', 'NorthEast');
     printPmtkFigure(figname{i});

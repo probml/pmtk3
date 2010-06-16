@@ -28,19 +28,20 @@ for i=1:numel(priorVar)
     post.Sigma = Sn;
     %% Now plot
     figure; hold on;
-    xrange = -5:0.1:5;
+    xrange = -5:0.25:5;
+    ms = 10; lw = 3;
     style = [styles{1}, symbols(1), colors(1)];
     plot(xrange, exp(gaussLogprob(prior, xrange)), style, ...
         'displayname', 'prior', ...
-        'linewidth'  , 2);
+        'linewidth'  , lw, 'markersize', ms);
     style = [styles{2}, symbols(2), colors(2)];
     plot(xrange, exp(gaussLogprob(lik  , xrange)), style, ...
         'displayname', 'lik', ...
-        'linewidth'  , 2);
+        'linewidth'  , lw, 'markersize', ms);
     style = [styles{3}, symbols(3), colors(3)];
     plot(xrange, exp(gaussLogprob(post , xrange)), style, ...
         'displayname', 'post', ...
-        'linewidth'  , 2);
+        'linewidth'  , lw, 'markersize', ms);
     set(gca, 'ylim', [0, 0.7]);
     legend('Location','NorthWest');
     title(sprintf('prior variance = %3.2f', priorVar(i)));

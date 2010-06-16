@@ -6,7 +6,8 @@ function [model, logev] = linregFitBayesGaussPrior(X, y, alpha, beta, addOnes)
 w0 = zeros(d,1);
 alphaVec = alpha*ones(d,1);
 if addOnes
-  alphaVec(1) = 0; % don't regularize offset term
+  alphaVec(1) = 1e-10; % don't regularize offset term
+  % but we require Lam0 to be posdef
 end
 Lam0 = diag(alphaVec);
 s2 = 1/beta;  sigma = sqrt(s2);

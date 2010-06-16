@@ -10,7 +10,7 @@ X  = rand(n, 1) < mu;
 %% Update & Plot
 figure; hold on; box on;
 [styles, colors, symbols] =  plotColors();
-ns = [0 5 50 100];        
+ns = [5 50 100];        
 betaPrior = [0.5, 0.5]; % uninformative prior
 xs = linspace(0.001, 0.999, 40); 
 for i=1:numel(ns)

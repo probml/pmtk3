@@ -23,7 +23,11 @@ if any(isnan(X(:)))
   logp = gaussLogprobMissingData(structure(mu, Sigma), X);
   return;
 end
+if isscalar(mu)
+  X = X(:);
+end
 [N, d] = size(X);
+
 X = bsxfun(@minus, X, rowvec(mu));
 if isvector(Sigma) % diagonal case
   sig2 = repmat(Sigma', N, 1);

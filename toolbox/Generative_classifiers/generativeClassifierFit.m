@@ -16,6 +16,7 @@ function model = generativeClassifierFit(fitFn, X, y, pseudoCount)
 % class prior, which can be passed to generativeClassifierPredict().
 %
 
+model.modelType = 'generativeClassifier';
 [y, model.support] = canonizeLabels(y);
 nclasses = numel(model.support); 
 SetDefaultValue(4, 'pseudoCount', ones(1, nclasses)); 

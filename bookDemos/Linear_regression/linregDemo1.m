@@ -11,8 +11,7 @@ Xtest1 = [ones(size(Xtest,1),1) Xtest];
 ypredTest = Xtest1*w;
 
 %% Use pmtk functions to do same thing
-pp = preProcessorCreate('standardizeX',false, 'addOnes', true);
-model2 = linregFit(Xtrain, ytrain, 'preproc', pp);
+model2 = linregFit(Xtrain, ytrain);
 [ypredTest2, v2] = linregPredict(model2, Xtest);
 assert(approxeq(ypredTest, ypredTest2))
 assert(approxeq(w, model2.w))

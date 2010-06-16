@@ -1,4 +1,4 @@
-function model = discrimAnalysisFit(X, y, type, lambda, R, V)
+function model = discrimAnalysisFit(X, y, type, varargin)
 %% Fit a Discriminant Analysis model
 % Input:
 % X is an n x d matrix
@@ -27,13 +27,15 @@ function model = discrimAnalysisFit(X, y, type, lambda, R, V)
 
 %PMTKauthor Hannes Bretschneider, Robert Tseng, Kevin Murphy
 
-if nargin < 4, lambda = []; end
-if nargin < 5, R = []; end
-if nargin < 6, V = []; end
+[lambda, R, V, pseudoCount] = process_options(varargin, ...
+  'lambda', [], 'R', [], 'V', [], 'pseudoCount', 1);
+ 
 
+model.modelType = 'discrimAnalysis';
 model.lambda = lambda;
-model.type = type;
-Nclasses = length(unique(y));
+model.covType = type;
+[y, model.support] = canonizeLabels(y);
+Nclasses = numel(model.support); 
 model.Nclasses = Nclasses;
 [N,D] = size(X);
 model.mu = zeros(D, Nclasses);
@@ -42,7 +44,7 @@ Nclass = zeros(1, Nclasses);
 for k=1:model.Nclasses
   ndx =(y==k);
   Nclass(k) = sum(ndx);
-  model.classPrior(k) = Nclass(k)/N;
+  model.classPrior(k) = (Nclass(k) + pseudoCount);
   if Nclass(k)==0
     % if there may be no examples of any given class, use generic mean
     model.mu(:,k) = xbar;
@@ -50,13 +52,14 @@ for k=1:model.Nclasses
     model.mu(:,k) =  mean(X(ndx,:))';
   end
 end
+model.classPrior = normalize(model.classPrior);
 
 switch lower(type)
   case 'shrunkencentroids'
     model = shrunkenCentroidsFit(model, X, y, lambda);
   case 'rda',
     model = rdaFit(model, X, y, lambda, R, V);
-  case 'qda'
+  case {'qda', 'quadratic'}
     model.Sigma = zeros(D, D, Nclasses);
     for c=1:Nclasses
       ndx = (y == c);
@@ -80,6 +83,8 @@ switch lower(type)
       SigmaPooled = SigmaPooled + nc*Sigma;
     end
     model.SigmaPooled = SigmaPooled/N;
+  otherwise
+    error(['bad covType ' type])
 end
 
 end

@@ -23,24 +23,3 @@ title(sprintf('%s', varnames{dim}))
 end
 printPmtkFigure irisBoxNotch
 
-
-figure();
-for dim=1:4
-  [n d] = size(X);
-  C = length(classnames);
-  XX = NaN*ones(n,C);
-  for c=1:C
-    ndx = find(y==c);
-    XX(1:length(ndx), c) = X(ndx, dim);
-  end
-  [n d] = size(X);
-  subplot(2,2,dim)
-  boxplot(XX)
-  set(gca,'xticklabel',classnames);
-  xlabel(''); ylabel('');
-  title(sprintf('%s', varnames{dim}))
-end
-  
-
-
-

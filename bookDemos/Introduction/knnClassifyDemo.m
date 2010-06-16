@@ -78,9 +78,11 @@ for ki=1:length(Ks)
 end
 
 figure; 
-plot(Ks, errRateTrain, 'ro-', Ks, errRateTest, 'k*:', 'linewidth', 2);
+plot(Ks, errRateTrain, 'bs:', Ks, errRateTest, 'rx-', 'linewidth', 2, 'markersize', 10);
 legend('train', 'test')
 xlabel('K'); ylabel('misclassification rate')
+printPmtkFigure('knnClassifyErrVsK')
+
 
 end
 

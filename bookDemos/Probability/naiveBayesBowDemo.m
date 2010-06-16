@@ -9,10 +9,10 @@ else
 end
 
 %% Train and test
-model = naiveBayesBerFit(Xtrain, ytrain);
-ypred_train = naiveBayesBerPredict(model, Xtrain);
+model = naiveBayesFit(Xtrain, ytrain);
+ypred_train = naiveBayesPredict(model, Xtrain);
 err_train = mean(zeroOneLossFn(ytrain, ypred_train));
-ypred_test = naiveBayesBerPredict(model, Xtest);
+ypred_test = naiveBayesPredict(model, Xtest);
 err_test = mean(zeroOneLossFn(ytest, ypred_test));
 fprintf('misclassification rates  on train = %5.2f pc, on test = %5.2f pc\n', ...
     err_train*100, err_test*100);

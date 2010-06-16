@@ -11,23 +11,26 @@ X = bank.data(:,2:3);
 X = standardizeCols(X);
 K = 2;
 
+N = size(bank.data,1);
+perm = randperm(N);
+trainNdx = perm(1:round(0.5*N));
+testNdx = setdiff(perm, trainNdx);
 
-[model] = mixStudentFitEm(X, K);
+y = bank.data(:,1);
+%ytrain = bank.data(trainNdx,1); % 0,1
+%ytest = bank.data(testNdx,1); % 0,1
+X = standardizeCols(bank.data(:, 2:3));
+Xtrain = X(trainNdx, :);
+Xtest = X(testNdx, :);
+
+[model] = mixStudentFitEm(Xtrain, K);
 model.dof
-if 0
-for c=1:K
-fprintf( 'c = %d\n', c);
-	model.mu(:,c)
-	model.Sigma(:,:,c)
-	model.dof(c)
-end
-end
 
 [zhat] = mixStudentInfer(model, X);
 figure;
 process(model, zhat, X, Y, 'student');
 
-[model] = mixGaussFitEm(X, K);
+[model] = mixGaussFitEm(Xtrain, K);
 [zhat] = mixGaussInfer(model, X);
 figure;
 process(model, zhat, X, Y, 'gauss');

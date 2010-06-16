@@ -14,8 +14,7 @@ z = [1 1 1 2 2 2 3 3 3];
 for c=1:3
    ndx = find(z==c);
    Nc = length(ndx);
-   model = struct('mu', mu(c, :), 'Sigma', sigma*eye(2));
-   X(ndx,:) = gaussSample(model, Nc);
+   X(ndx,:) = gaussSample(mu(c,:), sigma*eye(2), Nc);
 end
 
 figure;
@@ -25,10 +24,11 @@ for i=1:size(X,1)
   %plot(X(i,1), X(i,2), 'bo');
   hold on
 end
-colors = 'rgbc';
+colors = 'kkkk'; %'rgbc';
+names = {'A','B','C','D'};
 for i=1:K
   plot(mu(i,1), mu(i,2), 'o', 'markersize', 20, 'color', colors(i), 'linewidth', 3);
-  text(mu(i,1), mu(i,2), sprintf('%d', i), 'color', colors(i), 'fontsize', 15);
+  text(mu(i,1)-0.01, mu(i,2), sprintf('%s', names{i}), 'color', colors(i), 'fontsize', 12);
 end
 
 %axis_pct

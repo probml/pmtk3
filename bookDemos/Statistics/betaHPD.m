@@ -12,17 +12,19 @@ CI = [l,u]
 [styles, colors, symbols] = plotColors;
 xs = linspace(0.001, 0.999, 40);
 ps = exp(betaLogprob(model, xs));
-figure; hold on
+%figure; hold on
 HPD = [0.04, 0.485];
-%ints  = {CI, HPD};
-ints  = {HPD};
-linestyles = {'-', ':'};
+ints  = {CI, HPD};
+%ints  = {HPD};
+names = {'CI','HPD'}; 
+linestyles = {'-', '-'};
 for i=1:length(ints)
     l = ints{i}(1);
     u = ints{i}(2);
     pl = exp(betaLogprob(model, l));
     pu = exp(betaLogprob(model, u));
     %%
+    figure; hold on
     h=line([l l], [0 pl]);
     set(h, 'color', colors(i), 'linestyle', linestyles{i}, 'linewidth', 3);
     h = line([l u], [pl pu]);
@@ -30,8 +32,8 @@ for i=1:length(ints)
     set(h, 'color', colors(i),  'linestyle', linestyles{i},'linewidth', 3);
     h=line([u u], [0 pu]);
     set(h, 'color', colors(i), 'linestyle', linestyles{i}, 'linewidth', 3);
+    %legend(hh, '95% CI', '95% HPD');
+    plot(xs , ps, 'k-', 'linewidth', 3);
+    printPmtkFigure(sprintf('beta%s', names{i}))
 end
-%legend(hh, '95% CI', '95% HPD');
-plot(xs , ps, 'k-', 'linewidth', 3);
-printPmtkFigure betaHPD;
-%printPmtkFigure betaCI;
+

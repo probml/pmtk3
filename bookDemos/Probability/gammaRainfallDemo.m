@@ -12,15 +12,22 @@ X = X(1:end-5); % removing trailing 0s
 h = binc(2)-binc(1);
 N = length(X);
 areaH = h*N;
-figure(1);clf;bar(binc, v/areaH);hold on
+figure;bar(binc, v/areaH);hold on
 xs = linspace(0.05,  binc(end));
-linestyles = {'r-', 'k:'};
+linestyles = {'k:', 'r-'};
+for i=2
+  ps = exp(gammaLogprob(struct('a', a(i), 'b', b(i)), xs));
+  h(i) = plot(xs, ps, linestyles{i}, 'linewidth', 3);
+end
+printPmtkFigure('rainfallDemo'); 
+
+figure;bar(binc, v/areaH);hold on
 for i=1:2
   ps = exp(gammaLogprob(struct('a', a(i), 'b', b(i)), xs));
   h(i) = plot(xs, ps, linestyles{i}, 'linewidth', 3);
 end
 legend(h, 'MoM', 'MLE')
-printPmtkFigure('rainfallDemo'); 
+printPmtkFigure('rainfallDemoMOMMLE'); 
 end
 
 function [a,b] = gamMLE(X)
