@@ -5,7 +5,8 @@ function [model, logev] = linregFitBayes(X, y, varargin)
 %
 % INPUTS:
 % prior ... 'uninf' means use Jeffrey's prior on w and beta
-%           'vb' means use variational Bayes with vague NGamGam prior 
+%           'vb' means use Variational Bayes with vague NGamGam prior 
+%           'eb' means use Empirical Bayes (evidence procedure)
 %           'gauss' means use N(0, (1/alpha) I) prior on w, beta is fixed
 %           'zellner' means use N(0, 1/g*inv(X'*X)) Ga(sigma|0,0)
 %             Must specify g
@@ -38,6 +39,7 @@ if nargout >= 2
   switch lower(prior)
     case 'uninf', [model, logev] = linregFitBayesJeffreysPrior(X, y, addOnes);
     case 'vb', [model, logev] = linregFitVb(X, y, addOnes);
+    case 'eb', [model, logev] = linregFitEb(X, y, addOnes);
     case 'gauss', [model, logev] = linregFitBayesGaussPrior(X, y, alpha, beta, addOnes);
     case 'zellner', [model, logev] = linregFitBayesZellnerPrior(X, y, g, addOnes);
   end

@@ -9,7 +9,7 @@ yhat = X*wN;
 if nargout >= 2
   if isfield(model, 'beta') % known variance
     %  posterior is Gaussian
-    sigma2Hat = (1/model.beta)*ones(N,1) + diag(X*VN*X');
+    sigma2Hat = (1/model.beta) + diag(X*VN*X');
   else
     % posterior is student
     aN = model.aN; bN = model.bN;

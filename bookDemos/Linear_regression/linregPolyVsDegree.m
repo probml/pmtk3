@@ -9,33 +9,17 @@ close all; clear all;
 
 degs = 0:2:20;
 Nm = length(degs);
+
+%% Plot error vs degree
 mseTrain = zeros(1,Nm); mseTest = zeros(1,Nm);
 for m=1:length(degs)
   deg = degs(m);
   pp = preprocessorCreate('rescaleX', true, 'poly', deg, 'addOnes', true);
-  %addOnes = false;
-  %Xtrain = rescaleData(degexpand(xtrain, deg, addOnes)); 
-  %Xtest = rescaleData(degexpand(xtest, deg, addOnes));
   model = linregFit(xtrain, ytrain, 'preproc', pp);
   ypredTrain = linregPredict(model, xtrain);
   ypredTest = linregPredict(model, xtest);
   mseTrain(m) = mean((ytrain-ypredTrain).^2);
   mseTest(m) = mean((ytest-ypredTest).^2);
-    
-  if ismember(deg, [0, 2, 10, 14, 20])
-    figure;
-    scatter(xtrain,ytrain,'b','filled');
-    hold on; 
-    plot(xtest, ypredTest, 'k', 'linewidth', 3);
-    hold off
-    title(sprintf('degree %d', deg))
-     set(gca,'ylim',[-10 15]);
-     set(gca,'xlim',[-1 21]);
-    if ismember(deg, 14)
-      printPmtkFigure(sprintf('polyfitDemo%d', deg))
-    end
-  end
- 
 end
 
 ndx = (degs<=16);
@@ -47,5 +31,45 @@ xlabel('degree')
 ylabel('mse')
 legend('train', 'test')
 printPmtkFigure('linregPolyVsDegreeUcurve')
-placeFigures;
+
+
+
+%% Plot fitted function for chosen values of degree
+for deg = [0, 2, 14, 20]
+  pp = preprocessorCreate('rescaleX', true, 'poly', deg, 'addOnes', true);
+  model = linregFit(xtrain, ytrain, 'preproc', pp);
+  ypredTrain = linregPredict(model, xtrain);
+  ypredTest = linregPredict(model, xtest);
+  mseTrain(m) = mean((ytrain-ypredTrain).^2);
+  mseTest(m) = mean((ytest-ypredTest).^2);
+    
+  figure;
+  scatter(xtrain,ytrain,'b','filled');
+  hold on;
+  plot(xtest, ypredTest, 'k', 'linewidth', 3);
+  hold off
+  title(sprintf('degree %d', deg))
+  set(gca,'ylim',[-10 15]);
+  set(gca,'xlim',[-1 21]);
+  printPmtkFigure(sprintf('polyfitDemo%d', deg))
+end
+ 
+%% Compute log evidence for each model
+for m=1:length(degs)
+  deg = degs(m);
+  pp = preprocessorCreate('rescaleX', true, 'poly', deg, 'addOnes', true);
+  [modelN, logev(m)] = linregFitBayes(xtrain, ytrain, 'preproc', pp, ...
+    'prior', 'eb');
+end
+
+figure;
+probs = exp(normalizeLogspace(logev));
+plot(degs, logev ,'ko-', 'linewidth', 2, 'markersize', 12);
+xlabel('degree'); ylabel('log evidence')
+printPmtkFigure('linregPolyVsDegreeLogev')
+
+figure; bar(degs, probs)
+xlabel('degree'); ylabel('probability')
+printPmtkFigure('linregPolyVsDegreeProbModel')
+
 

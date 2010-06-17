@@ -26,36 +26,42 @@ data = [0.400 0.346;
      0.178 0.316
      0.156 0.200];
 %% Data Transformation
-Y = data(:,1);
-p = data(:,2);
+y = data(:,1);
+ytest = data(:,2);
 n = 45;
-x = sqrt(n)*asin(2*Y-1); % arcsin transform
+x = sqrt(n)*asin(2*y-1); % arcsin transform
+%% Shrinkage estimate
 d = length(x);
 xbar = mean(x);
 V    = sum((x-xbar).^2);
 s2   = V/d;
 %B = (d-3)/V;% Efron-Morris shrinkage
 sigma2 = 1; % by construction of the arcsin transform
-B = sigma2/(sigma2 + max(0, s2-sigma2)); % EB
-shrunkTransformed = xbar + (1-B)*(x-xbar); 
-shrunk = 0.5*(sin(shrunkTransformed/sqrt(n))+1); % untransform
+B = sigma2/(sigma2 + max(0, s2-sigma2)); % B = lambda0
+muShrunk = xbar + (1-B)*(x-xbar); 
+%% Back transform
+thetaShrunk = 0.5*(sin(muShrunk/sqrt(n))+1); 
+thetaMLE = y;
 
 %% Plot Shrinkage Estimates
 figure;
-plot(Y, ones(1, d) ,'o');
+plot(thetaMLE, ones(1, d) ,'o');
 hold on
-plot(shrunk, 0*ones(1, d), 'o');
+plot(thetaShrunk, 0*ones(1, d), 'o');
 for i=1:d
-  line([Y(i); shrunk(i)], [1; 0]);
+  line([thetaMLE(i); thetaShrunk(i)], [1; 0]);
 end
 title('MLE (top) and shrinkage estimates (bottom)')
 printPmtkFigure shrinkageDemoBaseballParams; 
 %% Histograms
 figure;
 ndx = 1:5;
-h = bar([p(ndx)'; 
-Y(ndx)'; shrunk(ndx)']');
+h = bar([ytest(ndx)';  thetaMLE(ndx)'; thetaShrunk(ndx)']');
 legend({'true', 'MLE', 'shrunk'})
 [im_hatch, colorlist] = applyhatch_pluscolor(gcf,'\-x.', 1);
-title(sprintf('MSE MLE = %6.4f, MSE shrunk = %6.4f', mse(p,Y), mse(p,shrunk)));
+mseMLE = mean((ytest-thetaMLE).^2);
+mseShrink = mean((ytest-thetaShrunk).^2);
+ttl = sprintf('MSE MLE = %6.4f, MSE shrunk = %6.4f', mseMLE, mseShrink)
+title(ttl)
 printPmtkFigure shrinkageDemoBaseballPred; 
+mseMLE/mseShrink

@@ -20,7 +20,7 @@ model.beta = beta;
 if nargout >= 2
   V0 = diag(1./alphaVec);
   tmp = struct('mu', X*w0, 'Sigma', s2*eye(N) + X*V0*X');
-  logev = gaussLogprob(tmp, y);
+  logev = gaussLogprob(tmp, y(:)');
 end
 end % end of main function
 

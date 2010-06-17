@@ -1,5 +1,5 @@
 function [model, logev] = linregNetlabFitEb(X, y)
-% Empirical Bayes linear regression 
+% Empirical Bayes linear regression using Netlab's evidence procedure
 % X is n*d, y is d*1
 % Do not add a column of 1s
 

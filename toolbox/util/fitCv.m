@@ -1,5 +1,5 @@
 function [model, bestParam, mu, se] = fitCv(params, fitFn, predictFn, lossFn, X, y,  Nfolds, ...
-  useSErule, doPlot, plotArgs, testFolds)
+  useSErule, doPlot, plotArgs, testFolds, randomizeOrder)
 % Fit a set of models of different complexity and use cross validation to pick the best
 %
 % Inputs:
@@ -35,7 +35,7 @@ SetDefaultValue(8, 'useSErule', false);
 SetDefaultValue(9, 'doPlot', false);
 SetDefaultValue(10, 'plotArgs', {});
 SetDefaultValue(11, 'testFolds', []);
-
+SetDefaultValue(12, 'randomizeOrder', false);
 
 % if params is 1 row vector, it is a probbaly a set of
 % single tuning params
@@ -50,7 +50,8 @@ if NM==1  % single param
    model  = fitFn(X, y, params(1,:));
    bestParam = params(1,:);
    if nargout >= 3
-    [mu, se] =  cvEstimate(@(X, y) fitFn(X, y, bestParam), predictFn, lossFn, X, y,  Nfolds, testFolds);
+    [mu, se] =  cvEstimate(@(X, y) fitFn(X, y, bestParam), predictFn, lossFn, X, y,  ...
+      Nfolds, 'testFolds', testFolds, 'randomizeOrder', randomizeOrder);
    end
    %mu = NaN;    se = NaN; 
    return;
@@ -75,24 +76,22 @@ bestParam = unwrapCell(params(bestNdx,:));
 model = fitFn(X, y, bestParam);
 
 if doPlot && size(params, 1) > 1;
-   if ~isnumeric(bestParam)
-      error('Plotting only supported for numerical values');  
-   end
-   singlevals = find(nunique(params) == 1); 
-   multivals = setdiff(1:numel(bestParam), singlevals);
-   ND = max(numel(bestParam)- numel(singlevals), 1);
-   switch ND
-       case 1
-           figure;
-           plotCVcurve(params(:, multivals), mu, se, bestParam(multivals), plotArgs{:});
-       case 2
-           figure;
-           plotCVgrid(params(:, multivals), mu, bestParam(multivals), plotArgs{:}); 
-       otherwise
-            error('Plotting is only supported in 1D or 2D'); 
-   end
-   
-   
+  if ~isnumeric(bestParam)
+    error('Plotting only supported for numerical values');
+  end
+  singlevals = find(nunique(params) == 1);
+  multivals = setdiff(1:numel(bestParam), singlevals);
+  ND = max(numel(bestParam)- numel(singlevals), 1);
+  switch ND
+    case 1
+      figure;
+      plotCVcurve(params(:, multivals), mu, se, bestParam(multivals), plotArgs{:});
+    case 2
+      figure;
+      plotCVgrid(params(:, multivals), mu, bestParam(multivals), plotArgs{:});
+    otherwise
+      error('Plotting is only supported in 1D or 2D');
+  end 
 end
 
 if strcmp(wstate.state, 'on')

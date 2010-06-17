@@ -42,7 +42,7 @@ for i=1:length(ns)
     %%
     figure(fig1);
     xs = 0.1:0.1:15;
-    str = sprintf('n=%d', n);
+    str = sprintf('N=%d', n);
     plot(xs, exp(invWishartLogprob(post, xs)), styles{i}, ...
         'color', colors(i),'linewidth', 3, 'displayname', str);
     xlabel('\sigma^2');

@@ -2,18 +2,18 @@
 %
 %%
 function mixBetaDemo()
-N = [20 10];
+dataSS = [20 10];
 alphaPrior = [20 20 ; 30 10];
 M = 2;
 mixprior = [0.5 0.5];
 %%
 for z=1:M
-    logmarglik(z) = betaln(alphaPrior(z,1) + N(1), alphaPrior(z,2) + N(2)) - ...
+    logmarglik(z) = betaln(alphaPrior(z,1) + dataSS(1), alphaPrior(z,2) + dataSS(2)) - ...
         betaln(alphaPrior(z,1), alphaPrior(z,2));
 end
-mixpost = exp(normalizeLogspace(logmarglik + log(mixprior)));
+mixpost = exp(normalizeLogspace(logmarglik + log(mixprior)))
 for z=1:M
-    alphaPost(z,:) = alphaPrior(z,:) + N;
+    alphaPost(z,:) = alphaPrior(z,:) + dataSS
 end
 %% Plot
 grid = 0.0001:0.01:0.9999;

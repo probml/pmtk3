@@ -2,6 +2,8 @@ function [model, logev] = linregNetlabFit(X, y, alpha)
 % PMTK interface to netlab
 % X is n*d, y is d*1
 % Do not add a column of 1s
+% alpha is fixed, beta is optimized
+% Computes log marginal likelihood with Gaussian prior
 
 x = X; targets = y; 
 % Compute posterior p(w|D,alpha) and estimate beta

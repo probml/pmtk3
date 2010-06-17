@@ -1,4 +1,4 @@
-function [mu, se] = cvEstimate(fitFn, predictFn, lossFn, X, y,  Nfolds, testFolds)
+function [mu, se] = cvEstimate(fitFn, predictFn, lossFn, X, y,  Nfolds, varargin)
 % Cross validation estimate of expected loss
 % model = fitFn(Xtrain, ytrain)
 % yhat = predictFn(model, Xtest)
@@ -12,9 +12,11 @@ function [mu, se] = cvEstimate(fitFn, predictFn, lossFn, X, y,  Nfolds, testFold
 % mu is expected error
 % se is standard error
 
+[testFolds, randomizeOrder] = process_options(varargin, ...
+  'testFolds', [], 'randomizeOrder', false);
+
 N = size(X,1);
-if nargin < 7 || isempty(testFolds)
-   randomizeOrder = false;
+if isempty(testFolds)
   [trainfolds, testfolds] = Kfold(N, Nfolds, randomizeOrder);
 else
   % explicitly specify the test folds
