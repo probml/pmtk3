@@ -6,7 +6,7 @@ function generatePmtkDataTable(dataSource)
 % PMTKneedsMatlab 
 %%
 if nargin == 0
-    dataSource = 'C:\pmtkData\';
+    dataSource = getConfigValue('PMTKlocalDataPath');
 end
 googleRoot = ' http://pmtkdata.googlecode.com/svn/trunk';
 dataSets   = dirs(dataSource);
