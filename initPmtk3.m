@@ -8,7 +8,11 @@ format compact
 cd(fileparts(which(mfilename())));
 %%
 % Add PMTK3 to the Matlab path
-addpath(genpathPMTK(pwd));
+addpath(pwd);
+addpath(genpathPMTK(fullfile(pwd, 'toolbox')));
+addpath(genpathPMTK(fullfile(pwd, 'data')));
+addpath(genpathPMTK(fullfile(pwd, 'bookDemos')));
+addpath(genpathPMTK(fullfile(pwd, 'external')));
 %%
 % We store user specific pmtk info in a directory they are sure to have
 % write access to.
@@ -43,8 +47,8 @@ text = { 'function answer = isOctave()'
 writeText(text, fullfile(pmtkInfoDir, 'isOctave.m')); 
 %%
 % Add PMTK support
-if  exist('pmtkSupportRoot', 'file')
-   addpath(genpathPMTK(pmtkSupportRoot()), '-end');  
+if  ~exist('pmtkSupportRoot', 'file')
+   installPmtkSupport(); 
 end
 %%
 % If running windows, add the svm executables to the system path.
