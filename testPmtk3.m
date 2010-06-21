@@ -38,6 +38,7 @@ catch %#ok
     return
 end
 %% graphViz4Matlab
+gvizErr = false; 
 if ~isOctave
     fprintf('Checking for graphviz............');
     
@@ -45,8 +46,8 @@ if ~isOctave
     if ~err
         fprintf('PASSED\n');
     else
-        fprintf(2, 'FAILED\n\nGraphviz, used by the associated graphViz4Matlab package,\ncannot be found. Please install it from <a href="http://http://www.graphviz.org/">here</a>,\nand add the bin subdirectory to your system path.\n');
-        return
+        fprintf(2, 'FAILED\n'); 
+        gvizErr = true; 
     end
 end
 %% Test code
@@ -77,15 +78,14 @@ close all
 mcmcMvn2d
 close all;
 fprintf('\n.......................\n');
-fprintf('\nAll Tests Passed\n');
+if ~gvizErr
+    fprintf('\nAll Tests Passed\n');
+else
+    fprintf('\nAll Tests Passed, except for the following:\n');
+    fprintf(2, 'Graphviz, used by some of the demos, (via the <a href="http://graphviz4matlab.googlecode.com">graphViz4Matlab</a> interface)\ncannot be found. You can obtain the latest version from <a href="http://www.graphviz.org/">here</a>.\nAfter installing, please add the "bin" subdirectory to your system path.\n');
+end
 fprintf('\n.......................\n');
+    
 
 end
-
-
-
-
-
-
-
 
