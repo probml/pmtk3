@@ -23,5 +23,5 @@ else
     fprintf('\n\n');
     error('installPmtkSupport:fileNotFound', 'The PMTK support packages could not be downloaded');
 end
-addpath(genpathPMTK(pmtkSupportRoot())); 
+addpath(genpathPMTK(destFolder)); 
 end
