@@ -1,0 +1,5 @@
+% This file stores hard coded paths and configuration variables
+%
+% PMTKsupportLink 'http://pmtksupport.googlecode.com/files/pmtksupport-21june2010.zip'
+% 
+%

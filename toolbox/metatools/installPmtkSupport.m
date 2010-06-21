@@ -1,8 +1,7 @@
 function installPmtkSupport()
 %% Download pmtkSupport packages from pmtkSupport.googlecode.com
 
-source     = 'http://pmtksupport.googlecode.com/files/pmtksupport-21june2010.zip';
-
+source = getConfigValue('PMTKsupportLink'); 
 destFolder = fullfile(pmtk3Root, 'external');
 destFile   = fullfile(destFolder, 'pmtkSupport.zip');
 fprintf('downloading pmtkSupport packages...');
