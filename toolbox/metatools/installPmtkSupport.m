@@ -5,7 +5,7 @@ source     = 'http://pmtksupport.googlecode.com/files/pmtksupport-9june2010.zip'
 
 destFolder = fullfile(pmtk3Root, 'external');
 destFile   = fullfile(destFolder, 'pmtkSupport.zip');
-fprintf('downloading pmtkSupport Packages...');
+fprintf('downloading pmtkSupport packages...');
 if ~isPerlInstalled()
     error('loadData:noPerl', 'This script requires perl, please install it, or download the pmtkSupport packages manually from <a href ="%s">here.</a>', source);
 end
