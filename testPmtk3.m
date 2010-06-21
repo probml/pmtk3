@@ -39,11 +39,13 @@ catch %#ok
 end
 %% graphViz4Matlab
 if ~isOctave
-    fprintf('Checking for graphViz4Matlab.....' );
-    if exist('drawNetwork.m', 'file') ==  2
+    fprintf('Checking for graphviz............');
+    
+    [j, err] = evalc('system([''dot'','' -V'']);');
+    if ~err
         fprintf('PASSED\n');
     else
-        fprintf(2, 'FAILED\n\ngraphViz4Matlab, used by parts of the system\ncannot be found.\nPlease download it from <a href = "http://code.google.com/p/graphviz4matlab/">here</a>.\n\n');
+        fprintf(2, 'FAILED\n\nGraphviz, used by the associated graphViz4Matlab package,\ncannot be found. Please install it from <a href="http://http://www.graphviz.org/">here</a>,\nand add the bin subdirectory to your system path.\n');
         return
     end
 end
@@ -65,8 +67,7 @@ hmmDiscreteTest;
 knnClassifyDemo;
 pcaDemo2d;
 close all
-mixGaussFitEm(loadData('faithful'), 2, 'verbose', true);
-mlpRegressDemoBishop;
+mixGaussFitEm(loadData('faithful'), 2);
 demoSteepestDescentRosen;
 close all
 gammaRainfallDemo;

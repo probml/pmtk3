@@ -12,7 +12,7 @@ addpath(pwd);
 addpath(genpathPMTK(fullfile(pwd, 'toolbox')));
 addpath(genpathPMTK(fullfile(pwd, 'data')));
 addpath(genpathPMTK(fullfile(pwd, 'bookDemos')));
-addpath(genpathPMTK(fullfile(pwd, 'external')));
+addpath(genpathPMTK(fullfile(pwd, 'external')), '-end');
 %%
 % We store user specific pmtk info in a directory they are sure to have
 % write access to.

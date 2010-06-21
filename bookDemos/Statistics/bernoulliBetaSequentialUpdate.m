@@ -13,6 +13,7 @@ figure; hold on; box on;
 ns = [5 50 100];        
 betaPrior = [0.5, 0.5]; % uninformative prior
 xs = linspace(0.001, 0.999, 40); 
+model = struct(); 
 for i=1:numel(ns)
     n = ns(i);
     Xsubset = X(1:n);

@@ -1,7 +1,7 @@
 function installPmtkSupport()
 %% Download pmtkSupport packages from pmtkSupport.googlecode.com
 
-source     = 'http://pmtksupport.googlecode.com/files/pmtksupport-9june2010.zip';
+source     = 'http://pmtksupport.googlecode.com/files/pmtksupport-21june2010.zip';
 
 destFolder = fullfile(pmtk3Root, 'external');
 destFile   = fullfile(destFolder, 'pmtkSupport.zip');
@@ -23,5 +23,5 @@ else
     fprintf('\n\n');
     error('installPmtkSupport:fileNotFound', 'The PMTK support packages could not be downloaded');
 end
-addpath(genpathPMTK(destFolder)); 
+addpath(genpathPMTK(destFolder), '-end'); 
 end
