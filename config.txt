@@ -2,4 +2,4 @@
 %
 % PMTKsupportLink http://pmtksupport.googlecode.com/files/pmtksupport-21june2010.zip
 % PMTKlocalWikiPath C:\googleCode\pmtk3Wiki
-% 
+% PMTKsynopsisWikiFile C:\kmurphy\GoogleCode\pmtk3wiki\synopsisPages.wiki

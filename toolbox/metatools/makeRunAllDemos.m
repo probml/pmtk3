@@ -14,7 +14,7 @@ demos = demos(sortidx(lower(demos)));
 header = {'%% Run Every Demo'};
 footer = {''};
 fulltext = [header;demos;footer];
-writeText(fulltext,fullfile(pmtk3Root(),'misc', 'metatools',fname));
+writeText(fulltext,fullfile(pmtk3Root(),'toolbox', 'metatools',fname));
 
 
 end

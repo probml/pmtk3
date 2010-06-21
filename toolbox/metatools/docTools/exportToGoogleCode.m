@@ -19,7 +19,7 @@ exportsvn(pwd, fpath, {'docs'});
 if 1
     fprintf('Uploading file...\n');
     %uploadFn = fullfile(matlabToolsRoot(),'googlecode_upload.py');
-    uploadFn = fullfile(pmtk3Root(),'misc\metatools\docTools','googlecode_upload.py');
+    uploadFn = fullfile(pmtk3Root(),'toolbox\metatools\docTools','googlecode_upload.py');
     fprintf('python %s -s "%s" -p "%s" -u %s -w %s "%s"', ...
         uploadFn, summary, package, username, passwd, fpath)
     result = systemf('python %s -s "%s" -p "%s" -u %s -w %s "%s"',...

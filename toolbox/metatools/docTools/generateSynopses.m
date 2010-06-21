@@ -3,8 +3,7 @@ function generateSynopses(wikiFile)
 % PMTKneedsMatlab
 
 if nargin < 1
-  %wikiFile = 'C:\pmtk3wiki\synopsisPages.wiki';
-  wikiFile = 'C:\kmurphy\GoogleCode\pmtk3wiki\synopsisPages.wiki';
+  wikiFile = getConfigValue('PMTKsynopsisWikiFile'); 
 end
 dest = fullfile(pmtk3Root(), 'docs', 'synopsis'); 
 %% Toolbox
@@ -15,9 +14,9 @@ for i=1:numel(d)
     
 end
 %% Util
-generateSynopsisTable(fullfile(pmtk3Root(), 'misc', 'util'), fullfile(dest, 'util.html'));
+generateSynopsisTable(fullfile(pmtk3Root(), 'toolbox', 'util'), fullfile(dest, 'util.html'));
 %% Meta Tools
-generateSynopsisTable(fullfile(pmtk3Root(), 'misc', 'metatools'), fullfile(dest, 'metatools.html'));
+generateSynopsisTable(fullfile(pmtk3Root(), 'toolbox', 'metatools'), fullfile(dest, 'metatools.html'));
 googleRoot = 'http://pmtk3.googlecode.com/svn/trunk/docs/synopsis';
 wikiText = cell(numel(d), 1);
 for i=1:numel(d)

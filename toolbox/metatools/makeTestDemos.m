@@ -40,6 +40,6 @@ for i=1:numel(demos)
                  '';
                 }];
 end
-writeText(text, fullfile(pmtk3Root(), 'misc', 'metatools', 'testDemos.m')); 
+writeText(text, fullfile(pmtk3Root(), 'toolbox', 'metatools', 'testDemos.m')); 
 
 end
