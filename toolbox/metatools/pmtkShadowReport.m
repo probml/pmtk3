@@ -25,7 +25,7 @@ for i=1:numel(files)
     shadows   = insertEnd(w(2:end), shadows);
 end
  
-pmtkRed  = '#990000';
+pmtkRed = getConfigValue('PMTKred');
 R = [main', shadows', identical'];
 htmlTable('data', R, 'colNames', {'Main File', 'Shadows', 'Identical?'}, ...
     'colNameColors', {pmtkRed, pmtkRed, pmtkRed}, ...

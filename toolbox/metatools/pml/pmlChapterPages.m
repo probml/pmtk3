@@ -12,7 +12,7 @@ function [pg, name] = pmlChapterPages(tocfile)
 % Gaussian", etc. 
 
 if nargin == 0
-    tocfile = 'C:\kmurphy\local\PML\Text\pml.toc';
+    tocfile = getConfigValue('PMTKpmlTocFile');
 end
 
 if ~exist(tocfile, 'file')

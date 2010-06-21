@@ -4,7 +4,7 @@ function generateAuthorReport()
 dest = fullfile(pmtk3Root(), 'docs', 'authors');
 R    = pmtkTagReport(); % everything you ever wanted to know about tags
 %%
-pmtkRed = '#990000';
+pmtkRed = getConfigValue('PMTKred');
 
 %% Create a table of authors and the total lines of code contributed
 fname = fullfile(dest, 'authorsLOC.html');

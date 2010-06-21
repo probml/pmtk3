@@ -35,7 +35,7 @@ function [missing, extra, copyProblems, missingExtra] = pmlOrganizeCode(bookSour
 % missingExtra   - a cell array of files with \extraCode refs in pml that
 %                  cannot be found. 
 %% Set Defaults
-SetDefaultValue(1, 'bookSource', 'C:\kmurphy\dropbox\PML\Text');
+SetDefaultValue(1, 'bookSource', getConfigValue('PMTKpmlBookSource'));
 %SetDefaultValue(1, 'bookSource', 'C:\Users\matt\Desktop\may1backup'); 
 SetDefaultValue(2, 'dest',  'C:\users\matt\Desktop\PMLcode');
 SetDefaultValue(3, 'demosOnly', true);

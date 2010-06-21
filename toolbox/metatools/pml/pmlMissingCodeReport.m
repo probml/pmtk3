@@ -24,7 +24,7 @@ ignoreList = {'polya-fit'  % In light-speed
              };
 
 
-SetDefaultValue(1, 'bookSource', 'C:\kmurphy\dropbox\PML\Text');
+SetDefaultValue(1, 'bookSource', getConfigValue('PMTKpmlBookSource'));
 SetDefaultValue(2, 'includeCodeSol', true); 
 
 if includeCodeSol

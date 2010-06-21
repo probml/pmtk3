@@ -1,6 +1,6 @@
 function text = pmlExtraCodeLatex()
 % Generates the latex code for the extra demos
-root = fullfile(pmtk3Root(), 'demos');
+root = fullfile(pmtk3Root(), 'bookDemos');
 cd(root); 
 d = cellstr(ls()); 
 d = filterCell(d, @(c)~startswith(c, '.'));

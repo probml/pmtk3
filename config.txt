@@ -1,5 +1,13 @@
 % This file stores hard coded paths and configuration variables
+% Use getConfigValue(varname) to access a value, e.g. 
+% getConfigValue('PMTKsupportLink')
 %
-% PMTKsupportLink http://pmtksupport.googlecode.com/files/pmtksupport-21june2010.zip
-% PMTKlocalWikiPath C:\googleCode\pmtk3Wiki
+%
+% PMTKsupportLink      http://pmtksupport.googlecode.com/files/pmtksupport-21june2010.zip
+% PMTKlocalWikiPath    C:\googleCode\pmtk3Wiki
 % PMTKsynopsisWikiFile C:\kmurphy\GoogleCode\pmtk3wiki\synopsisPages.wiki
+% PMTKdemosWikiFile    C:\kmurphy\GoogleCode\pmtk3wiki\Demos.wiki
+% PMTKpmlBookSource    C:\kmurphy\local\PML\Text
+% PMTKpmlCodeIndFile   C:\kmurphy\local\PML\Text\code.ind
+% PMTKpmlTocFile       C:\kmurphy\local\PML\Text\pml.toc
+% PMTKred              #990000

@@ -11,7 +11,7 @@ function extra = pmlUnusedDemoReport(bookSource)
 %
 %  *** Also displays an html table ***
 %%
-SetDefaultValue(1, 'bookSource', 'C:\kmurphy\dropbox\PML\Text');
+SetDefaultValue(1, 'bookSource', getConfigValue('PMTKpmlBookSource'));
 pmlCode = pmlCodeRefs(fullfile(bookSource, 'code.ind'));
 pmtkDemos = mfiles(fullfile(pmtk3Root(), 'bookDemos'), 'removeExt', true);
 extra = setdiff(pmtkDemos, pmlCode);

@@ -7,7 +7,7 @@ function value = getConfigValue(var)
 [tags, lines] = tagfinder(fullfile(pmtk3Root(), 'config.txt')); 
 S = createStruct(tags, lines); 
 if isfield(S, var)
-    value = S.(var); 
+    value = deblank(S.(var)); 
 else
     value = '';
 end

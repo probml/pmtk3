@@ -20,7 +20,7 @@ function [missing, extra] = pmlMoveExtraCode(bookSource, demosDir)
 %
 %%
 
-SetDefaultValue(1, 'bookSource', 'C:\kmurphy\dropbox\PML\Text');
+SetDefaultValue(1, 'bookSource', getConfigValue('PMTKpmlBookSource'));
 SetDefaultValue(2, 'demosDir', 'C:\users\matt\Desktop\PMLcode');
 
 indexFile = fullfile(bookSource, 'extraCode.ind'); 

@@ -5,7 +5,7 @@ root = pmtkSupportRoot();
 dest = fullfile(root, 'docs', 'authors');
 R    = pmtkTagReport(root); % get all files with tags
 %%
-pmtkRed = '#990000';
+pmtkRed = getConfigValue('PMTKred');
 
 colNames = {'AUTHOR', 'PACKAGE NAME', 'SOURCE URL', 'DATE', 'DIRECTORY'};
 fname    = fullfile(dest, 'packageAuthors.html');

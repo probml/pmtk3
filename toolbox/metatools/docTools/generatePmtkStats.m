@@ -14,7 +14,7 @@ colNames = {'directory', 'LOC matlab', 'LOC matlab (contrib)',...
     'LOC other', 'LOC other (contrib)', 'total LOC'};
 mmask    = '*.m';
 omask    = {'*.c', '*.cpp', '*.h', '*.py'};
-pmtkRed  = '#990000';
+pmtkRed = getConfigValue('PMTKred');
 %%
 data = zeros(numel(directories)+1, numel(colNames)-1); % +1 for totals
 countd = @(d, mask)countLinesOfCodeDir(d, excludeComments, recursive, mask);
