@@ -42,9 +42,14 @@ text = { 'function answer = isOctave()'
        };  
 writeText(text, fullfile(pmtkInfoDir, 'isOctave.m')); 
 %%
+% Add PMTK support
+if  exist('pmtkSupportRoot', 'file')
+   addpath(genpathPMTK(pmtkSupportRoot()), '-end');  
+end
+%%
 % If running windows, add the svm executables to the system path.
-if ispc()
-    folder = fullfile(pmtk3Root(), 'toolbox',...
+if ispc() && exist('pmtkSupportRoot', 'file')
+    folder = fullfile(pmtkSupportRoot(), 'toolbox',...
         'Kernel_methods_for_supervised_learning');
     
     dirs = {'svmLightWindows'        , ...

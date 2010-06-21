@@ -18,7 +18,25 @@ else
     fprintf(2, 'FAILED\n\nPMTK3 has not been properly initialized\nand may not work correctly. Please try\nrunning initPmtk3() again or report\nthe problem.\n\n') %#ok<PRTCAL>
     return
 end
-
+%% PMTK support
+%
+fprintf('Checking pmtkSupport packages....');
+if exist('pmtkSupportRoot.m', 'file') ==  2
+    fprintf('PASSED\n');
+else
+    fprintf(2, 'FAILED\n\nThe PMTK support packages, used by parts of the system\ncannot be found.\n\nPlease download them from <a href = "http://code.google.com/p/pmtksupport/">here</a>,\nand add them to the Matlab path.\n\n');
+    return
+end
+%% PMTK data
+%
+fprintf('Checking pmtkData................');
+try
+   loadData('crabs'); 
+   fprintf('PASSED\n');
+catch %#ok
+    fprintf(2, 'FAILED\n\nPMTK data could not be automatically downloaded.\nPlease check your internet connection, and perl installation\nor download the data manually from <a href = "http://code.google.com/p/pmtkdata">here</a>.\n\n');
+    return
+end
 %% graphViz4Matlab
 if ~isOctave
     fprintf('Checking for graphViz4Matlab.....' );
@@ -36,7 +54,6 @@ end
 
 fprintf('Testing selected code............\n\n\n\n');
 %try
-linregFitTestSimple;
 logregL2FitTest;
 newcombDemo
 close all
@@ -58,7 +75,9 @@ bernoulliBetaSequentialUpdate;
 close all
 mcmcMvn2d
 close all;
-fprintf('all tests passed\n');
+fprintf('\n.......................\n');
+fprintf('\nAll Tests Passed\n');
+fprintf('\n.......................\n');
 
 end
 

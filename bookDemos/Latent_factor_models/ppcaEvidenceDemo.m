@@ -13,7 +13,7 @@ k = 4;
 W = zeros(d,d);
 for i=1:k
    modeli.mu = mu; modeli.Sigma = Sigma(i,i)*eye(d);
-   W(:,i) = gaussSample(modeli);
+   W(:,i) = gaussSample(modeli, 1);
 end
 Z = randn(d,n);
 X = W*Z + randn(d,n);

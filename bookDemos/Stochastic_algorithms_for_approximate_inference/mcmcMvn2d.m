@@ -15,13 +15,13 @@ marg2.Sigma = Sigma(2, 2);
 margExact   = {marg1, marg2};
 %% 
 targetFn  = @(x) gaussLogprobUnnormalized(model,x);
-xinit     = gaussSample(model);
+xinit     = gaussSample(model, 1);
 S = cell(1, 3); 
 %% MH 1
-proposal1 = @(x) gaussSample(struct('mu', x,'Sigma', 1*eye(2)));
+proposal1 = @(x) gaussSample(x, 1*eye(2), 1);
 S{1}      = metropolisHastings(targetFn, proposal1, xinit, N);
 %% MH 0.01
-proposal2 = @(x) gaussSample(struct('mu', x,'Sigma', 0.01*eye(2)));
+proposal2 = @(x) gaussSample(x, 0.01*eye(2), 1);
 S{2}      = metropolisHastings(targetFn, proposal2, xinit, N);
 %% Gibbs
 fullCondSampler = gaussMkFullCondSamplers(model);

@@ -1,4 +1,4 @@
-function varargout = loadData(dataset, destnRoot)
+function varargout = loadData(dataset, destnRoot, quiet)
 %% Load the specified dataset into the struct D, downloading it if necessary
 %% from pmtkdata.googlecode.com
 %
@@ -19,6 +19,7 @@ function varargout = loadData(dataset, destnRoot)
 % s = loadData('sat', 'C:/mydir')
 
 if nargin < 2, destnRoot = fullfile(pmtk3Root(), 'data'); end
+if nargin < 3, quiet = false; end
  
 if isOctave(),  warning('off', 'Octave:load-file-in-path'); end
 googleRoot = ' http://pmtkdata.googlecode.com/svn/trunk';
@@ -27,7 +28,9 @@ dataset = filenames(dataset);
 if exist([dataset, '.mat'], 'file') == 2
     D = load([dataset, '.mat']);
 else % try and fetch it
-    fprintf('downloading %s...', dataset);
+    if ~quiet
+        fprintf('downloading %s...', dataset);
+    end
     source = sprintf('%s/%s/%s.zip', googleRoot, dataset, dataset);
     dest   = fullfile(destnRoot, [dataset, '.zip']);
     if ~isPerlInstalled()
@@ -41,7 +44,9 @@ else % try and fetch it
             delete(dest);
             addpath(destFolder)
             D = load([dataset, '.mat']);
-            fprintf('done\n')
+            if ~quiet
+                fprintf('done\n')
+            end
         catch %#ok
             fprintf('\n\n');
             error('loadData:postDownloadError', 'The %s data set was found, but could not be loaded', dataset);

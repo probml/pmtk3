@@ -14,7 +14,7 @@ Kfn = @(x,z) 1*exp(-sq_dist(x'/L,z'/L)/2);
 figure; hold on
 for i=1:3
   model = struct('mu', muFn(xs), 'Sigma',  Kfn(xs, xs) + 1e-15*eye(size(xs, 1)));
-  fs = gaussSample(model);
+  fs = gaussSample(model, 1);
   plot(xs, fs, 'k-', 'linewidth', 2)
 end
 printPmtkFigure('gprDemoNoiseFreePrior')
@@ -42,7 +42,7 @@ fill([xs; flipdim(xs,1)], f, [7 7 7]/8, 'EdgeColor', [7 7 7]/8);
 % plot samples from posterior predictive
 for i=1:3
   model = struct('mu', postMu(:)', 'Sigma', postCov);
-  fs = gaussSample(model);
+  fs = gaussSample(model, 1);
   plot(xs, fs, 'k-', 'linewidth', 2)
   h=plot(Xtrain, ftrain, 'kx', 'markersize', 12, 'linewidth', 3);
 end

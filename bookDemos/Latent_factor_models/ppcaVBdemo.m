@@ -16,7 +16,7 @@ k = 4;
 W = zeros(d,d);
 for i=1:k
    modeli = struct('mu', mu, 'Sigma', sigma(i)*eye(d));
-   W(:,i) = gaussSample(modeli);
+   W(:,i) = gaussSample(modeli, 1);
 end
 Z = randn(d,n);
 X = W*Z + randn(d,n);

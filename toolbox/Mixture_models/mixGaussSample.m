@@ -19,7 +19,7 @@ y = sampleDiscrete(mix, nsamples, 1);
 X = zeros(nsamples, d);
 for j=1:nsamples
   modelj = struct('mu', mus(:, y(j)), 'Sigma', Sigmas(:, :, y(j)));
-  X(j, :) = gaussSample(modelj) ;
+  X(j, :) = gaussSample(modelj, 1) ;
 end
 
 end
