@@ -25,7 +25,6 @@ ignoredWarnings = {
    'MATLAB:dispatcher:nameConflict'                         % caused by shadowFunction
    'MATLAB:Axes:NegativeDataInLogAxis'                      % erroneous log axis warning
                   };
-                            
 dbstat = dbstatus();
 % ensures function cleans up even after ctrl-c
 cleaner = onCleanup(@(x)cleanup(warnState, pwd, dbstat));

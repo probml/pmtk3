@@ -37,7 +37,7 @@ function varargout = unitTest(fname, varargin)
     'debug'    , false);
 
 callList = whoCallsMe(fname, 'recursive', recursive, 'recache', recache);
-demos = intersect(callList, mfiles(fullfile(pmtk3Root(), 'demos'), 'removeExt', true));
+demos = intersect(callList, mfiles(fullfile(pmtk3Root(), 'bookDemos'), 'removeExt', true));
 keep = [];
 for i=1:numel(demos)
     tags = tagfinder(demos{i});

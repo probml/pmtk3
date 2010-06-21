@@ -11,10 +11,10 @@ wikiOnly = true;     % set true if you only want to regenerate the wiki and
                 
 svnAutomatically = false;
 
-if nargin == 0,  wikiFile = 'C:\pmtk3wiki\Demos.wiki'; end
+if nargin == 0,  wikiFile = 'C:\googleCode\pmtk3wiki\Demos.wiki'; end
 googleRoot = 'http://pmtk3.googlecode.com/svn/trunk/docs/demoOutput';
 %%
-cd(fullfile(pmtk3Root(), 'demos'));
+cd(fullfile(pmtk3Root(), 'bookDemos'));
 d = dirs();
 dirEmpty = @(d)isempty(mfiles(d, 'topOnly', true));
 

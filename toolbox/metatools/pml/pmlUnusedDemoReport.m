@@ -13,7 +13,7 @@ function extra = pmlUnusedDemoReport(bookSource)
 %%
 SetDefaultValue(1, 'bookSource', 'C:\kmurphy\dropbox\PML\Text');
 pmlCode = pmlCodeRefs(fullfile(bookSource, 'code.ind'));
-pmtkDemos = mfiles(fullfile(pmtk3Root(), 'demos'), 'removeExt', true);
+pmtkDemos = mfiles(fullfile(pmtk3Root(), 'bookDemos'), 'removeExt', true);
 extra = setdiff(pmtkDemos, pmlCode);
 t = sprintf('Unused Demos (%d)', numel(extra));
 htmlTable('data', extra, 'dataAlign', 'left', 'title', t);

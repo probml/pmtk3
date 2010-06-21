@@ -16,10 +16,10 @@ shadowFunction({'pause', 'keyboard', 'input', 'placeFigures'}, [], true);
 % Demos with these tags have only their text published, they are not run.
 doNotEvalList = {'PMTKinteractive', 'PMTKbroken', 'PMTKreallySlow'};
 globalEval    = true; % if false, no code is evaluated during publishing.
-googleRoot    = sprintf('http://code.google.com/p/pmtk3/source/browse/trunk/demos/%s/', folder);
+googleRoot    = sprintf('http://code.google.com/p/pmtk3/source/browse/trunk/bookDemos/%s/', folder);
 dest          = fullfile(pmtk3Root(), 'docs', 'demoOutput');
 %% Make sure the folder is non-empty
-if (isempty(mfiles(fullfile(pmtk3Root(), 'demos', folder))));
+if (isempty(mfiles(fullfile(pmtk3Root(), 'bookDemos', folder))));
     fprintf('%s is empty\n', folder);
     return
 end
@@ -31,7 +31,7 @@ end
 PMLrefs   = cellfuncell(@genvarname, PMLrefs);
 PMLlookup = createStruct(PMLrefs, PMLpages);
 %% Get a list of all of the demos in the folder
-demos = mfiles(fullfile(pmtk3Root(), 'demos', folder));
+demos = mfiles(fullfile(pmtk3Root(), 'bookDemos', folder));
 %% Gather info about the demos, and then publish. 
 info = createStruct({'name', 'description', 'doEval', 'localLink', 'googleLink', 'tagstr'});
 cd(dest);

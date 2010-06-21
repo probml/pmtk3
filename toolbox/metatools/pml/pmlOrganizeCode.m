@@ -76,7 +76,7 @@ for i=1:nchapters
     end
 end
 %% Get a list of all PMTK demo files
-PMTKdemos = cellfuncell(@(c)c(1:end-2), mfiles(fullfile(pmtk3Root(), 'demos')));
+PMTKdemos = cellfuncell(@(c)c(1:end-2), mfiles(fullfile(pmtk3Root(), 'bookDemos')));
 %% Find out which demos are not included in PML
 extra = setdiff(PMTKdemos, pmlCode);
 %% Copy the files
