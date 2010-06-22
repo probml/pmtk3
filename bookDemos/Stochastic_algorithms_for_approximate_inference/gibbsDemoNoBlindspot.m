@@ -5,7 +5,7 @@
 setSeed(4);
 sigma = 1; % noise level
 A = loadData('letterA'); 
-y = A.imageWithoutHole; 
+y = A.AwithoutHole; 
 %load('imageWithBlackHole.mat') % defines y
 %load('imageWithWhiteHole.mat') % defines y
 
