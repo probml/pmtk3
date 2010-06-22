@@ -12,7 +12,7 @@ switch method
   h = 1e-20;
   for k=1:n
     e = zeros(n,1); e(k) = 1;
-    df(k) = imag(feval(f, x + h*e*i, args{:}))/h; 
+    df(k) = imag(feval(f, x + h*e*1i, args{:}))/h; 
   end
  case 'firstorder',
   h = 0.0001; 

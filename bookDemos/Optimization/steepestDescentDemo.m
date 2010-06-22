@@ -1,36 +1,36 @@
-%% Visualize steepest descent optimization
-%
-%%
-function steepestDescentDemo()
+%% Visualize steepest descent optimization on a 2d function
+% We try fixed step size, and also line searching.
 
 fn = @(x) aokiFn(x);
 [x1 x2] = meshgrid(0:0.1:2, -0.5:0.1:3);
-
 Z = fn([x1(:), x2(:)]);
 Z = reshape(Z, size(x1));
-figure;
-contour(x1,x2,Z,50)
-hold on
-h=plot(1,1,'ro'); set(h,'markersize',10,'markerfacecolor','r');
 
-x0 = [0; 0];
-global xhist fhist funcounthist
-xhist = [];
-if 1
-  % do line search
-  x = steepestDescent(fn, x0, 'maxIter', 10, ...
-    'exactLineSearch', true, 'outputFn', @optimstore);
-else
-  % fixed step size
-  stepSize = 0.1; %0.6;
-  x = steepestDescent(fn, x0, 'maxIter', 20, ...
-    'stepSize', stepSize, 'outputFn', @optimstore);
-end
+stepSizes = { [], 0.1, 0.6 }; % [] means use line search
+for m=1:length(stepSizes)
+  x0 = [0; 0];
+  global xhist fhist %updated by optimstore
+  xhist = []; fhist = [];
+  stepsize = stepSizes{m};
+  x = steepestDescent(fn, x0, 'maxIter', 15, ...
+    'stepSize', stepsize, 'outputFn', @optimstore);
   
-hold on;
-plot(xhist(1,:), xhist(2,:), 'ro-');
-printPmtkFigure aokiSteepestExact
-%title(sprintf('exact line searching %d', exactLineSearch))
-%title(sprintf('step size %3.1f', stepSize))
-
+  figure;
+  contour(x1,x2,Z,50)
+  hold on
+  % Plot location of global min
+  h=plot(1,1,'ro'); set(h,'markersize',10,'markerfacecolor','r');
+  % Plot trajectory
+  plot(xhist(1,:), xhist(2,:), 'ro-');
+  if isempty(stepsize)
+    ttl = sprintf('exact line search');
+    title(ttl);
+    printPmtkFigure('steepestDescentDemoLS');
+  else
+    ttl = sprintf('step size %2.1f', stepsize);
+    title(ttl);
+    printPmtkFigure(sprintf('steepestDescentDemo%2.1f', stepsize));
+  end
+  
+  figure; plot(fhist); title(ttl);
 end

@@ -6,7 +6,7 @@ function logregXorDemo()
 [X, y] = createXORdata();
 lambda = 1e-2;
 %% Linear Features
-if 0
+if 1
 model = logregFit(X, y, 'lambda', lambda);
 yhat = logregPredict(model, X);
 errorRate = mean(yhat ~= y);
