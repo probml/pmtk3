@@ -95,6 +95,8 @@ if isempty(R)
     [U S V] = svd(X, 'econ');
     R = U*S;
 end
+Nclasses = nunique(y);
+D = size(X, 2); 
 Rcov = cov(R);
 Sreg = (lambda*Rcov+(1-lambda)*diag(diag(Rcov)));
 Sinv = inv(Sreg);

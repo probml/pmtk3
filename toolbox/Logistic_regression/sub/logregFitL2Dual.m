@@ -13,8 +13,8 @@ end
 %X = R*V';
 [D N] = size(V); %#ok
 pre = logregFit(R, y, 'lambda', lambda,...
-     'regType', 'L2', 'preproc', struct('standardizeX', false));
-model.preproc.includeOffset = pre.preproc.includeOffset;
+     'regType', 'L2', 'preproc', struct('standardizeX', false, 'addOnes', true));
+model.preproc.addOnes = pre.preproc.addOnes;
 model.binary = pre.binary;
 model.ySupport = pre.ySupport;
 model.w = [pre.w(1,:); V*pre.w(2:N+1,:)];

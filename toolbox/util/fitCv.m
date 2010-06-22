@@ -63,7 +63,7 @@ se = zeros(1,NM);
 if ~isOctave(), w = waitbar(0,'Cross Validating'); end
 for m=1:NM
     param = unwrapCell(params(m, :));
-    [mu(m), se(m)] =  cvEstimate(@(X, y) fitFn(X, y, param), predictFn, lossFn, X, y,  Nfolds, testFolds);
+    [mu(m), se(m)] =  cvEstimate(@(X, y) fitFn(X, y, param), predictFn, lossFn, X, y,  Nfolds, 'testFolds', testFolds);
     if ~isOctave(),  waitbar(m/NM, w, 'Cross Validating'); end
 end
 if ~isOctave(), close(w); end
