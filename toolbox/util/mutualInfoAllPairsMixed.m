@@ -63,6 +63,7 @@ end
 for i = 1:D
   for j = i+1:D
     pxy = hist3(y([i,j],:)',cntrs([i,j])) + smoothing;
+    set(get(gca, 'child'), 'FaceColor', 'interp', 'CDataMode', 'auto');
     pxy = pxy./sum(sum(pxy));
     px  = sum(pxy,1);   
     py  = sum(pxy,2);
