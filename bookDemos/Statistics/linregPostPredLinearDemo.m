@@ -12,7 +12,7 @@ for i=1:length(fitMethods)
   model = fitMethods{i}(xtrain, ytrain);
   [mu, v] = predictMethods{i}(model, xtest);
   figure; hold on
-  plot(xtest, mu,  'k-', 'linewidth', 3, 'displayname', 'prediction't);
+  plot(xtest, mu,  'k-', 'linewidth', 3, 'displayname', 'prediction');
   plot(xtrain,ytrain,'ro','markersize', 14, 'linewidth', 3, ...
     'displayname', 'training data');
   NN = length(xtest);
