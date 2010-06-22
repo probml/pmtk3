@@ -66,14 +66,14 @@ useSErule = false;
 Nfolds = 3;
 
 maxLambda = lassoMaxLambda(Xtrain, ytrain);
-lambdasL1 = linspace(maxLambda, 0, 20);
+lambdasL1 = linspace(maxLambda, eps, 20);
 
 maxLambda = groupLassoMaxLambda(groups, Xtrain, ytrain);
-lambdasGL1 = linspace(maxLambda, 0, 20);
+lambdasGL1 = linspace(maxLambda, eps, 20);
 
 
 %% Fit 
-fitFn = @(X,y,lambda) linregFitL1InteriorPoint(X,y,  lambda); 
+fitFn = @(X,y,lambda) linregFitLassoEm(X,y,  lambda); 
 [wHatLasso] = fitCv(lambdasL1, fitFn, predictFn, lossFn, Xtrain, ytrain,  Nfolds, useSErule);
 
 fitFn = @(X,y,lambda) linregFitGroupLassoProj(X,y, groups, lambda);
