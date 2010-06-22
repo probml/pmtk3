@@ -24,7 +24,7 @@ end
 %% uninformative prior
 
 model = linregFitBayes(X, y, 'prior', 'uninf');
-post = linregParamBayes(model);
+post = linregParamsBayes(model);
 
 if 0
   % direct calculaiton
@@ -61,7 +61,7 @@ assert(approxeq(bint, post.credint))
 %% Zellner prior
 
 [model, logev] = linregFitBayes(X, y, 'prior', 'zellner', 'g', 100);
-linregParamBayes(model)
+linregParamsBayes(model)
    
 
 
