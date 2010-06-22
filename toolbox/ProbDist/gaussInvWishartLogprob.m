@@ -30,7 +30,7 @@ pgauss = zeros(n, 1);
 gaussModel.mu = mu; 
 for i=1:n
    gaussModel.Sigma = S(:, :, i) ./ k; 
-   pgauss(i) = gaussLogprob(gaussModel, m(:, i)); 
+   pgauss(i) = gaussLogprob(gaussModel, m(:, i)'); 
 end
 
 iwModel.Sigma = Sigma; 
