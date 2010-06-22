@@ -24,7 +24,7 @@ function [model] = linregFit(X, y, varargin)
 
 
 [preproc, X] = preprocessorApplyToTrain(preproc, X);
-[N,D] = size(X); 
+[N,D] = size(X);
 if strcmpi(regType, 'none')
     if isempty(lambda)
         regType = 'l2'; lambda = 0; % not specifying regType or lambda means MLE
@@ -43,8 +43,14 @@ winit = zeros(D,1);
 switch lower(regType)
     case 'l1'  , % lasso
         w = L1GeneralProjection(@(ww) SquaredError(ww,X,y), winit, lambdaVec(:), opts);
-    case 'l2'  , % ridge
-        w = linregFitL2QR(X, y, lambdaVec(:), opts{:});
+    case 'l2'  , % ridge using QR
+        if lambda == 0
+            w = X\y;
+        else
+            XX = [X; diag(sqrt(lambdaVec))];
+            yy = [y; zeros(D, 1)];
+            w  = XX \ yy;
+        end
     case 'scad', % scad
         % this cannot handle vector-valued lambda, so it regularizes
         % the offset term... So set addOnes to false before calling
