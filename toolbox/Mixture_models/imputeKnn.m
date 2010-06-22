@@ -27,7 +27,7 @@ if Nobs < K
 end
 K = min(Nobs,K);
 if K==0
-  Ximpute = imputeRows(X); return;
+  Ximpute = imputeColumns(X')'; return;
 end
 
 for i=1:Nhid

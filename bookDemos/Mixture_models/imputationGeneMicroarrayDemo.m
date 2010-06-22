@@ -15,6 +15,7 @@ for di=1:length(datasets)
     if strcmpi(dataName, 'yeastStress')
         % extract the 15 columns used in the Ouyang, Welsh, Georgopolous paper
         % These are features that are not too correlated (unlike cell cycle)
+        X = yeastStress.X; 
         ndx = [45 53 68 70 74 82 89 95 98 99 104 117 158 165 145];
         X = X(:,ndx);
     end
@@ -31,7 +32,8 @@ for di=1:length(datasets)
     ntrials = 3; % for speed
     opts = {'verbose', true, 'doMAP', true};
     methodNames = {'row mean', 'col mean', 'knn1', 'knn5', 'mixGauss1'}; % 'mixGauss5'};
-    imputeFns = {@imputeRows, @imputeColumns, @(X)imputeKnn(X, 1), @(X)imputeKnn(X, 5), ...
+    imputeRows = @(X)imputeColumns(X')';
+    imputeFns = {imputeRows, @imputeColumns, @(X)imputeKnn(X, 1), @(X)imputeKnn(X, 5), ...
         @(X)imputeMixGauss(X, 1, opts{:})};
     %@(X)imputeMixGauss(X, 5, opts{:})};
     nMethod = length(methodNames);
