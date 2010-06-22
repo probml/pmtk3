@@ -97,7 +97,8 @@ for i=1:length(Ns)
     xlabel('x'); ylabel('y')
     title(sprintf('iter %d, temp %5.3f', T, temp(T)));
     %view(-37,34);
-    printPmtkFigure(sprintf('SApeaksSamples%d.pdf', i));
+    set(get(gca, 'child'), 'FaceColor', 'interp', 'CDataMode', 'auto');
+    printPmtkFigure(sprintf('SApeaksSamples%d', i));
     
     if 0
     %figure(fig2); subplot(2,2,i);
@@ -105,6 +106,7 @@ for i=1:length(Ns)
     hh= hist3(samples(1:T,:), [N_bins N_bins]);
     imagesc(hh'); axis xy;  colorbar;
     title(sprintf('iter %d, temp %5.3f', T, temp(T)));
+    set(get(gca, 'child'), 'FaceColor', 'interp', 'CDataMode', 'auto');
     printPmtkFigure(sprintf('SApeaksImagesc%d', i));
     end
 end
