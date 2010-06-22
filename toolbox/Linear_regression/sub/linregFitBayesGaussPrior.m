@@ -14,13 +14,15 @@ s2 = 1/beta;  sigma = sqrt(s2);
 [wN, VN] = normalEqnsBayes(X, y, Lam0, w0, sigma);
 model.wN = wN;
 model.VN = VN;
-model.alpha = alpha;
 model.beta = beta;
+
+% for diagnostics
+model.alpha = alpha;
 
 if nargout >= 2
   V0 = diag(1./alphaVec);
-  tmp = struct('mu', X*w0, 'Sigma', s2*eye(N) + X*V0*X');
-  logev = gaussLogprob(tmp, y(:)');
+  mu =  X*w0; Sigma =  s2*eye(N) + X*V0*X';
+  logev = gaussLogprob(mu, Sigma, y(:)');
 end
 end % end of main function
 

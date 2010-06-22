@@ -2,7 +2,7 @@
 % Plot log evidence vs lambda for a degree 14 polynomial
 % See also linregPolyVsReg
 %%
-for n=[21 50]
+for n=[21]
   
 %% Make data
 setSeed(0);
@@ -86,6 +86,8 @@ for k=1:NL
   fitFn = @(Xtr,ytr) linregFit(Xtr, ytr, 'lambda', lambda, 'preproc', pp);
   predFn = @(mod, Xte) linregPredict(mod, Xte);
   lossFn = @(yhat, yte)  mean((yhat - yte).^2);
+  N = size(Xtrain, 1);
+  %nfolds = N; % LOOCV
   nfolds = 5;
   % since the data is sorted left to right, we must randomize the order
   [mu(k), se(k)] = cvEstimate(fitFn, predFn, lossFn, Xtrain, ytrain, nfolds, ...
@@ -97,7 +99,7 @@ ndx =  log(lambdas); % 1:length(lambdas);
 xlabel('log lambda')
 ylabel('mse')
 errorbar(ndx, mu, se, 'ko-','linewidth', 2, 'markersize', 12 );
-title(sprintf('5-fold cross validation, ntrain = %d', size(Xtrain,1)))
+title(sprintf('%d-fold cross validation, ntrain = %d', nfolds, N))
 if n <= 21
   set(gca,'yscale','log')
 else
@@ -156,14 +158,16 @@ title('log evidence')
 %% Now optimize alpha and beta using empirical Bayes
 
 [modelEB, logevEB] = linregFitBayes(Xtrain, ytrain, 'preproc', pp, 'prior', 'eb');
-lambdaEB = modelEB.alpha / modelEB.beta;
-verticalLine(log(modelEB.alpha), 'linewidth', 3);
+alpha = modelEB.netlab.alpha;
+beta = modelEB.netlab.beta;
+lambdaEB = alpha / beta;
+verticalLine(log(alpha), 'linewidth', 3);
 printPmtkFigure(sprintf('linregPolyVsRegTestEbN%d', n))
 
 % Plot p(m|D) vs alpha
 figure;
 prob = exp(normalizeLogspace(logev));
-plot(log(alphas), prob, 'ko-', 'linewidth', 2, 'markersize', 12);
+bar(log(alphas), prob);
 xlabel('log alpha')
 title('p(alpha|data)')
 

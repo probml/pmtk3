@@ -14,23 +14,28 @@ Zpos = Z+abs(m)+1;
 
 % Plot the surface at different temperatures
 %temps = [0.3];
-temps = [2, 1, 0.2, 0.1];
+temps = [2, 1, 0.2];
 %fig1 = figure; fig2= figure;
 for ti=1:length(temps)
     t = temps(ti);
     Zt = Zpos.^(1/t);
     %figure(fig1); subplot(2,2,ti)
     figure;
-    surf(XX,YY,Zt); title(sprintf('temp %5.3f', t));
+    %surf(XX,YY,Zt); title(sprintf('temp %5.3f', t));
+    surf(YY,XX,Zt); title(sprintf('temp %5.3f', t));
+    xlabel('x'); ylabel('y')
     if t>=1
         set(gca,'zlim',[0 10]);
     end
     %figure(fig2); subplot(2,2,ti);
     printPmtkFigure(sprintf('SApeaksSurf%d', ti));
+    
+    if 0
     figure;
     imagesc(Zt); axis xy;
     colorbar; title(sprintf('temp %5.3f', t));
     printPmtkFigure(sprintf('SApeaksSurfImagesc%d', ti));
+    end
 end
 
 
@@ -60,8 +65,7 @@ end
 Sigma_prop = 2^2 * eye(2); %2^2 = variance
 Nsamples  = 1000;
 opts = struct(...
-    'proposal', @(x) (x+(gaussSample...
-    (struct('mu', zeros(2,1), 'Sigma', Sigma_prop)))), ...
+    'proposal', @(x) (x+(gaussSample(zeros(2,1), Sigma_prop, 1))), ...
     'maxIter', Nsamples, ...
     'minIter', Nsamples, ...
     'temp', @(T,iter) (0.995*T), ...
@@ -92,15 +96,17 @@ for i=1:length(Ns)
     hist3(samples(1:T,:), [N_bins N_bins], 'FaceAlpha', 0.65);
     xlabel('x'); ylabel('y')
     title(sprintf('iter %d, temp %5.3f', T, temp(T)));
-    view(-37,34);
+    %view(-37,34);
     printPmtkFigure(sprintf('SApeaksSamples%d.pdf', i));
     
+    if 0
     %figure(fig2); subplot(2,2,i);
     figure;
     hh= hist3(samples(1:T,:), [N_bins N_bins]);
     imagesc(hh'); axis xy;  colorbar;
     title(sprintf('iter %d, temp %5.3f', T, temp(T)));
     printPmtkFigure(sprintf('SApeaksImagesc%d', i));
+    end
 end
 %{
 figure;

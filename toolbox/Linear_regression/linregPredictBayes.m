@@ -2,7 +2,10 @@ function [yhat, sigma2Hat] = linregPredictBayes(model, X)
 % Posterior predictive for linear regression model
 
 [X] = preprocessorApplyToTest(model.preproc, X);
-[N] = size(X,1);
+if isfield(model, 'netlab')
+  [yhat, sigma2Hat] = linregPredictNetlab(model, X);
+  return;
+end
 wN = model.wN; VN = model.VN;
 yhat = X*wN;
 
@@ -11,6 +14,7 @@ if nargout >= 2
     %  posterior is Gaussian
     sigma2Hat = (1/model.beta) + diag(X*VN*X');
   else
+    [N] = size(X,1);
     % posterior is student
     aN = model.aN; bN = model.bN;
     Sigma = bN/aN * (eye(N) + X*VN*X');

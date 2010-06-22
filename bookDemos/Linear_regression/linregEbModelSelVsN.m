@@ -7,7 +7,9 @@
 % and to Ian Nabney's netlab code. The netlab version seems
 % to work better when N is small (~8), but both give the same
 % results when N is large (~ 32).
-Ns = [8 32];
+
+clear all;
+Ns = [5 30];
 for ni=1:length(Ns)
   ndata = Ns(ni);
   
@@ -19,20 +21,15 @@ for ni=1:length(Ns)
   plotvals1d = [-2:0.1:12]'; % uniform grid for plotting/ testing
   trueOutput = (plotvals1d-4).^2;
   
-  fitFns = {...
-    @(X,y) linregFitBayes(X,y,'prior','eb'), ...
-    @(X,y) linregNetlabFitEb(X, y)};
-  predFns = {...
-    @(m, X) linregPredictBayes(m, X), ...
-    @(m, X) linregNetlabPredict(m, X)};
-  names = {'pmtk', 'netlab'};
-  
+  names = {'Chen', 'Netlab'};
+  %names = {'Netlab'};
+   
   for i=1:length(names)
-    fitFn = fitFns{i}; predFn = predFns{i}; name = names{i};
+    %fitFn = fitFns{i}; predFn = predFns{i};
+    name = names{i};
     
     
-    figure;
-    degs = [0 1 2 3];
+    degs = [1 2 3];
     for m=1:length(degs)
       deg=degs(m);
       X = polyBasis(x1d, deg);
@@ -40,21 +37,22 @@ for ni=1:length(Ns)
       Xtest = polyBasis(plotvals1d, deg);
       Xtest = Xtest(:, 2:end);
       
-      [model, logev(m)] = fitFn(X, ytrain);
-      [mu, sig2] = predFn(model, Xtest);
+      [model, logev(m)] = linregFitBayes(X, ytrain, 'prior', 'eb', 'ebMethod', name);
+      [mu, sig2] = linregPredictBayes(model, Xtest);
       sig = sqrt(sig2);
       
       % Plot the data, the original function, and the trained network function.
-      subplot(2,2,m)
-      plot(x1d, ytrain, 'ok')
+      figure;
+      plot(x1d, ytrain, 'ok', 'markersize', 10, 'linewidth', 3)
       hold on
-      plot(plotvals1d, trueOutput, 'g-');
-      plot(plotvals1d, mu, '-r')
+      plot(plotvals1d, trueOutput, 'g-', 'linewidth', 3);
+      plot(plotvals1d, mu, 'r-.', 'linewidth', 3)
       plot(plotvals1d, mu + sig, 'b:');
       plot(plotvals1d, mu - sig, 'b:');
-      title(sprintf('d=%d, logev=%5.3f, %s', deg, logev(m), name))
+      title(sprintf('d=%d, logev=%5.3f, %s', deg, logev(m)))
+      printPmtkFigure(sprintf('linregEbModelSelVsN%d%sD%d', ndata, name, deg))
     end
-    printPmtkFigure(sprintf('linregEbModelSelVsN%dFn%s', ndata, name))
+   
     
     
     figure;
@@ -65,7 +63,7 @@ for ni=1:length(Ns)
     set(gca,'FontSize',16);
     aa=xlabel('M'); set(aa,'FontSize',20);
     aa=ylabel('P(M|D)'); set(aa,'FontSize',20);
-    title(sprintf('N=%d, %s', ndata, name))
+    title(sprintf('N=%d', ndata))
     printPmtkFigure(sprintf('linregEbModelSelVsN%dPost%s', ndata, name))
   end % for i
   

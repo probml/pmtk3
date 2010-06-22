@@ -1,4 +1,4 @@
-function [mu, sig2] = linregNetlabPredict(model, X)
+function [mu, sig2] = linregPredictNetlab(model, X)
 % Compute E[y|x] and optionally Var[y|x] for each row of X
 [mu, a] = glmfwd(model.netlab, X);
 if nargout < 2, return; end

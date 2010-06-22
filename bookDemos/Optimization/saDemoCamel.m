@@ -1,10 +1,11 @@
 %% Demo of simulated annealing on a 2D function
-% Example based due to joachim.vandekerckhove@psy.kuleuven.be
-% http://www.mathworks.com/matlabcentral/files/10548/anneal.m
 %     The so-called "six-hump camelback" function has several local minima
 %     in the range -3<=x<=3 and -2<=y<=2. It has two global minima, namely
 %     f(-0.0898,0.7126) = f(0.0898,-0.7126) = -1.0316. 
-%%
+
+%PMTKauthor Joachim Vandekerckhove
+%PMTKurl http://www.mathworks.com/matlabcentral/fileexchange/10548-general-simulated-annealing-algorithm
+
 camel = @(x,y)(4-2.1*x.^2+x.^4/3).*x.^2+x.*y+4*(y.^2-1).*y.^2;
 energy = @(p) camel(p(1),p(2));
 
@@ -47,6 +48,7 @@ for i=1:S
   [junk,xx]=min(abs(XS-samples(i,1)));
   [junk,yy]=min(abs(YS-samples(i,2)));
   h=plot3(XS(xx),YS(yy),energies(i),'ro');
+  xlabel('x'); ylabel('y');
   %set(h,'markersize',10)
 end
 

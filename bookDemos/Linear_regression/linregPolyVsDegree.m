@@ -3,11 +3,14 @@
 % (Lecture 2 from http://www.cs.berkeley.edu/~asimma/294-fall06/)
 %%
 
-close all; clear all;
-[xtrain, ytrain, xtest, ytestNoisefree, ytest] = polyDataMake('sampling','thibaux');
+clear all;
+N = 21;
+[xtrain, ytrain, xtest, ytestNoisefree, ytest] = ...
+  polyDataMake('sampling','thibaux', 'n', N);
 
 
-degs = 0:2:20;
+%degs = 0:2:20;
+degs = 0:1:20;
 Nm = length(degs);
 
 %% Plot error vs degree
@@ -35,7 +38,7 @@ printPmtkFigure('linregPolyVsDegreeUcurve')
 
 
 %% Plot fitted function for chosen values of degree
-for deg = [0, 2, 14, 20]
+for deg = [0, 1, 2, 14, 20]
   pp = preprocessorCreate('rescaleX', true, 'poly', deg, 'addOnes', true);
   model = linregFit(xtrain, ytrain, 'preproc', pp);
   ypredTrain = linregPredict(model, xtrain);
@@ -58,7 +61,7 @@ end
 for m=1:length(degs)
   deg = degs(m);
   pp = preprocessorCreate('rescaleX', true, 'poly', deg, 'addOnes', true);
-  [modelN, logev(m)] = linregFitBayes(xtrain, ytrain, 'preproc', pp, ...
+  [modelEB, logev(m)] = linregFitBayes(xtrain, ytrain, 'preproc', pp, ...
     'prior', 'eb');
 end
 
