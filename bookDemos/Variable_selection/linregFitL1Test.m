@@ -1,6 +1,4 @@
-%% Linear Regression L1 Fit Tests
-% Check that different fitting methods for lasso regression give same
-% result.
+%% Linear Regression L1 Fit Test
 %%
 function linregFitL1Test()
 
@@ -30,22 +28,8 @@ doPlot(w_true, w_true, 'true')
 
 %% Fit
 lambda = 10;
-
-methods = { @linregFitL1Shooting         , ...
-            @linregFitLassoEm            , ...
-            @linregFitL1LarsSingleLambda , ...
-            @linregFitL1InteriorPoint
-           };
-for i=1:length(methods)
-    method = methods{i};
-    model{i} = linregFit(X, y, 'lambda', lambda, 'regType', 'L1', 'fitFn', method);
-    if i > 1
-        assert(approxeq(model{i}.w, model{1}.w, 1e-1))
-    end
-    subplot(nr, nc, i+1)
-    doPlot(model{i}.w, w_true, funcName(method))
-end
-
+model = linregFit(X, y, 'lambda', lambda, 'regType', 'L1', 'preproc', struct('addOnes', false)); 
+doPlot(model.w, w_true, 'L1 Projection'); 
 
 end
 
