@@ -73,7 +73,7 @@ switch lower(type)
             dat = X(ndx, :);
             model.SigmaDiag(:,c) = var(dat,1)';
         end
-    case 'lda'
+    case {'lda', 'linear'}
         SigmaPooled = zeros(D,D);
         for c=1:Nclasses
             ndx = (y == c);
