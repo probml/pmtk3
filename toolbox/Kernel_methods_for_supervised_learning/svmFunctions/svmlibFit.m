@@ -83,7 +83,7 @@ if isempty(customOptions)
 else
     options = customOptions;
 end
-model = svmtrain(y, X, options);
+model = libsvmTrain(y, X, options);
 model.C = C;
 model.fitEngine = mfilename();
 end
