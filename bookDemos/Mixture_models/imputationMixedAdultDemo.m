@@ -5,7 +5,7 @@
 %%
 requireStatsToolbox
 setSeed(0);
-adult = adultDataPreprocess;
+adult = loadData('adultCensus');
 
 X = adult.X;
 types = adult.types;
