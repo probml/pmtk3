@@ -70,11 +70,12 @@ end
 filendx  = @(f)cellfind(files, f);
 hastag   = @(f, tag)ismember(tag, tags(filendx(f)));
 %% Determine file authors
-excluded = tokenize(getConfigValue('PMTKauthors'), ',');
+excluded = tokenize(getConfigValue('PMTKauthors'), ',')';
 authors = cell(nfiles, 1);
 for i=1:nfiles
     j = cellfind(tags{i}, 'PMTKauthor');
     if ~isempty(j)
+        j = j(1); 
         alist = setdiff(strtrim(tokenize(tagtext{i}{j}, ',')), excluded);
         if ~isempty(alist)
            authors{i} = colvec(alist);  

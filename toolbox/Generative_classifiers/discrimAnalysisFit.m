@@ -90,7 +90,7 @@ end
 end
 
 function model = rdaFit(model, X, y, lambda, R, V)
-%PMTKauthor Hannes Bretschneider
+% author Hannes Bretschneider
 if isempty(R)
     [U S V] = svd(X, 'econ');
     R = U*S;
@@ -109,7 +109,7 @@ end
 end
 
 function model = shrunkenCentroidsFit(model, Xtrain, ytrain, lambda)
-%PMTKauthor Robert Tseng
+% author Robert Tseng
 
 C = length(unique(ytrain));
 [N, D] = size(Xtrain);
