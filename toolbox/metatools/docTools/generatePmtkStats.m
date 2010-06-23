@@ -1,11 +1,11 @@
 function generatePmtkStats()
 %% Generate an html page showing PMTK3 statistics such as LOC by directory.
 %
-% PMTKneedsMatlab 
+% PMTKneedsMatlab
 %% Settings
 excludeComments             = false;
 directories                 = {'toolbox', 'bookDemos'};
-treatPmtkAuthorTagAsContrib = true;
+
 excludedAuthors             = {'Matt Dunham', 'Kevin Murphy'};
 outputFile                  = fullfile(pmtk3Root, 'docs', 'pmtkStats.html');
 recursive                   = true;
@@ -14,37 +14,26 @@ colNames = {'directory', 'LOC matlab', 'LOC matlab (contrib)',...
     'LOC other', 'LOC other (contrib)', 'total LOC'};
 mmask    = '*.m';
 omask    = {'*.c', '*.cpp', '*.h', '*.py'};
-pmtkRed = getConfigValue('PMTKred');
+pmtkRed  = getConfigValue('PMTKred');
 %%
 data = zeros(numel(directories)+1, numel(colNames)-1); % +1 for totals
 countd = @(d, mask)countLinesOfCodeDir(d, excludeComments, recursive, mask);
 for i=1:numel(directories)
     d = fullfile(pmtk3Root(), directories{i});
-    totalMatlab = countd(d, mmask);
-    totalOther  = countd(d, omask);
-    contribDirs   = cellfuncell(@fileparts, filelist(d, 'Contents.m', true));
-    contribMatlab = sum(cellfun(@(dd)countd(dd, mmask), contribDirs));
-    contribOther  = sum(cellfun(@(dd)countd(dd, omask), contribDirs));
+    totalMatlab   = countd(d, mmask);
+    totalOther    = countd(d, omask);
     
-    if treatPmtkAuthorTagAsContrib
-        m = filelist(d, '*.m', recursive);
-        for j=1:numel(contribDirs)
-            m = setdiff(m, filelist(contribDirs{j}, '*.m', recursive));
-        end
-        authors = getTagText(m, 'PMTKauthor');
-        contribFiles = m(cellfun(@(c)~isempty(c) && ...
-            ~ismember(c, excludedAuthors), authors));
-        contribMatlab = contribMatlab + ...
-            sum(cellfun(@(f)countLinesOfCode(f, excludeComments), ...
-            contribFiles));
-    end
-    
+    % assume for now that all non-matlab files are written by other people
+    contribOther  = totalOther; 
+    m = filelist(d, '*.m', recursive);
+    authors = getTagText(m, 'PMTKauthor');
+    contribFiles = m(cellfun(@(c)~isempty(setdiff(c, excludedAuthors)), authors));
+    contribMatlab = sum(cellfun(@(f)countLinesOfCode(f, excludeComments), contribFiles));
     data(i, 1) = totalMatlab - contribMatlab;
     data(i, 2) = contribMatlab;
     data(i, 3) = totalOther - contribOther;
     data(i, 4) = contribOther;
     data(i, 5) = totalMatlab + totalOther;
-    
 end
 
 if excludeComments
@@ -60,7 +49,7 @@ header = [...
     sprintf('<br>LOC (lines of code) %s comments.<br>\n', excludeCommentStr), ...
     sprintf('Contrib means files contributed by other people (besides Dunham and Murphy).<br>\n'), ...
     sprintf('Authorship is automatically inferred based on the presence of a PMTKauthor tag.<br>\n'), ...
-    sprintf('"Other" means files not written in Matlab; most such files are in C.\n'), ... 
+    sprintf('"Other" means files not written in Matlab; most such files are in C.\n'), ...
     sprintf('<br><br><br>\n')...
     ];
 
