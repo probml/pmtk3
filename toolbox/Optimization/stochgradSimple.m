@@ -20,9 +20,13 @@ maxepoch = getOpt(options, 'maxepoch', 500);
 maxUpdates = getOpt(options, 'maxUpdates', 1000);
 verbose = getOpt(options, 'verbose', false);
 storeParamTrace = getOpt(options, 'storeParamTrace', false);
-lambda = getOpt(options, 'lambda', 1);
-t0 = getOpt(options, 't0', 0);
-stepSizeFn = getOpt(options, 'stepSizeFn',  @(t) 1/(lambda*(t+t0)));
+%lambda = getOpt(options, 'lambda', 1);
+t0 = getOpt(options, 't0', 1);
+eta0 = getOpt(options, 'eta0', 0.1);
+% Leon Bottou
+%stepSizeFn = getOpt(options, 'stepSizeFn',  @(t) 1/(lambda*(t+t0)));
+% Nic Schraudolph
+stepSizeFn = getOpt(options, 'stepSizeFn',  @(t) eta0*t0/(t+t0));
 
 [batchdata, batchlabels] = batchify(X, y, batchsize);
 num_batches = numel(batchlabels);
