@@ -3,15 +3,15 @@
 %%
 loadData('prostate');
 [n, d] = size(X);
+X = standardizeCols(X); 
+y = centerCols(y); 
 mse = zeros(2^8-1, 1); 
 ss = powerset(1:d);
 ss(1) = [];
 for i=1:numel(ss);
     ndx = ss{i};
-    model = linregFit(X(:, ndx), y);
+    model = linregFit(X(:, ndx), y, 'preproc', struct('addOnes', false));
     model.w = padZeros(model.w, ndx, [d, 1]);
-    model.preproc.Xmu = padZeros(model.preproc.Xmu, ndx, [1, d]);
-    model.preproc.Xstnd = padOnes(model.preproc.Xstnd, ndx, [1, d]);
     yhat = linregPredict(model, X); 
     mse(i) = mean((yhat - y).^2);
 end
