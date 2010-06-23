@@ -1,6 +1,5 @@
 function [errors, warnings] = debugDemos(subFolder, exclusions)
 % Run PMTK3 demos hiding all figures and demo output - displays a report
-% * Diplays an HTML report *
 % This function keeps running even if a demo fails.
 %% Input
 %
