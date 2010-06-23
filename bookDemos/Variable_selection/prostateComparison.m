@@ -16,11 +16,17 @@ nfolds = 10;
 
 maxLambda    =  log10(lambdaMaxLasso(Xtrain, ytrain));
 lambdaRange  =  logspace(-2, maxLambda, 30); 
-
-fit = @(regType)linregFit(Xtrain, ytrain,'lambda',...
-      lambdaRange, 'regType', regType, 'plotCv', true, 'nfolds', nfolds);
-
 loss = @(yhat, ytest) mean((yhat - ytest).^2);                 
+fit = @(regType)fitCv(lambdaRange,...
+    @(X, y, l)linregFit(X, y, 'lambda', l, 'regType', regType),...
+    @linregPredict, loss, Xtrain, ytrain, nfolds, false, true);
+
+
+
+%fit = @(regType)linregFit(Xtrain, ytrain,'lambda',...
+%      lambdaRange, 'regType', regType, 'plotCv', true, 'nfolds', nfolds);
+
+
 figureNames   = {'prostateLassoCV', 'prostateRidgeCV'};
 titlePrefixes = {'lasso', 'ridge'};
 regTypes = {'L1', 'L2'};
@@ -34,7 +40,7 @@ for i=1:numel(regTypes)
     mse(i) = loss(yhat, ytest);
     title(sprintf('%s, mseTest = %5.3f', titlePrefixes{i}, mse(i)));
     printPmtkFigure(figureNames{i});
-    weights(:, i) = [model.w0; colvec(model.w)]; 
+    weights(:, i) = colvec(model.w); 
 end
 
 
@@ -72,10 +78,10 @@ t = {  sprintf('%s, mseTest = %5.3f', 'all subsets', mse(3));
 title(t);
 printPmtkFigure('prostateSubsetsCV');
 
-weights(:, 3) = [modelFull.w0; colvec(modelFull.w)];
+weights(:, 3) = colvec(modelFull.w);
 %% OLS
 model = linregFit(data.Xtrain, data.ytrain, 'lambda', 0);
-weights(:, 4) = [model.w0; colvec(model.w)];
+weights(:, 4) = colvec(model.w);
 yhat = linregPredict(model, data.Xtest);
 mse(4) = loss(yhat, data.ytest); 
 %%
