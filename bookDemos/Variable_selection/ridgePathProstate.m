@@ -7,10 +7,10 @@ loadData('prostate');
  nlambdas = numel(lambdas);
  w = zeros(nlambdas, d);
  for i=1:nlambdas
-     model = linregFit(X, y, 'lambda', lambdas(i));
+     model = linregFit(X, y, 'lambda', lambdas(i), 'preproc', struct('addOnes', false));
      w(i, :) = rowvec(model.w);
  end
-dof = dofRidge(X, lambdas);
+dof = linregDofL2(X, lambdas);
 figure
 plot(dof, w, '-o', 'LineWidth', 2);
 legend(names{1:size(X, 2)}, 'Location', 'NorthWest');
