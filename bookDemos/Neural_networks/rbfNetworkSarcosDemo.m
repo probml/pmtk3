@@ -47,8 +47,8 @@
  nout = 7;
  Dridge = size(Xtrain,2);
  Drbf = size(Ktrain,2);
- wSaveRidge = zeros(Dridge, nout);
- wSaveRbf = zeros(Drbf, nout);
+ wSaveRidge = zeros(Dridge+1, nout);
+ wSaveRbf = zeros(Drbf+1, nout);
  for traini = 1:length(trainSize)
    ntrain = trainSize(traini);
    for j=1:nout
