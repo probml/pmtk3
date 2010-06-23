@@ -1,13 +1,14 @@
 %% Process named arguments to a function
-%                 - Processes options passed to a Matlab function.
-%                   This function provides a simple means of
-%                   parsing attribute-value options.  Each option is
-%                   named by a unique string and is given a default
-%                   value.
+%
+% This allows you to pass in arguments using name, value pairs
+% eg func(x, y, 'u', 0, 'v', 1)
+% Or you can pass in a  struct with named fields
+% eg  S.u = 0; S.v = 1; func(x, y, S)
 %
 % Usage:  [var1, var2, ..., varn[, unused]] = ...
 %           process_options(args, ...
 %                           str1, def1, str2, def2, ..., strn, defn)
+%
 %
 % Arguments:   
 %            args            - a cell array of input arguments, such
@@ -57,9 +58,6 @@
 % with options; all options can be passed to the outer function and
 % its unprocessed arguments can be passed to the inner function.
 %
-% You can also pass in a struct with named fields
-% eg  func(x, y, struct('u', 0, 'v', 1))
-
 
 %PMTKauthor Mark Paskin
 %PMTKurl http://ai.stanford.edu/~paskin/software.html

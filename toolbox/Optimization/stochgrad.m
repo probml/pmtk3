@@ -1,49 +1,31 @@
-function[x] = stochgrad(objFun,x,data,labels,batchsize,eta,maxepoch,method,avgstart,maxIter)
-nTrain = size(data, 1);
-num_batches = ceil(nTrain/batchsize);
-groups = repmat(1:num_batches,1,batchsize);
-groups = groups(1:nTrain);
-groups = groups(randperm(nTrain));
-t = 1;
-k = 1;
-err = 0;
-xavg = x;
-noise = 0;
-for i=1:num_batches
-	batchdata{i} = data(groups == i,:);
-	batchlabels{i} = labels(groups == i,:);
+function [w, f, exitflag, output] = stochgrad(objFun, w0, options, X, y, varargin)
+% This is a wrapper on stochgradSimple 
+% It calls it multiple times to determine a good learning rate
+% This doesn't seem to work, in the sense that changing t0 makes
+% no visible difference...
+
+[N,D] = size(X);
+% Try several values of t0 on small subset of data
+t0s = [0,  100, 10000];
+ndx = 1:min(N, 500);
+Xsmall = X(ndx,:); ysmall = y(ndx);
+%finit = objFun(w0, Xsmall, ysmall, varargin{:});
+for i=1:length(t0s)
+  opt = options;
+  opt.t0 = t0s(i);
+  opt.maxepoch = 1;
+  %opt.batchsize = numel(ndx);
+  [w{i}, f, exitflag, output] = stochgradSimple(objFun, w0, opt, Xsmall, ysmall, varargin{:});
+  ffinal(i) = objFun(w0, Xsmall, ysmall, varargin{:});
 end
-for i=1:maxepoch
-	for b=1:num_batches
-		bdata = batchdata{b};
-		blabels = batchlabels{b};
-		if (noise > 0)
-		  bdata = bdata.*(rand(size(bdata)) > noise);
-		end
-		if (isequal(method,'SGD'))
-			fprintf('epoch %d batch %d\r',i,b);
-			[f,g] = objFun(x,bdata,blabels);
-			x = x - eta*g;
-			if (i >= avgstart)
-				xavg = xavg - (1/t)*(xavg - x);
-				t = t + 1;
-			end
-			err = err + f;
-		else
-			fprintf('epoch %d batch %d\n',i,b);
-			options.method = method;
-			options.maxIter = maxIter;
-			x = minFunc(objFun,x,options,bdata,blabels);
-			if (i >= avgstart)
-				xavg = xavg - (1/t)*(xavg - x);
-				t = t + 1;
-			end
-		end
-		k = k + 1;
-	end
-	if (isequal(method,'SGD'))
-		fprintf('end of epoch %d error %4.6f\n',i,err);
-		err = 0;
-	end
+ffinal
+bestNdx = argmin(ffinal);
+t0 = t0s(bestNdx);
+
+% Now optimize over all data
+opt = options;
+opt.t0 = t0;
+[w, f, exitflag, output] = stochgradSimple(objFun, w{bestNdx}, opt, X, y, varargin{:});
+
+
 end
-x = xavg;

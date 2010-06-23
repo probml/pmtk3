@@ -1,6 +1,7 @@
 
 function [f,g,H] = LinregLoss(w,X,y)
-f = (y-X*w)'*(y-X*w);
-g = 2*X'*X*w - 2*X'*y;
-H  = 2*X'*X;
+N = size(X,1);
+f = (0.5)*(y-X*w)'*(y-X*w);
+g = 1 * X'*X*w - X'*y;
+H  = 1 * X'*X;
 end

@@ -1,26 +1,45 @@
-%% Compare various optimizers on a simple logistic regression problem
+%% Compare various optimizers on a binary logistic regression problem
 
-loadData('mnistAll');
-if 0
-  % test on all data- 255 seconds, 3.09% error
-  trainndx = 1:60000; testndx =  1:10000;
-else
-  % test on subset - 8 seconds, 3.80% error
-  trainndx = 1:60000; 
-  testndx =  1:1000; 
+setSeed(0);
+% Use  classes 2,3 for simplicity
+Ntrain = [];
+[Xtrain, ytrain, Xtest, ytest] = mnistLoad([2 3], Ntrain);
+
+
+ytrain = setSupport(ytrain, [-1 +1]);
+ytest = setSupport(ytest, [-1 +1]);
+[N,D] = size(Xtrain)
+winit = zeros(D,1); % randn(D,1);
+lambda = 1e-9; 
+%funObj = @(w)LogisticLossScaled(w,Xtrain,ytrain);
+funObjXy = @(w,X,y) penalizedL2(w, @(ww) LogisticLossScaled(ww, X, y), lambda);
+funObj = @(w) funObjXy(w, Xtrain, ytrain);
+
+
+
+% minfunc
+options = [];
+options.derivativeCheck = 'off';
+options.display = 'none';
+%options.display = 'iter';
+options.maxIter = 100;
+options.maxFunEvals = 100;
+options.TolFun = 1e-3; % defauly 1e-5
+options.TolX = 1e-3; % default 1e-5
+
+
+methods = {'sd', 'cg', 'bb', 'lbfgs'};
+
+for m=1:length(methods)
+  method = methods{m}
+  tic
+  options.Method = method;
+  [w, finalObj, exitflag, output{m}] = minFunc(funObj, winit, options);
+  fvalTrace = output{m}.trace.fval;
+  t = toc;
+  figure;
+  plot(fvalTrace, 'o-', 'linewidth', 2);
+  title(sprintf('%s, %5.3f seconds, final obj = %5.3f', ...
+    method, t, finalObj));
+  printPmtkFigure(sprintf('logregOpt%s', method))
 end
-ntrain = length(trainndx);
-ntest = length(testndx);
-Xtrain = double(reshape(mnist.train_images(:,:,trainndx),28*28,ntrain)');
-Xtest  = double(reshape(mnist.test_images(:,:,testndx),28*28,ntest)');
-
-if 0 
-  % matrix is real-valued but has many zeros due to black boundary
-  % so we make it sparse to save space - does not work in octave
-  Xtrain = sparse(Xtrain);
-  Xtest = sparse(Xtest);
-end
-
-ytrain = (mnist.train_labels(trainndx));
-ytest  = (mnist.test_labels(testndx));
-clear mnist trainndx testndx; % save space
