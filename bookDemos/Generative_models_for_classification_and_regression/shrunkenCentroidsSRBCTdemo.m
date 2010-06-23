@@ -6,7 +6,7 @@ loadData('srbct');
 Xtest = Xtest(~isnan(ytest), :);
 ytest = ytest(~isnan(ytest));
 
-fitFn = @(X,y,lam)  discrimAnalysisFit(X, y, 'shrunkenCentroids', lam);
+fitFn = @(X,y,lam)  discrimAnalysisFit(X, y, 'shrunkenCentroids', 'lambda', lam);
 predictFn = @(model, X)  discrimAnalysisPredict(model, X);
 
 
@@ -24,7 +24,7 @@ for i=1:length(lambdas)
 end
 
 figure;
-plot(Deltas, errTrain, 'gx-', lambdas, errTest, 'bo--',...
+plot(lambdas, errTrain, 'gx-', lambdas, errTest, 'bo--',...
   'MarkerSize', 10, 'linewidth', 2)
 legend('Training', 'Test', 'Location', 'northwest');
 xlabel('Amount of shrinkage')
@@ -37,11 +37,11 @@ title('SRBCT data')
 % CV curve as in Hastie fig 18.4...
 nFolds = 10;
 useSErule = false;
-[bestModel, bestDelta, errCV, se] = fitCv(Deltas, fitFn, predictFn,...
+[bestModel, bestDelta, errCV, se] = fitCv(lambdas, fitFn, predictFn,...
     @zeroOneLossFn, [Xtrain;Xtest], [ytrain;ytest], nFolds, useSErule); 
 
   figure;
-lambda = Deltas;
+lambda = lambdas;
 xticklam=[1:8];
 xtickNgenes = numgenes(round(linspace(1,length(numgenes), length(xticklam))));
 axisH=axes;
@@ -61,7 +61,7 @@ ylabel('Misclassification Error','position',[-0.7 0.49 1.001])
 %set(gca,'yticklabel',[]);
 %text(ticks*0-0.3,ticks-0.02,cellstr(num2str(ticks')),'rotation',90,'fontsize',15)
 legend( 'Test', 'Train', 'CV', 'Location', 'Best');
-bestNdx  = find(bestDelta==Deltas);
+bestNdx  = find(bestDelta==lambdas);
 fprintf('best lambda=%5.3f, ngenes = %d\n', bestDelta, numgenes(bestNdx));
 line([bestDelta bestDelta], [0 1]);
 printPmtkFigure('shrunkenCentroidsErrVsLambda')
