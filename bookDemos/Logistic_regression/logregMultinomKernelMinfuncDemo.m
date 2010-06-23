@@ -54,14 +54,6 @@ uRBF = minFunc(@penalizedL2,randn(nInstances*(nClasses-1),1),options,funObj,lamb
 %uRBF = minFunc(@penalizedKernelL2_matrix,randn(nInstances*(nClasses-1),1),options,Krbf,nClasses-1,funObj,lambda);
 uRBF = reshape(uRBF,[nInstances nClasses-1]);
 uRBF = [uRBF zeros(nInstances,1)];
-%% Check against PMTK functions
-preproc.kernelFn = @(X1, X2)kernelRbfSigma(X1, X2, rbfScale);
-preproc.standardizeX = false; 
-preproc.includeOffset = false;
-modelRBF = logregFit(X, y, 'lambda', lambda, 'preproc', preproc,...
-    'fitOptions', struct());
-wRBF = modelRBF.w;
-assert(approxeq(wRBF, uRBF))
 %% Compute training errors
 [junk yhat] = max(X*wLinear,[],2);
 trainErr_linear = sum(y~=yhat)/length(y)
@@ -70,8 +62,7 @@ trainErr_poly = sum(y~=yhat)/length(y)
 [junk yhat] = max(Krbf*uRBF,[],2);
 trainErr_rbf = sum(y~=yhat)/length(y)
 
-[yhat2, prob] = logregPredict(modelRBF, X);
-assert(isequal(yhat, yhat2))
+
 
 figure;
 plotClassifier(X,y,wLinear,'Linear Multinomial Logistic Regression');
