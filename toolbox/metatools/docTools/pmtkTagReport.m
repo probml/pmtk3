@@ -29,9 +29,19 @@ function I = pmtkTagReport(root)
 %                    containing directory structure. 
 %%
 %
-if nargin < 1, root = pmtk3Root(); end
+if nargin < 1, 
+    root = {fullfile(pmtk3Root(), 'toolbox'), ...
+            fullfile(pmtk3Root(), 'bookDemos')} ; 
+end
 %% Get a list of all  files
-files = mfiles(root(), 'usefullpath', true);
+if iscell(root)
+    files = {}; 
+    for i=1:numel(root)
+       files = union(files,  mfiles(root{i}, 'usefullpath', true)); 
+    end
+else
+    files = mfiles(root, 'usefullpath', true);
+end
 %% Get the tags, tagtext codelen and full text of all of these files
 [tags, tagtext, codelen, fulltext]  ...
     = cellfun(@tagfinder, files, 'uniformoutput', false);
