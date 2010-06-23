@@ -4,11 +4,11 @@
 %
 %
 % PMTKsupportLink      http://pmtksupport.googlecode.com/files/pmtkSupport-23June2010.zip
-% PMTKlocalWikiPath    C:\kmurphy\GoogleCode\pmtk3Wiki
+% PMTKlocalWikiPath    C:\googleCode\pmtk3Wiki
 % PMTKlocalDataPath    C:\googleCode\pmtkData
 % PMTKlocalSupportPath C:\googleCode\pmtkSupport
-% PMTKsynopsisWikiFile C:\kmurphy\GoogleCode\pmtk3wiki\synopsisPages.wiki
-% PMTKdemosWikiFile    C:\kmurphy\GoogleCode\pmtk3wiki\Demos.wiki
+% PMTKsynopsisWikiFile C:\googleCode\pmtk3wiki\synopsisPages.wiki
+% PMTKdemosWikiFile    C:\googleCode\pmtk3wiki\Demos.wiki
 % PMTKpmlBookSource    C:\kmurphy\dropbox\PML\Text
 % PMTKpmlCodeIndFile   C:\kmurphy\dropbox\PML\Text\code.ind
 % PMTKpmlTocFile       C:\kmurphy\dropbox\PML\Text\pml.toc

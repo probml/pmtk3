@@ -13,10 +13,7 @@ for i=1:numel(d)
                      fullfile(dest, sprintf('%s.html', d{i})));
     
 end
-%% Util
-generateSynopsisTable(fullfile(pmtk3Root(), 'toolbox', 'util'), fullfile(dest, 'util.html'));
-%% Meta Tools
-generateSynopsisTable(fullfile(pmtk3Root(), 'toolbox', 'metatools'), fullfile(dest, 'metatools.html'));
+%%
 googleRoot = 'http://pmtk3.googlecode.com/svn/trunk/docs/synopsis';
 wikiText = cell(numel(d), 1);
 for i=1:numel(d)
