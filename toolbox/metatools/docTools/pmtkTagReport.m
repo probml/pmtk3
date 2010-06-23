@@ -44,9 +44,9 @@ codelen(remove)  = [];
 fulltext(remove) = [];
 %% Standardize tag names, PMTKremainingtagname
 tags = cellfunR(@(c)[upper(c(1:4)), lower(c(5:end))], tags);
-%% Determine code length for contents files
+%% Determine code length for packages
 codelen = cell2mat(codelen);
-iscontents = cellfun(@(f)isSubstring('Contents.m', f), files);
+iscontents = cellfun(@(f)isSubstring('-meta.m', f), files);
 codelen(iscontents) = cellfun(@(c)countLinesOfCodeDir(...
     fileparts(c), false, true), files(iscontents));
 nfiles = numel(files);
