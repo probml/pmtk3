@@ -5,8 +5,7 @@ function generatePmtkStats()
 %% Settings
 excludeComments             = false;
 directories                 = {'toolbox', 'bookDemos'};
-
-excludedAuthors             = {'Matt Dunham', 'Kevin Murphy'};
+excludedAuthors             = tokenize(getConfigValue('PMTKauthors'), ',');
 outputFile                  = fullfile(pmtk3Root, 'docs', 'pmtkStats.html');
 recursive                   = true;
 %%

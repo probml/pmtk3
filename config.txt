@@ -13,3 +13,4 @@
 % PMTKpmlCodeIndFile   C:\kmurphy\dropbox\PML\Text\code.ind
 % PMTKpmlTocFile       C:\kmurphy\dropbox\PML\Text\pml.toc
 % PMTKred              #990000
+% PMTKauthors          Kevin Murphy, Matt Dunham
