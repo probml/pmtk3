@@ -20,7 +20,9 @@ yhat = logregPredict(LRL1model, Xtest);
 lrL1Nerrors = sum(yhat ~= ytest)
 %% LR L2 (no kernel)
 lambdas = logspace(-5,0,50);
-[LRL2model, lambdas, LRmu, LRse] = logregFit(Xtrain, ytrain,...
-    'lambda', lambdas, 'regType', 'L2');
+LRL2model = fitCv(lambdas, @(X, y, l)logregFit(X, y, 'lambda', l, 'regType', 'L2'), ...
+    @logregPredict, @zeroOneLossFn, Xtrain, ytrain); 
+
+
 yhat = logregPredict(LRL2model, Xtest);
 lrL2Nerrors = sum(yhat ~= ytest)
