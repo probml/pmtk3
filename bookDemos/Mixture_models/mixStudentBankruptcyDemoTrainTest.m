@@ -1,9 +1,9 @@
 %% Fit a mixture of Student T distributions to the bankruptcy data
 %
 %%
-function mixStudentBankruptcyDemo()
+function mixStudentBankruptcyDemoTrainTest()
 
-setSeed(0);
+setSeed(3);
 bank = loadData('bankruptcy');
 Y = bank.data(:,1); % 0,1
 X = bank.data(:,2:3);

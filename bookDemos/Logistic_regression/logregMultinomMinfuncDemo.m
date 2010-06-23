@@ -23,20 +23,8 @@ fprintf('Training multinomial logistic regression model...\n');
 wSoftmax = minFunc(@penalizedL2,zeros((nVars+1)*(nClasses-1),1),options,funObj,lambda(:));
 wSoftmax = reshape(wSoftmax,[nVars+1 nClasses-1]);
 wSoftmax = [wSoftmax zeros(nVars+1,1)];
-
-opts.maxIter = 2000;
-opts.TolX   = 1e-7;
-opts.TolFun = 1e-7;
-model = logregFit(X0, y, 'lambda', lambda0, 'fitOptions', opts, ...
-    'preproc', struct('standardizeX', false), 'fitFn', @logregFitL2Minfunc);
-wMAP = model.w; 
-assert(approxeq(wMAP, wSoftmax))
-
 [junk yhat] = max(X*wSoftmax,[],2);
 trainErr = sum(yhat~=y)/length(y)
-
-[yhat2, prob] = logregPredict(model, X0);
-assert(isequal(yhat, yhat2))
 
 figure;
 plotClassifier(X,y,wSoftmax,'Multinomial Logistic Regression');
