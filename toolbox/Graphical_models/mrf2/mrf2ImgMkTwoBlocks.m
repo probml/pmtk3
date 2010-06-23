@@ -1,4 +1,4 @@
-function blocks = mrfImgMkTwoBlocks(nRows, nCols)
+function blocks = mrf2ImgMkTwoBlocks(nRows, nCols)
 %% Make Blocks - comb structure (2 interlocking trees)
 nNodes = nRows*nCols;
 nodeNums = reshape(1:nNodes,nRows,nCols);
