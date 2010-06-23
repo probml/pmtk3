@@ -8,7 +8,7 @@ function generatePmtkDataTable(dataSource)
 if nargin == 0
     dataSource = getConfigValue('PMTKlocalDataPath');
 end
-googleRoot = ' http://pmtkdata.googlecode.com/svn/trunk';
+googleRoot = 'http://pmtkdata.googlecode.com/svn/trunk';
 dataSets   = dirs(dataSource);
 perm       = sortidx(lower(dataSets)); % sort by name
 dataSets   = dataSets(perm);
