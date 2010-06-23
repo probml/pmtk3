@@ -8,6 +8,6 @@ modelLR = logregFit(Xtrain, ytrain);
 yhat = logregPredict(modelLR, Xtest); 
 nerrsLR = sum(yhat ~= ytest)
 %% Probit Regression
-modelProbit = probitRegFitEm(Xtrain, ytrain);
+modelProbit = probitRegFit(Xtrain, ytrain);
 yhat = probitRegPredict(modelProbit, Xtest);
 nerrsProbit = sum(yhat ~= ytest)

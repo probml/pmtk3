@@ -1,5 +1,5 @@
 %% Fit a mixture of Student T distributions to the bankruptcy data
-%
+% See mixStudentBankruptcyDemo
 %%
 function mixStudentBankruptcyDemoTrainTest()
 
