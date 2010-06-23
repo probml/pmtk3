@@ -53,8 +53,7 @@ end
 %%
 % If running windows, add the svm executables to the system path.
 if ispc() && exist('pmtkSupportRoot', 'file')
-    folder = fullfile(pmtkSupportRoot(), 'toolbox',...
-        'Kernel_methods_for_supervised_learning');
+    folder = pmtkSupportRoot();
     
     dirs = {'svmLightWindows'        , ...
             'liblinear-1.51\windows' , ...
