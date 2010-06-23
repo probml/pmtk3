@@ -35,7 +35,7 @@ title('imputed - truth');
 printPmtkFigure('mvnImputeDiff');
 end
 
-if 1
+if 0
 figure; hintonDiagram(XimputeEM(ndx,:)); title('imputation with em');
 printPmtkFigure('mvnImputeImputeEM');
 

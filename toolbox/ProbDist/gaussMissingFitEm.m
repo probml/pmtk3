@@ -9,23 +9,24 @@ function [model, loglikHist] = gaussMissingFitEm(data, varargin)
 ismissing   = isnan(data);
 missingRows = find(any(ismissing, 2));
 X = data'; % it will be easier to work with column vectors
-expVals = zeros(d, n);
-expProd = zeros(d, d, n);
-%% If there is no missing data, then just plug-in -- E step not needed
+EXsum = zeros(d, 1);
+EXXsum = zeros(d, d);
+%% Precompute ESS for cases where there is no missing data (E step not needed)
 notMissing = setdiffPMTK(1:n, missingRows); 
 for row = 1:numel(notMissing)
     i = notMissing(row); 
-    expVals(:, i) = X(:, i);
-    expProd(:, :, i) = X(:, i)*X(:, i)';
+    EXsum = EXsum + X(:, i);
+    EXXsum = EXXsum + X(:, i)*X(:, i)';
 end
 %%
-ess = structure(expVals, expProd, ismissing, missingRows, n);
+ess = structure(EXsum, EXXsum, ismissing, missingRows, n);
 estepFn = @(model, data)estep(model, data, ess);
-initFn = @(model, data, restartNum)init(model, data, restartNum, ismissing); 
-[model, loglikHist] = emAlgo([], X, initFn, estepFn, @mstep, varargin{:});
+initFn = @(model, data, restartNum)init(model, data, restartNum, ismissing);
+model.modelType = 'gauss';
+[model, loglikHist] = emAlgo(model, X, initFn, estepFn, @mstep, varargin{:});
 end
 
-function model = init(model, X, restartNum, ismissing)
+function model = init(model, X, restartNum, ismissing) %#ok
 % Initialize
 data = X';
 nmissing = sum(ismissing(:)); 
@@ -39,33 +40,33 @@ end
 
 function [ess, loglik] = estep(model, X, ess)
 % Compute the expected sufficient statistics
-expVals     = ess.expVals;
-expProd     = ess.expProd;
 ismissing   = ess.ismissing;
 missingRows = ess.missingRows;
 mu = model.mu;
-Sigma = model.Sigma; 
+Sigma = model.Sigma;
+d = numel(mu);
+EX = zeros(d,1); EXX = zeros(d, d);
 for row = 1:numel(missingRows)
     i = missingRows(row); 
     u = ismissing(i, :); % unobserved entries
     o = ~u; % observed entries
-    Si = Sigma(u, u) - Sigma(u, o) * (Sigma(o, o)\Sigma(o, u));
-    expVals(u, i) = mu(u) + Sigma(u, o)*(Sigma(o, o)\(X(o, i)-mu(o)));
-    expVals(o, i) = X(o, i);
-    expProd(u, u, i) = expVals(u, i) * expVals(u, i)' + Si;
-    expProd(o, o, i) = expVals(o, i) * expVals(o, i)';
-    expProd(o, u, i) = expVals(o, i) * expVals(u, i)';
-    expProd(u, o, i) = expVals(u, i) * expVals(o, i)';
+    Vi = Sigma(u, u) - Sigma(u, o) * (Sigma(o, o)\Sigma(o, u));
+    mi = mu(u) + Sigma(u, o)*(Sigma(o, o)\(X(o, i)-mu(o)));
+    EX(u) = mi;
+    EX(o) = X(o, i);
+    EXX(u, u) = EX(u) * EX(u)' + Vi;
+    EXX(o, o) = EX(o) * EX(o)';
+    EXX(o, u) = EX(o) * EX(u)';
+    EXX(u, o) = EX(u) * EX(o)';
+    ess.EXsum = ess.EXsum + EX;
+    ess.EXXsum = ess.EXXsum + EXX;
 end
-ess.expVals = expVals;
-ess.expProd = expProd; 
 loglik = sum(gaussLogprobMissingData(model, X'));
 end
 
 function model = mstep(model, ess)
 % Maximize
 n = ess.n;
-mu = sum(ess.expVals, 2)/n;
-Sigma = sum(ess.expProd, 3)/n - mu*mu';
-model = structure(mu, Sigma);
+model.mu = ess.EXsum/n;
+model.Sigma = ess.EXXsum/n - model.mu*model.mu';
 end
