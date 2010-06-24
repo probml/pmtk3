@@ -1,11 +1,13 @@
-function [model, logev] = linregFitVb(X, y, varargin)
+function [model, logev] = linregFitVb(X, y, addOnes, varargin)
 % Variational bayes inference for linear regression
 % We use the following prior:
 %   p(w, beta, alpha) = N(w | 0, (beta diag(alpha))^{-1}) *
-%       * IG(beta | a0, b0) * IG(c0, d0)
+%       * IG(beta | a0, b0) * IG(alpha | c0, d0)
 % where a0, b0, c0, d0 are set small (vague prior)
 % where alpha is a vector of precisions and beta is the noise precision.
 % (Thus the model implements ARD) 
+% If addOnes=true, we clamp E(alpha(1)) = 10^10 to ensure
+% that the first term of w is not regularized.
 %
 % model is struct  with the following fields
 %   wN, VN, aN, bN, cN, dN, expectAlpha, 
@@ -14,7 +16,9 @@ function [model, logev] = linregFitVb(X, y, varargin)
 
 %PMTKauthor Jan Drugowitsch
 %PMTKurl http://www.bcs.rochester.edu/people/jdrugowitsch/code.html
+%PMTKmodified Kevin Murphy
 
+% KPM mpd
 [max_iter] = process_options(varargin, 'maxIter', 100);
 
 % uninformative priors
@@ -32,7 +36,6 @@ cn = c0 + 1 / 2;
 
 % iterate to find hyperparameters
 L_last = -realmax;
-max_iter = 100;
 E_a = ones(D, 1) * c0 / d0;
 for iter = 1:max_iter
     % covariance and weight of linear model
