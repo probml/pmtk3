@@ -19,7 +19,9 @@ verb = true;
 % first EM
 fprintf('EM First\n')
 [model, LLtrace{1}] = gaussMissingFitEm(Xmiss, 'verbose', verb, 'maxIter', 500);
-[muHat{1}, SigmaHat{1}] = structvals(model);
+muHat{1} = model.mu;
+SigmaHat{1} = model.Sigma; 
+
 % second ICM
 fprintf('Now ICM\n')
 [model, LLtrace{2}] = gaussMissingFitICM(Xmiss, 'verbose', verb);
