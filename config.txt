@@ -1,18 +1,19 @@
 % This file stores hard coded paths and configuration variables
 % Use getConfigValue(varname) to access a value, e.g. 
 % getConfigValue('PMTKsupportLink')
+%
 % If a config-local.txt file is found, its values will override these.
 %
-%
-% PMTKsupportLink      http://pmtksupport.googlecode.com/files/pmtkSupport-25June2010.zip
-% PMTKlocalWikiPath    C:\kmurphy\googleCode\pmtk3Wiki
-% PMTKlocalDataPath    C:\kmurphy\googleCode\pmtkData
-% PMTKlocalSupportPath C:\kmurphy\googleCode\pmtkSupport
-% PMTKsynopsisWikiFile C:\kmurphy\googleCode\pmtk3wiki\synopsisPages.wiki
-% PMTKdemosWikiFile    C:\kmurphy\googleCode\pmtk3wiki\Demos.wiki
-% PMTKpmlBookSource    C:\kmurphy\dropbox\PML\Text
-% PMTKpmlCodeIndFile   C:\kmurphy\dropbox\PML\Text\code.ind
-% PMTKpmlTocFile       C:\kmurphy\dropbox\PML\Text\pml.toc
-% PMTKred              #990000
-% PMTKauthors          Kevin Murphy, Matt Dunham
-% PMTKcodeDirs         toolbox, bookDemos
+% PMTKsupportLink http://pmtksupport.googlecode.com/files/pmtkSupport-25June2010.zip
+% PMTKred         #990000
+% PMTKauthors     Kevin Murphy, Matt Dunham
+% PMTKcodeDirs    toolbox, bookDemos
+
+% PMTKlocalWikiPath    C:\path\to\pmtk3Wiki
+% PMTKlocalDataPath    C:\path\to\pmtkData
+% PMTKlocalSupportPath C:\path\to\pmtkSupport
+% PMTKsynopsisWikiFile C:\path\to\pmtk3wiki\synopsisPages.wiki
+% PMTKdemosWikiFile    C:\path\to\pmtk3wiki\Demos.wiki
+% PMTKpmlBookSource    C:\path\to\PML\Text
+% PMTKpmlCodeIndFile   C:\path\to\PML\Text\code.ind
+% PMTKpmlTocFile       C:\path\to\PML\Text\pml.toc

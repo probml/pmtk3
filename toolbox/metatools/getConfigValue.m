@@ -28,7 +28,7 @@ end
 %%
 if isempty(value) && searchTwice 
     % search config.txt if not found in config-local.txt    
-    [tags, lines] = tagfinder(local);
+    [tags, lines] = tagfinder(generic);
     S = createStruct(tags, lines);
     if isfield(S, var)
         value = strtrim(S.(var));
