@@ -33,20 +33,17 @@ for m=1:length(methods)
     method = methods{m};
     maxIter = 15;
     progressFn =  @(X, iter)plotter(X, iter, method);
+    postMean = @meanFieldIsingGrid;
     args = {'maxIter', maxIter, 'progressFn', progressFn};
     switch lower(method)
         case 'meanfieldh',
             args = [args {'updateRate', 0.5, 'inplaceUpdates', false}];%#ok
-            postMean = @meanFieldIsingGrid;
         case 'meanfieldhip',
             args = [args {'updateRate', 0.5, 'inplaceUpdates', true}]; %#ok
-            postMean = @meanFieldIsingGrid;
         case 'meanfield1',
             args = [args {'updateRate', 1  , 'inplaceUpdates', false}];%#ok
-            postMean = @meanFieldIsingGrid;
         case 'meanfield1ip',
             args = [args {'updateRate', 1  , 'inplaceUpdates', true}]; %#ok
-            postMean = @meanFieldIsingGrid;
         otherwise
             postMean = @gibbsIsingGrid;
     end
