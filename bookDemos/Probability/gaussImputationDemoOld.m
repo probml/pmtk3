@@ -18,7 +18,9 @@ pcMissing = 0.5;
 for useFull = [true]
   if useFull
     model = gaussMissingFitEm(XfullTrain, 'verbose', false);
-    [muHat, SigmaHat] = structvals(model);
+    muHat = model.mu;
+    SigmaHat = model.SigmaHat;
+    
     assert(approxeq(rowvec(muHat), mean(XfullTrain)))
     assert(approxeq(SigmaHat, cov(XfullTrain,1)))
     [Ximpute, V] = gaussImpute(model, Xmiss);
