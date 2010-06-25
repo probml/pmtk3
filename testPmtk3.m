@@ -39,7 +39,7 @@ catch %#ok
 end
 %% graphViz4Matlab
 gvizErr = false; 
-if ~isOctave
+if ~isOctave && ~verLessThan('matlab', '7.6.0')
     fprintf('Checking for graphviz............');
     
     [j, err] = evalc('system([''dot'','' -V'']);');
@@ -69,7 +69,6 @@ knnClassifyDemo;
 pcaDemo2d;
 close all
 mixGaussFitEm(loadData('faithful'), 2);
-demoSteepestDescentRosen;
 close all
 gammaRainfallDemo;
 kalmanTrackingDemo;
