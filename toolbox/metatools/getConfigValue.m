@@ -1,6 +1,6 @@
 function value = getConfigValue(var, ignoreLocal)
 %% Return the value of a configuration variable stored in config.txt
-% If a config-local.txt file is found, these value override config.txt's
+% If a config-local.txt file is found, its values override config.txt's
 % values. 
 %% Example
 % path = getConfigValue('PMTKsupportLink');
