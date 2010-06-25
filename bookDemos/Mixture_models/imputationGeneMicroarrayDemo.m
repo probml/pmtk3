@@ -34,7 +34,7 @@ for di=1:length(datasets)
     methodNames = {'row mean', 'col mean', 'knn1', 'knn5', 'mixGauss1'}; % 'mixGauss5'};
     imputeRows = @(X)imputeColumns(X')';
     imputeFns = {imputeRows, @imputeColumns, @(X)imputeKnn(X, 1), @(X)imputeKnn(X, 5), ...
-        @(X)imputeMixGauss(X, 1, opts{:})};
+        @(X)mixGaussImpute(mixGaussCreate([], [], [], 1), X, opts{:})};
     %@(X)imputeMixGauss(X, 5, opts{:})};
     nMethod = length(methodNames);
     
