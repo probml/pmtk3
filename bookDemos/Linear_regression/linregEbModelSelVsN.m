@@ -1,9 +1,11 @@
 %% Bayesian model selection demo for polynomial regression
 % This illustartes that if we have more data, Bayes picks a more complex model.
-%
+% We use empirical Bayes (EB) and variational Bayes (VB)
+% to tune the hyper-parameter and approximate the marginal likelihood
+
 % Based on a demo by Zoubin Ghahramani
 
-% We use the pmtk wrapper to Tao Chen's code
+% For EB, we either use the pmtk wrapper to Tao Chen's code
 % and to Ian Nabney's netlab code. The netlab version seems
 % to work better when N is small (~8), but both give the same
 % results when N is large (~ 32).
@@ -21,13 +23,12 @@ for ni=1:length(Ns)
   plotvals1d = [-2:0.1:12]'; % uniform grid for plotting/ testing
   trueOutput = (plotvals1d-4).^2;
   
-  names = {'Chen', 'Netlab'};
-  %names = {'Netlab'};
-   
+ %names = {'vb', 'ebNetlab', 'ebChen'};
+  names = {'VB', 'EB'};
+ 
   for i=1:length(names)
     %fitFn = fitFns{i}; predFn = predFns{i};
     name = names{i};
-    
     
     degs = [1 2 3];
     for m=1:length(degs)
@@ -37,11 +38,12 @@ for ni=1:length(Ns)
       Xtest = polyBasis(plotvals1d, deg);
       Xtest = Xtest(:, 2:end);
       
-      [model, logev(m)] = linregFitBayes(X, ytrain, 'prior', 'eb', 'ebMethod', name);
+      [model, logev(m)] = linregFitBayes(X, ytrain, 'prior', name);
       [mu, sig2] = linregPredictBayes(model, Xtest);
       sig = sqrt(sig2);
       
       % Plot the data, the original function, and the trained network function.
+      if 1
       figure;
       plot(x1d, ytrain, 'ok', 'markersize', 10, 'linewidth', 3)
       hold on
@@ -49,11 +51,12 @@ for ni=1:length(Ns)
       plot(plotvals1d, mu, 'r-.', 'linewidth', 3)
       plot(plotvals1d, mu + sig, 'b:');
       plot(plotvals1d, mu - sig, 'b:');
-      title(sprintf('d=%d, logev=%5.3f, %s', deg, logev(m)))
-      printPmtkFigure(sprintf('linregEbModelSelVsN%d%sD%d', ndata, name, deg))
+      %title(sprintf('d=%d, logev=%5.3f', deg, logev(m)))
+      title(sprintf('d=%d, logev=%5.3f, %s', deg, logev(m), name))
+      printPmtkFigure(sprintf('linregEbModelSelVsN%dD%d%s', ndata,  deg, name))
+      end
     end
-   
-    
+     
     
     figure;
     PP=exp(logev);
@@ -63,7 +66,8 @@ for ni=1:length(Ns)
     set(gca,'FontSize',16);
     aa=xlabel('M'); set(aa,'FontSize',20);
     aa=ylabel('P(M|D)'); set(aa,'FontSize',20);
-    title(sprintf('N=%d', ndata))
+    %title(sprintf('N=%d', ndata))
+    title(sprintf('N=%d, method=%s', ndata, name))
     printPmtkFigure(sprintf('linregEbModelSelVsN%dPost%s', ndata, name))
   end % for i
   

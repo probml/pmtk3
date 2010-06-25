@@ -63,7 +63,8 @@ printPmtkFigure(sprintf('linregPolyVsRegTestErrN%d', n))
 
 %% print fitted function for certain chosen lambdas
 
-for k=printNdx
+
+for k=[] %printNdx
   lambda = lambdas(k);
   [model] = linregFit(Xtrain, ytrain, 'lambda', lambda, 'preproc', pp);
   [ypredTest, s2] = linregPredict(model, Xtest);
@@ -101,6 +102,8 @@ ylabel('mse')
 errorbar(ndx, mu, se, 'ko-','linewidth', 2, 'markersize', 12 );
 title(sprintf('%d-fold cross validation, ntrain = %d', nfolds, N))
 if n <= 21
+  % When N is small, CV massively over-estimates error for small 
+  % lambda, so we have to use log scale
   set(gca,'yscale','log')
 else
   yy = get(gca,'ylim');
@@ -119,7 +122,7 @@ verticalLine(ndx(idx_opt), 'color','b', 'linewidth',2);
 printPmtkFigure(sprintf('linregPolyVsRegCvN%d', n))
 
 
-%% Empirical Bayes
+%% Bayes
 % We  compute log evidence for each value of alpha
 % to see how it compares to test error
 % To simplify things, we use the known noise variance
@@ -150,19 +153,10 @@ title('mean squared error')
 
 
 % Log evidence vs alpha
-figure;
+figLogev = figure;
 plot(log(alphas), logev, 'ko-', 'linewidth', 2, 'markersize', 12);
 xlabel('log alpha')
 title('log evidence')
-
-%% Now optimize alpha and beta using empirical Bayes
-
-[modelEB, logevEB] = linregFitBayes(Xtrain, ytrain, 'preproc', pp, 'prior', 'eb');
-alpha = modelEB.netlab.alpha;
-beta = modelEB.netlab.beta;
-lambdaEB = alpha / beta;
-verticalLine(log(alpha), 'linewidth', 3);
-printPmtkFigure(sprintf('linregPolyVsRegTestEbN%d', n))
 
 % Plot p(m|D) vs alpha
 figure;
@@ -170,5 +164,21 @@ prob = exp(normalizeLogspace(logev));
 bar(log(alphas), prob);
 xlabel('log alpha')
 title('p(alpha|data)')
+
+%% Now optimize alpha and beta using empirical Bayes
+[modelEB, logevEB] = linregFitBayes(Xtrain, ytrain, 'preproc', pp, 'prior', 'eb');
+alphaEB = modelEB.netlab.alpha;
+figure(figLogev);
+verticalLine(log(alphaEB), 'linewidth', 3, 'color', 'r');
+printPmtkFigure(sprintf('linregPolyVsRegTestEbN%d', n))
+
+
+%% Now infer alpha and beta using VB
+[modelVB, logevVB] = linregFitBayes(Xtrain, ytrain, 'preproc', pp, 'prior', 'vb');
+alphaVB = modelVB.expectAlpha;
+figure(figLogev);
+verticalLine(log(alphaVB), 'linewidth', 3, 'color', 'b');
+
+
 
 end

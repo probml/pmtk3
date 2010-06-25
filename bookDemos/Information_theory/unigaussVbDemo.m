@@ -99,11 +99,11 @@ level = 5;
 figure;
 plotFnTrue = @(input) normalGammaPdf(input(:,1), input(:,2), truePost.mu, ...
     truePost.kappa, truePost.alpha, truePost.beta);
-[p, h] = plotContour(plotFnTrue, [-1 1 0 2], level, 'g-', 'linewidth', 3);
+[p, h] = plotContour(plotFnTrue, [-1 1 0 2], level, 'g-', 'linewidth', 3, 'npoints', 50);
 
 hold on;
 plotFnPredict = @(input) vbPost(input(:,1), input(:,2), aN, bN, muN, kappaN);
-[p, h] = plotContour(plotFnPredict, [-1 1 0 2], level, 'r:', 'linewidth', 2);
+[p, h] = plotContour(plotFnPredict, [-1 1 0 2], level, 'r:', 'linewidth', 2, 'npoints', 50);
 axis equal
 
 legend('exact', 'vb')
