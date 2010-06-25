@@ -55,7 +55,6 @@ for m=1:length(methods)
     colorbar;
     title(sprintf('mean after %d sweeps of %s', maxIter, method));
     axis('square');
-    colormap gray;
     axis off;
     printPmtkFigure(sprintf('isingImageDenoise%sMean', method));
 end
