@@ -58,6 +58,13 @@ if exist(source, 'dir')
 else
     installPmtkSupport();
 end
+% Add graphViz directory
+if matlab && ~verLessThan('matlab', '7.6.0')
+    gvizDir = getConfigValue('PMTKgvizPath'); 
+    if exist(gvizDir, 'dir')
+       addToSystempath(gvizDir);  
+    end
+end
 %%
 % If running windows, add the svm executables to the system path.
 if ispc() && exist('pmtkSupportRoot', 'file')
