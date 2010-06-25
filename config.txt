@@ -3,7 +3,7 @@
 % getConfigValue('PMTKsupportLink')
 %
 %
-% PMTKsupportLink      http://pmtksupport.googlecode.com/files/pmtkSupport-23June2010.zip
+% PMTKsupportLink      http://pmtksupport.googlecode.com/files/pmtkSupport-25June2010.zip
 % PMTKlocalWikiPath    C:\googleCode\pmtk3Wiki
 % PMTKlocalDataPath    C:\googleCode\pmtkData
 % PMTKlocalSupportPath C:\googleCode\pmtkSupport
