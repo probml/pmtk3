@@ -8,10 +8,12 @@ function [yhat, p, pCI] = logregPredictBayes(model, X, method)
 %   p(i) = median{p(y=1)}. We also return 
 %    pCI(i, :) = [Q5 Q95] = 5% and 95% quantiles 
 
-if nargout >= 3
-  method = 'mc';
-else
-  method = 'plugin'; % fastest
+if nargin < 3
+  if nargout >= 3
+    method = 'mc';
+  else
+    method = 'plugin'; % fastest
+  end
 end
 
 w = model.wN;
@@ -28,6 +30,9 @@ switch method
     p = logregPredictMackay(X, w, V);
   case 'mc'
     [p, pCI] = logregPredictBayesMc(X, w, V);
+  case 'vb'
+    % This is a wrapper to Jan Drugowitsch's code.
+    p = bayes_logit_post(X, model.wN, model.VN, model.invVN);
   otherwise
     error(['unrecognized method ' method])
 end
@@ -56,7 +61,6 @@ end
 function p = logregPredictMackay(X, wMAP, C)
 % Compute p(i) = p(y=1|X(i,:)) \approx int sigma(y w^T X(i,:)) * gauss(w | wMAP, C) dw
 % Bishop'06 p219
-
 mu = X*wMAP(:);
 [N D] = size(X);
 %sigma2 = diag(X * C * X');

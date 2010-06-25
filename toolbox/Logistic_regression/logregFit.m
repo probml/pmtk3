@@ -1,4 +1,4 @@
-function [model, X] = logregFit(X, y, varargin)
+function [model, X, lambdaVec] = logregFit(X, y, varargin)
 % Fit a logistic regression model, (supports multiclass)
 %% INPUTS: (specified as name value pairs)
 % regType       ... 'L1' or 'L2' or 'none'
@@ -50,7 +50,9 @@ else
     model.binary = false;
 end
 model.lambda = lambda;
+
 lambdaVec = lambda*ones(D, nclasses-1);
+  
 if preproc.addOnes
     lambdaVec(1, :) = 0; % don't penalize bias term
 end
