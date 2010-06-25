@@ -99,7 +99,8 @@ for m=1:M
     useSErule=0; doPlot=0; plotArgs= [];
     [model{m}, bestParam(m)] = fitCv(params,...
         fitFn, predictFn, @zeroOneLossFn, xtrain_std, ytrain, ...
-        Nfolds, useSErule, doPlot, plotArgs,  folds);
+        Nfolds, 'useSErule', useSErule, 'doPlot', doPlot, ...
+        'plotArgs', plotArgs, 'testFolds', folds);
     %ndx = find(err==min(err), 1);
     %lossCv(m)= err(ndx); seCv(m) = se(ndx);
     yhat = predictFn(model{m}, xtest_std);

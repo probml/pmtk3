@@ -123,7 +123,7 @@ else
     
     [model, bestLambda, muLoss, seLoss] = ...
         fitCv(lambda, fitFn, @logregPredict, lossFn, X, y, nfolds, ...
-              useSErule, plotCv);
+              'useSErule', useSErule, 'doPlot', plotCv);
 end
 %%
 lambdas = lambda;

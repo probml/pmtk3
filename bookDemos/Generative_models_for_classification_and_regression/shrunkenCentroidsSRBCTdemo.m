@@ -38,7 +38,7 @@ title('SRBCT data')
 nFolds = 10;
 useSErule = false;
 [bestModel, bestDelta, errCV, se] = fitCv(lambdas, fitFn, predictFn,...
-    @zeroOneLossFn, [Xtrain;Xtest], [ytrain;ytest], nFolds, useSErule); 
+    @zeroOneLossFn, [Xtrain;Xtest], [ytrain;ytest], nFolds, 'useSErule', useSErule); 
 
   figure;
 lambda = lambdas;

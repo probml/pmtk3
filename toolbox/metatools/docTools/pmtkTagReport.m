@@ -30,8 +30,8 @@ function I = pmtkTagReport(root)
 %%
 %
 if nargin < 1, 
-    root = {fullfile(pmtk3Root(), 'toolbox'), ...
-            fullfile(pmtk3Root(), 'bookDemos')} ; 
+    searchDirs = tokenize(getConfigValue('PMTKcodeDirs'), ','); 
+    root = cellfuncell(@(d)fullfile(pmtk3Root(), d), searchDirs); 
 end
 %% Get a list of all  files
 if iscell(root)

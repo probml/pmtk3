@@ -74,10 +74,10 @@ lambdasGL1 = linspace(maxLambda, eps, 20);
 
 %% Fit 
 fitFn = @(X,y,lambda) linregFitLassoEm(X,y,  lambda); 
-[wHatLasso] = fitCv(lambdasL1, fitFn, predictFn, lossFn, Xtrain, ytrain,  Nfolds, useSErule);
+[wHatLasso] = fitCv(lambdasL1, fitFn, predictFn, lossFn, Xtrain, ytrain,  Nfolds, 'useSErule', useSErule);
 
 fitFn = @(X,y,lambda) linregFitGroupLassoProj(X,y, groups, lambda);
-[wHatGroup] = fitCv(lambdasGL1, fitFn, predictFn, lossFn, Xtrain, ytrain,  Nfolds, useSErule);
+[wHatGroup] = fitCv(lambdasGL1, fitFn, predictFn, lossFn, Xtrain, ytrain,  Nfolds, 'useSErule', useSErule);
 
 
 %% Plot

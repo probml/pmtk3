@@ -26,7 +26,7 @@ useSErule = true;
 plotCv = true; 
 [LRmodel, lambdaStar, LRmu, LRse] = ...
     fitCv(paramRange, fitFn, predictFn, lossFn, Xtrain, ytrain, nfolds, ...
-    useSErule, plotCv);
+    'useSErule', useSErule, 'doPlot', plotCv);
 
 set(gca, 'xscale', 'log')
 yhat = logregPredict(LRmodel, Xtest);

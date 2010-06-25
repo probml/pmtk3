@@ -145,7 +145,7 @@ options = {'maxIter', 15, 'verbose', false};
 fitFn = @(X,y,ps) linregFitSparseEm(X,y, prior, 'scale', ps(1), 'shape', ps(2),options{:});
 predictFn = @(w, X) X*w;
 lossFn = @(yhat, y)  sum((yhat-y).^2);
-[w, bestParams, mu, se] = fitCv(params, fitFn, predictFn, lossFn, Xtrain, ytrain,  Nfolds, useSErule);
+[w, bestParams, mu, se] = fitCv(params, fitFn, predictFn, lossFn, Xtrain, ytrain,  Nfolds, 'useSErule', useSErule);
 
 % refit model using more iterations with best params and all the data
 scale = bestParams(1);

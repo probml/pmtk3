@@ -5,7 +5,7 @@ loadData('crabs')
 %% SVM
 gammas = logspace(-2, 2, 50);
 Cvals  = logspace(-1, 3.5, 30);
-cvopts = {5, false, true}; % {nfolds, useSErule, doPlot}
+cvopts = {5, 'useSErule', false, 'doPlot', true}; % {nfolds, useSErule, doPlot}
 model = svmFit(Xtrain, ytrain, 'kernel', 'rbf', ...
     'C', Cvals, 'kernelParam', gammas, 'cvOptions', cvopts);
 yhat = svmPredict(model, Xtest);

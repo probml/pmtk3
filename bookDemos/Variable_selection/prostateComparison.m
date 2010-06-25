@@ -19,7 +19,7 @@ lambdaRange  =  logspace(-2, maxLambda, 30);
 loss = @(yhat, ytest) mean((yhat - ytest).^2);                 
 fit = @(regType)fitCv(lambdaRange,...
     @(X, y, l)linregFit(X, y, 'lambda', l, 'regType', regType),...
-    @linregPredict, loss, Xtrain, ytrain, nfolds, false, true);
+    @linregPredict, loss, Xtrain, ytrain, nfolds, 'useSErule', false, 'doPlot', true);
 
 
 
