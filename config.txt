@@ -1,6 +1,7 @@
 % This file stores hard coded paths and configuration variables
 % Use getConfigValue(varname) to access a value, e.g. 
 % getConfigValue('PMTKsupportLink')
+% If a config-local.txt file is found, its values will override these.
 %
 %
 % PMTKsupportLink      http://pmtksupport.googlecode.com/files/pmtkSupport-25June2010.zip
