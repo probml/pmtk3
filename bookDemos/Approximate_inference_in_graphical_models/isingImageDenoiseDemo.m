@@ -1,82 +1,80 @@
+%% Image denoising using Ising prior and Gibbs sampling or mean field
+%
+%%
 function isingImageDenoiseDemo()
-%% image denoising using Ising prior and Gibbs sampling or mean field
+
+%% Generate Data
+% input matrix consisting of letter A. The body of letter A is made of 1's
+% while the background is made of -1's.
 setSeed(0);
-% Generate Data
-sigma = 2; % noise level
-% input matrix consisting of letter A. The body of letter
-% A is made of 1's while the background is made of -1's.
-img = imread('lettera.bmp'); 
-[M,N] = size(img);
-img = double(img);
-m = mean(img(:));
-img2 = +1*(img>m) + -1*(img<m); % -1 or +1
-y = img2 + sigma*randn(size(img2)); %y = noisy signal
-
-% Create model
-J = 1; % coupling strenght
-CPDs = {MvnDist(-1,sigma^2), MvnDist(+1,sigma^2)};
-model = IsingGridDist(J, CPDs);
-
-folder = 'C:\kmurphy\PML\pdfFigures';
-doPrint = false;
-
-figure; imagesc(y);  colorbar; title('noisy image');
-axis('square'); colormap gray; axis off; 
-if doPrint
-  fname = fullfile(folder, sprintf('isingImageDenoise.pdf'));
-  pdfcrop; print(gcf, '-dpdf', fname);
-end
-   
-methods = {'Gibbs', 'MeanfieldH', 'MeanfieldHIP', ...
-  'Meanfield1', 'Meanfield1IP'};
-
-
-
+sigma  = 2; % noise level
+data   = loadData('lettera');
+img    = data.A;
+[M, N] = size(img); %#ok
+img    = double(img);
+m      = mean(img(:));
+img2   = +1*(img>m) + -1*(img<m); % -1 or +1
+y      = img2 + sigma*randn(size(img2)); %y = noisy signal
+%%
+J    = 1; % coupling strenght
+CPDs = { gaussCreate(-1, sigma^2), gaussCreate(+1, sigma^2) };
+%%
+figure;
+imagesc(y);
+colorbar;
+title('noisy image');
+axis('square');
+colormap gray;
+axis off;
+printPmtkFigure('isingImageDenoise');
+%%
+methods = {'Gibbs', 'MeanfieldH', 'MeanfieldHIP', 'Meanfield1', 'Meanfield1IP'};
 for m=1:length(methods)
-  method = methods{m};
-  maxIter = 15;
-  args = {'maxIter', maxIter, 'progressFn', @plotter};
-  switch lower(method)
-    case 'meanfieldh',
-       methodName = 'meanfield';
-       args = [args {'updateRate', 0.5, 'inplaceUpdates', false}];
-     case 'meanfieldhip',
-       methodName = 'meanfield';
-       args = [args {'updateRate', 0.5, 'inplaceUpdates', true}];
-    case 'meanfield1',
-       methodName = 'meanfield';
-       args = [args {'updateRate', 1, 'inplaceUpdates', false}];
-     case 'meanfield1ip',
-       methodName = 'meanfield';
-       args = [args {'updateRate', 1, 'inplaceUpdates', true}];
-    otherwise
-    methodName = method;
-  end
-  
-  mu = postMean(model, y,'infMethod',methodName,'infArgs',args);
-  
-  figure; imagesc(mu); colormap('gray');
-  colorbar; title(sprintf('mean after %d sweeps of %s', maxIter, method));
-  axis('square'); colormap gray; axis off;
-   if doPrint
-     fname = fullfile(folder, sprintf('isingImageDenoise%sMean.pdf', method));
-     pdfcrop; print(gcf, '-dpdf', fname);
-   end
+    method = methods{m};
+    maxIter = 15;
+    progressFn =  @(X, iter)plotter(X, iter, method);
+    args = {'maxIter', maxIter, 'progressFn', progressFn};
+    switch lower(method)
+        case 'meanfieldh',
+            args = [args {'updateRate', 0.5, 'inplaceUpdates', false}];%#ok
+            postMean = @meanFieldIsingGrid;
+        case 'meanfieldhip',
+            args = [args {'updateRate', 0.5, 'inplaceUpdates', true}]; %#ok
+            postMean = @meanFieldIsingGrid;
+        case 'meanfield1',
+            args = [args {'updateRate', 1  , 'inplaceUpdates', false}];%#ok
+            postMean = @meanFieldIsingGrid;
+        case 'meanfield1ip',
+            args = [args {'updateRate', 1  , 'inplaceUpdates', true}]; %#ok
+            postMean = @meanFieldIsingGrid;
+        otherwise
+            postMean = @gibbsIsingGrid;
+    end
+    mu = postMean(J, CPDs, @gaussLogprob, y, args{:});
+    %%
+    figure;
+    imagesc(mu);
+    colormap('gray');
+    colorbar;
+    title(sprintf('mean after %d sweeps of %s', maxIter, method));
+    axis('square');
+    colormap gray;
+    axis off;
+    printPmtkFigure(sprintf('isingImageDenoise%sMean', method));
 end
 
- % plot intermediate results
-  function plotter(X, iter)
-    if any(iter == [ 1, 3, 5])
-      figure;
-      imagesc(X);  axis('square'); colormap gray; axis off; colorbar;
-      title(sprintf('sample %d, %s', iter, method));
-      drawnow
-      if doPrint
-        fname = fullfile(folder, sprintf('isingImageDenoise%s%d.pdf', method, iter));
-        pdfcrop; print(gcf, '-dpdf', fname);
-      end
-    end
-  end
+end
 
-
+function plotter(X, iter, method)
+%% plot intermediate results
+if any(iter == [ 1, 3, 5])
+    figure;
+    imagesc(X);  
+    axis('square');
+    colormap gray;
+    axis off; 
+    colorbar;
+    title(sprintf('sample %d, %s', iter, method));
+    printPmtkFigure(sprintf('isingImageDenoise%s%d', method, iter));
+end
 end
