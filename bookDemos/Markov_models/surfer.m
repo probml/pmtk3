@@ -16,6 +16,7 @@
 %%
 % PMTKauthor Cleve Moler
 % PMTKurl http://www.mathworks.com/moler/ncm/surfer.m
+% PMTKinteractive
 %%
 function [U,G] = surfer(root,n)
 

@@ -21,7 +21,7 @@ psi(:,t) = 0; % arbitrary value, since there is no predecessor to t=1
 for t=2:T
     for j=1:K
         [delta(j,t), psi(j,t)] = max(delta(:,t-1) .* A(:,j));
-        delta(j,t) = delta(j,t) * obslik(j,t);
+        delta(j,t) = delta(j,t) * B(j,t);
     end
     delta(:,t) = normalize(delta(:,t));
 end
