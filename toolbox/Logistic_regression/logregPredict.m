@@ -1,6 +1,7 @@
 function [yhat, p] = logregPredict(model, X)
-%% p(i, j) = p(y=j | X(i,:), model)
-% yhat max_j p(i, j) - same space as model.ySupport
+% Predict response for logistic regression
+% p(i, c) = p(y=c | X(i,:), model)
+% yhat(i) =  max_c p(i, c) - same space as model.ySupport
 % A column of 1s is added if this was done at training time
 % This works for both binary and multiclass and kernelized logistic
 % regression.

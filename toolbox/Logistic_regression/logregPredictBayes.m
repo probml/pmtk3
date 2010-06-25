@@ -1,11 +1,18 @@
-function [yhat, p, pCI] = logregPredictBayes(model, X)
-% yhat(i) = argmax_c p(y=c| X(i,:), wMean), converted to label space of model
-% p(i, c) = p(y=c | X(i,:), wMean) % Plug in approximation
-% For binary outputs, we can get a more refined probability using
-% Monte Carlo:
-% pCI(i, 1:3) = [Q5 Q50 Q95] = 5%, median and 95% quantiles of p(y=1|X(i,:))
-% A column of 1s is added to X if this was done at training time
+function [yhat, p, pCI] = logregPredictBayes(model, X, method)
+% Approximate p(i) = p(y=1|X(i,i), model) and yhat(i) = ind{p(i) > 0.5}
+% Method should be one of
+% - 'plugin': uses p(y=1 | X(i,:), E[w])
+% - 'moderated': uses the Mackay trick to approximate int_w Gauss(w)*sigmoid(y|w)
+% - 'vb': uses variational bayes to approximate int_w Gauss(w)*sigmoid(y|w)
+% - 'mc': draws Monte Carlo samples from p(w). In this case
+%   p(i) = median{p(y=1)}. We also return 
+%    pCI(i, :) = [Q5 Q95] = 5% and 95% quantiles 
 
+if nargout >= 3
+  method = 'mc';
+else
+  method = 'plugin'; % fastest
+end
 
 w = model.wN;
 V = model.VN;
@@ -14,31 +21,52 @@ if isfield(model, 'preproc')
     [X] = preprocessorApplyToTest(model.preproc, X);
 end
 
-if model.binary
+switch method
+  case 'plugin'
     p = sigmoid(X*w);
-    yhat = p > 0.5;  % now in [0 1]
-    yhat = setSupport(yhat, model.ySupport, [0 1]); 
-else
-    p = softmaxPmtk(X*w);
-    yhat = maxidx(p, [], 2);
-    C = size(p, 2); % now in 1:C
-    yhat = setSupport(yhat, model.ySupport, 1:C); 
+  case 'moderated'
+    p = logregPredictMackay(X, w, V);
+  case 'mc'
+    [p, pCI] = logregPredictBayesMc(X, w, V);
+  otherwise
+    error(['unrecognized method ' method])
 end
 
-if (nargout >= 3) && (model.binary)
-    Nsamples = 100;
-    ws = gaussSample(w, V, Nsamples);
-    N = size(X,1);
-    pCI = zeros(N, 3);
-    for i=1:N
-      ps = 1 ./ (1+exp(-X(i,:)*ws')); % ps(s) = p(y=1|x(i,:), ws(s,:)) row vec
-      tmp = sort(ps, 'ascend');
-      Q5 = tmp(floor(0.05*Nsamples));
-      Q50 = tmp(floor(0.50*Nsamples));
-      Q95 = tmp(floor(0.95*Nsamples));
-      pCI(i,:) = [Q5 Q50 Q95];
-    end
-end
-
+yhat = p > 0.5;  % now in [0 1]
+yhat = setSupport(yhat, model.ySupport, [0 1]); 
     
 end
+
+function [p, pCI] = logregPredictBayesMc(X, w, V)
+Nsamples = 100;
+ws = gaussSample(w, V, Nsamples);
+N = size(X,1);
+pCI = zeros(N, 2); p = zeros(N,1);
+for i=1:N
+  ps = 1 ./ (1+exp(-X(i,:)*ws')); % ps(s) = p(y=1|x(i,:), ws(s,:)) row vec
+  tmp = sort(ps, 'ascend');
+  Q5 = tmp(floor(0.05*Nsamples));
+  Q50 = tmp(floor(0.50*Nsamples));
+  Q95 = tmp(floor(0.95*Nsamples));
+  p(i) = Q50;
+  pCI(i,:) = [Q5 Q95];
+end
+end
+
+function p = logregPredictMackay(X, wMAP, C)
+% Compute p(i) = p(y=1|X(i,:)) \approx int sigma(y w^T X(i,:)) * gauss(w | wMAP, C) dw
+% Bishop'06 p219
+
+mu = X*wMAP(:);
+[N D] = size(X);
+%sigma2 = diag(X * C * X');
+sigma2 = zeros(1,N);
+for i=1:N
+  sigma2(i) = X(i,:)*C*X(i,:)';
+end
+kappa = 1./sqrt(1 + pi.*sigma2./8);
+p = sigmoid(kappa .* mu');
+
+end
+
+ 

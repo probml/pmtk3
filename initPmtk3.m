@@ -10,8 +10,11 @@ cd(fileparts(which(mfilename())));
 % Add PMTK3 to the Matlab path
 addpath(pwd);
 addpath(genpathPMTK(fullfile(pwd, 'toolbox')));
-addpath(genpathPMTK(fullfile(pwd, 'data')));
 addpath(genpathPMTK(fullfile(pwd, 'bookDemos')));
+
+% The following directories are initially empty
+% but may be filled with stuff on demand...
+addpath(genpathPMTK(fullfile(pwd, 'data')));
 addpath(genpathPMTK(fullfile(pwd, 'external')), '-end');
 %%
 % We store user specific pmtk info in a directory they are sure to have
@@ -47,9 +50,18 @@ text = { 'function answer = isOctave()'
 writeText(text, fullfile(pmtkInfoDir, 'isOctave.m')); 
 %%
 % Add PMTK support
-if  ~exist('pmtkSupportRoot', 'file')
+% If you have a local copy of pmtkSupport,
+% add it to your path
+% otherwise download it.
+source = getConfigValue('PMTKlocalSupportPath');
+if exist(source, 'dir')
+  addpath(genpathPMTK(source));
+else
    installPmtkSupport(); 
 end
+%if  ~exist('pmtkSupportRoot', 'file')
+%   installPmtkSupport(); 
+%end
 %%
 % If running windows, add the svm executables to the system path.
 if ispc() && exist('pmtkSupportRoot', 'file')
@@ -63,4 +75,12 @@ if ispc() && exist('pmtkSupportRoot', 'file')
         addtosystempath(fullfile(folder, dirs{i}))
     end
 end
+%%
+% Add local data directory to path if it exists
+source = getConfigValue('PMTKlocalDataPath');
+if exist(source, 'dir')
+  addpath(genpathPMTK(source));
+end
+%%
+disp('welcome to pmtk3')
 end
