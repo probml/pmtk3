@@ -71,6 +71,7 @@ if ~isbinary
 end
 model.w = w;
 model.preproc = preproc;
+model.type = 'logreg';
 end 
 
 function opts = defaultFitOptions(regType, D) 

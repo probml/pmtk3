@@ -6,6 +6,10 @@ function [yhat, p] = logregPredict(model, X)
 % This works for both binary and multiclass and kernelized logistic
 % regression.
 
+if ~strcmpi(model.type, 'logreg')
+  error('can only call this funciton on models of type logreg')
+end
+
 if isfield(model, 'preproc')
     [X] = preprocessorApplyToTest(model.preproc, X);
 end

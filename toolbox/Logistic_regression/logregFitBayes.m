@@ -28,6 +28,8 @@ end
   'preproc', preprocessorCreate('addOnes', true, 'standardizeX', true), ...
   'method', method, 'lambda', 0);
 
+[y, ySupport] = setSupport(y, [-1 1]);
+ 
 if ~strcmpi(method, 'laplace')
   % Laplace calls logregFit which calls ppApply already...
   [model.preproc, X] = preprocessorApplyToTrain(preproc, X);
@@ -44,5 +46,8 @@ switch method
   otherwise
     error(['unrecognized method ' method])
 end
+
+model.type = 'logregBayes';
+model.ySupport = ySupport;
 
 end

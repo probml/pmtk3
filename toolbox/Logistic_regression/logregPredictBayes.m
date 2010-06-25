@@ -8,6 +8,10 @@ function [yhat, p, pCI] = logregPredictBayes(model, X, method)
 %   p(i) = median{p(y=1)}. We also return 
 %    pCI(i, :) = [Q5 Q95] = 5% and 95% quantiles 
 
+if ~strcmpi(model.type, 'logregBayes')
+  error('can only call this funciton on models of type logregBayes')
+end
+
 if nargin < 3
   if nargout >= 3
     method = 'mc';

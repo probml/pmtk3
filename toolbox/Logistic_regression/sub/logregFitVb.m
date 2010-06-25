@@ -12,6 +12,8 @@ function [model, logev] = logregFitVb(X, y, useARD)
 %
 % logev is the lower bound on the log marginal likelihood
 
+if nargin < 3, useARD = false; end
+
 y = setSupport(y, [-1 1]);
 
 if ~useARD
