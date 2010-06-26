@@ -5,7 +5,7 @@ function [model] = logregFitLaplaceApprox(X, y, lambda, preproc)
 
 [y] = setSupport(y, [-1, 1]);
 
-% First find mode
+% First find mode - this will add ones for us
 [model, X, lambdaVec] = logregFit(X, y, 'regType', 'L2', 'lambda', lambda, 'preproc', preproc);
 wN = model.w;
 % X has possibly been transformed already

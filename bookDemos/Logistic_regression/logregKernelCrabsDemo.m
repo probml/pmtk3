@@ -5,8 +5,8 @@
 loadData('crabs');
 %%
 %% Here we cross validate over both lambda and Sigma
-lambda     = logspace(-7, -4, 20); 
-Sigma      = 8:0.5:10;
+lambda     = logspace(-7, -4, 10); %logspace(-7, -4, 20); 
+Sigma      = 8:10; % 8:0.5:10;
 paramRange = crossProduct(lambda, Sigma); 
 %% Construct fit function
 % plotCv expects a function of three variables, X, y, and param, where
@@ -17,7 +17,7 @@ paramRange = crossProduct(lambda, Sigma);
 % Sigma. 
 fitFn = @(X, y, param)...
     logregFit(X, y, 'lambda', param(1), 'regType', 'L1', 'preproc', ...
-    struct('kernelFn', @(X1, X2)kernelRbfSigma(X1, X2, param(2))));
+    preprocessorCreate('kernelFn', @(X1, X2)kernelRbfSigma(X1, X2, param(2))));
 %%
 predictFn = @logregPredict;
 lossFn = @(ytest, yhat)mean(yhat ~= ytest);

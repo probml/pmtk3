@@ -1,4 +1,4 @@
-function [model, logev] = linregFitVb(X, y, useARD)
+function [model, logev] = linregFitVb(X, y, pp, useARD)
 % Variational bayes inference for linear regression
 % This is a wrapper to Jan Drugowitsch's code.
 % We use the following prior:
@@ -13,6 +13,7 @@ function [model, logev] = linregFitVb(X, y, useARD)
 %
 % logev is the lower bound on the log marginal likelihood
 
+[model.preproc, X] = preprocessorApplyToTrain(pp, X);
 if ~useARD
   [w, V, invV, logdetV, an, bn, E_a, L] = bayes_linear_fit(X, y); %#ok
 else

@@ -9,16 +9,19 @@ function [yhat, p, pCI] = logregPredictBayes(model, X, method)
 %    pCI(i, :) = [Q5 Q95] = 5% and 95% quantiles 
 
 if ~strcmpi(model.type, 'logregBayes')
-  error('can only call this funciton on models of type logregBayes')
+  error('can only call this function on models of type logregBayes')
 end
 
 if nargin < 3
   if nargout >= 3
     method = 'mc';
+  elseif isfield(model, 'netlab')
+    method = 'netlab';
   else
     method = 'plugin'; % fastest
   end
 end
+method
 
 if isfield(model, 'preproc')
     [X] = preprocessorApplyToTest(model.preproc, X);
@@ -40,9 +43,15 @@ switch method
     error(['unrecognized method ' method])
 end
 
-yhat = p > 0.5;  % now in [0 1]
-yhat = setSupport(yhat, model.ySupport, [0 1]); 
-    
+if model.binary
+  yhat = p > 0.5;  % now in [0 1]
+  yhat = setSupport(yhat, model.ySupport, [0 1]); % restore initial support 
+else
+  yhat = maxidx(p, [], 2);
+  C = size(p, 2); % now in 1:C
+  yhat = setSupport(yhat, model.ySupport, 1:C); % restore initial support
+end
+
 end
 
 function [p, pCI] = logregPredictBayesMc(X, w, V)

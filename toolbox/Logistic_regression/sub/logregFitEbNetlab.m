@@ -1,13 +1,15 @@
-function [model, logev] = logregFitEbNetlab(X, y)
+function [model, logev] = logregFitEbNetlab(X, y, pp)
 % Empirical Bayes logistic regression using Netlab's evidence procedure
 % X is n*d, y is d*1, can be binary or multiclass
 % Do not add a column of 1s
 
-x = X;
+pp.addOnes = false; % netlab does this already
+[model.preproc, x] = preprocessorApplyToTrain(pp, X);
+
 nclasses = nunique(y);
 targets = dummyEncoding(y(:), nclasses);
-model.isbinary = nclasses < 3;
-if model.isbinary
+isbinary = nclasses < 3;
+if isbinary
   link = 'logistic';
 else
   link = 'softmax';
@@ -18,7 +20,7 @@ end
 [n,d] = size(x);
 % Set up network parameters.
 nin = d;		% Number of inputs.
-nout = 1;		% Number of outputs.
+nout = nclasses;		% Number of outputs.
 alpha_init = 0.01;	% initial regularizer
 
 net = glm(nin, nout, link, alpha_init);
@@ -40,12 +42,5 @@ end
 
 model.netlab = net;
 model.effnparams = gamma;
-      
-% Need to compute inverse hessian so we can get error bars
-w = netpak(model.netlab);
-hess = nethess(w, model.netlab, X, y);
-invhess = inv(hess);
-model.wMu = w;
-model.wCov = invhess;
 
 end

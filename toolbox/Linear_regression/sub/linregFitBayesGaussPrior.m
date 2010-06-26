@@ -1,11 +1,12 @@
-function [model, logev] = linregFitBayesGaussPrior(X, y, alpha, beta, addOnes)
+function [model, logev] = linregFitBayesGaussPrior(X, y, alpha, beta, pp)
 % Bayesian inference for a linear regression model with fixed noise
 % precision beta and diagonal gaussian prior with precision alpha
 
+[model.preproc, X] = preprocessorApplyToTrain(pp, X);
 [N,d] = size(X);
 w0 = zeros(d,1);
 alphaVec = alpha*ones(d,1);
-if addOnes
+if pp.addOnes
   alphaVec(1) = 1e-10; % don't regularize offset term
   % but we require Lam0 to be posdef
 end

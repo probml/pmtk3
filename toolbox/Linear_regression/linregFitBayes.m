@@ -23,35 +23,30 @@ function [model, logev] = linregFitBayes(X, y, varargin)
 % logev is  the log marginal likelihood
 
 
-[prior, preproc,  beta, alpha, g] = ...
+[prior, preproc,  beta, alpha, g, useARD] = ...
   process_options(varargin , ...
   'prior', 'uninf', ...
   'preproc', preprocessorCreate('addOnes', true, 'standardizeX', false), ...      
   'beta', [], ...
   'alpha', [], ...
-  'g', []);
-
-[preproc, X] = preprocessorApplyToTrain(preproc, X);
+  'g', [], ...
+  'useARD', false);
 
 % The prior is p(w) = N(w|0, (1/alpha) I)
 % which shrinks the offset term w(1) as well.
 % If we added 1s to the first column, we should adjust alpha.
 % Currently the EB and VB code cannot handle this
-% The VB ARD code could be modified to do so, but this has not been done
-addOnes = preproc.addOnes; 
-
+% The VB ARD code could be modified to do so, but this has not been done 
 
 switch lower(prior)
-  case 'uninf', [model, logev] = linregFitBayesJeffreysPrior(X, y, addOnes);
-  case 'gauss', [model, logev] = linregFitBayesGaussPrior(X, y, alpha, beta, addOnes);
-  case 'zellner', [model, logev] = linregFitBayesZellnerPrior(X, y, g, addOnes);
-  case 'vb', [model, logev] = linregFitVb(X, y);
-  case {'eb', 'ebnetlab'}, [model, logev] = linregFitEbNetlab(X, y);
-  case 'ebchen', [model, logev] = linregFitEbChen(X, y);
+  case 'uninf', [model, logev] = linregFitBayesJeffreysPrior(X, y, preproc);
+  case 'gauss', [model, logev] = linregFitBayesGaussPrior(X, y, alpha, beta, preproc);
+  case 'zellner', [model, logev] = linregFitBayesZellnerPrior(X, y, g, preproc);
+  case 'vb', [model, logev] = linregFitVb(X, y, preproc, useARD);
+  case {'eb', 'ebnetlab'}, [model, logev] = linregFitEbNetlab(X, y, preproc);
+  case 'ebchen', [model, logev] = linregFitEbChen(X, y, preproc);
 end
 
-
-model.preproc = preproc;
 model.modelType = 'linregBayes';
 
 end % end of main function

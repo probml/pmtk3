@@ -1,9 +1,11 @@
-function [model, logev] = linregNetlabFitEb(X, y)
+function [model, logev] = linregFitEbNetlab(X, y, pp)
 % Empirical Bayes linear regression using Netlab's evidence procedure
 % X is n*d, y is d*1
 % Do not add a column of 1s
 
-x = X; targets = y;
+pp.addOnes = false; % netlab already does this
+[model.preproc, x] = preprocessorApplyToTrain(pp, X);
+targets = y;
 
 % Uses evidence procedure to find optimal regularizer
 % logev is log p(y|X, alpha-hat, beta-hat)

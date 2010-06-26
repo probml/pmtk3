@@ -1,4 +1,4 @@
-function [model, L, Lhist] = linregFitEbChen(X, Y, varargin)
+function [model, L, Lhist] = linregFitEbChen(X, Y, pp, varargin)
 % Evidence procedure (Empirical Bayes) for linear regression
 % PMTKauthor Tao Chen
 % PMTKurl http://www3.ntu.edu.sg/home/chentao/software.htm
@@ -12,6 +12,7 @@ function [model, L, Lhist] = linregFitEbChen(X, Y, varargin)
 [maxIter, verbose] = process_options(varargin, ...
   'maxIter', 100, 'verbose', false);
 
+[model.preproc, X] = preprocessorApplyToTrain(pp, X);
 [N, M] = size(X);
 
 %% pre-computation & initial values

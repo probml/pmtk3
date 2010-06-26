@@ -1,4 +1,4 @@
-function [model, logev] = logregFitVb(X, y, useARD)
+function [model, logev] = logregFitVb(X, y, pp, useARD)
 % Variational bayes inference for logistic regression
 % This is a wrapper to Jan Drugowitsch's code.
 % We use the following prior:
@@ -12,9 +12,9 @@ function [model, logev] = logregFitVb(X, y, useARD)
 %
 % logev is the lower bound on the log marginal likelihood
 
-if nargin < 3, useARD = false; end
 
 y = setSupport(y, [-1 1]);
+[model.preproc, X] = preprocessorApplyToTrain(pp, X);
 
 if ~useARD
   [w, V, invV, logdetV, E_a, L] = bayes_logit_fit(X, y); %#ok
