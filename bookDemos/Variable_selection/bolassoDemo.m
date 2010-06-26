@@ -1,7 +1,7 @@
 %% Reproduce figures 1,2,3 from Bolasso: Model Consistent Lasso Estimation
 % throught the Bootstrap, by Francis R. Bach.
 %%
-%PMTKslow
+%PMTKreallySlow
 seed = 2008;
 rand('twister',seed);randn('state',seed);
 if(exist('bolassoDemoResults.mat','file'))
