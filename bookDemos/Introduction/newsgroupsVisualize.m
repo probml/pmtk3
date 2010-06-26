@@ -1,7 +1,11 @@
 %% Visualize word-document binary matrix
 %
 %%
-loadData('newsgroups'); % X is 16,642 documents by 100 words  (sparse logical  matrix)
+loadData('20news_w100');
+ % documents, wordlist, newsgroups, groupnames
+X = documents'; % 16,642 documents by 100 words  (sparse logical  matrix)
+y = uint8(newsgroups); % class label, 1..4
+classlabels = groupnames;
 
 %% Visualize raw data
 % First sort so that documents with the most words present come first.
