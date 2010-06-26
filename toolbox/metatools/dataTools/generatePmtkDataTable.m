@@ -69,7 +69,7 @@ end
 
 function str = getSourceString(S, googlePath)
 %% Deal with the source column as a special case 
-% We look for both PMTKsource and PMTKcreated tags
+% We look for PMTKsource, PMTKcreated, and PMTKcontributedBy tags
 str = {};
 if isfield(S, 'PMTKsource')
     source = convertLinksToHtml(S.PMTKsource);
