@@ -7,9 +7,6 @@ function downloadAllData(destnRoot, quiet)
 SetDefaultValue(1, 'destnRoot', fullfile(pmtk3Root(), 'data'));
 SetDefaultValue(2, 'quiet', false);
 googleRoot = ' http://pmtkdata.googlecode.com/svn/trunk';
-if ~isPerlInstalled()
-    error('downloadAllData:noPerl', 'This script requires perl');
-end
 dataSets = scrapePmtkData();
 maxLen = max(cellfun(@numel, dataSets));
 for i=1:numel(dataSets)

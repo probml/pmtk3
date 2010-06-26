@@ -33,9 +33,6 @@ else % try and fetch it
     end
     source = sprintf('%s/%s/%s.zip', googleRoot, dataset, dataset);
     dest   = fullfile(destnRoot, [dataset, '.zip']);
-    if ~isPerlInstalled()
-        error('loadData:noPerl', 'This script requires perl, please install it, or download the data set manually from <a href ="%s">here.</a>', source);
-    end
     ok     = downloadFile(source, dest);
     if ok
         try
