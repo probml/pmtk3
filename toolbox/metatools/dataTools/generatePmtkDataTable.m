@@ -15,7 +15,7 @@ dataSets   = dataSets(perm);
 n          = numel(dataSets);
 %%
 colNames   = {'NAME' , 'FILESIZE (KB)', 'DESCRIPTION', 'X TYPE', 'Y TYPE',...
-              'NCASES', 'NDIMS', 'SOURCE', 'CONTRIBUTED BY'};
+              'NCASES', 'NDIMS', 'SOURCE'};
 NAME   = 1;
 FSIZE  = 2; 
 DESC   = 3; 
@@ -24,7 +24,7 @@ YTYPE  = 5;
 NCASES = 6; 
 NDIMS  = 7;
 SRC    = 8; 
-CONTBY = 9;
+%CONTBY = 9;
 %%
 htmlData = cell(n, numel(colNames));
 for ds=1:n
@@ -39,7 +39,7 @@ for ds=1:n
     htmlData{ds, NCASES} = getData(S, 'PMTKncases');
     htmlData{ds, NDIMS}  = getData(S, 'PMTKndims');
     htmlData{ds, SRC}    = getSourceString(S, sprintf('%s/%s', googleRoot, dname));
-    htmlData{ds, CONTBY} = getData(S, 'PMTKcontributedBy');
+    %htmlData{ds, CONTBY} = getData(S, 'PMTKcontributedBy');
     
     if isempty(htmlData{ds, XTYPE}) && isempty(htmlData{ds, YTYPE})
         htmlData{ds, XTYPE} = getData(S, 'PMTKtype'); % backwards compatibility
@@ -91,6 +91,15 @@ if isfield(S, 'PMTKcreated')
    end
    str = [str, sprintf('Created by: %s', cstr)];
 end
+
+if isfield(S, 'PMTKcontributedBy')
+    if ~isempty(str), str = [str, '<br>'];  end
+    source = convertLinksToHtml(S.PMTKcontributedBy);
+    if ~isempty(source)
+        str = [str, sprintf('Contributed by: %s', source)];
+    end
+end
+
 end
 
 function S = getTagStruct(source, dataSet)
