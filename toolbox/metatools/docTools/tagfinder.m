@@ -45,11 +45,11 @@ for i=1:numel(text)
         end
         [newtag, remaining] = strtok(line(hashNDX:end), ' ');
         if(nargin < 2 || (nargin > 1 && ismember(newtag, tagList)))
-            tags = [tags; newtag];
+            tags = [tags; {newtag}];
             if(isempty(remaining))
                 remaining = ' ';
             end
-            lines = [lines; remaining];
+            lines = [lines; {remaining}];
         end
     end
 end
