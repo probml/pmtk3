@@ -20,20 +20,19 @@ if nargin < 3
   end
 end
 
-w = model.wN;
-V = model.VN;
-    
 if isfield(model, 'preproc')
     [X] = preprocessorApplyToTest(model.preproc, X);
 end
 
 switch method
   case 'plugin'
-    p = sigmoid(X*w);
+    p = sigmoid(X*model.wN);
+  case 'netlab'
+    p = glmfwd(model.netlab, X);
   case 'moderated'
-    p = logregPredictMackay(X, w, V);
+    p = logregPredictMackay(X, model.wN, model.VN);
   case 'mc'
-    [p, pCI] = logregPredictBayesMc(X, w, V);
+    [p, pCI] = logregPredictBayesMc(X, model.wN, model.VN);
   case 'vb'
     % This is a wrapper to Jan Drugowitsch's code.
     p = bayes_logit_post(X, model.wN, model.VN, model.invVN);

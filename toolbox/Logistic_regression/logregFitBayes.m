@@ -1,5 +1,5 @@
 function [model, logev] = logregFitBayes(X, y, varargin)
-% Fit *binary* logistic regression using Bayesian inference
+% Fit logistic regression using Bayesian inference
 % X is n*d, y is d*1, can be 0/1 or -1/+1
 % Do not add a column of 1s
 %
@@ -7,9 +7,9 @@ function [model, logev] = logregFitBayes(X, y, varargin)
 %
 % INPUTS:
 % method: one of these
-% - 'laplace' use Laplace approximation: must specify 'lambda'
-% - 'vb' use Variational Bayes
-% - 'eb' use Empircal Bayes
+% - 'laplace' use Laplace approximation: must specify 'lambda' (binary only)
+% - 'vb' use Variational Bayes (binary only)
+% - 'eb' use Empirical Bayes (can be multiclass, uses netlab)
 %
 % preproc       ... a struct, passed to preprocessorApplyToTtrain
 %
@@ -19,17 +19,20 @@ function [model, logev] = logregFitBayes(X, y, varargin)
 
 wantLogev = (nargout >= 2);
 if wantLogev
-  method = 'vb';
+  method = 'eb';
 else
   method = 'laplace'; % faster
 end
 
 [preproc, method, lambda] = process_options(varargin, ...
   'preproc', preprocessorCreate('addOnes', true, 'standardizeX', true), ...
-  'method', method, 'lambda', 0);
+  'method', 'eb', 'lambda', 0);
 
+nclasses = nunique(y);
+targets = dummyEncoding(y(:), nclasses);
+model.isbinary = nclasses < 3;
 [y, ySupport] = setSupport(y, [-1 1]);
- 
+
 if ~strcmpi(method, 'laplace')
   % Laplace calls logregFit which calls ppApply already...
   [model.preproc, X] = preprocessorApplyToTrain(preproc, X);
@@ -41,8 +44,7 @@ switch method
   case 'vb'
     [model, logev] = logregFitVb(X, y);
   case 'eb'
-    error('not yet implemented')
-    %[model, logev] = logregFitEb(X, y);
+    [model, logev] = logregFitEbNetlab(X, y);
   otherwise
     error(['unrecognized method ' method])
 end
