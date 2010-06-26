@@ -3,7 +3,7 @@ function generateSynopses(wikiFile)
 % PMTKneedsMatlab
 
 if nargin < 1
-  wikiFile = getConfigValue('PMTKsynopsisWikiFile'); 
+  wikiFile = fullfile(getConfigValue('PMTKlocalWikiPath'), 'synopsisPages.wiki'); 
 end
 dest = fullfile(pmtk3Root(), 'docs', 'synopsis'); 
 %% Toolbox

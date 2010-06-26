@@ -13,7 +13,7 @@ function [codename, pg, datestr] = pmlCodeRefs(codeIndFile)
 % datestr  - a date string indicating the last time the codeIndFile was
 %            modified. 
 if nargin ==0
-    codeIndFile =  getConfigValue('PMTKpmlCodeIndFile'); 
+    codeIndFile =  fullfile(getConfigValue('PMTKpmlBookSource'), 'code.ind'); 
 end
 datestr = getFileModificationDate(codeIndFile); 
 if ~exist(codeIndFile, 'file')
