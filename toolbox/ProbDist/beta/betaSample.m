@@ -1,14 +1,27 @@
-function S = betaSample(model, n)
+function S = betaSample(arg1, arg2, arg3)
 % Return n samples from a beta distribution
+% S = betaSample(a, b, n); or S = betaSample(model, n);
 % with parameters model.a, model.b. 
+
+
+if isstruct(arg1)
+    model = arg1;
+    a = model.a;
+    b = model.b;
+    n = arg2; 
+else
+    a = arg1; 
+    b = arg2;
+    n = arg3;
+end
 
 
 if nargin < 2, n = 1; end
 if isscalar(n)
     n = [n, 1];
 end
-sa = randgamma(repmat(model.a, n)); 
-sb = randgamma(repmat(model.b, n));
+sa = randgamma(repmat(a, n)); 
+sb = randgamma(repmat(b, n));
 S = colvec(sa ./ (sa + sb));
 
 

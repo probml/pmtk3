@@ -1,7 +1,19 @@
-function logp = binomialLogprob(model, X)
-% logp(i) = log p( X(i) | model.mu, model.N)
-mu = model.mu;
-N  = model.N;
+function logp = binomialLogprob(arg1, arg2, arg3)
+% logp(i) = log p( X(i) | mu, N)
+% logp = binomialLogprob(arg1, arg2, arg3); 
+
+if isstruct(arg1)
+    model = arg1; 
+    mu = model.mu; 
+    N = model.N;
+    X = arg2;
+else
+    mu = arg1;
+    N = arg2; 
+    X = arg3; 
+end
+
+
 n = size(X, 1);
 X = X(:);
 if isscalar(mu)
