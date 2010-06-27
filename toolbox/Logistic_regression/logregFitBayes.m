@@ -21,7 +21,7 @@ function [model, logev] = logregFitBayes(X, y, varargin)
 
 [preproc, method, lambda, useARD] = process_options(varargin, ...
   'preproc', preprocessorCreate('addOnes', true, 'standardizeX', true), ...
-  'method', 'eb', 'lambda', 0, 'useARD', false);
+  'method', 'laplace', 'lambda', 0, 'useARD', false);
 
 nclasses = nunique(y);
 isbinary = nclasses < 3;

@@ -6,7 +6,7 @@
 % pmtk for solving supervised learning problems (i.e., univariate
 % conditional density estimation).
 %
-
+%
 %% Models
 % The following is a list of pmtk models that are designed for 
 % supervised learning (in alphabetical order).
@@ -175,13 +175,12 @@ end
 fprintf('\n');
 %%
 % We see that the MLE is the same as the posterior mean,
-% and the 95% frequentist confidence interval is the same as the 95% Bayesian credible interval.
-% (If you don't have the stats toolbox, you can use |linregParamsFrequentist|
-% instead, which does more or less the same thing.)
+% and the 95% frequentist confidence interval is the same as the 95%
+% Bayesian credible interval.
+%
 %
 % In general, a Bayesian and frequentist analysis may not give the same
-% results. In pmtk, all inference is Bayesian (except for
-% |linregParamsFrequentist|), because this is the optimal thing to do.
+% results. In pmtk, all inference is Bayesian.
 % However, pmtk supports some non-Bayesian  estimation methods
 % (i.e, where we optimize a loss function that is not some function of the
 % posterior), as we will see below.
@@ -300,7 +299,7 @@ plot(X, y, 'ko', 'linewidth', 2, 'MarkerSize', 7, 'markerfacecolor', 'k');
 hold on
 plot(X, prob, 'ro', 'linewidth', 2,'MarkerSize', 10)
 for i=1:size(X,1)
-  line([X(i,1) X(i,1)], [pCI(i,1) pCI(i,3)]);
+  line([X(i,1) X(i,1)], [pCI(i,1) pCI(i,2)]);
 end
 
 %%
@@ -397,19 +396,31 @@ end
 % centered at all the training data. This only leaves the kernel parameters
 % ($\sigma$ and $d$) to be specified.
 % Below we discuss how to choose the kernel parameters automatically.
+%
 
 %% Overfitting, regularization and MAP estimation
 % Using maximum likelihood to train a model  often results in overfitting.
 % This means that the model fits the training set well, but is overly complex
 % and consequently performs poorly on test data. This is easiest to
 % illustrate in the context of polynomial regression in 1d, as shown below (based on
-% |linregPolyVsReg|)
+% |linregPolyVsRegDemo|)
 %%
+
 close all; clear all;
-[xtrain, ytrain, xtest, ytestNoisefree, ytest] = polyDataMake('sampling','thibaux');
+setSeed(0);
+n=21;
+[xtrain, ytrain, xtest, ytestNoisefree, ytest, sigma2] =...
+  polyDataMake('sampling','thibaux','n',n);
+
 deg = 14;
-Xtrain = xtrain; Xtest = xtest;
-pp = preprocessorCreate('rescaleX', true, 'poly', deg, 'addOnes', true);
+ytrain = centerCols(ytrain);
+ytest = centerCols(ytest);
+pp = preprocessorCreate('poly', deg, 'rescaleX', true, 'standardizeX', false, 'addOnes', false);
+[pp, Xtrain] = preprocessorApplyToTrain(pp, xtrain);
+[Xtest] = preprocessorApplyToTest(pp, xtest);
+pp = preprocessorCreate( 'standardizeX', false, 'addOnes', false);
+
+% Fit model by MLE and plot
 model = linregFit(Xtrain, ytrain, 'preproc', pp);
 [ypredTest] = linregPredict(model, Xtest);
 figure;
@@ -422,14 +433,7 @@ plot(xtest, ypredTest, 'k', 'linewidth', 3);
 % (in this example, we have 
 % N=21 data points, and 15 parameters, since we fit a degree 14 polynomial).
 %
-% Using Bayesian inference with an uninformative prior does not help, since
-% the mean of the posterior predictive distribution can be obtained by
-% plugging in the posterior mean parameter, which is equal to the MLE
-% (since the prior is uninformative):
-%%
-% $$ E[y|x,D] = E[ E[y|x,w]| D] = E[ x^T  w | D] = x^T E[w|D] = x^T \hat{w}$$
-%%
-%
+% Using Bayesian inference with an uninformative prior does not help.
 % What we need is an informative prior, that encodes our preference for
 % simpler models. A popular away to achieve this is to use a zero-mean spherical
 % Gaussian prior of the form $p(w) = N(w|0,\alpha^{-1} I)$,
@@ -457,52 +461,142 @@ plot(xtest, ypredTest, 'k', 'linewidth', 3);
 %%
 % We see that this is a least squares problem with an L2 penalty on the
 % weight vector (this is known as ridge regression).
-% Below we show how to fit this model for several settings of $\lambda$.
-% We see that increasing $\lambda$ results in a smoother fit.
-
-%%
-lambdas = [0.00001, 0.001];
-NL = length(lambdas);
-for k=1:NL
-    lambda = lambdas(k);
-    model = linregFit(Xtrain, ytrain, 'lambda', lambda, 'preproc', pp, 'regtype', 'L2');
-    [ypredTest] = linregPredict(model, Xtest);  
-    figure; 
-    scatter(xtrain, ytrain,'b','filled');
-    hold on;
-    plot(xtest, ypredTest, 'k', 'linewidth', 3);
-    title(sprintf('log(lambda)=%5.3f', log10(lambda)))
-end
-
-%%
 % If $\lambda$ is too small, the model will overfit (since the function
 % is too wiggly), but if it is too big, the model will underfit
 % (since the function is too smooth). This is illustrated below, where we
 % examine the mean squared error on the training and  test sets as a function
 % of $\lambda$. This illustrates the characteristic U-shape on the test
 % set.
+
 %%
-lambdas = logspace(-10,1.2,9);
+lambdas = logspace(-10,1.3,10);
 NL = length(lambdas);
- testMse = zeros(1,NL); trainMse = zeros(1,NL);
+printNdx = round(linspace(2, NL-1, 3));
+testMse = zeros(1,NL); trainMse = zeros(1,NL);
 for k=1:NL
-    lambda = lambdas(k);
-    [model] = linregFit(Xtrain, ytrain, 'lambda', lambda, 'preproc', pp);
-    ypredTest = linregPredict(model, Xtest);
-    ypredTrain = linregPredict(model, Xtrain);
-    testMse(k) = mean((ypredTest - ytest).^2); 
-    trainMse(k) = mean((ypredTrain - ytrain).^2);
+  lambda = lambdas(k);
+  [model] = linregFit(Xtrain, ytrain, 'lambda', lambda, 'preproc', pp);
+  [ypredTest, s2] = linregPredict(model, Xtest);
+  ypredTrain = linregPredict(model, Xtrain);
+  testMse(k) = mean((ypredTest - ytest).^2);
+  trainMse(k) = mean((ypredTrain - ytrain).^2);
 end
-figure; hold on
+
+
+hlam=figure; hold on
 ndx =  log(lambdas); % 1:length(lambdas);
 plot(ndx, trainMse, 'bs:', 'linewidth', 2, 'markersize', 12);
 plot(ndx, testMse, 'rx-', 'linewidth', 2, 'markersize', 12);
 legend('train mse', 'test mse', 'location', 'northwest')
-xlabel('log regularizer')
+xlabel('log lambda')
+title('mean squared error')
+
 %%
-% We can apply L2 regularization to logistic regression and neural
-% networks just as easily.
-%
+% Below we print the fitted function for certain chosen lambdas
+%%
+for k=printNdx
+  lambda = lambdas(k);
+  [model] = linregFit(Xtrain, ytrain, 'lambda', lambda, 'preproc', pp);
+  [ypredTest, s2] = linregPredict(model, Xtest);
+  ypredTrain = linregPredict(model, Xtrain);
+  sig = sqrt(s2);
+  figure;
+  scatter(xtrain, ytrain,'b','filled');
+  hold on;
+  plot(xtest, ypredTest, 'k', 'linewidth', 3);
+  plot(xtest, ypredTest + sig, 'b:');
+  plot(xtest, ypredTest - sig, 'b:');
+  title(sprintf('ln lambda %5.3f', log(lambda)))
+end
+
+
+%% Cross validation for ridge regression
+% One simple way to choose regularization parameters is cross validation.
+% Below we show how to estimate the expected loss for a ridge
+% regression model as we vary the regularizer.
+%%
+for k=1:NL
+  lambda = lambdas(k);
+  fitFn = @(Xtr,ytr) linregFit(Xtr, ytr, 'lambda', lambda, 'preproc', pp);
+  predFn = @(mod, Xte) linregPredict(mod, Xte);
+  lossFn = @(yhat, yte)  mean((yhat - yte).^2);
+  N = size(Xtrain, 1);
+  %nfolds = N; % LOOCV
+  nfolds = 5;
+  % since the data is sorted left to right, we must randomize the order
+  [mu(k), se(k)] = cvEstimate(fitFn, predFn, lossFn, Xtrain, ytrain, nfolds, ...
+    'randomizeOrder', true);
+end
+
+%%
+% We can plot the results as shown below.
+% We see that it exhibits a U-shape similar to the test error.
+% The vertical line denotes the best value.
+%%
+figure; hold on
+ndx =  log(lambdas); % 1:length(lambdas);
+xlabel('log lambda')
+ylabel('mse')
+errorbar(ndx, mu, se, 'ko-','linewidth', 2, 'markersize', 12 );
+title(sprintf('%d-fold cross validation, ntrain = %d', nfolds, N))
+set(gca,'yscale','log')
+% draw vertical line at best value
+dof = 1./(eps+lambdas);
+idx_opt  = argmin(mu);
+verticalLine(ndx(idx_opt), 'color','b', 'linewidth',2);
+
+%% Bayesian evidence procedure for ridge regression
+% An alternative to cross validation is to
+% to compute log evidence for each value of alpha, as shown below.
+% (To simplify things, we use the known noise variance)
+% When we plot the log evidence vs alpha,
+% it exhibits the same (inverted) U shape as the test error.
+
+beta = 1/sigma2;
+alphas = beta * lambdas;
+
+for k=1:NL
+  lambda = lambdas(k);
+  [model, logev(k)] = linregFitBayes(Xtrain, ytrain, 'preproc', pp, ...
+    'prior', 'gauss', 'alpha', alphas(k), 'beta', beta);
+  ypredTest = linregPredictBayes(model, Xtest);
+  ypredTrain = linregPredictBayes(model, Xtrain);
+  testMseB(k) = mean((ypredTest - ytest).^2);
+  trainMseB(k) = mean((ypredTrain - ytrain).^2);
+end
+% Sanity check - Bayes with fixed sigma should be same as ridge
+assert(approxeq(testMseB, testMse))
+assert(approxeq(trainMseB, trainMse))
+
+% Now we plot the log evidence vs alpha.
+figLogev = figure;
+plot(log(alphas), logev, 'ko-', 'linewidth', 2, 'markersize', 12);
+xlabel('log alpha')
+title('log evidence')
+
+%% Empirical Bayes for ridge regression
+% The main benefit of the Bayesian approach is that we can 
+% use numerical optimization to pick the regularizer,
+% rather than performing a discrete search over a finite grid
+% of values. This is illustrated below.
+
+%%
+[modelEB, logevEB] = linregFitBayes(Xtrain, ytrain, 'preproc', pp, 'prior', 'eb');
+alphaEB = modelEB.netlab.alpha;
+figure(figLogev);
+verticalLine(log(alphaEB), 'linewidth', 3, 'color', 'r');
+
+%% Variational Bayes for ridge regression
+% An alternative to EB is to use variational Bayes to infer
+% the posterior over $\alpha$ and $\beta$. This is illustrated
+% below.
+%%
+[modelVB, logevVB] = linregFitBayes(Xtrain, ytrain, 'preproc', pp, 'prior', 'vb');
+alphaVB = modelVB.expectAlpha;
+figure(figLogev);
+verticalLine(log(alphaVB), 'linewidth', 3, 'color', 'b');
+
+%{
 %% Discriminant analysis
 % For generative models such as naive Bayes and
 % discriminant analysis, Gaussian priors (corresponding to L2 regularization)
@@ -562,6 +656,6 @@ legend('Training', 'Test', 'Location', 'northwest');
 xlabel('Amount of shrinkage')
 ylabel('misclassification rate')
 title('SRBCT data')
-%%
-%% Cross validation
+
+%}
 

@@ -7,13 +7,14 @@ pp.addOnes = false; % netlab does this already
 [model.preproc, x] = preprocessorApplyToTrain(pp, X);
 
 nclasses = nunique(y);
-targets = dummyEncoding(y(:), nclasses);
+[y, ySupport] = setSupport(y, 1:nclasses);
 isbinary = nclasses < 3;
 if isbinary
   link = 'logistic';
 else
   link = 'softmax';
 end
+targets = dummyEncoding(y(:), nclasses);
 
 % Uses evidence procedure to find optimal regularizer
 % logev is log p(y|X, alpha-hat, beta-hat)

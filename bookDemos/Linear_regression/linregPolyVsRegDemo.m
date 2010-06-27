@@ -1,11 +1,8 @@
 %% Ridge regression: visualize effect of lambda
-% Plot log evidence vs lambda for a degree 14 polynomial
-% See also linregPolyVsReg
-%%
-for n=[21]
   
 %% Make data
 setSeed(0);
+n = 21;
 [xtrain, ytrain, xtest, ytestNoisefree, ytest, sigma2] =...
   polyDataMake('sampling','thibaux','n',n);
 
@@ -33,6 +30,13 @@ else
   pp = preprocessorCreate('rescaleX', true, 'poly', deg, 'addOnes', addOnes);
 end
 
+
+%% Fit model by MLE and plot
+model = linregFit(Xtrain, ytrain, 'preproc', pp);
+[ypredTest] = linregPredict(model, Xtest);
+figure;
+scatter(xtrain, ytrain,'b','filled'); hold on;
+plot(xtest, ypredTest, 'k', 'linewidth', 3);
 
 
 %% compute train/test error for each  lambda using ridge
@@ -62,9 +66,7 @@ for i=printNdx(:)',  plot(ndx(i), 0, '*', 'markersize', 12, 'linewidth', 2); end
 printPmtkFigure(sprintf('linregPolyVsRegTestErrN%d', n))
 
 %% print fitted function for certain chosen lambdas
-
-
-for k=[] %printNdx
+for k=printNdx
   lambda = lambdas(k);
   [model] = linregFit(Xtrain, ytrain, 'lambda', lambda, 'preproc', pp);
   [ypredTest, s2] = linregPredict(model, Xtest);
@@ -180,5 +182,3 @@ figure(figLogev);
 verticalLine(log(alphaVB), 'linewidth', 3, 'color', 'b');
 
 
-
-end
