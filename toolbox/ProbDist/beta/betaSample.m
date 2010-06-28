@@ -8,7 +8,11 @@ if isstruct(arg1)
     model = arg1;
     a = model.a;
     b = model.b;
-    n = arg2; 
+    if nargin < 2
+        n = 1;
+    else
+        n = arg2; 
+    end
 else
     a = arg1; 
     b = arg2;
