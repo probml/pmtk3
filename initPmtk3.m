@@ -57,7 +57,7 @@ if exist(source, 'dir')
     addpath(genpathPMTK(source), '-end');
 end
 if ~(exist('pmtkSupportRoot', 'file') == 2)
-    installPmtkSupport();
+    downloadAllSupport();
 end
 % Add graphViz directory
 if matlab && ~verLessThan('matlab', '7.6.0')

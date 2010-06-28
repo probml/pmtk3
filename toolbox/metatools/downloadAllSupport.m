@@ -1,4 +1,4 @@
-function installPmtkSupport(destnRoot, quiet)
+function downloadAllSupport(destnRoot, quiet)
 %% Download pmtkSupport packages from pmtkSupport.googlecode.com
 
 SetDefaultValue(1, 'destnRoot', fullfile(pmtk3Root(), 'external'));
