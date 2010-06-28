@@ -1,4 +1,4 @@
-function samples = mrfSample(model, N, clamped)
+function samples = mrf2Sample(model, N, clamped)
 % Sample N row vectors from from markov random field
 % clamped is an optional 1*D vector, where
 % clamped(i) = 0 means node i is not observed

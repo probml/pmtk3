@@ -1,5 +1,7 @@
-clear all
-close all
+%% minfunc demo
+%%PMTKinteractive
+%PMTKslow
+%%
 f = 1;
 
 options.Display = 'none';
@@ -586,7 +588,7 @@ Xnode = ones(nInstances,1,nNodes); % Nodes just have a bias
 Xedge = ones(nInstances,1,nEdges); % Edges just have a bias
 ising = 0;
 tied = 0;
-infoStruct = UGM_makeInfoStruct(Xnode,Xedge,edgeStruct,ising,tied);
+infoStruct = UGM_makeCRFInfoStruct(Xnode,Xedge,edgeStruct,ising,tied);
 [w,v] = UGM_initWeights(infoStruct);
 funObj = @(wv)UGM_MRFLoss(wv,Xnode,Xedge,y,edgeStruct,infoStruct,@UGM_Infer_Tree);
 fprintf('Training tree-structured Markov random field\n');
