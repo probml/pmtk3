@@ -101,7 +101,7 @@ printPmtkFigure('logregLaplaceGirolamiPostLaplace')
 %% Plot the predictive distribution for logistic regression
 figure;
 Xgrid = W; % grid of x1, x2 valyes
-pred = 1./(1+exp(X-Xgrid*wMAP));
+pred = 1./(1+exp(-Xgrid*wMAP));
 contour(w1,w2,reshape(pred,[n,n]),30);
 hold on
 plot(X(find(t==1),1),X(find(t==1),2),'r.');
