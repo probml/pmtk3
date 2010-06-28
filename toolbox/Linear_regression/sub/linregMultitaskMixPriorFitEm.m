@@ -31,7 +31,7 @@ for t = 1:T
     lambda = 0.001;
     models{t} = linregFit(X, Y(:,t), 'regtype', 'L2', 'lambda', lambda, ...
         'preproc', struct('standardizeX', false));
-    b(t) = models{t}.w0;
+    b(t) = models{t}.w(1);
     sigma2(t) = models{t}.sigma2;
 end
 for k = 1:K
@@ -49,7 +49,7 @@ while (iter <= maxIter && ~converged)
         for k = 1:K
             curModel.mu = b(t) + X*mu(:,k);
             curModel.Sigma = diag(diag(sigma2(t) + X*Sigma(:,:,k)*X'));
-            logr(t,k) = logmix(k) + gaussLogProb(curModel, Y(:,t));
+            logr(t,k) = logmix(k) + sum(gaussLogprob(curModel, Y(:,t)));
         end
     end
     [logr, ll] = normalizeLogspace(logr);
