@@ -1,8 +1,8 @@
-function dataSets = scrapePmtkData()
-%% Scrape pmtkData.googleCode.com to get the names of all the data sets there
+function dataSets = scrapePmtkSupport()
+%% Scrape pmtkSupport.googleCode.com to get the names of all the support packages there
 excludedDirs = tokenize(getConfigValue('PMTKmetaDirs'), ',')';
 
-url = 'http://pmtkdata.googlecode.com/svn/trunk/';
+url = 'http://pmtksupport.googlecode.com/svn/trunk/';
 
 raw = tokenize(urlread(url), '\n');
 dataSets = filterCell(raw, @(c)startswith(c, '<li>'));
