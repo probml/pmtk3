@@ -5,11 +5,13 @@ function generatePmtkDataTable(dataSource)
 % repository.
 % PMTKneedsMatlab 
 %%
+excludedDirs = tokenize(getConfigValue('PMTKmetaDirs'), ',');
 if nargin == 0
     dataSource = getConfigValue('PMTKlocalDataPath');
 end
 googleRoot = 'http://pmtkdata.googlecode.com/svn/trunk';
 dataSets   = dirs(dataSource);
+dataSets   = setdiff(dataSets, excludedDirs);
 perm       = sortidx(lower(dataSets)); % sort by name
 dataSets   = dataSets(perm);
 n          = numel(dataSets);
@@ -31,7 +33,7 @@ for ds=1:n
     dname = dataSets{ds}; 
     S = getTagStruct(dataSource, dname); 
     
-    htmlData{ds, NAME}   = sprintf('<a href="%s/%s/%s-meta.txt">%s</a>', googleRoot, dname, dname, dname); 
+    htmlData{ds, NAME}   = sprintf('<a href="%s/%s/%s-meta.m">%s</a>', googleRoot, 'meta', dname, dname); 
     htmlData{ds, FSIZE}  = sprintf('<a href="%s/%s/%s.zip">%s</a>', googleRoot, dname, dname, fileSize(dataSource, dname));  
     htmlData{ds, DESC}   = getData(S, 'PMTKdescription'); 
     htmlData{ds, XTYPE}  = getData(S, 'PMTKtypeX');
@@ -56,7 +58,7 @@ header = [...
     ];
 
 colNameColors = repmat({pmtkRed}, 1, numel(colNames));
-dest = fullfile(dataSource, 'dataTable.html'); 
+dest = fullfile(dataSource, 'docs', 'dataTable.html'); 
 htmlTable('data'          , htmlData       , ...
           'doshow'        , true           , ...
           'dosave'        , true           , ...
@@ -104,7 +106,7 @@ end
 
 function S = getTagStruct(source, dataSet)
 %% Return a struct from tags to data for the given data set
-metaFile = fullfile(source, dataSet, [dataSet, '-meta.txt']);
+metaFile = fullfile(source, 'meta', [dataSet, '-meta.m']);
 [tags, lines] = tagfinder(metaFile);
 S = createStruct(tags, lines);
 end
