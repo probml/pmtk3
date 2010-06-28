@@ -1,7 +1,7 @@
 function [model, logev] = linregFitBayesZellnerPrior(X, y, g, preproc) %#ok
 % Bayesian inference for a linear regression model using Zellner's g prior
 
-[model.preproc, X] = preprocessorApplyToTrain(pp, X);
+[model.preproc, X] = preprocessorApplyToTrain(preproc, X);
 [N,D] = size(X);
 [Q,R] = qr(X,0);
 wmle = R\(Q'*y); % posterior mean
