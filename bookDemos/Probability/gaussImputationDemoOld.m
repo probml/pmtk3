@@ -16,33 +16,33 @@ pcMissing = 0.5;
 
 % we either train on fully observed data (useFull) or partially observed
 for useFull = [true]
-  if useFull
-    model = gaussMissingFitEm(XfullTrain, 'verbose', false);
-    muHat = model.mu;
-    SigmaHat = model.SigmaHat;
+    if useFull
+        model = gaussMissingFitEm(XfullTrain, 'verbose', false);
+        muHat = model.mu;
+        SigmaHat = model.Sigma;
+        
+        assert(approxeq(rowvec(muHat), mean(XfullTrain)))
+        assert(approxeq(SigmaHat, cov(XfullTrain,1)))
+        [Ximpute, V] = gaussImpute(model, Xmiss);
+        
+        Xtrain = XfullTrain;
+        fname = 'mvnImputeFull';
+    else
+        [model, LLtrace] = gaussMissingFitEm(XmissTrain, 'verbose', false);
+        figure; plot(LLtrace); title('EM loglik vs iteration')
+        [Ximpute, V] = gaussImpute(model, Xmiss);
+        Xtrain = XmissTrain;
+        fname = 'mvnImputeEm';
+    end
+    conf = 1./V;
+    conf(isinf(conf))=0;
     
-    assert(approxeq(rowvec(muHat), mean(XfullTrain)))
-    assert(approxeq(SigmaHat, cov(XfullTrain,1)))
-    [Ximpute, V] = gaussImpute(model, Xmiss);
-    
-    Xtrain = XfullTrain;
-    fname = 'mvnImputeFull';
-  else
-    [model, LLtrace] = gaussMissingFitEm(XmissTrain, 'verbose', false);
-    figure; plot(LLtrace); title('EM loglik vs iteration')
-    [Ximpute, V] = gaussImpute(model, Xmiss);
-    Xtrain = XmissTrain;
-    fname = 'mvnImputeEm';
-  end
-  conf = 1./V;
-  conf(isinf(conf))=0;
-  
-  figure; 
-  hintonScaleMulti({Xtrain}, {'map', 'jet', 'title', 'training data'}, ...
-    {Xmiss}, {'map', 'Jet', 'title', 'observed'}, ...
-    {Ximpute, conf}, {'title', 'imputed'}, ...
-    {Xhid}, {'title', 'hidden truth'});
-  printPmtkFigure(fname);
+    figure;
+    hintonScaleMulti({Xtrain}, {'map', 'jet', 'title', 'training data'}, ...
+        {Xmiss}, {'map', 'Jet', 'title', 'observed'}, ...
+        {Ximpute, conf}, {'title', 'imputed'}, ...
+        {Xhid}, {'title', 'hidden truth'});
+    printPmtkFigure(fname);
 end
 
 end
@@ -57,12 +57,12 @@ model = struct('mu', mu, 'Sigma', Sigma);
 Xfull = gaussSample(model, n);
 
 if rnd
-  % Random missing pattern
-  missing = rand(n,d) < pcMissing;
+    % Random missing pattern
+    missing = rand(n,d) < pcMissing;
 else
-  % Make the first pc% stripes (features) be completely missing
-  missing = false(n,d);
-  missing(:, 1:floor(pcMissing*d)) = true;
+    % Make the first pc% stripes (features) be completely missing
+    missing = false(n,d);
+    missing(:, 1:floor(pcMissing*d)) = true;
 end
 
 Xmiss = Xfull;
