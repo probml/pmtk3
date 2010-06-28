@@ -1,5 +1,6 @@
 function dataSets = scrapePmtkData()
 %% Scrape pmtkData.googleCode.com to get the names of all the data sets there
+excludedDirs = tokenize(getConfigValue('PMTKmetaDirs'), ',')';
 
 url = 'http://pmtkdata.googlecode.com/svn/trunk/';
 
@@ -10,5 +11,5 @@ start = '<li><a href="';
 dataSets = cellfuncell(@(c)c(numel(start)+1:end), dataSets); 
 dataSets = cellfuncell(@(c)strtok(c, '/'), dataSets);
 dataSets = filterCell(dataSets, @(c)~isSubstring('.', c)); 
-
+dataSets = setdiff(dataSets, excludedDirs); 
 end
