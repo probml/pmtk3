@@ -2,7 +2,7 @@
 % PMTKauthor Kevin Murphy
 % PMTKmodified Hannes Bretschneider
 % PMTKslow
-% PMTKbroken
+% PMTKbroken log likelihood decreases
 %%
 function linregMultitaskGmmPriorDemo()
 
