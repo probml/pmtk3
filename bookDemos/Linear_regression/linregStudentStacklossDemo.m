@@ -8,6 +8,7 @@
 %PMTKauthor Hannes Bretschneider
 
 %%
+saveLatex = false;
 loadData('stackloss');
 n = size(X,1);
 X1 = [ones(n,1) X];
@@ -46,7 +47,7 @@ for i = 1:ndof
     table(i,3:6) = [modelEM{i}.w0, rowvec(modelEM{i}.w)];
 end
 
-saveLatex = false;
+
 
 
 labels = {'dof', 'loglik', 'w0', 'w1', 'w2', 'w3'};
