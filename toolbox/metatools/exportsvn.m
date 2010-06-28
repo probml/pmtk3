@@ -12,7 +12,7 @@ if nargin < 3, exclusions = {}; end
 if nargin < 4, createEmpty = {}; end
 
 destpath = fileparts(dest);
-system(sprintf('svn export %s %s', source, fullfile(destpath, 'tmp')));
+[err1, output] = system(sprintf('svn export %s %s', source, fullfile(destpath, 'tmp')));
 for i=1:numel(exclusions)
     ex = fullfile(destpath, 'tmp', exclusions{i});
     if exist(ex, 'file')
@@ -20,15 +20,19 @@ for i=1:numel(exclusions)
         system(sprintf('rmdir /Q /S %s', ex));
     end
 end
+
+readmeText = {'This directory is left intentionally empty, and filled on demand.'};
 for i=1:numel(createEmpty)
-   fprintf('adding emtpy directory: %s\n', createEmpty{i}); 
-   mkdir(fullfile(destpath, 'tmp', createEmpty{i}));  
+   fprintf('adding empty directory: %s\n', createEmpty{i}); 
+   emptyPath = fullfile(destpath, 'tmp', createEmpty{i});
+   mkdir(emptyPath);  
+   writeText(readmeText, fullfile(emptyPath, 'readme.txt')); 
 end
 
 
 zip(dest, fullfile(destpath, 'tmp', '*'));
-[err, output] = system(sprintf('rmdir /Q /S %s', fullfile(destpath, 'tmp')));
-if err
+err2 = system(sprintf('rmdir /Q /S %s', fullfile(destpath, 'tmp')));
+if err1 || err2
     error('svn export failed:%s\n', output); 
 end
 end

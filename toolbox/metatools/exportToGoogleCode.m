@@ -10,7 +10,10 @@ function exportToGoogleCode(package, username, passwd, summary, exclusions, crea
 %                 {'docs', 'external', 'data'}
 % CREATEEMPTY  -  a cell array of empty top level directories to add, e.g.
 %                {'external', 'data'}
+%PMTKneedsMatlab
+%PMTKneedsPython
 %%
+uploadFn = which('googlecode_upload.py');
 SetDefaultValue(1, 'package'     , 'pmtk3'); 
 SetDefaultValue(2, 'username'    , getConfigValue('PMTKgoogleUsername'));
 SetDefaultValue(3, 'passwd'      , getConfigValue('PMTKgooglePassword'))
@@ -33,25 +36,21 @@ mkdir(fileparts(zipFilePath));
 fprintf('root directory is %s\n', rootDir); 
 fprintf('exporting code to %s...\n', zipFilePath); 
 exportsvn(rootDir, zipFilePath, exclusions, createEmpty); 
+fprintf('export successful\n'); 
 
-
-
-
-
-if 0
+if 1
     fprintf('uploading file...\n');
-    uploadFn = fullfile(pmtk3Root(), 'toolbox\metatools\', 'googlecode_upload.py');
-    command = sprintf('python %s -s "%s" -p "%s" -u %s -w %s "%s"', ...
-        uploadFn, summary, package, username, passwd, fpath);
     fprintf('executing the following command:\n'); 
-    fprintf(command); 
+    command = sprintf('python %s -s "%s" -p "%s" -u %s -w %s "%s"', ...
+        uploadFn, summary, package, username, passwd, zipFilePath)
+    
     fprintf('\n'); 
     [err, output] = system(command);
     if err
         error('There was a problem uploading the file:\n%s', output); 
     end
     fprintf('cleaning up...\n');
-    delete(fpath)
+    delete(zipFilePath);
     fprintf('done\n\n')
     web(sprintf('http://code.google.com/p/%s/downloads/list', lower(package)), '-browser')
 end
