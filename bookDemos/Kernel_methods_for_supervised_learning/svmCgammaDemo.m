@@ -14,7 +14,7 @@ y = convertLabelsToPM1(data.y);
 gammas = [5, 1, 0.5, 0.1];
 Crange = logspace(-1, 3.5, 15); 
 plotArgs = {true, data.bayesError};  %{useLogScale, hline}
-cvopts = {5, false, true, plotArgs}; %{nfolds, useSErule, doPlot, plotArgs}
+cvopts = {5, 'useSErule', false, 'doPlot', true, 'plotArgs', plotArgs}; %{nfolds, useSErule, doPlot, plotArgs}
 for i=1:numel(gammas)
     gamma = gammas(i); 
     svmFit(X, y, 'kernelParam', gamma, 'C', Crange, ...
@@ -27,7 +27,7 @@ end
 C = logspace(-1, 3.5, 10); 
 gammas = logspace(-1, 1, 10);
 [model, bestParams, CVmu, CVse] = svmFit...
-    (X, y, 'kernelParam', gammas, 'C', C, 'cvOptions', {5, false, true},...
+    (X, y, 'kernelParam', gammas, 'C', C, 'cvOptions', {5, 'useSErule', false, 'doPlot', true},...
     'fitFn', @svmlightFit);
 xlabel('C');
 ylabel('\gamma');
