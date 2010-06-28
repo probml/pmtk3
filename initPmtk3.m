@@ -50,12 +50,13 @@ text = { 'function answer = isOctave()'
 writeText(text, fullfile(pmtkInfoDir, 'isOctave.m'));
 %%
 % Add PMTK support
-% If you have a local copy of pmtkSupport, % add it to your path  otherwise
+% If you have a local copy of pmtkSupport, add it to your path  otherwise
 % download it.
 source = getConfigValue('PMTKlocalSupportPath');
 if exist(source, 'dir')
     addpath(genpathPMTK(source), '-end');
-else
+end
+if ~(exist('pmtkSupportRoot', 'file') == 2)
     installPmtkSupport();
 end
 % Add graphViz directory
