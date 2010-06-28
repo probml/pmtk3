@@ -38,7 +38,7 @@ model.effnparams = gamma;
       
 % Need to compute inverse hessian so we can get error bars
 w = netpak(model.netlab);
-hess = nethess(w, model.netlab, X, y);
+hess = nethess(w, model.netlab, x, y);
 invhess = inv(hess);
 model.wMu = w;
 model.wCov = invhess;

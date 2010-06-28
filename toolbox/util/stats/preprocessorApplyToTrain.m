@@ -29,6 +29,7 @@ if ~isempty(preproc.kernelFn)
 end
 
 if ~isempty(preproc.poly)
+  assert(preproc.poly > 0); 
   X = degexpand(X, preproc.poly, false);
 end
 

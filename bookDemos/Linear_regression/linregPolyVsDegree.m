@@ -3,26 +3,26 @@
 % (Lecture 2 from http://www.cs.berkeley.edu/~asimma/294-fall06/)
 %%
 
-clear all;
+
 N = 21;
 [xtrain, ytrain, xtest, ytestNoisefree, ytest] = ...
-  polyDataMake('sampling','thibaux', 'n', N);
+    polyDataMake('sampling','thibaux', 'n', N);
 
 
 %degs = 0:2:20;
-degs = 0:1:20;
+degs = 1:20;
 Nm = length(degs);
 
 %% Plot error vs degree
 mseTrain = zeros(1,Nm); mseTest = zeros(1,Nm);
 for m=1:length(degs)
-  deg = degs(m);
-  pp = preprocessorCreate('rescaleX', true, 'poly', deg, 'addOnes', true);
-  model = linregFit(xtrain, ytrain, 'preproc', pp);
-  ypredTrain = linregPredict(model, xtrain);
-  ypredTest = linregPredict(model, xtest);
-  mseTrain(m) = mean((ytrain-ypredTrain).^2);
-  mseTest(m) = mean((ytest-ypredTest).^2);
+    deg = degs(m);
+    pp = preprocessorCreate('rescaleX', true, 'poly', deg, 'addOnes', true);
+    model = linregFit(xtrain, ytrain, 'preproc', pp);
+    ypredTrain = linregPredict(model, xtrain);
+    ypredTest = linregPredict(model, xtest);
+    mseTrain(m) = mean((ytrain-ypredTrain).^2);
+    mseTest(m) = mean((ytest-ypredTest).^2);
 end
 
 ndx = (degs<=16);
@@ -38,31 +38,31 @@ printPmtkFigure('linregPolyVsDegreeUcurve')
 
 
 %% Plot fitted function for chosen values of degree
-for deg = [0, 1, 2, 14, 20]
-  pp = preprocessorCreate('rescaleX', true, 'poly', deg, 'addOnes', true);
-  model = linregFit(xtrain, ytrain, 'preproc', pp);
-  ypredTrain = linregPredict(model, xtrain);
-  ypredTest = linregPredict(model, xtest);
-  mseTrain(m) = mean((ytrain-ypredTrain).^2);
-  mseTest(m) = mean((ytest-ypredTest).^2);
+for deg = [1, 2, 14, 20]
+    pp = preprocessorCreate('rescaleX', true, 'poly', deg, 'addOnes', true);
+    model = linregFit(xtrain, ytrain, 'preproc', pp);
+    ypredTrain = linregPredict(model, xtrain);
+    ypredTest = linregPredict(model, xtest);
+    mseTrain(m) = mean((ytrain-ypredTrain).^2);
+    mseTest(m) = mean((ytest-ypredTest).^2);
     
-  figure;
-  scatter(xtrain,ytrain,'b','filled');
-  hold on;
-  plot(xtest, ypredTest, 'k', 'linewidth', 3);
-  hold off
-  title(sprintf('degree %d', deg))
-  set(gca,'ylim',[-10 15]);
-  set(gca,'xlim',[-1 21]);
-  printPmtkFigure(sprintf('polyfitDemo%d', deg))
+    figure;
+    scatter(xtrain,ytrain,'b','filled');
+    hold on;
+    plot(xtest, ypredTest, 'k', 'linewidth', 3);
+    hold off
+    title(sprintf('degree %d', deg))
+    set(gca,'ylim',[-10 15]);
+    set(gca,'xlim',[-1 21]);
+    printPmtkFigure(sprintf('polyfitDemo%d', deg))
 end
- 
+
 %% Compute log evidence for each model
 for m=1:length(degs)
-  deg = degs(m);
-  pp = preprocessorCreate('rescaleX', true, 'poly', deg, 'addOnes', true);
-  [modelEB, logev(m)] = linregFitBayes(xtrain, ytrain, 'preproc', pp, ...
-    'prior', 'eb');
+    deg = degs(m);
+    pp = preprocessorCreate('rescaleX', true, 'poly', deg, 'addOnes', true);
+    [modelEB, logev(m)] = linregFitBayes(xtrain, ytrain, 'preproc', pp, ...
+        'prior', 'eb');
 end
 
 figure;
