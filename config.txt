@@ -4,7 +4,6 @@
 %
 % If a config-local.txt file is found, its values will override these.
 %
-% PMTKsupportLink      http://pmtksupport.googlecode.com/files/pmtkSupport-25June2010.zip
 % PMTKmetaDirs         meta, docs, tmp
 % PMTKred              #990000
 % PMTKauthors          Kevin Murphy, Matt Dunham
