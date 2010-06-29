@@ -1,7 +1,8 @@
-function S = multinomSample(model, nsamples)
-%% S(1:nsamples, :) ~ Mu(model.N, model.p)
+function S = multinomSample(arg1, arg2, arg3)
+%% S(1:nsamples, :) ~ Mu(N, p)
+% S = multinomSample(model, nSample); OR S = multinomSample(N, p, nSamples);
 % model.p must sum to one
-% sum(S(i, :)) = N for all i. 
+% sum(S(i, :)) = N for all i.
 % S is of size, nsamples-by-length(p), and S(i, j) is in {0, ... , N}
 %% Example
 %
@@ -17,6 +18,26 @@ function S = multinomSample(model, nsamples)
 %      1     6     3
 %      3     6     1
 %5
-S = histc(rand(nsamples, model.N), [0, cumsum(model.p(:)')], 2);
-S(:, end) = []; 
+%%
+if isstruct(arg1)
+    model = arg1;
+    N = model.N;
+    p = model.p;
+    if nargin < 2
+        nSamples = 1;
+    else
+        nSamples = arg2;
+    end
+else
+    N = arg1;
+    p = arg2;
+    if nargin < 3
+        nSamples = 1;
+    else
+        nSamples = arg3;
+    end
+end
+
+S = histc(rand(nSamples, N), [0, cumsum(p(:)')], 2);
+S(:, end) = [];
 end

@@ -4,7 +4,7 @@
 %   theta(:,t) | Z(t)=k ~ Dir(alpha(:,k))
 %   x(i,t) | theta(:,t) ~ Discrete(theta(:,t))
 
-close all; clear all;
+
 %% Data generation
 setSeed(1);
 Nseq = 10;
