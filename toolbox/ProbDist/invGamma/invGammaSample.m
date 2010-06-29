@@ -1,6 +1,6 @@
 function X = invGammaSample(arg1, arg2, arg3)
 % Sample from an inverse gamma distribution with parameters a, b
-% X = invGammaSample(model, n); or X = invGammaSample(a, b, n); 
+% X = invGammaSample(model, n); or X = invGammaSample(a, b, n);
 
 
 if isstruct(arg1)
@@ -10,7 +10,7 @@ if isstruct(arg1)
     if nargin < 2
         n = 1;
     else
-        n = arg2; 
+        n = arg2;
     end
 else
     a = arg1;
