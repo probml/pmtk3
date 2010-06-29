@@ -1,7 +1,22 @@
-function S = dirichletSample(model, n)
-% S(1:n, :) ~ dir(model.alpha)
-if nargin < 2, n = 1; end
-alpha = rowvec(model.alpha);
+function S = dirichletSample(arg1, arg2)
+%% S(1:n, :) ~ dir(alpha)
+% S = dirichletSample(alpha, n), OR S = dirichletSample(model, n)
+%%
+
+if isstruct(arg1)
+    model = arg1;
+    alpha = model.alpha;
+else
+    alpha = arg1;
+end
+
+
+if nargin < 2
+    n = 1;
+else
+    n = arg2;
+end
+alpha = rowvec(alpha);
 S = dirichlet_sample(alpha, n);
 
 end

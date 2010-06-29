@@ -1,7 +1,19 @@
-function S = chi2Sample(model, n)
-% Sample n samples from a chi^2 distribution 
-% with model.dof degrees of freedom.
-dof = model.dof;
+function S = chi2Sample(arg1, arg2)
+% Sample n samples from a chi^2 distribution dof degress of freedom
+% S = chi2Sample(dof, n) OR S = chi2Sample(model, n)
+
+if isstruct(arg1)
+    model = arg1;
+    dof   = model.dof;
+else
+    dof = arg1;
+end
+if nargin < 2
+    n = 1;
+else
+    n = arg2;
+end
+
 if ~isequal(length(dof), n)
     dof = repmat(dof, n);
 end
