@@ -1,8 +1,17 @@
-function logp = paretoLogprob(model, X)
-% logp(i) = log p(X(i) | model.m, model.K); 
-
-m = model.m;
-K = model.K; 
+function logp = paretoLogprob(arg1, arg2, arg3)
+% logp(i) = log p(X(i) | m, K); 
+% logp = paretoLogprob(model, X); or logp = paretoLogprob(m, K, X); 
+%%
+if isstruct(arg1)
+    model = arg1;
+    m = model.m;
+    K = model.K; 
+    X = arg2; 
+else
+    m = arg1; 
+    K = arg2; 
+    X = arg3;
+end
 
 % p = K*m^K ./ (X.^(K+1));
 % p(X < m) = 0;
