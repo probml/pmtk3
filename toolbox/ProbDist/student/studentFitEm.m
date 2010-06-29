@@ -161,7 +161,7 @@ function dof = estimateDofNLL(model, X)
 % NLL
 mu = model.mu;
 Sigma = model.Sigma;
-nllfn = @(v) -sum(studentLogprob(studentDist(mu, Sigma, v), X));
+nllfn = @(v) -sum(studentLogprob(studentCreate(mu, Sigma, v), X));
 dofMax = 1000; dofMin = 0.1;
 dof = fminbnd(nllfn, dofMin, dofMax);
 

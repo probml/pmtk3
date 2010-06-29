@@ -6,7 +6,7 @@ for useLog = [false true]
 dofs = [0.1 1 5];
 xs = linspace(-4, 4, 40);  
 figure;
-[styles, colors, symbols] = plotColors;
+[styles, colors, symbols, styleStr] = plotColors;
 N = length(dofs);
 for i=1:N
     dof = dofs(i);
@@ -14,9 +14,9 @@ for i=1:N
     model.mu = 0; model.Sigma = 1; model.dof = dof; 
     ps = exp(studentLogprob(model, xs));  
     if useLog
-      plot(xs, log(ps), styles{i}, 'linewidth', 2, 'markersize', 12);
+      plot(xs, log(ps), styleStr{i}, 'linewidth', 2, 'markersize', 12);
     else
-      plot(xs, ps, styles{i}, 'linewidth', 2, 'markersize', 12);
+      plot(xs, ps, styleStr{i}, 'linewidth', 2, 'markersize', 12);
     end
     hold on
     legendStr{i} = sprintf('t(%s=%2.1f)', '\nu', dof);
@@ -24,9 +24,9 @@ end
 %ps = normpdf(xs, 0, 1);
 ps = gausspdf(xs, 0, 1);
 if useLog
-  plot(xs,  log(ps), styles{N+1}, 'linewidth', 2, 'markersize', 12);
+  plot(xs,  log(ps), styleStr{N+1}, 'linewidth', 2, 'markersize', 12);
 else
-  plot(xs, ps, styles{N+1}, 'linewidth', 2, 'markersize', 12);
+  plot(xs, ps, styleStr{N+1}, 'linewidth', 2, 'markersize', 12);
 end
   
 legendStr{N+1} = 'N(0,1)';

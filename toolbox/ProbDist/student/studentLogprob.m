@@ -1,12 +1,26 @@
-function logp = studentLogprob(model, X)
+function logp = studentLogprob(arg1, arg2, arg3, arg4)
 % Multivariate student T distribution, log pdf
 %
 % -  model is a structure containing fields mu, Sigma, dof
 % -  logp(i) = logp(X(i, :) | model)
 %
 % For the scalar case, Sigma is the variance not the standard deviation
+%
+% logp = studentLogprob(model, X); OR logp = studentLogprob(mu, Sigma, dof, X);
 
-mu = model.mu; Sigma = model.Sigma; nu = model.dof;
+if isstruct(arg1)
+    model = arg1;
+    mu    = model.mu;
+    Sigma = model.Sigma;
+    nu    = model.dof;
+    X     = arg2;
+else
+    mu    = arg1;
+    Sigma = arg2;
+    nu    = arg3;
+    X     = arg4;
+end
+
 d = size(Sigma, 1);
 X = reshape(X, [], d);
 %XX = X;
