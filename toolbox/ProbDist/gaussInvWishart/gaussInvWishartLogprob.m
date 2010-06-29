@@ -1,4 +1,8 @@
-function logp = gaussInvWishartLogprob(model, m, S)
+function logp = gaussInvWishartLogprob(arg1, arg2, arg3, arg4, arg5, arg6)
+% logp(i) = p(m(:, i), S(:, :, i) | model) 
+% logp = gaussInvWishartLogprob(model, m, S) OR
+% logp = gaussInvWishartLogprob(mu, Sigma, dof, k, m, S)
+%
 % logp(i) = p(m(:, i), S(:, :, i) | model) 
 %         = N(m(:, i) | model.mu, (1/model.k) * S(:, :, i)) *
 %           IW(S(:, :, i) | model.dof, model.Sigma)
@@ -14,10 +18,24 @@ function logp = gaussInvWishartLogprob(model, m, S)
 %
 % *** Vectorized w.r.t. to both m and S ***  
 
-mu    = model.mu;
-Sigma = model.Sigma; 
-dof   = model.dof;
-k     = model.k;
+if isstruct(arg1)
+    model = arg1;
+    m = arg2;
+    S = arg3;
+    mu    = model.mu;
+    Sigma = model.Sigma;
+    dof   = model.dof;
+    k     = model.k;
+else
+    mu = arg1;
+    Sigma = arg2;
+    dof = arg3;
+    k = arg4;
+    m = arg5;
+    S = arg6;
+end
+
+
 
 d     = min(size(S, 1), size(S, 2));  % take care of 1d vectorized case
 m     = reshape(m, d, []);
