@@ -93,6 +93,15 @@ function model = mrf2Create(adj, nStates, varargin)
   'nodePot', [], 'edgePot', [], 'tied', 1, 'ising', 1, 'method', 'dummy', 'maxIter', 0, ...
   'cutset', [], 'nRestarts', 1, 'burnIn', 0, 'nSamples', 0, 'varProb', 0, 'blocks', []);
 
+maxNstates = max(nStates); 
+if isempty(nodePot)
+    nodePot = rand(size(adj, 1), maxNstates); 
+end
+
+if isempty(edgePot)
+    edgePot = rand(maxNstates, maxNstates); % will be replicated
+end
+
 model.adj = adj;
 model.nStates = nStates;
 model.edgeStruct = UGM_makeEdgeStruct(adj,nStates);
