@@ -1,7 +1,7 @@
 %% Demonstrate training a chain-structured MRF
 % Based on
 % http://www.cs.ubc.ca/~schmidtm/Software/UGM/trainMRF.html
-%PMTKbroken may be that mrf2Create does not create pots
+
 %% Get  data
 setSeed(0);
 load rain.mat % X is 1059*28
