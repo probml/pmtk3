@@ -33,9 +33,9 @@ dbclear('if', 'error');
 dbclear('if', 'warning');
 if nargin < 1, subFolder = ''; end
 if nargin < 2
-    exclusions = {'PMTKslow', 'PMTKinteractive', 'PMTKreallySlow', 'PMTKbroken'};
+    %exclusions = {'PMTKslow', 'PMTKinteractive', 'PMTKreallySlow', 'PMTKbroken'};
     %exclusions = {'PMTKinteractive', 'PMTKreallySlow', 'PMTKbroken'};
-    %exclusions = {'PMTKinteractive', 'PMTKbroken'}; 
+    exclusions = {'PMTKinteractive', 'PMTKbroken'}; 
 end
 hideFigures();
 fprintf('skipping demos with these tags: %s\n', catString(exclusions, ', ')); 
@@ -115,8 +115,8 @@ header = [...
 
 summary = {'errors', sprintf('%d / %d', numel(fieldnames(errors)), nTotalDemos); 
            'warnings', sprintf('%d / %d', numel(fieldnames(warnings)), nTotalDemos); 
-           'pmtkbroken', sprintf('%d / %d', numel(excluded), nTotalDemos); 
-           'skipped', sprintf('%d / %d',nKnownBroken, nTotalDemos); 
+           'pmtkbroken', sprintf('%d / %d', nKnownBroken, nTotalDemos); 
+           'skipped', sprintf('%d / %d',numel(excluded), nTotalDemos); 
            };
        
 summaryColors = repmat({'lightgreen'}, size(summary)); 
