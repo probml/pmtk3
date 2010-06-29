@@ -9,6 +9,15 @@
 %   SOB    X
 %%
 S = 1; CB = 2; LC = 3; SOB = 4; X = 5;
+G = zeros(5,5);
+G(S,[CB LC]) = 1;
+G([CB LC], SOB) = 1;
+G(LC, X) = 1;
+
+names = {'S','CB','LC','SOB','XR'};
+%drawNetwork(G, '-nodeLabels', names);
+
+
 %% Make CPDs
 % Specify the conditional probability tables as cell arrays
 % The left-most index toggles fastest, so entries are stored in this order:
@@ -49,17 +58,31 @@ set(gca,'ylim',[0 0.2]) % zoom in
 printPmtkFigure('lungcancerJointBar')
 
 
-%% Inference
-
+%% Conditional marginals
 pLCgivenSOB = tabularFactorConditional(jointT, LC, SOB, 2);
-pLCgivenSOB.T
+fprintf('p(LC=1|SOB=1)=%5.3f\n', pLCgivenSOB.T(2))
 
+pLCgivenSOBandX = tabularFactorConditional(jointT, LC, [SOB,X], [2,2]);
+fprintf('p(LC=1|SOB=1,XR=1)=%5.3f\n', pLCgivenSOBandX.T(2))
 
-pLCgivenSOBandX = tabularFactorConditional(jointT, LC, [SOB, X], [2, 2]);
-pLCgivenSOBandX.T
+pCBgivenSOB = tabularFactorConditional(jointT, CB, SOB, 2);
+fprintf('p(CB=1|SOB=1)=%5.3f\n', pCBgivenSOB.T(2))
+%assert(approxeq(pCBgivenSOB.T, [0.5038; 0.4962]));
 
+pCBgivenSOBandX = tabularFactorConditional(jointT, CB, [SOB, X], [2, 2]);
+fprintf('p(CB=1|SOB=1,XR=1)=%5.3f\n', pCBgivenSOBandX.T(2))
+% explaining away - prob of CB is now lower given X, since LC is more
+% likely
+%assert(approxeq(pCBgivenSOBandX.T, [0.5220; 0.4780])); 
 
+%% Unconditional marginals
+mmap = zeros(1,5);
+for i=1:5
+  p = tabularFactorMarginalize(jointT, i);
+  fprintf('p(%s=1)=%5.3f\n', names{i}, p.T(2));
+  if p.T(2)>0.5, mmap(i) = 1; end
+end
 
-
-
+%% Joint mode
+mode = argmax(joint)-1
 
