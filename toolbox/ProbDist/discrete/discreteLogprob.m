@@ -1,23 +1,34 @@
-function [L, Lij] = discreteLogprob(model, X)
+function [L, Lij] = discreteLogprob(arg1, X)
 % Compute the log probability of the data. X must be in 1:K.
-% model is a structure with a field T, a K-by-d stochastic matrix, 
+% [L, Lij] = discreteLogprob(T, X); or [L, Lij] = discreteLogprob(model, X)
+%
+% model is a structure with a field T, a K-by-d stochastic matrix,
 %(as returned by discreteFit).
 %
 % X(i, j) is the ith case from the jth distribution.
 %
 % Lij = log p(X(i, j) | params(j))
 % L   = sum(Lij, 2)  % i.e. summed across distributions, (not cases).
+%%
 
 if any(isnan(X(:)))
-  [L, Lij] = discreteLogprobMissingData(model, X);
-  return;
+    [L, Lij] = discreteLogprobMissingData(arg1, X);
+    return;
 end
 
-d = model.d;
-X = reshape(X, [], d); 
+if isstruct(arg1)
+    model = arg1;
+    T = model.T;
+    K = model.K;
+    d = model.d;
+else
+    T = arg1;
+    [K, d] = size(T);
+end
+
+X = reshape(X, [], d);
 n = size(X, 1);
-T = model.T;
-if model.K == 2
+if K == 2
     % more efficient method if data is binary; we treat X as a mask for T
     X = (X == 2);
     logT = log(T + eps);
@@ -27,7 +38,7 @@ if model.K == 2
     L = sum(Lij, 2);
 else
     Lij = zeros(n, d);
-    logT = log(T + eps); 
+    logT = log(T + eps);
     for j=1:d
         Lij(:, j) = logT(X(:, j), j); % loop is faster than sub2ind vectorized solution
     end
