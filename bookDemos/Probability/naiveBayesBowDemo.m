@@ -5,7 +5,10 @@ if 1
     loadData('XwindowsDocData'); % 900x600, 2 classes Xwindows vs MSwindows
     Xtrain = xtrain; Xtest = xtest;
 else
-    loadData('newsgroups') % 16242x100, 4 classes
+    loadData('20news_w100') % 16242x100, 4 classes
+    X = shuffleRows(documents'); 
+    Xtrain = X(1:60, :); 
+    Xtest = X(61:end,:); 
 end
 
 %% Train and test
