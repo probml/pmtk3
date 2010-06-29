@@ -1,10 +1,28 @@
-function X = invGammaSample(model, n)
-% Sample from an inverse gamma distribution 
-% with parameters model.a, model.b.
+function X = invGammaSample(arg1, arg2, arg3)
+% Sample from an inverse gamma distribution with parameters a, b
+% X = invGammaSample(model, n); or X = invGammaSample(a, b, n); 
 
 
-a = model.a;
-b = model.b;
+if isstruct(arg1)
+    model = arg1;
+    a = model.a;
+    b = model.b;
+    if nargin < 2
+        n = 1;
+    else
+        n = arg2; 
+    end
+else
+    a = arg1;
+    b = arg2;
+    if nargin < 3
+        n = 1;
+    else
+        n = arg3;
+    end
+end
+
+
 v = 2*a;
 s2 = 2*b/v;
 X = invchi2rnd(v, s2, n, 1);
