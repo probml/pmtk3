@@ -1,8 +1,15 @@
-function [logp, L] = poissonLogprob(model, X)
-% logp(i) = sum_j log p(X(i, j) | model.lambda(j))
-% L(i, j) = log(p(X(i, j) | model.lambda(j))
+function [logp, L] = poissonLogprob(arg1, X)
+% logp(i) = sum_j log p(X(i, j) | lambda(j))
+% L(i, j) = log(p(X(i, j) | lambda(j))
+% arg1 is either a model with field lambda, or just lambda itself. 
+%%
+if isstruct(arg1)
+    model = arg1; 
+    lambda = model.lambda; 
+else
+    lambda = arg1; 
+end
 
-lambda = model.lambda;
 if numel(lambda) == 1
     X = colvec(X);
 end
