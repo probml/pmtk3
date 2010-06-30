@@ -1,5 +1,6 @@
 function postQuery = libDaiInfer(model, queryVars, visVars, visVals)
 %% Experimental interface to libdai
+% add the libdai/matlab directory to the matlab path
 if nargin == 0; runTest(); return; end
 
 tic
@@ -17,7 +18,7 @@ if nargin > 2
 end
 factors = filterCell(factors, @(f)~isempty(f.domain)); % remove empty factors
 psi = cellfuncell(@convertToLibFac, factors);
-[logZ, q, md, qv, qf] = dai(psi, 'JTREE', '[updates=HUGIN]');
+[logZ, q, md, qv] = dai(psi, 'JTREE', '[updates=HUGIN]');
 
 if numel(queryVars) == 1
     postQuery = convertToPmtkFac(qv{queryVars});
@@ -68,7 +69,7 @@ end
 
 
 function runTest()
-
+%% test 
 
 alarm = loadData('alarmNetwork');
 CPT = alarm.CPT;
