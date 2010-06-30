@@ -1,5 +1,5 @@
 function postQuery = libDaiInfer(model, queryVars, visVars, visVals)
-
+%% Experimental interface to libdai
 if nargin == 0; runTest(); return; end
 
 tic
