@@ -17,26 +17,19 @@ X = standardizeCols(bank.data(:, 2:3));
 Xtrain = X(trainNdx, :);
 Xtest = X(testNdx, :);
 
-Xtrain  = X; Xtest = X; 
-ytrain = y; ytest = y;
-
 modelS = generativeClassifierFit(@studentFit, Xtrain, ytrain); 
-%[yhat] = generativeClassifierPredict(@studentLogprob, modelS, Xtest);
-[yhat] = generativeClassifierPredict(@studentLogprob, modelS, X);
+[yhat] = generativeClassifierPredict(@studentLogprob, modelS, Xtest);
 figure;
-%process(modelS, yhat, Xtest, ytest, 'Student', Xtrain, ytrain);
-process(modelS, yhat, X, y, 'Student');
+process(modelS, yhat, Xtest, ytest, 'Student', Xtrain, ytrain);
 printPmtkFigure('robustLDAstudent')
 
 modelG = generativeClassifierFit(@gaussFit, Xtrain, ytrain); 
-%[yhat] = generativeClassifierPredict(@gaussLogprob, modelG, Xtest);
-[yhat] = generativeClassifierPredict(@gaussLogprob, modelG, X);
+[yhat] = generativeClassifierPredict(@gaussLogprob, modelG, Xtest);
 figure;
-%process(modelG, yhat, Xtest, ytest, 'Gaussian', Xtrain, ytrain);
-process(modelG, yhat, X, y, 'Gaussian');
+process(modelG, yhat, Xtest, ytest, 'Gaussian', Xtrain, ytrain);
 printPmtkFigure('robustLDAgauss')
 
-if 0
+if 1
 % Sanity check - should be same as using Gaussian
 modelQ = discrimAnalysisFit(Xtrain, ytrain, 'QDA'); 
 [yhat] = discrimAnalysisPredict(modelQ, Xtest);
@@ -73,16 +66,17 @@ idxsolvent2 = find(Y == 1 & yhat(:) == 0);
 % Plot data and predictions
 nerrors = sum(Y ~= yhat);
 h1 = plot(X(idxbankrupt1, 1), X(idxbankrupt1,2), 'bo');
-plot(X(idxbankrupt2, 1), X(idxbankrupt2,2), 'ro', 'markersize', 12);
+plot(X(idxbankrupt2, 1), X(idxbankrupt2,2), 'ro', 'markersize', 12, 'linewidth', 3);
 h2 = plot(X(idxsolvent1, 1), X(idxsolvent1,2), 'b^');
-plot(X(idxsolvent2, 1), X(idxsolvent2,2), 'r^', 'markersize', 12);
+plot(X(idxsolvent2, 1), X(idxsolvent2,2), 'r^', 'markersize', 12, 'linewidth', 3);
 
-if 0
-plot(Xtr((ytr==0),1), Xtr((ytr==0),2), 'ko', 'markersize', 8);
-plot(Xtr((ytr==1),1), Xtr((ytr==1),2), 'k^', 'markersize', 8);
+if ~isempty(Xtr)
+  % Plot training data
+  plot(Xtr((ytr==0),1), Xtr((ytr==0),2), 'ko', 'markersize', 8);
+  plot(Xtr((ytr==1),1), Xtr((ytr==1),2), 'k^', 'markersize', 8);
 end
 
-title(sprintf('Bankruptcy Data using %s (blue=correct, red=wrong), nerr = %d', name, nerrors ));
+title(sprintf('Bankruptcy Data using %s (black = train, blue=correct, red=wrong), nerr = %d', name, nerrors ));
 legend([h1, h2], 'Bankrupt', 'Solvent', 'location', 'southeast');
 fprintf('Num Errors using %s: %d\n' , name, nerrors);
 
