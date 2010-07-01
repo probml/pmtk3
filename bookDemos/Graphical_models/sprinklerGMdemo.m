@@ -47,6 +47,7 @@ xticklabelRot(lab, 90, 10, 0.01)
 title('joint distribution of water sprinkler UGM')
 
 %% Inference
+nvars = numel(CPDs); 
 model.Tfac = CPDs;
 model.domain = [C, S, R, W];
 model.G = G; 
@@ -63,13 +64,15 @@ mSWve = variableElimination(model, [S, W]);
 assert(approxeq(mSW.T(TRUE, TRUE), 0.2781))
 assert(approxeq(mSWve.T(TRUE, TRUE), 0.2781))
 
+evidence = sparsevec(W, TRUE, nvars); 
 mSgivenW = tabularFactorConditional(jointF, S, W, TRUE);
-mSgivenWve = variableElimination(model, S, W, TRUE);
+mSgivenWve = variableElimination(model, S, evidence);
 assert(approxeq(mSgivenW.T(TRUE), 0.4298));
 assert(approxeq(mSgivenWve.T(TRUE), 0.4298));
 
+evidence = sparsevec([W R], [TRUE TRUE], nvars); 
 mSgivenWR = tabularFactorConditional(jointF, S, [W R], [TRUE, TRUE]);
-mSgivenWRve = variableElimination(model, S, [W R], [TRUE, TRUE]);
+mSgivenWRve = variableElimination(model, S, evidence);
 assert(approxeq(mSgivenWR.T(TRUE), 0.1945)); % explaining away
 assert(approxeq(mSgivenWRve.T(TRUE), 0.1945));
 

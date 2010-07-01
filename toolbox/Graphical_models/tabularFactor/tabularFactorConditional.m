@@ -1,5 +1,6 @@
 function [TQ] = tabularFactorConditional(TF, queryVars, visVars, visValues)
-%% Condition a tabular factor
+%% Compute sum_H p(Q, H | V=v) through brute force enumeration
+% See also variableElimination
 TF = tabularFactorSlice(TF, visVars, visValues);
 TF = tabularFactorNormalize(TF);
 TQ = tabularFactorMarginalize(TF, queryVars);

@@ -32,6 +32,6 @@ function [model, loglikHist] = mixStudentFit(data, K, varargin)
 %   K
 %
 % loglikHist(t) for plotting
-%PMTKlatent mixStudent
+%PMTKlatentModel mixStudent
 [model, loglikHist] = mixStudentFitEm(data, K, varargin{:});
 end

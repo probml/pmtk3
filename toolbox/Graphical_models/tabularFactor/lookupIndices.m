@@ -5,7 +5,7 @@ function ndx = lookupIndices(small, big)
 n = numel(small);
 ndx = zeros(n,1);
 for i=1:n
-  ndx(i) = find(big==small(i));
+  ndx(i) = find(big==small(i), 1);
 end
 % loop is faster than vectorized versions 
 % ndx = any(bsxfun(@eq,smalldom',bigdom),1)

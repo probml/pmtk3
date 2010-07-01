@@ -1,35 +1,35 @@
-function [postQuery, Z] = variableElimination(model, queryVars, visVars, visVals)
+function [postQuery, Z] = variableElimination(model, queryVars, evidence)
 %% Perform sum-product variable elimination to compute sum_H p(Q, H | V=v)
 % See Koller & Friedman algorithm 9.1 pg 273
 % model is a struct with the following fields:
 % Tfac    - a cell array of tabular factors
 % G       - the graph structure: an adjacency matrix
-% domain  - the global domain
 %%
 % postQuery is a tabular factor
 %% Setup
-if(nargin < 4)
+if(nargin < 3)
     visVars = [];
     visVals = [];
+else
+    visVars = find(evidence); 
+    visVals = nonzeros(evidence); 
 end
-factors      = rowvec(model.Tfac);
-G            = model.G;
-globalDomain = model.domain;
-nstates      = cellfun(@(t)t.sizes(end), factors);
-%% Find a good elimination ordering
-moralG    = moralizeGraph(G); % marry parents, and make graph symmetric 
-ordering  = globalDomain(bestFirstElimOrder(moralG, nstates));
-hiddenNdx = argout(2, @setdiff, ordering, union(queryVars, visVars));
-elim      = ordering(sort(hiddenNdx));
+factors = rowvec(model.Tfac);
+G       = model.G;
 %% Condition on the evidence
 for i=1:numel(factors)
-    localVars = intersect(factors{i}.domain, visVars);
+    localVars = intersectPMTK(factors{i}.domain, visVars);
     if isempty(localVars)
         continue;
     end
     localVals  = visVals(lookupIndices(localVars, visVars));
     factors{i} = tabularFactorSlice(factors{i}, localVars, localVals);
 end
+nstates = cellfun(@(t)t.sizes(end), factors);
+%% Find a good elimination ordering
+moralG    = moralizeGraph(G); % marry parents, and make graph symmetric 
+ordering  = bestFirstElimOrder(moralG, nstates);
+elim      = setdiffPMTK(ordering, [queryVars, visVars]); 
 %% Eliminate nuisance variables
 for i=1:numel(elim)
    factors = eliminate(factors, elim(i));  
@@ -41,9 +41,9 @@ end
 
 function F = eliminate(F, v)
 %% Eliminate variable v from the factors F
-inscope = cellfun(@(f)ismember(v, f.domain), F); 
+inscope = cellfun(@(f)any(v == f.domain), F); 
 psi     = tabularFactorMultiply(F(inscope)); 
-onto    = setdiff(psi.domain, v); 
+onto    = setdiffPMTK(psi.domain, v); 
 tau     = tabularFactorMarginalize(psi, onto); 
 F       = [F(not(inscope)), {tau}];
 end

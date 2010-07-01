@@ -3,7 +3,7 @@ function ns = neighbors(adj_mat, i)
 % ns = neighbors(adj_mat, i)
 
 %ns = myunion(children(adj_mat, i), parents(adj_mat, i));
-ns = [find(adj_mat(i,:)) find(adj_mat(:,i))'];
+ns = [find(adj_mat(i, :)) find(adj_mat(:, i))'];
 
 
 end
