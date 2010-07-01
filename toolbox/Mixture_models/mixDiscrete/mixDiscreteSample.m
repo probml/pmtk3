@@ -19,6 +19,7 @@ function [X, y] = mixDiscreteSample(model, nsamples)
 % model.T = normalize(rand(model.nstates, model.d, model.nmix), 1);
 % nsamples = 1000;
 % [X, y] = mixDiscreteSample(model, nsamples); 
+%PMTKlatentModel mixDiscrete
 y = sampleDiscrete(model.mixweight, nsamples, 1); 
 X = zeros(nsamples, model.d);
 T = model.T;

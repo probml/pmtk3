@@ -4,6 +4,7 @@ function [W,mu,sigma2,evals,evecs,Xproj,Xrecon]  = ppcaFit(X,K)
 % Each column of W is a pc basis, so W is d*k
 % We also return the evecs and evals of the covariance matrix
 % which are useful for efficient evaluation of ppcaLoglik
+%PMTKlatentModel ppca
 
 [evecs, Xproj, evals, Xrecon, mu] = pcaPmtk(X,K); 
 [n,d] = size(X);

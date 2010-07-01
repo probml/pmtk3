@@ -11,7 +11,8 @@ function [model] = linregFit(X, y, varargin)
 %
 % OUTPUTS:
 % model         ... a struct, which you can pass directly to linregPredict
-
+%PMTKsupervisedModel linreg
+%%
 [   regType         ...
     lambda          ...
     fitOptions      ...

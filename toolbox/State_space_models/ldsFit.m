@@ -22,6 +22,6 @@ function [model, loglikHist] = ldsFit(data, nlatent, varargin)
 % model         - a struct with fields
 %   A, C, b, Q, R, m1, Sigma1
 % loglikHist    - history of the log likelihood
-%
+%PMTKlatentModel lds
 [model, loglikHist] = ldsFitEm(data, nlatent, varargin{:});
 end

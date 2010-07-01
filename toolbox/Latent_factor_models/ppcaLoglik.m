@@ -1,7 +1,7 @@
 function [logp, ll] = ppcaLoglik(X, W, mu, sigma2, evals, evecs)
 % logp(i) = log N(X(i,:) | mu, C) where C = W W' + sigma^2 I(d)
 % Based on code by Ian Nabney
-
+%PMTKlatentModel ppca
 mu = mu(:)';
 [N d] = size(X);
 [d K] = size(W);

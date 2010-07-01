@@ -16,7 +16,7 @@ function [model, logev] = logregFitBayes(X, y, varargin)
 % OUTPUT
 % model.wN and model.VN contain posterior.
 % logev is  the log marginal likelihood
-
+% PMTKsupervisedModel logreg
 
 
 [preproc, method, lambda, useARD] = process_options(varargin, ...

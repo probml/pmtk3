@@ -9,6 +9,7 @@ function model = markovFit(X, nstates, pseudoCountsPi, pseudoCountsA)
 %
 % where S(t) denotes the state at time step t.
 %
+% PMTKlatentModel markov
 
 if nargin < 2, nstates = nunique(X(:)); end
 if nargin < 3, pseudoCountsPi = ones(1, nstates); end

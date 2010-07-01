@@ -2,9 +2,9 @@ function [model, loglikHist] = mixGaussVbFit(X, K, varargin)
 % Variational Bayes for fitting mixture of K gaussians
 % data(i,:) is i'th case
 % See Bishop sec 10.2 for details
-
+%
 %PMTKauthor Emtiyaz Khan, Cody Severinski, Kevin Murphy
-
+%PMTKlatentModel mixGaussVb
 [maxIter, thresh, plotFn, verbose, alpha0] = process_options(...
     varargin, 'maxIter', 200, 'thresh', 1e-5, 'plotFn', [], ...
     'verbose', false, 'alpha0', 0.001);

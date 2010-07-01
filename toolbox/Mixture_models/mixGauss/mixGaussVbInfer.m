@@ -2,9 +2,9 @@ function [z, r, logSumRho, logr, Nk] = mixGaussVbInfer(model, X)
 % z(i) = argmax_k p(z=k|X(i,:), model) hard clustering
 % pz(i,k) = p(z=k|X(i,:), model) soft responsibility
 % ll(i) = log p(X(i,:) | model)  logprob of observed data
-
+%
 % Calculate responsibilities using Bishop eqn 10.67
-
+%PMTKlatentModel mixGaussVb
 [alpha, beta, entropy, invW, logDirConst, logLambdaTilde, logPiTilde,  ...
     logWishartConst, m, v, W] = ...
   structvals(model.postParams, 'alpha', 'beta', 'entropy', 'invW', ...

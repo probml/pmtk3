@@ -5,7 +5,6 @@ function [model] = mixTreeFit(X, K)
 % model.mixWeights
 % model.G{k} sparse adjacency matrix
 % model.CPD{k}{i}(u,v) = p(i=v|pa(i)=u) for node i in tree k
-
 %PMTKbroken
 
 values = unique(unique(full(X)));

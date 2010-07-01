@@ -9,6 +9,7 @@ function path = hmmEstState(model, X)
 %
 % X    - 1-by-T vector of integers in 1:C
 %
+%PMTKlatentModel hmm
 pi = model.pi;
 A  = model.A;
 B  = hmmMkLocalEvidence(model, X);

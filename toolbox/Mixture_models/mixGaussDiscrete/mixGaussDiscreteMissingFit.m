@@ -7,6 +7,6 @@ function [model, loglikHist] = mixGaussDiscreteMissingFit(data, K, types, vararg
 % beta(c,j,k) = p(xj=c|z=k)
 % muk(j,k), sigmak(j,k),
 % mixweight
-%
+%PMTKlatentModel mixGaussDiscrete
 [model, loglikHist] = mixGaussDiscreteMissingFitEm(data, K, types, varargin{:});
 end

@@ -2,7 +2,7 @@ function [samples] = hmmSamplePost(model, X, nsamples, varargin)
 % Forwards filtering, backwards sampling for HMMs
 % OUTPUT:
 % samples(t,s) = value of S(t)  in sample s
-
+%PMTKlatentModel* hmm
 obslik = process_options(varargin, 'obslik', []); 
 
 

@@ -8,7 +8,7 @@ function out = logregParamBayes(model, varargin)
 %
 % If you set display=true, it
 % prints the summary (as a latex table) to the screen
-
+% PMTKsupervisedModel logreg
 [doDisplay] = process_options(varargin, ...
   'display', true);
 

@@ -4,6 +4,7 @@ function [yhat, py] = naiveBayesPredict(model, Xtest)
 % For Gaussian features, use discrimAnalysis.
 % yhat(i) = argmax_c p(y=c|Xtest(i,:), theta(c,:)), in 1:C
 % py(i,c) = p(y=c|xi, params)
+%PMTKsupervisedModel naiveBayes
 
 vectorized = true;
 if vectorized

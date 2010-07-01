@@ -2,6 +2,7 @@ function [yhat, post] = discrimAnalysisPredict(model, Xtest)
 % Apply Bayes rule with Gaussian class-conditional densities.
 % Computes post(i,c) = P(y=c|x(i,:), params)
 % and yhat(i) = arg max_c post(i,c)
+%PMTKsupervisedModel discrimAnalysis
 
 
 [N, d] = size(Xtest);

@@ -11,7 +11,7 @@ function [X, y] = mixGaussSample(model, nsamples)
 % nsamples   - the number of samples to generate
 % X          - an nsamples-by-d matrix 
 % y          - an nsamples-by-1 vector, the component labels in 1:C
-
+%PMTKlatentModel mixGauss
 mus = model.mu; Sigmas = model.Sigma; mix = model.mixweight; 
 
 d = size(mus, 1);

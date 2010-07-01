@@ -5,6 +5,7 @@ function [gamma, logp, alpha, beta, B]  = hmmInferState(model, X)
 % gamma(i,t)  = p(S(t)=i | X(1:T, :))   (smoothed)
 % B - local evidence
 %*** X must be a single sequence ***
+%PMTKlatentModel hmm
 %
 pi       = model.pi;
 A        = model.A;

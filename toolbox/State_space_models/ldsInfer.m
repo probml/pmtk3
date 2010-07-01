@@ -1,5 +1,5 @@
 function [msmooth, Vsmooth, loglik, VVsmooth, m0smooth, V0smooth, VV0smooth] = ...
-  kalmanSmoother(y, A, C, Q, R, init_mu, init_V, varargin)
+  ldsInfer(y, A, C, Q, R, init_mu, init_V, varargin)
 % Kalman/RTS smoother.
 % Input/ output is same as for kalmanFilter
 % For learning with EM, we also need to compute
@@ -7,7 +7,7 @@ function [msmooth, Vsmooth, loglik, VVsmooth, m0smooth, V0smooth, VV0smooth] = .
 % We follow Matt Beal's thesis and create a dummy node at time 0
 % m0smooth(:) = E[Z(0) | y(1:T)], V0smooth(:,:)  = cov[]
 % VV0smooth = Cov[Z(1), Z(0) | y(1:T)]
-
+%PMTKlatentModel lds
 [os T] = size(y); % os = size of observation space
 ss = size(A,1); % size of state space
 

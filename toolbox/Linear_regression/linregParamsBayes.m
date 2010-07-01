@@ -1,4 +1,4 @@
-function out = linregParamBayes(model, varargin)
+function out = linregParamsBayes(model, varargin)
 % Return summaries of the posterior distribution of the regression weights
 % You must call linregFitBayes first
 % out is a structure containing
@@ -8,7 +8,7 @@ function out = linregParamBayes(model, varargin)
 %
 % If you set display=true, it
 % prints the summary (as a latex table) to the screen
-
+%PMTKsupervisedModel linreg
 [doDisplay] = process_options(varargin, ...
   'display', true);
 

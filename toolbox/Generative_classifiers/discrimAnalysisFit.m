@@ -26,7 +26,8 @@ function model = discrimAnalysisFit(X, y, type, varargin)
 %    and (for plotting purposes) model.shrunkenCentroids(:,c)
 
 %PMTKauthor Hannes Bretschneider, Robert Tseng, Kevin Murphy
-
+%PMTKsupervisedModel discrimAnalysis
+%%
 [lambda, R, V, pseudoCount] = process_options(varargin, ...
     'lambda', [], 'R', [], 'V', [], 'pseudoCount', 1);
 

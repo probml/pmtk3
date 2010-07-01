@@ -42,6 +42,6 @@ function [model, loglikHist] = hmmFit(data, nstates, type, varargin)
 %
 % model         - a struct with fields, pi, A, emission, nstates, type
 % loglikHist    - history of the log likelihood
-%
+%PMTKlatentModel hmm
 %%
 [model, loglikHist] = hmmFitEm(data, nstates, type, varargin{:});

@@ -9,7 +9,8 @@ function [model, X, lambdaVec] = logregFit(X, y, varargin)
 %% OUTPUTS:
 % model         ... a struct, which you can pass directly to logregPredict
 % X             ... possibly transformed input
-
+% PMTKsupervisedModel logreg
+%%
 y = y(:);
 assert(size(y, 1) == size(X, 1));
 %% process options
