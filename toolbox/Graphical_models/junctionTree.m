@@ -7,8 +7,10 @@ function [postQuery, Z, jtree] = junctionTree(model, queryVars, evidence, jtree)
 %             TabularFactors, and G is the graph structure, an adjacency
 %             matrix.
 % queryVars - the query variables
+%
 % evidence  - a sparse vector of length nvars indicating the values for the
 %             observed variables with 0 elsewhere.
+%
 % jtree     - an optional struct as created by this function to allow for
 %             multiple queries efficiently. If jtree is specified, evidence
 %             must be [], i.e. we don't recalibrate based on new evidence.
@@ -20,7 +22,7 @@ function [postQuery, Z, jtree] = junctionTree(model, queryVars, evidence, jtree)
 %%
 % See also variableElimination, tabularFactorCondition
 %%
-if nargin == 0;
+if nargin == 0; % test to be removed
     test();
     return;
 end
