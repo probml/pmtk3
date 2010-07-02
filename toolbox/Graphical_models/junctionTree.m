@@ -27,7 +27,7 @@ if nargin == 0; % test to be removed
     return;
 end
 
-if nargin < 4 || ~isempty(evidence)
+if nargin < 4 || ~isempty(evidence) % build the jtree
     factors  = model.Tfac(:);
     nfactors = numel(factors);
    
