@@ -35,6 +35,10 @@ if nargin < 4 || ~isempty(evidence) % build the jtree
     if nargin > 2 && ~isempty(evidence) && nnz(evidence) > 0
         %% Condition on the evidence
         visVars  = find(evidence);
+        overlap = intersectPMTK(visVars, queryVars);
+        if ~isempty(overlap)
+            error('these query nodes are already observed: %d', overlap);
+        end
         visVals  = nonzeros(evidence);
         for i=1:numel(factors)
             localVars = intersectPMTK(factors{i}.domain, visVars);
@@ -137,20 +141,26 @@ candidates   = find(all(cliqueLookup(queryVars, :), 1));
 if ~isempty(candidates)
     cliqueNdx = candidates(minidx(cellfun(@(x)numel(x), cliques(candidates))));
     tf        = tabularFactorMarginalize(cliques{cliqueNdx}, queryVars);
-else
-    fprintf('performing an out of clique query\n'); 
-    clqScopes = [cellfuncell(@(c)c.domain, cliques); num2cell(1:nvars)']; 
-    ndx = greedySpan(queryVars, clqScopes); 
-    assert(~isempty(ndx)); 
-    beliefs = cell(1, numel(ndx)); 
-    for i=1:numel(ndx)
-        beliefs{i} = junctionTree(model, clqScopes{ndx(i)}, [], jtree); 
+    if isfield(jtree, 'normalize') && ~jtree.normalize
+        postQuery = tf; Z = [];
+    else
+        [postQuery, Z] = tabularFactorNormalize(tf);
     end
-    tf = tabularFactorMultiply(beliefs); 
+else
+    fprintf('performing an out of clique query\n');
+    clqScopes = [cellfuncell(@(c)c.domain, cliques); num2cell(1:nvars)'];
+    ndx = greedySpan(queryVars, clqScopes);
+    assert(~isempty(ndx));
+    beliefs = cell(1, numel(ndx));
+    jtree.normalize = false;
+    for i=1:numel(ndx)
+        beliefs{i} = junctionTree(model, clqScopes{ndx(i)}, [], jtree);
+    end
+    jtree = rmfield(jtree, 'normalize');
+    tf = tabularFactorMultiply(beliefs);
+    [postQuery, Z] = tabularFactorNormalize(tf);
 end
-[postQuery, Z] = tabularFactorNormalize(tf);
 end
-
 
 
 
@@ -169,9 +179,10 @@ for i=1:numel(CPT)
     Tfac{i} = tabularFactorCreate(CPT{i}, family);
 end
 model = structure(Tfac, G);
-evidence = sparsevec([11 15], [2 4], n);
-tic; ve = variableElimination(model, [2:10, 12:13], evidence); toc
-tic; jt = junctionTree(model,[2:10, 12:13] , evidence); toc
+evidence = sparsevec([11 12], [2 1], n);
+queryVars = [9];
+tic; ve = variableElimination(model, queryVars, evidence); toc
+tic; jt = junctionTree(model, queryVars , evidence); toc
 
 assert(approxeq(ve.T, jt.T));
 
