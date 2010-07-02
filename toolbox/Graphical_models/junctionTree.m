@@ -4,8 +4,8 @@ function [postQuery, Z, jtree] = junctionTree(model, queryVars, evidence, jtree)
 %% Inputs
 %
 % model     - a struct with fields Tfac and G: Tfac is a cell array of
-%             tabularFactors, and G is the graph structure, an adjacency
-%             matrix.
+%             tabularFactors, and G is the variable graph structure: an 
+%             adjacency matrix.
 %
 % queryVars - the query variables
 %
@@ -14,26 +14,23 @@ function [postQuery, Z, jtree] = junctionTree(model, queryVars, evidence, jtree)
 %
 % jtree     - an optional struct as created by this function to allow for
 %             multiple queries efficiently. If jtree is specified, evidence
-%             must be [], i.e. we don't recalibrate based on new evidence.
+%             must be [], i.e. we don't recalibrate based on new evidence. 
+%             Further, out-of-clique subsequent queries are not supported. 
 %% Outputs
 % postQuery - a TabularFactor
 % Z         - the normalization constant
 % jtree     - the junction tree struct, pass it back into junctionTree
-%             if you have multiple queries.
+%             if you have multiple queries. 
 %%
 % See also variableElimination, tabularFactorCondition
 %%
-if nargin == 0; % test to be removed
-    test();
-    return;
-end
-
-if nargin < 4 || ~isempty(evidence) % build the jtree
+if nargin == 0;  test(); return; end % test to be removed
+%%
+if nargin < 4  % build the jtree
     factors  = model.Tfac(:);
     nfactors = numel(factors);
-    
     if nargin > 2 && ~isempty(evidence) && nnz(evidence) > 0
-        %% Condition on the evidence
+        %% condition on the evidence
         visVars  = find(evidence);
         overlap = intersectPMTK(visVars, queryVars);
         if ~isempty(overlap)
@@ -47,12 +44,12 @@ if nargin < 4 || ~isempty(evidence) % build the jtree
             factors{i} = tabularFactorSlice(factors{i}, localVars, localVals);
         end
     end
-    %% Setup jtree
+    %% setup jtree
     qv            = queryVars;
     nstates       = cellfun(@(t)t.sizes(end), factors);
     G             = moralizeGraph(model.G);
     nvars         = size(G, 1);
-    G(qv, qv)     = 1;
+    G(qv, qv)     = 1;  % ensure a clique will be built among the query vars
     G             = setdiag(G, 0);
     G             = mkChordal(G, minweightElimOrder(G, nstates));
     cliqueIndices = chordal2RipCliques(G, perfectElimOrder(G));
@@ -76,8 +73,7 @@ if nargin < 4 || ~isempty(evidence) % build the jtree
         tf         = [{T}; factors(factorLookup(:, c))];
         cliques{c} = tabularFactorMultiply(tf);
     end
-    %% Construct separating sets
-    % for each edge in the clique tree, construct the separating set.
+    %% construct separating sets
     sepsets  = cell(ncliques);
     [is, js] = find(cliqueGraph);
     for k=1:numel(is)
@@ -86,7 +82,7 @@ if nargin < 4 || ~isempty(evidence) % build the jtree
         sepsets{i, j} = intersectPMTK(cliques{i}.domain, cliques{j}.domain);
         sepsets{j, i} = sepsets{i, j};
     end
-    %% Calibrate
+    %% calibrate
     cliqueTree          = triu(cliqueGraph);
     messages            = cell(ncliques, ncliques);
     allexcept           = @(x)[1:x-1,(x+1):ncliques];
@@ -127,13 +123,12 @@ if nargin < 4 || ~isempty(evidence) % build the jtree
     end
     jtree = structure(cliques, cliqueGraph, cliqueLookup);
 end
-
-%% Find a clique to answer query
+%% find a clique to answer query
 cliques      = jtree.cliques;
 cliqueLookup = jtree.cliqueLookup;
 candidates   = find(all(cliqueLookup(queryVars, :), 1));
 if isempty(candidates)
-    error('out of clique queries are not supported'); 
+    error('out of clique queries are not supported'); % only happens if reusing an existing jtree
 end
 cliqueNdx  = candidates(minidx(cellfun(@(x)numel(x), cliques(candidates))));
 tf = tabularFactorMarginalize(cliques{cliqueNdx}, queryVars);
@@ -147,7 +142,7 @@ end
 
 
 function test()
-%% To be removed
+%% to be removed
 alarm = loadData('alarmNetwork');
 CPT = alarm.CPT;
 G   = alarm.G;
