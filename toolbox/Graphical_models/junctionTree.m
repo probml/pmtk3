@@ -56,7 +56,7 @@ if nargin < 4 || ~isempty(evidence) % build the jtree
         tmpGraph(dom, dom) = 1;
     end
     tmpGraph      = mkSymmetric(setdiag(tmpGraph, 0));
-    elimOrder     = minweightElimOrder(tmpGraph);
+    elimOrder     = minweightElimOrder(tmpGraph, nstates);
     tmpGraph      = mkChordal(tmpGraph, elimOrder);
     perfectOrder  = perfectElimOrder(tmpGraph);
     cliqueIndices = chordal2RipCliques(tmpGraph, perfectOrder);
