@@ -33,7 +33,7 @@ for i=2:p;
     % find set of neighbours of each v=order(i)
     % turn the set into a vector (so can take intersection)
     
-    pa{i}=intersect(ns, pre_v);
+    pa{i}=intersectPMTK(ns, pre_v);
     % find the sets of those neighbours which precede
     % v(i) with respect to order.
     % Store answer for cliques.
@@ -47,7 +47,7 @@ for i=2:p;
 end;
 ladder=zeros(1,p);
 for i=1:p;
-    if i==p | num_pa(i) >= num_pa(i+1);
+    if i==p || num_pa(i) >= num_pa(i+1);
         %if i=p or cardinality of pa decreasing with i
         %then the vertex v=order(i) is a ladder vertex.
         ladder(i)=order(i);
@@ -58,7 +58,7 @@ cliques=cell(size(ladder));
 for i=1:p;
     if ladder(i)==0
         cliques{i}=[];
-    else;
+    else
         cliques{i}=union(order(i), pa{i});
         % NOTE matlab orders union(a,b) as [min(a,b), max(a,b)]
         % regardless of relative size of a,b

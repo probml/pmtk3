@@ -24,7 +24,7 @@ for i=1:n
     min_weight = zeros(1,length(valid));
     for j=1:length(valid)
         k = valid(j);
-        nbrs = intersect(neighbors(G, k), U);
+        nbrs = intersectPMTK(neighbors(G, k), U);
         l = length(nbrs);
         M = Gorig(nbrs,nbrs);
         min_fill(j) = l^2 - sum(M(:)); % num. added edges
@@ -39,7 +39,7 @@ for i=1:n
     k = valid(j);
     uneliminated(k) = 0;
     order(i) = k;
-    ns = intersect(neighbors(G, k), U);
+    ns = intersectPMTK(neighbors(G, k), U);
     if ~isempty(ns)
         G(ns,ns) = 1;
         G = setdiag(G,0);

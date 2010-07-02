@@ -20,9 +20,9 @@ score=zeros(1,t);
 jtree=zeros(t,t);
 for i=2:t;
     for k=1:i-1;
-        score(k)=length(intersect(re_index_cliques{i}, re_index_cliques{k}));
+        score(k)=length(intersectPMTK(re_index_cliques{i}, re_index_cliques{k}));
     end;
-    if max(score)~=0 ;
+    if max(score)~=0 
         % only add the edge if clique i IS connected to one of its
         % predecessors. if score is all zeros, then clique has no intersection
         % with any of its predecessors. Since the cliques are in RIP, it must

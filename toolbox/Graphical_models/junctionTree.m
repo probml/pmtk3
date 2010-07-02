@@ -4,8 +4,9 @@ function [postQuery, Z, jtree] = junctionTree(model, queryVars, evidence, jtree)
 %% Inputs
 %
 % model     - a struct with fields Tfac and G: Tfac is a cell array of
-%             TabularFactors, and G is the graph structure, an adjacency
+%             tabularFactors, and G is the graph structure, an adjacency
 %             matrix.
+%
 % queryVars - the query variables
 %
 % evidence  - a sparse vector of length nvars indicating the values for the
@@ -30,7 +31,7 @@ end
 if nargin < 4 || ~isempty(evidence) % build the jtree
     factors  = model.Tfac(:);
     nfactors = numel(factors);
-   
+    
     if nargin > 2 && ~isempty(evidence) && nnz(evidence) > 0
         %% Condition on the evidence
         visVars  = find(evidence);
@@ -56,8 +57,7 @@ if nargin < 4 || ~isempty(evidence) % build the jtree
     tmpGraph  = mkSymmetric(tmpGraph);
     elimOrder = minweightElimOrder(tmpGraph);
     tmpGraph  = mkChordal(tmpGraph, elimOrder);
-    [ischordal, perfectOrder] = checkChordal(tmpGraph);
-    assert(ischordal);
+    perfectOrder  = perfectElimOrder(tmpGraph);
     cliqueIndices = chordal2RipCliques(tmpGraph, perfectOrder);
     ncliques      = numel(cliqueIndices);
     cliqueGraph   = ripCliques2Jtree(cliqueIndices);
@@ -104,7 +104,7 @@ if nargin < 4 || ~isempty(evidence) % build the jtree
     %% upwards pass
     while not(readyToSend(root))
         current = find(readyToSend, 1);
-        parent = parents(cliqueTree, current); 
+        parent = parents(cliqueTree, current);
         m = [cliques(current); messages(allexcept(parent), current)];
         psi = tabularFactorMultiply(removeEmpty(m));
         message = tabularFactorMarginalize(psi, sepsets{current, parent});
@@ -133,11 +133,13 @@ if nargin < 4 || ~isempty(evidence) % build the jtree
     end
     jtree = structure(cliques, cliqueGraph, cliqueLookup);
 end
+
+%% Find a clique to answer query
 cliques = jtree.cliques;
 cliqueLookup = jtree.cliqueLookup;
-%% Find a clique to answer query
 candidates = find(all(cliqueLookup(queryVars, :), 1));
-if isempty(candidates) % out of clique lookup (can be improved)
+if isempty(candidates)
+    % out of clique lookup (can be improved)
     marginals = cell(numel(queryVars), 1);
     for q=1:numel(queryVars)
         marginals{q} = junctionTree(model, queryVars(q), [], jtree);
@@ -149,6 +151,10 @@ else
 end
 [postQuery, Z] = tabularFactorNormalize(tf);
 end
+
+
+
+
 
 
 
@@ -164,11 +170,11 @@ for i=1:numel(CPT)
     Tfac{i} = tabularFactorCreate(CPT{i}, family);
 end
 model = structure(Tfac, G);
-evidence = sparsevec([11 15], [2 4], n); 
+evidence = sparsevec([11 15], [2 4], n);
 tic; ve = variableElimination(model, 9, evidence); toc
 tic; jt = junctionTree(model, 9, evidence); toc
 
-assert(approxeq(ve.T, jt.T)); 
+assert(approxeq(ve.T, jt.T));
 
 end
 
