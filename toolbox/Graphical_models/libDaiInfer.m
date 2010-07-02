@@ -28,7 +28,7 @@ else % search q
     if ~isempty(ndx)
         postQuery = convertToPmtkFac(q{ndx}); 
     else 
-       error('out of clique query not supported'); 
+       error('out of clique queriess not supported'); 
     end
 end
 t = toc;
@@ -75,6 +75,6 @@ end
 domain = 1:n;
 model = structure(Tfac, G, domain); 
 %% Try some arbitrary queries 
-p1_10Given13eq2 = libDaiInfer(model, 1:10, 13, 2); 
+p1_10Given13eq2 = libDaiInfer(model, 10, 13, 2); 
 p33 = libDaiInfer(model, 33);
 end
