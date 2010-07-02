@@ -7,7 +7,7 @@ function [postQuery, Z, jtree] = junctionTree(model, queryVars, evidence, jtree)
 %             tabularFactors, and G is the graph structure, an adjacency
 %             matrix.
 %
-% queryVars - the query variables (out of clique queries not supported)
+% queryVars - the query variables
 %
 % evidence  - a sparse vector of length nvars indicating the values for the
 %             observed variables with 0 elsewhere.
@@ -47,23 +47,17 @@ if nargin < 4 || ~isempty(evidence) % build the jtree
             factors{i} = tabularFactorSlice(factors{i}, localVars, localVals);
         end
     end
-    %% Setup clique tree
-    nstates     = cellfun(@(t)t.sizes(end), factors);
-    factorGraph = moralizeGraph(model.G);
-    tmpGraph    = factorGraph;
-    for f=1:nfactors
-        dom = factors{f}.domain;
-        tmpGraph(dom, dom) = 1;
-    end
-    tmpGraph      = mkSymmetric(setdiag(tmpGraph, 0));
-    elimOrder     = minweightElimOrder(tmpGraph, nstates);
-    tmpGraph      = mkChordal(tmpGraph, elimOrder);
-    perfectOrder  = perfectElimOrder(tmpGraph);
-    cliqueIndices = chordal2RipCliques(tmpGraph, perfectOrder);
+    %% Setup jtree
+    qv            = queryVars;
+    nstates       = cellfun(@(t)t.sizes(end), factors);
+    G             = moralizeGraph(model.G);
+    nvars         = size(G, 1);
+    G(qv, qv)     = 1;
+    G             = setdiag(G, 0);
+    G             = mkChordal(G, minweightElimOrder(G, nstates));
+    cliqueIndices = chordal2RipCliques(G, perfectElimOrder(G));
     cliqueGraph   = ripCliques2Jtree(cliqueIndices);
     ncliques      = numel(cliqueIndices);
-    ftmp          = [factors{:}];
-    nvars         = max([ftmp.domain]);
     cliqueLookup  = false(nvars, ncliques);
     for c=1:ncliques
         cliqueLookup(cliqueIndices{c}, c) = true;
@@ -138,7 +132,9 @@ end
 cliques      = jtree.cliques;
 cliqueLookup = jtree.cliqueLookup;
 candidates   = find(all(cliqueLookup(queryVars, :), 1));
-if isempty(candidates), error('out of clique queries are not supported'); end
+if isempty(candidates)
+    error('out of clique queries are not supported'); 
+end
 cliqueNdx  = candidates(minidx(cellfun(@(x)numel(x), cliques(candidates))));
 tf = tabularFactorMarginalize(cliques{cliqueNdx}, queryVars);
 [postQuery, Z] = tabularFactorNormalize(tf);
@@ -162,10 +158,12 @@ for i=1:numel(CPT)
     Tfac{i} = tabularFactorCreate(CPT{i}, family);
 end
 model = structure(Tfac, G);
-evidence = sparsevec([11 12], [2 1], n);
-queryVars = 9; 
+evidence = sparsevec([11 12 29 30], [2 1 1 2], n);
+queryVars = [1 2 9 22 33:37];
+%evidence = sparsevec([12 13], [2 2], n);
+%queryVars = 9;
 tic; ve = variableElimination(model, queryVars, evidence); toc
-tic; jt = junctionTree(model, queryVars , evidence); toc
+tic; [jt, Z, jtree] = junctionTree(model, queryVars , evidence); toc
 
 assert(approxeq(ve.T, jt.T));
 
