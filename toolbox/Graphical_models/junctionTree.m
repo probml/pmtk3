@@ -134,16 +134,19 @@ end
 cliques      = jtree.cliques;
 cliqueLookup = jtree.cliqueLookup;
 candidates   = find(all(cliqueLookup(queryVars, :), 1));
-if isempty(candidates)
-    % out of clique lookup (can be improved)
-    marginals = cell(numel(queryVars), 1);
-    for q=1:numel(queryVars)
-        marginals{q} = junctionTree(model, queryVars(q), [], jtree);
-    end
-    tf = tabularFactorMultiply(marginals);
-else
+if ~isempty(candidates)
     cliqueNdx = candidates(minidx(cellfun(@(x)numel(x), cliques(candidates))));
     tf        = tabularFactorMarginalize(cliques{cliqueNdx}, queryVars);
+else
+    fprintf('performing an out of clique query\n'); 
+    clqScopes = [cellfuncell(@(c)c.domain, cliques); num2cell(1:nvars)']; 
+    ndx = greedySpan(queryVars, clqScopes); 
+    assert(~isempty(ndx)); 
+    beliefs = cell(1, numel(ndx)); 
+    for i=1:numel(ndx)
+        beliefs{i} = junctionTree(model, clqScopes{ndx(i)}, [], jtree); 
+    end
+    tf = tabularFactorMultiply(beliefs); 
 end
 [postQuery, Z] = tabularFactorNormalize(tf);
 end
@@ -167,8 +170,8 @@ for i=1:numel(CPT)
 end
 model = structure(Tfac, G);
 evidence = sparsevec([11 15], [2 4], n);
-tic; ve = variableElimination(model, 9, evidence); toc
-tic; jt = junctionTree(model, 9, evidence); toc
+tic; ve = variableElimination(model, [2:10, 12:13], evidence); toc
+tic; jt = junctionTree(model,[2:10, 12:13] , evidence); toc
 
 assert(approxeq(ve.T, jt.T));
 
