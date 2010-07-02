@@ -38,54 +38,49 @@ if nargin < 4 || ~isempty(evidence) % build the jtree
         visVals  = nonzeros(evidence);
         for i=1:numel(factors)
             localVars = intersectPMTK(factors{i}.domain, visVars);
-            if isempty(localVars)
-                continue;
-            end
+            if isempty(localVars),  continue;  end
             localVals  = visVals(lookupIndices(localVars, visVars));
             factors{i} = tabularFactorSlice(factors{i}, localVars, localVals);
         end
     end
     %% Setup clique tree
-    nstates  = cellfun(@(t)t.sizes(end), factors);
+    nstates     = cellfun(@(t)t.sizes(end), factors);
     factorGraph = moralizeGraph(model.G);
     tmpGraph    = factorGraph;
     for f=1:nfactors
         dom = factors{f}.domain;
         tmpGraph(dom, dom) = 1;
     end
-    tmpGraph  = setdiag(tmpGraph, 0);
-    tmpGraph  = mkSymmetric(tmpGraph);
-    elimOrder = minweightElimOrder(tmpGraph);
-    tmpGraph  = mkChordal(tmpGraph, elimOrder);
+    tmpGraph      = mkSymmetric(setdiag(tmpGraph, 0));
+    elimOrder     = minweightElimOrder(tmpGraph);
+    tmpGraph      = mkChordal(tmpGraph, elimOrder);
     perfectOrder  = perfectElimOrder(tmpGraph);
     cliqueIndices = chordal2RipCliques(tmpGraph, perfectOrder);
-    ncliques      = numel(cliqueIndices);
     cliqueGraph   = ripCliques2Jtree(cliqueIndices);
+    ncliques      = numel(cliqueIndices);
     ftmp          = [factors{:}];
     nvars         = max([ftmp.domain]);
     cliqueLookup  = false(nvars, ncliques);
     for c=1:ncliques
-        % cliqueLookup(v, c) = 1 iff var v is in scope of clique c
         cliqueLookup(cliqueIndices{c}, c) = true;
     end
     %% add factors to cliques
-    % add each factor to the smallest accommodating clique
     factorLookup = false(nfactors, ncliques);
     for f=1:nfactors
         candidateCliques = find(all(cliqueLookup(factors{f}.domain, :), 1));
-        c = minidx(cellfun(@(x)numel(x), cliqueIndices(candidateCliques)));
-        factorLookup(f, candidateCliques(c)) = true;
+        smallest = minidx(cellfun(@(x)numel(x), cliqueIndices(candidateCliques)));
+        factorLookup(f, candidateCliques(smallest)) = true;
     end
     cliques = cell(ncliques, 1);
     for c=1:ncliques
-        ndx = cliqueIndices{c};
-        T = tabularFactorCreate(onesPMTK(nstates(ndx)), ndx);
-        tf = [{T}; factors(factorLookup(:, c))];
+        ndx        = cliqueIndices{c};
+        T          = tabularFactorCreate(onesPMTK(nstates(ndx)), ndx);
+        tf         = [{T}; factors(factorLookup(:, c))];
         cliques{c} = tabularFactorMultiply(tf);
     end
     %% Construct separating sets
     % for each edge in the clique tree, construct the separating set.
-    sepsets = cell(ncliques);
+    sepsets  = cell(ncliques);
     [is, js] = find(cliqueGraph);
     for k=1:numel(is)
         i = is(k);
@@ -94,50 +89,51 @@ if nargin < 4 || ~isempty(evidence) % build the jtree
         sepsets{j, i} = sepsets{i, j};
     end
     %% Calibrate
-    cliqueTree  = triu(cliqueGraph);
-    messages    = cell(ncliques);
-    allexcept   = @(x)[1:x-1,(x+1):ncliques];
-    root        = find(not(sum(cliqueTree, 1)), 1);
-    readyToSend = false(1, ncliques);
-    leaves      = not(sum(cliqueTree, 2));
+    cliqueTree          = triu(cliqueGraph);
+    messages            = cell(ncliques, ncliques);
+    allexcept           = @(x)[1:x-1,(x+1):ncliques];
+    root                = find(not(sum(cliqueTree, 1)), 1);
+    readyToSend         = false(1, ncliques);
+    leaves              = not(sum(cliqueTree, 2));
     readyToSend(leaves) = true;
     %% upwards pass
     while not(readyToSend(root))
         current = find(readyToSend, 1);
-        parent = parents(cliqueTree, current);
-        m = [cliques(current); messages(allexcept(parent), current)];
-        psi = tabularFactorMultiply(removeEmpty(m));
+        parent  = parents(cliqueTree, current);
+        m       = [cliques(current); messages(allexcept(parent), current)];
+        psi     = tabularFactorMultiply(removeEmpty(m));
         message = tabularFactorMarginalize(psi, sepsets{current, parent});
         messages{current, parent} = message;
         readyToSend(current) = false;
-        childMessages = messages(children(cliqueTree, parent), parent);
-        readyToSend(parent) = all(cellfun(@(x)~isempty(x), childMessages));
+        childMessages        = messages(children(cliqueTree, parent), parent);
+        readyToSend(parent)  = all(cellfun(@(x)~isempty(x), childMessages));
     end
     %% downwards pass
     while(any(readyToSend))
         current = find(readyToSend, 1);
         C = children(cliqueTree, current);
         for i=1:numel(C)
-            child = C(i);
-            m = removeEmpty([cliques(current); messages(allexcept(child), current)]);
-            psi = tabularFactorMultiply(m);
-            messages{current, child} = tabularFactorMarginalize(psi, sepsets{current, child});
+            child   = C(i);
+            m       = [cliques(current); messages(allexcept(child), current)];
+            psi     = tabularFactorMultiply(removeEmpty(m));
+            message = tabularFactorMarginalize(psi, sepsets{current, child});
+            messages{current, child} = message;
             readyToSend(child) = true;
         end
         readyToSend(current) = false;
     end
     %% update the cliques with all of the messages sent to them
     for c=1:ncliques
-        m = removeEmpty([cliques(c); messages(:, c)]);
+        m          = removeEmpty([cliques(c); messages(:, c)]);
         cliques{c} = tabularFactorMultiply(m);
     end
     jtree = structure(cliques, cliqueGraph, cliqueLookup);
 end
 
 %% Find a clique to answer query
-cliques = jtree.cliques;
+cliques      = jtree.cliques;
 cliqueLookup = jtree.cliqueLookup;
-candidates = find(all(cliqueLookup(queryVars, :), 1));
+candidates   = find(all(cliqueLookup(queryVars, :), 1));
 if isempty(candidates)
     % out of clique lookup (can be improved)
     marginals = cell(numel(queryVars), 1);
@@ -147,7 +143,7 @@ if isempty(candidates)
     tf = tabularFactorMultiply(marginals);
 else
     cliqueNdx = candidates(minidx(cellfun(@(x)numel(x), cliques(candidates))));
-    tf = tabularFactorMarginalize(cliques{cliqueNdx}, queryVars);
+    tf        = tabularFactorMarginalize(cliques{cliqueNdx}, queryVars);
 end
 [postQuery, Z] = tabularFactorNormalize(tf);
 end
