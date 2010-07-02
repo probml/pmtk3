@@ -7,7 +7,7 @@ function [postQuery, Z, jtree] = junctionTree(model, queryVars, evidence, jtree)
 %             tabularFactors, and G is the graph structure, an adjacency
 %             matrix.
 %
-% queryVars - the query variables
+% queryVars - the query variables (out of clique queries not supported)
 %
 % evidence  - a sparse vector of length nvars indicating the values for the
 %             observed variables with 0 elsewhere.
@@ -138,29 +138,12 @@ end
 cliques      = jtree.cliques;
 cliqueLookup = jtree.cliqueLookup;
 candidates   = find(all(cliqueLookup(queryVars, :), 1));
-if ~isempty(candidates)
-    cliqueNdx = candidates(minidx(cellfun(@(x)numel(x), cliques(candidates))));
-    tf        = tabularFactorMarginalize(cliques{cliqueNdx}, queryVars);
-    if isfield(jtree, 'normalize') && ~jtree.normalize
-        postQuery = tf; Z = [];
-    else
-        [postQuery, Z] = tabularFactorNormalize(tf);
-    end
-else
-    fprintf('performing an out of clique query\n');
-    clqScopes = [cellfuncell(@(c)c.domain, cliques); num2cell(1:nvars)'];
-    ndx = greedySpan(queryVars, clqScopes);
-    assert(~isempty(ndx));
-    beliefs = cell(1, numel(ndx));
-    jtree.normalize = false;
-    for i=1:numel(ndx)
-        beliefs{i} = junctionTree(model, clqScopes{ndx(i)}, [], jtree);
-    end
-    jtree = rmfield(jtree, 'normalize');
-    tf = tabularFactorMultiply(beliefs);
-    [postQuery, Z] = tabularFactorNormalize(tf);
+if isempty(candidates), error('out of clique queries are not supported'); end
+cliqueNdx  = candidates(minidx(cellfun(@(x)numel(x), cliques(candidates))));
+tf = tabularFactorMarginalize(cliques{cliqueNdx}, queryVars);
+[postQuery, Z] = tabularFactorNormalize(tf);
 end
-end
+
 
 
 
@@ -180,7 +163,7 @@ for i=1:numel(CPT)
 end
 model = structure(Tfac, G);
 evidence = sparsevec([11 12], [2 1], n);
-queryVars = [9];
+queryVars = 9; 
 tic; ve = variableElimination(model, queryVars, evidence); toc
 tic; jt = junctionTree(model, queryVars , evidence); toc
 

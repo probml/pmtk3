@@ -27,16 +27,8 @@ else % search q
     ndx = find(cellfun(@(f)issubset(queryVars, f.Member+1), q), 1, 'first');
     if ~isempty(ndx)
         postQuery = convertToPmtkFac(q{ndx}); 
-    else % out of clique query, (this can be improved by greedily searching for cliques to span the query)
-        [intersectSize, ndx] = max(cellfun(@(f)numel(intersect(queryVars, f.Member+1)), q));
-        if intersectSize > 1
-           largestFac = convertToPmtkFac(q{ndx}); 
-           missing = setdiff(queryVars, largestFac.domain); 
-           otherFacs = cellfuncell(@convertToPmtkFac, qv(missing));
-           postQuery = tabularFactorNormalize(tabularFactorMultiply([{largestFac}; otherFacs]));
-        else % just multiply together all of the marginals
-            postQuery = tabularFactorNormalize(tabularFactorMultiply(cellfuncell(@convertToPmtkFac, qv(queryVars))));
-        end
+    else 
+       error('out of clique query not supported'); 
     end
 end
 t = toc;
