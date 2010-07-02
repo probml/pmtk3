@@ -151,7 +151,7 @@ end
 
 
 function test()
-
+%% To be removed
 alarm = loadData('alarmNetwork');
 CPT = alarm.CPT;
 G   = alarm.G;
