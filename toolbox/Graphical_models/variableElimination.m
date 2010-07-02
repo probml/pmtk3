@@ -11,28 +11,30 @@ if(nargin < 3)
     visVars = [];
     visVals = [];
 else
-    visVars = find(evidence); 
-    visVals = nonzeros(evidence); 
+    visVars = find(evidence);
+    visVals = nonzeros(evidence);
 end
 factors = rowvec(model.Tfac);
 G       = model.G;
-%% Condition on the evidence
-for i=1:numel(factors)
-    localVars = intersectPMTK(factors{i}.domain, visVars);
-    if isempty(localVars)
-        continue;
+if ~isempty(visVars)
+    %% Condition on the evidence
+    for i=1:numel(factors)
+        localVars = intersectPMTK(factors{i}.domain, visVars);
+        if isempty(localVars)
+            continue;
+        end
+        localVals  = visVals(lookupIndices(localVars, visVars));
+        factors{i} = tabularFactorSlice(factors{i}, localVars, localVals);
     end
-    localVals  = visVals(lookupIndices(localVars, visVars));
-    factors{i} = tabularFactorSlice(factors{i}, localVars, localVals);
 end
 nstates = cellfun(@(t)t.sizes(end), factors);
 %% Find a good elimination ordering
-moralG    = moralizeGraph(G); % marry parents, and make graph symmetric 
+moralG    = moralizeGraph(G); % marry parents, and make graph symmetric
 ordering  = bestFirstElimOrder(moralG, nstates);
-elim      = setdiffPMTK(ordering, [queryVars, visVars]); 
+elim      = setdiffPMTK(ordering, [queryVars, visVars]);
 %% Eliminate nuisance variables
 for i=1:numel(elim)
-   factors = eliminate(factors, elim(i));  
+    factors = eliminate(factors, elim(i));
 end
 %% Multiply and normalize
 TF = tabularFactorMultiply(factors);
@@ -41,9 +43,9 @@ end
 
 function F = eliminate(F, v)
 %% Eliminate variable v from the factors F
-inscope = cellfun(@(f)any(v == f.domain), F); 
-psi     = tabularFactorMultiply(F(inscope)); 
-onto    = setdiffPMTK(psi.domain, v); 
-tau     = tabularFactorMarginalize(psi, onto); 
+inscope = cellfun(@(f)any(v == f.domain), F);
+psi     = tabularFactorMultiply(F(inscope));
+onto    = setdiffPMTK(psi.domain, v);
+tau     = tabularFactorMarginalize(psi, onto);
 F       = [F(not(inscope)), {tau}];
 end
