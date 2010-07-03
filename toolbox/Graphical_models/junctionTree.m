@@ -26,6 +26,8 @@ function [postQuery, Z, jtree] = junctionTree(model, queryVars, evidence)
 % postQuery = junctionTree(model, query, evidence); 
 %
 % allMarginals = junctionTree(model, num2cell(1:nvars)); 
+%
+% postQueries = junctionTree(model, {[1 2], [3 4], [5 6]}, evidence); 
 %%
 % See also variableElimination, tabularFactorCondition
 %%
