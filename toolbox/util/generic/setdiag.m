@@ -3,9 +3,9 @@ function M = setdiag(M, v)
 % M = setdiag(M, v)
 
 n = size(M,1);
-if length(v)==1
-  v = repmat(v, 1, n);
-end
+%if length(v)==1
+%  v = repmat(v, 1, n);
+%end
 J = 1:n+1:n^2;
 M(J) = v;
 %M = triu(M,1) + tril(M,-1) + diag(v);

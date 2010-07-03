@@ -3,9 +3,9 @@ function T = repmatPMTK(T, sizes)
 
 
 if length(sizes)==1
-  T = repmat(T, [sizes 1]);
+    T = repmatC(T, [sizes 1]);
 else
-  T = repmat(T, sizes(:)');
+    T = repmatC(T, sizes(:)');
 end
 
 end
