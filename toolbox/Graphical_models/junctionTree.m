@@ -53,7 +53,7 @@ G        = moralizeGraph(model.G);
 nvars    = size(G, 1);
 nqueries = numel(queries); 
 for i=1:nqueries
-% ensure that cliques will be built among sets of query vars
+% ensure that cliques will be built containing query var sets
     q = queries{i};
     G(q, q) = 1;  
 end
