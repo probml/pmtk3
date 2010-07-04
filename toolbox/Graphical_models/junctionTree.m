@@ -58,8 +58,10 @@ for i=1:nqueries
     G(q, q) = 1;  
 end
 G             = setdiag(G, 0);
-G             = mkChordal(G, minweightElimOrder(G, nstates));
-cliqueIndices = chordal2RipCliques(G, perfectElimOrder(G));
+elimOrder     = minweightElimOrder(G, nstates);
+G             = mkChordal(G, elimOrder);
+pElimOrder    = perfectElimOrder(G);
+cliqueIndices = chordal2RipCliques(G, pElimOrder);
 cliqueGraph   = ripCliques2Jtree(cliqueIndices);
 ncliques      = numel(cliqueIndices);
 cliqueLookup  = false(nvars, ncliques);
@@ -70,7 +72,7 @@ end
 factorLookup = false(nfactors, ncliques);
 for f=1:nfactors
     candidateCliques = find(all(cliqueLookup(factors{f}.domain, :), 1));
-    smallest = minidx(cellfun(@(x)numel(x), cliqueIndices(candidateCliques)));
+    smallest = minidx(cellfun('length', cliqueIndices(candidateCliques)));
     factorLookup(f, candidateCliques(smallest)) = true;
 end
 cliques = cell(ncliques, 1);
@@ -107,7 +109,7 @@ while not(readyToSend(root))
     messages{current, parent} = message;
     readyToSend(current) = false;
     childMessages        = messages(children(cliqueTree, parent), parent);
-    readyToSend(parent)  = all(cellfun(@(x)~isempty(x), childMessages));
+    readyToSend(parent)  = all(~cellfun('isempty', childMessages));
 end
 %% downwards pass
 while(any(readyToSend))
@@ -137,7 +139,7 @@ Z         = zeros(nqueries, 1);
 for i=1:nqueries
     q = queries{i}; 
     candidates = find(all(cliqueLookup(q, :), 1));
-    cliqueNdx  = candidates(minidx(cellfun(@(x)numel(x), cliques(candidates))));
+    cliqueNdx  = candidates(minidx(cellfun('length', cliques(candidates))));
     tf         = tabularFactorMarginalize(cliques{cliqueNdx}, q);
     [postQuery{i}, Z(i)] = tabularFactorNormalize(tf);
 end
@@ -162,15 +164,23 @@ evidence = sparsevec([11 12 29 30], [2 1 1 2], n);
 queryVars = [1 2 9 22 33:37];
 %evidence = sparsevec([12 13], [2 2], n);
 %queryVars = 9;
-tic; ve = variableElimination(model, queryVars, evidence); toc
-tic; [jt, Z, jtree] = junctionTree(model, queryVars , evidence); toc
+ve = variableElimination(model, queryVars, evidence);
+[jt, Z, jtree] = junctionTree(model, queryVars , evidence); 
 
 assert(approxeq(ve.T, jt.T));
 
+tic;
 jt = junctionTree(model, num2cell(1:37)); % get all marginals
-
+toc;
 jt = junctionTree(model, {[1 3 5], [2 13], [19 23], [4, 8, 33, 37]}, evidence);
-
+%tic;
+%psi = cellfuncell(@convertToLibFac, Tfac);
+%[logZ, q, md, qv] = dai(psi, 'JTREE', '[updates=HUGIN]');
+%toc;
+function lfac = convertToLibFac(mfac)
+lfac.Member = mfac.domain - 1;
+lfac.P = mfac.T;
+end
 
 
 end

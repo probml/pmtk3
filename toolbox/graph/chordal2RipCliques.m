@@ -59,7 +59,7 @@ for i=1:p;
     if ladder(i)==0
         cliques{i}=[];
     else
-        cliques{i}=union(order(i), pa{i});
+        cliques{i}=unionPMTK(order(i), pa{i})';
         % NOTE matlab orders union(a,b) as [min(a,b), max(a,b)]
         % regardless of relative size of a,b
     end;

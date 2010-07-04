@@ -14,15 +14,21 @@ function jtree = ripCliques2Jtree(re_index_cliques)
 
 % PMTKauthor Helen Armstrong
 % PMTKurl http://www.library.unsw.edu.au/~thesis/adt-NUN/uploads/approved/adt-NUN20060901.134349/public/01front.pdf -
-
-t=size(re_index_cliques,2);
-score=zeros(1,t);
-jtree=zeros(t,t);
+% PMTKmodified Matt Dunham (inlined intersection computation)
+%%
+t     = size(re_index_cliques, 2);
+score = zeros(1, t);
+jtree = zeros(t, t);
 for i=2:t;
+    clq1 = re_index_cliques{i};
+    m1   = max(clq1);
     for k=1:i-1;
-        score(k)=length(intersectPMTK(re_index_cliques{i}, re_index_cliques{k}));
-    end;
-    if max(score)~=0 
+        clq2       = re_index_cliques{k};
+        bits       = false(max(m1, max(clq2)), 1);
+        bits(clq1) = true;
+        score(k)   = sum(bits(clq2));
+    end
+    if max(score)~=0
         % only add the edge if clique i IS connected to one of its
         % predecessors. if score is all zeros, then clique has no intersection
         % with any of its predecessors. Since the cliques are in RIP, it must
@@ -31,8 +37,8 @@ for i=2:t;
         % if clique i has no intersection with any of the preceding cliques,
         % then the graph is disconnected, so the adjacency matrix will have
         % a zero row/column for this i, and we have a forest, not a j_tree.
-        j=argmax(score);
-        jtree(i,j)=1;
-        jtree(j,i)=1;
+        j = maxidx(score);
+        jtree(i, j) = 1;
+        jtree(j, i) = 1;
     end;
 end;

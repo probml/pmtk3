@@ -9,40 +9,34 @@ function order = minweightElimOrder(G, nodeWeights)
 % - C. Huang and A. Darwiche, "Inference in Belief Networks: A procedural guide",
 %      Intl. J. Approx. Reasoning, 11, 1994
 %
-
+%PMTKmodified Matt Dunham (partially vectorized code)
+%%
 n = length(G);
-if nargin < 2, nodeWeights = ones(1, n); end
-
-uneliminated = ones(1,n);
-order = zeros(1,n);
-Gorig = G;
-for i=1:n
-    U = find(uneliminated);
-    valid = U;
-    % Choose the best node from the set of valid candidates
-    min_fill = zeros(1,length(valid));
-    min_weight = zeros(1,length(valid));
-    for j=1:length(valid)
-        k = valid(j);
-        nbrs = intersectPMTK(neighbors(G, k), U);
-        l = length(nbrs);
-        M = Gorig(nbrs,nbrs);
-        min_fill(j) = l^2 - sum(M(:)); % num. added edges
-        min_weight(j) = sum(nodeWeights([k nbrs])); % weight of clique
-    end
-    lightest_nbrs = find(min_weight==min(min_weight));
-    % break ties using min-fill heuristic
-    best_nbr_ndx = argmin(min_fill(lightest_nbrs));
-    j = lightest_nbrs(best_nbr_ndx); % we will eliminate the j'th element of valid
-    %j1s = find(score1==min(score1));
-    %j = j1s(argmin(score2(j1s)));
-    k = valid(j);
-    uneliminated(k) = 0;
-    order(i) = k;
-    ns = intersectPMTK(neighbors(G, k), U);
-    if ~isempty(ns)
-        G(ns,ns) = 1;
-        G = setdiag(G,0);
-    end
+if nargin < 2,
+    nodeWeights = ones(1, n);
 end
-
+nodeWeights = rowvec(nodeWeights); 
+U     = true(1, n);
+order = zeros(1, n);
+Gorig = G;
+G     = logical(G);
+for i=1:n
+    G           = setdiag(G, false);
+    candidates  = find(U);
+    nbrs        = bsxfun(@and, G(U, :) | G(:, U)', U);
+    ncandidates = numel(candidates);
+    minFill     = zeros(1, ncandidates);
+    for j=1:ncandidates
+        nodes      = nbrs(j, :);
+        minFill(j) = sum(sum((Gorig(nodes, nodes)))); 
+    end
+    minFill      = (sum(nbrs, 2).^2)' - minFill;
+    minWeight    = sum(bsxfun(@times, nbrs, nodeWeights), 2)' + nodeWeights(candidates);
+    lightestNbrs = find(minWeight==min(minWeight));
+    bestNbrNdx   = minidx(minFill(lightestNbrs));
+    k            = candidates(lightestNbrs(bestNbrNdx));
+    U(k)         = false;
+    order(i)     = k;
+    ns           = (G(k, :) | G(:, k)') & U;
+    G(ns, ns)    = true;
+end
