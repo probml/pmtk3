@@ -159,7 +159,40 @@ for i=1:numel(CPT)
     family = [parents(G, i), i];
     Tfac{i} = tabularFactorCreate(CPT{i}, family);
 end
+
 model = structure(Tfac, G);
+
+
+% ve
+tic
+mve = cell(1, 37);
+for i=1:37
+    mve{i} = variableElimination(model, i); 
+end
+t = toc;
+fprintf('ve: %g\n', t); 
+
+tic
+mjt = junctionTree(model, num2cell(1:37)); 
+t = toc;
+fprintf('jt: %g\n', t); 
+
+tic;
+psi = cellfuncell(@convertToLibFac, Tfac);
+[logZ, q, md, qv] = dai(psi, 'JTREE', '[updates=HUGIN]');
+mld = cellfuncell(@convertToPmtkFac, qv);
+t = toc;
+fprintf('ld: %g\n', t); 
+
+
+for i=1:37
+   assert(approxeq(mve{i}.T, mjt{i}.T)); 
+   assert(approxeq(mjt{i}.T, mld{i}.T)); 
+end
+
+
+
+if 0
 evidence = sparsevec([11 12 29 30], [2 1 1 2], n);
 queryVars = [1 2 9 22 33:37];
 %evidence = sparsevec([12 13], [2 2], n);
@@ -177,11 +210,18 @@ jt = junctionTree(model, {[1 3 5], [2 13], [19 23], [4, 8, 33, 37]}, evidence);
 %psi = cellfuncell(@convertToLibFac, Tfac);
 %[logZ, q, md, qv] = dai(psi, 'JTREE', '[updates=HUGIN]');
 %toc;
+
+
+end
+
 function lfac = convertToLibFac(mfac)
 lfac.Member = mfac.domain - 1;
 lfac.P = mfac.T;
 end
 
+function mfac = convertToPmtkFac(lfac)
+    mfac = tabularFactorCreate(lfac.P, lfac.Member+1); 
+end
 
 end
 
