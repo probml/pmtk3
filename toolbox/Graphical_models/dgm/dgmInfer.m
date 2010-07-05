@@ -10,9 +10,9 @@ function [bel, logZ, clqBel] = dgmInfer(dgm, query, varargin)
 %% Optional named inputs
 % 'clampled'  - a sparse vector indicating observed values for discrete nodes
 %
-% 'localev'   - a full matrix of size nnodes-by-max(nstates)
-%               Use rows of NaNs for missing observations and pad the ends
-%               of rows with NaNs where needed.
+% 'localev'   - a full matrix of size max(nstates)-by-nnodes
+%               Use cols of NaNs for missing observations and pad the ends
+%               with NaNs where needed.
 %
 % 'method'    - an inference method: 'varelim', 'jtree', 'libdai'
 %
@@ -79,7 +79,7 @@ if isempty(localev), return; end
 
 pointer = dgm.pointerTable;
 for i=1:size(localev, 1)
-    Bt = localev(i, :);
+    Bt = localev(:, i);
     dgm.CPD{pointer(i)}.B = colvec(Bt(~isnan(Bt)));
 end
 
