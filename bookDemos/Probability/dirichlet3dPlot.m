@@ -42,4 +42,3 @@ printPmtkFigure(sprintf('DirSimplex%d', model.alpha*10))
 
 end
 
-

@@ -27,7 +27,7 @@ protoTypesStnd = standardizeCols(protoTypes);
 kernels = {@(X1, X2)kernelRbfSigma(X1, protoTypesStnd, rbfScale)
            @(X1, X2)kernelRbfSigma(X1, X2, rbfScale)
            @(X1, X2)kernelPoly(X1, X2, polydeg)};
-fnames  = {'logregXorRbf', 'logregXorRbfProto', 'logregXorPolyKernel'};
+fnames  = {'logregXorRbfProto', 'logregXorRbfAll', 'logregXorPolyKernel'};
 titles  = {'rbf prototypes', 'rbf all', 'poly kernel'};
 for i=1:numel(kernels)
   pp{i} = preprocessorCreate('kernelFn', kernels{i}, 'standardizeX', true, 'addOnes', true);
