@@ -16,13 +16,14 @@ function [postQuery, logZ, clqBel] = junctionTreeLibDai(model, query, evidence)
 %             values for the observed variables with 0 elsewhere.
 %
 %% Outputs
-% postQuery - a tabularFactor (or a cell array of tabularFactors if there
-%             are multiple queries).
+% postQuery  - a tabularFactor (or a cell array of tabularFactors if there
+%              are multiple queries).
 %
-% Z         - the normalization constant (or constants, one for each query).
+% logZ       - the log normalization constant (or constants, one for each query).
 %
 % clqBel     - all of the clique beliefs
 %%
+assert(exist('dai', 'file')==3); % requires libdai
 factors  = model.Tfac(:);
 if nargin > 2 && ~isempty(evidence) && nnz(evidence) > 0
     %% condition on the evidence
