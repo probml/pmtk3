@@ -1,4 +1,4 @@
-function [postQuery, Z, jtree] = junctionTree(model, queryVars, evidence)
+function [postQuery, logZ, clqBel] = junctionTree(model, query, evidence)
 %% Junction tree algorithm for computing sum_H p(Q, H | V=v)
 %
 %% Inputs
@@ -7,7 +7,7 @@ function [postQuery, Z, jtree] = junctionTree(model, queryVars, evidence)
 %             tabularFactors, and G is the variable graph structure: an
 %             adjacency matrix.
 %
-% queryVars - the query variables: use a cell array for multiple queries.
+% query    - the query variables: use a cell array for multiple queries.
 %             (each query is w.r.t. the same evidence vector).
 %
 % evidence  - an optional sparse vector of length nvars indicating the
@@ -17,9 +17,9 @@ function [postQuery, Z, jtree] = junctionTree(model, queryVars, evidence)
 % postQuery - a tabularFactor (or a cell array of tabularFactors if there
 %             are multiple queries).
 %
-% Z         - the normalization constant (or constants, one for each query).
+% logZ       - the log normalization constant (or constants, one for each query).
 % 
-% jtree     - a structure storing all of the cliques and the clique graph
+% clqBel     - all of the clique beliefs
 %% Examples
 % evidence  = sparsevec([12 13], [2 2], nvars); 
 % query     = [1 3 5]; 
@@ -47,7 +47,7 @@ if nargin > 2 && ~isempty(evidence) && nnz(evidence) > 0
     end
 end
 %% setup jtree
-queries  = cellwrap(queryVars); 
+queries  = cellwrap(query); 
 nstates  = cellfun(@(t)t.sizes(end), factors);
 G        = moralizeGraph(model.G);
 nvars    = size(G, 1);
@@ -131,7 +131,7 @@ for c=1:ncliques
     cliques{c} = tabularFactorMultiply(m);
 end
 if nargout > 2
-    jtree = structure(cliques, cliqueGraph, cliqueLookup, sepsets, messages);
+    clqBel = cliques; 
 end
 %% find a clique to answer query
 postQuery = cell(nqueries, 1); 
@@ -144,6 +144,7 @@ for i=1:nqueries
     [postQuery{i}, Z(i)] = tabularFactorNormalize(tf);
 end
 if nqueries == 1, postQuery = postQuery{1}; end
+logZ = log(Z + eps); 
 end
 
 
@@ -178,9 +179,7 @@ t = toc;
 fprintf('jt: %g\n', t); 
 
 tic;
-psi = cellfuncell(@convertToLibFac, Tfac);
-[logZ, q, md, qv] = dai(psi, 'JTREE', '[updates=HUGIN]');
-mld = cellfuncell(@convertToPmtkFac, qv);
+mld = junctionTreeLibDai(model, num2cell(1:37)); 
 t = toc;
 fprintf('ld: %g\n', t); 
 
@@ -194,11 +193,11 @@ end
 
 if 0
 evidence = sparsevec([11 12 29 30], [2 1 1 2], n);
-queryVars = [1 2 9 22 33:37];
+query = [1 2 9 22 33:37];
 %evidence = sparsevec([12 13], [2 2], n);
-%queryVars = 9;
-ve = variableElimination(model, queryVars, evidence);
-[jt, Z, jtree] = junctionTree(model, queryVars , evidence); 
+%query = 9;
+ve = variableElimination(model, query, evidence);
+[jt] = junctionTree(model, query , evidence); 
 
 assert(approxeq(ve.T, jt.T));
 

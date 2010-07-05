@@ -1,4 +1,4 @@
-function [postQuery, Z] = variableElimination(model, queryVars, evidence)
+function [postQuery, logZ] = variableElimination(model, queryVars, evidence)
 %% Perform sum-product variable elimination to compute sum_H p(Q, H | V=v)
 % See Koller & Friedman algorithm 9.1 pg 273
 % model is a struct with the following fields:
@@ -39,6 +39,7 @@ end
 %% Multiply and normalize
 TF = tabularFactorMultiply(factors);
 [postQuery, Z] = tabularFactorNormalize(TF);
+logZ = log(Z + eps);
 end
 
 function F = eliminate(F, v)
