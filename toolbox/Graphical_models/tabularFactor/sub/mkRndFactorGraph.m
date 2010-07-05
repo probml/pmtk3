@@ -13,7 +13,7 @@ for i=1:nnodes
     if isscalar(sz)
         sz = [sz, 1];
     end
-    T = rand(sz);
+    T = normalize(rand(sz));
     Tfac{i} = tabularFactorCreate(T, family);
     assert(numel(Tfac{i}.sizes) == numel(Tfac{i}.domain)); 
 end
