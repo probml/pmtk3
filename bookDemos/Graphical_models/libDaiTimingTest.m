@@ -1,7 +1,9 @@
 function libDaiTimingTest
-%%
+%% Compare speed of libDAI's jtree code to our own
+% libDAI is currently about 10 times faster, but gives normalizaton errors
+% when nnodes > about 580
 setSeed(0);
-nnodes = 600; 
+nnodes = 580; 
 maxNstates = 2;
 maxFanIn = 2; 
 maxFanOut = 3; 
@@ -9,7 +11,7 @@ model = mkRndFactorGraph(nnodes, maxNstates, maxFanIn, maxFanOut);
 
 
 
-if 0
+if 1
 tic;
 marginalsJT = junctionTree(model, num2cell(1:nnodes));
 toc;
