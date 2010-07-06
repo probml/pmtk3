@@ -1,43 +1,53 @@
-%% Test hmm2Dgm
+%% Compare different inference methods for an HMM 
 %
-%%
-setSeed(0); 
-nstates = 3; 
-d = 10; 
-A = normalize(rand(nstates), 2); 
-pi = normalize(rand(nstates, 1)); 
-emission = cell(1, nstates); 
+%% Create a random hmm model
+setSeed(0);
+nstates = 3;
+d = 10;
+A = normalize(rand(nstates), 2);
+pi = normalize(rand(nstates, 1));
+emission = cell(1, nstates);
 for i=1:nstates
-    emission{i} = gaussCreate(randn(d, 1), randpd(d)); 
+    emission{i} = gaussCreate(randn(d, 1), randpd(d));
 end
-model = hmmCreate('gauss', pi, A, emission, nstates); 
-T = 20; 
-X = hmmSample(model, T, 1); 
-X = X{1}'; 
+model = hmmCreate('gauss', pi, A, emission, nstates);
+%% Sample data
+T = 20;
+X = hmmSample(model, T, 1);
+X = X{1}';
+%% infer single marginals using fwdback
 tic
-gamma = hmmInferState(model, X); 
+gamma = hmmInferState(model, X);
 t = toc;
-fprintf('fwdbck: %g seconds\n', t); 
-
-tic
+fprintf('\nfwdbck: %g seconds\n', t);
+%% Convert to a dgm
 dgm = hmm2Dgm(model, X);
-marginalsLD = dgmInfer(dgm, num2cell(1:dgm.nnodes), 'method', 'libdai'); 
-gammaLibDai = zeros(nstates, dgm.nnodes); 
-for t=1:numel(marginalsLD)
-    gammaLibDai(:, t) = marginalsLD{t}.T;
+%%
+query = num2cell(1:dgm.nnodes); % all single marginals
+%% infer single marginals using libdai's jtree
+if exist('dai', 'file') == 3
+    tic
+    marginalsLD = dgmInfer(dgm, query, 'method', 'libdai');
+    t = toc;
+    fprintf('libdai: %g seconds\n', t);
+    %%
+    gammaLibDai = zeros(nstates, dgm.nnodes);
+    for t=1:numel(marginalsLD)
+        gammaLibDai(:, t) = marginalsLD{t}.T;
+    end
 end
-t = toc;
-fprintf('libdai: %g seconds\n', t); 
-
+%% infer single marginals using our jtree code
 tic
-dgm = hmm2Dgm(model, X);
-marginalsJT = dgmInfer(dgm, num2cell(1:dgm.nnodes), 'method', 'jtree'); 
-gammaJtree = zeros(nstates, dgm.nnodes); 
+marginalsJT = dgmInfer(dgm, query, 'method', 'jtree');
+t = toc;
+fprintf('jtree : %g seconds\n', t);
+%%
+gammaJtree = zeros(nstates, dgm.nnodes);
 for t=1:numel(marginalsJT)
     gammaJtree(:, t) = marginalsJT{t}.T;
 end
-t = toc;
-fprintf('jtree : %g seconds\n', t); 
-
-assert(approxeq(gamma, gammaJtree)); 
-assert(approxeq(gamma, gammaLibDai)); 
+%% make sure they return the same values
+assert(approxeq(gamma, gammaJtree));
+if exist('dai', 'file') == 3
+    assert(approxeq(gamma, gammaLibDai));
+end
