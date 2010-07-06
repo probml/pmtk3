@@ -2,8 +2,9 @@
 %
 %% Create a random hmm model
 setSeed(0);
-nstates = 3;
-d = 10;
+nstates = 100;
+d = 80;
+T = 200;
 A = normalize(rand(nstates), 2);
 pi = normalize(rand(nstates, 1));
 emission = cell(1, nstates);
@@ -12,7 +13,6 @@ for i=1:nstates
 end
 model = hmmCreate('gauss', pi, A, emission, nstates);
 %% Sample data
-T = 20;
 X = hmmSample(model, T, 1);
 X = X{1}';
 %% infer single marginals using fwdback
