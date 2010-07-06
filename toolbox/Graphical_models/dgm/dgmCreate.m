@@ -8,14 +8,14 @@ pointerTable = process_options(varargin, 'pointerTable', []);
 nnodes = size(G, 1); 
 if isempty(pointerTable)
     assert(numel(CPD) == nnodes); % must specify a pointer table for parameter tying
-	P = 1:nnodes; 
+	pointerTable = 1:nnodes; 
 end
 if ~isstruct(CPD{1})
     CPD = cellfuncell(@tabularCpdCreate, CPD); 
 end
 nstates = zeros(nnodes, 1); 
 for i=1:nnodes
-    nstates(i) = CPD{P(i)}.nstates; 
+    nstates(i) = CPD{pointerTable(i)}.nstates; 
 end
 model = structure(G, CPD, pointerTable, nnodes); 
 model.isdirected = true; 

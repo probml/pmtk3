@@ -44,7 +44,9 @@ for i=1:nnodes
     node    = CPD{pointer(i)};
     family  = [rowvec(parents(G, i)), i];
     fac     = tabularFactorCreate(node.T, family);
-    if clamped(i)
+    if node.clamped 
+        fac = tabularFactorSlice(fac, i, node.clamped);
+    elseif clamped(i)
         fac = tabularFactorSlice(fac, i, clamped(i));
     end
     facs{j} = fac;
@@ -88,7 +90,7 @@ end
 
 function method = pickMethod(query, nout)
 %% Choose an appropriate inference method based on the query
-if iscell || nout > 2 
+if iscell(query) || nout > 2 
     m = max(cellfun('length', query));
     if exist('dai', 'file') == 3 && m == 1 % single marginals requested
         method = 'libdai';
