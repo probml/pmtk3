@@ -28,8 +28,10 @@ for i=1:n
     minFill     = zeros(1, ncandidates);
     for j=1:ncandidates
         nodes      = nbrs(j, :);
-        minFill(j) = sum(sum((Gorig(nodes, nodes)))); 
+        S          = Gorig(nodes, nodes); 
+        minFill(j) = sum(S(:)); 
     end
+      
     minFill      = (sum(nbrs, 2).^2)' - minFill;
     minWeight    = sum(bsxfun(@times, nbrs, nodeWeights), 2)' + nodeWeights(candidates);
     lightestNbrs = find(minWeight==min(minWeight));
