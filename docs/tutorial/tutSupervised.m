@@ -168,9 +168,13 @@ linregParamsBayes(modelB, 'display', true);
 % to the sampling distribution of the MLE). To see this, let us use the
 % <http://www.mathworks.com/products/statistics/ stats toolbox> to fit the model and perform a frequentist analysis:
 %%
-[w, wint] = regress(y, [ones(size(X,1),1) X]);
+X1 = [ones(n,1), X];
+[b, bint] = regress(y, X1);
+% b(j) is coefficient j, bint(j,:) = lower and upper 95% conf interval
+assert(approxeq(b, post.what))
+assert(approxeq(bint, post.credint))
 for i=1:length(w)
-  fprintf('%5.3f, [%5.3f, %5.3f]\n', w(i), wint(i,1), wint(i,2));
+  fprintf('%8.3f, [%8.3f, %8.3f]\n', b(i), bint(i,1), bint(i,2));
 end
 fprintf('\n');
 %%

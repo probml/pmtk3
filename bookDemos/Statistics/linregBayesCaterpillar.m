@@ -6,7 +6,6 @@ X = loadData('caterpillar'); % from http://www.ceremade.dauphine.fr/~xian/BCS/ca
 y = log(X(:,11)); % log number of nests
 X = X(:,1:10);
 [n,d] = size(X);
-X1 = [ones(n,1), X];
 
 
 %% plot the data
@@ -24,7 +23,7 @@ end
 %% uninformative prior
 
 model = linregFitBayes(X, y, 'prior', 'uninf');
-post = linregParamsBayes(model);
+post = linregParamsBayes(model, 'display', true, 'latex', false);
 
 if 0
   % direct calculaiton
@@ -53,15 +52,13 @@ end
 
 % check that Bayesian credible interval is same as freq conf int
 % needs stats toolbox
-[b, bint] = regress(y, X1);
+X1 = [ones(n,1), X];
+[b, bint, residuals, residualInt, stats] = regress(y, X1);
+R2 = stats(1); Fstat  = stats(2); pval = stats(3); sigma2 = stats(4);
 % b(j) is coefficient j, bint(j,:) = lower and upper 95% conf interval
 assert(approxeq(b, post.what))
 assert(approxeq(bint, post.credint))
-
-%% Zellner prior
-
-[model, logev] = linregFitBayes(X, y, 'prior', 'zellner', 'g', 100);
-linregParamsBayes(model)
-   
-
-
+for i=1:length(b)
+  fprintf('%8.3f, [%8.3f, %8.3f]\n', b(i), bint(i,1), bint(i,2));
+end
+fprintf('\n');

@@ -9,8 +9,8 @@ function out = linregParamsBayes(model, varargin)
 % If you set display=true, it
 % prints the summary (as a latex table) to the screen
 %PMTKsupervisedModel linreg
-[doDisplay] = process_options(varargin, ...
-  'display', true);
+[doDisplay, useLatex] = process_options(varargin, ...
+  'display', true, 'latex', false);
 
 % Extract posterior parameters
 wn = model.wN; Vn = model.VN;
@@ -35,24 +35,26 @@ end
 
 if doDisplay
   D = length(wn);
-
-  fprintf('coeff & mean & stddev & 95pc CI & sig\n');
+  
+  if useLatex
+    fprintf('coeff & mean & stddev & 95pc CI & sig\n');
+  else
+    fprintf('%-5s %-10s %-10s %-20s %-5s \n', 'coeff', 'mean', 'stddev', '95pc CI', 'sig');
+  end
   for i=1:D
     if model.preproc.addOnes, j=i-1; else j=i; end
     L = credint(i,1); U = credint(i,2);
     sig = (L<0 && U<0) || (L>0 && U>0);
     if sig, sigStr = '*'; else sigStr = ''; end
-    fprintf('w%d & %3.3f & %3.5f & [%3.3f, %3.3f] & %s \\\\\n', ...
-      j, what(i), stderr(i), credint(i,1), credint(i,2), sigStr)
+    if useLatex
+      fprintf('w%d & %3.3f & %3.5f & [%3.3f, %3.3f] & %s \\\\\n', ...
+        j, what(i), stderr(i), credint(i,1), credint(i,2), sigStr)
+    else
+      fprintf('%5s %8.3f  %8.5f  [%8.3f, %8.3f] %5s \n', ...
+        sprintf('w%d',j), what(i), stderr(i), credint(i,1), credint(i,2), sigStr)
+    end
   end
   fprintf('\n');
-  
-  if 0
-  if model.preproc.addOnes, coeff = 0:(D-1); else coeff=1:D; end
-  T = [coeff(:) what(:) stderr(:) credint(:,1) credint(:,2)];
-  latextable(T, 'Horiz', {'coeff', 'mean', 'stderr', 'lower', 'upper'}, ...
-    'Hline', 1, 'format', '%5.3f')
-  end
 end
 
 out = structure(what, stderr, credint);
