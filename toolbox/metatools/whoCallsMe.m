@@ -53,6 +53,7 @@ else
         fprintf('recaching - this may take a while\n');
     end
     m = cellfuncell(@(s)s(1:end-2), allMfilesOnPath);
+    m = filterCell(m, @isvarname); 
     map = enumerate(m);
     g = false(numel(m));
     for i=1:numel(m)
