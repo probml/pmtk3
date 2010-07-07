@@ -44,11 +44,15 @@ for i=1:nnodes
     node    = CPD{pointer(i)};
     family  = [rowvec(parents(G, i)), i];
     fac     = tabularFactorCreate(node.T, family);
-    if node.clamped 
-        fac = tabularFactorSlice(fac, i, node.clamped);
-    elseif clamped(i)
-        fac = tabularFactorSlice(fac, i, clamped(i));
+    if node.clamped
+        clamped(i) = node.clamped;
     end
+%     if node.clamped 
+%         fac = tabularFactorSlice(fac, i, node.clamped);
+%         
+%     elseif clamped(i)
+%         fac = tabularFactorSlice(fac, i, clamped(i));
+%     end
     facs{j} = fac;
     j = j+1;
     B = node.B;
@@ -64,12 +68,12 @@ fg   = factorGraphCreate(facs, G);
 
 switch lower(method)
     case 'varelim'
-        [bel, logZ] = variableElimination(fg, query);
+        [bel, logZ] = variableElimination(fg, query, clamped);
         clqBel = {}; 
     case 'jtree'
-        [bel, logZ, clqBel] = junctionTree(fg, query);
+        [bel, logZ, clqBel] = junctionTree(fg, query, clamped);
     case 'libdai'
-        [bel, logZ, clqBel] = junctionTreeLibDai(fg, query);
+        [bel, logZ, clqBel] = junctionTreeLibDai(fg, query, clamped);
     otherwise
         error('%s is not a valid inference method', method);
 end

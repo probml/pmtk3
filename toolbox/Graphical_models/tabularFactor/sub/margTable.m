@@ -1,4 +1,4 @@
-function smallT = marg_table(bigT, bigdom, bigsz, onto, maximize)
+function smallT = margTable(bigT, bigdom, bigsz, onto, maximize)
 % Marginalize a table
 
 if nargin < 5, maximize = 0; end

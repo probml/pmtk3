@@ -46,19 +46,19 @@ postQuery = cell(nqueries, 1);
 logZ = zeros(nqueries, 1); 
 for i=1:nqueries
     Q = query{i}; 
-    if numel(Q) == 1
-        postQuery{i} = convertToPmtkFac(marginals{Q});
-    else
+%     if numel(Q) == 1
+%         postQuery{i} = convertToPmtkFac(marginals{Q});
+%     else
         ndx = find(cellfun(@(f)issubset(Q, f.Member+1), clqBel), 1, 'first');
         if ~isempty(ndx)
             fac = convertToPmtkFac(clqBel{ndx}); 
             fac = tabularFactorMarginalize(fac, Q); 
-            [postQuery, Z] = tabularFactorNormalize(fac); 
+            [postQuery{i}, Z] = tabularFactorNormalize(fac); 
             logZ(i) = log(Z + eps); 
         else
             error('out of clique queries are not supported by libdai'); 
         end
-    end
+    %end
 end
 if nqueries == 1, postQuery = postQuery{1}; end
 if nargout > 2

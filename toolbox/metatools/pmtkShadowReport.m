@@ -14,8 +14,8 @@ for i=1:numel(files)
     end
     w = which(f, '-all');
     w = filterCell(w, @(c)endswith(c, '.m') ...
-        && ~issubstring([filesep, 'private', filesep], c)...
-        && ~issubstring('@', c));
+        && ~isSubstring([filesep, 'private', filesep], c)...
+        && ~isSubstring('@', c));
     if numel(w) < 2
         continue
     end

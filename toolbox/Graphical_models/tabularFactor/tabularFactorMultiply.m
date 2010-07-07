@@ -5,14 +5,14 @@ function TF = tabularFactorMultiply(varargin)
 % fields T, domain, sizes.
 %%
 
-useBsxfun = false; % bsxfun is sometimes slower but it saves memory
+useBsxfun = true; % bsxfun is sometimes slower but it saves memory
     
 if nargin == 1 && iscell(varargin{1})
     facs = varargin{1};
 else
     facs = varargin;
 end
-facs = filterCell(facs, @(TF)~isequal(TF.T, 1)); % ignore idempotent factors
+
 facStruct = [facs{:}];
 dom = unique([facStruct.domain]);
 N = numel(facs);
@@ -22,13 +22,12 @@ for i=1:N
     ns(Ti.domain) = Ti.sizes;
 end
 % sz = prod(ns(dom));
-% if sz > 100000
+% if sz > 500000
 %     fprintf('creating tabular factor with %d entries\n', sz);
 % end
-TF     = tabularFactorCreate(onesPMTK(ns(dom)), dom);
-T      = TF.T;
-domain = TF.domain;
-sizes  = TF.sizes;
+T = onesPMTK(ns(dom)); 
+
+
 
 if useBsxfun
     for i=1:N
@@ -38,11 +37,11 @@ if useBsxfun
 else
     for i=1:N
         Ti = facs{i};
-        T = T.*extend_domain_table(Ti.T, Ti.domain, Ti.sizes, domain, sizes);
+        T = T.*extendDomainTable(Ti.T, Ti.domain, Ti.sizes, dom, ns(dom));
     end
 end
-TF.T = T;
-
+TF = tabularFactorCreate(T, dom); 
+  
 end
 
 function T = multTable(T, Tsmall, smalldom, smallsz, bigdom)

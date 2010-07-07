@@ -1,4 +1,4 @@
-function B = extend_domain_table(A, smalldom, smallsz, bigdom, bigsz)
+function B = extendDomainTable(A, smalldom, smallsz, bigdom, bigsz)
 % Expand an array so it has the desired size.
 %
 % A is the array with domain smalldom and sizes smallsz.

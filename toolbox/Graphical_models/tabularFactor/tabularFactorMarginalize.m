@@ -5,7 +5,7 @@ function smallpot = tabularFactorMarginalize(bigpot, onto, maximize)
 if nargin < 3,
     maximize = false;
 end
-smallT = marg_table(bigpot.T, bigpot.domain, bigpot.sizes, onto, maximize);
+smallT = margTable(bigpot.T, bigpot.domain, bigpot.sizes, onto, maximize);
 smallpot = tabularFactorCreate(smallT, onto);
 
 end

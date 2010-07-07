@@ -1,6 +1,7 @@
-function initPmtk3()
+function initPmtk3(verbose)
 %% Run this script to initialize PMTK3
-disp('initializing pmtk3');
+if nargin < 1, verbose = true; end
+if verbose, disp('initializing pmtk3'); end
 format compact
 %%
 % Change to the directory storing this function, which should be the
@@ -86,5 +87,5 @@ if exist(source, 'dir')
     addpath(genpathPMTK(source));
 end
 %%
-disp('welcome to pmtk3')
+if verbose, disp('welcome to pmtk3'); end
 end
