@@ -14,7 +14,7 @@ else
 end
 
 facStruct = [facs{:}];
-dom = unique([facStruct.domain]);
+dom = uniquePMTK([facStruct.domain]);
 N = numel(facs);
 ns = zeros(1, max(dom));
 for i=1:N

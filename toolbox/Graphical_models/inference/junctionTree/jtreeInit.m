@@ -1,0 +1,74 @@
+function jtree = jtreeInit(fg, varargin)
+%% Initialize a junction tree for a given factor graph
+% This structure can then be passed to jtreeCalibrate
+% Optionally include cliqueConstraints, a cell array of sets of variable
+% indices if you want to guarantee that cliques containing these sets are
+% created.
+%%
+cc = process_options(varargin, 'cliqueConstraints', {});
+factors  = fg.Tfac(:);
+nfactors = numel(factors);
+nstates  = cellfun(@(t)t.sizes(end), factors);
+G        = moralizeGraph(fg.G);
+nvars    = size(G, 1);
+for i=1:numel(cc)
+    c = cc{i};
+    G(c, c) = 1;
+end
+G             = setdiag(G, 0);
+elimOrder     = minweightElimOrder(G, nstates);
+G             = mkChordal(G, elimOrder);
+pElimOrder    = perfectElimOrder(G);
+cliqueIndices = chordal2RipCliques(G, pElimOrder);
+cliqueGraph   = ripCliques2Jtree(cliqueIndices);
+ncliques      = numel(cliqueIndices);
+cliqueLookup  = false(nvars, ncliques);
+for c=1:ncliques
+    cliqueLookup(cliqueIndices{c}, c) = true;
+end
+%% add factors to cliques
+initClqSizes = cellfun('length', cliqueIndices);
+factorLookup = false(nfactors, ncliques);
+for f=1:nfactors
+    candidateCliques = find(all(cliqueLookup(factors{f}.domain, :), 1));
+    smallest = minidx(initClqSizes(candidateCliques));
+    factorLookup(f, candidateCliques(smallest)) = true;
+end
+cliques = cell(ncliques, 1);
+for c=1:ncliques
+    ndx        = cliqueIndices{c};
+    T          = tabularFactorCreate(onesPMTK(nstates(ndx)), ndx);
+    tf         = [{T}; factors(factorLookup(:, c))];
+    cliques{c} = tabularFactorMultiply(tf);
+end
+%% Determine message schedule
+root = nvars;
+rootCliques = find(cliqueLookup(root, :));
+rootClq = rootCliques(minidx(initClqSizes(rootCliques)));
+[preOrder, postOrder, pred] = dfsearch(cliqueGraph, rootClq, false);
+cliqueTree = zeros(ncliques, ncliques);
+for i=1:length(pred)
+    if pred(i) > 0
+        cliqueTree(pred(i), i) = 1;
+    end
+end
+postOrderParents = cell(1, length(postOrder));
+for i = postOrder
+    postOrderParents{i} = parents(cliqueTree, i);
+end
+preOrderChildren = cell(1, length(preOrder));
+for i = preOrder
+    preOrderChildren{i} = children(cliqueTree, i);
+end
+%% construct separating sets
+sepsets  = cell(ncliques);
+[is, js] = find(cliqueTree);
+for k = 1:numel(is)
+    i = is(k);
+    j = js(k);
+    sepsets{i, j} = intersectPMTK(cliques{i}.domain, cliques{j}.domain);
+    sepsets{j, i} = sepsets{i, j};
+end
+jtree = structure(cliques, sepsets, preOrder, postOrder, ...
+    preOrderChildren, postOrderParents, cliqueLookup, cliqueTree);
+end
