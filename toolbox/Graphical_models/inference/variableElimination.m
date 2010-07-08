@@ -27,7 +27,11 @@ end
 function F = eliminate(F, v)
 %% Eliminate variable v from the factors F
 inscope = cellfun(@(f)any(v == f.domain), F);
-psi     = tabularFactorMultiply(F(inscope));
+Fs      = F(inscope); 
+if isempty(Fs)
+    return
+end
+psi     = tabularFactorMultiply(Fs);
 onto    = setdiffPMTK(psi.domain, v);
 tau     = tabularFactorMarginalize(psi, onto);
 F       = [F(not(inscope)), {tau}];

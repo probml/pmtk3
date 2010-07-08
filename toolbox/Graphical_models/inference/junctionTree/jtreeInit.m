@@ -60,15 +60,7 @@ preOrderChildren = cell(1, length(preOrder));
 for i = preOrder
     preOrderChildren{i} = children(cliqueTree, i);
 end
-%% construct separating sets
-sepsets  = cell(ncliques);
-[is, js] = find(cliqueTree);
-for k = 1:numel(is)
-    i = is(k);
-    j = js(k);
-    sepsets{i, j} = intersectPMTK(cliques{i}.domain, cliques{j}.domain);
-    sepsets{j, i} = sepsets{i, j};
-end
-jtree = structure(cliques, sepsets, preOrder, postOrder, ...
+%%
+jtree = structure(cliques, preOrder, postOrder, ...
     preOrderChildren, postOrderParents, cliqueLookup, cliqueTree);
 end

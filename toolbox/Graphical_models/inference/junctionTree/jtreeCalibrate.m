@@ -3,13 +3,22 @@ function jtree = jtreeCalibrate(jtree)
 % jtree is a struct as returned by e.g. jtreeInit
 %%
 cliques          = jtree.cliques; 
-sepsets          = jtree.sepsets;
 preOrder         = jtree.preOrder;
 postOrder        = jtree.postOrder; 
 preOrderChildren = jtree.preOrderChildren; 
 postOrderParents = jtree.postOrderParents; 
 ncliques         = numel(cliques); 
+cliqueTree       = jtree.cliqueTree; 
 messages         = cell(ncliques, ncliques);
+%% construct separating sets
+sepsets  = cell(ncliques);
+[is, js] = find(cliqueTree);
+for k = 1:numel(is)
+    i = is(k);
+    j = js(k);
+    sepsets{i, j} = intersectPMTK(cliques{i}.domain, cliques{j}.domain);
+    sepsets{j, i} = sepsets{i, j};
+end
 %% collect messaegs
 for c = postOrder
     for p = postOrderParents{c}

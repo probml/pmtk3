@@ -1,6 +1,5 @@
 function [nodeBels, logZ] = dgmInferNodes(dgm, varargin)
 %% Return all node beliefs (single marginals)
-%
 %% Inputs
 %
 % dgm    - a struct created by dgmCreate
@@ -59,10 +58,16 @@ if ~isempty(softev)
 else
     localFacs = {};
 end
+visVars = find(clamped); 
+hidVars = setdiffPMTK(1:nnodes, visVars); 
 %% Run inference
 switch lower(engine)
     case 'jtree'
-        jtree              = dgm.jtree; 
+        if ~isfield(dgm, 'jtree')
+            jtree          = jtreeInit(factorGraphCreate(dgm.factors, dgm.G));
+        else
+            jtree          = dgm.jtree; 
+        end
         cliques            = jtree.cliques; 
         cl                 = jtree.cliqueLookup;
         [cliques, cl]      = sliceFactors(cliques, clamped, cl); 
@@ -70,19 +75,39 @@ switch lower(engine)
         jtree.cliqueLookup = cl; 
         jtree              = jtreeAddFactors(jtree, localFacs); 
         jtree              = jtreeCalibrate(jtree); 
-        [logZ, nodeBels]   = jtreeQuery(jtree, num2cell(1:nnodes)); 
+        [logZ, nodeBels]   = jtreeQuery(jtree, num2cell(hidVars)); 
     case 'libdaijtree'
         factors            = sliceFactors(dgm.factors, clamped); 
         factors            = [factors(:); localFacs(:)]; % may need to multiply these in
         [logZ, nodeBels]   = libdaiJtree(factors); 
+        %nodeBels(visVars)  = []; % to be consistent with other methods
     case 'varelim' 
         factors            = sliceFactors(dgm.factors, clamped); 
         factors            = [factors(:); localFacs(:)];
-        nodeBels           = cell(nnodes, 1); 
-        for i=1:nnodes
-           [logZ, nodeBels{i}] = variableElimination(factorGraphCreate(factors, dgm.G), i);  
+        nhid               = numel(hidVars); 
+        nodeBels           = cell(nhid, 1); 
+        for i = 1:nhid
+           [logZ, nodeBels{i}] = ...
+               variableElimination(factorGraphCreate(factors, dgm.G), hidVars(i));  
         end
     otherwise
         error('%s is not a valid inference engine', dgm.infEngine); 
+end
+nodeBels = insertClampedBels(nodeBels, visVars, hidVars);
+end
+
+
+function padded = insertClampedBels(nodeBels, visVars, hidVars)
+% We insert unit factors for the clamped vars to maintain a one-to-one 
+% corresponence between cell array position and domain, and to return
+% consistent results regardless of the inference method. 
+if isempty(visVars)
+    padded = nodeBels; 
+    return; 
+end
+padded = cell(numel(visVars) + numel(hidVars), 1); 
+padded(hidVars) = nodeBels; 
+for v = visVars
+   padded{v} = tabularFactorCreate(1, v); 
 end
 end

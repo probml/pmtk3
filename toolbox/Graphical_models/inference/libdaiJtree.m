@@ -13,7 +13,7 @@ function [logZ, nodeBels, clqBels] = libdaiJtree(tfacs)
 %
 % clqBels  - all of the clique beliefs
 %%
-if ~exist('dai', 'file') == 3
+if ~(exist('dai', 'file') == 3)
     error('could not find dai.%s', mexext); 
 end
 
