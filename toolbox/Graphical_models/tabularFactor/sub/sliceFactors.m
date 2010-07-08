@@ -5,7 +5,7 @@ function [facs, lookupTable] = sliceFactors(facs, clamped, lookupTable)
 if isempty(clamped); return; end
 visVars = find(clamped);
 if isempty(visVars); return; end
-visVals = nonzeros(clapmed);
+visVals = nonzeros(clamped);
 nfacs = numel(facs); 
 for i=1:nfacs
     localVars = intersectPMTK(facs{i}.domain, visVars);

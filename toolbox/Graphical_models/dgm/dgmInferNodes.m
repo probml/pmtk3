@@ -74,13 +74,13 @@ switch lower(engine)
     case 'libdaijtree'
         factors            = sliceFactors(dgm.factors, clamped); 
         factors            = [factors(:); localFacs(:)]; % may need to multiply these in
-        [logZ, nodeBels]   = libDaiJtree(factors); 
+        [logZ, nodeBels]   = libdaiJtree(factors); 
     case 'varelim' 
         factors            = sliceFactors(dgm.factors, clamped); 
         factors            = [factors(:); localFacs(:)];
         nodeBels           = cell(nnodes, 1); 
         for i=1:nnodes
-           [logZ, nodeBels{i}] = variableElimination(factorGraphCreate(factors, dgm.G));  
+           [logZ, nodeBels{i}] = variableElimination(factorGraphCreate(factors, dgm.G), i);  
         end
     otherwise
         error('%s is not a valid inference engine', dgm.infEngine); 
