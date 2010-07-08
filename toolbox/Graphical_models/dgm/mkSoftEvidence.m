@@ -1,7 +1,6 @@
 function B = mkSoftEvidence(localCPD, X)
 %% Make a soft evidence matrix B(j, t) = p(X(:, t) | S(t) = j, localCPD)
-% where S(t) denotes the state of node t. By local, we mean it has only one
-% parent in the DGM.
+% where S(t) denotes the state of node t. 
 %
 %% Inputs:
 %

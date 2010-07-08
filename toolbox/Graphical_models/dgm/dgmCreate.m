@@ -1,26 +1,53 @@
-function model = dgmCreate(G, CPD, varargin)
+function model = dgmCreate(G, CPDs, varargin)
 %% Create a directed graphical model (backbone)
-% Continuous nodes are handled using private evidence nodes associated with
-% each CPD struct. Parameter tying is handled using a pointer table where
-% CPD{P(v)} returns the CPD associated with random variable v. 
+% Parameter tying is handled using a pointer table where  CPDs{P(v)} returns
+% the CPD associated with random variable v.
 %%
-pointerTable = process_options(varargin, 'pointerTable', []); 
-nnodes = size(G, 1); 
-if isempty(pointerTable)
-    assert(numel(CPD) == nnodes); % must specify a pointer table for parameter tying
-	pointerTable = 1:nnodes; 
+[infEngine, localCPDs, CPDpointers, localCPDpointers] = process_options(varargin, ...
+    'infEngine'       , 'jtree', ...
+    'localCPDs'       , {}, ...
+    'CPDpointers'     , [], ...
+    'localCPDpointers', []);
+
+CPDs = cellwrap(CPDs); 
+nnodes = size(G, 1);
+if isempty(CPDpointers)
+    if numel(CPDs) == 1
+        CPDpointers = ones(1, nnodes); 
+    else
+        CPDpointers = 1:nnodes;
+    end
 end
-if ~isstruct(CPD{1})
-    CPD = cellfuncell(@tabularCpdCreate, CPD); 
+if ~isempty(localCPDs)
+    cellwrap(localCPDs);
+    if isempty(localCPDpointers) 
+        if numel(localCPDs) == 1
+            localCPDpointers = ones(1, nnodes); 
+        else
+            localCPDpointers = 1:nnodes;
+        end
+    end
 end
-nstates = zeros(nnodes, 1); 
+
+if numel(CPDs) > 0 && ~isstruct(CPDs{1})
+    CPDs = cellfuncell(@tabularCpdCreate, CPDs);
+end
+
+nstates = zeros(nnodes, 1);
 for i=1:nnodes
-    nstates(i) = CPD{pointerTable(i)}.nstates; 
+    nstates(i) = CPDs{CPDpointers(i)}.nstates;
 end
-model = structure(G, CPD, pointerTable, nnodes); 
-model.isdirected = true; 
-model.modelType = 'dgm'; 
 
+factors = cell(nnodes, 1); % ignore localCPDs until they are instantiated
+for i=1:nnodes
+    factors{i} = cpt2Factor(CPDs{CPDpointers(i)}.T , G, i);
+end
 
-
+model = structure(G, CPDs, localCPDs, CPDpointers, localCPDpointers,...
+                 nnodes, infEngine, factors, nstates);
+model.isdirected = true;
+model.modelType = 'dgm';
+if strcmpi(infEngine, 'jtree')
+    model.jtree = jtreeInit(factorGraphCreate(factors, G));
+end
 end

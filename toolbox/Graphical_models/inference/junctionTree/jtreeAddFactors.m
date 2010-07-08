@@ -2,6 +2,7 @@ function jtree = jtreeAddFactors(jtree, facs)
 %% Add factors to an existing jtree
 % by multiplying them into the smallest accommodating cliques.
 %%
+if isempty(facs); return; end
 cliques = jtree.cliques;
 clqSizes = cellfun('length', cliques);
 cliqueLookup = jtree.cliqueLookup;
