@@ -21,7 +21,7 @@ for c=1:C
   Non = sum( Xtr==1, 1);
   Noff = sum( Xtr==0, 1);
   theta(c,:) = (Non + pseudoCount) ./ (Non + Noff + 2*pseudoCount); % posterior mean
-  Nclass(c) = length(ndx); %#ok
+  Nclass(c) = sum(ndx); %#ok
 end
 model.classPrior = normalize(Nclass);
 model.theta = theta;
