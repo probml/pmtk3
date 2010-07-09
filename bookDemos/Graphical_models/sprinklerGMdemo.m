@@ -16,7 +16,7 @@ factors = dgm.factors;
 
 fullJoint = tabularFactorMultiply(factors); 
 
-p1g2 = tabularFactorConditional(fullJoint, 1, 2, 2);
+p1g2 = tabularFactorCondition(fullJoint, 1, 2, 2);
 
 m = dgmInferNodes(dgm, 'clamped', sparsevec(2, 2, 4)); 
 assert(tfequal(m{1}, p1g2));
@@ -83,7 +83,7 @@ assert(approxeq(mSWve.T(TRUE, TRUE), 0.2781))
 assert(approxeq(mSWjt.T(TRUE, TRUE), 0.2781))
 
 evidence = sparsevec(W, TRUE, nvars); 
-mSgivenW = tabularFactorConditional(jointF, S, W, TRUE);
+mSgivenW = tabularFactorCondition(jointF, S, W, TRUE);
 mSgivenWve = variableElimination(model, S, evidence);
 mSgivenWjt = junctionTree(model, S, evidence);
 assert(approxeq(mSgivenW.T(TRUE), 0.4298));
@@ -91,7 +91,7 @@ assert(approxeq(mSgivenWve.T(TRUE), 0.4298));
 assert(approxeq(mSgivenWjt.T(TRUE), 0.4298));
 
 evidence = sparsevec([W R], [TRUE TRUE], nvars); 
-mSgivenWR = tabularFactorConditional(jointF, S, [W R], [TRUE, TRUE]);
+mSgivenWR = tabularFactorCondition(jointF, S, [W R], [TRUE, TRUE]);
 mSgivenWRve = variableElimination(model, S, evidence);
 mSgivenWRjt = junctionTree(model, S, evidence);
 assert(approxeq(mSgivenWR.T(TRUE), 0.1945)); % explaining away
