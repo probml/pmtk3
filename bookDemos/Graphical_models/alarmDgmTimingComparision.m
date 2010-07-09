@@ -12,11 +12,12 @@ nnodes = 37;
 
 engines = {'jtree', 'libdaiJtree'};
 time = zeros(ntrials, numel(engines));
-for i=1:ntrials + 1 % we throw away the first trial 
-    %% create random evidence on a random number of nodes
-    lambda = 7;
-    nobs = poissonSample(lambda);
-    if nobs >= nnodes, nobs = 0; end
+for i=1:ntrials + 1 % we throw away the first trial
+    %% create random evidence 
+    %lambda = 7;
+    %nobs = poissonSample(lambda);
+    %if nobs >= nnodes, nobs = 0; end
+    nobs = 5; 
     perm = randperm(nnodes);
     visVars = perm(1:nobs);
     visVals = zeros(1, nobs);
@@ -46,43 +47,47 @@ maxStrLen = max(cellfun('length', engines));
 for e=1:numel(engines)
     fprintf('%s%s%g\n', engines{e}, dots(maxStrLen+3-length(engines{e})), meanTimes(e));
 end
-maxTimes = max(time(start:end, :), [], 1); 
+maxTimes = max(time(start:end, :), [], 1);
 fprintf('\nMAX TIMES in second(s)\n');
 maxStrLen = max(cellfun('length', engines));
 for e=1:numel(engines)
     fprintf('%s%s%g\n', engines{e}, dots(maxStrLen+3-length(engines{e})), maxTimes(e));
 end
 
-%% 
-
-if 0 % do some basic tests
+%% To run the code below, unload PMTK and load BNT 
+if 0
+    ntrials = 50;
+    tBNT = zeros(ntrials, 1);
     nnodes = 37;
-    dgmJ = mkAlarmDgm('jtree');
-    dgmV = mkAlarmDgm('varelim');
-    dgmL = mkAlarmDgm('libdaiJtree');
-    J = dgmInferNodes(dgmJ);
-    V = dgmInferNodes(dgmV);
-    L = dgmInferNodes(dgmL);
-    assert(tfequal(J, V, L));
-    
-    if 1
-        E = sparsevec(5, 2, nnodes);
-        L = dgmInferNodes(dgmL, 'clamped', E); % problematic case for libai
-        J = dgmInferNodes(dgmV, 'clamped', E); 
-        assert(tfequal(L, J)); 
+    bnet = mk_alarm_bnet();
+    nobs = 5;
+    for i=1:ntrials
+        E = sample_bnet(bnet);
+        perm = randperm(nnodes);
+        obs = perm(1:nobs);
+        evidence = cell(1, nnodes);
+        evidence(obs) = E(obs);
+        tic;
+        engine = jtree_inf_engine(bnet);
+        [engine, ll] = enter_evidence(engine, evidence);
+        margBNT = cell(nnodes, 1);
+        for j=1:numel(nnodes);
+            margBNT{j} = marginal_nodes(engine, j);
+        end
+        tBNT(i) = toc;
     end
-    
-    E = sparsevec(13, 2, nnodes);
-    J = dgmInferNodes(dgmJ, 'clamped', E);
-    V = dgmInferNodes(dgmV, 'clamped', E);
-    L = dgmInferNodes(dgmL, 'clamped', E);
-    assert(tfequal(J, V, L));
-    
-    evidence = sparsevec([11 15], [2 4], nnodes);
-    E = sparsevec(13, 2, nnodes);
-    J = dgmInferNodes(dgmJ, 'clamped', E);
-    V = dgmInferNodes(dgmV, 'clamped', E);
-    L = dgmInferNodes(dgmL, 'clamped', E);
-    assert(tfequal(J, V, L));
-    %%
+    meanTime = mean(tBNT);
 end
+
+
+
+
+
+
+
+
+
+
+
+
+
