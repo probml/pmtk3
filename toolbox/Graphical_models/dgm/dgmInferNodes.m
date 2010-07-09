@@ -64,28 +64,25 @@ hidVars = setdiffPMTK(1:nnodes, visVars);
 switch lower(engine)
     case 'jtree'
         if ~isfield(dgm, 'jtree')
-            jtree          = jtreeInit(factorGraphCreate(dgm.factors, dgm.G));
+            jtree        = jtreeInit(factorGraphCreate(dgm.factors, dgm.G));
         else
-            jtree          = dgm.jtree; 
+            jtree        = dgm.jtree; 
         end
-        cliques            = jtree.cliques; 
-        cl                 = jtree.cliqueLookup;
-        [cliques, cl]      = sliceFactors(cliques, clamped, cl); 
-        jtree.cliques      = cliques; 
-        jtree.cliqueLookup = cl; 
-        jtree              = jtreeAddFactors(jtree, localFacs); 
-        jtree              = jtreeCalibrate(jtree); 
-        [logZ, nodeBels]   = jtreeQuery(jtree, num2cell(hidVars)); 
+        jtree            = jtreeSliceCliques(jtree, clamped); 
+        jtree            = jtreeAddFactors(jtree, localFacs); 
+        jtree            = jtreeCalibrate(jtree); 
+        [logZ, nodeBels] = jtreeQuery(jtree, num2cell(hidVars)); 
     case 'libdaijtree'
-        factors            = sliceFactors(dgm.factors, clamped); 
-        factors            = [factors(:); localFacs(:)]; % may need to multiply these in
-        [logZ, nodeBels]   = libdaiJtree(factors); 
-        %nodeBels(visVars)  = []; % to be consistent with other methods
+        doSlice = false; % libdai often segfaults when slicing
+        factors          = addEvidenceToFactors(dgm.factors, clamped, doSlice); 
+        factors          = [factors(:); localFacs(:)]; % may need to multiply these in
+        [logZ, nodeBels] = libdaiJtree(factors); 
     case 'varelim' 
-        factors            = sliceFactors(dgm.factors, clamped); 
-        factors            = [factors(:); localFacs(:)];
-        nhid               = numel(hidVars); 
-        nodeBels           = cell(nhid, 1); 
+        doSlice          = false; 
+        factors          = addEvidenceToFactors(dgm.factors, clamped, doSlice); 
+        factors          = [factors(:); localFacs(:)];
+        nhid             = numel(hidVars); 
+        nodeBels         = cell(nhid, 1); 
         for i = 1:nhid
            [logZ, nodeBels{i}] = ...
                variableElimination(factorGraphCreate(factors, dgm.G), hidVars(i));  
@@ -105,8 +102,14 @@ if isempty(visVars)
     padded = nodeBels; 
     return; 
 end
-padded = cell(numel(visVars) + numel(hidVars), 1); 
-padded(hidVars) = nodeBels; 
+nvars = numel(visVars) + numel(hidVars); 
+padded = cell(nvars, 1);
+if numel(nodeBels) == nvars
+    padded(hidVars) = nodeBels(hidVars);     
+else
+    padded(hidVars) = nodeBels; 
+end
+
 for v = visVars
    padded{v} = tabularFactorCreate(1, v); 
 end

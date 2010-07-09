@@ -9,6 +9,20 @@
 %   v
 %   W
 %%
+
+dgm = mkSprinklerDgm(); 
+
+factors = dgm.factors; 
+
+fullJoint = tabularFactorMultiply(factors); 
+
+p1g2 = tabularFactorConditional(fullJoint, 1, 2, 2);
+
+m = dgmInferNodes(dgm, 'clamped', sparsevec(2, 2, 4)); 
+assert(tfequal(m{1}, p1g2));
+
+if 0
+
 C = 1; S = 2; R = 3; W = 4;
 
 G = zeros(4,4);
@@ -86,4 +100,4 @@ assert(approxeq(mSgivenWRjt.T(TRUE), 0.1945));
 
 %%
 
-
+end

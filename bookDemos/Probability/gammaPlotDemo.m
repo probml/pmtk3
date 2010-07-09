@@ -6,9 +6,9 @@ as = [1 1.5 2];
 b = 1;
 bs = b*ones(1,length(as));
 figure;
-%[styles, colors, symbols] = plotColors;
+[styles, colors, symbols] = plotColors;
 legendStr = cell(1, length(as)); 
-styles = {'k:',  'b--', 'r-'};
+%styles = {'k:',  'b--', 'r-'};
 for i=1:length(as)
     a = as(i); b = bs(i);
     xs = linspace(0.1, 7, 40);

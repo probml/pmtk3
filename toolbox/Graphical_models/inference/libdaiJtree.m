@@ -19,6 +19,8 @@ end
 
 psi = cellfuncell(@convertToLibFac, tfacs);
 [logZ, clqBels, md, nodeBels] = dai(psi, 'JTREE', '[updates=HUGIN]');
+
+
 if nargout > 1
     nodeBels = cellfuncell(@convertToPmtkFac, nodeBels);
 end
@@ -35,6 +37,17 @@ end
 
 function lfac = convertToLibFac(mfac)
 % Convert a PMTK factor to libdai format
-lfac.Member = mfac.domain - 1;
-lfac.P = mfac.T;
+domain = mfac.domain;
+T = mfac.T; 
+try
+assert(~isempty(domain)); 
+assert(numel(T) > 1);      % does not support trival factors
+assert(~all(T(:) < eps));  
+catch %#ok
+   disp(mfac);
+   error('libdaiJtree:invalidFactor', 'invalid factor');
+end
+
+lfac.Member = domain - 1;
+lfac.P = T;
 end
