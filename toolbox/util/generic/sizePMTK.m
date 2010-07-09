@@ -8,10 +8,12 @@ function sz = sizePMTK(M)
 % - M = rand(2,2,1), sizePMTK(M) = [2 2],  size(M) = [2 2]
 % - M = rand(1,2,1), sizePMTK(M) = 2,      size(M) = [1 2]
 
+
+
 if isempty(M)
     sz = 0;
 elseif isvector(M)
-    sz = length(M);
+    sz = numel(M);
 else
     sz = size(M);
 end

@@ -11,5 +11,7 @@ end
 % ndx = any(bsxfun(@eq,smalldom',bigdom),1)
 %     or
 % [junk,ndx] = ismember(smalldom,bigdom);
+%     or even
+% ndx = ismembc2(smalldom, bigdom); 
 
 end

@@ -2,7 +2,7 @@
 %
 %%
 
-ntrials = 10;
+ntrials = 50;
 setSeed(1);
 loadData('alarmNetwork');
 G = alarmNetwork.G;
@@ -10,11 +10,11 @@ CPT = alarmNetwork.CPT;
 nstates = alarmNetwork.nodeSizes;
 nnodes = 37;
 
-engines = {'jtree', 'libdaiJtree', 'varelim'};
+engines = {'jtree', 'libdaiJtree'};
 time = zeros(ntrials, numel(engines));
 for i=1:ntrials + 1 % we throw away the first trial 
     %% create random evidence on a random number of nodes
-    lambda = 5;
+    lambda = 7;
     nobs = poissonSample(lambda);
     if nobs >= nnodes, nobs = 0; end
     perm = randperm(nnodes);
@@ -25,6 +25,7 @@ for i=1:ntrials + 1 % we throw away the first trial
         visVals(j) = unidrndPMTK(ns);
     end
     clamped = sparsevec(visVars, visVals, nnodes);
+    %%
     nodeBels = cell(numel(engines), 1);
     for e=1:numel(engines)
         tic;

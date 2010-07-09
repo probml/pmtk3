@@ -4,15 +4,11 @@ function TF = tabularFactorMultiply(varargin)
 % Each factor is a struct as returned by tabularFactorCreate and has
 % fields T, domain, sizes.
 %%
-
-useBsxfun = true; % bsxfun is sometimes slower but it saves memory
-    
-if nargin == 1 && iscell(varargin{1})
+if nargin == 1
     facs = varargin{1};
 else
     facs = varargin;
 end
-
 facStruct = [facs{:}];
 dom = uniquePMTK([facStruct.domain]);
 N = numel(facs);
@@ -25,39 +21,18 @@ end
 % if sz > 500000
 %     fprintf('creating tabular factor with %d entries\n', sz);
 % end
-T = onesPMTK(ns(dom)); 
 
-
-
-if useBsxfun
-    for i=1:N
-        Ti = facs{i};
-        T  = multTable(T, Ti.T, Ti.domain, Ti.sizes, dom);
-    end
-else
-    for i=1:N
-        Ti = facs{i};
-        T = T.*extendDomainTable(Ti.T, Ti.domain, Ti.sizes, dom, ns(dom));
-    end
-end
-TF = tabularFactorCreate(T, dom); 
-  
+T = ones([ns(dom), 1]);
+for i=1:N
+    Ti = facs{i};
+    T  = bsxTable(@times, T, Ti.T, dom, Ti.domain);
 end
 
-function T = multTable(T, Tsmall, smalldom, smallsz, bigdom)
-%% Multiply two tables reshaping and virtually expanding the small table as needed
-if isequal(size(T), size(Tsmall))
-    T = T.*Tsmall;
-else
-    nsmall = numel(smalldom);
-    ndx    = zeros(nsmall, 1);
-    for i=1:nsmall
-        ndx(i) = find(bigdom==smalldom(i), 1);
-    end
-    nbig    = numel(bigdom);
-    sz      = ones(1, nbig);
-    sz(ndx) = smallsz;
-    Tsmall  = reshapePMTK(Tsmall, sz);
-    T       = bsxfun(@times, T, Tsmall);
-end
+% for i=1:N
+%     Ti = facs{i};
+%     T = T.*extendDomainTable(Ti.T, Ti.domain, Ti.sizes, dom, ns(dom));
+% end
+%end
+
+TF = tabularFactorCreate(T, dom);
 end
