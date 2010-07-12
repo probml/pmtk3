@@ -26,4 +26,12 @@ for i=1:numel(packages)
 end
 
 addpath(genpathPMTK(destnRoot), '-end');
+rootText = ...
+{
+    'function r = pmtkSupportRoot()';
+    '% Return directory name where pmtkSupport is stored';
+    '  r = fileparts(which(mfilename()));';
+    'end';
+};
+writeText(rootText, fullfile(destnRoot, 'pmtkSupportRoot.m'));
 end
