@@ -10,7 +10,7 @@ assert(tfequal(J, V, L));
 
 if 1
     E = sparsevec(5, 2, nnodes);
-    L = dgmInferNodes(dgmL, 'clamped', E); % problematic case for libai
+    L = dgmInferNodes(dgmL, 'clamped', E); % problematic case for libai if slicing is on
     J = dgmInferNodes(dgmV, 'clamped', E);
     assert(tfequal(L, J));
 end

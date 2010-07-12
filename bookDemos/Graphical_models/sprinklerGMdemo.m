@@ -11,15 +11,15 @@
 %%
 
 dgm = mkSprinklerDgm(); 
-
 factors = dgm.factors; 
-
 fullJoint = tabularFactorMultiply(factors); 
-
 p1g2 = tabularFactorCondition(fullJoint, 1, 2, 2);
-
 m = dgmInferNodes(dgm, 'clamped', sparsevec(2, 2, 4)); 
 assert(tfequal(m{1}, p1g2));
+
+
+
+
 
 if 0
 

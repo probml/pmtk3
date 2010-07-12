@@ -2,7 +2,7 @@
 %
 %% Create a random hmm model
 setSeed(0);
-nstates = 200;
+nstates = 100;
 d = 10;
 T = 100;
 A = normalize(rand(nstates), 2);
