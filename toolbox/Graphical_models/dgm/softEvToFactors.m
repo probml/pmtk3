@@ -6,7 +6,7 @@ function facs = softEvToFactors(B)
 nf = size(B, 2); 
 facs = cell(nf, 1); 
 for i=1:nf
-   Bt = B(:, t); 
+   Bt = B(:, i); 
    if all(isnan(Bt)), continue; end
    facs{i} = tabularFactorCreate(Bt(~isnan(Bt)), i);  
 end

@@ -13,8 +13,10 @@ for i=1:numel(facs)
     if isempty(candidateCliques)
         error('no accomidating clique could be found for facs{%d}: %d', i, fdom); 
     end
-    smallest = minidx(clqSizes(candidateCliques));
+    smallest = candidateCliques(minidx(clqSizes(candidateCliques)));
+    assert(issubset(fdom, cliques{smallest}.domain)); 
     cliques{smallest} = tabularFactorMultiply(cliques{smallest}, f);
+    cliques{smallest} = tabularFactorNormalize(cliques{smallest}); 
     cliqueLookup(fdom, smallest) = 1;
 end
 jtree.cliques = cliques;

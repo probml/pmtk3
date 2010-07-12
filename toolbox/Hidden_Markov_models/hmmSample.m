@@ -38,4 +38,7 @@ switch lower(model.type)
     otherwise
         error('%s is not a valid hmm type', model.type);
 end
+if nsamples == 1
+    hidden = hidden{1};
+    observed = observed{1};
 end

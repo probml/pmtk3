@@ -5,6 +5,8 @@ function model = hmmCreate(type, pi, A, emission, nstates)
 model = structure(type, pi, A, emission, nstates);
 model.modelType = 'hmm';
 if strcmpi(type, 'gauss')
-    model.d = length(emission{1}.mu); 
+    model.d = emission.d;
+else
+    model.d = 1;
 end
 end

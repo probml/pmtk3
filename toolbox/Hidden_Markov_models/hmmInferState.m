@@ -7,9 +7,9 @@ function [gamma, logp, alpha, beta, B]  = hmmInferState(model, X)
 %*** X must be a single sequence ***
 %PMTKlatentModel hmm
 %
-pi       = model.pi;
-A        = model.A;
-B = mkSoftEvidence(model.emission, X); 
+pi                         = model.pi;
+A                          = model.A;
+B                          = mkSoftEvidence(model.emission, X); 
 [gamma, alpha, beta, logp] = hmmFwdBack(pi, A, B);
 
 end

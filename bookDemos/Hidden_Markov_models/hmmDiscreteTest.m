@@ -21,7 +21,7 @@ trueModel.type = 'discrete';
 %% Sample
 len = 100;
 [observed, hidden] = hmmSample(trueModel, len);
-hidden = hidden{1};
+
 %% Learn the model using EM with random restarts
 nrestarts = 2;
 modelEM = hmmFit(observed, nHidStates, 'discrete', ...

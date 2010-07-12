@@ -1,22 +1,20 @@
-function dgm = hmm2Dgm(model, X)
-%% Given a single observation sequence, convert an HMM to a DGM
-% Each CPD in the DGM stores its own local evidence node to handle the
-% continuous observation. 
-% X is T-by-d
-%% 
-B        = hmmMkLocalEvidence(model, X); 
-T        = size(X, 1); 
-CPD      = cell(T, 1); 
-CPD{1}   = tabularCpdCreate(model.pi, 'localev', normalize(B(:, 1))); 
-A        = model.A; 
-for t=2:T
-   CPD{t} = tabularCpdCreate(A, 'localev', normalize(B(:, t))); 
-end
-G = zeros(T, T); 
-for t=1:T-1
-    G(t, t+1) = 1; 
-end
+function dgm = hmm2Dgm(model, T, varargin)
+%% Convert an hmm model to a dgm of by unrolling the hmm for T time steps
+% All other args are passed directly to dgmCreate
+%%
 
-dgm = dgmCreate(G, CPD); 
+
+G = diag(ones(T-1, 1), 1); 
+CPD1 = tabularCpdCreate(model.pi); 
+CPD2 = tabularCpdCreate(model.A); 
+localCPD = model.emission; 
+dgm = dgmCreate(G, {CPD1, CPD2}                            , ...
+                   'localCPDs'       , localCPD            , ...
+                   'CPDpointers'     , [1, 2*ones(1, T-1)] , ...
+                   'localCPDpointers', ones(1, T)          , ...
+                   varargin{:}                             ); 
+
+
+
 
 end

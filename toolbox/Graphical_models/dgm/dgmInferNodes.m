@@ -48,9 +48,11 @@ if ~isempty(localev)
     end
 end
 %% Both local and soft evidence
-if ~isempty(localev) && ~isemtpy(softev)
+if ~isempty(localev) && ~isempty(softev)
     nanCols = all(isnan(softev), 1);
     softev(:, nanCols) = B(:, nanCols); 
+elseif ~isempty(localev)
+    softev = B; 
 end
 %% Convert soft evidence to factors
 if ~isempty(softev)
@@ -77,12 +79,15 @@ switch lower(engine)
     case 'libdaijtree'
         doSlice = false; % libdai often segfaults when slicing
         factors          = addEvidenceToFactors(dgm.factors, clamped, doSlice); 
-        factors          = [factors(:); localFacs(:)]; % may need to multiply these in
+        factors          = [factors(:); localFacs(:)]; 
         [logZ, nodeBels] = libdaiJtree(factors); 
     case 'varelim' 
-        doSlice          = false; 
+        doSlice          = true; 
         factors          = addEvidenceToFactors(dgm.factors, clamped, doSlice); 
-        factors          = [factors(:); localFacs(:)];
+        if ~isempty(localFacs)
+            factors = cellfuncell(@tabularFactorMultiply, factors, localFacs); 
+            factors = cellfuncell(@tabularFactorNormalize, factors); 
+        end
         nhid             = numel(hidVars); 
         nodeBels         = cell(nhid, 1); 
         for i = 1:nhid

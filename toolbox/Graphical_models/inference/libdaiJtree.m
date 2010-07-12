@@ -42,7 +42,7 @@ T = mfac.T;
 try
 assert(~isempty(domain)); 
 assert(numel(T) > 1);      % does not support trival factors
-assert(~all(T(:) < eps));  
+assert(any(T(:)));         % does not support all zero factors
 catch %#ok
    disp(mfac);
    error('libdaiJtree:invalidFactor', 'invalid factor');
