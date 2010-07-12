@@ -10,7 +10,7 @@ logp = zeros(nobs, 1);
 pi = model.pi;
 A = model.A;
 for i=1:nobs
-    B = hmmMkLocalEvidence(model, X{i}'); 
+    B = mkSoftEvidence(model.emission, X{i}'); 
     logp(i) = hmmFilter(pi, A, B);
 end
 

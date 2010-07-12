@@ -5,10 +5,11 @@
 %% Define the generating model
 setSeed(0);
 nHidStates = 4; 
-trueModel.emission = [1/6  1/6   1/6   1/6   1/6   1/6  ;  
+T =                  [1/6  1/6   1/6   1/6   1/6   1/6  ;  
                      1/10  1/10  1/10  1/10  1/10  5/10 
                      2/6   1/6   1/6   16    1/12  1/12
                      7/12   1/12  1/12  1/12  1/12 1/12];  
+trueModel.emission = tabularCpdCreate(T);                  
     
 trueModel.A = [0.6 0.15 0.20 0.05;
               0.10 0.70 0.15 0.05
@@ -23,7 +24,7 @@ len = 100;
 hidden = hidden{1};
 %% Learn the model using EM with random restarts
 nrestarts = 2;
-modelEM = hmmFitEm(observed, nHidStates, 'discrete', ...
+modelEM = hmmFit(observed, nHidStates, 'discrete', ...
     'convTol', 1e-5, 'nRandomRestarts', nrestarts, 'verbose', true);
 
 %% How different are the respective log probabilities?

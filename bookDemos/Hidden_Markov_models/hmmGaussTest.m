@@ -6,7 +6,7 @@ data = [train4'; train5'];
 d = 13;
 
 % test with a bogus prior
-if 0
+if 1
     prior.mu = ones(1, d);
     prior.Sigma = 0.1*eye(d);
     prior.k = d;

@@ -1,4 +1,4 @@
-%% Test of the TabularFactor code using the water sprinkeler BN
+%% Low level test of the TabularFactor code using the water sprinkeler BN
 %   C
 %  / \
 % v  v

@@ -12,24 +12,27 @@ hidden   = cell(nsamples, 1);
 observed = cell(nsamples, 1);
 switch lower(model.type)
     case 'discrete'
-        E = model.emission;
+        E = model.emission.T;
         for i=1:nsamples
             T = len(i);
-            hidden{i} = rowvec(markovSample(model, T, 1));
+            hidden{i}   = rowvec(markovSample(model, T, 1));
             observed{i} = zeros(1, T);
             for t=1:T
                 observed{i}(t) = sampleDiscrete(E(hidden{i}(t), :));
             end
         end
     case 'gauss'
-        d = model.d;
-        E = model.emission;
+        d     = model.d;
+        E     = model.emission;
+        mu    = E.mu; 
+        Sigma = E.Sigma; 
         for i=1:nsamples
             T = len(i);
-            hidden{i} = rowvec(markovSample(model, T, 1));
+            hidden{i}   = rowvec(markovSample(model, T, 1));
             observed{i} = zeros(d, T);
             for t=1:T
-                observed{i}(:, t) = colvec(gaussSample(E{hidden{i}(t)}, 1));
+                k = hidden{i}(t); 
+                observed{i}(:, t) = colvec(gaussSample(mu(:, k), Sigma(:, :, k), 1));
             end
         end
     otherwise

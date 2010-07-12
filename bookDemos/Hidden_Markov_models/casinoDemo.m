@@ -38,14 +38,14 @@ for t=1:len
 end
 %% Fit via EM (pretending we don't know the hidden states)
 nstates = size(obsModel, 1);
-modelEM = hmmFitEm(observed, nstates, 'discrete', ...
+modelEM = hmmFit(observed, nstates, 'discrete', ...
     'maxIter', 1000, 'verbose', true, 'convTol', 1e-7, 'nRandomRestarts', 3);
 %% Viterbi Path
 % We can now try and recover the most likely sequence of hidden states, 
 % the Viterbi path. 
 
 model.nObsStates = size(obsModel, 2); 
-model.emission = obsModel;
+model.emission = tabularCpdCreate(obsModel);
 model.nstates = nstates;
 model.pi = pi;
 model.A = transmat; 

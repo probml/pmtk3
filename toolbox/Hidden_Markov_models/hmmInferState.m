@@ -9,7 +9,7 @@ function [gamma, logp, alpha, beta, B]  = hmmInferState(model, X)
 %
 pi       = model.pi;
 A        = model.A;
-B = hmmMkLocalEvidence(model, X); 
+B = mkSoftEvidence(model.emission, X); 
 [gamma, alpha, beta, logp] = hmmFwdBack(pi, A, B);
 
 end

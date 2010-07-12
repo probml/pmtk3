@@ -16,21 +16,32 @@ function B = mkSoftEvidence(localCPD, X)
 %  Use NaN's in X for unobserved nodes. The corresponding column of B contain
 %  NaNs.
 %%
-
-nstates  = localCPD.nstates;
-observed = ~any(isnan(X), 1);
-Xobs     = X(:, observed);
-B = nan(nstates, size(X, 2));
-
+if iscell(X)
+    X = X{1};
+end
+if isvector(X), 
+    X = rowvec(X); 
+else
+    d = localCPD.d;
+    X = reshape(X, d, []); 
+end
+[d, seqlen] = size(X); 
+observed    = ~any(isnan(X), 1);
+Xobs        = X(:, observed);
 switch lower(localCPD.cpdType)
     case 'tabular'
-        T = localCPD.T;
-        B(:, observed) = T(:, Xobs'); % must have only one parent
+        T              = localCPD.T;
+        nstates        = size(T, 1); 
+        B              = nan(nstates, seqlen);
+        B(:, observed) = T(:, Xobs); % must have only one parent
     case 'condgauss'
-        mu    = localCPD.mu;
-        Sigma = localCPD.Sigma;
+        Xobs     = reshape(Xobs, [], localCPD.d); 
+        nstates  = localCPD.nstates;
+        B        = nan(nstates, seqlen);
+        mu       = localCPD.mu;
+        Sigma    = localCPD.Sigma;
         for j=1:nstates
-            B(j, observed) = rowvec(exp(gaussLogprob(mu(:, j), Sigma(:, :, j), Xobs')));
+            B(j, observed) = rowvec(exp(gaussLogprob(mu(:, j), Sigma(:, :, j), Xobs)));
         end
     otherwise
         error('%s is not a recognized CPD type', localCPD.cpdType);

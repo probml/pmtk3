@@ -63,12 +63,14 @@ hidVars = setdiffPMTK(1:nnodes, visVars);
 %% Run inference
 switch lower(engine)
     case 'jtree'
-        if ~isfield(dgm, 'jtree')
-            jtree        = jtreeInit(factorGraphCreate(dgm.factors, dgm.G));
-        else
+        if ~isfield(dgm, 'jtree') % take advantage of evidence
+            doSlice      = true; 
+            factors      = addEvidenceToFactors(dgm.factors, clamped, doSlice); 
+            jtree        = jtreeInit(factorGraphCreate(factors, dgm.G));
+        else                     % else use prebuiit jtree
             jtree        = dgm.jtree; 
+            jtree        = jtreeSliceCliques(jtree, clamped); 
         end
-        jtree            = jtreeSliceCliques(jtree, clamped); 
         jtree            = jtreeAddFactors(jtree, localFacs); 
         jtree            = jtreeCalibrate(jtree); 
         [logZ, nodeBels] = jtreeQuery(jtree, num2cell(hidVars)); 
