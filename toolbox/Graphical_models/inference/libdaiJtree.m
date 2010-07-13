@@ -1,6 +1,6 @@
 function [logZ, nodeBels, clqBels] = libdaiJtree(tfacs)
 %% Bare bones interface to libdai's jtree algorithm 
-%
+% 
 %% Input
 %
 % tfacs    s- a cell array of tabular factors
@@ -43,6 +43,7 @@ try
 assert(~isempty(domain)); 
 assert(numel(T) > 1);      % does not support trival factors
 assert(any(T(:)));         % does not support all zero factors
+assert(~isrowvec(T));      % crashes with row vectors
 catch %#ok
    disp(mfac);
    error('libdaiJtree:invalidFactor', 'invalid factor');

@@ -41,6 +41,9 @@ fac{W} = tabularFactorCreate(CPD{W}, [S R W]);
 J = tabularFactorMultiply(fac);
 joint3 = J.T;
 assert(approxeq(joint, joint3));
+%%
+
+
 %% check against dgm code
 dgm = mkSprinklerDgm(); 
 marginals = dgmInferNodes(dgm);

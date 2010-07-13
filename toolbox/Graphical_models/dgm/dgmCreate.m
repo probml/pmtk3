@@ -1,13 +1,14 @@
 function model = dgmCreate(G, CPDs, varargin)
 %% Create a directed graphical model (backbone)
-% Parameter tying is handled using a pointer table where  CPDs{P(v)} returns
-% the CPD associated with random variable v.
+% 
 %%
 [infEngine, localCPDs, CPDpointers, localCPDpointers] = process_options(varargin, ...
     'infEngine'       , 'jtree', ...
     'localCPDs'       , {}, ...
     'CPDpointers'     , [], ...
     'localCPDpointers', []);
+
+assert(isTopoOrdered(G)); % if j < k, node j must not be a child of node k
 
 CPDs = cellwrap(CPDs); 
 nnodes = size(G, 1);
@@ -42,7 +43,6 @@ factors = cell(nnodes, 1); % ignore localCPDs until they are instantiated
 for i=1:nnodes
     factors{i} = cpt2Factor(CPDs{CPDpointers(i)}.T , G, i);
 end
-
 model = structure(G, CPDs, localCPDs, CPDpointers, localCPDpointers,...
                  nnodes, infEngine, factors, nstates);
 model.isdirected = true;

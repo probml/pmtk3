@@ -77,9 +77,11 @@ switch lower(engine)
         jtree            = jtreeCalibrate(jtree); 
         [logZ, nodeBels] = jtreeQuery(jtree, num2cell(hidVars)); 
     case 'libdaijtree'
+        assert(isWeaklyConnected(dgm.G)); % libdai segfaults on disconnected graphs
         doSlice = false; % libdai often segfaults when slicing
         factors          = addEvidenceToFactors(dgm.factors, clamped, doSlice); 
         factors          = [factors(:); localFacs(:)]; 
+        factors          = cellfuncell(@tabularFactorNormalize, factors); 
         [logZ, nodeBels] = libdaiJtree(factors); 
     case 'varelim' 
         doSlice          = true; 
@@ -93,6 +95,19 @@ switch lower(engine)
         for i = 1:nhid
            [logZ, nodeBels{i}] = ...
                variableElimination(factorGraphCreate(factors, dgm.G), hidVars(i));  
+        end
+    case 'enum' 
+        factors = dgm.factors; 
+        if ~isempty(localFacs)
+            factors = cellfuncell(@tabularFactorMultiply, factors, localFacs); 
+            factors = cellfuncell(@tabularFactorNormalize, factors); 
+        end        
+        joint = (tabularFactorMultiply(factors)); 
+        visVars = find(clamped); 
+        visVals = nonzeros(clamped); 
+        nodeBels = cell(nnodes, 1); 
+        for i=1:nnodes
+           nodeBels{i} = tabularFactorCondition(joint, i, visVars, visVals); 
         end
     otherwise
         error('%s is not a valid inference engine', dgm.infEngine); 
