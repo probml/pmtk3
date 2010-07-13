@@ -49,7 +49,6 @@ gammaLD = tfMarg2Mat(margLD);
 t = toc;
 fprintf('libdai: %g seconds\n', t);
 assert(approxeq(gamma, gammaLD));
-return;
 
 
 
@@ -63,33 +62,3 @@ return;
 
 
 
-
-%%
-query = num2cell(1:dgm.nnodes); % all single marginals
-%% infer single marginals using libdai's jtree
-if exist('dai', 'file') == 3
-    tic
-    marginalsLD = dgmInfer(dgm, query, 'method', 'libdai');
-    t = toc;
-    fprintf('libdai: %g seconds\n', t);
-    %%
-    gammaLibDai = zeros(nstates, dgm.nnodes);
-    for t=1:numel(marginalsLD)
-        gammaLibDai(:, t) = marginalsLD{t}.T;
-    end
-end
-%% infer single marginals using our jtree code
-tic
-marginalsJT = dgmInfer(dgm, query, 'method', 'jtree');
-t = toc;
-fprintf('jtree : %g seconds\n', t);
-%%
-gammaJtree = zeros(nstates, dgm.nnodes);
-for t=1:numel(marginalsJT)
-    gammaJtree(:, t) = marginalsJT{t}.T;
-end
-%% make sure they return the same values
-assert(approxeq(gamma, gammaJtree));
-if exist('dai', 'file') == 3
-    assert(approxeq(gamma, gammaLibDai));
-end
