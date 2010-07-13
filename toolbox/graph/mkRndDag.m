@@ -1,4 +1,4 @@
-function G = mkRndDag(nnodes, maxFanIn, maxFanOut, lambda)
+function G = mkRndDag(nnodes, maxFanIn, maxFanOut, sparsityFactor)
 %% Make a random, directed, weakly connected, topologically ordered, acyclic graph 
 %
 % A directed graph is called weakly connected if replacing all of its
@@ -9,12 +9,12 @@ function G = mkRndDag(nnodes, maxFanIn, maxFanOut, lambda)
 % child of node k. 
 %
 %
-% lambda (poisson parameter) influences the sparsity, higher = denser
+% sparsityFactor (poisson parameter) influences the sparsity, higher = denser
 %%
 if nargin < 1, nnodes = 10; end
 if nargin < 2,  maxFanIn = 2; end
 if nargin < 3, maxFanOut = 3; end
-if nargin < 4, lambda = 1; end
+if nargin < 4, sparsityFactor = 0.1; end
 G = zeros(nnodes);
 for i=randperm(nnodes)
     candidates = setdiffPMTK(1:nnodes, [i, ancestors(G, i)]);
@@ -24,7 +24,7 @@ for i=randperm(nnodes)
     nc = numel(candidates);
     if nc == 0; continue; end
     %nchildren = unidrndPMTK(min(nc, maxFanOut));
-    nchildren = min([nc, poissonSample(lambda, 1)+1, maxFanOut]); 
+    nchildren = min([nc, poissonSample(sparsityFactor, 1)+1, maxFanOut]); 
     
     
     ndx = unidrndPMTK(nc, [nchildren, 1]);
