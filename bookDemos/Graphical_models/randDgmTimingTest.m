@@ -49,9 +49,11 @@ meanTimes = mean(data, 3);
 stdTimes = std(data, 0, 3);
 [styles, colors, symbols, str] =  plotColors();
 f = figure(); hold on;
-for k=1:nmethods
-    plot(nstates, meanTimes(k, :), ['.-', colors(k)],...
-        'linewidth', 2.5, 'markersize', 20, 'displayname', names{k});
+for k=1:nmethods -1
+    %plot(nstates, meanTimes(k, :), ['.-', colors(k)],...
+    %    'linewidth', 2.5, 'markersize', 20, 'displayname', names{k});
+     errorbar(nstates, meanTimes(k, :), stdTimes(k, :), ['.-', colors(k)],...
+             'linewidth', 2.5, 'markersize', 20, 'displayname', names{k});
 end
 xlabel('max number of states per node');
 ylabel('mean time in seconds');
@@ -110,8 +112,10 @@ if 0 % compare w.r.t. # of nodes
     [styles, colors, symbols, str] =  plotColors();
     f = figure(); hold on;
     for k=1:nmethods
-        plot(nnodes, meanTimes(k, :), ['.-', colors(k)],...
-            'linewidth', 2.5, 'markersize', 20, 'displayname', names{k});
+        %plot(nnodes, meanTimes(k, :), ['.-', colors(k)],...
+        %    'linewidth', 2.5, 'markersize', 20, 'displayname', names{k});
+        errorbar(nnodes, meanTimes(k, :), stdTimes(k, :), ['.-', colors(k)],...
+             'linewidth', 2.5, 'markersize', 20, 'displayname', names{k});
     end
     xlabel('number of nodes');
     ylabel('mean time in seconds');
