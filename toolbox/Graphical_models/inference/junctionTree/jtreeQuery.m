@@ -12,7 +12,7 @@ Z  = zeros(nqueries, 1);
 for i=1:nqueries
     q = queries{i};
     candidates = find(all(cliqueLookup(q, :), 1));
-    if ~candidates, error('out-of-clique query'); end
+    if isempty(candidates), error('out-of-clique query'); end
     cliqueNdx  = candidates(minidx(cellfun('length', cliques(candidates))));
     tf         = tabularFactorMarginalize(cliques{cliqueNdx}, q);
     [bels{i}, Z(i)] = tabularFactorNormalize(tf);
