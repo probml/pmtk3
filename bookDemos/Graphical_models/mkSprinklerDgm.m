@@ -1,4 +1,4 @@
-function dgm = mkSprinklerDgm()
+function dgm = mkSprinklerDgm(varargin)
 %% Make the sprinkler dgm
 %    C
 %   / \
@@ -21,6 +21,6 @@ CPTs{S} = reshape([0.5 0.9 0.5 0.1], 2, 2);
 CPTs{R} = reshape([0.8 0.2 0.2 0.8], 2, 2);
 CPTs{W} = reshape([1 0.1 0.1 0.01 0 0.9 0.9 0.99], 2, 2, 2);
 
-dgm = dgmCreate(G, CPTs); 
+dgm = dgmCreate(G, CPTs, varargin{:}); 
 
 end
