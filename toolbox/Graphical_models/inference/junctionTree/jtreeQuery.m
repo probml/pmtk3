@@ -19,5 +19,6 @@ for i=1:nqueries
 end
 if nqueries == 1, bels = bels{1}; end
 logZ = log(Z + eps);
+logZ = logZ(1); % all the same
 
 end

@@ -11,6 +11,7 @@ nfactors = numel(factors);
 nstates  = cellfun(@(t)t.sizes(end), factors);
 G        = moralizeGraph(fg.G);
 nvars    = size(G, 1);
+cc       = cellwrap(cc); 
 for i=1:numel(cc)
     c = cc{i};
     G(c, c) = 1;

@@ -1,5 +1,7 @@
-function localFacs = dgmEv2LocalFacs(dgm, localev, softev)
+function [localFacs, visVars] = dgmEv2LocalFacs(dgm, localev, softev)
 %% Handle local and/or soft evidence prior to inference
+
+
 if ~isempty(localev)
     maxNstates = max(dgm.nstates); 
     localCPDs = cellwrap(dgm.localCPDs); 
@@ -25,8 +27,9 @@ elseif ~isempty(localev)
 end
 %% Convert soft evidence to factors
 if ~isempty(softev)
-    localFacs = softEvToFactors(softev);
+    [localFacs, visVars] = softEvToFactors(softev);
 else
     localFacs = {};
+    visVars = []; 
 end
 end

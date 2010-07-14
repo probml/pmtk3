@@ -1,4 +1,4 @@
-function [logZ, nodeBels, clqBels] = libdaiJtree(tfacs)
+function [logZ, nodeBels, clqBels, cliqueLookup] = libdaiJtree(tfacs)
 %% Bare bones interface to libdai's jtree algorithm 
 % 
 %% Input
@@ -12,6 +12,8 @@ function [logZ, nodeBels, clqBels] = libdaiJtree(tfacs)
 % nodeBels - all single marginals (node beliefs)
 %
 % clqBels  - all of the clique beliefs
+%
+% cliqueLookup - an nvars-by-ncliques lookup table
 %%
 if ~(exist('dai', 'file') == 3)
     error('could not find dai.%s', mexext); 
@@ -26,6 +28,13 @@ if nargout > 1
 end
 if nargout > 2
     clqBels = cellfuncell(@convertToPmtkFac, clqBels);
+    clqStruct = [clqBels{:}];
+    nvars = max([clqStruct.domain]);
+    nclqs = numel(clqBels); 
+    cliqueLookup = zeros(nvars, nclqs); 
+    for c=1:nclqs
+        cliqueLookup(clqBels{c}.domain, c) = 1; 
+    end
 end
 end
 
