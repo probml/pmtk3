@@ -17,7 +17,7 @@ function [logZ, bels] = dgmInferQuery(dgm, queries, varargin)
 %
 %% Outputs
 %
-% logZ   - log normalization constant 
+% logZ   - log of the partition sum
 %
 % bels   - tabularFactors (clique beliefs) representing the queries
 %%
@@ -32,6 +32,7 @@ engine               = dgm.infEngine;
 G                    = dgm.G;
 queries              = cellwrap(queries); 
 nqueries             = numel(queries);
+%%
 if doPrune
     error('pruning is not yet implemented'); 
     allVisVars = [find(clamped), softVis];
@@ -40,7 +41,6 @@ if doPrune
     end
     
 end
-
 %% Run inference
 switch lower(engine)
     

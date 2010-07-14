@@ -4,7 +4,6 @@ function [nodeBels, logZ] = dgmInferNodes(dgm, varargin)
 %
 % dgm    - a struct created by dgmCreate
 % 
-% logZ   - log normalization constant
 %% Optional named inputs
 %
 % 'clamped'  - a sparse vector of size 1-by-nnodes
@@ -25,6 +24,8 @@ function [nodeBels, logZ] = dgmInferNodes(dgm, varargin)
 % 
 % nodeBels   - a cell array of tabularFactors representing the normalized 
 %              node beliefs (single marginals). 
+%
+% logZ       - log of the partition sum
 %% Setup
 [clamped, softev, localev] = process_options(varargin, ...
     'clamped', [], ...

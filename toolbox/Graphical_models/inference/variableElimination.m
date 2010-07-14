@@ -5,7 +5,7 @@ function [logZ, postQuery] = variableElimination(model, queryVars)
 % G       - the graph structure: an adjacency matrix
 %%
 % postQuery is a tabular factor
-% logZ    - the log normalization constant
+% logZ is the log of the partition sum
 %% Handle multiple queries 
 % (note it is much more efficient to use jtree for multiple queries)
 if iscell(queryVars)

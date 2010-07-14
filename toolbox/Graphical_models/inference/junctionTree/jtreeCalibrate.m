@@ -1,6 +1,8 @@
 function [jtree, logZ] = jtreeCalibrate(jtree)
 %% Calibrate a junction tree
 % jtree is a struct as returned by e.g. jtreeInit
+%
+% logZ  - log of the partition sum
 %%
 cliques          = jtree.cliques; 
 preOrder         = jtree.preOrder;

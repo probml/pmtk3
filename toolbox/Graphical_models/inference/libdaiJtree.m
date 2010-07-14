@@ -7,7 +7,7 @@ function [logZ, nodeBels, clqBels, cliqueLookup] = libdaiJtree(tfacs)
 %
 %% Outputs
 %
-% logZ     - log normalization constant
+% logZ     - log of the partition sum
 %
 % nodeBels - all single marginals (node beliefs)
 %
