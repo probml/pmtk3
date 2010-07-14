@@ -69,6 +69,7 @@ switch lower(engine)
                    variableElimination(factorGraphCreate(factors, dgm.G), queries{i});  
             end
         else
+            error('not yet implemented'); 
            for i = 1:nqueries
                
                
