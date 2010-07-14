@@ -26,6 +26,9 @@ function [bels, logZ] = dgmInferQuery(dgm, queries, varargin)
     'softev' , [], ...
     'localev', [], ...
     'doPrune', false);
+if doPrune && nargout > 1
+    error('pruning is not supported when logZ is requested'); 
+end
 %%
 queries              = cellwrap(queries); 
 nqueries             = numel(queries);
@@ -34,33 +37,30 @@ engine               = dgm.infEngine;
 CPDs                 = dgm.CPDs;
 CPDpointers          = dgm.CPDpointers;
 G                    = dgm.G;
-%%
-if doPrune && nargout < 2
-    if nqueries > 1
+%% optionally prune conditionally independent nodes
+if doPrune
+    if nqueries > 1 % then call recursively 
         bels = cell(nqueries, 1);
         for q=1:nqueries
             bels{q} = dgmInferQuery(dgm, queries{q}, varargin{:});
         end
         return;
     end
-    query = queries{1}; 
-    if isfield(dgm, 'jtree'),
-        dgm = rmfield(dgm, 'jtree');
-    end
-    allVisVars = [find(clamped), softVis]; % don't prune nodes with softev
+    if isfield(dgm, 'jtree'), dgm = rmfield(dgm, 'jtree');  end
+    query                  = queries{1}; 
+    allVisVars             = [find(clamped), softVis]; % don't prune nodes with softev
     [G, pruned, remaining] = pruneNodes(G, query, allVisVars);
-    CPDs = CPDs(CPDpointers(remaining)); 
-    CPDpointers(pruned) = []; 
-    CPDpointers = rowvec(lookupIndices(CPDpointers, remaining));
+    CPDs                   = CPDs(CPDpointers(remaining)); 
+    CPDpointers(pruned)    = []; 
+    CPDpointers            = rowvec(lookupIndices(CPDpointers, remaining));
+    queries                = {lookupIndices(query, remaining)}; 
+    visVars                = lookupIndices(find(clamped), remaining); 
+    visVals                = nonzeros(clamped); 
+    clamped                = sparsevec(visVars, visVals, size(G, 1)); 
     for i=1:numel(localFacs)
        localFacs{i}.domain = lookupIndices(localFacs{i}.domain, remaining); 
     end
-    queries = {lookupIndices(query, remaining)}; 
-    visVars  = find(clamped); 
-    visVals  = nonzeros(clamped); 
-    clamped = sparsevec(lookupIndices(visVars, remaining), visVals, size(G, 1)); 
 end
-
 %% Run inference
 switch lower(engine)
     
