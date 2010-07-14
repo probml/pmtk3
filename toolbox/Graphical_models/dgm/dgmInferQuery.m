@@ -19,7 +19,7 @@ function [bels, logZ] = dgmInferQuery(dgm, queries, varargin)
 %
 % bels   - tabularFactors (clique beliefs) representing the queries
 %
-% logZ   - log of the partition sum
+% logZ   - log of the partition sum (if this is all you want, use dgmLogZ)
 %%
 [clamped, softev, localev, doPrune] = process_options(varargin, ...
     'clamped', [], ...

@@ -25,7 +25,8 @@ function [nodeBels, logZ] = dgmInferNodes(dgm, varargin)
 % nodeBels   - a cell array of tabularFactors representing the normalized 
 %              node beliefs (single marginals). 
 %
-% logZ       - log of the partition sum
+% logZ       - log of the partition sum (if this is all you want, use
+%              dgmLogZ)
 %% Setup
 [clamped, softev, localev] = process_options(varargin, ...
     'clamped', [], ...
