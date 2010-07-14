@@ -1,98 +1,102 @@
 function [logZ, bels] = dgmInferQuery(dgm, queries, varargin)
 %% Compute sum_H p(Q, H | V) for each Q in queries
-
+%
+%% Inputs  
+%
+% dgm      - a struct as created by dgmCreate
+% queries  - a query, (i.e. a list of variables) or a cell array of queries
+%
+%% Optional named inputs
+%
+% doPrune  - [false] if true, nodes conditionally independent of the query
+%                    given the evidence are first removed. Note, this may
+%                    not improve performance if multiple queries are
+%                    requested. 
+% 
+% See dgmInferNodes for details on the remaining args
+%
+%% Outputs
+%
+% logZ   - log normalization constant 
+%
+% bels   - tabularFactors (clique beliefs) representing the queries
+%%
 [clamped, softev, localev, doPrune] = process_options(varargin, ...
     'clamped', [], ...
     'softev' , [], ...
     'localev', [], ...
     'doPrune', false);
-
-engine    = dgm.infEngine;
+%%
+engine               = dgm.infEngine;
 [localFacs, softVis] = dgmEv2LocalFacs(dgm, localev, softev);
-allVisVars = [find(clamped), softVis];
-G = dgm.G;
-nqueries = numel(queries);
+G                    = dgm.G;
+queries              = cellwrap(queries); 
+nqueries             = numel(queries);
+if doPrune
+    error('pruning is not yet implemented'); 
+    allVisVars = [find(clamped), softVis];
+    if isfield(dgm, 'jtree')
+       dgm = rmfield(dgm, 'jtree'); 
+    end
+    
+end
+
 %% Run inference
 switch lower(engine)
+    
     case 'jtree'
-        if isfield(dgm, 'jtree') && jtreeCheckQueries(dgm.jtree, queries) && ~doPrune
-            jtree = jtreeSliceCliques(dgm.jtree, clamped);
-            jtree = jtreeAddFactors(jtree, localFacs);
-            jtree = jtreeCalibrate(jtree);
-            [logZ, bels] = jtreeQuery(jtree, queries);
+        
+        if isfield(dgm, 'jtree') && jtreeCheckQueries(dgm.jtree, queries) 
+            jtree         = jtreeSliceCliques(dgm.jtree, clamped);
+            jtree         = jtreeAddFactors(jtree, localFacs);
+            [jtree, logZ] = jtreeCalibrate(jtree);
+            bels          = jtreeQuery(jtree, queries);
         else 
-            doSlice = true;
-            factors = addEvidenceToFactors(dgm.factors, clamped, doSlice);
-            if ~doPrune
-                jtree   = jtreeInit(factorGraphCreate(factors, G), 'cliqueConstraints', queries);
-                jtree   = jtreeCalibrate(jtree);
-                [logZ, bels] = jtreeQuery(jtree, queries);
-            else
-                bels = cell(nqueries, 1);
-                for q=1:nqueries
-                    query = queries{q}; 
-                    [Gp, pruned, remaining] = pruneNodes(G, query, allVisVars); 
-                    facp = factors; 
-                    facp(pruned) = []; 
-                    for f=1:numel(facp)
-                       facp.domain = lookupIndices(facp.domain, remaining);
-                    end
-                    qq = lookupIndices(query, remaining); 
-                    jtree = jtreeInit(factorGraphCreate(facp, ...
-                        Gp), 'cliqueConstraints', qq);
-                    jtree = jtreeCalibrate(jtree);
-                    [logZ, bel] = jtreeQuery(jtree, qq);
-                    bel.domain = remaining(bel.domain); 
-                    bels{q} = bel; 
-                end
-            end
+            doSlice       = true;
+            factors       = cpds2Factors(dgm.CPDs, G, dgm.CPDpointers);
+            factors       = addEvidenceToFactors(factors, clamped, doSlice);
+            fg            = factorGraphCreate(factors, G); 
+            jtree         = jtreeInit(fg, 'cliqueConstraints', queries);
+            [jtree, logZ] = jtreeCalibrate(jtree);
+            bels          = jtreeQuery(jtree, queries); 
         end
+            
     case 'libdaijtree'
+        
         assert(isWeaklyConnected(dgm.G)); % libdai segfaults on disconnected graphs
         doSlice = false;                  % libdai often segfaults when slicing
-        factors          = addEvidenceToFactors(dgm.factors, clamped, doSlice); 
-        factors          = [factors(:); localFacs(:)]; 
-        factors          = cellfuncell(@tabularFactorNormalize, factors); 
+        factors = cpds2Factors(CPDs, G, dgm.CPDpointers);   
+        factors = addEvidenceToFactors(factors, clamped, doSlice); 
+        factors = [factors(:); localFacs(:)]; 
+        factors = cellfuncell(@tabularFactorNormalize, factors); 
         [logZ, nodeBels, cliques, cliqueLookup] = libdaiJtree(factors); 
-        [logZ, bels] = jtreeQuery(structure(cliques, cliqueLookup), queries);
+        bels    = jtreeQuery(structure(cliques, cliqueLookup), queries);
+        
     case 'varelim'
-        doSlice = true; 
-        factors = addEvidenceToFactors(dgm.factors, clamped, doSlice); 
-        if ~isempty(localFacs)
-            factors = cellfuncell(@tabularFactorMultiply, factors, localFacs); 
-            factors = cellfuncell(@tabularFactorNormalize, factors); 
-        end
-        bels = cell(nhid, 1); 
-        if ~doPrune
-            for i = 1:nqueries
-               [logZ, bels{i}] = ...
-                   variableElimination(factorGraphCreate(factors, dgm.G), queries{i});  
-            end
-        else
-            error('not yet implemented'); 
-           for i = 1:nqueries
-               
-               
-               [logZ, bels{i}] = ...
-                   variableElimination(factorGraphCreate(factors, dgm.G), queries{i});  
-            end
-            
-        end
+        
+        doSlice      = true; 
+        factors      = cpds2Factors(dgm.CPDs, G, dgm.CPDpointers);   
+        factors      = addEvidenceToFactors(factors, clamped, doSlice); 
+        factors      = multiplyInLocalFactors(factors, localFacs);
+        fg           = factorGraphCreate(factors, G);
+        [logZ, bels] = variableElimination(fg, queries); 
+        
     case 'enum'
-        factors = dgm.factors; 
-        if ~isempty(localFacs)
-            factors = cellfuncell(@tabularFactorMultiply, factors, localFacs); 
-            factors = cellfuncell(@tabularFactorNormalize, factors); 
-        end        
-        joint = (tabularFactorMultiply(factors)); 
-        visVars = find(clamped); 
-        visVals = nonzeros(clamped); 
-        bels = cell(nqueries, 1);
-        logZ = zeros(nqueries, 1); 
+        
+        factors  = cpds2Factors(dgm.CPDs, G, dgm.CPDpointers);   
+        factors  = multiplyInLocalFactors(factors, localFacs);
+        joint    = tabularFactorMultiply(factors); 
+        bels     = cell(nqueries, 1); 
         for i=1:nqueries
-           [bels{i}, logZ] = tabularFactorCondition(joint, queries{i}, visVars, visVals); 
+           [bels{i}, logZ] = tabularFactorCondition(joint, queries{i}, clamped); 
         end
+        
     otherwise
         error('%s is not a valid inference engine', dgm.infEngine);
 end
+
+if doPrune % shift domain back
+    
+end
+
 end

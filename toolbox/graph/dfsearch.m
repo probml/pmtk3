@@ -54,7 +54,9 @@ if directed
     ns = children(G, u);
 else
     ns = neighbors(G, u);
-    ns = setdiff(ns, pred(u)); % don't go back to visit the guy who called you!
+    if pred(u)
+        ns = setdiffPMTK(ns, pred(u)); % don't go back to visit the guy who called you!
+    end
 end
 for v = ns
     switch S(v)

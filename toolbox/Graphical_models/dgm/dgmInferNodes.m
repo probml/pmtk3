@@ -3,7 +3,8 @@ function [nodeBels, logZ] = dgmInferNodes(dgm, varargin)
 %% Inputs
 %
 % dgm    - a struct created by dgmCreate
-%
+% 
+% logZ   - log normalization constant
 %% Optional named inputs
 %
 % 'clamped'  - a sparse vector of size 1-by-nnodes
@@ -14,8 +15,10 @@ function [nodeBels, logZ] = dgmInferNodes(dgm, varargin)
 %              with nstates < max(nstates). softev is
 %              max(nstates)-by-nnodes.
 %
-% 'localev'  - a d-by-nnodes matrix representing an observation sequence. 
-%              Use NaNs for unobserved nodes. 
+% 'localev'  - a d-by-nnodes matrix representing a (usually continuous)
+%              observation sequence, which will be converted to factors
+%              using localCPDs specified to dgmCreate. Use NaNs for 
+%              unobserved nodes. 
 %
 % * you can specify both softev and localev, but not for the same node. 
 %% Outputs
@@ -33,56 +36,55 @@ nnodes    = dgm.nnodes;
 localFacs = dgmEv2LocalFacs(dgm, localev, softev); 
 visVars   = find(clamped); 
 hidVars   = setdiffPMTK(1:nnodes, visVars); 
+G         = dgm.G; 
 %% Run inference
 switch lower(engine)
-    case 'jtree'
-        if ~isfield(dgm, 'jtree') 
-            doSlice = true; 
-            factors = addEvidenceToFactors(dgm.factors, clamped, doSlice); 
-            jtree   = jtreeInit(factorGraphCreate(factors, dgm.G));
+    
+    case 'jtree' 
+        
+        if isfield(dgm, 'jtree') 
+            jtree     = jtreeSliceCliques(dgm.jtree, clamped); 
         else                     
-            jtree = dgm.jtree; 
-            jtree = jtreeSliceCliques(jtree, clamped); 
+            doSlice   = true; 
+            factors   = cpds2Factors(dgm.CPDs, G, dgm.CPDpointers);   
+            factors   = addEvidenceToFactors(factors, clamped, doSlice); 
+            jtree     = jtreeInit(factorGraphCreate(factors, G));
         end
-        jtree = jtreeAddFactors(jtree, localFacs); 
-        jtree = jtreeCalibrate(jtree); 
-        [logZ, nodeBels] = jtreeQuery(jtree, num2cell(hidVars)); 
-    case 'libdaijtree'
-        assert(isWeaklyConnected(dgm.G)); % libdai segfaults on disconnected graphs
-        doSlice = false;                  % libdai often segfaults when slicing
-        factors          = addEvidenceToFactors(dgm.factors, clamped, doSlice); 
-        factors          = [factors(:); localFacs(:)]; 
-        factors          = cellfuncell(@tabularFactorNormalize, factors); 
-        [logZ, nodeBels] = libdaiJtree(factors); 
+        jtree         = jtreeAddFactors(jtree, localFacs); 
+        [jtree, logZ] = jtreeCalibrate(jtree); 
+        nodeBels      = jtreeQuery(jtree, num2cell(hidVars)); 
+        
+    case 'libdaijtree' 
+        
+        assert(isWeaklyConnected(G)); % libdai segfaults on disconnected graphs
+        doSlice          = false;     % libdai often segfaults when slicing
+        factors          = cpds2Factors(dgm.CPDs, G, dgm.CPDpointers);   
+        factors          = addEvidenceToFactors(factors, clamped, doSlice); 
+        [logZ, nodeBels] = libdaiJtree([factors(:); localFacs(:)]); 
+        
     case 'varelim' 
-        doSlice = true; 
-        factors = addEvidenceToFactors(dgm.factors, clamped, doSlice); 
-        if ~isempty(localFacs)
-            factors = cellfuncell(@tabularFactorMultiply, factors, localFacs); 
-            factors = cellfuncell(@tabularFactorNormalize, factors); 
-        end
-        nhid  = numel(hidVars); 
-        nodeBels = cell(nhid, 1); 
-        for i = 1:nhid
-           [logZ, nodeBels{i}] = ...
-               variableElimination(factorGraphCreate(factors, dgm.G), hidVars(i));  
-        end
+        
+        doSlice          = true; 
+        factors          = cpds2Factors(dgm.CPDs, G, dgm.CPDpointers);   
+        factors          = addEvidenceToFactors(factors, clamped, doSlice); 
+        factors          = multiplyInLocalFactors(factors, localFacs);
+        fg               = factorGraphCreate(factors, G);
+        [logZ, nodeBels] = variableElimination(fg, num2cell(hidVars)); 
+        
     case 'enum' 
-        factors = dgm.factors; 
-        if ~isempty(localFacs)
-            factors = cellfuncell(@tabularFactorMultiply, factors, localFacs); 
-            factors = cellfuncell(@tabularFactorNormalize, factors); 
-        end        
-        joint = (tabularFactorMultiply(factors)); 
-        visVars = find(clamped); 
-        visVals = nonzeros(clamped); 
+        
+        factors  = cpds2Factors(dgm.CPDs, G, dgm.CPDpointers);   
+        factors  = multiplyInLocalFactors(factors, localFacs);
+        joint    = tabularFactorMultiply(factors); 
         nodeBels = cell(nnodes, 1); 
         for i=1:nnodes
-           nodeBels{i} = tabularFactorCondition(joint, i, visVars, visVals); 
+           [nodeBels{i}, logZ] = tabularFactorCondition(joint, i, clamped); 
         end
-    otherwise
-        error('%s is not a valid inference engine', dgm.infEngine); 
+        
+    otherwise, error('%s is not a valid inference engine', dgm.infEngine);
+        
 end
+%%
 nodeBels = insertClampedBels(nodeBels, visVars, hidVars);
 end
 
@@ -106,4 +108,5 @@ end
 for v = visVars
    padded{v} = tabularFactorCreate(1, v); 
 end
+
 end

@@ -54,13 +54,13 @@ yobs = [1 0 0]+1;
 % marginal MAP
 mmap = zeros(1,3);
 for i=1:3
-  p = tabularFactorCondition(joint, xs(i), ys, yobs);
+  p = tabularFactorCondition(joint, xs(i), sparsevec(ys, yobs));
   fprintf('p(x%d=1|y)=%5.3f\n', i, p.T(2))
   mmap(i) = argmax(p.T)-1
 end
 
 % find joint modes of posterior
-pCond = tabularFactorCondition(joint, xs, ys, yobs);
+pCond = tabularFactorCondition(joint, xs, sparsevec(ys, yobs));
 pmax = max(pCond.T(:));
 ndx = find(pCond.T == pmax)
 modes = ind2subv(2*ones(1,3), ndx)-1

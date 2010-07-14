@@ -59,17 +59,17 @@ printPmtkFigure('lungcancerJointBar')
 
 
 %% Conditional marginals
-pLCgivenSOB = tabularFactorCondition(jointT, LC, SOB, 2);
+pLCgivenSOB = tabularFactorCondition(jointT, LC, sparsevec(SOB, 2));
 fprintf('p(LC=1|SOB=1)=%5.3f\n', pLCgivenSOB.T(2))
 
-pLCgivenSOBandX = tabularFactorCondition(jointT, LC, [SOB,X], [2,2]);
+pLCgivenSOBandX = tabularFactorCondition(jointT, LC, sparsevec([SOB,X], [2,2]));
 fprintf('p(LC=1|SOB=1,XR=1)=%5.3f\n', pLCgivenSOBandX.T(2))
 
-pCBgivenSOB = tabularFactorCondition(jointT, CB, SOB, 2);
+pCBgivenSOB = tabularFactorCondition(jointT, CB, sparsevec(SOB, 2));
 fprintf('p(CB=1|SOB=1)=%5.3f\n', pCBgivenSOB.T(2))
 %assert(approxeq(pCBgivenSOB.T, [0.5038; 0.4962]));
 
-pCBgivenSOBandX = tabularFactorCondition(jointT, CB, [SOB, X], [2, 2]);
+pCBgivenSOBandX = tabularFactorCondition(jointT, CB, sparsevec([SOB, X], [2, 2]));
 fprintf('p(CB=1|SOB=1,XR=1)=%5.3f\n', pCBgivenSOBandX.T(2))
 % explaining away - prob of CB is now lower given X, since LC is more
 % likely

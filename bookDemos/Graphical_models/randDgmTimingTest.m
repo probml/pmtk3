@@ -23,12 +23,13 @@ while i <= ntrials
         baseDgm = mkRndDgm(nnodes, maxFanIn, maxFanOut, ...
             ns, sparsityFactor, 'infEngine', 'varelim');
         belNodes = cell(nmethods, 1);
+        logZ     = zeros(nmethods, 1); 
         for k=1:nmethods
             method = methods{k};
             fprintf('trial=%d nstates=%d method=%s\n', i, ns, method);
             tic;
             dgm = dgmCreate(baseDgm.G, baseDgm.CPDs, 'infEngine', method);
-            belNodes{k} = dgmInferNodes(dgm);
+            [belNodes{k}, logZ(k)] = dgmInferNodes(dgm);
             t = toc;
             data(k, j, i) = t;
         end

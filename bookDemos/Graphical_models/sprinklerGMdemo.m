@@ -13,7 +13,7 @@
 dgm = mkSprinklerDgm(); 
 factors = dgm.factors; 
 fullJoint = tabularFactorMultiply(factors); 
-p1g2 = tabularFactorCondition(fullJoint, 1, 2, 2);
+p1g2 = tabularFactorCondition(fullJoint, 1, sparsevec(2, 2));
 m = dgmInferNodes(dgm, 'clamped', sparsevec(2, 2, 4)); 
 assert(tfequal(m{1}, p1g2));
 
@@ -21,7 +21,7 @@ assert(tfequal(m{1}, p1g2));
 
 
 
-if 0
+if 0 % old code to be refactored
 
 C = 1; S = 2; R = 3; W = 4;
 

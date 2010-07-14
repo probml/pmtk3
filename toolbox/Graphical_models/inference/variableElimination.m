@@ -6,6 +6,18 @@ function [logZ, postQuery] = variableElimination(model, queryVars)
 %%
 % postQuery is a tabular factor
 % logZ    - the log normalization constant
+%% Handle multiple queries 
+% (note it is much more efficient to use jtree for multiple queries)
+if iscell(queryVars)
+   [logZ, postQuery] = cellfun(@(q)variableElimination(model, q), ...
+                       queryVars, 'UniformOutput', false);
+    postQuery = colvec(postQuery); 
+    logZ      = logZ{1}; % all the same
+    if numel(postQuery) == 1
+        postQuery = postQuery{1};  
+    end
+    return
+end
 %% Setup
 factors  = rowvec(model.Tfac);
 G        = model.G;
