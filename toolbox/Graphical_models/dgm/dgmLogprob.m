@@ -1,13 +1,33 @@
 function logZ = dgmLogprob(dgm, varargin)
 %% Estimate the log of the partition sum
 % See dgmInferNodes for optional args
+% (only handles a single observation sequence)
 %%
-[clamped, softev, localev] = process_options(varargin, ...
+[clamped, softEv, localEv] = process_options(varargin, ...
     'clamped', [], ...
     'softev' , [], ...
     'localev', []);
 
-localFacs = dgmEv2LocalFacs(dgm, localev, softev);
+if all(clamped)
+    if isfield(dgm, 'factors')
+        factors = dgm.factors;
+    else
+        factors = cpds2Factors(dgm.CPDs, dgm.G, dgm.CPDpointers);
+    end
+    doSlice = false;
+    factors = addEvidenceToFactors(factors, clamped, doSlice); 
+    logZ = log(prod(cellfun(@(f)nonzeros(f.T), factors)) + eps);
+    return; 
+end
+% otherwise run inference 
+localFacs = {}; 
+if ~isempty(localEv)
+    localFacs = softEvToFactors(dgmLocalEvToSoftEv(dgm, localEv));
+end
+if ~isempty(softEv)
+    localFacs = [localFacs(:); colvec(softEvToFactors(softEv))];
+end
+
 G = dgm.G;
 
 if isfield(dgm, 'jtree')

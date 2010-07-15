@@ -51,9 +51,13 @@ assert(tfequal(pSWj, pSWv, pSWe));
 assert(approxeq(pSWj.T(TRUE, TRUE), 0.2781, 1e-4)); 
 %%
 clamped = sparsevec(W, TRUE, nvars); 
-pSgWj = dgmInferQuery(dgmJ, S, 'clamped', clamped);
-pSgWv = dgmInferQuery(dgmV, S, 'clamped', clamped);
-pSgWe = dgmInferQuery(dgmE, S, 'clamped', clamped);
+[pSgWj, logZj] = dgmInferQuery(dgmJ, S, 'clamped', clamped);
+[pSgWv, logZv] = dgmInferQuery(dgmV, S, 'clamped', clamped);
+[pSgWe, logZe] = dgmInferQuery(dgmE, S, 'clamped', clamped);
+logZ = dgmLogprob(dgmJ, 'clamped', clamped); 
+assert(approxeq(logZj, logZv));
+assert(approxeq(logZv, logZe)); 
+assert(approxeq(logZe, logZ)); 
 assert(tfequal(pSgWj, pSgWv, pSgWe)); 
 assert(approxeq(pSgWj.T(TRUE), 0.4298, 1e-4)); 
 %%

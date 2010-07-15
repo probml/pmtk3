@@ -21,7 +21,7 @@ function [bels, logZ] = dgmInferQuery(dgm, queries, varargin)
 %
 % logZ   - log of the partition sum (if this is all you want, use dgmLogZ)
 %%
-[clamped, softev, localev, doPrune] = process_options(varargin, ...
+[clamped, softEv, localEv, doPrune] = process_options(varargin, ...
     'clamped', [], ...
     'softev' , [], ...
     'localev', [], ...
@@ -32,7 +32,18 @@ end
 %%
 queries              = cellwrap(queries); 
 nqueries             = numel(queries);
-[localFacs, softVis] = dgmEv2LocalFacs(dgm, localev, softev);
+
+localFacs = {}; 
+softVis   = []; 
+if ~isempty(localEv)
+    [localFacs, softVis] = softEvToFactors(dgmLocalEvToSoftEv(dgm, localEv));
+end
+if ~isempty(softEv)
+    [lf, sv]  = softEvToFactors(softEv); 
+    softVis   = unionPMTK(softVis, sv); 
+    localFacs = [localFacs(:); colvec(lf(:))];
+end
+
 engine               = dgm.infEngine;
 CPDs                 = dgm.CPDs;
 CPDpointers          = dgm.CPDpointers;
@@ -58,7 +69,7 @@ if doPrune
     visVals                = nonzeros(clamped); 
     clamped                = sparsevec(visVars, visVals, size(G, 1)); 
     for i=1:numel(localFacs)
-       localFacs{i}.domain = lookupIndices(localFacs{i}.domain, remaining); 
+       localFacs{i}.domain = lookupIndices(localFacs{i}.domain, remaining); %#ok
     end
 end
 %% Run inference
