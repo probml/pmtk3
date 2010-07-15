@@ -2,7 +2,7 @@
 %
 %%
 
-loadData('ngramData');; % use ngramMake to create this
+loadData('ngramData'); % cotnains bigrams, ugrams, etc (use ngramMake to create this)
 if(0) % Plot bigram frequencies
     bigramFig = figure;
     axes1 = axes('Parent',bigramFig,...
@@ -26,7 +26,8 @@ end
 
 if(1) % Plot unigram and bigram frequencies
     main = figure;
-    hintonw(ugrams);
+    hintonDiagram(ugrams);
+    %hintonDiagram(normalize(ugrams));
     title('Unigrams');
     uniAx = gca;
     set(uniAx,'XTick',[],'YTick',1:27,'Color','k','Position',[0.25,0.1,0.04,0.8],'FontName','Courier');
@@ -37,8 +38,10 @@ if(1) % Plot unigram and bigram frequencies
     spaces = repmat('   ',27,1);
     labels = [num2str((1:27)') spaces num2str(ugramsNorm,'%4.5f') spaces char(letters)];
     set(uniAx,'YTickLabel',labels);
+    
     tmp = figure;
-    hintonw(bigrams);
+    hintonDiagram(bigrams);
+    %hintonDiagram(normalize(bigrams)); % joint probability
     title('Bigrams');
     xlabel(''); ylabel('');
     biAx = gca;

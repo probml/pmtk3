@@ -1,51 +1,7 @@
 function [model, loglikHist] = hmmFitEm(data, nstates, type, varargin)
 %% Fit an HMM model via EM
-%
-%% Inputs
-% data         - a cell array of observations; each observation is
-%                d-by-seqLength, (where d is always 1 if type = 'discrete')
-%
-% nstates      - the number of hidden states
-%
-% type         - as string, either 'gauss', or 'discrete' depending on the
-%                desired emission (local) distribution.
-%% Optional named arguments
-%
-% pi0           - specify an initial value for the starting distribution
-%                 instead of randomly initiializing. This is an
-%                 1-by-nstates vector that sums to one. 
-%
-% trans0        - specify an initial value for the transition matrix
-%                 instead of randomly initializing. This is an
-%                 nstates-by-nstates matrix whos *rows* sum to one. 
-%
-% emission0     - specify an initial value for the emission (local) 
-%                 distribution instead of randomly initializing. If type is
-%                 'discrete', this is a tabularCpd, if type is 'gauss',
-%                 this is a condGaussCpd, as created by tabularCpdCreate or
-%                 condGaussCpdCreate. 
-%
-% piPrior       - pseudo counts for the starting distribution
-%
-% transPrior    - pseudo counts for the transition matrix, (either
-%                 nstates-by-nstates or 1-by-nstates in which case it is
-%                 automatically replicated.
-%
-% emissionPrior - If type is 'discrete', these are pseduoCounts in an
-%                 nstates-by-nObsStates matrix. If type is 'gauss',
-%                 emissionPrior is a struct with the parameters of a
-%                 Gauss-inverseWishart distribution, namely,
-%                 mu, Sigma, dof, k.
-%
-%% EM related inputs
-% *** See emAlgo for additional EM related optional inputs ***
-%
-%% Outputs
-%
-% model         - a struct with fields, pi, A, emission, nstates, type
-% loglikHist    - history of the log likelihood
-%
-%%
+% Interface is identical to hmmFit
+
 if ~iscell(data)
     if isvector(data) % scalar time series
         data = rowvec(data);
@@ -96,7 +52,7 @@ d = size(data{1}, 1);
 if isempty(model.emissionPrior)
     model.emissionPrior.mu    = zeros(1, d);
     model.emissionPrior.Sigma = 0.1*eye(d);
-    model.emissionPrior.k     = d;
+    model.emissionPrior.k     = 0; % do not shrink means %d;
     model.emissionPrior.dof   = d + 1;
 end
 model.d = d;
@@ -106,7 +62,7 @@ if isempty(model.emission)
     if restartNum == 1 % initialize using a mixture of Gaussians
         mixModel = mixGaussFitEm(stackedData, nstates, 'verbose', false);
         mu       = mixModel.mu; 
-        Sigma    = bsxfun(@plus, mixModel.Sigma, eye(d)); 
+        Sigma    = bsxfun(@plus, mixModel.Sigma, eye(d)); % regularize the MLE
         emission = condGaussCpdCreate(mu, Sigma); 
         if isempty(model.A) || isempty(model.pi)
             z = colvec(mixGaussInfer(mixModel, stackedData));
