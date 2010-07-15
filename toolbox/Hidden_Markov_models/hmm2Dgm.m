@@ -4,7 +4,7 @@ function dgm = hmm2Dgm(model, T, varargin)
 %%
 
 
-G = diag(ones(T-1, 1), 1); 
+G = mkChain(T); 
 CPD1 = tabularCpdCreate(model.pi); 
 CPD2 = tabularCpdCreate(model.A); 
 localCPD = model.emission; 
