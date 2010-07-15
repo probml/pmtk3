@@ -13,3 +13,4 @@
 % PMTKlocalDataPath    C:\path\to\pmtkData
 % PMTKlocalSupportPath C:\path\to\pmtkSupport
 % PMTKpmlBookSource    C:\path\to\PML\Text
+% PMTKlibdaiPath       C:\path\to\libdai

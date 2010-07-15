@@ -13,8 +13,6 @@ addpath(pwd);
 addpath(genpathPMTK(fullfile(pwd, 'toolbox')));
 addpath(genpathPMTK(fullfile(pwd, 'bookDemos')));
 
-addpath(genpathPMTK(fullfile('C:\kmurphy\GoogleCode\pmtklibdai')))
-
 % The following directories are initially empty
 % but may be filled with stuff on demand...
 addpath(genpathPMTK(fullfile(pwd, 'data')));
@@ -68,6 +66,11 @@ if matlab && ~verLessThan('matlab', '7.6.0')
     if exist(gvizDir, 'dir')
        addtosystempath(gvizDir);  
     end
+end
+% add libdai
+source = getConfigValue('PMTKlibdaiPath'); 
+if exist(source, 'dir')
+    addpath(genpathPMTK(source), '-end'); 
 end
 %%
 % If running windows, add the svm executables to the system path.
