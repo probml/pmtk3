@@ -1,4 +1,4 @@
-function logZ = dgmLogZ(dgm, varargin)
+function logZ = dgmLogprob(dgm, varargin)
 %% Estimate the log of the partition sum
 % See dgmInferNodes for optional args
 %%
