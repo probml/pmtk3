@@ -41,8 +41,8 @@ switch lower(localCPD.cpdType)
         mu       = localCPD.mu;
         Sigma    = localCPD.Sigma;
         for j=1:nstates
-            %B(j, observed) = rowvec(exp(gaussLogprob(mu(:, j), Sigma(:, :, j), Xobs)));
-            B(j, observed) = rowvec(exp(normalizeLogspace(gaussLogprob(mu(:, j), Sigma(:, :, j), Xobs))));
+            B(j, observed) = rowvec(exp(gaussLogprob(mu(:, j), Sigma(:, :, j), Xobs)));
+            %B(j, observed) = rowvec(exp(normalizeLogspace(gaussLogprob(mu(:, j), Sigma(:, :, j), Xobs))));
         end
     otherwise
         error('%s is not a recognized CPD type', localCPD.cpdType);
