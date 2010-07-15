@@ -6,16 +6,20 @@ function [nodeBels, logZ] = dgmInferNodes(dgm, varargin)
 % 
 %% Optional named inputs
 %
-% 'clamped'  - a sparse vector of size 1-by-nnodes
+% 'clamped'  - a sparse vector of size 1-by-nnodes.
+%              clamped(t) = j means node t is clamped to state j
+%              clamped(t) = 0 means node t is not clamped
 %
-% 'softev'   - softev(j, t) = p(Y(:, t) | S(t) = j, localCPD) as created by 
-%              e.g. mkSoftEvidence. Use NaN columns for nodes without soft
+% 'softev'   - softev(j, t) = p(v(t) | h(t) = j) where h(t) is
+%              the t'th hidden node, and v(t) is its private evidence child.
+%              softev can be  created by  mkSoftEvidence. 
+%              Use NaN columns for nodes without soft
 %              evidence, and pad the ends of columns with NaNs for nodes
 %              with nstates < max(nstates). softev is
 %              max(nstates)-by-nnodes.
 %
 % 'localev'  - a d-by-nnodes matrix representing a (usually continuous)
-%              observation sequence, which will be converted to factors
+%              observation sequence v(:,1:T), which will be converted to factors
 %              using localCPDs specified to dgmCreate. Use NaNs for 
 %              unobserved nodes. 
 %

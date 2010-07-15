@@ -9,6 +9,11 @@ function [model, loglikHist] = hmmFit(data, nstates, type, varargin)
 %
 % type         - as string, either 'gauss', or 'discrete' depending on the
 %                desired emission (local) distribution.
+%
+% By default, we lightly regularize all parameters, so we are 
+% doing MAP estimation, not MLE. You can change the priors 
+% by modifying the named arguments below.
+%
 %% Optional named arguments
 %
 % pi0           - specify an initial value for the starting distribution
