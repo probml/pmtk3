@@ -52,7 +52,7 @@ d = size(data{1}, 1);
 if isempty(model.emissionPrior)
     model.emissionPrior.mu    = zeros(1, d);
     model.emissionPrior.Sigma = 0.1*eye(d);
-    model.emissionPrior.k     = 0; % do not shrink means %d;
+    model.emissionPrior.k     = 1; 
     model.emissionPrior.dof   = d + 1;
 end
 model.d = d;
