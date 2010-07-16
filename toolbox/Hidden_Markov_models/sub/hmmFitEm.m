@@ -1,7 +1,7 @@
 function [model, loglikHist] = hmmFitEm(data, nstates, type, varargin)
 %% Fit an HMM model via EM
 % Interface is identical to hmmFit
-
+%%
 if ~iscell(data)
     if isvector(data) % scalar time series
         data = rowvec(data);
@@ -47,79 +47,84 @@ end
 
 %% INIT
 function model = initGauss(model, data, restartNum)
-%% Initialize Gaussian model
+%% Initialize the model given a Gaussian emission distribution
 d = size(data{1}, 1);
+model.d = d;
 if isempty(model.emissionPrior)
     model.emissionPrior.mu    = zeros(1, d);
     model.emissionPrior.Sigma = 0.1*eye(d);
     model.emissionPrior.k     = 0.01;
     model.emissionPrior.dof   = d + 1;
 end
-model.d = d;
-nstates = model.nstates;
 if isempty(model.emission) || isempty(model.pi) || isempty(model.A)
-    stackedData  = cell2mat(data')';
-    if restartNum == 1 % initialize using a mixture of Gaussians
-        mixModel       = mixGaussFitEm(stackedData, nstates, 'verbose', false);
-        mu             = mixModel.mu;
-        Sigma          = bsxfun(@plus, mixModel.Sigma, eye(d)); % regularize the MLE
-        model.emission = condGaussCpdCreate(mu, Sigma);
-        if isempty(model.A) || isempty(model.pi)
-            z = colvec(mixGaussInfer(mixModel, stackedData));
-            if isempty(model.A)
-                A = accumarray([z(1:end-1), z(2:end)], 1); % count transitions
-                model.A = normalize(A + ones(size(A)), 2); % regularize
-            end
-            if isempty(model.pi)
-                % seqidx(1:end-1) are the start indices of the sequences
-                seqidx = cumsum([1, cellfun(@(seq)size(seq, 2), data')]);
-                pi = histc(z(seqidx(1:end-1)), 1:nstates);
-                model.pi = normalize(pi + ones(size(pi))); % regularize
-            end
-        end
-    else % restartNum > 1
-        % Fit on random perturbations of the data, ignoring temporal structure.
-        mu     = zeros(d, nstates);
-        Sigma  = zeros(d, d, nstates);
-        for k  = 1:nstates
-            XX = stackedData + randn(size(stackedData));
+    if restartNum == 1
+        model = initWithMixModel(model, data, @mixGaussFit, @mixGaussInfer);
+        Sigma = bsxfun(@plus, model.emission.Sigma, eye(model.d));
+        model.emission.Sigma = Sigma;  % regularize MLE
+    else 
+        nstates     = model.nstates;
+        stackedData = cell2mat(data')';
+        mu          = zeros(d, nstates);
+        Sigma       = zeros(d, d, nstates);
+        for k              = 1:nstates
+            XX             = stackedData + randn(size(stackedData));
             mu(:, k)       = colvec(mean(XX));
             Sigma(:, :, k) = cov(XX);
         end
         model.emission = condGaussCpdCreate(mu, Sigma);
-        if isempty(model.pi)
-            model.pi = normalize(rand(1, nstates) +  model.piPrior -1);
-        end
-        if isempty(model.A)
-            model.A  = normalize(rand(nstates, nstates) + model.transPrior -1, 2);
-        end
+        model.pi       = normalize(rand(1, nstates) +  model.piPrior -1);
+        model.A        = normalize(rand(nstates) + model.transPrior -1, 2);
     end
 end
 end
 
-function model = initDiscrete(model, data, restartNum) %#ok
-% Initialize the model given a discrete emission distribution
+function model = initDiscrete(model, data, restartNum) 
+%% Initialize the model given a discrete emission distribution
 model.d          = 1;
-model.nObsStates = nunique(cell2mat(data')');
 nstates          = model.nstates;
-nObsStates       = model.nObsStates;
+nObsStates       = nunique(cell2mat(data')');
+model.nObsStates = nObsStates; 
 if isempty(model.emissionPrior)
-    model.emissionPrior = 2*ones(nstates, model.nObsStates);
+    model.emissionPrior = 2*ones(nstates, nObsStates);
 end
-if isempty(model.pi)
-    model.pi = normalize(rand(1, nstates) + model.piPrior);
+if isempty(model.emission) || isempty(model.pi) || isempty(model.A)
+    if restartNum == 1
+        model = initWithMixModel(model, data, @mixDiscreteFit, @mixDiscreteInfer); 
+    else
+        T              = normalize(rand(nstates, nObsStates), 2);
+        model.emission = tabularCpdCreate(T);
+        model.pi       = normalize(rand(1, nstates) +  model.piPrior -1);
+        model.A        = normalize(rand(nstates) + model.transPrior -1, 2);
+    end
 end
-if isempty(model.A)
-    model.A = normalize(rand(nstates, nstates) + model.transPrior, 2);
 end
+
+function model = initWithMixModel(model, data, fitFn, inferFn)
+%% Initialze using a mixture model, ignoring temporal structure
+stackedData = cell2mat(data')';
+nstates     = model.nstates;
+mixModel    = fitFn(stackedData, nstates, 'verbose', false);
 if isempty(model.emission)
-    model.emission = tabularCpdCreate(normalize(rand(nstates, nObsStates), 2));
+    model.emission = mixModel2Cpd(mixModel);
+end
+if isempty(model.A) || isempty(model.pi)
+    z = colvec(inferFn(mixModel, stackedData));
+    if isempty(model.A)
+        A       = accumarray([z(1:end-1), z(2:end)], 1); % count transitions
+        model.A = normalize(A + ones(size(A)), 2);       % regularize
+    end
+    if isempty(model.pi)
+        % seqidx(1:end-1) are the start indices of the sequences
+        seqidx   = cumsum([1, cellfun(@(seq)size(seq, 2), data')]);
+        pi       = histc(z(seqidx(1:end-1)), 1:nstates);
+        model.pi = normalize(pi + ones(size(pi))); % regularize
+    end
 end
 end
 
 %% ESTEP
 function [ess, loglik] = estep(model, data, emissionEstep)
-% Compute the expected sufficient statistics.
+%% Compute the expected sufficient statistics.
 stackedData = cell2mat(data')';
 seqidx      = cumsum([1, cellfun(@(seq)size(seq, 2), data')]);
 seqidx      = seqidx(1:end-1);
@@ -144,7 +149,7 @@ for i = 1:nobs
     weights(ndx, :)                = weights(ndx, :) + gamma';
 end
 logprior                = log(A(:)+eps)'*(model.transPrior(:)-1) + ...
-    log(model.pi(:)+eps)'*(model.piPrior(:)-1);
+                          log(model.pi(:)+eps)'*(model.piPrior(:)-1);
 loglik                  = loglik + logprior;
 ess                     = structure(weights, startCounts, transCounts);
 [ess, logEmissionPrior] = emissionEstep(model, ess, stackedData);
@@ -152,7 +157,7 @@ loglik                  = loglik + logEmissionPrior;
 end
 
 function [ess, logprior] = estepGaussEmission(model, ess, stackedData)
-% Perform the Gaussian emission component of the estep.
+%% Perform the Gaussian emission component of the estep.
 d = model.d;
 nstates = model.nstates;
 weights = ess.weights;
@@ -177,7 +182,7 @@ end
 end
 
 function [ess, logprior] = estepDiscreteEmission(model, ess, stackedData)
-% Perform the discrete emission component of the estep.
+%% Perform the discrete emission component of the estep.
 %
 % Since we've computed the weights already, we operate with all of
 % observation sequences in one long vector: stackedData. The actual
@@ -216,18 +221,16 @@ wsum     = ess.wsum;
 d        = model.d;
 mu       = zeros(d, nstates);
 Sigma    = zeros(d, d, nstates);
-for k=1:nstates
-    xbark  = xbar(:, k);
-    XXk    = XX(:, :, k);
-    wk     = wsum(k);
-    mn     = (wk*xbark + kappa0*m0)./(wk + kappa0);
-    a      = (kappa0*wk)./(kappa0 + wk);
-    b      = nu0 + wk + d + 2;
-    Sprior = (xbark-m0)*(xbark-m0)';
-    Sigmak = (S0 + XXk + a*Sprior)./b;
-    assert(isposdef(Sigmak));
+for k = 1:nstates
+    xbark          = xbar(:, k);
+    XXk            = XX(:, :, k);
+    wk             = wsum(k);
+    mn             = (wk*xbark + kappa0*m0)./(wk + kappa0);
+    a              = (kappa0*wk)./(kappa0 + wk);
+    b              = nu0 + wk + d + 2;
+    Sprior         = (xbark-m0)*(xbark-m0)';
+    Sigma(:, :, k) = (S0 + XXk + a*Sprior)./b;
     mu(:, k)       = mn;
-    Sigma(:, :, k) = Sigmak;
 end
 model.emission = condGaussCpdCreate(mu, Sigma);
 end

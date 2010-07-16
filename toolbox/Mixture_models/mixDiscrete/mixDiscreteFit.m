@@ -19,4 +19,5 @@ function [model, loglikHist] = mixDiscreteFit(X, nmix,  varargin)
 % loglikHist - log likelihood history
 %PMTKlatentModel mixDiscrete
 [model, loglikHist] = mixDiscreteFitEm(X, nmix,  varargin{:});
+model.modelType = 'mixDiscrete'; 
 end

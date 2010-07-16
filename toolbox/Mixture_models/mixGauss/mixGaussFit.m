@@ -14,4 +14,5 @@ function [model, loglikHist] = mixGaussFit(data, K, varargin)
 %%
 %PMTKlatentModel mixGauss
 [model, loglikHist] = mixGaussFitEm(data, K, varargin{:});
+model.modelType = 'mixGauss';
 end
