@@ -13,7 +13,7 @@ for f=1:nfacs
         case 'tabular'
             factors{f} = cpt2Factor(cpd.T , G, f);
         case 'noisyor'
-            factors{f} = cpt2Factor(noisyOrCpd2Cpt, G, f); 
+            factors{f} = cpt2Factor(noisyOrCpd2Cpt(cpd), G, f); 
         otherwise
             error('%s cannot be converted to a tabular factor');
     end

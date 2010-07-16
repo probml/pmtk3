@@ -18,5 +18,6 @@ function CPD = noisyOrCpdCreate(leakI, parentsI)
 %  1  1  pA * PB
 %%
 CPD = structure(leakI, parentsI); 
+CPD.nstates = 2; 
 CPD.cpdType = 'noisyOr';
 end
