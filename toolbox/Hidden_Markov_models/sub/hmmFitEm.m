@@ -66,14 +66,13 @@ if isempty(model.emission) || isempty(model.pi) || isempty(model.A)
         stackedData = cell2mat(data')';
         mu          = zeros(d, nstates);
         Sigma       = zeros(d, d, nstates);
-        for k              = 1:nstates
+        for k = 1:nstates
             XX             = stackedData + randn(size(stackedData));
             mu(:, k)       = colvec(mean(XX));
             Sigma(:, :, k) = cov(XX);
         end
         model.emission = condGaussCpdCreate(mu, Sigma);
-        model.pi       = normalize(rand(1, nstates) +  model.piPrior -1);
-        model.A        = normalize(rand(nstates) + model.transPrior -1, 2);
+        model = rndInitPiA(model); 
     end
 end
 end
@@ -91,12 +90,18 @@ if isempty(model.emission) || isempty(model.pi) || isempty(model.A)
     if restartNum == 1
         model = initWithMixModel(model, data, @mixDiscreteFit, @mixDiscreteInfer); 
     else
-        T              = normalize(rand(nstates, nObsStates), 2);
+        T = normalize(rand(nstates, nObsStates), 2);
         model.emission = tabularCpdCreate(T);
-        model.pi       = normalize(rand(1, nstates) +  model.piPrior -1);
-        model.A        = normalize(rand(nstates) + model.transPrior -1, 2);
+        model = rndInitPiA(model); 
     end
 end
+end
+
+function model = rndInitPiA(model)
+%% Randomly initialize pi and A
+nstates  = model.nstates; 
+model.pi = normalize(rand(1, nstates) + model.piPrior -1);
+model.A  = normalize(rand(nstates) + model.transPrior -1, 2);
 end
 
 function model = initWithMixModel(model, data, fitFn, inferFn)
