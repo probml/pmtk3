@@ -6,7 +6,7 @@ function jtree = jtreeInit(fg, varargin)
 % created.
 %%
 [cc, debug, method] = process_options(varargin, 'cliqueConstraints', {}, ...
-  'debug', false, 'method', 1);
+  'debug', false, 'method', 2);
 factors  = fg.Tfac(:);
 nfactors = numel(factors);
 nstates  = cellfun(@(t)t.sizes(end), factors);
