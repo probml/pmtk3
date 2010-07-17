@@ -1,7 +1,10 @@
 function clampedFac = tabularFactorClamp(Tfac, visVars, visValues)
 % Clamp a tabular factor
 %%
-if isempty(visVars), return; end
+if isempty(visVars)
+    clampedFac = Tfac; 
+    return;
+end
 visVars = rowvec(visVars);
 visValues = rowvec(visValues);
 domain = Tfac.domain;

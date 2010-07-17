@@ -8,7 +8,7 @@ function logZ = dgmLogprob(dgm, varargin)
     'softev' , [], ...
     'localev', []);
 
-if all(clamped)
+if ~isempty(clamped) && all(clamped)
     if isfield(dgm, 'factors')
         factors = dgm.factors;
     else
@@ -29,7 +29,6 @@ if ~isempty(softEv)
 end
 
 G = dgm.G;
-
 if isfield(dgm, 'jtree')
     jtree = jtreeSliceCliques(dgm.jtree, clamped);
 else

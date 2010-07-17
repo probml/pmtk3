@@ -14,6 +14,7 @@ for i=1:numel(cliques)
     localVals  = visVals(lookupIndices(localVars, visVars));
     cliques{i} = tabularFactorSlice(cliques{i}, localVars, localVals);
 end
+
 jtree.cliques      = cliques; 
 jtree.cliqueLookup = cliqueLookup; 
 end

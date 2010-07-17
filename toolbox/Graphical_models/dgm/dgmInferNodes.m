@@ -90,8 +90,8 @@ switch lower(engine)
         factors  = multiplyInLocalFactors(factors, localFacs);
         joint    = tabularFactorMultiply(factors);
         nodeBels = cell(nnodes, 1);
-        for i=1:nnodes
-            [nodeBels{i}, logZ] = tabularFactorCondition(joint, i, clamped);
+        for i=1:numel(hidVars)
+            [nodeBels{i}, logZ] = tabularFactorCondition(joint, hidVars(i), clamped);
         end
         
     otherwise, error('%s is not a valid inference engine', dgm.infEngine);

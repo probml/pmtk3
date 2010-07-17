@@ -99,7 +99,6 @@ switch lower(engine)
         factors = cpds2Factors(CPDs, G, CPDpointers);   
         factors = addEvidenceToFactors(factors, clamped, doSlice); 
         factors = [factors(:); localFacs(:)]; 
-        factors = cellfuncell(@tabularFactorNormalize, factors); 
         [logZ, nodeBels, cliques, cliqueLookup] = libdaiJtree(factors); 
         bels    = jtreeQuery(structure(cliques, cliqueLookup), queries);
         

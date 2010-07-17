@@ -15,7 +15,7 @@ delta_fval = abs(fval - previous_fval);
 avg_fval = (abs(fval) + abs(previous_fval) + eps)/2;
 if (delta_fval / avg_fval) < threshold, converged = 1; end
 
-if warn && fval < previous_fval
+if warn && (fval-previous_fval) < -2*eps %fval < previous_fval
     warning('convergenceTest:fvalDecrease', 'objective decreased!'); 
 end
 

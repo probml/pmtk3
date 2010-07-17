@@ -37,13 +37,14 @@ switch lower(localCPD.cpdType)
     case 'condgauss'
         Xobs     = reshape(Xobs, [], localCPD.d); 
         nstates  = localCPD.nstates;
-        B        = nan(nstates, seqlen);
+        logB     = nan(nstates, seqlen);
         mu       = localCPD.mu;
         Sigma    = localCPD.Sigma;
         for j=1:nstates
-            B(j, observed) = rowvec(exp(gaussLogprob(mu(:, j), Sigma(:, :, j), Xobs)));
-            %B(j, observed) = rowvec(exp(normalizeLogspace(gaussLogprob(mu(:, j), Sigma(:, :, j), Xobs))));
+            logB(j, observed) = rowvec(gaussLogprob(mu(:, j), Sigma(:, :, j), Xobs));
         end
+        %L = argout(2, @normalizeLogspace, logB)
+        B = exp(logB);
     otherwise
         error('%s is not a recognized CPD type', localCPD.cpdType);
 end

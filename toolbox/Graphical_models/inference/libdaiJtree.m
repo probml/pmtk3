@@ -46,6 +46,7 @@ end
 
 function lfac = convertToLibFac(mfac)
 % Convert a PMTK factor to libdai format
+assert(~isempty(mfac));   % can happen if we are slicing
 domain = mfac.domain;
 T = mfac.T; 
 try

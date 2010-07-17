@@ -26,6 +26,6 @@ else
         [alpha, scale(t)] = normalize((AT * alpha) .* obslik(:,t));
     end
 end
-loglik = sum(log(scale)+eps);
+loglik = sum(log(scale+eps));
 
 end

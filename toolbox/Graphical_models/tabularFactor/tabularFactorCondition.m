@@ -4,7 +4,7 @@ function [TQ, logZ] = tabularFactorCondition(TF, queryVars, clamped)
 
 visVars  = find(clamped); 
 visValues  = nonzeros(clamped); 
-TF = tabularFactorSlice(TF, visVars, visValues);
+TF = tabularFactorClamp(TF, visVars, visValues);
 [TF, Z] = tabularFactorNormalize(TF);
 TQ = tabularFactorMarginalize(TF, queryVars);
 logZ = log(Z + eps); 
