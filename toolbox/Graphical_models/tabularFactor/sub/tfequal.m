@@ -11,7 +11,8 @@ eq = true;
 for i=2:nargin
    TFi = varargin{i}; 
    eq = eq && approxeq(TF1.T, TFi.T)          && ...
-              isequal(TF1.domain, TFi.domain) && ...
-              isequal(TF1.sizes, TFi.sizes); 
+     isequal(TF1.domain, TFi.domain) && ...
+     isequal(TF1.sizes, TFi.sizes);
+   if ~eq, return; end % KPM
 end
 end

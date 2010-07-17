@@ -1,4 +1,4 @@
-function C = intersectPMTK(A, B)
+function [C] = intersectPMTK(A, B)
 % Intersect two sets of positive integers faster than the built-in intersect
 
 if isempty(A) || isempty(B)

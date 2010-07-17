@@ -5,7 +5,8 @@ function jtree = jtreeInit(fg, varargin)
 % indices if you want to guarantee that cliques containing these sets are
 % created.
 %%
-cc = process_options(varargin, 'cliqueConstraints', {});
+[cc, debug, method] = process_options(varargin, 'cliqueConstraints', {}, ...
+  'debug', false, 'method', 1);
 factors  = fg.Tfac(:);
 nfactors = numel(factors);
 nstates  = cellfun(@(t)t.sizes(end), factors);
@@ -19,25 +20,36 @@ end
 G             = setdiag(G, 0);
 elimOrder     = minweightElimOrder(G, nstates);
 G             = mkChordal(G, elimOrder);
-pElimOrder    = jtreePerfectElimOrder(G);
-cliqueIndices = chordal2RipCliques(G, pElimOrder);
-cliqueGraph   = ripCliques2Jtree(cliqueIndices);
-ncliques      = numel(cliqueIndices);
+
+% clqs{i} is the i'th maximal clique, ordered by RIP
+switch method
+  case 1
+    pElimOrder = jtreePerfectElimOrder(G);
+    clqs = chordal2RipCliques(G, pElimOrder);
+    cliqueTreeUndir   = ripCliques2Jtree(clqs);
+  case 2
+    [pElimOrder, chordal, clqs]    = maxCardinalitySearch(G); %#ok
+    cliqueTreeUndir   = mcsCliques2Jtree(clqs);
+end
+
+
+% cliqueLookup(i, c) = true if GM node i is in clqs{c}
+ncliques      = numel(clqs);
 cliqueLookup  = false(nvars, ncliques);
 for c=1:ncliques
-    cliqueLookup(cliqueIndices{c}, c) = true;
+    cliqueLookup(clqs{c}, c) = true;
 end
 %% add factors to cliques
-initClqSizes = cellfun('length', cliqueIndices);
+initClqSizes = cellfun('length', clqs);
 factorLookup = false(nfactors, ncliques);
 for f=1:nfactors
     candidateCliques = find(all(cliqueLookup(factors{f}.domain, :), 1));
     smallest = minidx(initClqSizes(candidateCliques));
     factorLookup(f, candidateCliques(smallest)) = true;
 end
-cliques = cell(ncliques, 1);
+cliques = cell(ncliques, 1); % tabular potentials
 for c=1:ncliques
-    ndx        = cliqueIndices{c};
+    ndx        = clqs{c};
     T          = tabularFactorCreate(onesPMTK(nstates(ndx)), ndx);
     tf         = [{T}; factors(factorLookup(:, c))];
     cliques{c} = tabularFactorMultiply(tf);
@@ -46,7 +58,8 @@ end
 root = nvars;
 rootCliques = find(cliqueLookup(root, :));
 rootClq = rootCliques(minidx(initClqSizes(rootCliques)));
-[preOrder, postOrder, pred] = dfsearch(cliqueGraph, rootClq, false);
+[preOrder, postOrder, pred] = dfsearch(cliqueTreeUndir, rootClq, false);
+% Make a directed version of cliqueTreeUndir
 cliqueTree = zeros(ncliques, ncliques);
 for i=1:length(pred)
     if pred(i) > 0
