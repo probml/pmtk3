@@ -16,7 +16,7 @@ m      = mean(img(:));
 img2   = +1*(img>m) + -1*(img<m); % -1 or +1
 y      = img2 + sigma*randn(size(img2)); %y = noisy signal
 %%
-J    = 1; % coupling strenght
+J    = 1; % coupling strength
 CPDs = { gaussCreate(-1, sigma^2), gaussCreate(+1, sigma^2) };
 %%
 figure;

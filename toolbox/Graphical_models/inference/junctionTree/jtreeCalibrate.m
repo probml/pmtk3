@@ -13,6 +13,8 @@ ncliques         = numel(cliques);
 cliqueTree       = jtree.cliqueTree; 
 messages         = cell(ncliques, ncliques);
 %% construct separating sets
+% These can change after jtreeInit has been called due to slicing, hence we 
+% calculate them here not in jtreeInit. 
 sepsets  = cell(ncliques);
 [is, js] = find(cliqueTree);
 for k = 1:numel(is)

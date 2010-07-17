@@ -5,8 +5,7 @@ function jtree = jtreeInit(fg, varargin)
 % indices if you want to guarantee that cliques containing these sets are
 % created.
 %%
-[cc, debug, method] = process_options(varargin, 'cliqueConstraints', {}, ...
-  'debug', false, 'method', 2);
+cc = process_options(varargin, 'cliqueConstraints', {}); 
 factors  = fg.Tfac(:);
 nfactors = numel(factors);
 nstates  = cellfun(@(t)t.sizes(end), factors);
@@ -17,25 +16,13 @@ for i=1:numel(cc)
     c = cc{i};
     G(c, c) = 1;
 end
-G             = setdiag(G, 0);
-elimOrder     = minweightElimOrder(G, nstates);
-G             = mkChordal(G, elimOrder);
-
-% clqs{i} is the i'th maximal clique, ordered by RIP
-switch method
-  case 1
-    pElimOrder = jtreePerfectElimOrder(G);
-    clqs = chordal2RipCliques(G, pElimOrder);
-    cliqueTreeUndir   = ripCliques2Jtree(clqs);
-  case 2
-    [pElimOrder, chordal, clqs]    = maxCardinalitySearch(G); %#ok
-    cliqueTreeUndir   = mcsCliques2Jtree(clqs);
-end
-
-
-% cliqueLookup(i, c) = true if GM node i is in clqs{c}
-ncliques      = numel(clqs);
-cliqueLookup  = false(nvars, ncliques);
+G = setdiag(G, 0);
+elimOrder = minweightElimOrder(G, nstates);
+G = mkChordal(G, elimOrder);
+[pElimOrder, chordal, clqs] = maxCardinalitySearch(G); % clqs{i} is the i'th maximal clique, ordered by RIP
+cliqueTreeUndir = mcsCliques2Jtree(clqs);
+ncliques = numel(clqs);
+cliqueLookup = false(nvars, ncliques);                 % cliqueLookup(i, c) = true if GM node i is in clqs{c}
 for c=1:ncliques
     cliqueLookup(clqs{c}, c) = true;
 end
