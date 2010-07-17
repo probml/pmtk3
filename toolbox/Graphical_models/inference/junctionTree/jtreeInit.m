@@ -19,7 +19,7 @@ end
 G             = setdiag(G, 0);
 elimOrder     = minweightElimOrder(G, nstates);
 G             = mkChordal(G, elimOrder);
-pElimOrder    = perfectElimOrder(G);
+pElimOrder    = jtreePerfectElimOrder(G);
 cliqueIndices = chordal2RipCliques(G, pElimOrder);
 cliqueGraph   = ripCliques2Jtree(cliqueIndices);
 ncliques      = numel(cliqueIndices);
