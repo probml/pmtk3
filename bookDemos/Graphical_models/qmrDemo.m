@@ -1,6 +1,6 @@
 %% Compare inference in a QMR like network (dgm)
-
-nfindings = 35;
+setSeed(0); 
+nfindings = 100; % turn down if you run out of memory
 ndiseases = 15; 
 nnodes = nfindings + ndiseases; 
 
@@ -43,5 +43,5 @@ for i=1:nmethods
     times(i) = t;
     fprintf('%s:%g seconds\n', methods{i}, t); 
 end
-
+assert(tfequal(bels{:})); 
 

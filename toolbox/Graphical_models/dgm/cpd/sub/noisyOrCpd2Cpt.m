@@ -11,9 +11,9 @@ if numel(q)==1
   return;
 end
 n = numel(q);
-Bn = ind2subv(2*ones(1,n), 1:(2^n))-1;  
+Bn = ind2sub(2*ones(1,n), 1:(2^n))-1;  
 T = zeros(2^n, 2);
-Q = repmat(q(:)', 2^n, 1);
+Q = repmatC(q(:)', 2^n, 1);
 Q(~Bn) = 1;
 T(:, 1) = prod(Q, 2);
 T(:, 2) = 1-T(:, 1);
