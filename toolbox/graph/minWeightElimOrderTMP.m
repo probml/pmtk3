@@ -1,4 +1,4 @@
-function order = minweightElimOrder(G, nodeWeights)
+function order = minWeightElimOrder(G, nodeWeights)
 % Greedily find an elimination order which induces the lightest clique.
 % Break ties by minimizing the number of fill-in edges.
 % So if nodeWeights = zeros(1,d), this is just minfill heuristic.
