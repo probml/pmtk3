@@ -5,6 +5,10 @@ function CPD = condGaussCpdCreate(mu, Sigma)
 % Sigma is of size d-by-d-by-nstates
 %%
 
+if isvector(Sigma)
+   Sigma = permute(rowvec(Sigma), [1 3 2]);  
+end
+
 nstates = size(Sigma, 3); 
 if size(mu, 2) ~= nstates && size(mu, 1) == nstates
     mu = mu';

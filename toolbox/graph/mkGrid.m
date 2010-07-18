@@ -24,12 +24,12 @@ end
 
 helper = zeros(M, N); 
 helper(:) = 1:N*M; 
+ne = (N-1)*M + (M-1)*N; 
+G = sparse([], [], [], N*M, N*M, ne); 
 
-G = zeros(N*M); 
-
-for i=1:M
+for i=1:M  
   row = helper(i, :) ;
-  for k=2:N
+  for k=2:N    
      G(row(k-1), row(k)) = 1;  
   end
 end
