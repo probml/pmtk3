@@ -104,7 +104,7 @@ model.modelType = 'dgm';
 %% precompute jtree
 if strcmpi(infEngine, 'jtree') && precomputeJtree
     factors = cpds2Factors(CPDs, G, CPDpointers);   
-    model.jtree = jtreeInit(factorGraphCreate(factors, G));
+    model.jtree = jtreeCreate(factorGraphCreate(G, factors));
     model.factors = factors;
 end
 end

@@ -24,7 +24,7 @@ G        = model.G;
 nstates  = cellfun(@(t)t.sizes(end), factors);
 %% Find a good elimination ordering
 moralG   = moralizeGraph(G); % marry parents, and make graph symmetric
-ordering = minweightElimOrder(moralG, nstates);
+ordering = minWeightElimOrder(moralG, nstates);
 elim     = setdiffPMTK(ordering, queryVars);
 %% Eliminate nuisance variables
 for i=1:numel(elim)

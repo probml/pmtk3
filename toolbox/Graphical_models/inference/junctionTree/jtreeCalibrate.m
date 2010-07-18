@@ -1,6 +1,6 @@
 function [jtree, logZ] = jtreeCalibrate(jtree)
 %% Calibrate a junction tree
-% jtree is a struct as returned by e.g. jtreeInit
+% jtree is a struct as returned by e.g. jtreeCreate
 %
 % logZ  - log of the partition sum
 %%
@@ -13,8 +13,8 @@ ncliques         = numel(cliques);
 cliqueTree       = jtree.cliqueTree; 
 messages         = cell(ncliques, ncliques);
 %% construct separating sets
-% These can change after jtreeInit has been called due to slicing, hence we 
-% calculate them here not in jtreeInit. 
+% These can change after jtreeCreate has been called due to slicing, hence we 
+% calculate them here not in jtreeCreate. 
 sepsets  = cell(ncliques);
 [is, js] = find(cliqueTree);
 for k = 1:numel(is)

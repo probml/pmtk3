@@ -1,5 +1,5 @@
-function jtree = jtreeInit(fg, varargin)
-%% Initialize a junction tree for a given factor graph
+function jtree = jtreeCreate(fg, varargin)
+%% Create a junction tree for a given factor graph
 % This structure can then be passed to jtreeCalibrate
 % Optionally include cliqueConstraints, a cell array of sets of variable
 % indices if you want to guarantee that cliques containing these sets are
@@ -20,7 +20,7 @@ end
 G = setdiag(G, 0);
 %% build clique tree
 % clqs{i} is the i'th maximal clique, ordered by RIP
-elimOrder                   = minweightElimOrder(G, nstates);
+elimOrder                   = minWeightElimOrder(G, nstates);
 G                           = mkChordal(G, elimOrder);
 [pElimOrder, chordal, clqs] = maxCardinalitySearch(G); 
 cliqueTreeUndir             = mcsCliques2Jtree(clqs);

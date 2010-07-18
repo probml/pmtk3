@@ -35,7 +35,7 @@ else
     doSlice = true;
     factors = cpds2Factors(dgm.CPDs, G, dgm.CPDpointers);
     factors = addEvidenceToFactors(factors, clamped, doSlice);
-    jtree   = jtreeInit(factorGraphCreate(factors, G));
+    jtree   = jtreeCreate(factorGraphCreate(G, factors));
 end
 jtree = jtreeAddFactors(jtree, localFacs);
 [jtree, logZ] = jtreeCalibrate(jtree);

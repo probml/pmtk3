@@ -61,7 +61,7 @@ switch lower(engine)
             doSlice   = true;
             factors   = cpds2Factors(dgm.CPDs, G, dgm.CPDpointers);
             factors   = addEvidenceToFactors(factors, clamped, doSlice);
-            jtree     = jtreeInit(factorGraphCreate(factors, G));
+            jtree     = jtreeCreate(factorGraphCreate(G, factors));
         end
         jtree         = jtreeAddFactors(jtree, localFacs);
         [jtree, logZ] = jtreeCalibrate(jtree);
@@ -81,7 +81,7 @@ switch lower(engine)
         factors          = cpds2Factors(dgm.CPDs, G, dgm.CPDpointers);
         factors          = addEvidenceToFactors(factors, clamped, doSlice);
         factors          = multiplyInLocalFactors(factors, localFacs);
-        fg               = factorGraphCreate(factors, G);
+        fg               = factorGraphCreate(G, factors);
         [logZ, nodeBels] = variableElimination(fg, num2cell(hidVars));
         
     case 'enum'
