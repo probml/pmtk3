@@ -20,10 +20,10 @@ end
 G = setdiag(G, 0);
 %% build clique tree
 % clqs{i} is the i'th maximal clique, ordered by RIP
-elimOrder                   = minWeightElimOrder(G, nstates);
-G                           = mkChordal(G, elimOrder);
-[pElimOrder, chordal, clqs] = maxCardinalitySearch(G); 
-cliqueTreeUndir             = mcsCliques2Jtree(clqs);
+[elimOrder, G]                = minWeightElimOrder(G, nstates); 
+[pElimOrder, ischordal, clqs] = maxCardinalitySearch(G); 
+cliqueTreeUndir               = mcsCliques2Jtree(clqs);
+assert(ischordal); 
 %% create clique lookup table
 % cliqueLookup(i, c) = true if GM node i is in clqs{c}
 ncliques = numel(clqs);

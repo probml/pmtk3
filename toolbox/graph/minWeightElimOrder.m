@@ -1,4 +1,4 @@
-function order = minWeightElimOrder(G, nodeWeights)
+function [order, Gchordal] = minWeightElimOrder(G, nodeWeights)
 % Greedily find an elimination order which induces the lightest clique.
 % Break ties by minimizing the number of fill-in edges.
 % So if nodeWeights = zeros(1,d), this is just minfill heuristic.
@@ -11,6 +11,12 @@ function order = minWeightElimOrder(G, nodeWeights)
 %
 %PMTKmodified Matt Dunham (partially vectorized code)
 %%
+Gchordal = G; 
+mkChordal = nargout > 1; 
+n = size(Gchordal, 1); 
+eliminated = false(1, n);
+
+
 n = length(G);
 if nargin < 2,
     nodeWeights = ones(1, n);
@@ -41,4 +47,13 @@ for i=1:n
     order(i)     = k;
     ns           = (G(k, :) | G(:, k)') & U;
     G(ns, ns)    = true;
+    if mkChordal
+        Gchordal = setdiag(Gchordal, 0); 
+        nodes    = false(1, n); 
+        nodes([find(G(k, :)) find(G(:, k))']) = true; 
+        nodes = nodes & ~eliminated; 
+        nodes(k) = true; 
+        Gchordal(nodes, nodes) = 1; 
+        eliminated(k) = true;  
+    end
 end
