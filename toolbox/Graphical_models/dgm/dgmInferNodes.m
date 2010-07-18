@@ -42,7 +42,7 @@ nnodes    = dgm.nnodes;
 
 localFacs = {}; 
 if ~isempty(localEv)
-    localFacs = softEvToFactors(dgmLocalEvToSoftEv(dgm, localEv));
+    localFacs = softEvToFactors(localEvToSoftEv(dgm, localEv));
 end
 if ~isempty(softEv)
     localFacs = [localFacs(:); colvec(softEvToFactors(softEv))];
@@ -61,7 +61,8 @@ switch lower(engine)
             doSlice   = true;
             factors   = cpds2Factors(dgm.CPDs, G, dgm.CPDpointers);
             factors   = addEvidenceToFactors(factors, clamped, doSlice);
-            jtree     = jtreeCreate(factorGraphCreate(G, factors));
+            nstates   = cellfun(@(f)f.sizes(end), factors); 
+            jtree     = jtreeCreate(factorGraphCreate(factors, nstates, G));
         end
         jtree         = jtreeAddFactors(jtree, localFacs);
         [jtree, logZ] = jtreeCalibrate(jtree);
@@ -81,7 +82,8 @@ switch lower(engine)
         factors          = cpds2Factors(dgm.CPDs, G, dgm.CPDpointers);
         factors          = addEvidenceToFactors(factors, clamped, doSlice);
         factors          = multiplyInLocalFactors(factors, localFacs);
-        fg               = factorGraphCreate(G, factors);
+        nstates          = cellfun(@(f)f.sizes(end), factors); 
+        fg               = factorGraphCreate(factors, nstates, G);
         [logZ, nodeBels] = variableElimination(fg, num2cell(hidVars));
         
     case 'enum'
@@ -99,29 +101,4 @@ switch lower(engine)
 end
 %%
 nodeBels = insertClampedBels(nodeBels, visVars, hidVars);
-end
-
-
-function padded = insertClampedBels(nodeBels, visVars, hidVars)
-% We insert unit factors for the clamped vars to maintain a one-to-one
-% corresponence between cell array position and domain, and to return
-% consistent results regardless of the inference method.
-if isempty(visVars)
-    padded = nodeBels;
-    return;
-end
-nvars = numel(visVars) + numel(hidVars);
-padded = cell(nvars, 1);
-if numel(nodeBels) == nvars
-    padded(hidVars) = nodeBels(hidVars);
-elseif numel(nodeBels) == 1
-    padded{hidVars} = cellwrap(nodeBels); 
-else
-    padded(hidVars) = nodeBels;
-end
-
-for v = visVars
-    padded{v} = tabularFactorCreate(1, v);
-end
-
 end

@@ -19,7 +19,7 @@ function [bels, logZ] = dgmInferQuery(dgm, queries, varargin)
 %
 % bels   - tabularFactors (clique beliefs) representing the queries
 %
-% logZ   - log of the partition sum (if this is all you want, use dgmLogZ)
+% logZ   - log of the partition sum (if this is all you want, use dgmLogprob)
 %%
 [clamped, softEv, localEv, doPrune] = process_options(varargin, ...
     'clamped', [], ...
@@ -36,7 +36,7 @@ nqueries             = numel(queries);
 localFacs = {}; 
 softVis   = []; 
 if ~isempty(localEv)
-    [localFacs, softVis] = softEvToFactors(dgmLocalEvToSoftEv(dgm, localEv));
+    [localFacs, softVis] = softEvToFactors(localEvToSoftEv(dgm, localEv));
 end
 if ~isempty(softEv)
     [lf, sv]  = softEvToFactors(softEv); 
@@ -86,7 +86,8 @@ switch lower(engine)
             doSlice       = true;
             factors       = cpds2Factors(CPDs, G, CPDpointers);
             factors       = addEvidenceToFactors(factors, clamped, doSlice);
-            fg            = factorGraphCreate(G, factors); 
+            nstates       = cellfun(@(f)f.sizes(end), factors); 
+            fg            = factorGraphCreate(factors, nstates, G); 
             jtree         = jtreeCreate(fg, 'cliqueConstraints', queries);
             [jtree, logZ] = jtreeCalibrate(jtree);
             bels          = jtreeQuery(jtree, queries); 
@@ -108,7 +109,8 @@ switch lower(engine)
         factors      = cpds2Factors(CPDs, G, CPDpointers);   
         factors      = addEvidenceToFactors(factors, clamped, doSlice); 
         factors      = multiplyInLocalFactors(factors, localFacs);
-        fg           = factorGraphCreate(G, factors);
+        nstates      = cellfun(@(f)f.sizes(end), factors); 
+        fg           = factorGraphCreate(factors, nstates, G);
         [logZ, bels] = variableElimination(fg, queries); 
         
     case 'enum'

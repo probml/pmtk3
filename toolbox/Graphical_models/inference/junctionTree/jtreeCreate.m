@@ -8,7 +8,7 @@ function jtree = jtreeCreate(fg, varargin)
 cc       = process_options(varargin, 'cliqueConstraints', {}); 
 factors  = fg.Tfac(:);
 nfactors = numel(factors);
-nstates  = cellfun(@(t)t.sizes(end), factors);
+nstates  = fg.nstates; 
 G        = moralizeGraph(fg.G);
 nvars    = size(G, 1);
 %% add in clique constraints

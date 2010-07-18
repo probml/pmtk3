@@ -1,9 +1,9 @@
-function softev = dgmLocalEvToSoftEv(dgm, localev)
+function softev = localEvToSoftEv(model, localev)
 %% Convert local evidence to soft evidence
 
-maxNstates = max(dgm.nstates);
-localCPDs = cellwrap(dgm.localCPDs);
-localCPDpointers = dgm.localCPDpointers;
+maxNstates = max(model.nstates);
+localCPDs = cellwrap(model.localCPDs);
+localCPDpointers = model.localCPDpointers;
 if numel(localCPDs) == 1 % vectorize
     softev = mkSoftEvidence(localCPDs{1}, localev);
 else

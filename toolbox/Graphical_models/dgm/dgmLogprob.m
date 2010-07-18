@@ -22,7 +22,7 @@ end
 % otherwise run inference 
 localFacs = {}; 
 if ~isempty(localEv)
-    localFacs = softEvToFactors(dgmLocalEvToSoftEv(dgm, localEv));
+    localFacs = softEvToFactors(localEvToSoftEv(dgm, localEv));
 end
 if ~isempty(softEv)
     localFacs = [localFacs(:); colvec(softEvToFactors(softEv))];
@@ -35,7 +35,8 @@ else
     doSlice = true;
     factors = cpds2Factors(dgm.CPDs, G, dgm.CPDpointers);
     factors = addEvidenceToFactors(factors, clamped, doSlice);
-    jtree   = jtreeCreate(factorGraphCreate(G, factors));
+    nstates = cellfun(@(f)f.sizes(end), factors); 
+    jtree   = jtreeCreate(factorGraphCreate(factors, nstates, G));
 end
 jtree = jtreeAddFactors(jtree, localFacs);
 [jtree, logZ] = jtreeCalibrate(jtree);
