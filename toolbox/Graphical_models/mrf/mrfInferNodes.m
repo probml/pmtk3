@@ -35,14 +35,14 @@ switch lower(engine)
         end
         jtree         = jtreeAddFactors(jtree, localFacs);
         [jtree, logZ] = jtreeCalibrate(jtree);
-        nodeBels      = jtreeQuery(jtree, num2cell(1:nnodes));
+        nodeBels      = jtreeQuery(jtree, num2cell(hidNodes));
         if nargout > 2
             edgeBels  = jtreeQuery(jtree, mrf.edges);
         end
         
     case 'libdaijtree'
         
-        assert(isWeaklyConnected(G)); % libdai segfaults on disconnected graphs
+        assert(isWeaklyConnected(fg.G)); % libdai segfaults on disconnected graphs
         doSlice = false;     % libdai often segfaults when slicing
         factors = addEvidenceToFactors(fg.Tfac, clamped, doSlice);
         factors = [factors(:); localFacs(:)];
@@ -57,7 +57,7 @@ switch lower(engine)
         factors          = addEvidenceToFactors(fg.Tfac, clamped, doSlice);
         factors          = multiplyInLocalFactors(factors, localFacs);
         fg.Tfac          = factors; 
-        [logZ, nodeBels] = variableElimination(fg, num2cell(hidVars));
+        [logZ, nodeBels] = variableElimination(fg, num2cell(hidNodes));
         if nargout > 2
           
            error('not yet implemented'); 

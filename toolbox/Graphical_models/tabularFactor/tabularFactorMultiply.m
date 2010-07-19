@@ -23,6 +23,7 @@ end
 % end
 
 T = ones([ns(dom), 1]);
+
 for i=1:N
     Ti = facs{i};
     T  = bsxTable(@times, T, Ti.T, dom, Ti.domain);
