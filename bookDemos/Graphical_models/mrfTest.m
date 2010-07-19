@@ -31,8 +31,9 @@ mrfPmtk = mrfCreate(adj, 'nodePots', mat2cellRows(nodePot), 'edgePots', edgePot)
 nodeBelPmtk  = mrfInferNodes(mrfPmtk); 
 assert(approxeq(nodeBel', tfMarg2Mat(nodeBelPmtk))); 
 
-
-
+mapMrf2 = mrf2Map(model);
+mapMrf  = mrfMap(mrfPmtk);
+assert(isequal(mapMrf2, mapMrf)); 
 %%
 setSeed(0);
 samples = mrf2Sample(model, 100);
@@ -43,6 +44,11 @@ samples = mrf2Sample(model, 100);
 
 clamped = zeros(nNodes, 1);
 clamped(10) = 6;
+
+mapMrf2 =  mrf2Map(model, clamped);
+mapMrf  = mrfMap(mrfPmtk, 'clamped', clamped); 
+assert(isequal(mapMrf2, mapMrf)); 
+
 
 [nodeBel, edgeBel, logZ] =  mrf2InferMarginals(model, clamped);
 nodeBelPmtk = mrfInferNodes(mrfPmtk, 'clamped', sparse(clamped')); 
