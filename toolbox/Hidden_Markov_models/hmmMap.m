@@ -1,4 +1,4 @@
-function path = hmmEstState(model, X)
+function path = hmmMap(model, X)
 % Find the most-probable (Viterbi) path through the HMM state trellis. 
 %% Inputs:
 % model - a struct as returned by e.g. hmmFit, which must contain

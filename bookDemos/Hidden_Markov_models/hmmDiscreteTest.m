@@ -32,21 +32,21 @@ fprintf('trueModel LL: %g\n', hmmLogprob(trueModel, observed));
 fprintf('emModel LL: %g\n', hmmLogprob(modelEM, observed)); 
 
 %% Decode using true model
-decodedFromTrueViterbi = hmmEstState(trueModel, observed);
+decodedFromTrueViterbi = hmmMap(trueModel, observed);
 decodedFromTrueViterbi = bestPermutation(decodedFromTrueViterbi, hidden);
 trueModelViterbiError = mean(decodedFromTrueViterbi ~= hidden)
 
-decodedFromTrueMaxMarg = maxidx(hmmInferState(trueModel, observed), [], 1);
+decodedFromTrueMaxMarg = maxidx(hmmInferNodes(trueModel, observed), [], 1);
 decodedFromTrueMaxMarg = bestPermutation(decodedFromTrueMaxMarg, hidden);
 trueModelMaxMargError = mean(decodedFromTrueMaxMarg ~= hidden)
 
 %% Decode using the EM model
-decodedFromEMviterbi = hmmEstState(modelEM, observed);
+decodedFromEMviterbi = hmmMap(modelEM, observed);
 decodedFromEMviterbi = bestPermutation(decodedFromEMviterbi, hidden);
 
 emModelViterbiError = mean(decodedFromEMviterbi ~= hidden)
 
-decodedFromEMmaxMarg = maxidx(hmmInferState(modelEM, observed), [], 1);
+decodedFromEMmaxMarg = maxidx(hmmInferNodes(modelEM, observed), [], 1);
 decodedFromEMmaxMarg = bestPermutation(decodedFromEMmaxMarg, hidden);
 
 emModelMaxMargError = mean(decodedFromEMmaxMarg ~= hidden)

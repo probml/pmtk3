@@ -50,9 +50,9 @@ model.nstates = nstates;
 model.pi = pi;
 model.A = transmat; 
 model.type = 'discrete';
-viterbiPath = hmmEstState(model, observed);
+viterbiPath = hmmMap(model, observed);
 %% Sequence of Most Likely States (Max Marginals)
-[gamma, loglik, alpha, beta, localEvidence]  = hmmInferState(model, observed);
+[gamma, loglik, alpha, beta, localEvidence]  = hmmInferNodes(model, observed);
 maxmargF = maxidx(alpha); % filtered (forwards pass only)
 maxmarg = maxidx(gamma);  % smoothed (forwards backwards)
 %% Posterior Samples

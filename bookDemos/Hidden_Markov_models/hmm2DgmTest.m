@@ -17,7 +17,7 @@ model = hmmCreate('gauss', pi, A, emission, nstates);
 X = hmmSample(model, T, 1);
 %% infer single marginals using fwdback
 tic
-gamma = hmmInferState(model, X);
+gamma = hmmInferNodes(model, X);
 t = toc;
 fprintf('fwdbck: %g seconds\n', t);
 %% infer single marginals using varelim
