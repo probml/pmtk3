@@ -28,6 +28,7 @@ for c = postOrder
     for p = postOrderParents{c}
         message        = tabularFactorMarginalize(cliques{c}, sepsets{c, p}, maximize);
         cliques{p}     = tabularFactorMultiply(cliques{p}, message);
+        %cliques{p}     = tabularFactorNormalize(cliques{p}); 
         messages{p, c} = message;
     end
 end
@@ -42,6 +43,7 @@ for p = preOrder
         childClq               = tabularFactorDivide(cliques{c}, messages{p, c});
         message                = tabularFactorMarginalize(cliques{p}, sepsets{p, c}, maximize);
         cliques{c}             = tabularFactorMultiply(childClq, message);
+        %cliques{c}             = tabularFactorNormalize(cliques{c}); 
         messages{p, c}         = message;
         dom                    = cliques{c}.domain;
         [cliques{c}, map(dom)] = tabularFactorMaximize(cliques{c}); 

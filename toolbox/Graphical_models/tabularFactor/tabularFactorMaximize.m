@@ -6,7 +6,7 @@ TF.T(:) = 0;
 TF.T(i) = m;
 
 if nargout > 1
-   indices = ind2sub(i, size(TF.T));  
+   indices = ind2subv(size(TF.T), i);  
 end
 
 

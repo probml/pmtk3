@@ -49,7 +49,10 @@ gammaLD = tfMarg2Mat(margLD);
 t = toc;
 fprintf('libdai: %g seconds\n', t);
 assert(approxeq(gamma, gammaLD));
-
+%% Compare map assignments
+mapDGM = dgmMap(dgm, 'localev', X); 
+mapHMM = hmmMap(model, X); 
+assert(isequal(mapDGM, mapHMM)); 
 
 
 
