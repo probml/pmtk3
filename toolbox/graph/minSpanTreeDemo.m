@@ -18,7 +18,7 @@ A = G; A((A==0))=inf;
 [T, cost] =  minSpanTreeKruskal(A) % Kruskal
 assert(cost==37)
 
-[T2, cost2] =  minSpanTreePrimSimple(A) % Prim
+[T2, cost2] =  minSpanTreePrim(A) % Prim
 assert(cost2==37)
 %drawNetwork(T2)
 
@@ -37,5 +37,5 @@ A = G; A((A==0))=inf; % set absent edgges to impossible
 [T, cost] =  minSpanTreeKruskal(A) % Kruskal
 assert(cost==15)
 
-[T2, cost2] =  minSpanTreePrimSimple(A) % Prim
+[T2, cost2] =  minSpanTreePrim(A) % Prim
 assert(cost2==15)

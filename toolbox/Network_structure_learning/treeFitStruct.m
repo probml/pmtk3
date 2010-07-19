@@ -14,7 +14,7 @@ N = size(X,1);
 if nargin < 3, weights = ones(1,N); end
  
 [mi] = mutualInfoAllPairsDiscrete(X, domain, weights);
-[treeAdjMat, cost] = minSpanTreePrimSimple(-mi); % find max weight spanning tree
+[treeAdjMat, cost] = minSpanTreePrim(-mi); % find max weight spanning tree
 %[treeAdjMat1, cost1] = minSpanTreeKruskal(-wij);
 %assert(cost==cost1)
 %isequal(treeAdjMat, treeAdjMat1)
