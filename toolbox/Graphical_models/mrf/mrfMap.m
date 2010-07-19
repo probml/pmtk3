@@ -18,7 +18,7 @@ if isfield(mrf, 'jtree')
 else
     doSlice   = true;
     fg.Tfac   = addEvidenceToFactors(fg.Tfac, clamped, doSlice);
-    fg.nstates(visNodes) = 1;
+    fg.nstates(find(clamped)) = 1; %#ok
     jtree     = jtreeCreate(fg);
 end
 jtree         = jtreeAddFactors(jtree, localFacs);

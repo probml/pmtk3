@@ -49,10 +49,13 @@ edgePot   = exp([J -J; -J J]);
 nodePot   = [0.5 0.5];
 G         = mkGrid(M, N);
 model     = mrfCreate(G, 'nodePots', nodePot, 'edgePots', edgePot,...
-    'localCPDs', localCPD, 'infEngine', 'libdaiJtree');
-nodeBels  = mrfInferNodes(model, 'localev', y(:));
+    'localCPDs', localCPD);
 
-maxMarginals = maxidx(tfMarg2Mat(nodeBels), [], 1) - 1;
+map = mrfMap(model, 'localev', y(:)); 
+
+%nodeBels  = mrfInferNodes(model, 'localev', y(:));
+%maxMarginals = maxidx(tfMarg2Mat(nodeBels), [], 1) - 1;
 figure;
-imagesc(reshape(maxMarginals, M, N));
+%imagesc(reshape(maxMarginals, M, N));
+imagesc(reshape(map, M, N));
 title('reconstructed image');
