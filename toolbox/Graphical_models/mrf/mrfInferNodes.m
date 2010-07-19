@@ -1,6 +1,10 @@
 function [nodeBels, logZ, edgeBels] = mrfInferNodes(mrf, varargin)
-
-
+%% Return all node beliefs (single marginals)
+% 
+% mrf is a struct as created by mrfCreate
+%
+% Optional named args are the same as for dgmInferNodes
+%%
 [clamped, softEv, localEv] = process_options(varargin, ...
     'clamped', [], ... % nodes only
     'softev' , [], ...

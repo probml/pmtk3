@@ -80,7 +80,7 @@ if isempty(localCPDpointers)
         localCPDpointers = 1:nnodes;
     end
 end
-%% 
+%% convert any numeric matrices to tabular factors
 if ~isempty(nodePots);
     nodeFactors = nodePots(nodePotPointers);
     for f=1:numel(nodeFactors)
@@ -90,7 +90,6 @@ if ~isempty(nodePots);
     end
 end
 nstates = cellfun(@(f)f.sizes(end), nodeFactors); 
-%% 
 if ~isempty(edgePots)
     E = find(tril(G));
     sz = size(G);
@@ -104,6 +103,7 @@ if ~isempty(edgePots)
     end
 end
 edgeFactors = removeEmpty(edgeFactors);
+%% save edge information
 nEdgeFacs   = numel(edgeFactors); 
 edges       = cell(nEdgeFacs, 1); 
 edgeLookup  = false(nnodes, nEdgeFacs);
@@ -112,7 +112,7 @@ for i=1:numel(edgeFactors)
    edges{i} = dom; 
    edgeLookup(dom, i) = true; 
 end
-%% Combine node and edge factors
+%% combine node and edge factors
 if isempty(edgeFactors)
    factorGraph = factorGraphCreate(nodeFactors, G);  
 else
@@ -123,9 +123,6 @@ else
     end
     factorGraph = factorGraphCreate(factors, nstates);  
 end
-%%
-
-
 %% package
 mrf = structure(G, factorGraph, localCPDs, localCPDpointers, ...
     localCPDpointers, infEngine, nnodes, edges, nstates); 
