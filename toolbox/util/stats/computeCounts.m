@@ -1,17 +1,15 @@
 function count = computeCounts(X, sz)
 % Count the number of times each combination of discrete assignments occurs
-% count = compute_counts(X, sz)
-%
-% data(n,i) is the value of variable i in case t
+% data is ncases-by-nvars
 % sz(i) : values for variable i are assumed to be in [1:sz(i)]
 %
 % Example: to compute a 2x2 contingency table on binary data
 % use C = computeCounts([X(:) Y(:)]+1, [2 2]);
-
+%%
 assert(length(sz) == size(X, 2));
 P = prod(sz);
-indices = subv2ind(sz, X); % each row of data' is a case 
-count = hist(indices, 1:P);
+indices = subv2ind(sz, X);
+count = histc(indices, 1:P);
 count = reshapePMTK(count, sz);
 
 % test on contingency table
