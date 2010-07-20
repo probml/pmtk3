@@ -58,9 +58,9 @@ for i=1:length(pred)
         cliqueTree(pred(i), i) = 1;
     end
 end
-postOrderParents = cell(1, length(postOrder));
-for i = postOrder
-    postOrderParents{i} = parents(cliqueTree, i);
+postOrderParents = zeros(1, length(postOrder));
+for i = postOrder(1:end-1)
+    postOrderParents(i) = parents(cliqueTree, i); % always a single parent
 end
 preOrderChildren = cell(1, length(preOrder));
 for i = preOrder
