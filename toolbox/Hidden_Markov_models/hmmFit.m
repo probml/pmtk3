@@ -2,8 +2,8 @@ function [model, loglikHist] = hmmFit(data, nstates, type, varargin)
 %% Fit a hidden markov model (by default, we use  EM)
 %
 %% Inputs
-% data         - a cell array of observations; each observation is
-%                d-by-seqLength, (where d is always 1 if type = 'discrete')
+% data         - a cell array of observations; each observation j is
+%                d-by-seqLength(j), (where d is always 1 if type = 'discrete')
 %
 % nstates      - the number of hidden states
 %

@@ -24,7 +24,7 @@ for k = 1:numel(is)
     sepsets{j, i} = sepsets{i, j};
 end
 %% collect messages
-postOrder(end) = []; % remove root
+postOrder(end) = []; % remove root as it has no one to send to in this phase
 Z = zeros(numel(postOrder), 1);
 i = 1;
 for c = postOrder
@@ -36,7 +36,6 @@ for c = postOrder
     messages{p, c} = message;
 end
 %% distribute messages
-
 for p = preOrder
     for c = preOrderChildren{p}
         childClq        = tabularFactorDivide(cliques{c}, messages{p, c});

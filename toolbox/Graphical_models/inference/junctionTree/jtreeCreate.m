@@ -51,6 +51,7 @@ root                        = nvars; % last one
 rootCliques                 = find(cliqueLookup(root, :));
 rootClqNdx                  = rootCliques(minidx(initClqSizes(rootCliques)));
 [preOrder, postOrder, pred] = dfsearch(cliqueTreeUndir, rootClqNdx, false);
+
 % Make a directed version of cliqueTreeUndir
 cliqueTree = zeros(ncliques, ncliques);
 for i=1:length(pred)
@@ -59,8 +60,8 @@ for i=1:length(pred)
     end
 end
 postOrderParents = zeros(1, length(postOrder));
-for i = postOrder(1:end-1)
-    postOrderParents(i) = parents(cliqueTree, i); % always a single parent
+for i = postOrder(1:end-1) % always a single parent since it's a tree
+    postOrderParents(i) = parents(cliqueTree, i); 
 end
 preOrderChildren = cell(1, length(preOrder));
 for i = preOrder
