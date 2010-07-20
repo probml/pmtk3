@@ -55,7 +55,7 @@ else % handle parameter tying
     for i = 1:numel(CPDs)
         CPD = CPDs{i}; 
         eclass = eqc{i};
-        if any(clamped(eclass));  % if its clamped, we assume it's tabular
+        if any(clamped(eclass));  
             val = clamped(eclass(1)); 
             CPD = cpdClamp(CPD, val); 
         else
@@ -81,10 +81,9 @@ if ~isempty(localEv)
     localPointers = dgm.localCPDpointers; 
     for i=1:numel(localCPDs)
        if isempty(lCPD), continue; end
-       if clamped(localPointers(i)); continue; end
-       lCPD = localCPDs{i}; 
-       
        eclass = findEquivClass(localPointers, i); 
+       if clamped(eclass(1)); continue; end
+       lCPD = localCPDs{i}; 
        N = nobs*numel(eclass);
        Y = reshape(localEv(:, :, eclass), [N, d]); 
        missing = any(isnan(Y), 2);
