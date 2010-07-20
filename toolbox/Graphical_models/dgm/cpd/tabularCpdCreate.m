@@ -17,4 +17,5 @@ if ischar(prior)
 end
 cpd = structure(T, prior, sizes, nstates);
 cpd.cpdType = 'tabular';
+cpd.fitFn = @tabularCpdFit; % don't curry cpd as its state can change after creation
 end

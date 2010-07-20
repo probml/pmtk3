@@ -11,6 +11,11 @@ function model = dgmCreate(G, CPDs, varargin)
 %           localCPDs below. You can also pass in a cell array of numeric
 %           CPTs and these will be automatically converted to tabularCpds. 
 %
+%           Alternatively, set CPDs to {}, and specify 'nstates' to
+%           automatically create tabularCpds with random parameters.
+%           nstates(j) is the number of states that node j can take on. 
+%           Parameter tying is not supported with this option. 
+%
 %% Optional named inputs
 %
 % 'infEngine'        - an inference engine, one of the following: 
@@ -50,15 +55,20 @@ function model = dgmCreate(G, CPDs, varargin)
 % model              - a struct which can be passed to e.g dgmInferNodes or
 %                      dgmInferQuery
 %%
-[infEngine, localCPDs, CPDpointers, localCPDpointers, precomputeJtree] =...
+[infEngine, localCPDs, CPDpointers, ...
+    localCPDpointers, precomputeJtree, initNstates] =...
     process_options(varargin   , ...
     'infEngine'       , 'jtree', ...
     'localCPDs'       , {}     , ...
     'CPDpointers'     , []     , ...
     'localCPDpointers', []     , ...
-    'precomputeJtree' , true   );
+    'precomputeJtree' , true   , ...
+    'nstates'         , []);
 %% 
 assert(isTopoOrdered(G)); % if j < k, node j must not be a child of node k
+if isempty(CPDs) && ~isempty(initNstates)
+   CPDs = mkRndTabularCpds(G, initNstates);  
+end
 %% CPD pointers
 CPDs = cellwrap(CPDs);
 nnodes = size(G, 1);
