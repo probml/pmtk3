@@ -26,11 +26,11 @@ function dgm = dgmFitFullyObs(dgm, data, varargin)
 CPDs = dgm.CPDs;
 pointers = dgm.CPDpointers;
 nnodes = dgm.nnodes;
-
+G = dgm.G; 
 if isequal(pointers, 1:numel(CPDs))
     
     for i=1:nnodes
-       dom = [parents(i), i];
+       dom = [parents(G, i), i];
        CPD = CPDs{i};
        CPD = CPD.fitFn(CPD, data(:, dom)); 
        CPDs{i} = CPD; 
