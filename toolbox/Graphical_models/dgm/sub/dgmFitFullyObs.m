@@ -39,8 +39,8 @@ if isequal(pointers, 1:numel(CPDs))
     
     for i=1:nnodes
         CPD = CPDs{i};
-        if clamped(i); % if its clamped, we assume its tabular
-            CPD = tabularCpdClamp(CPD, clamped(i)); 
+        if clamped(i); 
+            CPD = cpdClamp(CPD, clamped(i)); 
         else
             dom = [parents(G, i), i];
             CPD = CPD.fitFn(CPD, data(:, dom));
@@ -57,7 +57,7 @@ else % handle parameter tying
         eclass = eqc{i};
         if any(clamped(eclass));  % if its clamped, we assume it's tabular
             val = clamped(eclass(1)); 
-            CPD = tabularCpdClamp(CPD, val); 
+            CPD = cpdClamp(CPD, val); 
         else
             domSz  = numel(parents(G, eclass(1))) + 1;
             X      = zeros(nobs*numel(eclass), domSz);
