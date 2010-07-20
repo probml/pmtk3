@@ -10,6 +10,10 @@ function dgm = dgmFitFullyObs(dgm, data, varargin)
 %
 %% Optional named arguments
 %
+% 'clamped' - If clamped(j), node j is not updated but is clamped to the
+%             value clamped(j). 
+%
+%
 % 'localev' - a matrix of (usually continuous observations) corresponding
 %             to the localCPDs, (see dgmCreate for details).
 %             localev is of size nobs-d-by-nnodes. If some nodes do not
@@ -19,17 +23,22 @@ function dgm = dgmFitFullyObs(dgm, data, varargin)
 %                     and the jtree is precomputed and stored with the dgm.
 %
 %%
-[localEv, precomputeJtree] = process_options(varargin, 'localev', [],...
-    'precomputeJtree', true);
+data = full(data); 
+nnodes = dgm.nnodes;
+[clamped, localEv, precomputeJtree] = process_options(varargin, ...
+    'clamped'         , sparsevec([], [], nnodes) , ...
+    'localev'         , [] , ...
+    'precomputeJtree' , true);
 
 %% fit CPDs
-CPDs = dgm.CPDs;
+CPDs = clampCpds(dgm.CPDs, clamped);
 pointers = dgm.CPDpointers;
 nnodes = dgm.nnodes;
 G = dgm.G; 
 if isequal(pointers, 1:numel(CPDs))
     
     for i=1:nnodes
+       if clamped(i); continue; end
        dom = [parents(G, i), i];
        CPD = CPDs{i};
        CPD = CPD.fitFn(CPD, data(:, dom)); 
@@ -41,8 +50,9 @@ else % handle parameter tying
     eqc = computeEquivClasses(pointers);
     nobs = size(data, 1);
     for i = 1:numel(eqc)
-        eclass = eqc{i};
         ndx    = pointers(i);
+        if clamped(ndx); continue; end
+        eclass = eqc{i};
         CPD    = CPDs{ndx};
         domSz  = numel(parents(G, eclass(1))) + 1; 
         X      = zeros(nobs*numel(eclass), domSz);
@@ -63,8 +73,10 @@ if ~isempty(localEv)
     localCPDs = dgm.localCPDs;
     localPointers = dgm.localCPDpointers; 
     for i=1:numel(localCPDs)
-       lCPD = localCPDs{i}; 
        if isempty(lCPD), continue; end
+       if clamped(localPointers(i)); continue; end
+       lCPD = localCPDs{i}; 
+       
        eclass = findEquivClass(localPointers, i); 
        N = nobs*numel(eclass);
        Y = reshape(localEv(:, :, eclass), [N, d]); 
