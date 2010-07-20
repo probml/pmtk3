@@ -31,37 +31,44 @@ nnodes = dgm.nnodes;
     'precomputeJtree' , true);
 
 %% fit CPDs
-CPDs = clampCpds(dgm.CPDs, clamped);
+CPDs = dgm.CPDs;
 pointers = dgm.CPDpointers;
 nnodes = dgm.nnodes;
 G = dgm.G; 
 if isequal(pointers, 1:numel(CPDs))
     
     for i=1:nnodes
-       if clamped(i); continue; end
-       dom = [parents(G, i), i];
-       CPD = CPDs{i};
-       CPD = CPD.fitFn(CPD, data(:, dom)); 
-       CPDs{i} = CPD; 
+        CPD = CPDs{i};
+        if clamped(i); % if its clamped, we assume its tabular
+            CPD = tabularCpdClamp(CPD, clamped(i)); 
+        else
+            dom = [parents(G, i), i];
+            CPD = CPD.fitFn(CPD, data(:, dom));
+        end
+        CPDs{i} = CPD;
     end
     
 else % handle parameter tying
     
     eqc = computeEquivClasses(pointers);
     nobs = size(data, 1);
-    for i = 1:numel(eqc)
-        ndx    = pointers(i);
-        if clamped(ndx); continue; end
+    for i = 1:numel(CPDs)
+        CPD = CPDs{i}; 
         eclass = eqc{i};
-        CPD    = CPDs{ndx};
-        domSz  = numel(parents(G, eclass(1))) + 1; 
-        X      = zeros(nobs*numel(eclass), domSz);
-        for j=1:numel(eclass)
-           k   = eclass(j); 
-           dom = [parents(G, k), k]; 
-           X((j-1)*nobs+1, :) = data(:, dom);  
+        if any(clamped(eclass));  % if its clamped, we assume it's tabular
+            val = clamped(eclass(1)); 
+            CPD = tabularCpdClamp(CPD, val); 
+        else
+            domSz  = numel(parents(G, eclass(1))) + 1;
+            X      = zeros(nobs*numel(eclass), domSz);
+            for j = 1:numel(eclass)
+                k   = eclass(j);
+                dom = [parents(G, k), k];
+                X((j-1)*nobs+1, :) = data(:, dom);
+            end
+            CPD = CPD.fitFn(CPD, X);
         end
-        CPDs{ndx} = CPD.fitFn(CPD, X);
+        CPDs{i} = CPD;
     end
     
 end
