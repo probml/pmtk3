@@ -64,7 +64,8 @@ else % handle parameter tying
             for j = 1:numel(eclass)
                 k   = eclass(j);
                 dom = [parents(G, k), k];
-                X((j-1)*nobs+1, :) = data(:, dom);
+                ndx = (j-1)*nobs+1:(j-1)*nobs+nobs;
+                X(ndx, :) = data(:, dom);
             end
             CPD = CPD.fitFn(CPD, X);
         end
@@ -77,13 +78,13 @@ dgm.CPDs = CPDs;
 %% fit localCPDs
 if ~isempty(localEv)
     [nobs, d, nnodes] = size(localEv); %#ok
-    localCPDs = dgm.localCPDs;
+    localCPDs = cellwrap(dgm.localCPDs);
     localPointers = dgm.localCPDpointers; 
     for i=1:numel(localCPDs)
+       lCPD = localCPDs{i}; 
        if isempty(lCPD), continue; end
        eclass = findEquivClass(localPointers, i); 
        if clamped(eclass(1)); continue; end
-       lCPD = localCPDs{i}; 
        N = nobs*numel(eclass);
        Y = reshape(localEv(:, :, eclass), [N, d]); 
        missing = any(isnan(Y), 2);
@@ -91,7 +92,7 @@ if ~isempty(localEv)
        if isempty(Y); continue; end
        Z = reshape(data(:, pointers(eclass)), [N, 1]); 
        Z(missing) = []; 
-       lCPD{i} = lCPD.fitFn(lCPD, Z, Y);
+       lCPD = lCPD.fitFn(lCPD, Z, Y);
        localCPDs{i} = lCPD; 
     end
 end
