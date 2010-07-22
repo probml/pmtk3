@@ -1,10 +1,10 @@
 %% Fit an HMM and an equivalent DGM and make sure the results agree
 setSeed(0); 
 %% Sample data
-nstates   = 14;
+nstates   = 40;
 d         = 12; 
-T         = 20; 
-nsamples  = 13; 
+T         = 100; 
+nsamples  = 25; 
 hmmSource = mkRndGaussHmm(nstates, d); 
 [Y, Z] = hmmSample(hmmSource, T, nsamples); 
 %% Create an hmm-like random dgm

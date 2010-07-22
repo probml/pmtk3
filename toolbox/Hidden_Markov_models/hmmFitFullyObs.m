@@ -40,15 +40,20 @@ switch lower(type)
             emissionPrior.k     = 0.01;
             emissionPrior.dof   = d + 1; 
         end
-        mu = zeros(d, nstatesZ);
-        Sigma = zeros(d, d, nstatesZ); 
-        for s=1:nstatesZ
-           m              = gaussFit(Ystacked(Zstacked == s, :), emissionPrior); 
-           mu(:, s)       = m.mu(:);  
-           Sigma(:, :, s) = m.Sigma; 
-        end
-        model.emission = condGaussCpdCreate(mu, Sigma); 
-        model.d = d; 
+        cpd.d = d;
+        cpd.prior = emissionPrior; 
+        cpd.nstates = nstatesZ;
+        model.emission = condGaussCpdFit(cpd, Zstacked, Ystacked); 
+        
+%         mu = zeros(d, nstatesZ);
+%         Sigma = zeros(d, d, nstatesZ); 
+%         for s=1:nstatesZ
+%            m              = gaussFit(Ystacked(Zstacked == s, :), emissionPrior); 
+%            mu(:, s)       = m.mu(:);  
+%            Sigma(:, :, s) = m.Sigma; 
+%         end
+%         model.emission = condGaussCpdCreate(mu, Sigma); 
+%         model.d = d; 
         
     case 'discrete'
         
