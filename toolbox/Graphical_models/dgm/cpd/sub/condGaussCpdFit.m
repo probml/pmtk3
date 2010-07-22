@@ -16,7 +16,7 @@ prior = cpd.prior;
 nstates = cpd.nstates; 
 if ~isstruct(prior) || isempty(prior) % do mle
     cpd.mu    = partitionedMean(Y, Z, nstates)';
-    cpd.Sigma = partitionedCov(Y, Z,  nstates)'; 
+    cpd.Sigma = partitionedCov(Y, Z,  nstates); 
 else  % map
     mu = zeros(d, nstates);
     Sigma = zeros(d, d, nstates);

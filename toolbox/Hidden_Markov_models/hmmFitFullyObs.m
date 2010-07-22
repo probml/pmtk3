@@ -18,14 +18,14 @@ Ystacked = cell2mat(Y')'; % sum(seqLength)-by-d
 nstatesZ = max(Zstacked); 
 
 [piPrior, transPrior, emissionPrior] = process_options(varargin , ...
-    'piPrior'                   , ones(1, nstatesZ)           , ...
-    'transPrior'                , ones(nstatesZ, nstatesZ)    , ...
+    'piPrior'                   , 2*ones(1, nstatesZ)           , ...
+    'transPrior'                , 2*ones(nstatesZ, nstatesZ)    , ...
     'emissionPrior'             , []);
 
 if diff(size(transPrior))
     transPrior = repmat(rowvec(transPrior), nstatesZ, 1);
 end
-A        = accumarray([Zstacked(1:end-1), Zstacked(2:end)], 1); 
+A        = countTransitions(Z, nstatesZ); 
 model.A  = normalize(A + transPrior-1, 2); 
 seqidx   = cumsum([1, cellfun(@(seq)size(seq, 2), Z')]);
 pi       = histc(Zstacked(seqidx(1:end-1)), 1:nstatesZ)';

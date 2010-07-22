@@ -47,7 +47,7 @@ end
 function dgm = init(dgm, data, restartNum)
 %% Initialize
 
-% Use current params for the first runs
+% Use current params for the first run
 if restartNum > 1
     
 end
@@ -100,8 +100,11 @@ if nLocalCpds > 0
         % combine data cases and weights from the same equivalence classes
         N           = ncases*numel(eclass); 
         localData   = reshape(localEv(:, :, eclass), N, []); 
+        missing     = any(isnan(localData), 2);
+        localData(missing, :) = []; 
         wcell       = colvec(localWeights(:, eclass));
         weights     = vertcat(wcell{:}); % weights is now N-by-nstates
+        weights(missing, :) = []; 
         if ~isempty(weights); % if parent is not clamped
             emission{i} = localCPD.essFn(localCPD, localData, weights); 
         end

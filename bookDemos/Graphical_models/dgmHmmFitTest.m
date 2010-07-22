@@ -1,30 +1,30 @@
 %% Fit an HMM and an equivalent DGM and make sure the results agree
 setSeed(0); 
 %% Sample data
-nstates   = 2;
-d         = 2; 
+nstates   = 14;
+d         = 12; 
 T         = 20; 
-nsamples  = 3; 
+nsamples  = 13; 
 hmmSource = mkRndGaussHmm(nstates, d); 
 [Y, Z] = hmmSample(hmmSource, T, nsamples); 
 %% Create an hmm-like random dgm
 dgmModel = hmm2Dgm(mkRndGaussHmm(nstates, d), T);  
 %% First the fully observed case
 
-hmmModel = hmmFitFullyObs(Z, Y, 'gauss'); 
+hmmModel = hmmFitFullyObs(Z, Y, 'gauss', 'emissionPrior', 'none'); 
 
 localev  = hmmObs2LocalEv(Y); 
 data     = cell2mat(Z); 
-%dgmModel.CPDs{1}.prior = hmmModel.piPrior(:); 
-%dgmModel.CPDs{2}.prior = hmmModel.transPrior ;
-dgmModel.localCPD.prior = hmmModel.emissionPrior; 
+dgmModel.CPDs{1}.prior = hmmModel.piPrior(:); 
+dgmModel.CPDs{2}.prior = hmmModel.transPrior ;
+dgmModel.localCPDs{1}.prior = hmmModel.emissionPrior; 
 dgmModel = dgmFitFullyObs(dgmModel, data, 'localev', localev); 
 
 
 pi    = hmmModel.pi;
 A     = hmmModel.A; 
 Ehmm  = hmmModel.emission;
-Edgm  = dgmModel.localCPDs; % only one since tied
+Edgm  = dgmModel.localCPDs{1}; 
 piDgm = dgmModel.CPDs{1}.T'; 
 Adgm  = dgmModel.CPDs{2}.T;
 assert(approxeq(pi, piDgm)); 
