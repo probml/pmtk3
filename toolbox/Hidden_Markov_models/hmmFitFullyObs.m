@@ -45,16 +45,6 @@ switch lower(type)
         cpd.nstates = nstatesZ;
         model.emission = condGaussCpdFit(cpd, Zstacked, Ystacked); 
         
-%         mu = zeros(d, nstatesZ);
-%         Sigma = zeros(d, d, nstatesZ); 
-%         for s=1:nstatesZ
-%            m              = gaussFit(Ystacked(Zstacked == s, :), emissionPrior); 
-%            mu(:, s)       = m.mu(:);  
-%            Sigma(:, :, s) = m.Sigma; 
-%         end
-%         model.emission = condGaussCpdCreate(mu, Sigma); 
-%         model.d = d; 
-        
     case 'discrete'
         
         nstatesY = max(Ystacked); 

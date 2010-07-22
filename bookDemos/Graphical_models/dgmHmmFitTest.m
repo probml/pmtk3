@@ -1,10 +1,10 @@
 %% Fit an HMM and an equivalent DGM and make sure the results agree
-setSeed(0); 
+%setSeed(0); 
 %% Sample data
-nstates   = 40;
-d         = 12; 
-T         = 100; 
-nsamples  = 25; 
+nstates   = 20;
+d         = 17; 
+T         = 80; 
+nsamples  = 44; 
 hmmSource = mkRndGaussHmm(nstates, d); 
 [Y, Z] = hmmSample(hmmSource, T, nsamples); 
 %% Create an hmm-like random dgm
@@ -32,3 +32,5 @@ assert(approxeq(A, Adgm));
 
 assert(approxeq(Ehmm.mu, Edgm.mu)); 
 assert(approxeq(Ehmm.Sigma, Edgm.Sigma)); 
+
+%%

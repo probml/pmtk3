@@ -53,9 +53,6 @@ else % handle parameter tying
     
     eqc = computeEquivClasses(pointers);
     nobs = size(data, 1);
-   
-    
-    
     for i = 1:numel(CPDs)
         CPD = CPDs{i}; 
         eclass = eqc{i};
@@ -88,12 +85,9 @@ if ~isempty(localEv)
        lCPD = localCPDs{i}; 
        if isempty(lCPD), continue; end
        eclass = findEquivClass(localPointers, i); 
-       % eclass{i} are all of the nodes whose localCPD children are
-       % represented by localCPDs{i}.
        if clamped(eclass(1)); continue; end
        N = nobs*numel(eclass);
-       %Y = reshape(localEv(:, :, eclass), [N, d]); 
-       Y = cell2mat(localEv2HmmObs(localEv(:, :, eclass))')';
+       Y = cell2mat(localEv2HmmObs(localEv(:, :, eclass))')'; % Y is now Nxd
        missing = any(isnan(Y), 2);
        Y(missing, :) = []; 
        if isempty(Y); continue; end % unobserved leaf
