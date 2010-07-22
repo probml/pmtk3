@@ -70,4 +70,7 @@ switch lower(type)
 end
 
 model.type = type; 
+model.piPrior = piPrior; 
+model.transPrior = transPrior;
+model.emissionPrior = emissionPrior; 
 end

@@ -7,7 +7,7 @@ function eqc = computeEquivClasses(pointers)
 %
 % ans = {[1], [2], [3:10]}
 %%
-classes = uniquePMTK(pointers);
+classes = 1:max(pointers); 
 nclasses = numel(classes); 
 eqc = cell(nclasses, 1); 
 for i=1:nclasses

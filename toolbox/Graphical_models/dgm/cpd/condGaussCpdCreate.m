@@ -25,7 +25,24 @@ if size(mu, 2) ~= nstates && size(mu, 1) == nstates
     mu = mu';
 end
 CPD = structure(mu, Sigma, nstates, d, prior); 
-CPD.cpdType = 'condGauss'; 
-CPD.fitFn = @condGaussCpdFit; 
+CPD.cpdType    = 'condGauss'; 
+CPD.fitFn      = @condGaussCpdFit; 
+CPD.fitFnEss   = @condGaussCpdFitEss;
+CPD.essFn      = @condGaussCpdComputeEss;
+CPD.logPriorFn = @logPriorFn;
 
+
+end
+
+
+function logp = logPriorFn(cpd)
+%% calculate the logprior
+logp = 0;
+nstates = cpd.nstates; 
+prior = cpd.prior; 
+mu = cpd.mu;
+Sigma = cpd.Sigma; 
+for k = 1:nstates
+    logp = logp + gaussInvWishartLogprob(prior, mu(:, k), Sigma(:, :, k));
+end
 end

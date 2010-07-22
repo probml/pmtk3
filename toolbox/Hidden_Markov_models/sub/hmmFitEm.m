@@ -97,39 +97,9 @@ if isempty(model.emission) || isempty(model.pi) || isempty(model.A)
 end
 end
 
-function model = rndInitPiA(model)
-%% Randomly initialize pi and A
-nstates  = model.nstates; 
-model.pi = normalize(rand(1, nstates) + model.piPrior -1);
-model.A  = normalize(rand(nstates) + model.transPrior -1, 2);
-end
-
-function model = initWithMixModel(model, data, fitFn, inferFn)
-%% Initialze using a mixture model, ignoring temporal structure
-stackedData = cell2mat(data')';
-nstates     = model.nstates;
-mixModel    = fitFn(stackedData, nstates, 'verbose', false);
-if isempty(model.emission)
-    model.emission = mixModel2Cpd(mixModel);
-end
-if isempty(model.A) || isempty(model.pi)
-    z = colvec(inferFn(mixModel, stackedData));
-    if isempty(model.A)
-        A       = accumarray([z(1:end-1), z(2:end)], 1); % count transitions
-        model.A = normalize(A + ones(size(A)), 2);       % regularize
-    end
-    if isempty(model.pi)
-        % seqidx(1:end-1) are the start indices of the sequences
-        seqidx   = cumsum([1, cellfun(@(seq)size(seq, 2), data')]);
-        pi       = histc(z(seqidx(1:end-1)), 1:nstates);
-        model.pi = normalize(pi + ones(size(pi))); % regularize
-    end
-end
-end
-
 %% ESTEP
 function [ess, loglik] = estep(model, data, emissionEstep)
-%% Compute the expected sufficient statistics.
+%% Compute the expected sufficient statistics
 stackedData = cell2mat(data')';
 seqidx      = cumsum([1, cellfun(@(seq)size(seq, 2), data')]);
 seqidx      = seqidx(1:end-1);
@@ -163,27 +133,13 @@ end
 
 function [ess, logprior] = estepGaussEmission(model, ess, stackedData)
 %% Perform the Gaussian emission component of the estep.
-d = model.d;
-nstates = model.nstates;
-weights = ess.weights;
-wsum    = sum(weights, 1);
-xbar    = bsxfun(@rdivide, stackedData'*weights, wsum); %d-by-nstates
-XX      = zeros(d, d, nstates);
-for j=1:nstates
-    Xc          = bsxfun(@minus, stackedData, xbar(:, j)');
-    XX(:, :, j) = bsxfun(@times, Xc, weights(:, j))'*Xc;
-end
-ess.xbar = xbar;
-ess.XX   = XX;
-ess.wsum = wsum;
-logprior = 0;
-E        = model.emission;
-mu       = E.mu;
-Sigma    = E.Sigma;
-prior    = model.emissionPrior;
-for k = 1:nstates
-    logprior = logprior + gaussInvWishartLogprob(prior, mu(:, k), Sigma(:, :, k));
-end
+emission       = model.emission; 
+emissionEss    = condGaussCpdComputeEss(emission, stackedData, ess.weights);
+ess.xbar       = emissionEss.xbar;
+ess.XX         = emissionEss.XX;
+ess.wsum       = emissionEss.wsum;
+emission.prior = model.emissionPrior; 
+logprior       = emission.logPriorFn(emission);
 end
 
 function [ess, logprior] = estepDiscreteEmission(model, ess, stackedData)
@@ -210,34 +166,14 @@ ess.wsum       = sum(weights, 1)';
 end
 
 %% MSTEP
+
 function model = mstepGauss(model, ess)
 %% Maximize
-model.pi = normalize(ess.startCounts + model.piPrior -1);
-model.A  = normalize(ess.transCounts + model.transPrior -1, 2);
-xbar     = ess.xbar;
-XX       = ess.XX;
-nstates  = model.nstates;
-prior    = model.emissionPrior;
-kappa0   = prior.k;
-m0       = prior.mu(:);
-nu0      = prior.dof;
-S0       = prior.Sigma;
-wsum     = ess.wsum;
-d        = model.d;
-mu       = zeros(d, nstates);
-Sigma    = zeros(d, d, nstates);
-for k = 1:nstates
-    xbark          = xbar(:, k);
-    XXk            = XX(:, :, k);
-    wk             = wsum(k);
-    mn             = (wk*xbark + kappa0*m0)./(wk + kappa0);
-    a              = (kappa0*wk)./(kappa0 + wk);
-    b              = nu0 + wk + d + 2;
-    Sprior         = (xbark-m0)*(xbark-m0)';
-    Sigma(:, :, k) = (S0 + XXk + a*Sprior)./b;
-    mu(:, k)       = mn;
-end
-model.emission = condGaussCpdCreate(mu, Sigma);
+model.pi       = normalize(ess.startCounts + model.piPrior -1);
+model.A        = normalize(ess.transCounts + model.transPrior -1, 2);
+emission       = model.emission;
+emission.prior = model.emissionPrior; 
+model.emission = condGaussCpdFitEss(emission, ess); 
 end
 
 function model = mstepDiscrete(model, ess)
@@ -247,4 +183,36 @@ model.A        = normalize(ess.transCounts + model.transPrior -1, 2);
 Epc            = model.emissionPrior - 1;
 denom          = ess.wsum + sum(Epc, 2);
 model.emission = tabularCpdCreate(bsxfun(@rdivide, ess.dataCounts + Epc, denom));
+end
+
+%% Init Helpers
+
+function model = rndInitPiA(model)
+%% Randomly initialize pi and A
+nstates  = model.nstates; 
+model.pi = normalize(rand(1, nstates) + model.piPrior -1);
+model.A  = normalize(rand(nstates) + model.transPrior -1, 2);
+end
+
+function model = initWithMixModel(model, data, fitFn, inferFn)
+%% Initialze using a mixture model, ignoring temporal structure
+stackedData = cell2mat(data')';
+nstates     = model.nstates;
+mixModel    = fitFn(stackedData, nstates, 'verbose', false);
+if isempty(model.emission)
+    model.emission = mixModel2Cpd(mixModel);
+end
+if isempty(model.A) || isempty(model.pi)
+    z = colvec(inferFn(mixModel, stackedData));
+    if isempty(model.A)
+        A       = accumarray([z(1:end-1), z(2:end)], 1); % count transitions
+        model.A = normalize(A + ones(size(A)), 2);       % regularize
+    end
+    if isempty(model.pi)
+        % seqidx(1:end-1) are the start indices of the sequences
+        seqidx   = cumsum([1, cellfun(@(seq)size(seq, 2), data')]);
+        pi       = histc(z(seqidx(1:end-1)), 1:nstates);
+        model.pi = normalize(pi + ones(size(pi))); % regularize
+    end
+end
 end

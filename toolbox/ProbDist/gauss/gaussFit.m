@@ -6,7 +6,7 @@ function model = gaussFit(X, prior)
 %
 %
 %%
-if nargin < 2 || isempty(prior) % mle
+if nargin < 2 || isempty(prior) || strcmpi(prior, 'none') % mle
     mu = mean(X);
     Sigma = cov(X);
 else % map

@@ -36,11 +36,6 @@ function model = dgmCreate(G, CPDs, varargin)
 %                      j does not have a localCPD then simply leave that
 %                      entry in the cell array empty. 
 %
-% 'CPDpointers'      - pointers for parameter tying. CPDs{CPDpointers(i)} 
-%                      is used as the CPD for node i. 
-%
-% 'localCPDpointers' - similar to CPDpointers but for the localCPDs above. 
-%
 % 'precomputeJtree'  - if infEngine is 'jtree', the jtree is precomputed
 %                      for use during inference. You can turn this off by
 %                      setting 'precomputeJtree' to false. You may want to
@@ -48,6 +43,21 @@ function model = dgmCreate(G, CPDs, varargin)
 %                      evidence will be signficantly better, or if you want
 %                      to perform graph surgery once the evidence is known
 %                      removing conditionally independent nodes. 
+%
+%% Parameter tying
+%
+% 'CPDpointers'      - pointers for parameter tying. CPDs{CPDpointers(i)} 
+%                      stores the parameters for node i. The length of
+%                      CPDpointers must be equal to the number of nodes. 
+%
+% 'localCPDpointers' - similar to CPDpointers but for the localCPDs above,
+%                     i.e. the paramters of the local child of node j are 
+%                     stored in localCPDs{localCPDpointers(j)}.
+%
+%                      Set localCPDpointers(j) = 0 if node j does not have
+%                      a localCPD. The length of localCPDpointers must be
+%                      equal to the number of nodes. 
+%
 %
 %
 %% Output

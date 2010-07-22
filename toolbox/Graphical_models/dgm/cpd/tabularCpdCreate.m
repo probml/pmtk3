@@ -17,5 +17,12 @@ if ischar(prior)
 end
 cpd = structure(T, prior, sizes, nstates);
 cpd.cpdType = 'tabular';
-cpd.fitFn = @tabularCpdFit; % don't curry cpd as its state can change after creation
+%% 
+cpd.fitFn      = @(cpd, data)tabularCpdCreate(...
+    mkStochastic(computeCounts(data, cpd.sizes) + cpd.prior), 'prior', cpd.prior);
+
+cpd.fitFnEss   = @(cpd, counts)tabularCpdCreate(mkStochastic(...
+    reshape(counts, size(cpd.T)) + cpd.prior), 'prior', cpd.prior);   
+
+cpd.logPriorFn = @(cpd)log(cpd.T(:) + eps)'*(cpd.prior(:)-1);
 end

@@ -11,7 +11,8 @@ function dgm = dgmFitFullyObs(dgm, data, varargin)
 %% Optional named arguments
 %
 % 'clamped' - If clamped(j), node j is not updated but is clamped to the
-%             value clamped(j). 
+%             value clamped(j). If node j has a localCPD, it's not updated
+%             either. 
 %
 %
 % 'localev' - a matrix of (usually continuous observations) corresponding
@@ -80,16 +81,21 @@ if ~isempty(localEv)
     [nobs, d, nnodes] = size(localEv); %#ok
     localCPDs = cellwrap(dgm.localCPDs);
     localPointers = dgm.localCPDpointers; 
+    % localCPDs{localPointers(i)} holds the parameters for the local child 
+    % of the ith parent. The ith parent's parameters, however, are stored in
+    % CPDs{pointers(i)}. 
     for i=1:numel(localCPDs)
        lCPD = localCPDs{i}; 
        if isempty(lCPD), continue; end
        eclass = findEquivClass(localPointers, i); 
+       % eclass{i} are all of the nodes whose localCPD children are
+       % represented by localCPDs{i}.
        if clamped(eclass(1)); continue; end
        N = nobs*numel(eclass);
        Y = reshape(localEv(:, :, eclass), [N, d]); 
        missing = any(isnan(Y), 2);
        Y(missing, :) = []; 
-       if isempty(Y); continue; end
+       if isempty(Y); continue; end % unobserved leaf
        Z = reshape(data(:, pointers(eclass)), [N, 1]); 
        Z(missing) = []; 
        lCPD = lCPD.fitFn(lCPD, Z, Y);

@@ -5,14 +5,7 @@ setSeed(0);
 nstates = 250;
 d = 10;
 T = 100;
-A = normalize(rand(nstates), 2);
-pi = normalize(rand(nstates, 1));
-Sigma = zeros(d, d, nstates);
-for k=1:nstates
-    Sigma(:, :, k) = randpd(d) + 2*eye(d);
-end
-emission = condGaussCpdCreate(randn(d, nstates), Sigma);
-model = hmmCreate('gauss', pi, A, emission, nstates);
+model = mkRndGaussHmm(nstates, d); 
 %% Sample data
 X = hmmSample(model, T, 1);
 %% infer single marginals using fwdback
