@@ -46,13 +46,13 @@ G         = mkGrid(M, N);
 model     = mrfCreate(G, 'nodePots', nodePot, 'edgePots', edgePot,...
     'localCPDs', localCPD);
 
-map = mrfMap(model, 'localev', y(:)); 
+map = mrfMap(model, 'localev', rowvec(y)); 
 
 
 figure;
 imagesc(reshape(map, M, N));colormap('gray'); title('MAP estimate');
 
-nodeBels  = mrfInferNodes(model, 'localev', y(:));
+nodeBels  = mrfInferNodes(model, 'localev', rowvec(y));
 maxMarginals = maxidx(tfMarg2Mat(nodeBels), [], 1) - 1;
 figure;
 imagesc(reshape(maxMarginals, M, N));

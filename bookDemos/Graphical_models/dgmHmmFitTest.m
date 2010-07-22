@@ -2,9 +2,9 @@
 setSeed(0); 
 %% sample data
 nstates   = 5;
-d         = 12; 
-T         = 80; 
-nsamples  = 10; 
+d         = 2; 
+T         = 10; 
+nsamples  = 2; 
 hmmSource = mkRndGaussHmm(nstates, d); 
 [Y, Z] = hmmSample(hmmSource, T, nsamples); 
 %% create an hmm-like random dgm
@@ -34,7 +34,20 @@ assert(approxeq(A, Adgm));
 assert(approxeq(Ehmm.mu, Edgm.mu)); 
 assert(approxeq(Ehmm.Sigma, Edgm.Sigma)); 
 %% now try the unobserved case
-hmmModel = hmmFitEm(Y, nstates, 'gauss');
-dgmModel = hmm2Dgm(mkRndGaussHmm(nstates, d), T);  
+pi0 = normalize(rand(1, nstates)); 
+trans0 = normalize(rand(nstates, nstates), 2); 
+Sigma0 = zeros(d, d, nstates); 
+for i=1:nstates
+    Sigma0(:, :, i) = randpd(d) + 2*eye(d); 
+end
+mu0 = randn(d, nstates); 
+emission0 = condGaussCpdCreate(mu0, Sigma0); 
+
+hmmModel = hmmFitEm(Y, nstates, 'gauss', ...
+    'pi0', pi0, 'trans0', trans0, 'emission0', emission0, 'maxIter', 2);
+dgmModel.localCPDs = {emission0};
+dgmModel.CPDs{1} = tabularCpdCreate(pi0(:)); 
+dgmModel.CPDs{2} = tabularCpdCreate(trans0); 
+
 dgmModel = dgmFitEm(dgmModel, [], 'localev', localev, 'verbose', true);
 

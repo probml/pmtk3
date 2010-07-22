@@ -2,7 +2,7 @@ function [path, j1, j2] = hmmViterbiC(logpi, logA, logB)
 % Find the most-probable (Viterbi) path through the HMM state trellis. 
 % logpi(j) = log of initial state distribution
 % logA(i,j) = log of transition matrix
-% logB(k,t) = log of local evidence
+% logB(k,t) = log of soft evidence
 % * we use log of inputs for compatability with .mex version *
 % * called hmmViterbiC since Matlab has an hmmViterbi function already *
 %%

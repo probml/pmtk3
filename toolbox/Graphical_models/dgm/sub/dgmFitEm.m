@@ -71,7 +71,7 @@ if restartNum > 1
         CPDs{i} = CPD;
     end
     dgm.CPDs = CPDs; 
-    % randomly init localCPDS too
+    % randomly init localCPDs too
 end
 
 
@@ -98,10 +98,24 @@ for i = 1:ncases
         dataCase    = data(i, :);
     end
     if i <= nLocalEvCases
-        localEvCase = localEv(i, :, :);
+        localEvCase = squeeze(localEv(i, :, :));
     end
     [fmarg, llobs, pmarg] ...
         = dgmInferFamily(dgm, 'clamped', dataCase, 'localev', localEvCase);
+    
+    debug = true;
+    if debug
+        hmm.pi = dgm.CPDs{1}.T(:)';
+        hmm.A = dgm.CPDs{2}.T;
+        hmm.emission = dgm.localCPDs{1}; 
+        gamma = hmmInferNodes(hmm, localEvCase); 
+        
+        
+        
+        
+    end
+    
+    
     
     loglik = loglik + llobs;
     for j = 1:nnodes
@@ -128,8 +142,6 @@ if nLocalCpds > 0
         localCPD    = localCPDs{i};
         eclass      = findEquivClass(localCPDpointers, i);
         % combine data cases and weights from the same equivalence classes
-       % N           = ncases*numel(eclass);
-        %localData   = reshape(localEv(:, :, eclass), N, []);
         localData = cell2mat(localEv2HmmObs(localEv(:, :, eclass))')'; % localData is now ncases*numel(eclass)-by-d
         missing     = any(isnan(localData), 2);
         localData(missing, :) = [];

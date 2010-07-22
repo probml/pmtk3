@@ -10,21 +10,13 @@ function B = mkSoftEvidence(localCPD, X)
 %
 % X       -  a dense matrix of size d-by-nnodes, where nnodes is e.g. the
 %            number of nodes 'parameter-tied' to localCPD, or e.g. the
-%            number of time steps in an hmm model, i.e. the sequence
-%            length.
+%            number of time steps in an hmm model, (the sequence
+%            length).
 %
-%  Use NaN's in X for unobserved nodes. The corresponding column of B contain
-%  NaNs.
+%  Use NaN's in X for unobserved nodes. The corresponding column of B 
+% will contain NaNs.
 %%
-if iscell(X)
-    X = X{1};
-end
-if isvector(X), 
-    X = rowvec(X); 
-else
-    d = localCPD.d;
-    X = reshape(X, d, []); 
-end
+assert(size(X, 1) == localCPD.d); 
 [d, seqlen] = size(X); 
 observed    = ~any(isnan(X), 1);
 Xobs        = X(:, observed);
@@ -35,15 +27,13 @@ switch lower(localCPD.cpdType)
         B              = nan(nstates, seqlen);
         B(:, observed) = T(:, Xobs); % must have only one parent
     case 'condgauss'
-        Xobs     = reshape(Xobs, [], localCPD.d); 
         nstates  = localCPD.nstates;
         logB     = nan(nstates, seqlen);
         mu       = localCPD.mu;
         Sigma    = localCPD.Sigma;
         for j=1:nstates
-            logB(j, observed) = rowvec(gaussLogprob(mu(:, j), Sigma(:, :, j), Xobs));
+            logB(j, observed) = rowvec(gaussLogprob(mu(:, j), Sigma(:, :, j), Xobs'));
         end
-        %L = argout(2, @normalizeLogspace, logB)
         B = exp(logB);
     otherwise
         error('%s is not a recognized CPD type', localCPD.cpdType);

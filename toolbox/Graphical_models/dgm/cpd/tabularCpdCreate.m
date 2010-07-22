@@ -25,4 +25,5 @@ cpd.fitFnEss   = @(cpd, counts)tabularCpdCreate(mkStochastic(...
     reshape(counts, size(cpd.T)) + cpd.prior-1), 'prior', cpd.prior);   
 
 cpd.logPriorFn = @(cpd)log(cpd.T(:) + eps)'*(cpd.prior(:)-1);
+cpd.d = 1; 
 end

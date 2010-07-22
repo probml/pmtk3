@@ -11,16 +11,16 @@ transmat = [q p 0;
 	    0 0 1];
 T = 7;
 %obslik = ones(K, T); % non-informative observations
-obslik = repmat([0.5 0.3 0.2]', 1, T); % noisy obs
+softev = repmat([0.5 0.3 0.2]', 1, T); % noisy obs
 nsamples = 1000;
 
 % check that samples converge to true marginals
 model.pi = initDist;
 model.A = transmat;
 
-samples = hmmSamplePost(model, [], nsamples, 'obslik', obslik);
-[gamma, j, j, j] = hmmFwdBack(initDist, transmat, obslik);
-[path, j, j] = hmmViterbiC(log(initDist), log(transmat), log(obslik))
+samples = hmmSamplePost(model, [], nsamples, 'softev', softev);
+[gamma, j, j, j] = hmmFwdBack(initDist, transmat, softev);
+[path, j, j] = hmmViterbiC(log(initDist), log(transmat), log(softev))
 
 for t=1:T
   belApprox(:,t) = normalize(hist(samples(t,:),1:K));
