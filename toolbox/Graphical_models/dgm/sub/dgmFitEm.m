@@ -9,9 +9,11 @@ nnodes = dgm.nnodes;
     'localev'         , [] , ...
     'precomputeJtree' , true);
 
+dgm.CPDs = cellwrap(dgm.CPDs); 
+dgm.localCPDs = cellwrap(dgm.localCPDs); 
 %% clamp unadjustable cpds
 CPDs = dgm.CPDs;
-eqc = computeEquivClasses(dgm.pointers);
+eqc = computeEquivClasses(dgm.CPDpointers);
 for i = 1:numel(CPDs)
     eclass = eqc{i};
     if clamped(eclass(1)); 
@@ -36,7 +38,7 @@ end
 %%
 initFn = @init;
 estepFn = @(dgm, data)estep(dgm, data, clamped, localEv);
-mstepFn = @(dgm, ess)mstep(dgm, ess, clamped);
+mstepFn = @(dgm, ess)mstep(dgm, ess);
 
 [dgm, loglikHist] = emAlgo(dgm, data, initFn, estepFn, mstepFn, EMargs{:});
 end
@@ -64,7 +66,7 @@ ncases           = size(data, 1);
 counts           = repmat({0}, 1, nEqClasses);
 localWeights     = cell(ncases, nnodes);
 loglik           = 0;
-isAdjustable     = true(1, nEqClasses); 
+isAdjustable     = false(1, nEqClasses); 
 for i = 1:ncases
     dataCase    = data(i, :);
     localEvCase = localEv(i, :, :); 
@@ -75,9 +77,9 @@ for i = 1:ncases
     for j = 1:nnodes
         k = CPDpointers(j); % update the kth bank of parameters
         if clamped(j) 
-            isAdjustable(j) = false; 
             continue;  
         end
+        isAdjustable(k) = true; 
         counts{k}   = counts{k} + fmarg{j}.T(:); 
         localParent = pmarg{j}; 
         if ~isempty(localParent) % isempty if it has no localCPD.
@@ -86,8 +88,9 @@ for i = 1:ncases
     end
 end
 ess.counts = counts; 
+ess.isAdjustable = isAdjustable; 
 %% local CPDs
-localCPDs = dgm.localCPDs;
+localCPDs = cellwrap(dgm.localCPDs);
 nLocalCpds = numel(localCPDs); 
 if nLocalCpds > 0
     emission        = cell(nLocalCpds, 1); 
@@ -115,7 +118,7 @@ function dgm = mstep(dgm, ess)
 %%
 counts = ess.counts; 
 CPDs = dgm.CPDs; 
-for i = find(ess.isAjustable)
+for i = find(ess.isAdjustable)
     CPD = CPDs{i}; 
     CPD = CPD.fitFnEss(CPD, counts{i});
     CPDs{i} = CPD; 

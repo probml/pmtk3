@@ -8,21 +8,21 @@ if ischar(prior)
     switch lower(prior)
         case 'bdeu'
             q = prod(sizes(1:end-1));
-            prior = onesPMTK(sizes)*1/(q*nstates);
+            prior = 1 + onesPMTK(sizes)*1/(q*nstates);
         case 'laplace'
-            prior = 1*onesPMTK(sizes);
+            prior = 2*onesPMTK(sizes);
         case 'none'
-            prior = 0*onesPMTK(sizes);
+            prior = onesPMTK(sizes);
     end
 end
 cpd = structure(T, prior, sizes, nstates);
 cpd.cpdType = 'tabular';
 %% 
 cpd.fitFn      = @(cpd, data)tabularCpdCreate(...
-    mkStochastic(computeCounts(data, cpd.sizes) + cpd.prior), 'prior', cpd.prior);
+    mkStochastic(computeCounts(data, cpd.sizes) + cpd.prior-1), 'prior', cpd.prior);
 
 cpd.fitFnEss   = @(cpd, counts)tabularCpdCreate(mkStochastic(...
-    reshape(counts, size(cpd.T)) + cpd.prior), 'prior', cpd.prior);   
+    reshape(counts, size(cpd.T)) + cpd.prior-1), 'prior', cpd.prior);   
 
 cpd.logPriorFn = @(cpd)log(cpd.T(:) + eps)'*(cpd.prior(:)-1);
 end

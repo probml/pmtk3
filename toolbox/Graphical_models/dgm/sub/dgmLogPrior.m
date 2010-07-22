@@ -1,8 +1,9 @@
 function logp = dgmLogPrior(dgm)
 %% Calculate the logprior of a dgm
 CPDs = dgm.CPDs(dgm.CPDpointers);
-localCPDs = dgm.localCPDs(dgm.localCPDpointers); 
+localCPDs = cellwrap(dgm.localCPDs);
+localCPDs = localCPDs(dgm.localCPDpointers); 
 allCPDs = [CPDs(:); localCPDs(:)]; 
-logp = sum(cellfun(@(cpd)cpd.cpdLogPriorFn(cpd), allCPDs)); 
+logp = sum(cellfun(@(cpd)cpd.logPriorFn(cpd), allCPDs)); 
 end
 

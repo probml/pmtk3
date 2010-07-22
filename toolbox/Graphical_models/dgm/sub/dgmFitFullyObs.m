@@ -53,6 +53,9 @@ else % handle parameter tying
     
     eqc = computeEquivClasses(pointers);
     nobs = size(data, 1);
+   
+    
+    
     for i = 1:numel(CPDs)
         CPD = CPDs{i}; 
         eclass = eqc{i};

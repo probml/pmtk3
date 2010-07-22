@@ -3,8 +3,8 @@ setSeed(0);
 %% Sample data
 nstates   = 2;
 d         = 2; 
-T         = 5; 
-nsamples  = 2; 
+T         = 20; 
+nsamples  = 3; 
 hmmSource = mkRndGaussHmm(nstates, d); 
 [Y, Z] = hmmSample(hmmSource, T, nsamples); 
 %% Create an hmm-like random dgm
@@ -15,8 +15,8 @@ hmmModel = hmmFitFullyObs(Z, Y, 'gauss');
 
 localev  = hmmObs2LocalEv(Y); 
 data     = cell2mat(Z); 
-dgmModel.CPDs{1}.prior = hmmModel.piPrior(:) - 1; 
-dgmModel.CPDs{2}.prior = hmmModel.transPrior - 1;
+%dgmModel.CPDs{1}.prior = hmmModel.piPrior(:); 
+%dgmModel.CPDs{2}.prior = hmmModel.transPrior ;
 dgmModel.localCPD.prior = hmmModel.emissionPrior; 
 dgmModel = dgmFitFullyObs(dgmModel, data, 'localev', localev); 
 
