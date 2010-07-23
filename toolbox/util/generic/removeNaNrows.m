@@ -6,5 +6,5 @@ if iscell(A)
     A = cellfuncell(@removeNaNrows, A); 
     return
 end
-A(any(isnan(A), 2)) = [];
+A(any(isnan(A), 2), :) = [];
 end

@@ -34,10 +34,10 @@ CPDpointers      = dgm.CPDpointers;
 localCPDpointers = dgm.localCPDpointers;
 nnodes           = dgm.nnodes;
 localEqClasses   = computeEquivClasses(localCPDpointers);
-nEqClasses       = numel(dgm.CPDs);
 nLocalEqClasses  = numel(localEqClasses); 
 nDataCases       = size(data, 1); 
 nLocalEvCases    = size(localEv, 1); 
+nEqClasses       = numel(dgm.CPDs);
 ncases           = max(nDataCases, nLocalEvCases); 
 counts           = repmat({0}, 1, nEqClasses); 
 localWeights     = cell(nLocalEqClasses, 1);
@@ -55,16 +55,15 @@ for i = 1:ncases
     args = {'clamped', [], 'localev', []}; 
     if i <= nDataCases   ,  args{2} = data(i, :);                       end
     if i <= nLocalEvCases,  args{4} = squeezePMTK(localEv(i, :, :));    end
-    [fmarg, llobs, pmarg] = dgmInferFamily(dgm, args{:});                  % pmarg are the marg probs of the parents with localCPDs
+    [fmarg, llobs, pmarg] = dgmInferFamily(dgm, args{:}); % pmarg are the marg probs of the parents with localCPDs
     loglik                = loglik + llobs;
     for j = 1:nnodes
         k = CPDpointers(j); % update the kth bank of parameters
         if clamped(j)
             isAdjustable(k) = false;
-            continue;
+            continue;       
         end
         counts{k} = counts{k} + fmarg{j}.T(:);
-        %%
         if nLocalEvCases
             l = localCPDpointers(j); 
             localParent = pmarg{j};
@@ -84,14 +83,14 @@ end
 
 function emissionEss = estepEmission(dgm, localEv, localWeights)
 %% Compute the expcected sufficient statistics for the localCPDs
-% 
-%%
 localCPDs        = dgm.localCPDs; 
 nLocalCpds       = numel(localCPDs);
 emissionEss      = cell(nLocalCpds, 1);
 localCPDpointers = dgm.localCPDpointers; 
 if nLocalCpds > 0
     for k = 1:numel(localCPDs)
+        weights        = localWeights{k}; 
+        if isempty(weights), continue; end % parent was clamped
         localCPD       = localCPDs{k};
         eclass         = findEquivClass(localCPDpointers, k);               % combine data cases and weights from the same equivalence classes
         localData      = cell2mat(localEv2HmmObs(localEv(:, :, eclass))')'; % localData is now ncases*numel(eclass)-by-d in correspondence with localWeights
@@ -102,7 +101,6 @@ end
 
 function dgm = mstep(dgm, ess)
 %% Maximize
-
 counts = ess.counts;
 CPDs = dgm.CPDs;
 for i = find(ess.isAdjustable)
@@ -111,7 +109,7 @@ for i = find(ess.isAdjustable)
     CPDs{i} = CPD;
 end
 dgm.CPDs = CPDs;
-%% Local CPDs
+%%
 emissionEss = ess.emissionEss;
 if ~isempty(emissionEss)
     localCPDs = dgm.localCPDs;
