@@ -97,8 +97,9 @@ if ~isempty(localEv)
        lCPD = lCPD.fitFn(lCPD, Z, Y);
        localCPDs{i} = lCPD; 
     end
+    dgm.localCPDs = localCPDs; 
 end
-dgm.localCPDs = localCPDs; 
+
 %% any existing jtree is invalidated
 if isfield(dgm, 'jtree')
     dgm = rmfield(dgm, 'jtree');
