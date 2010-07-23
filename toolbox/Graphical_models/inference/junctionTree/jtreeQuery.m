@@ -18,7 +18,7 @@ for i=1:nqueries
             bels{i} = tabularFactorCreate(1, q); 
             continue; 
         else
-            error('out-of-clique query'); 
+            error('out-of-clique query. Unless you called this function directly, you have probably queried a node that you have already conditioned on, (clamped).'); 
         end
     end
     cliqueNdx  = candidates(minidx(cellfun('length', cliques(candidates))));

@@ -36,7 +36,10 @@ end
 %%
 queries              = cellwrap(queries); 
 nqueries             = numel(queries);
-
+visVars              = find(clamped); 
+if ~all(cellfun(@(q)isempty(intersectPMTK(q, visVars)) , queries))
+    doSlice = false; % querying observed nodes so don't slice them out of existence
+end
 localFacs = {}; 
 softVis   = []; 
 if ~isempty(localEv)
