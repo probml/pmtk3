@@ -93,7 +93,7 @@ if isempty(CPDpointers)
 end
 %% localCPD pointers
 if ~isempty(localCPDs)
-    cellwrap(localCPDs);
+    localCPDs = cellwrap(localCPDs);
     if isempty(localCPDpointers)
         if numel(localCPDs) == 1
             localCPDpointers = ones(1, nnodes);

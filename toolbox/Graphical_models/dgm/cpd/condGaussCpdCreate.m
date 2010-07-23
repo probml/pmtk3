@@ -30,10 +30,22 @@ CPD.fitFn      = @condGaussCpdFit;
 CPD.fitFnEss   = @condGaussCpdFitEss;
 CPD.essFn      = @condGaussCpdComputeEss;
 CPD.logPriorFn = @logPriorFn;
-
+CPD.rndInitFn  = @rndInit;
 
 end
 
+
+function cpd = rndInit(cpd)
+%% randomly initialize
+d = cpd.d;
+nstates = cpd.nstates;
+cpd.mu = randn(d, nstates);
+Sigma = zeros(d, d, nstates);
+for i=1:nstates
+    Sigma(:, :, i) = randpd(d) + 2*eye(d); 
+end
+cpd.Sigma = Sigma; 
+end
 
 function logp = logPriorFn(cpd)
 %% calculate the logprior

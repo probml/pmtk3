@@ -87,7 +87,7 @@ data = sparse(data);
 
 dgm = dgmFitEm(dgm, data, 'verbose', true, 'nRandomRestarts', 3); 
 
-%% Compare against a mixture of Gaussians
+%% Fit a mixture of Gaussians
 
 nstates = 3; 
 d = 10; 
@@ -103,3 +103,5 @@ localCPD = condGaussCpdCreate(randn(d, nstates), Sigma);
 mixGaussDgm = dgmCreate(G, CPD, 'localCPDs', localCPD);
 localEv = randn(nobs, d); 
 mixGaussDgm = dgmFitEm(mixGaussDgm, [], 'localev', localEv, 'verbose', true);
+
+
