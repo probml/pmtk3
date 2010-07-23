@@ -110,7 +110,7 @@ prior.Sigma = mixGauss.prior.S0;
 prior.dof = mixGauss.prior.nu0;
 prior.k = mixGauss.prior.kappa0; 
 
-G = 0; % single node with one localCPD
+G = 0; % graph of a single node with one localCPD
 CPD = tabularCpdCreate(mix');
 localCPD = condGaussCpdCreate(mu, Sigma, 'prior', prior); 
 mixGaussDgm = dgmCreate(G, CPD, 'localCPDs', localCPD);
