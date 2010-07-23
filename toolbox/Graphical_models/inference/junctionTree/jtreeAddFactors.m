@@ -15,8 +15,7 @@ for i=1:numel(facs)
     end
     smallest = candidateCliques(minidx(clqSizes(candidateCliques)));
     assert(issubset(fdom, cliques{smallest}.domain)); 
-    clq = tabularFactorMultiply(cliques{smallest}, f);
-    cliques{smallest} = tabularFactorNormalize(clq); 
+    cliques{smallest} = tabularFactorMultiply(cliques{smallest}, f);
     cliqueLookup(fdom, smallest) = 1;
 end
 jtree.cliques = cliques;

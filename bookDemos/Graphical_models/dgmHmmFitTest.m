@@ -6,23 +6,22 @@ d         = 13;
 T         = 11; 
 nsamples  = 15; 
 hmmSource = mkRndGaussHmm(nstates, d); 
-[Y, Z] = hmmSample(hmmSource, T, nsamples); 
-Y = cellwrap(Y);
-Z = cellwrap(Z);
+[Y, Z]    = hmmSample(hmmSource, T, nsamples); 
+Y         = cellwrap(Y);
+Z         = cellwrap(Z);
 %% create an hmm-like random dgm
-dgmModel = hmm2Dgm(mkRndGaussHmm(nstates, d), T);  
-%% first the fully observed case
-%
-%% fit the hmm model
+dgmModel  = hmm2Dgm(mkRndGaussHmm(nstates, d), T);  
+%% FULLY OBSERVED HMM CASE
+% fit the hmm model
 hmmModel = hmmFitFullyObs(Z, Y, 'gauss'); 
-%% convert data to dgm format
+% convert data to dgm format
 localev  = hmmObs2LocalEv(Y); 
 data     = cell2mat(Z); 
-%% make sure they have the same priors
+% make sure they have the same priors
 dgmModel.CPDs{1}.prior = hmmModel.piPrior(:); 
 dgmModel.CPDs{2}.prior = hmmModel.transPrior ;
 dgmModel.localCPDs{1}.prior = hmmModel.emissionPrior; 
-%% fit dgm
+% fit dgm
 dgmModel = dgmFitFullyObs(dgmModel, data, 'localev', localev); 
 %% compare results
 pi    = hmmModel.pi;
@@ -37,7 +36,7 @@ assert(approxeq(Ehmm.mu, Edgm.mu));
 assert(approxeq(Ehmm.Sigma, Edgm.Sigma)); 
 
 %%
-%% now try the unobserved case
+%% UNOBSERVED HMM CASE
 pi0    = normalize(rand(1, nstates)); 
 trans0 = normalize(rand(nstates, nstates), 2); 
 Sigma0 = zeros(d, d, nstates); 
@@ -59,11 +58,10 @@ dgmModel.CPDs{1} = tabularCpdCreate(pi0(:), 'prior', hmmModel.piPrior(:));
 dgmModel.CPDs{2} = tabularCpdCreate(trans0, 'prior', hmmModel.transPrior); 
 
 fprintf('\nDGM\n'); 
-dgmModel.infEngine = 'libdaiJtree'; 
+%dgmModel.infEngine = 'libdaiJtree'; 
 dgmModel = dgmFitEm(dgmModel, [], 'localev', localev, ...
     'verbose', true, 'maxIter', maxIter);
-%% compare results
-
+% compare results
 hmmPi = hmmModel.pi(:); 
 dgmPi = dgmModel.CPDs{1}.T(:);
 assert(approxeq(hmmPi, dgmPi)); 
@@ -81,7 +79,7 @@ dgmSigma = dgmModel.localCPDs{1}.Sigma;
 assert(approxeq(hmmSigma, dgmSigma)); 
 
 
-%% Fit a random dgm without any localev
+%% ALARM NETWORK
 fprintf('alarm network\n');
 dgm = mkAlarmDgm();
 data = randi(2, [20, 37]); 
@@ -91,7 +89,7 @@ dgm.infEngine = 'libdaiJtree';
 dgm = dgmFitEm(dgm, data, 'verbose', true, 'maxIter', 5); 
 
 
-%% Fit a mixture of Gaussians
+%% MIXTURE OF GAUSSIANS
 % note loglik values won't agree since mixGaussEm /N and does not include
 % normalization constant for log prior
 setSeed(0);

@@ -8,6 +8,7 @@ function [dgm, loglikHist] = dgmFitEm(dgm, data, varargin)
 estepFn           = @(dgm, data)estep(dgm, data, localEv);
 [dgm, loglikHist] = emAlgo(dgm, data, @init, estepFn, @mstep, EMargs{:});
 dgm               = dgmRebuildJtree(dgm, precomputeJtree);
+
 end
 
 function dgm = init(dgm, data, restartNum)
