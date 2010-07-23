@@ -35,6 +35,8 @@ assert(approxeq(pi, piDgm));
 assert(approxeq(A, Adgm)); 
 assert(approxeq(Ehmm.mu, Edgm.mu)); 
 assert(approxeq(Ehmm.Sigma, Edgm.Sigma)); 
+
+%%
 %% now try the unobserved case
 pi0    = normalize(rand(1, nstates)); 
 trans0 = normalize(rand(nstates, nstates), 2); 
@@ -57,6 +59,7 @@ dgmModel.CPDs{1} = tabularCpdCreate(pi0(:), 'prior', hmmModel.piPrior(:));
 dgmModel.CPDs{2} = tabularCpdCreate(trans0, 'prior', hmmModel.transPrior); 
 
 fprintf('\nDGM\n'); 
+dgmModel.infEngine = 'libdaiJtree'; 
 dgmModel = dgmFitEm(dgmModel, [], 'localev', localev, ...
     'verbose', true, 'maxIter', maxIter);
 %% compare results
