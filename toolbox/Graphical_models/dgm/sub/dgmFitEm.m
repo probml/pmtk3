@@ -5,15 +5,14 @@ function [dgm, loglikHist] = dgmFitEm(dgm, data, varargin)
 [localEv, precomputeJtree, EMargs] = process_options(varargin, ...
     'localev'         , [] , ...
     'precomputeJtree' , true);
-initFn            = @init;
 estepFn           = @(dgm, data)estep(dgm, data, localEv);
-mstepFn           = @(dgm, ess)mstep(dgm, ess);
-[dgm, loglikHist] = emAlgo(dgm, data, initFn, estepFn, mstepFn, EMargs{:});
+[dgm, loglikHist] = emAlgo(dgm, data, @init, estepFn, @mstep, EMargs{:});
 dgm               = dgmRebuildJtree(dgm, precomputeJtree);
 end
 
 function dgm = init(dgm, data, restartNum)
 %% Initialize
+dgm = removeFields(dgm, 'jtree', 'factors'); 
 % use current params for the first run
 if restartNum > 1
     dgm.CPDs      = cellfuncell(@(c)c.rndInitFn(c), dgm.CPDs); 
@@ -95,12 +94,12 @@ end
 dgm.CPDs = CPDs;
 %%
 emissionEss = ess.emissionEss;
-if ~isempty(emissionEss)
-    localCPDs = dgm.localCPDs;
-    for i=1:numel(localCPDs)
-        localCPD = localCPDs{i};
-        localCPDs{i} = localCPD.fitFnEss(localCPD, emissionEss{i});
-    end
-    dgm.localCPDs = localCPDs; 
+localCPDs   = dgm.localCPDs;
+for i = 1:numel(localCPDs)
+    localCPD     = localCPDs{i};
+    localCPDs{i} = localCPD.fitFnEss(localCPD, emissionEss{i});
 end
+dgm.localCPDs = localCPDs;
+dgm = removeFields(dgm, 'jtree', 'factors'); 
+
 end

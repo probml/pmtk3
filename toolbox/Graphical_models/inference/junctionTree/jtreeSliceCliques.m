@@ -2,7 +2,11 @@ function jtree = jtreeSliceCliques(jtree, clamped, doSlice)
 %% Slice cliques in a jtree according to the sparse evidence vector clamped
 % You can optionally clamp them instead, (useful for debugging, etc)
 
-if nargin < 3 || doSlice
+
+if nargin < 3 
+    doSlice = false;
+end
+if doSlice
     evidenceFn = @tabularFactorSlice;
 else
     evidenceFn = @tabularFactorClamp; 

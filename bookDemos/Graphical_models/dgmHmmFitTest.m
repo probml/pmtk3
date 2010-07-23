@@ -79,16 +79,17 @@ assert(approxeq(hmmSigma, dgmSigma));
 
 
 %% Fit a random dgm without any localev
-setSeed(0); 
-dgm = mkRndDgm(50);
+fprintf('alarm network\n');
+dgm = mkAlarmDgm();
 data = randi(2, [20, 37]); 
-data(1:5:end) = 0;
+data(1:3:end) = 0;
 data = sparse(data); 
+dgm.infEngine = 'libdaiJtree';
+dgm = dgmFitEm(dgm, data, 'verbose', true, 'maxIter', 5); 
 
-dgm = dgmFitEm(dgm, data, 'verbose', true, 'nRandomRestarts', 3); 
 
 %% Fit a mixture of Gaussians
-
+fprintf('mix Gauss\n'); 
 nstates = 3; 
 d = 10; 
 nobs = 100; 
@@ -97,11 +98,11 @@ Sigma = zeros(d, d, nstates);
 for i=1:nstates
    Sigma(:, :, i) = randpd(d) + 2*eye(d);  
 end
-G = 0; 
-CPD = tabularCpdCreate(mkStochastic(rand(nstates, 1)));
+G = 0; % single node with one localCPD
+CPD = tabularCpdCreate(mkStochastic(rand(nstates, 1)), 'prior', 'laplace');
 localCPD = condGaussCpdCreate(randn(d, nstates), Sigma); 
 mixGaussDgm = dgmCreate(G, CPD, 'localCPDs', localCPD);
 localEv = randn(nobs, d); 
-mixGaussDgm = dgmFitEm(mixGaussDgm, [], 'localev', localEv, 'verbose', true);
+mixGaussDgm = dgmFitEm(mixGaussDgm, [], 'localev', localEv, 'verbose', true, 'maxIter', 5);
 
 
