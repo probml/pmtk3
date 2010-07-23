@@ -54,9 +54,9 @@ for i = 1:ncases
         k = CPDpointers(j); % update the kth bank of parameters
         counts{k} = counts{k} + fmarg{j}.T(:);
         if nLocalEvCases
-            l = localCPDpointers(j);  % weights for the lth bank of local params
+            l = localCPDpointers(j);  
             if l==0, continue; end    % no localCPD for parent j
-            localParent = pmarg{j};
+            localParent = pmarg{j};   % weights for the lth bank of local params
             localWeights{l}(lwCounter(l), :) = rowvec(localParent.T); 
             lwCounter(l) = lwCounter(l) + 1; 
         end
