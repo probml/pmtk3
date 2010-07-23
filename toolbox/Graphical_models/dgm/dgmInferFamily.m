@@ -18,7 +18,8 @@ if calcNodeBels
         queries = [queries(:); num2cell(hasLocalCpd(:))];
     end
 end
-[familyBels, logZ] = dgmInferQuery(dgm, queries, varargin{:}); 
+
+[familyBels, logZ] = dgmInferQuery(dgm, queries, 'doSlice', false, varargin{:}); 
 
 if calcNodeBels
     nodeBels(hasLocalCpd) = familyBels(nnodes+1:end); 

@@ -1,5 +1,12 @@
-function jtree = jtreeSliceCliques(jtree, clamped)
+function jtree = jtreeSliceCliques(jtree, clamped, doSlice)
 %% Slice cliques in a jtree according to the sparse evidence vector clamped
+% You can optionally clamp them instead, (useful for debugging, etc)
+
+if nargin < 3 || doSlice
+    evidenceFn = @tabularFactorSlice;
+else
+    evidenceFn = @tabularFactorClamp; 
+end
 
 if isempty(clamped); return; end
 visVars = find(clamped);
@@ -10,9 +17,11 @@ cliqueLookup = jtree.cliqueLookup;
 for i=1:numel(cliques)
     localVars = intersectPMTK(cliques{i}.domain, visVars);
     if isempty(localVars),  continue;  end
-    cliqueLookup(localVars, i) = 0;
+    if doSlice
+        cliqueLookup(localVars, i) = 0;
+    end
     localVals  = visVals(lookupIndices(localVars, visVars));
-    cliques{i} = tabularFactorSlice(cliques{i}, localVars, localVals);
+    cliques{i} = evidenceFn(cliques{i}, localVars, localVals);
 end
 
 jtree.cliques      = cliques; 

@@ -12,6 +12,9 @@ function [bels, logZ] = dgmInferQuery(dgm, queries, varargin)
 %                    given the evidence are first removed. Note, this may
 %                    not improve performance if multiple queries are
 %                    requested. Not supported if logZ is also requested.
+%
+% sliceCliques [true] if true, factors / cliques are sliced rather than
+% clamped. 
 % 
 % See dgmInferNodes for details on the remaining args
 %
@@ -21,11 +24,12 @@ function [bels, logZ] = dgmInferQuery(dgm, queries, varargin)
 %
 % logZ   - log of the partition sum (if this is all you want, use dgmLogprob)
 %%
-[clamped, softEv, localEv, doPrune] = process_options(varargin, ...
+[clamped, softEv, localEv, doPrune, doSlice] = process_options(varargin, ...
     'clamped', [], ...
     'softev' , [], ...
     'localev', [], ...
-    'doPrune', false);
+    'doPrune', false, ...
+    'doSlice', true);
 if doPrune && nargout > 1
     error('pruning is not supported when logZ is requested'); 
 end
@@ -78,9 +82,9 @@ switch lower(engine)
     case 'jtree'
         
         if isfield(dgm, 'jtree') && jtreeCheckQueries(dgm.jtree, queries)
-            jtree         = jtreeSliceCliques(dgm.jtree, clamped);
+            jtree         = jtreeSliceCliques(dgm.jtree, clamped, doSlice);
         else
-            doSlice       = true;
+
             factors       = cpds2Factors(CPDs, G, CPDpointers);
             factors       = addEvidenceToFactors(factors, clamped, doSlice);
             nstates       = cellfun(@(f)f.sizes(end), factors);

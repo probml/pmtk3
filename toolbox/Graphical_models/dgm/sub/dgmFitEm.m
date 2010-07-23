@@ -104,10 +104,12 @@ for i = 1:ncases
         end
         counts{k}   = counts{k} + fmarg{j}.T(:);
         %%
-        l = localCPDpointers(j); 
-        localParent = pmarg{j};
-        if ~isempty(localParent) % isempty if it has no localCPD.
-            localWeights{l} = [localWeights{l}; rowvec(localParent.T)]; % need to preallocate somehow
+        if nLocalEvCases
+            l = localCPDpointers(j); 
+            localParent = pmarg{j};
+            if ~isempty(localParent) % isempty if it has no localCPD.
+                localWeights{l} = [localWeights{l}; rowvec(localParent.T)]; % need to preallocate somehow
+            end
         end
     end
 end
@@ -116,8 +118,8 @@ ess.isAdjustable = isAdjustable;
 %% local CPDs
 localCPDs = cellwrap(dgm.localCPDs);
 nLocalCpds = numel(localCPDs);
+emissionEss = cell(nLocalCpds, 1);
 if nLocalCpds > 0
-    emissionEss        = cell(nLocalCpds, 1);
     for k=1:numel(localCPDs)
         localCPD    = localCPDs{k};
         eclass      = findEquivClass(localCPDpointers, k);
@@ -125,8 +127,8 @@ if nLocalCpds > 0
         localData = cell2mat(localEv2HmmObs(localEv(:, :, eclass))')'; % localData is now ncases*numel(eclass)-by-d
         emissionEss{k} = localCPD.essFn(localCPD, localData, localWeights{k}); 
     end
-    ess.emissionEss = emissionEss;
 end
+ess.emissionEss = emissionEss;
 %%
 loglik = loglik + dgmLogPrior(dgm);  % includes localCPDs
 end
@@ -144,12 +146,14 @@ dgm.CPDs = CPDs;
 %% Local CPDs
 
 emissionEss = ess.emissionEss;
-localCPDs = dgm.localCPDs;
-for i=1:numel(localCPDs)
-    localCPD = localCPDs{i};
-    E = emissionEss{i};
-    if isempty(E), continue; end % parent was clamped
-    localCPDs{i} = localCPD.fitFnEss(localCPD, E);
+if ~isempty(emissionEss)
+    localCPDs = dgm.localCPDs;
+    for i=1:numel(localCPDs)
+        localCPD = localCPDs{i};
+        E = emissionEss{i};
+        if isempty(E), continue; end % parent was clamped
+        localCPDs{i} = localCPD.fitFnEss(localCPD, E);
+    end
+    dgm.localCPDs = localCPDs; 
 end
-dgm.localCPDs = localCPDs; 
 end

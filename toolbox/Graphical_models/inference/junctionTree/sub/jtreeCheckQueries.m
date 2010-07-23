@@ -9,3 +9,4 @@ for i = 1:nqueries
 end
 ok = true;
 end
+

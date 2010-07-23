@@ -78,6 +78,13 @@ dgmSigma = dgmModel.localCPDs{1}.Sigma;
 assert(approxeq(hmmSigma, dgmSigma)); 
 
 
+%%
+setSeed(0); 
+dgm = mkAlarmDgm;
+data = randi(2, [100, 37]); 
+data(1:5:end) = 0;
+data = sparse(data); 
 
+dgm = dgmFitEm(dgm, data, 'verbose', true, 'nRandomRestarts', 3); 
 
 
