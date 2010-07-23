@@ -9,9 +9,11 @@ if nargin == 1
 else
     facs = varargin;
 end
+N = numel(facs);
+if N == 1, TF = facs{1}; return; end
 facStruct = [facs{:}];
 dom = uniquePMTK([facStruct.domain]);
-N = numel(facs);
+
 ns = zeros(1, max(dom));
 for i=1:N
     Ti = facs{i};

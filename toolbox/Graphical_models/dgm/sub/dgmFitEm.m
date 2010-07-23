@@ -90,6 +90,9 @@ for i = 1:ncases
     end
     if i <= nLocalEvCases
         localEvCase = squeeze(localEv(i, :, :));
+        if isvector(localEvCase)
+            localEvCase = colvec(localEvCase);
+        end
     end
     [fmarg, llobs, pmarg] ...
         = dgmInferFamily(dgm, 'clamped', dataCase, 'localev', localEvCase);

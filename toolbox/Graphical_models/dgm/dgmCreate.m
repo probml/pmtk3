@@ -79,9 +79,11 @@ assert(isTopoOrdered(G)); % if j < k, node j must not be a child of node k
 if isempty(CPDs) && ~isempty(initNstates)
    CPDs = mkRndTabularCpds(G, initNstates);  
 end
+nnodes = size(G, 1);
+if nnodes == 1, infEngine = 'varelim';  end
 %% CPD pointers
 CPDs = cellwrap(CPDs);
-nnodes = size(G, 1);
+
 if isempty(CPDpointers)
     if numel(CPDs) == 1
         CPDpointers = ones(1, nnodes);

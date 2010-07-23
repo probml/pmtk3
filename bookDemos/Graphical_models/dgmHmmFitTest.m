@@ -78,13 +78,28 @@ dgmSigma = dgmModel.localCPDs{1}.Sigma;
 assert(approxeq(hmmSigma, dgmSigma)); 
 
 
-%%
+%% Fit a random dgm without any localev
 setSeed(0); 
-dgm = mkAlarmDgm;
-data = randi(2, [100, 37]); 
+dgm = mkRndDgm(50);
+data = randi(2, [20, 37]); 
 data(1:5:end) = 0;
 data = sparse(data); 
 
 dgm = dgmFitEm(dgm, data, 'verbose', true, 'nRandomRestarts', 3); 
 
+%% Compare against a mixture of Gaussians
 
+nstates = 3; 
+d = 10; 
+nobs = 100; 
+mu = randn(d, nstates); 
+Sigma = zeros(d, d, nstates);
+for i=1:nstates
+   Sigma(:, :, i) = randpd(d) + 2*eye(d);  
+end
+G = 0; 
+CPD = tabularCpdCreate(mkStochastic(rand(nstates, 1)));
+localCPD = condGaussCpdCreate(randn(d, nstates), Sigma); 
+mixGaussDgm = dgmCreate(G, CPD, 'localCPDs', localCPD);
+localEv = randn(nobs, d); 
+mixGaussDgm = dgmFitEm(mixGaussDgm, [], 'localev', localEv, 'verbose', true);
