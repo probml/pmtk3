@@ -2,19 +2,13 @@ function [dgm, loglikHist] = dgmFitEm(dgm, data, varargin)
 %% Fit a dgm with partially observed data via EM
 %
 %%
-nnodes = dgm.nnodes;
-[clamped, localEv, precomputeJtree, EMargs] = process_options(varargin, ...
-    'clamped'         , sparsevec([], [], nnodes) , ...
+[localEv, precomputeJtree, EMargs] = process_options(varargin, ...
     'localev'         , [] , ...
     'precomputeJtree' , true);
-%%
-dgm               = dgmClampCpds(dgm, clamped); 
-%% run EM
 initFn            = @init;
-estepFn           = @(dgm, data)estep(dgm, data, clamped, localEv);
+estepFn           = @(dgm, data)estep(dgm, data, localEv);
 mstepFn           = @(dgm, ess)mstep(dgm, ess);
 [dgm, loglikHist] = emAlgo(dgm, data, initFn, estepFn, mstepFn, EMargs{:});
-%%
 dgm               = dgmRebuildJtree(dgm, precomputeJtree);
 end
 
@@ -27,7 +21,7 @@ if restartNum > 1
 end
 end
 
-function [ess, loglik] = estep(dgm, data, clamped, localEv)
+function [ess, loglik] = estep(dgm, data, localEv)
 %% Compute the expected sufficient statistics
 localCPDs        = dgm.localCPDs; 
 CPDpointers      = dgm.CPDpointers;
@@ -46,11 +40,10 @@ for k = 1:nLocalEqClasses
    eqClass         = localEqClasses{k}; 
    N               = nLocalEvCases*numel(eqClass); 
    ns              = localCPDs{eqClass(1)}.nstates;
-   localWeights{k} = nan(N, ns);   
+   localWeights{k} = zeros(N, ns);   
 end
 lwCounter = ones(1, nLocalEqClasses); 
-loglik       = 0;
-isAdjustable = true(1, nEqClasses);
+loglik    = 0;
 for i = 1:ncases
     args = {'clamped', [], 'localev', []}; 
     if i <= nDataCases   ,  args{2} = data(i, :);                       end
@@ -59,24 +52,17 @@ for i = 1:ncases
     loglik                = loglik + llobs;
     for j = 1:nnodes
         k = CPDpointers(j); % update the kth bank of parameters
-        if clamped(j)
-            isAdjustable(k) = false;
-            continue;       
-        end
         counts{k} = counts{k} + fmarg{j}.T(:);
         if nLocalEvCases
-            l = localCPDpointers(j); 
+            l = localCPDpointers(j);  % weights for the lth bank of local params
+            if l==0, continue; end    % no localCPD for parent j
             localParent = pmarg{j};
-            if ~isempty(localParent) % is empty if it has no localCPD.
-                localWeights{l}(lwCounter(l), :) = rowvec(localParent.T); 
-                lwCounter(l) = lwCounter(l) + 1; 
-            end
+            localWeights{l}(lwCounter(l), :) = rowvec(localParent.T); 
+            lwCounter(l) = lwCounter(l) + 1; 
         end
     end
 end
-localWeights     = removeNaNrows(localWeights); 
 ess.counts       = counts;
-ess.isAdjustable = isAdjustable;
 ess.emissionEss  = estepEmission(dgm, localEv, localWeights); 
 loglik           = loglik + dgmLogPrior(dgm);  % includes localCPDs
 end
@@ -89,8 +75,6 @@ emissionEss      = cell(nLocalCpds, 1);
 localCPDpointers = dgm.localCPDpointers; 
 if nLocalCpds > 0
     for k = 1:numel(localCPDs)
-        weights        = localWeights{k}; 
-        if isempty(weights), continue; end % parent was clamped
         localCPD       = localCPDs{k};
         eclass         = findEquivClass(localCPDpointers, k);               % combine data cases and weights from the same equivalence classes
         localData      = cell2mat(localEv2HmmObs(localEv(:, :, eclass))')'; % localData is now ncases*numel(eclass)-by-d in correspondence with localWeights
@@ -103,10 +87,10 @@ function dgm = mstep(dgm, ess)
 %% Maximize
 counts = ess.counts;
 CPDs = dgm.CPDs;
-for i = find(ess.isAdjustable)
-    CPD = CPDs{i};
-    CPD = CPD.fitFnEss(CPD, counts{i});
-    CPDs{i} = CPD;
+for k = 1:numel(CPDs); 
+    CPD = CPDs{k};
+    CPD = CPD.fitFnEss(CPD, counts{k});
+    CPDs{k} = CPD;
 end
 dgm.CPDs = CPDs;
 %%
@@ -115,9 +99,7 @@ if ~isempty(emissionEss)
     localCPDs = dgm.localCPDs;
     for i=1:numel(localCPDs)
         localCPD = localCPDs{i};
-        E = emissionEss{i};
-        if isempty(E), continue; end % parent was clamped
-        localCPDs{i} = localCPD.fitFnEss(localCPD, E);
+        localCPDs{i} = localCPD.fitFnEss(localCPD, emissionEss{i});
     end
     dgm.localCPDs = localCPDs; 
 end
