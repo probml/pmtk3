@@ -89,20 +89,34 @@ dgm = dgmFitEm(dgm, data, 'verbose', true, 'maxIter', 5);
 
 
 %% Fit a mixture of Gaussians
-fprintf('mix Gauss\n'); 
+% note loglik values won't agree since mixGaussEm /N and does not include
+% normalization constant for log prior
+setSeed(0);
 nstates = 3; 
-d = 10; 
-nobs = 100; 
-mu = randn(d, nstates); 
+d       = 10; 
+nobs    = 100; 
+mu      = randn(d, nstates); 
 Sigma = zeros(d, d, nstates);
 for i=1:nstates
    Sigma(:, :, i) = randpd(d) + 2*eye(d);  
 end
-G = 0; % single node with one localCPD
-CPD = tabularCpdCreate(mkStochastic(rand(nstates, 1)), 'prior', 'laplace');
-localCPD = condGaussCpdCreate(randn(d, nstates), Sigma); 
-mixGaussDgm = dgmCreate(G, CPD, 'localCPDs', localCPD);
+mix = normalize(rand(1, nstates)); 
 localEv = randn(nobs, d); 
-mixGaussDgm = dgmFitEm(mixGaussDgm, [], 'localev', localEv, 'verbose', true, 'maxIter', 5);
+mixGauss = mixGaussFitEm(localEv, nstates, 'mu', mu, 'Sigma', Sigma,...
+    'mixweight', mix, 'doMap', true, 'maxIter', 5, 'verbose', false); 
 
+prior.mu = mixGauss.prior.m0;
+prior.Sigma = mixGauss.prior.S0;
+prior.dof = mixGauss.prior.nu0;
+prior.k = mixGauss.prior.kappa0; 
+
+G = 0; % single node with one localCPD
+CPD = tabularCpdCreate(mix');
+localCPD = condGaussCpdCreate(mu, Sigma, 'prior', prior); 
+mixGaussDgm = dgmCreate(G, CPD, 'localCPDs', localCPD);
+
+mixGaussDgm = dgmFitEm(mixGaussDgm, [], 'localev', localEv, 'verbose', false, 'maxIter', 5);
+assert(approxeq(mixGaussDgm.localCPDs{1}.mu, mixGauss.mu)); 
+assert(approxeq(mixGaussDgm.localCPDs{1}.Sigma, mixGauss.Sigma)); 
+assert(approxeq(mixGaussDgm.CPDs{1}.T(:), mixGauss.mixweight(:)));
 

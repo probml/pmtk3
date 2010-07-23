@@ -37,7 +37,7 @@ function [model, loglikHist] = mixGaussFitEm(data, K, varargin)
 if doMAP
     % set hyper-parameters
     prior.m0 = zeros(D,1);
-    prior.kappa0 = 0;
+    prior.kappa0 = 0.01;
     prior.nu0 = D+2;
     prior.S0 = (1/K^(1/D))*var(data(:))*eye(D);
 else
