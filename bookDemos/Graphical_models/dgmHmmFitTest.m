@@ -1,12 +1,14 @@
 %% Fit an HMM and an equivalent DGM and make sure the results agree
-setSeed(0); 
+setSeed(2); 
 %% sample data
-nstates   = 5;
-d         = 2; 
-T         = 10; 
-nsamples  = 2; 
+nstates   = 20;
+d         = 13; 
+T         = 11; 
+nsamples  = 15; 
 hmmSource = mkRndGaussHmm(nstates, d); 
 [Y, Z] = hmmSample(hmmSource, T, nsamples); 
+Y = cellwrap(Y);
+Z = cellwrap(Z);
 %% create an hmm-like random dgm
 dgmModel = hmm2Dgm(mkRndGaussHmm(nstates, d), T);  
 %% first the fully observed case
@@ -34,7 +36,7 @@ assert(approxeq(A, Adgm));
 assert(approxeq(Ehmm.mu, Edgm.mu)); 
 assert(approxeq(Ehmm.Sigma, Edgm.Sigma)); 
 %% now try the unobserved case
-pi0 = normalize(rand(1, nstates)); 
+pi0    = normalize(rand(1, nstates)); 
 trans0 = normalize(rand(nstates, nstates), 2); 
 Sigma0 = zeros(d, d, nstates); 
 for i=1:nstates
@@ -42,12 +44,33 @@ for i=1:nstates
 end
 mu0 = randn(d, nstates); 
 emission0 = condGaussCpdCreate(mu0, Sigma0); 
-
+fprintf('\nHMM\n'); 
 hmmModel = hmmFitEm(Y, nstates, 'gauss', ...
-    'pi0', pi0, 'trans0', trans0, 'emission0', emission0, 'maxIter', 2);
-dgmModel.localCPDs = {emission0};
-dgmModel.CPDs{1} = tabularCpdCreate(pi0(:)); 
-dgmModel.CPDs{2} = tabularCpdCreate(trans0); 
+    'pi0', pi0, 'trans0', trans0, 'emission0', emission0, 'verbose', true, 'maxIter', 5);
 
-dgmModel = dgmFitEm(dgmModel, [], 'localev', localev, 'verbose', true);
+dgmModel.localCPDs = {emission0};
+dgmModel.localCPDs{1}.prior = hmmModel.emissionPrior; 
+dgmModel.CPDs{1} = tabularCpdCreate(pi0(:), 'prior', hmmModel.piPrior(:)); 
+dgmModel.CPDs{2} = tabularCpdCreate(trans0, 'prior', hmmModel.transPrior); 
+fprintf('\nDGM\n'); 
+dgmModel = dgmFitEm(dgmModel, [], 'localev', localev, 'verbose', true, 'maxIter', 5);
+
+%% compare results
+
+hmmPi = hmmModel.pi(:); 
+dgmPi = dgmModel.CPDs{1}.T(:);
+assert(approxeq(hmmPi, dgmPi)); 
+hmmA = hmmModel.A;
+dgmA = dgmModel.CPDs{2}.T;
+assert(approxeq(hmmA, dgmA)); 
+hmmMu = hmmModel.emission.mu;
+dgmMu = dgmModel.localCPDs{1}.mu;
+assert(approxeq(hmmMu, dgmMu)); 
+hmmSigma = hmmModel.emission.Sigma;
+dgmSigma = dgmModel.localCPDs{1}.Sigma;
+assert(approxeq(hmmSigma, dgmSigma)); 
+
+
+
+
 

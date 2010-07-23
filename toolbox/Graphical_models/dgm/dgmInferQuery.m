@@ -77,22 +77,20 @@ switch lower(engine)
     
     case 'jtree'
         
-        if isfield(dgm, 'jtree') && jtreeCheckQueries(dgm.jtree, queries) 
+        if isfield(dgm, 'jtree') && jtreeCheckQueries(dgm.jtree, queries)
             jtree         = jtreeSliceCliques(dgm.jtree, clamped);
-            jtree         = jtreeAddFactors(jtree, localFacs);
-            [jtree, logZ] = jtreeCalibrate(jtree);
-            bels          = jtreeQuery(jtree, queries);
-        else 
+        else
             doSlice       = true;
             factors       = cpds2Factors(CPDs, G, CPDpointers);
             factors       = addEvidenceToFactors(factors, clamped, doSlice);
-            nstates       = cellfun(@(f)f.sizes(end), factors); 
-            fg            = factorGraphCreate(factors, nstates, G); 
+            nstates       = cellfun(@(f)f.sizes(end), factors);
+            fg            = factorGraphCreate(factors, nstates, G);
             jtree         = jtreeCreate(fg, 'cliqueConstraints', queries);
-            [jtree, logZ] = jtreeCalibrate(jtree);
-            bels          = jtreeQuery(jtree, queries); 
         end
-            
+        jtree         = jtreeAddFactors(jtree, localFacs);
+        [jtree, logZ] = jtreeCalibrate(jtree);
+        bels          = jtreeQuery(jtree, queries);
+        
     case 'libdaijtree'
         
         assert(isWeaklyConnected(G)); % libdai segfaults on disconnected graphs

@@ -24,17 +24,6 @@ for i = 1:numel(CPDs)
     end
 end
 dgm.CPDs = CPDs;
-%% pad local evidence
-% if necessary so that it has the same number of cases as data
-% if ~isempty(localEv) && size(localEv, 1) < size(data, 1)
-%     nobsData = size(data, 1);
-%     nobsLocal = size(localEv, 1);
-%     if nobsLocal < nobsData
-%         le = nan(nobsData, size(localEv, 2), size(localEv, 3));
-%         le(1:nobsLocal, :, :) = localEv;
-%         localEv = le;
-%     end
-% end
 %%
 initFn = @init;
 estepFn = @(dgm, data)estep(dgm, data, clamped, localEv);
@@ -88,7 +77,11 @@ nDataCases       = size(data, 1);
 nLocalEvCases    = size(localEv, 1); 
 ncases           = max(nDataCases, nLocalEvCases); 
 counts           = repmat({0}, 1, nEqClasses);
-localWeights     = cell(ncases, nnodes);
+%localWeights     = cell(ncases, nnodes);
+localCPDs        = dgm.localCPDs; 
+nLocalEqClasses  = numel(localCPDs); 
+localWeights = cell(nLocalEqClasses, 1); % NEED TO PREALLOCATE HERE!
+%localData    = cell(nLocalEqClasses, 1); 
 loglik           = 0;
 isAdjustable     = true(1, nEqClasses);
 for i = 1:ncases
@@ -103,20 +96,6 @@ for i = 1:ncases
     [fmarg, llobs, pmarg] ...
         = dgmInferFamily(dgm, 'clamped', dataCase, 'localev', localEvCase);
     
-    debug = true;
-    if debug
-        hmm.pi = dgm.CPDs{1}.T(:)';
-        hmm.A = dgm.CPDs{2}.T;
-        hmm.emission = dgm.localCPDs{1}; 
-        gamma = hmmInferNodes(hmm, localEvCase); 
-        
-        
-        
-        
-    end
-    
-    
-    
     loglik = loglik + llobs;
     for j = 1:nnodes
         k = CPDpointers(j); % update the kth bank of parameters
@@ -125,9 +104,13 @@ for i = 1:ncases
             continue;
         end
         counts{k}   = counts{k} + fmarg{j}.T(:);
+        %%
+        l = localCPDpointers(j); 
+        
         localParent = pmarg{j};
         if ~isempty(localParent) % isempty if it has no localCPD.
-            localWeights{i, j} = pmarg{j}.T(:)';
+            %localWeights{i, j} = pmarg{j}.T(:)';
+            localWeights{l} = [localWeights{l}; rowvec(localParent.T)]; % need to preallocate somehow
         end
     end
 end
@@ -137,22 +120,23 @@ ess.isAdjustable = isAdjustable;
 localCPDs = cellwrap(dgm.localCPDs);
 nLocalCpds = numel(localCPDs);
 if nLocalCpds > 0
-    emission        = cell(nLocalCpds, 1);
-    for i=1:numel(localCPDs)
-        localCPD    = localCPDs{i};
-        eclass      = findEquivClass(localCPDpointers, i);
+    emissionEss        = cell(nLocalCpds, 1);
+    for k=1:numel(localCPDs)
+        localCPD    = localCPDs{k};
+        eclass      = findEquivClass(localCPDpointers, k);
         % combine data cases and weights from the same equivalence classes
         localData = cell2mat(localEv2HmmObs(localEv(:, :, eclass))')'; % localData is now ncases*numel(eclass)-by-d
-        missing     = any(isnan(localData), 2);
-        localData(missing, :) = [];
-        wcell       = colvec(localWeights(:, eclass));
-        weights     = vertcat(wcell{:}); % weights is now N-by-nstates
-        weights(missing, :) = [];
-        if ~isempty(weights); % if parent is not clamped
-            emission{i} = localCPD.essFn(localCPD, localData, weights);
-        end
+        %missing     = any(isnan(localData), 2);
+        %localData(missing, :) = [];
+        %wcell       = colvec(localWeights(:, eclass));
+        %weights     = vertcat(wcell{:}); % weights is now ncases*numel(eclass)-by-nstates
+        %weights(missing, :) = [];
+        %if ~isempty(weights); % if parent is not clamped
+        %    emission{i} = localCPD.essFn(localCPD, localData, weights);
+        %end
+        emissionEss{k} = localCPD.essFn(localCPD, localData, localWeights{k}); 
     end
-    ess.emission = emission;
+    ess.emissionEss = emissionEss;
 end
 %%
 loglik = loglik + dgmLogPrior(dgm);  % includes localCPDs
@@ -172,11 +156,11 @@ end
 dgm.CPDs = CPDs;
 %% Local CPDs
 
-emission = ess.emission;
+emissionEss = ess.emissionEss;
 localCPDs = dgm.localCPDs;
 for i=1:numel(localCPDs)
     localCPD = localCPDs{i};
-    E = emission{i};
+    E = emissionEss{i};
     if isempty(E), continue; end % parent was clamped
     localCPDs{i} = localCPD.fitFnEss(localCPD, E);
 end

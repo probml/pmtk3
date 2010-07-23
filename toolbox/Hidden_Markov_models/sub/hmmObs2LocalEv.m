@@ -6,6 +6,7 @@ function localev = hmmObs2LocalEv(obs)
 %
 % See also localEv2HmmObs
 %%
+obs = cellwrap(obs);
 nobs = numel(obs); 
 d    = size(obs{1}, 1); 
 Tmax = max(cellfun(@(c)size(c, 2), obs)); 

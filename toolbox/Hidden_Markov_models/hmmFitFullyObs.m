@@ -28,7 +28,7 @@ end
 A        = countTransitions(Z, nstatesZ); 
 model.A  = normalize(A + transPrior-1, 2); 
 seqidx   = cumsum([1, cellfun(@(seq)size(seq, 2), Z')]);
-pi       = histc(Zstacked(seqidx(1:end-1)), 1:nstatesZ)';
+pi       = rowvec(histc(Zstacked(seqidx(1:end-1)), 1:nstatesZ));
 model.pi = normalize(pi + rowvec(piPrior) - 1);       
 switch lower(type)
     case 'gauss'
