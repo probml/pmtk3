@@ -10,7 +10,7 @@ model = mkRndGaussHmm(nstates, d);
 X = hmmSample(model, T, 1);
 %% infer single marginals using fwdback
 tic
-gamma = hmmInferNodes(model, X);
+[gamma, logpHmm] = hmmInferNodes(model, X);
 t = toc;
 fprintf('fwdbck: %g seconds\n', t);
 %% infer single marginals using varelim
@@ -27,7 +27,7 @@ end
 if 1
     tic;
     dgm        = hmm2Dgm(model, T, 'infEngine', 'jtree');
-    margJtree  = dgmInferNodes(dgm, 'localev', X);
+    [margJtree, logpDgm]  = dgmInferNodes(dgm, 'localev', X);
     gammaJtree = tfMarg2Mat(margJtree);
     t = toc;
     fprintf('jtree : %g seconds\n', t);

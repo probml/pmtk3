@@ -1,7 +1,7 @@
 %% Fit an HMM and an equivalent DGM and make sure the results agree
 setSeed(2); 
 %% sample data
-nstates   = 20;
+nstates   = 10;
 d         = 13; 
 T         = 11; 
 nsamples  = 15; 
@@ -44,28 +44,35 @@ for i=1:nstates
 end
 mu0 = randn(d, nstates); 
 emission0 = condGaussCpdCreate(mu0, Sigma0); 
+maxIter = 5;
+
 fprintf('\nHMM\n'); 
 hmmModel = hmmFitEm(Y, nstates, 'gauss', ...
-    'pi0', pi0, 'trans0', trans0, 'emission0', emission0, 'verbose', true, 'maxIter', 5);
+    'pi0', pi0, 'trans0', trans0, 'emission0',...
+    emission0, 'verbose', true, 'maxIter', maxIter);
 
 dgmModel.localCPDs = {emission0};
 dgmModel.localCPDs{1}.prior = hmmModel.emissionPrior; 
 dgmModel.CPDs{1} = tabularCpdCreate(pi0(:), 'prior', hmmModel.piPrior(:)); 
 dgmModel.CPDs{2} = tabularCpdCreate(trans0, 'prior', hmmModel.transPrior); 
-fprintf('\nDGM\n'); 
-dgmModel = dgmFitEm(dgmModel, [], 'localev', localev, 'verbose', true, 'maxIter', 5);
 
+fprintf('\nDGM\n'); 
+dgmModel = dgmFitEm(dgmModel, [], 'localev', localev, ...
+    'verbose', true, 'maxIter', maxIter);
 %% compare results
 
 hmmPi = hmmModel.pi(:); 
 dgmPi = dgmModel.CPDs{1}.T(:);
 assert(approxeq(hmmPi, dgmPi)); 
+
 hmmA = hmmModel.A;
 dgmA = dgmModel.CPDs{2}.T;
 assert(approxeq(hmmA, dgmA)); 
+
 hmmMu = hmmModel.emission.mu;
 dgmMu = dgmModel.localCPDs{1}.mu;
 assert(approxeq(hmmMu, dgmMu)); 
+
 hmmSigma = hmmModel.emission.Sigma;
 dgmSigma = dgmModel.localCPDs{1}.Sigma;
 assert(approxeq(hmmSigma, dgmSigma)); 

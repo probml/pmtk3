@@ -77,11 +77,9 @@ nDataCases       = size(data, 1);
 nLocalEvCases    = size(localEv, 1); 
 ncases           = max(nDataCases, nLocalEvCases); 
 counts           = repmat({0}, 1, nEqClasses);
-%localWeights     = cell(ncases, nnodes);
 localCPDs        = dgm.localCPDs; 
 nLocalEqClasses  = numel(localCPDs); 
 localWeights = cell(nLocalEqClasses, 1); % NEED TO PREALLOCATE HERE!
-%localData    = cell(nLocalEqClasses, 1); 
 loglik           = 0;
 isAdjustable     = true(1, nEqClasses);
 for i = 1:ncases
@@ -96,6 +94,7 @@ for i = 1:ncases
     [fmarg, llobs, pmarg] ...
         = dgmInferFamily(dgm, 'clamped', dataCase, 'localev', localEvCase);
     
+    %fprintf('%g\n',llobs); 
     loglik = loglik + llobs;
     for j = 1:nnodes
         k = CPDpointers(j); % update the kth bank of parameters
@@ -106,10 +105,8 @@ for i = 1:ncases
         counts{k}   = counts{k} + fmarg{j}.T(:);
         %%
         l = localCPDpointers(j); 
-        
         localParent = pmarg{j};
         if ~isempty(localParent) % isempty if it has no localCPD.
-            %localWeights{i, j} = pmarg{j}.T(:)';
             localWeights{l} = [localWeights{l}; rowvec(localParent.T)]; % need to preallocate somehow
         end
     end
@@ -126,14 +123,6 @@ if nLocalCpds > 0
         eclass      = findEquivClass(localCPDpointers, k);
         % combine data cases and weights from the same equivalence classes
         localData = cell2mat(localEv2HmmObs(localEv(:, :, eclass))')'; % localData is now ncases*numel(eclass)-by-d
-        %missing     = any(isnan(localData), 2);
-        %localData(missing, :) = [];
-        %wcell       = colvec(localWeights(:, eclass));
-        %weights     = vertcat(wcell{:}); % weights is now ncases*numel(eclass)-by-nstates
-        %weights(missing, :) = [];
-        %if ~isempty(weights); % if parent is not clamped
-        %    emission{i} = localCPD.essFn(localCPD, localData, weights);
-        %end
         emissionEss{k} = localCPD.essFn(localCPD, localData, localWeights{k}); 
     end
     ess.emissionEss = emissionEss;
@@ -144,8 +133,6 @@ end
 
 function dgm = mstep(dgm, ess)
 %% Maximize
-%
-%%
 counts = ess.counts;
 CPDs = dgm.CPDs;
 for i = find(ess.isAdjustable)

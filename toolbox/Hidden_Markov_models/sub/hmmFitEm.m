@@ -114,6 +114,7 @@ nobs        = numel(data);
 for i = 1:nobs
     obs                            = data{i};
     [gamma, llobs, alpha, beta, B] = hmmInferNodes(model, obs);
+    %fprintf('%g\n',llobs); 
     loglik                         = loglik + llobs;
     xi_summed                      = hmmComputeTwoSlice(alpha, beta, A, B);
     startCounts                    = startCounts + gamma(:, 1)';
