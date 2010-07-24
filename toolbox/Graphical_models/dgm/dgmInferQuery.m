@@ -87,7 +87,6 @@ switch lower(engine)
         if isfield(dgm, 'jtree') && jtreeCheckQueries(dgm.jtree, queries)
             jtree         = jtreeSliceCliques(dgm.jtree, clamped, doSlice);
         else
-
             factors       = cpds2Factors(CPDs, G, CPDpointers);
             factors       = addEvidenceToFactors(factors, clamped, doSlice);
             nstates       = cellfun(@(f)f.sizes(end), factors);

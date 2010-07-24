@@ -24,6 +24,7 @@ end
 function [ess, loglik] = estep(dgm, data, localEv)
 %% Compute the expected sufficient statistics
 localCPDs        = dgm.localCPDs; 
+CPDs             = dgm.CPDs; 
 CPDpointers      = dgm.CPDpointers;
 localCPDpointers = dgm.localCPDpointers;
 nnodes           = dgm.nnodes;
@@ -39,7 +40,7 @@ localWeights     = cell(nLocalEqClasses, 1);
 for k = 1:nLocalEqClasses
    eqClass         = localEqClasses{k}; 
    N               = nLocalEvCases*numel(eqClass); 
-   ns              = localCPDs{eqClass(1)}.nstates;
+   ns              = CPDs{CPDpointers(eqClass(1))}.nstates;
    localWeights{k} = zeros(N, ns);   
 end
 lwCounter = ones(1, nLocalEqClasses); 
@@ -47,7 +48,7 @@ loglik    = 0;
 for i = 1:ncases
     args = {'clamped', [], 'localev', []}; 
     if i <= nDataCases   ,  args{2} = data(i, :);                       end
-    if i <= nLocalEvCases,  args{4} = squeezePMTK(localEv(i, :, :));    end
+    if i <= nLocalEvCases,  args{4} = squeezeFirst(localEv(i, :, :));   end
     [fmarg, llobs, pmarg] = dgmInferFamily(dgm, args{:}); % pmarg are the marg probs of the parents with localCPDs
     loglik                = loglik + llobs;
     for j = 1:nnodes

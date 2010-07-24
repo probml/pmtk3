@@ -34,7 +34,6 @@ assert(approxeq(pi, piDgm));
 assert(approxeq(A, Adgm)); 
 assert(approxeq(Ehmm.mu, Edgm.mu)); 
 assert(approxeq(Ehmm.Sigma, Edgm.Sigma)); 
-
 %%
 %% UNOBSERVED HMM CASE
 pi0    = normalize(rand(1, nstates)); 
@@ -120,4 +119,29 @@ mixGaussDgm = dgmFitEm(mixGaussDgm, [], 'localev', localEv, 'verbose', false, 'm
 assert(approxeq(mixGaussDgm.localCPDs{1}.mu, mixGauss.mu)); 
 assert(approxeq(mixGaussDgm.localCPDs{1}.Sigma, mixGauss.Sigma)); 
 assert(approxeq(mixGaussDgm.CPDs{1}.T(:), mixGauss.mixweight(:)));
+
+%% Discrete HMM
+obsModel = [1/6 , 1/6 , 1/6 , 1/6 , 1/6 , 1/6  ;   
+           1/10, 1/10, 1/10, 1/10, 1/10, 5/10 ];   
+transmat = [0.95 , 0.05;
+           0.10  , 0.90];
+pi = [0.5, 0.5];
+T = 30; nsamples = 1;
+markov.pi = pi;
+markov.A = transmat;
+hidden = markovSample(markov, T, nsamples);
+observed = zeros(1, T); 
+for t=1:T
+   observed(1, t) = sampleDiscrete(obsModel(hidden(t), :)); 
+end
+nstates = size(obsModel, 1);
+model.nObsStates = size(obsModel, 2); 
+model.emission = tabularCpdCreate(obsModel);
+model.nstates = nstates;
+model.pi = pi;
+model.A = transmat; 
+model.type = 'discrete';
+dgm = hmm2Dgm(model, T); 
+dgm = dgmFitEm(dgm, [], 'localev', permute(observed(:), [3 2 1])); 
+
 
