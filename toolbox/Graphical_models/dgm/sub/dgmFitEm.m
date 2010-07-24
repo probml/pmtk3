@@ -1,19 +1,16 @@
 function [dgm, loglikHist] = dgmFitEm(dgm, data, varargin)
 %% Fit a dgm with partially observed data via EM
 %
+% See dgmFit
 %%
-[localEv, precomputeJtree, EMargs] = process_options(varargin, ...
-    'localev'         , [] , ...
-    'precomputeJtree' , true);
+[localEv, EMargs] = process_options(varargin, 'localev', []);
 estepFn           = @(dgm, data)estep(dgm, data, localEv);
 [dgm, loglikHist] = emAlgo(dgm, data, @init, estepFn, @mstep, EMargs{:});
-dgm               = dgmRebuildJtree(dgm, precomputeJtree);
-
 end
 
 function dgm = init(dgm, data, restartNum)
 %% Initialize
-dgm = removeFields(dgm, 'jtree', 'factors'); 
+if strcmpi(dgm.infEngine, 'jtree'); dgm = dgmRebuildJtree(dgm);  end
 % use current params for the first run
 if restartNum > 1
     dgm.CPDs      = cellfuncell(@(c)c.rndInitFn(c), dgm.CPDs); 
@@ -23,7 +20,6 @@ end
 
 function [ess, loglik] = estep(dgm, data, localEv)
 %% Compute the expected sufficient statistics
-localCPDs        = dgm.localCPDs; 
 CPDs             = dgm.CPDs; 
 CPDpointers      = dgm.CPDpointers;
 localCPDpointers = dgm.localCPDpointers;
@@ -36,8 +32,7 @@ nEqClasses       = numel(dgm.CPDs);
 ncases           = max(nDataCases, nLocalEvCases); 
 counts           = repmat({0}, 1, nEqClasses); 
 localWeights     = cell(nLocalEqClasses, 1);
-%% preallocate localWeights
-for k = 1:nLocalEqClasses
+for k = 1:nLocalEqClasses % preallocate localWeights
    eqClass         = localEqClasses{k}; 
    N               = nLocalEvCases*numel(eqClass); 
    ns              = CPDs{CPDpointers(eqClass(1))}.nstates;
@@ -63,13 +58,17 @@ for i = 1:ncases
         end
     end
 end
-ess.counts       = counts;
-ess.emissionEss  = estepEmission(dgm, localEv, localWeights); 
-loglik           = loglik + dgmLogPrior(dgm);  % includes localCPDs
+ess.counts      = counts;
+ess.emissionEss = estepEmission(dgm, localEv, localWeights); 
+loglik          = loglik + dgmLogPrior(dgm);  % includes localCPD priors
 end
 
 function emissionEss = estepEmission(dgm, localEv, localWeights)
 %% Compute the expcected sufficient statistics for the localCPDs
+% the local weights are the marginal probabilities of each parent with a
+% localCPD for each data case, grouped by local equivalence class. We group
+% localEv by eqclass here. 
+%%
 localCPDs        = dgm.localCPDs; 
 nLocalCpds       = numel(localCPDs);
 emissionEss      = cell(nLocalCpds, 1);
@@ -102,6 +101,6 @@ for i = 1:numel(localCPDs)
     localCPDs{i} = localCPD.fitFnEss(localCPD, emissionEss{i});
 end
 dgm.localCPDs = localCPDs;
-dgm = removeFields(dgm, 'jtree', 'factors'); 
+if strcmpi(dgm.infEngine, 'jtree'); dgm = dgmRebuildJtree(dgm);  end
 
 end

@@ -36,10 +36,10 @@ function [model, loglikHist] = mixGaussFitEm(data, K, varargin)
 %% Create data-dependent prior
 if doMAP
     % set hyper-parameters
-    prior.m0 = zeros(D,1);
-    prior.kappa0 = 0.01;
-    prior.nu0 = D+2;
-    prior.S0 = (1/K^(1/D))*var(data(:))*eye(D);
+    prior.mu = zeros(D,1);
+    prior.k = 0.01;
+    prior.dof = D+2;
+    prior.Sigma = (1/K^(1/D))*var(data(:))*eye(D);
 else
     prior = [];
 end
@@ -48,7 +48,7 @@ model = structure(K, mu, Sigma, mixweight, prior);
 if isempty(overRelaxFactor)
     mstepORfn = [];
 else
-    mstepORfn = @mstepOR; 
+    mstepORfn = @mstepOR;
 end
 [model, loglikHist] = emAlgo(model, data, @init, @estep,  @mstep, ...
     'mstepOR'         , mstepORfn , ...
@@ -63,15 +63,15 @@ end
 function model = init(model, data, restartNum) %#ok
 % Initialize params
 if isempty(model.mu)
-    K = model.K; 
-    prior = model.prior; 
+    K = model.K;
+    prior = model.prior;
     [mu, Sigma, mixweight] = kmeansInitMixGauss(data, K);
     model = structure(K, mu, Sigma, mixweight, prior);
 end
 end
 
 function model = mstep(model, ess)
-[D, D2, K] = size(ess.Sk); 
+[D, D2, K] = size(ess.Sk);
 mixweight = normalize(ess.w);
 % Set any zero weights to one before dividing
 % This is valid because w(c)=0 => WY(:,c)=0, and 0/0=0
@@ -80,8 +80,8 @@ Sigma = zeros(D,D,K);
 mu = zeros(D,K);
 prior = model.prior;
 if ~isempty(prior)
-    kappa0 = prior.kappa0; m0 = prior.m0;
-    nu0 = prior.nu0; S0 = prior.S0;
+    kappa0 = prior.k; m0 = prior.mu;
+    nu0 = prior.dof; S0 = prior.Sigma;
     for c=1:K
         mu(:,c) = (w(c)*ess.ybark(:,c)+kappa0*m0)./(w(c)+kappa0);
         a = (kappa0*w(c))./(kappa0 + w(c));
@@ -143,25 +143,17 @@ Y = data'; % Y(:,i) is i'th case
 % post(i,c) = responsibility for cluster c, point i
 
 % Evaluate objective funciton
-loglik = sum(ll)/N;
+loglik = sum(ll);
 prior = model.prior;
 if ~isempty(prior)
     % add log prior
-    kappa0 = prior.kappa0; m0 = prior.m0;
-    nu0 = prior.nu0; S0 = prior.S0;
     logprior = zeros(1,K);
+    mu = model.mu;
+    Sigma = model.Sigma;
     for c=1:K
-        %Sinv = inv(model.Sigma(:,:,c));
-        S = model.Sigma(:, :, c); 
-        % note logdet(Sinv) == -logdet(S)
-        logprior(c) = -logdet(S)*(nu0 + D + 2)/2 - 0.5*trace(S\S0) ...
-            -kappa0/2*(model.mu(:,c)-m0)'*(S\(model.mu(:,c)-m0));
-        % does not include log(Z) term, which is constant
-        %mod2 = struct('mu', m0, 'Sigma', S0, 'dof', nu0, 'k', kappa0);
-        %logp = gaussInvWishartLogprob(mod2, model.mu(:,c), model.Sigma(:,:,c));
-        %assert(approxeq(logp, logprior(c)))
+        logprior(c) = gaussInvWishartLogprob(prior, mu(:, c), Sigma(:, :, c));
     end
-    loglik = loglik + sum(logprior)/N;
+    loglik = loglik + sum(logprior);
 end
 
 % compute expected sufficient statistics

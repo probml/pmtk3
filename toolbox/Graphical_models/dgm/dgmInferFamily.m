@@ -8,7 +8,6 @@ function [familyBels, logZ, nodeBels] = dgmInferFamily(dgm, varargin)
 calcNodeBels = nargout > 2; 
 nnodes       = dgm.nnodes; 
 queries      = allFamilies(dgm.G);
-
 if calcNodeBels
     nodeBels = cell(nnodes, 1); 
     hasLocalCpd = find(dgm.localCPDpointers); 
