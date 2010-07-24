@@ -145,3 +145,33 @@ dgm = hmm2Dgm(model, T);
 dgm = dgmFitEm(dgm, [], 'localev', permute(observed(:), [3 2 1])); 
 
 
+%% naive bayes
+
+C = 5;
+d = 10;
+K = 2;
+ncases = 100; 
+%% generate some data
+X = randi(K, [ncases, d]); 
+y = randi(C, [ncases, 1]); 
+%%
+
+G = zeros(d+1, d+1);
+for i=1:d
+    G(1, i+1) = 1;
+end
+
+nstates(1) = C; 
+nstates(2:d+1) = K; 
+CPDs = mkRndTabularCpds(G, nstates, 'prior', 'laplace'); 
+CPDs{1}.prior = 1;
+dgm = dgmCreate(G, CPDs); 
+dgm = dgmFitFullyObs(dgm, [y, X]); 
+pseudoCounts = 1; 
+nb = naiveBayesFit(X-1, y, pseudoCounts); 
+
+assert(approxeq(nb.classPrior(:), dgm.CPDs{1}.T(:))); 
+for i=1:d
+   assert(approxeq(nb.theta(:, i), dgm.CPDs{i+1}.T(:, 2)));  
+end
+
