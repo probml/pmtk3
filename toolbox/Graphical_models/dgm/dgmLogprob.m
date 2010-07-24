@@ -38,6 +38,7 @@ else
     nstates = cellfun(@(f)f.sizes(end), factors); 
     jtree   = jtreeCreate(factorGraphCreate(factors, nstates, G));
 end
-jtree = jtreeAddFactors(jtree, localFacs);
+[jtree, logZlocal] = jtreeAddFactors(jtree, localFacs);
 [jtree, logZ] = jtreeCalibrate(jtree);
+logZ = logZ + logZlocal; 
 end

@@ -1,8 +1,21 @@
-function jtree = jtreeAddFactors(jtree, facs)
+function [jtree, logZlocal] = jtreeAddFactors(jtree, facs)
 %% Add factors to an existing jtree
 % by multiplying them into the smallest accommodating cliques.
 %%
-if isempty(facs); return; end
+
+if isempty(facs)
+    logZlocal = 0;
+    return;
+end
+nfacs = numel(facs); 
+Z = zeros(nfacs, 1);
+for i=1:nfacs
+   [facs{i}, Z(i)] = tabularFactorNormalize(facs{i});  
+end
+logZlocal = sum(log(Z)); 
+    
+    
+
 cliques = jtree.cliques;
 clqSizes = cellfun('length', cliques);
 cliqueLookup = jtree.cliqueLookup;

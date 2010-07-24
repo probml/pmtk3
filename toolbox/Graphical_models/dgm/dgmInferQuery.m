@@ -93,9 +93,10 @@ switch lower(engine)
             fg            = factorGraphCreate(factors, nstates, G);
             jtree         = jtreeCreate(fg, 'cliqueConstraints', queries);
         end
-        jtree         = jtreeAddFactors(jtree, localFacs);
-        [jtree, logZ] = jtreeCalibrate(jtree);
-        bels          = jtreeQuery(jtree, queries);
+        [jtree, logZlocal]= jtreeAddFactors(jtree, localFacs);
+        [jtree, logZ]     = jtreeCalibrate(jtree);
+        bels              = jtreeQuery(jtree, queries);
+        logZ = logZ + logZlocal; 
         
     case 'libdaijtree'
         

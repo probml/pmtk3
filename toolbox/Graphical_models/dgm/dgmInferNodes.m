@@ -56,17 +56,18 @@ switch lower(engine)
     case 'jtree'
         
         if isfield(dgm, 'jtree')
-            jtree     = jtreeSliceCliques(dgm.jtree, clamped);
+            jtree          = jtreeSliceCliques(dgm.jtree, clamped);
         else
-            doSlice   = true;
-            factors   = cpds2Factors(dgm.CPDs, G, dgm.CPDpointers);
-            factors   = addEvidenceToFactors(factors, clamped, doSlice);
-            nstates   = cellfun(@(f)f.sizes(end), factors); 
-            jtree     = jtreeCreate(factorGraphCreate(factors, nstates, G));
+            doSlice        = true;
+            factors        = cpds2Factors(dgm.CPDs, G, dgm.CPDpointers);
+            factors        = addEvidenceToFactors(factors, clamped, doSlice);
+            nstates        = cellfun(@(f)f.sizes(end), factors); 
+            jtree          = jtreeCreate(factorGraphCreate(factors, nstates, G));
         end
-        jtree         = jtreeAddFactors(jtree, localFacs);
-        [jtree, logZ] = jtreeCalibrate(jtree);
-        nodeBels      = jtreeQuery(jtree, num2cell(hidVars));
+        [jtree, logZlocal] = jtreeAddFactors(jtree, localFacs);
+        [jtree, logZ]      = jtreeCalibrate(jtree);
+        nodeBels           = jtreeQuery(jtree, num2cell(hidVars));
+        logZ = logZ + logZlocal; 
         
     case 'libdaijtree'
         
