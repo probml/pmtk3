@@ -1,11 +1,17 @@
-function f = fnameOnly(fullPath)
+function f = fnameOnly(fullPath, includeExt)
 %% Return the filename given its full path
 % e.g. fnameOnly('C:\foo\bar\test.m') yields 'test'
 
+if nargin < 2
+    includeExt = false;
+end
 if iscell(fullPath)
     f = cellfuncell(@fnameOnly, fullPath); 
     return;
 end
-
-f = argout(2, @fileparts, fullPath); 
+[p, f, ext] = fileparts(fullPath); 
+if includeExt
+    f = [f, ext];
+end
+    
 end

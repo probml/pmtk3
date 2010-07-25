@@ -19,6 +19,7 @@ function B = pmlGrabBook(includeEx, includeSol)
 %
 % Each included chapter is listed in order in pml.tex with \include{chname}
 % Each chapter.tex file has \input{chbody} lines. 
+% The book must be capable of being compiled, i.e. no syntax errors. 
 % 
 %%
 if nargin  == 0 

@@ -15,6 +15,10 @@ function [codename, pg, datestr] = pmlCodeRefs(codeIndFile)
 if nargin ==0
     codeIndFile =  fullfile(getConfigValue('PMTKpmlBookSource'), 'code.ind'); 
 end
+if ~exist(codeIndFile, 'file');
+   error('Could not find code.ind file - please recompile the book and make indexes');  
+end
+
 datestr = getFileModificationDate(codeIndFile); 
 if ~exist(codeIndFile, 'file')
     error('Could not find %s. Check the path and try recompiling the latex source and/or regenerating the index with "makeindex code".', codeIndFile);

@@ -2,6 +2,20 @@ function F = pmlFigureInfo(includeEx, includeSol)
 %% Parse every figure in PML
 %
 % F{i}(j) is a struct storing info on the jth figure in chapter i
+%
+% Each struct has these fields:
+%
+% options   - the options used with the figure, e.g. 'height=1.5in'
+% caption   - the full raw caption text, (as one line)
+% label     - the figure label used
+% fnames    - the names of the source pdf files (a cell array)
+% figNum    - the figure number relative to the chapter
+% figNumTxt - the absolute figure number as a string, e.g. '12.2' 
+% codeNames - all names appearing in \codename{foo} in the caption
+%
+% To combine figures from all chapters into one structured array use
+% F = [F{:}]; 
+%
 %%
 if nargin == 0
     includeEx  = false; 
@@ -77,14 +91,13 @@ label   = strtrim(label(2:(end-1)));
 fnames  = cellfuncell(@(c)c(2:end-1), fnames); 
 fnames  = strtrim(fnames); 
 
+
 ndx = strfind(caption, '\codename');
-if ~isempty(ndx)
-    codename = grab(caption(ndx(1):end), 1); 
-    codename = textBetween(codename, '{', '}'); 
-else
-    codename = '';
-end
-Fstruct = structure(options, caption, label, fnames, codename);
+codeNames = cell(numel(ndx), 1); 
+for i=1:numel(ndx)
+    codeNames{i} = textBetween(grab(caption(ndx(i):end), 1), '{', '}'); 
+end    
+Fstruct = structure(options, caption, label, fnames, codeNames);
 end
 
 function [T, i] = grab(T, n)
