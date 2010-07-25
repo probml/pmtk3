@@ -22,8 +22,8 @@ function B = pmlGrabBook(includeEx, includeSol)
 % 
 %%
 if nargin  == 0 
-    includeEx = true;
-    includeSol = true; 
+    includeEx = false;
+    includeSol = false; 
 end
 bookSource = getConfigValue('PMTKpmlBookSource');
 chapterFiles = getChapterFileNames(fullfile(bookSource, 'pml.tex')); 
