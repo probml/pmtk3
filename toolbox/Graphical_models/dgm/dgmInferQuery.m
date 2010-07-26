@@ -90,7 +90,7 @@ switch lower(engine)
             factors       = cpds2Factors(CPDs, G, CPDpointers);
             factors       = addEvidenceToFactors(factors, clamped, doSlice);
             nstates       = cellfun(@(f)f.sizes(end), factors);
-            fg            = factorGraphCreate(factors, nstates, G);
+            fg            = cliqueGraphCreate(factors, nstates, G);
             jtree         = jtreeCreate(fg, 'cliqueConstraints', queries);
         end
         [jtree, logZlocal]= jtreeAddFactors(jtree, localFacs);
@@ -115,7 +115,7 @@ switch lower(engine)
         factors      = addEvidenceToFactors(factors, clamped, doSlice); 
         factors      = multiplyInLocalFactors(factors, localFacs);
         nstates      = cellfun(@(f)f.sizes(end), factors); 
-        fg           = factorGraphCreate(factors, nstates, G);
+        fg           = cliqueGraphCreate(factors, nstates, G);
         [logZ, bels] = variableElimination(fg, queries); 
         
     case 'enum'

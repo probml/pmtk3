@@ -1,6 +1,6 @@
-function [logZ, postQuery] = variableElimination(factorGraph, queryVars)
+function [logZ, postQuery] = variableElimination(cliqueGraph, queryVars)
 %% Sum-product variable elimination
-% factorGraph is a struct with the following fields:
+% cliqueGraph is a struct with the following fields:
 % Tfac       - a cell array of tabular factors
 % G          - the graph structure: an adjacency matrix
 % nstates(j) - the number of states for node j
@@ -10,7 +10,7 @@ function [logZ, postQuery] = variableElimination(factorGraph, queryVars)
 %% Handle multiple queries 
 % (note it is much more efficient to use jtree for multiple queries)
 if iscell(queryVars)
-   [logZ, postQuery] = cellfun(@(q)variableElimination(factorGraph, q), ...
+   [logZ, postQuery] = cellfun(@(q)variableElimination(cliqueGraph, q), ...
                        queryVars, 'UniformOutput', false);
     postQuery = colvec(postQuery); 
     logZ      = logZ{1}; % all the same
@@ -20,9 +20,9 @@ if iscell(queryVars)
     return
 end
 %% Setup
-factors  = rowvec(factorGraph.Tfac);
-G        = factorGraph.G;
-nstates  = factorGraph.nstates; 
+factors  = rowvec(cliqueGraph.Tfac);
+G        = cliqueGraph.G;
+nstates  = cliqueGraph.nstates; 
 %% Find a good elimination ordering
 moralG   = moralizeGraph(G); % marry parents, and make graph symmetric
 ordering = minWeightElimOrder(moralG, nstates);

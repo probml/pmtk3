@@ -114,17 +114,17 @@ for i=1:numel(edgeFactors)
 end
 %% combine node and edge factors
 if isempty(edgeFactors)
-   factorGraph = factorGraphCreate(nodeFactors, nstates, G);  
+   cliqueGraph = cliqueGraphCreate(nodeFactors, nstates, G);  
 else
     factors = edgeFactors;  
     for f=1:nnodes
         ndx = find(edgeLookup(f, :), 1);
         factors{ndx} = tabularFactorMultiply(factors{ndx}, nodeFactors{f}); 
     end
-    factorGraph = factorGraphCreate(factors, nstates);  
+    cliqueGraph = cliqueGraphCreate(factors, nstates);  
 end
 %% package
-mrf = structure(G, factorGraph, localCPDs, localCPDpointers, ...
+mrf = structure(G, cliqueGraph, localCPDs, localCPDpointers, ...
     localCPDpointers, infEngine, nnodes, edges, nstates, ...
     nodePots, nodePotPointers, edgePots, edgePotPointers); 
 
@@ -132,6 +132,6 @@ mrf.isdirected = false;
 mrf.modelType = 'mrf';
 %% precompute jtree
 if strcmpi(infEngine, 'jtree') && precomputeJtree
-    mrf.jtree = jtreeCreate(factorGraph);
+    mrf.jtree = jtreeCreate(cliqueGraph);
 end
 end

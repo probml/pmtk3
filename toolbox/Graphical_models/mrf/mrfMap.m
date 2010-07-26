@@ -12,7 +12,7 @@ end
 if ~isempty(softEv)
     localFacs = [localFacs(:); colvec(softEvToFactors(softEv))];
 end
-fg = mrf.factorGraph; 
+fg = mrf.cliqueGraph; 
 if isfield(mrf, 'jtree')
     jtree     = jtreeSliceCliques(mrf.jtree, clamped);
 else

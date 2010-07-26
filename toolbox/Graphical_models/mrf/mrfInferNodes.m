@@ -12,7 +12,7 @@ function [nodeBels, logZ, edgeBels] = mrfInferNodes(mrf, varargin)
 
 engine = mrf.infEngine;
 nnodes = mrf.nnodes;
-fg     = mrf.factorGraph; 
+fg     = mrf.cliqueGraph; 
 
 localFacs = {}; 
 if ~isempty(localEv)

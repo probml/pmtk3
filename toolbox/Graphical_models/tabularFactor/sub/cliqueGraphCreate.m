@@ -1,5 +1,5 @@
-function fg = factorGraphCreate(Tfac, nstates, G)
-%% Construct a factor graph
+function fg = cliqueGraphCreate(Tfac, nstates, G)
+%% Construct a clique graph
 %
 % Tfac is a cell array of tabular factors
 % nstates(j) is the number of states for node j

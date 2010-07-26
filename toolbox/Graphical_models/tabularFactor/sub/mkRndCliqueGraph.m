@@ -1,5 +1,5 @@
-function model = mkRndFactorGraph(nnodes, maxNstates, maxFanIn, maxFanOut)
-%% Create a random factor graph
+function model = mkRndCliqueGraph(nnodes, maxNstates, maxFanIn, maxFanOut)
+%% Create a random clique graph
 
 G = mkRndDag(nnodes, maxFanIn, maxFanOut);
 

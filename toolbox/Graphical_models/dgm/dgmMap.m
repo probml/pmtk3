@@ -20,7 +20,7 @@ else
     factors = cpds2Factors(dgm.CPDs, G, dgm.CPDpointers);
     factors = addEvidenceToFactors(factors, clamped, doSlice);
     nstates = cellfun(@(f)f.sizes(end), factors);
-    jtree   = jtreeCreate(factorGraphCreate(factors, nstates, G));
+    jtree   = jtreeCreate(cliqueGraphCreate(factors, nstates, G));
 end
 jtree = jtreeAddFactors(jtree, localFacs);
 map   = jtreeFindMap(jtree);

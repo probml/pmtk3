@@ -3,7 +3,7 @@ function dgm = dgmRebuildJtree(dgm, varargin)
 %
 %%
 factors = cpds2Factors(dgm.CPDs, dgm.G, dgm.CPDpointers);
-dgm.jtree = jtreeCreate(factorGraphCreate(factors, dgm.nstates, dgm.G), varargin{:});
+dgm.jtree = jtreeCreate(cliqueGraphCreate(factors, dgm.nstates, dgm.G), varargin{:});
 dgm.factors = factors;
 
 end
