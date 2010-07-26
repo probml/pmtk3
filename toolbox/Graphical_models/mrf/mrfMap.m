@@ -12,14 +12,14 @@ end
 if ~isempty(softEv)
     localFacs = [localFacs(:); colvec(softEvToFactors(softEv))];
 end
-fg = mrf.cliqueGraph; 
+cg = mrf.cliqueGraph; 
 if isfield(mrf, 'jtree')
     jtree     = jtreeSliceCliques(mrf.jtree, clamped);
 else
     doSlice   = true;
-    fg.Tfac   = addEvidenceToFactors(fg.Tfac, clamped, doSlice);
-    fg.nstates(find(clamped)) = 1; %#ok
-    jtree     = jtreeCreate(fg);
+    cg.Tfac   = addEvidenceToFactors(cg.Tfac, clamped, doSlice);
+    cg.nstates(find(clamped)) = 1; %#ok
+    jtree     = jtreeCreate(cg);
 end
 jtree         = jtreeAddFactors(jtree, localFacs);
 map           = jtreeFindMap(jtree); 

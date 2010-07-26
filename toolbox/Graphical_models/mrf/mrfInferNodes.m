@@ -12,7 +12,7 @@ function [nodeBels, logZ, edgeBels] = mrfInferNodes(mrf, varargin)
 
 engine = mrf.infEngine;
 nnodes = mrf.nnodes;
-fg     = mrf.cliqueGraph; 
+cg     = mrf.cliqueGraph; 
 
 localFacs = {}; 
 if ~isempty(localEv)
@@ -33,9 +33,9 @@ switch lower(engine)
             jtree     = jtreeSliceCliques(mrf.jtree, clamped);
         else
             doSlice   = true;
-            fg.Tfac   = addEvidenceToFactors(fg.Tfac, clamped, doSlice);
-            fg.nstates(visNodes) = 1; 
-            jtree     = jtreeCreate(fg);
+            cg.Tfac   = addEvidenceToFactors(cg.Tfac, clamped, doSlice);
+            cg.nstates(visNodes) = 1; 
+            jtree     = jtreeCreate(cg);
         end
         [jtree, logZlocal] = jtreeAddFactors(jtree, localFacs);
         [jtree, logZ] = jtreeCalibrate(jtree);
@@ -47,9 +47,9 @@ switch lower(engine)
         
     case 'libdaijtree'
         
-        assert(isWeaklyConnected(fg.G)); % libdai segfaults on disconnected graphs
+        assert(isWeaklyConnected(cg.G)); % libdai segfaults on disconnected graphs
         doSlice = false;     % libdai often segfaults when slicing
-        factors = addEvidenceToFactors(fg.Tfac, clamped, doSlice);
+        factors = addEvidenceToFactors(cg.Tfac, clamped, doSlice);
         factors = [factors(:); localFacs(:)];
         [logZ, nodeBels, cliques, cliqueLookup] = libdaiJtree(factors);
         if nargout > 2
@@ -59,10 +59,10 @@ switch lower(engine)
     case 'varelim'
         
         doSlice          = true;
-        factors          = addEvidenceToFactors(fg.Tfac, clamped, doSlice);
+        factors          = addEvidenceToFactors(cg.Tfac, clamped, doSlice);
         factors          = multiplyInLocalFactors(factors, localFacs);
-        fg.Tfac          = factors; 
-        [logZ, nodeBels] = variableElimination(fg, num2cell(hidNodes));
+        cg.Tfac          = factors; 
+        [logZ, nodeBels] = variableElimination(cg, num2cell(hidNodes));
         if nargout > 2
           
            error('not yet implemented'); 
@@ -70,7 +70,7 @@ switch lower(engine)
         
     case 'enum'
 
-        factors  = multiplyInLocalFactors(fg.Tfac, localFacs);
+        factors  = multiplyInLocalFactors(cg.Tfac, localFacs);
         joint    = tabularFactorMultiply(factors);
         nodeBels = cell(nnodes, 1);
         for i=1:numel(hidVars)

@@ -84,8 +84,8 @@ switch lower(engine)
         factors          = addEvidenceToFactors(factors, clamped, doSlice);
         factors          = multiplyInLocalFactors(factors, localFacs);
         nstates          = cellfun(@(f)f.sizes(end), factors); 
-        fg               = cliqueGraphCreate(factors, nstates, G);
-        [logZ, nodeBels] = variableElimination(fg, num2cell(hidVars));
+        cg               = cliqueGraphCreate(factors, nstates, G);
+        [logZ, nodeBels] = variableElimination(cg, num2cell(hidVars));
         
     case 'enum'
         

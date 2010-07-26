@@ -1,15 +1,17 @@
-function jtree = jtreeCreate(fg, varargin)
+function jtree = jtreeCreate(cg, varargin)
 %% Create a junction tree for a given factor graph
 % This structure can then be passed to jtreeCalibrate
 % Optionally include cliqueConstraints, a cell array of sets of variable
 % indices if you want to guarantee that cliques containing these sets are
 % created.
+%
+% cg is a cliqueGraph  - see cliqueGraphCreate
 %% setup
 cc       = process_options(varargin, 'cliqueConstraints', {}); 
-factors  = fg.Tfac(:);
+factors  = cg.Tfac(:);
 nfactors = numel(factors);
-nstates  = fg.nstates; 
-G        = moralizeGraph(fg.G);
+nstates  = cg.nstates; 
+G        = moralizeGraph(cg.G);
 nvars    = size(G, 1);
 %% add in clique constraints
 cc = cellwrap(cc); 
