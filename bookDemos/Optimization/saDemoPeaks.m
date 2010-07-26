@@ -14,7 +14,7 @@ Zpos = Z+abs(m)+1;
 
 % Plot the surface at different temperatures
 %temps = [0.3];
-temps = [2, 1, 0.2];
+temps = [1.5, 1, 0.2];
 %fig1 = figure; fig2= figure;
 for ti=1:length(temps)
     t = temps(ti);
@@ -84,7 +84,7 @@ printPmtkFigure('SApeaksEnergy');
 
 
 % plot the histogram of samples
-N_bins = 50;
+N_bins = 20; % otherwise the image file gets too large
 Nsamples = size(samples, 1);
 Ns = round(linspace(100, Nsamples, 3));
 %fig1 = figure; fig2 = figure;

@@ -56,8 +56,9 @@ mmap = zeros(1,3);
 for i=1:3
   p = tabularFactorCondition(joint, xs(i), sparsevec(ys, yobs));
   fprintf('p(x%d=1|y)=%5.3f\n', i, p.T(2))
-  mmap(i) = argmax(p.T)-1
+  mmap(i) = argmax(p.T)-1;
 end
+mmap
 
 % find joint modes of posterior
 pCond = tabularFactorCondition(joint, xs, sparsevec(ys, yobs));
