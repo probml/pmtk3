@@ -114,7 +114,7 @@ for i=1:numel(edgeFactors)
 end
 %% combine node and edge factors
 if isempty(edgeFactors)
-   factorGraph = factorGraphCreate(nodeFactors, G);  
+   factorGraph = factorGraphCreate(nodeFactors, nstates, G);  
 else
     factors = edgeFactors;  
     for f=1:nnodes
@@ -125,7 +125,8 @@ else
 end
 %% package
 mrf = structure(G, factorGraph, localCPDs, localCPDpointers, ...
-    localCPDpointers, infEngine, nnodes, edges, nstates); 
+    localCPDpointers, infEngine, nnodes, edges, nstates, ...
+    nodePots, nodePotPointers, edgePots, edgePotPointers); 
 
 mrf.isdirected = false;
 mrf.modelType = 'mrf';

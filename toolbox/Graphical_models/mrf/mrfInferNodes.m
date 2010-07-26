@@ -37,8 +37,9 @@ switch lower(engine)
             fg.nstates(visNodes) = 1; 
             jtree     = jtreeCreate(fg);
         end
-        jtree         = jtreeAddFactors(jtree, localFacs);
+        [jtree, logZlocal] = jtreeAddFactors(jtree, localFacs);
         [jtree, logZ] = jtreeCalibrate(jtree);
+        logZ = logZ + logZlocal;
         nodeBels      = jtreeQuery(jtree, num2cell(hidNodes));
         if nargout > 2
             edgeBels  = jtreeQuery(jtree, mrf.edges);
