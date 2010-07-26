@@ -64,7 +64,7 @@ loglik          = loglik + dgmLogPrior(dgm);  % includes localCPD priors
 end
 
 function emissionEss = estepEmission(dgm, localEv, localWeights)
-%% Compute the expcected sufficient statistics for the localCPDs
+%% Compute the expected sufficient statistics for the localCPDs
 % the local weights are the marginal probabilities of each parent with a
 % localCPD for each data case, grouped by local equivalence class. We group
 % localEv by eqclass here. 
