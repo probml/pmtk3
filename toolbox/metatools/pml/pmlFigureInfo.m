@@ -112,8 +112,13 @@ function macroText =  parseCaption(caption, macro)
 ndx = strfind(caption, macro);
 macroText = cell(numel(ndx), 1); 
 for i=1:numel(ndx)
-    macroText{i} = textBetween(grab(caption(ndx(i):end), 1), '{', '}'); 
+    macroText{i} = unwrapMacro(grab(caption(ndx(i):end), 1));
 end    
+end
+
+function T = unwrapMacro(T)
+%% Extracts the text 'foo' from \macro{foo}
+T = T(find(T=='{', 1, 'first')+1:end-1);
 end
 
 function [T, i] = grab(T, n)
