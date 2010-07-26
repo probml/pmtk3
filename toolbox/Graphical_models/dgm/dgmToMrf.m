@@ -1,0 +1,13 @@
+function mrf = dgmToMrf(dgm)
+%% Convert a dgm to an undirected model
+
+G = moralizeGraph(dgm.G); 
+if isfield(dgm, dgm.factors)
+    factors = dgm.factors; 
+else
+    factors = cpds2Factors(dgm.CPDs, dgm.G, dgm.CPDpointers);
+end
+mrf = mrfCreate(G, 'nodePots', factors, 'localCPDs', ...
+    dgm.localCPDs, 'localCPDpointers', dgm.localCPDpointers); 
+
+end
