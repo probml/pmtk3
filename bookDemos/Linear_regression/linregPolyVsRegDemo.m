@@ -1,8 +1,9 @@
-%% Ridge regression: visualize effect of lambda
-  
-%% Make data
+%% Ridge regression: visualize effect of changing lambda
+% and selecting it with CV and EB
+ 
+ns = [21 50];
+for n=ns(:)'
 setSeed(0);
-n = 21;
 [xtrain, ytrain, xtest, ytestNoisefree, ytest, sigma2] =...
   polyDataMake('sampling','thibaux','n',n);
 
@@ -182,3 +183,4 @@ figure(figLogev);
 verticalLine(log(alphaVB), 'linewidth', 3, 'color', 'b');
 
 
+end
