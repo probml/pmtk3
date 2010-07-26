@@ -13,6 +13,7 @@ function F = pmlFigureInfo(includeEx, includeSol)
 % figNumTxt - the absolute figure number as a string, e.g. '12.2' 
 % codeNames - all names appearing in calls to \codename{foo} in the caption
 % macros    - a struct of additional macros, e.g. figcredit
+%
 % To combine figures from all chapters into one structured array use
 % F = [F{:}]; 
 %
@@ -72,7 +73,7 @@ end
 end
 
 function Fstruct = parseSingleFigure(T, nfigs)
-%% Parse a single \add*fig(*) command
+%% Parse a single \add*fig(s) command
 [command, i] = grab(T, 1);     T = T(i+1:end);
 [caption, i] = grab(T, 1);     T = T(i+1:end);
 [label, i]   = grab(T, 1);     T = T(i+1:end);
