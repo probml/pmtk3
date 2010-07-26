@@ -168,6 +168,7 @@ if any(missingSource)
 end
 end
 %% copy pml.pdf if it exists
+if 0
 fprintf('copying pml.pdf...')
 if exist(fullfile(bookSource, 'pml.pdf'), 'file')
     src = fullfile(bookSource, 'pml.pdf');
@@ -176,6 +177,7 @@ if exist(fullfile(bookSource, 'pml.pdf'), 'file')
     fprintf('done\n');
 else
     fprintf('pml.pdf could not be found\n');
+end
 end
 %% call pmlMissingCodeReport
 fprintf('calling pmlMissingCodeReport...');
