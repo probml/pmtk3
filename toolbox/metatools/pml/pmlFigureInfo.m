@@ -11,8 +11,8 @@ function F = pmlFigureInfo(includeEx, includeSol)
 % fnames    - the names of the source pdf files (a cell array)
 % figNum    - the figure number relative to the chapter
 % figNumTxt - the absolute figure number as a string, e.g. '12.2' 
-% codeNames - all names appearing in \codename{foo} in the caption
-%
+% codeNames - all names appearing in calls to \codename{foo} in the caption
+% macros    - a struct of additional macros, e.g. figcredit
 % To combine figures from all chapters into one structured array use
 % F = [F{:}]; 
 %
@@ -36,9 +36,8 @@ for i=1:nchaps
 end
 end
 
-
 function F = parseChapterFigs(chText)
-%%
+%% Extract all \add*fig(s) text from a chapter
 one    = '\addfig';
 two    = '\addtwofigs';
 three  = '\addthreefigs';
@@ -46,18 +45,19 @@ four   = '\addfourfigs';
 five   = '\addfivefigs';
 six    = '\addsixfigs';
 tags   = {one, two, three, four, five, six}; 
-counts = 4:9;
+counts = 4:9; % number of args for each tag (macro)
+%%
 T = catString(chText, ' '); 
 F = []; 
 for i=1:numel(tags)
     ndx = strfind(T, tags{i}); 
     for j = 1:numel(ndx)
-        k = ndx(j); 
-        n = counts(i); 
-        nfigs = n-3; % -3 for {options}{caption}{label}
-        Fk = parseSingleFigure(grab(T(k:end), n), nfigs); 
+        k          = ndx(j); 
+        n          = counts(i); 
+        nfigs      = n-3; % -3 for {options}{caption}{label}
+        Fk         = parseSingleFigure(grab(T(k:end), n), nfigs); 
         Fk.sortkey = k; 
-        F = [F, Fk]; %#ok
+        F          = [F, Fk]; %#ok
     end
 end
 if isempty(F)
@@ -83,26 +83,41 @@ for j=1:nfigs
 end
 
 options = strtrim(textBetween(command, '{', '}')); 
+
 caption = strtrim(caption); 
 label   = strtrim(label); 
 fnames  = strtrim(fnames); 
+
 caption = strtrim(caption(2:end-1)); 
 label   = strtrim(label(2:(end-1))); 
-fnames  = cellfuncell(@(c)c(2:end-1), fnames); 
-fnames  = strtrim(fnames); 
+fnames  = strtrim(cellfuncell(@(c)c(2:end-1), fnames)); 
+%%
 
+codeNames              = parseCaption(caption, '\codename'); 
+macros.figtaken        = parseCaption(caption, '\figtaken'); 
+macros.figcredit       = parseCaption(caption, '\figcredit');
+macros.figthanks       = parseCaption(caption, '\figthanks');
+macros.extfigcredit    = parseCaption(caption, '\extfigcredit');
+macros.fignopermission = parseCaption(caption, '\fignopermission');
+macros.figack          = parseCaption(caption, '\figack');
 
-ndx = strfind(caption, '\codename');
-codeNames = cell(numel(ndx), 1); 
+Fstruct = structure(options, caption, label, fnames, codeNames, macros);
+end
+
+function macroText =  parseCaption(caption, macro)
+%% Parse a figure caption for the text in the first arg of a latex macro
+% macroText is a cell array - one cell per occurrance of the macro
+% Example: codeNames = parseCaption(caption, '\codename')
+%%
+ndx = strfind(caption, macro);
+macroText = cell(numel(ndx), 1); 
 for i=1:numel(ndx)
-    codeNames{i} = textBetween(grab(caption(ndx(i):end), 1), '{', '}'); 
+    macroText{i} = textBetween(grab(caption(ndx(i):end), 1), '{', '}'); 
 end    
-Fstruct = structure(options, caption, label, fnames, codeNames);
 end
 
 function [T, i] = grab(T, n)
-%% Keep grabbing chars from T until curly braces have opened and closed n
-%% times. 
+%% Keep grabbing chars from T until curly braces have opened and closed n times
 lc = 0;
 rc = 0; 
 eqt = 0; 
@@ -125,4 +140,3 @@ while i < length(T)
 end
 T = T(1:i); 
 end
-
