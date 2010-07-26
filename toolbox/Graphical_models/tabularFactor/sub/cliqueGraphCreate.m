@@ -2,8 +2,8 @@ function cg = cliqueGraphCreate(Tfac, nstates, G)
 %% Construct a clique graph
 % Here we assume one potential function per clique as opposed a factor
 % graph representation with potential functions for nodes and edges. Note,
-% this is not a junction tree, (i.e. it does not necessarily satisfy RIP) -
-% see jtreeCreate. 
+% this is not a junction tree, i.e. it does not necessarily satisfy RIP:
+% see jtreeCreate. Further, the cliques are not necessarily maximal. 
 %
 % Cliques, (and their associated potential functions) are represented using
 % tabularFactors, (see tabularFactorCreate). 
