@@ -112,7 +112,7 @@ for i=1:numel(edgeFactors)
    edges{i} = dom; 
    edgeLookup(dom, i) = true; 
 end
-%% combine node and edge factors
+%% combine node and edge factors into a cliqueGraph
 if isempty(edgeFactors)
    cliqueGraph = cliqueGraphCreate(nodeFactors, nstates, G);  
 else

@@ -10,8 +10,10 @@ function cg = cliqueGraphCreate(Tfac, nstates, G)
 %
 % Tfac is a cell array of tabular factors
 % nstates(j) is the number of states for node j
-% G is the graph structure, (automatically inferred if not specified)
-% 
+% G is the (node) graph structure, (automatically inferred if not specified)
+%
+% Note G may be either directed or undirected (in contrast to factor
+% graph). If G is automatically inferred, it is undirected. 
 %%
 if nargin < 3
     G  = constructGraphFromFactors(Tfac);

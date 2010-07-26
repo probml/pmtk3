@@ -1,0 +1,58 @@
+function fg = factorGraphCreate(cliqueGraph)
+%% Create a factor graph
+% The input cliqueGraph is a struct with fields Tfac, nstates and G - see
+% cliqueGraphCreate. 
+%
+% This is a bipartite undirected graph with two types of nodes, 'round',
+% and 'square'. Round nodes represent random variables, and square nodes
+% represent factors. There is an edge from each variable to every factor
+% that 'mentions' it. 
+%
+%% Output
+%
+% fg is a struct with the following fields:
+%
+% G          - a bipartite, undirected adjacency matrix representing the
+%              node-factor connectivity. 
+%
+% factors    - a cell array of all of the factors, (each factor is a
+%              tabularFactor: see tabularFactorCreate).
+%
+% nstates    - nstates(j) is the number of states variable j can take on
+%
+% nodeFacNdx - factors{nodeFacNdx} are node factors (pots), (i.e.
+%              they 'mention' only a single variable)
+%
+% edgeFacNdx - factors{edgeFacNdx} are edge factors (pots) i.e. they
+%              mention more than one variable.
+%
+% round      - indices into G indicating nodes
+%
+% square     - indices into G indicating factors
+%
+% isPairwise - true if all of the edge factors (if any) are pairwise
+% 
+%%
+
+factors    = cliqueGraph.Tfac;
+nstates    = cliqueGraph.nstates;
+nfactors   = numel(factors);  
+nnodes     = size(cliqueGraph.G, 1); 
+round      = (1:nnodes)';
+square     = (nnodes+1:nnodes+nfactors)';
+sz         =  cellfun(@(f)numel(f.domain), factors); 
+nodeFacNdx = find(sz == 1);
+edgeFacNdx = find(sz > 1); 
+isPairwise = max(sz) == 2; 
+
+G = zeros(nnodes+nfactors, nnodes+nfactors); 
+for i=1:numel(factors)
+   fac = factors{i};
+   dom = fac.domain; 
+   for j=dom
+      G(i, j) = 1;
+      G(j, i) = 1;
+   end
+end
+fg = structure(G, factors, nstates, round, square, nodeFacNdx, edgeFacNdx, isPairwise); 
+end
