@@ -11,6 +11,8 @@ function fg2 = factorGraphMakePairwise(fg)
 % consistency between the assignment to the mega-node and the values of the
 % parts.
 %%
+
+error('work in progress'); 
 if fg.isPairwise
     fg2 = fg;
     return;

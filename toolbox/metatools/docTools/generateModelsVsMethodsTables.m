@@ -1,6 +1,7 @@
 function generateModelsVsMethodsTables()
 %% Make the models vs methods tables
 
+error('work in progress'); 
 pmtkRed = getConfigValue('PMTKred');
 modelTags = {'PMTKlatentmodel', 'PMTKgmmodel', 'PMTKsupervisedmodel'};
 R = pmtkTagReport(fullfile(pmtk3Root(), 'toolbox'));
