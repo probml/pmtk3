@@ -1,4 +1,4 @@
-function ndx = cellfind(cellarray, value)
+function ndx = cellfind(cellarray, value, varargin)
 % A find function for cell arrays
 %
 % example
@@ -7,5 +7,5 @@ function ndx = cellfind(cellarray, value)
 % cellfind(a, 1:3)
 % ans = 4
 if iscell(value) && ~iscell(cellarray{1}), value = value{:}; end
-ndx = find(cellfun(@(x)isequal(x, value), cellarray));
+ndx = find(cellfun(@(x)isequal(x, value), cellarray), varargin{:});
 end
