@@ -16,8 +16,10 @@ if nargin == 0,
 end
 googleRoot = 'http://pmtk3.googlecode.com/svn/trunk/docs/demoOutput';
 %%
-cd(fullfile(pmtk3Root(), 'bookDemos'));
-d = dirs();
+cd(fullfile(pmtk3Root(), 'demos'));
+d = [dirs(fullfile(pmtk3Root(), 'demos', 'bookDemos')); 
+    dirs(dirs(fullfile(pmtk3Root(), 'demos', 'otherDemos')))];
+
 dirEmpty = @(d)isempty(mfiles(d, 'topOnly', true));
 
 for i = 1:numel(d)

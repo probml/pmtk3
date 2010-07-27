@@ -102,7 +102,12 @@ for i=1:numel(extra)
         copyProblems = insertEnd(extra{i}, copyProblems);
     end
 end
-%% Organize the extra files
+
+
+
+
+%%
+%% Organize the extra files (now turned off)
 %[missingExtra, extra] = pmlMoveExtraCode(bookSource, dest); 
 %% Check that we have accounted for all of the demos
 copiedFiles = cellfuncell(@(c)c(1:end-2), mfiles(dest));

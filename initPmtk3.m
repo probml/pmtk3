@@ -11,7 +11,7 @@ cd(fileparts(which(mfilename())));
 % Add PMTK3 to the Matlab path
 addpath(pwd);
 addpath(genpathPMTK(fullfile(pwd, 'toolbox')));
-addpath(genpathPMTK(fullfile(pwd, 'bookDemos')));
+addpath(genpathPMTK(fullfile(pwd, 'demos')));
 
 % The following directories are initially empty
 % but may be filled with stuff on demand...

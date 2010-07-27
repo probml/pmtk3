@@ -40,7 +40,7 @@ if nargin < 1, includeTags = {}; end
 if nargin < 2, excludeTags = {}; end
 if nargin < 3, pauseTime = 0; end
 if nargin < 4, doformat = true; end
-cd(fullfile(pmtk3Root(),'bookDemos'));                                         % change directory to /pmtk/examples/
+cd(fullfile(pmtk3Root(),'demos'));                                         % change directory to /pmtk/examples/
 if nargin == 5 && ~isempty(subFolder)
     cd(subFolder)
 end
