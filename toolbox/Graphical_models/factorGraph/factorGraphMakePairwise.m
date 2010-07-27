@@ -2,17 +2,7 @@ function fg2 = factorGraphMakePairwise(fg)
 %% Convert a factorGraph to an equivalent one with only pairwise edge pots
 %  
 %
-% For every unary factor (with just one variable attached), create a local
-% evidence node encoding the factor. For every multiway factor, create a
-% new mega node whose state-space is the Cartesian product of all the
-% variables participating in this factor; create a dummy evidence node
-% encoding the factor; create edges between the mega-node and its
-% constituent parts; and set the edge potentials such that they enforce
-% consistency between the assignment to the mega-node and the values of the
-% parts.
 %%
-
-
 if fg.isPairwise
     fg2 = fg;
     return;

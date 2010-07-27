@@ -47,14 +47,16 @@ nodeFacNdx = find(sz == 1);
 edgeFacNdx = find(sz > 1); 
 isPairwise = max(sz) == 2; 
 
-G = zeros(nnodes+nfactors, nnodes+nfactors); 
+
+N = numel(round) + numel(square);
+G = zeros(N, N); 
 for i=1:numel(factors)
-   fac = factors{i};
-   dom = fac.domain; 
-   for j=dom
-      G(i, j) = 1;
-      G(j, i) = 1;
-   end
+   dom = factors{i}.domain;
+   j = square(i); 
+   G(j, dom) = 1;
+   G(dom, j) = 1; 
 end
+
+
 fg = structure(G, factors, nstates, round, square, nodeFacNdx, edgeFacNdx, isPairwise); 
 end

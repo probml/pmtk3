@@ -3,7 +3,7 @@
 %%
 
 setSeed(0); 
-nnodes     = 15;
+nnodes     = 10;
 maxFanIn   = 2;
 maxFanOut  = 3;
 maxNstates = 3; 
