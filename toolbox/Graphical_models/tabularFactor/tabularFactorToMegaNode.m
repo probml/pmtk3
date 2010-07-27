@@ -1,11 +1,11 @@
-function TFmega = tabularFactorToMegaNode(TF, newId)
+function [TFmega, stateMap] = tabularFactorToMegaNode(TF, newId)
 %% Construct a mega node from a tabularFactor 
 % by taking the cartesian product of the state spaces of the participating
 % variables. The new domain of TFmega is the single value newId. 
 %
 % The new states correspond to the linear indexing of TF.T.
 %
-% You can lookup the original states using the added stateMap field.
+% You can lookup the original states using stateMap
 %
 % Suppose TF.T is of size 2x2x2x2, then the following state combinations of
 % the original variables correspond to the new states as follows. This was
@@ -29,15 +29,6 @@ function TFmega = tabularFactorToMegaNode(TF, newId)
 %     2     2     2     2   -> 16
 %
 %%
-
-
-TFmega = tabularFactorCreate(TF.T(:) , newId);
-
-TFmega.stateMap   = ind2subv(size(TF.T), 1:numel(TF.T)); 
-TFmega.initSizes  = TF.sizes; 
-TFmega.initDomain = TF.domain; 
-
-
-
-
+TFmega   = tabularFactorCreate(TF.T(:) , newId);
+stateMap = ind2subv(size(TF.T), 1:numel(TF.T)); 
 end

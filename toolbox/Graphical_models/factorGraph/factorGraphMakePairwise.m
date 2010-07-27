@@ -12,7 +12,7 @@ function fg2 = factorGraphMakePairwise(fg)
 % parts.
 %%
 
-error('work in progress'); 
+
 if fg.isPairwise
     fg2 = fg;
     return;
@@ -25,42 +25,36 @@ multiway    = find(sz > 2);
 nMega       = numel(multiway); 
 megaNodes   = cell(nMega, 1);
 megaIds     = nInitNodes+1:nInitNodes+nMega;
-for i=1:nMega
-    megaNodes{i} = tabularFactorToMegaNode(initFactors{multiway(i)}, megaIds(i));
+stateMaps   = cell(nMega, 1); 
+for m=1:nMega
+    [megaNodes{m}, stateMaps{m}] = tabularFactorToMegaNode(initFactors{multiway(m)}, megaIds(m));
 end
 newFactors = [initFactors(sz <= 2); megaNodes];
 %% construct new edge factors between megaNodes and their constituent parts
 newEdgeFactors = cell(sum(sz(multiway)), 1); 
 counter = 1; 
-for i=1:nMega
-    mfac = megaNodes{i};
-    ifac = initFactors{multiway(i)}; 
-    for j=1:numel(ifac.domain)
-        
-        
-        ndom  = [ifac.domain(j), mfac.domain];
-        Tedge = zeros(ifac.sizes(j), mfac.sizes); 
-        mfac.stateMap
-        
-        %Tedge(i, j) = 1 if mfac.stateMap(j, 
-        
-        
-        newEdgeFactors{counter} = tabularFactorCreate(Tedge, ndom); 
+for m = 1:nMega
+    mfac      = megaNodes{m};
+    ifac      = initFactors{multiway(m)}; 
+    ifacDom   = ifac.domain;
+    mfacDom   = mfac.domain; 
+    ifacSizes = ifac.sizes;
+    mfacSizes = mfac.sizes; 
+    for i = 1:numel(ifacDom)
+        newdom   = [ifacDom(i), mfacDom];
+        stateMap = stateMaps{m}; 
+        Tedge    = zeros(ifacSizes(i), mfacSizes); 
+        for k=1:ifacSizes(i)
+            Tedge(k, :) = rowvec(stateMap(:, i) == k);
+        end
+        newEdgeFactors{counter} = tabularFactorCreate(Tedge, newdom); 
         counter = counter + 1; 
     end
-    
-    
 end
+
+newNstates = [fg.nstates; cellfun(@(f)f.sizes(end), megaNodes)]; 
 
 
 newFactors = [newFactors; newEdgeFactors]; 
-newNstates = [nstates; cellfun(@(f)f.sizes(end), megaNodes)]; 
-fg2 = factorGraphCreate(newFactors, newNstates); 
-
-
-
-
-
-
-
+fg2        = factorGraphCreate(newFactors, newNstates); 
 end
