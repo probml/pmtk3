@@ -1,0 +1,242 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>linregStudentStacklossDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-07-27"><meta name="m-file" content="linregStudentStacklossDemo"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Reproduce table 1 from "Robust statistical modeling using the T distribution</a></li><li><a href="#3">fit model</a></li><li><a href="#4">format output</a></li></ul></div><h2>Reproduce table 1 from "Robust statistical modeling using the T distribution<a name="1"></a></h2><p>Lange et al, JASA 1989 The estimated coefficients are similar However, this does <b>not</b> reproduce the log likelihoods correctly The reason for this is not clear - is Lange evaluating the expected complete data loglik instead?</p><pre class="codeinput"><span class="comment">%PMTKauthor Hannes Bretschneider</span>
+</pre><pre class="codeinput">saveLatex = false;
+loadData(<span class="string">'stackloss'</span>);
+n = size(X,1);
+X1 = [ones(n,1) X];
+</pre><h2>fit model<a name="3"></a></h2><p>dof=0 means estimate from data dof=100 means effectively use Gaussian model</p><pre class="codeinput">dofs = [100, 8, 4, 3, 2, 1.1, 1, 0.5, 0];
+modelEM = cell(1,length(dofs));
+loglikEM  = zeros(1, length(dofs));
+<span class="keyword">for</span> i = 1:length(dofs)
+    dof = dofs(i);
+    modelEM{i} = linregRobustStudentFitEm(X, y, dof);
+    loglikEM(i) = sum(linregRobustStudentLogprob(modelEM{i}, X, y));
+
+    <span class="comment">% debug - use objective fn from linregRobustStudentFitConstr</span>
+    sigma2 = modelEM{i}.sigma2; w = [modelEM{i}.w0; modelEM{i}.w];
+    sigma = sqrt(sigma2);
+    theta = y - X1*w;
+    nll = sum(1/2*log(dof*pi) + log(gamma(dof/2)) - log(gamma((dof+1)/2)) + <span class="keyword">...</span>
+        log(sigma) + (dof+1)/2*log(1+theta.^2 / (sigma2*dof)));
+    <span class="comment">%assert(approxeq(nll, -loglikEM(i))) % FAILS!</span>
+
+    modelConstr{i} = linregRobustStudentFitConstr(X, y, dof);
+    loglikConstr(i) = sum(linregRobustStudentLogprob(modelConstr{i}, X, y));
+<span class="keyword">end</span>
+</pre><h2>format output<a name="4"></a></h2><pre class="codeinput">fprintf(<span class="string">'estimated dof, EM %5.3f, constr %5.3f\n'</span>, <span class="keyword">...</span>
+    modelEM{end}.dof, modelConstr{end}.dof);
+ndof = length(dofs);
+table = NaN(ndof,6);
+table(:,1) = dofs';
+table(:,2) = loglikEM';
+<span class="keyword">for</span> i = 1:ndof
+    table(i,3:6) = [modelEM{i}.w0, rowvec(modelEM{i}.w)];
+<span class="keyword">end</span>
+
+
+
+
+labels = {<span class="string">'dof'</span>, <span class="string">'loglik'</span>, <span class="string">'w0'</span>, <span class="string">'w1'</span>, <span class="string">'w2'</span>, <span class="string">'w3'</span>};
+<span class="keyword">if</span> saveLatex
+    latextable(table, <span class="string">'Format'</span>, <span class="string">'%5.3f'</span>, <span class="string">'horiz'</span>, labels, <span class="string">'hline'</span>, 1, <span class="keyword">...</span>
+        <span class="string">'name'</span>, <span class="string">'stacklossOutputEm'</span>);
+<span class="keyword">end</span>
+table
+
+
+table = NaN(ndof,6);
+table(:,1) = dofs';
+table(:,2) = loglikConstr';
+<span class="keyword">for</span> i = 1:ndof
+    table(i,3:6) = [modelConstr{i}.w0, rowvec(modelConstr{i}.w)];
+<span class="keyword">end</span>
+<span class="keyword">if</span> saveLatex
+    latextable(table, <span class="string">'Format'</span>, <span class="string">'%5.3f'</span>, <span class="string">'horiz'</span>, labels, <span class="string">'hline'</span>, 1, <span class="keyword">...</span>
+        <span class="string">'name'</span>, <span class="string">'stacklossOutputConstr'</span>);
+<span class="keyword">end</span>
+table
+</pre><pre class="codeoutput">estimated dof, EM 100.000, constr 1.139
+table =
+  Columns 1 through 4
+  100.0000 -203.9992   17.3050    0.8504
+    8.0000 -154.9067   17.1832    0.8400
+    4.0000 -137.8952   17.1147    0.8396
+    3.0000 -131.9219   17.0836    0.8437
+    2.0000 -125.1243   17.0471    0.8591
+    1.1000 -120.5993   17.1353    0.9460
+    1.0000 -120.5655   17.1939    0.9657
+    0.5000 -121.5819   17.5122    1.0411
+         0 -204.0003   17.3050    0.8504
+  Columns 5 through 6
+    0.9471   -0.8241
+    0.9460   -0.8151
+    0.9028   -0.8034
+    0.8571   -0.7948
+    0.7443   -0.7777
+    0.3542   -0.7444
+    0.2796   -0.7407
+    0.0185   -0.7335
+    0.9471   -0.8241
+table =
+  1.0e+003 *
+  Columns 1 through 4
+    0.1000   -1.1487   -0.0400    0.0007
+    0.0080   -0.3710   -0.0401    0.0008
+    0.0040   -0.2754   -0.0401    0.0009
+    0.0030   -0.2474   -0.0399    0.0009
+    0.0020   -0.2161   -0.0386    0.0009
+    0.0011   -0.1829   -0.0388    0.0009
+    0.0010   -0.1795   -0.0393    0.0009
+    0.0005   -0.1636   -0.0404    0.0008
+         0   -0.1850   -0.0391    0.0009
+  Columns 5 through 6
+    0.0012   -0.0001
+    0.0009   -0.0001
+    0.0007   -0.0001
+    0.0006   -0.0001
+    0.0005   -0.0001
+    0.0005   -0.0001
+    0.0005   -0.0001
+    0.0005   -0.0000
+    0.0005   -0.0001
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Reproduce table 1 from "Robust statistical modeling using the T distribution
+% Lange et al, JASA 1989
+% The estimated coefficients are similar
+% However, this does *not* reproduce the log likelihoods correctly
+% The reason for this is not clear - is Lange evaluating the expected
+% complete data loglik instead?
+%
+%PMTKauthor Hannes Bretschneider
+
+%%
+saveLatex = false;
+loadData('stackloss');
+n = size(X,1);
+X1 = [ones(n,1) X];
+%% fit model
+% dof=0 means estimate from data
+% dof=100 means effectively use Gaussian model
+dofs = [100, 8, 4, 3, 2, 1.1, 1, 0.5, 0];
+modelEM = cell(1,length(dofs));
+loglikEM  = zeros(1, length(dofs));
+for i = 1:length(dofs)
+    dof = dofs(i);
+    modelEM{i} = linregRobustStudentFitEm(X, y, dof);
+    loglikEM(i) = sum(linregRobustStudentLogprob(modelEM{i}, X, y));
+    
+    % debug - use objective fn from linregRobustStudentFitConstr
+    sigma2 = modelEM{i}.sigma2; w = [modelEM{i}.w0; modelEM{i}.w];
+    sigma = sqrt(sigma2);
+    theta = y - X1*w;
+    nll = sum(1/2*log(dof*pi) + log(gamma(dof/2)) - log(gamma((dof+1)/2)) + ...
+        log(sigma) + (dof+1)/2*log(1+theta.^2 / (sigma2*dof)));
+    %assert(approxeq(nll, -loglikEM(i))) % FAILS!
+    
+    modelConstr{i} = linregRobustStudentFitConstr(X, y, dof);
+    loglikConstr(i) = sum(linregRobustStudentLogprob(modelConstr{i}, X, y));
+end
+
+%% format output
+
+fprintf('estimated dof, EM %5.3f, constr %5.3f\n', ...
+    modelEM{end}.dof, modelConstr{end}.dof);
+ndof = length(dofs);
+table = NaN(ndof,6);
+table(:,1) = dofs';
+table(:,2) = loglikEM';
+for i = 1:ndof
+    table(i,3:6) = [modelEM{i}.w0, rowvec(modelEM{i}.w)];
+end
+
+
+
+
+labels = {'dof', 'loglik', 'w0', 'w1', 'w2', 'w3'};
+if saveLatex
+    latextable(table, 'Format', '%5.3f', 'horiz', labels, 'hline', 1, ...
+        'name', 'stacklossOutputEm');
+end
+table
+
+
+table = NaN(ndof,6);
+table(:,1) = dofs';
+table(:,2) = loglikConstr';
+for i = 1:ndof
+    table(i,3:6) = [modelConstr{i}.w0, rowvec(modelConstr{i}.w)];
+end
+if saveLatex
+    latextable(table, 'Format', '%5.3f', 'horiz', labels, 'hline', 1, ...
+        'name', 'stacklossOutputConstr');
+end
+table
+
+
+##### SOURCE END #####
+--></body></html>

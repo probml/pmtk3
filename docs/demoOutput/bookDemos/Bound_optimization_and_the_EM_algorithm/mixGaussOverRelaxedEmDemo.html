@@ -1,0 +1,456 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>Fit a Gaussian Mixture Model using over-relaxed EM</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-07-27"><meta name="m-file" content="mixGaussOverRelaxedEmDemo"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Fit a Gaussian Mixture Model using over-relaxed EM</h1><!--introduction--><p>We use synthetic data sampled from a GMM PMTKauthor Krishna Nand, Keshava Murthy</p><!--/introduction--><pre class="codeinput">ntrials = 2;
+<span class="keyword">for</span> trial = 1:ntrials
+</pre><pre class="codeinput">    setSeed(trial);
+    D = 15; N = 5000;
+    Clusters = 10;
+    mu = rand(D,Clusters);
+    mixweight = normalize(rand(1, Clusters));
+    Sigma = zeros(D,D,Clusters);
+    <span class="keyword">for</span> k=1:Clusters
+        Sigma(:,:,k) = randpd(D);
+    <span class="keyword">end</span>
+    trueModel = struct(<span class="string">'K'</span>, Clusters, <span class="string">'mu'</span>, mu, <span class="string">'Sigma'</span>, Sigma, <span class="keyword">...</span>
+        <span class="string">'mixweight'</span>, mixweight);
+    [fullData] = mixGaussSample(trueModel, N);
+    Ks = [5 10];
+    verbose = true;
+    eta = {[], 1, 1.25, 2, 5}; <span class="comment">% over-relaxation increase factor</span>
+    nmethods = length(eta);
+    llHist  = cell(1, nmethods);
+    models = cell(1, nmethods);
+    names = {<span class="string">'EM'</span>, <span class="string">'OR(1)'</span>, <span class="string">'OR(1.25)'</span>, <span class="string">'OR(2)'</span>, <span class="string">'OR(5)'</span>};
+    [styles, colors, symbols] =  plotColors();
+    <span class="keyword">for</span> k = 1:length(Ks)
+        K = Ks(k);
+        [mu,Sigma,mixweight] = kmeansInitMixGauss(fullData, K);
+        <span class="keyword">for</span> m=1:nmethods
+            tic
+            [models{m}, llHist{m}] = mixGaussFitEm(fullData, K, <span class="keyword">...</span>
+                <span class="string">'Sigma'</span>, Sigma, <span class="string">'mu'</span>, mu, <span class="string">'mixweight'</span>, mixweight, <span class="keyword">...</span>
+                <span class="string">'overRelaxFactor'</span>,eta{m}, <span class="string">'verbose'</span>, verbose, <span class="string">'doMAP'</span>, 1);
+            tim(m) = toc;
+        <span class="keyword">end</span>
+
+        figure
+        hold <span class="string">on</span>
+        <span class="keyword">for</span> m=1:nmethods
+            str= sprintf(<span class="string">'%s%s%s'</span>, colors(m), symbols(m), styles{m});
+            plot(llHist{m}, str, <span class="string">'LineWidth'</span>,2,<span class="string">'MarkerSize'</span>,10)
+            legendStr{m} = sprintf(<span class="string">'%s (%5.3f)'</span>, names{m}, tim(m));
+        <span class="keyword">end</span>
+        legend(legendStr, <span class="string">'location'</span>, <span class="string">'southeast'</span>);
+        xlabel(<span class="string">'iterations'</span>); ylabel(<span class="string">'loglik'</span>)
+        title(sprintf(<span class="string">'K=%d, D=%d, N=%d'</span>, K, D, N));
+    <span class="keyword">end</span>
+</pre><pre class="codeoutput">1	 loglik: -209237
+2	 loglik: -208582
+3	 loglik: -208130
+4	 loglik: -207666
+5	 loglik: -207155
+6	 loglik: -206485
+7	 loglik: -205563
+8	 loglik: -204396
+9	 loglik: -202882
+10	 loglik: -200526
+11	 loglik: -197906
+12	 loglik: -195730
+13	 loglik: -193757
+14	 loglik: -192582
+15	 loglik: -192318
+16	 loglik: -192308
+2	 loglik: -208582
+3	 loglik: -207749
+4	 loglik: -206262
+5	 loglik: -205084
+6	 loglik: -203756
+7	 loglik: -200099
+8	 loglik: -197707
+9	 loglik: -195701
+10	 loglik: -193402
+11	 loglik: -192382
+12	 loglik: -192309
+13	 loglik: -192308
+2	 loglik: -208582
+3	 loglik: -207749
+4	 loglik: -206262
+5	 loglik: -205084
+6	 loglik: -203756
+7	 loglik: -200099
+8	 loglik: -197707
+9	 loglik: -195701
+10	 loglik: -193402
+11	 loglik: -192382
+12	 loglik: -192309
+13	 loglik: -192308
+2	 loglik: -208582
+3	 loglik: -207749
+4	 loglik: -206262
+5	 loglik: -205084
+6	 loglik: -203756
+7	 loglik: -200099
+8	 loglik: -197707
+9	 loglik: -195701
+10	 loglik: -193402
+11	 loglik: -192382
+12	 loglik: -192309
+13	 loglik: -192308
+2	 loglik: -208582
+3	 loglik: -207749
+4	 loglik: -206262
+5	 loglik: -205084
+6	 loglik: -203756
+7	 loglik: -200099
+8	 loglik: -197707
+9	 loglik: -195701
+10	 loglik: -193402
+11	 loglik: -192382
+12	 loglik: -192309
+13	 loglik: -192308
+1	 loglik: -210877
+2	 loglik: -209356
+3	 loglik: -208199
+4	 loglik: -206385
+5	 loglik: -203355
+6	 loglik: -199848
+7	 loglik: -196961
+8	 loglik: -194444
+9	 loglik: -191660
+10	 loglik: -189469
+11	 loglik: -188926
+12	 loglik: -188735
+13	 loglik: -188485
+14	 loglik: -187932
+15	 loglik: -187214
+16	 loglik: -186799
+17	 loglik: -186718
+18	 loglik: -186677
+19	 loglik: -186645
+20	 loglik: -186613
+21	 loglik: -186577
+22	 loglik: -186538
+23	 loglik: -186486
+24	 loglik: -186448
+25	 loglik: -186401
+26	 loglik: -186370
+27	 loglik: -186370
+2	 loglik: -209356
+3	 loglik: -207120
+4	 loglik: -204596
+5	 loglik: -201009
+6	 loglik: -196663
+7	 loglik: -193816
+8	 loglik: -190962
+9	 loglik: -190901
+10	 loglik: -188857
+11	 loglik: -188671
+12	 loglik: -188018
+13	 loglik: -187173
+14	 loglik: -186761
+15	 loglik: -186671
+16	 loglik: -186613
+17	 loglik: -186586
+18	 loglik: -186525
+19	 loglik: -186448
+20	 loglik: -186273
+21	 loglik: -186248
+22	 loglik: -186230
+2	 loglik: -209356
+3	 loglik: -207120
+4	 loglik: -204596
+5	 loglik: -201009
+6	 loglik: -196663
+7	 loglik: -193816
+8	 loglik: -190962
+9	 loglik: -190901
+10	 loglik: -188857
+11	 loglik: -188671
+12	 loglik: -188018
+13	 loglik: -187173
+14	 loglik: -186761
+15	 loglik: -186671
+16	 loglik: -186613
+17	 loglik: -186586
+18	 loglik: -186525
+19	 loglik: -186448
+20	 loglik: -186273
+21	 loglik: -186248
+22	 loglik: -186230
+2	 loglik: -209356
+3	 loglik: -207120
+4	 loglik: -204596
+5	 loglik: -201009
+6	 loglik: -196663
+7	 loglik: -193816
+8	 loglik: -190962
+9	 loglik: -190901
+10	 loglik: -188857
+11	 loglik: -188671
+12	 loglik: -188018
+13	 loglik: -187173
+14	 loglik: -186761
+15	 loglik: -186671
+16	 loglik: -186613
+17	 loglik: -186586
+18	 loglik: -186525
+19	 loglik: -186448
+20	 loglik: -186273
+21	 loglik: -186248
+22	 loglik: -186230
+2	 loglik: -209356
+3	 loglik: -207120
+4	 loglik: -204596
+5	 loglik: -201009
+6	 loglik: -196663
+7	 loglik: -193816
+8	 loglik: -190962
+9	 loglik: -190901
+10	 loglik: -188857
+11	 loglik: -188671
+12	 loglik: -188018
+13	 loglik: -187173
+14	 loglik: -186761
+15	 loglik: -186671
+16	 loglik: -186613
+17	 loglik: -186586
+18	 loglik: -186525
+19	 loglik: -186448
+20	 loglik: -186273
+21	 loglik: -186248
+22	 loglik: -186230
+</pre><img vspace="5" hspace="5" src="mixGaussOverRelaxedEmDemo_01.png" alt=""> <img vspace="5" hspace="5" src="mixGaussOverRelaxedEmDemo_02.png" alt=""> <pre class="codeoutput">1	 loglik: -208109
+2	 loglik: -207178
+3	 loglik: -206293
+4	 loglik: -205391
+5	 loglik: -204442
+6	 loglik: -203194
+7	 loglik: -201175
+8	 loglik: -197915
+9	 loglik: -194219
+10	 loglik: -190424
+11	 loglik: -186521
+12	 loglik: -184901
+13	 loglik: -184682
+14	 loglik: -184377
+15	 loglik: -183750
+16	 loglik: -183026
+17	 loglik: -182642
+18	 loglik: -182605
+19	 loglik: -182604
+2	 loglik: -207178
+3	 loglik: -205574
+4	 loglik: -203754
+5	 loglik: -201114
+6	 loglik: -198049
+7	 loglik: -193512
+8	 loglik: -189617
+9	 loglik: -186637
+10	 loglik: -186624
+2	 loglik: -207178
+3	 loglik: -205574
+4	 loglik: -203754
+5	 loglik: -201114
+6	 loglik: -198049
+7	 loglik: -193512
+8	 loglik: -189617
+9	 loglik: -186637
+10	 loglik: -186624
+2	 loglik: -207178
+3	 loglik: -205574
+4	 loglik: -203754
+5	 loglik: -201114
+6	 loglik: -198049
+7	 loglik: -193512
+8	 loglik: -189617
+9	 loglik: -186637
+10	 loglik: -186624
+2	 loglik: -207178
+3	 loglik: -205574
+4	 loglik: -203754
+5	 loglik: -201114
+6	 loglik: -198049
+7	 loglik: -193512
+8	 loglik: -189617
+9	 loglik: -186637
+10	 loglik: -186624
+1	 loglik: -209465
+2	 loglik: -207120
+3	 loglik: -204154
+4	 loglik: -198109
+5	 loglik: -191024
+6	 loglik: -187080
+7	 loglik: -184694
+8	 loglik: -183432
+9	 loglik: -182868
+10	 loglik: -182587
+11	 loglik: -182387
+12	 loglik: -182229
+13	 loglik: -182065
+14	 loglik: -182013
+15	 loglik: -181991
+16	 loglik: -181960
+17	 loglik: -181945
+2	 loglik: -207120
+3	 loglik: -201313
+4	 loglik: -193700
+5	 loglik: -188327
+6	 loglik: -185583
+7	 loglik: -183321
+8	 loglik: -182853
+9	 loglik: -182436
+10	 loglik: -182107
+11	 loglik: -181951
+12	 loglik: -181941
+2	 loglik: -207120
+3	 loglik: -201313
+4	 loglik: -193700
+5	 loglik: -188327
+6	 loglik: -185583
+7	 loglik: -183321
+8	 loglik: -182853
+9	 loglik: -182436
+10	 loglik: -182107
+11	 loglik: -181951
+12	 loglik: -181941
+2	 loglik: -207120
+3	 loglik: -201313
+4	 loglik: -193700
+5	 loglik: -188327
+6	 loglik: -185583
+7	 loglik: -183321
+8	 loglik: -182853
+9	 loglik: -182436
+10	 loglik: -182107
+11	 loglik: -181951
+12	 loglik: -181941
+2	 loglik: -207120
+3	 loglik: -201313
+4	 loglik: -193700
+5	 loglik: -188327
+6	 loglik: -185583
+7	 loglik: -183321
+8	 loglik: -182853
+9	 loglik: -182436
+10	 loglik: -182107
+11	 loglik: -181951
+12	 loglik: -181941
+</pre><img vspace="5" hspace="5" src="mixGaussOverRelaxedEmDemo_03.png" alt=""> <img vspace="5" hspace="5" src="mixGaussOverRelaxedEmDemo_04.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Fit a Gaussian Mixture Model using over-relaxed EM
+% We use synthetic data sampled from a GMM
+% PMTKauthor Krishna Nand, Keshava Murthy
+%%
+ntrials = 2;
+for trial = 1:ntrials
+    setSeed(trial);
+    D = 15; N = 5000;
+    Clusters = 10;
+    mu = rand(D,Clusters);
+    mixweight = normalize(rand(1, Clusters));
+    Sigma = zeros(D,D,Clusters);
+    for k=1:Clusters
+        Sigma(:,:,k) = randpd(D);
+    end
+    trueModel = struct('K', Clusters, 'mu', mu, 'Sigma', Sigma, ...
+        'mixweight', mixweight);
+    [fullData] = mixGaussSample(trueModel, N);
+    Ks = [5 10];
+    verbose = true;
+    eta = {[], 1, 1.25, 2, 5}; % over-relaxation increase factor
+    nmethods = length(eta);
+    llHist  = cell(1, nmethods);
+    models = cell(1, nmethods);
+    names = {'EM', 'OR(1)', 'OR(1.25)', 'OR(2)', 'OR(5)'};
+    [styles, colors, symbols] =  plotColors();
+    for k = 1:length(Ks)
+        K = Ks(k);
+        [mu,Sigma,mixweight] = kmeansInitMixGauss(fullData, K);
+        for m=1:nmethods
+            tic
+            [models{m}, llHist{m}] = mixGaussFitEm(fullData, K, ...
+                'Sigma', Sigma, 'mu', mu, 'mixweight', mixweight, ...
+                'overRelaxFactor',eta{m}, 'verbose', verbose, 'doMAP', 1);
+            tim(m) = toc;
+        end
+        
+        figure
+        hold on
+        for m=1:nmethods
+            str= sprintf('%s%s%s', colors(m), symbols(m), styles{m});
+            plot(llHist{m}, str, 'LineWidth',2,'MarkerSize',10)
+            legendStr{m} = sprintf('%s (%5.3f)', names{m}, tim(m));
+        end
+        legend(legendStr, 'location', 'southeast');
+        xlabel('iterations'); ylabel('loglik')
+        title(sprintf('K=%d, D=%d, N=%d', K, D, N));
+    end
+    %%
+end
+
+##### SOURCE END #####
+--></body></html>
