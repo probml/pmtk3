@@ -1,19 +1,10 @@
-function S = formatHtmlText(varargin)
-%% Format a multiline comment for html
-% This is just like multiLineString, except it adds <br> to the end of
-% lines. 
+function S = formatHtmlText(txt, varargin)
+%% Format multiline text for inclusion in an html report
+% This is like sprintf, but txt is a cell array. Each entry in the array
+% is treated as a separate line with html <br> breaks added to the end of 
+% each.
+%
 % 
 %%
-
-stack = dbstack('-completenames');
-if numel(stack) < 2
-    error('This function cannot be called from the command prompt');
-end
-T = getText(stack(2).file);
-T = T((stack(2).line):end);
-
-start = cellfind(T, '%{', 1, 'first');
-endl  = cellfind(T, '%}', 1, 'first'); 
-T = strtrim(T(start+1:endl-1)); 
-S = sprintf(catString(T, '<br>\n'), varargin{:}); 
+S = sprintf(catString(txt, '<br>\n'), varargin{:}); 
 end
