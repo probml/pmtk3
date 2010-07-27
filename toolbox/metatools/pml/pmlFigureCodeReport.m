@@ -65,7 +65,7 @@ for i=1:nfigs
         fpdf      = [fnames{j}, '.pdf'];
         src       = fullfile(pdfSource, fpdf);
         dst       = fullfile(pdfDest, fpdf);
-        %system(sprintf('copy %s %s', src, dst));
+        system(sprintf('copy %s %s', src, dst));
         plink     = sprintf('<a href = %s/%s>%s</a>', fnameOnly(pdfDest), fpdf, fnames{j});
         fnameLink = sprintf('%s%s<br>', fnameLink, plink);
     end
@@ -96,7 +96,7 @@ for i=1:nfigs
         if ~isempty(src)
             found = true;
             for j=1:numel(src)
-                %system(sprintf('copy %s %s', src{j}, figDest));
+                system(sprintf('copy %s %s', src{j}, figDest));
                 sourceLink = sprintf('%s<a href = %s/%s>%s</a><br>', ...
                     sourceLink, 'figuresSource', fnameOnly(src{j}, true), ...
                     fnameOnly(src{j}, true));
