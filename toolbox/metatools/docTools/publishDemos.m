@@ -6,19 +6,22 @@ function publishDemos(wikiFile)
 %%
 
 
-wikiOnly = true;     % set true if you only want to regenerate the wiki and 
+wikiOnly = false;     % set true if you only want to regenerate the wiki and 
                      % index.html pages, and not republish. 
                 
 svnAutomatically = false;
 
 if nargin == 0,  
-    fullfile(getConfigValue('PMTKlocalWikiPath'), 'Demos.wiki'); 
+    wikiFile = fullfile(getConfigValue('PMTKlocalWikiPath'), 'Demos.wiki'); 
 end
 googleRoot = 'http://pmtk3.googlecode.com/svn/trunk/docs/demoOutput';
 %%
 cd(fullfile(pmtk3Root(), 'demos'));
-d = [dirs(fullfile(pmtk3Root(), 'demos', 'bookDemos')); 
-    dirs(dirs(fullfile(pmtk3Root(), 'demos', 'otherDemos')))];
+d = cellfuncell(@(c)fullfile('bookDemos', c), dirs(fullfile(pmtk3Root(), 'demos', 'bookDemos')));
+d = [d; 'otherDemos'];
+
+
+    
 
 dirEmpty = @(d)isempty(mfiles(d, 'topOnly', true));
 
