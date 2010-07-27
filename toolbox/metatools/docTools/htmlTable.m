@@ -3,7 +3,7 @@ function out = htmlTable(varargin)
 %
 %PMTKauthor Gus Brown
 %PMTKurl http://www.mathworks.com/matlabcentral/fileexchange/18329
-%PMTKmodified Matt Dunham
+%PMTKmodified Matt Dunham 
 %
 % INPUTS:
 %        'data'          the data to display, an array or cell array
@@ -35,17 +35,25 @@ function out = htmlTable(varargin)
 %        'dataColors'    a cell array of colors, the same size as data -
 %                         if specified, each cell is colored according to the corresponding
 %                         entry in dataColors.
-%        'tableAlign'
-%        'tableValign'
-%        'colNameAlign'
-%        'colNameValign'
-%        'rowNameAlign'
-%        'rowNameValign'
-%        'rowNameColors'
-%        'colNameColors'
-%        'titleAlign'
-%        'titleValign'
-%        'header'
+%     'tableAlign'       
+%     'tableValign'      
+%     'colNameAlign'     
+%     'colNameValign'    
+%     'rowNameAlign'     
+%     'rowNameValign'    
+%     'rowNameColors'    
+%     'colNameColors'    
+%     'titleAlign'       
+%     'titleValign'      
+%     'titleFontSize'    
+%     'dataFontSize'     
+%     'rowNameFontSize'  
+%     'colNameFontSize'  
+%     'titleBarColor'    
+%     'colSpan'          
+%     'customCellAlign'  
+%     'header'           
+
 %
 %
 % OUTPUT: The html text as a char array, (only if nargout > 0)
@@ -65,7 +73,7 @@ end
     caption       , captionLoc    , captionFontSize , dataColors    , tableAlign      , tableValign     , ...
     colNameAlign  , colNameValign , rowNameAlign    , rowNameValign , rowNameColors   , colNameColors   , ...
     titleAlign    , titleValign   , titleFontSize   , dataFontSize  , rowNameFontSize , colNameFontSize , ...
-    titleBarColor , colSpan       , customCellAlign , header        , footer...
+    titleBarColor , colSpan       , customCellAlign , header        , ...
     ] = process_options(varargin,...
     'data'             , []       ,...
     'rowNames'          , {}       ,...
@@ -106,8 +114,7 @@ end
     'titleBarColor'     ,'white'   ,...
     'colSpan'           ,[]        ,...
     'customCellAlign'   ,{}        ,...
-    'header'            , ''       ,...
-    'footer'            , '');
+    'header'            , ''       );
 
 %%
 if vertCols && ~isempty(colNames)
@@ -260,7 +267,6 @@ for ipage = 1:size(data,3),
     % format data rows
     for ii = 1:size(page,1),
         HTML = [HTML sprintf('<TR>\n')];  %#ok new row of data
-        
         % add row label to line
         if ~isempty(rowNames),
             if ii<=length(rowNames),
@@ -270,9 +276,10 @@ for ipage = 1:size(data,3),
                     else
                         color = bgColor;
                     end
-                    HTML = [HTML sprintf(['<TH BGCOLOR=%s ALIGN=%s VALIGN=%s><font size=%d>' rowFormat '</font></TH>'],color,rowNameAlign,rowNameValign,rowNameFontSize,[rowNames{ii}])]; %#ok
+                    
+                    HTML = [HTML sprintf(['<TH BGCOLOR=%s ALIGN=%s VALIGN=%s ><font size=%d>' rowFormat '</font></TH>'],color,rowNameAlign,rowNameValign, rowNameFontSize,[rowNames{ii}])]; %#ok
                 else
-                    HTML = [HTML sprintf(['<TH BGCOLOR=%s ALIGN=%s VALIGN=%s><font size=%d>' rowFormat '</font></TH>'],bgColor,rowNameAlign,rowNameValign,rowNameFontSize,rowNames(ii))]; %#ok
+                    HTML = [HTML sprintf(['<TH BGCOLOR=%s ALIGN=%s VALIGN=%s ><font size=%d>' rowFormat '</font></TH>'],bgColor,rowNameAlign,rowNameValign, rowNameFontSize,rowNames(ii))]; %#ok
                 end;
             else
                 HTML = [HTML sprintf('<TH></TH>')];  %#ok empty row
@@ -350,7 +357,7 @@ for ipage = 1:size(data,3),
         HTML = [HTML sprintf('\n</TR>')]; %#ok close data row
     end;
 end;
-HTML = [HTML sprintf('</TABLE><br>') footer];  % close table
+HTML = [HTML sprintf('</TABLE><br>')];  % close table
 
 % Save to html file
 if (dosave),

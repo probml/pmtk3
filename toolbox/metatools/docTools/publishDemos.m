@@ -33,7 +33,7 @@ end
 wikiText   = cell(numel(d), 1);
 for i=1:numel(d)
     if ~dirEmpty(d{i})
-        wikiText{i} = sprintf(' * [%s/%s/index.html %s]',googleRoot, d{i}, fnameOnly(d{i}));
+        wikiText{i} = sprintf(' * [%s/%s/index.html %s]',googleRoot, strrep(d{i}, '\', '/'), fnameOnly(d{i}));
     end
 end
 wikiText = filterCell(wikiText, @(c)~isempty(c));

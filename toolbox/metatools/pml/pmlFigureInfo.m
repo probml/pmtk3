@@ -30,6 +30,7 @@ for i=1:nchaps
    if ~isempty(chText)
       Fc = parseChapterFigs(chText);  
       for j=1:numel(Fc)
+         Fc(j).chapter = i;
          Fc(j).figNumTxt = sprintf('%d.%d', i, Fc(j).figNum);  
       end
       F{i} = Fc;

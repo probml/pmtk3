@@ -65,7 +65,7 @@ for i=1:nfigs
         fpdf      = [fnames{j}, '.pdf'];
         src       = fullfile(pdfSource, fpdf);
         dst       = fullfile(pdfDest, fpdf);
-        system(sprintf('copy %s %s', src, dst));
+        %system(sprintf('copy %s %s', src, dst));
         plink     = sprintf('<a href = %s/%s>%s</a>', fnameOnly(pdfDest), fpdf, fnames{j});
         fnameLink = sprintf('%s%s<br>', fnameLink, plink);
     end
@@ -96,7 +96,7 @@ for i=1:nfigs
         if ~isempty(src)
             found = true;
             for j=1:numel(src)
-                system(sprintf('copy %s %s', src{j}, figDest));
+                %system(sprintf('copy %s %s', src{j}, figDest));
                 sourceLink = sprintf('%s<a href = %s/%s>%s</a><br>', ...
                     sourceLink, 'figuresSource', fnameOnly(src{j}, true), ...
                     fnameOnly(src{j}, true));
@@ -110,8 +110,22 @@ for i=1:nfigs
 end
 fprintf('done\n');
 fprintf('generating html report...');
-%% create html report
+
+%% Add chapter breaks
 pmtkRed = getConfigValue('PMTKred');
+figsPerCh = cellfun('length', F);
+figsPerCh(figsPerCh == 0) = [];
+ndx = cumsum(figsPerCh+1); 
+htmlData = insertBlankCells(htmlData, ndx); 
+blanks = cellfun(@isempty, htmlData);
+htmlData(blanks) = {'&nbsp;'};
+colors  = repmat({'white'}, size(htmlData)); 
+colors(ndx, :) = {pmtkRed}; 
+colSpan = zeros(size(htmlData, 1), 1); 
+colSpan(ndx) = 1;
+
+%% create html report
+
 header = formatHtmlText(...
 {    
 '<font align="left" style="color:%s"><h2>Figures from "Machine Learning: a Probabilistic Approach"</h2></font>' 
@@ -138,7 +152,9 @@ htmlTable(  'data'          , htmlData                     , ...
             'colNameColors' , {pmtkRed, pmtkRed, pmtkRed}  , ...
             'doSave'        , true                         , ...
             'filename'      , outputFile                   , ...
-            'doShow'        , false);
+            'doShow'        , false                        , ...
+            'dataColors'    , colors                       , ...
+            'colSpan'       , colSpan);
 fprintf('done\n');
 %% missing source figures
 if 0
