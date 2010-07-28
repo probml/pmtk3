@@ -15,7 +15,7 @@ nodeBels3 = mrf2InferMarginals(mrf2);
 % remove padding:
 nodeBels3 = nodeBels3(1:4, 1:2)';
 assert(approxeq(nodeBels3, tfMarg2Mat(nodeBels))); 
-%%
+%% quick mrfToMrf2 test
 mrf = dgmToMrf(dgm);
 nodeBels4 = mrfInferNodes(mrf);
 tfequal(nodeBels4, nodeBels); 

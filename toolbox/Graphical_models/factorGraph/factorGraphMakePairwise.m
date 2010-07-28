@@ -2,7 +2,6 @@ function fg2 = factorGraphMakePairwise(fg)
 %% Convert a factorGraph to an equivalent one with only pairwise edge pots
 %  
 %
-
 %%
 if fg.isPairwise
     fg2 = fg;
@@ -20,7 +19,8 @@ megaNodes   = cell(nMega, 1);
 megaIds     = nInitNodes+1:nInitNodes+nMega;
 stateMaps   = cell(nMega, 1); 
 for m=1:nMega
-    [megaNodes{m}, stateMaps{m}] = tabularFactorToMegaNode(initFactors{multiway(m)}, megaIds(m));
+    [megaNodes{m}, stateMaps{m}] = ...
+        tabularFactorToMegaNode(initFactors{multiway(m)}, megaIds(m));
 end
 %% construct dummy evidence nodes
 singletons = cellfun(@(f)f.domain, initFactors(sz == 1));
@@ -30,7 +30,6 @@ for i=1:numel(dummyNeeded)
     j = dummyNeeded(i); 
    dummyNodes{i} = tabularFactorCreate(ones(nstates(j), 1), j);  
 end
-
 newFactors = [initFactors(sz <= 2); megaNodes; dummyNodes];
 %% construct new edge factors between megaNodes and their constituent parts
 newEdgeFactors = cell(sum(sz(multiway)), 1); 
@@ -55,8 +54,6 @@ for m = 1:nMega
 end
 
 newNstates = [nstates; cellfun(@(f)f.sizes(end), megaNodes)]; 
-
-
 newFactors = [newFactors; newEdgeFactors]; 
 fg2        = factorGraphCreate(newFactors, newNstates); 
 end
