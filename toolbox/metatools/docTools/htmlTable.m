@@ -53,7 +53,6 @@ function out = htmlTable(varargin)
 %     'colSpan'          
 %     'customCellAlign'  
 %     'header'           
-
 %
 %
 % OUTPUT: The html text as a char array, (only if nargout > 0)
