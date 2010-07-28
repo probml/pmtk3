@@ -1,7 +1,7 @@
 function model = treeFitParams(model,  X, dirichlet)
 % Find the MAP estimate of the parameters of the CPTs.
 %  X(i,j) is value of node j in case i, i=1:n, j=1:d
-%PMTKgmModel treeFit
+%PMTKgmModel tree
 if nargin < 3, dirichlet = 0; end
 G = model.G;
 d = size(X,2);

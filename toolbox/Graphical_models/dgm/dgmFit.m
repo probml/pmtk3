@@ -38,6 +38,7 @@ function dgm = dgmFit(dgm, varargin)
 %                This is true by default if the infEngine is set to jtree.
 %
 % If data is missing, see emAlgo for additional EM related optional args. 
+% PMTKgraphicalModel dgm
 %%
 
 [data, clamped, buildJtree, args] = process_options(varargin, ...

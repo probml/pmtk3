@@ -39,6 +39,8 @@ function mrf = mrfCreate(G, varargin)
 %
 % 'precomputeJtree'     - [true] set to false if you don't want to precompute
 %                        the jtree.
+%
+% PMTKgraphicalModel mrf
 %%
 [nodePots, edgePots, localCPDs, ...
     nodePotPointers, edgePotPointers, localCPDpointers, ...

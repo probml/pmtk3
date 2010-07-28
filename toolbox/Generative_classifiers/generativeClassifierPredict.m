@@ -12,7 +12,8 @@ function [yhat, post] = generativeClassifierPredict(logprobFn, model, Xtest)
 % post      - post(i, j) is the posterior probability that Xtest(i, :) belongs
 %             to class j.
 %
-
+% PMTKsupervisedModel generativeClassifier
+%%
 n = size(Xtest, 1);
 nclasses = model.nclasses;
 classConditionals = model.classConditionals;

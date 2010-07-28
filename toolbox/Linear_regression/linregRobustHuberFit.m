@@ -5,7 +5,8 @@ function model = linregRobustHuberFit(X, y, delta, includeOffset)
 
 %PMTKauthor Mark Schmidt
 %PMTKurl http://people.cs.ubc.ca/~schmidtm/Software/minFunc/minFunc.html#2
-
+% PMTKsupervisedModel linregRobustHuber
+%%
 if nargin < 3, delta = 1; end
 if nargin < 4, includeOffset = true; end
 [N,D] = size(X);

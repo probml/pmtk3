@@ -4,6 +4,7 @@ function [familyBels, logZ, nodeBels] = dgmInferFamily(dgm, varargin)
 %
 % If requested, nodeBels{i} is the ith marginal, if the ith node has a local
 % CPD, and empty otherwise, (used by dgmFitEm).
+% PMTKgraphicalModel dgm
 %%
 calcNodeBels = nargout > 2; 
 nnodes       = dgm.nnodes; 

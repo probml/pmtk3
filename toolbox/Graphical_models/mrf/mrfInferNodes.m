@@ -4,6 +4,7 @@ function [nodeBels, logZ, edgeBels] = mrfInferNodes(mrf, varargin)
 % mrf is a struct as created by mrfCreate
 %
 % Optional named args are the same as for dgmInferNodes
+% PMTKgraphicalModel mrf
 %%
 [clamped, softEv, localEv] = process_options(varargin, ...
     'clamped', [], ... % nodes only

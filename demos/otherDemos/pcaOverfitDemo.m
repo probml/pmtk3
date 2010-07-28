@@ -37,7 +37,7 @@ for ki=1:length(Ks)
   mse(ki) = sqrt(mean(err(:).^2));
   
   [W,mu,sigma2,evals,evecs]  = ppcaFit(Xtrain,k);  
-  [logp] = ppcaLoglik(Xtest, W, mu, sigma2, evals, evecs);
+  [logp] = ppcaLogprob(Xtest, W, mu, sigma2, evals, evecs);
   ll(ki) = sum(logp);
 end
 

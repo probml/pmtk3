@@ -2,6 +2,7 @@ function S = dgmSample(dgm, nsamples)
 %% Sample from a dgm
 % Does not support evidence yet, and currenly only supports tabularCPDs
 % Each *row* of S is a sample
+% PMTKgraphicalModel dgm
 %%
 if nargin < 2, nsamples = 1; end
 G = dgm.G; 

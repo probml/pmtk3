@@ -17,13 +17,13 @@ opt = foptions;
 mix = gmmem(mix, X, opt);
 prob = gmmactiv(mix, X);
 
-[ll, logp] = ppcaLoglik(X, W, mu, sigma2, evals, evecs);
+[ll, logp] = ppcaLogprob(X, W, mu, sigma2, evals, evecs);
 
 assert(approxeq(exp(ll), prob))
 assert(approxeq(exp(logp), prob))
 
 X = ppcaSample(10,  W, mu, sigma2, evals, evecs);
 
-[postMean, postCov] = ppcaPost(X, W, mu, sigma2, evals, evecs)
+[postMean, postCov] = ppcaInfer(X, W, mu, sigma2, evals, evecs)
 
 

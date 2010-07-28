@@ -1,7 +1,7 @@
 function precMat = ggmFit(G, X, lambda)
 % MLE / MAP for a GGM 
 % Lambda is optional strength of a diagonal G-wishart prior
-
+% PMTKgraphicalModel ggm
 if nargin < 3, lambda = 0; end
 
 if lambda==0

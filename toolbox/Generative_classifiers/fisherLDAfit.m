@@ -1,9 +1,10 @@
-function [W, Z]  = fisherLDA(Xtrain, ytrain, K)
+function [W, Z]  = fisherLDAfit(Xtrain, ytrain, K)
 % Optimal linear projection from D dimensions to C-1
 % Xtrain is N*D, ytrain(i) is in {1,2,...,C}
 % W is D*K, where K <= C-1
 % Z is the project of Xtrain onto W, i.e. Xtrain*W
-
+% PMTKsupervisedModel fisherLDA
+%%
 C = max(ytrain);
 if nargin < 3, K = C-1; end
 muC = partitionedMean(Xtrain, ytrain);

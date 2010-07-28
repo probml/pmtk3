@@ -6,7 +6,7 @@ exceptionThreshold = 1;
 dest = fullfile(pmtk3Root, 'docs', 'modelsByMethods');
 modelTags = {
     'PMTKlatentmodel'
-    'PMTKgmmodel'
+    'PMTKgraphicalmodel';
     'PMTKsupervisedmodel'};
 
 titles = {

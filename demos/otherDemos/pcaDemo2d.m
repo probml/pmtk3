@@ -25,4 +25,4 @@ axis equal
 printPmtkFigure('pcaDemo2'); 
 
 
-%ll = ppcaLoglik(X, W, mu, sigma2, evecs, evals)
+%ll = ppcaLogprob(X, W, mu, sigma2, evecs, evals)

@@ -9,7 +9,7 @@ X = centerCols(X);
 [n d] = size(X);
 [W, mu, sigma2, evals, evecs] = ppcaFit(X, 1);
 %sigma2=eps;
-[Z, postCov] = ppcaPost(X, W, mu, sigma2, evals, evecs);
+[Z, postCov] = ppcaInfer(X, W, mu, sigma2, evals, evecs);
 Xrecon = Z*W' + repmat(mu, n,1);
 figure(2);clf;
 plot(mu(1), mu(2), '*', 'markersize', 15, 'color', 'r');

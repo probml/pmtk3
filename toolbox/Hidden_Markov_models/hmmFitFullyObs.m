@@ -10,6 +10,7 @@ function model =  hmmFitFullyObs(Z, Y, type, varargin)
 % type     - one of {'gauss', 'discrete'}
 %
 % See hmmFit for details on priors
+%
 %%
 Z        = cellwrap(Z); 
 Y        = cellwrap(Y); 

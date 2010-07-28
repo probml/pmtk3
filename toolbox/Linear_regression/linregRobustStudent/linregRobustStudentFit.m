@@ -1,5 +1,6 @@
 function model = linregRobustStudentFit(X, y, dof, sigma2)
 %% Fit linear regression with Student noise model
+% PMTKsupervisedModel linregRobustStudent
 if nargin < 3, dof = []; end
 if nargin < 4, sigma2 = []; end
 
