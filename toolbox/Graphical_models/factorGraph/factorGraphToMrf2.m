@@ -53,5 +53,5 @@ else
 end
 
 args = [args, {'edgePot', epot}];
-mrf2 = mrf2Create(G, maxNstates, args{:}, 'tied', 0, varargin{:});
+mrf2 = mrf2Create(G, fg.nstates, args{:}, 'tied', 0, varargin{:});
 end
