@@ -57,6 +57,5 @@ for i=1:numel(factors)
    G(dom, j) = 1; 
 end
 
-
 fg = structure(G, factors, nstates, round, square, nodeFacNdx, edgeFacNdx, isPairwise); 
 end
