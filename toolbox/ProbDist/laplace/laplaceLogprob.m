@@ -1,6 +1,7 @@
 function L = laplaceLogprob(arg1, arg2, arg3)
 % L(i) = log p(X(i)|model)
 % L = laplaceLogprob(model, X); OR L = laplaceLogprob(mu, b, X);
+% PMTKsimpleModel laplace
 %%
 
 if isstruct(arg1)

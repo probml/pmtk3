@@ -1,7 +1,7 @@
 function logp = wishartLogprob(arg1, arg2, arg3)
 % logp(i) = log p(S(:, :, i) | model.Sigma, model.dof)
 % logp = wishartLogprob(model, S); OR logp = wishartLogprob(Sigma, dof, S); 
-
+% PMTKsimpleModel wishart
 if isstruct(arg1)
     model = arg1; 
     Sigma = model.Sigma; 

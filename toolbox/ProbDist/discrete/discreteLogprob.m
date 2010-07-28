@@ -9,6 +9,7 @@ function [L, Lij] = discreteLogprob(arg1, X)
 %
 % Lij = log p(X(i, j) | params(j))
 % L   = sum(Lij, 2)  % i.e. summed across distributions, (not cases).
+% PMTKsimpleModel discrete
 %%
 
 if any(isnan(X(:)))

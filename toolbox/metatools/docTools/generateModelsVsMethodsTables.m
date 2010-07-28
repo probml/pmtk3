@@ -7,17 +7,20 @@ dest = fullfile(pmtk3Root, 'docs', 'modelsByMethods');
 modelTags = {
     'PMTKlatentmodel'
     'PMTKgraphicalmodel';
-    'PMTKsupervisedmodel'};
+    'PMTKsupervisedmodel'
+     'PMTKsimplemodel'};
 
 titles = {
     'Latent Variable Models'
     'Graphical Models'
-    'Supervised Models'};
+    'Supervised Models'
+     'Simple Models'};
 
 fnames = {
     'latentModels.html'
     'graphicalModels.html'
-    'supervisedModels.html'};
+    'supervisedModels.html'
+    'simpleModels.html'};
 
 fnames = cellfuncell(@(f)fullfile(dest, f), fnames); 
 

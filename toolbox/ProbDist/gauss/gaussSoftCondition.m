@@ -1,4 +1,5 @@
 function [post, logevidence] = gaussSoftCondition(pmu, py, A, y)
+% PMTKsimpleModel gauss
 % Bayes rule for MVNs
 Syinv = inv(py.Sigma);
 Smuinv = inv(pmu.Sigma);

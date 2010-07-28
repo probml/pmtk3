@@ -1,9 +1,9 @@
-function S = sampleUniform(arg1, arg2, arg3)
+function S = uniformSample(arg1, arg2, arg3)
 % Sample n uniformly distributed random numbers in the range [a, b].
 % (Note, n can also be a size vector as in sampleUniform(model, [3,2]),
 % yielding a 3x2 matrix of numbers.
 % S = sampleUniform(model, n); OR S = sampleUniform(a, b, n); 
-
+% PMTKsimpleModel uniform
 if isstruct(arg1)
     model = arg1; 
     a     = model.a; 

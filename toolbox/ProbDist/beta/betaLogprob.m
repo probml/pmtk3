@@ -1,7 +1,7 @@
 function logp = betaLogprob(arg1, arg2, arg3)
 % logp(i) = log p( X(i) | a, b)
 % logp = betaLogprob(model, X); or logp = betaLogprob(a, b, X);
-
+% PMTKsimpleModel beta
 if isstruct(arg1)
     model = arg1;
     a = model.a;

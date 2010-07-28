@@ -1,7 +1,7 @@
 function p = gausspdf(X, mu, Sigma)
 % Multivariate Gaussian distribution, pdf
 % X(i,:) is i'th case
-
+% PMTKsimpleModel gauss
 d = size(Sigma, 2);
 X  = reshape(X, [], d);  % make sure X is n-by-d and not d-by-n
 X = bsxfun(@minus, X, rowvec(mu));

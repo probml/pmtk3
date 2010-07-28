@@ -1,7 +1,7 @@
 function p = gausscdf(X, mu, sigma)
 % Univariate Gaussian cdf
 % X(i,:) is i'th case
-
+% PMTKsimpleModel gauss
 if nargin < 3, 
     mu = 0; 
     sigma = 1;

@@ -1,4 +1,4 @@
-function out = logregParamBayes(model, varargin)
+function out = logregParamsBayes(model, varargin)
 % Return summaries of the posterior distribution of the regression weights
 % You must call logregFitBayes first
 % out is a structure containing

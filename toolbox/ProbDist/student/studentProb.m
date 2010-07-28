@@ -1,4 +1,6 @@
 function p = studentProb(x, mu, sigma2, dof)
+%% Student probability
+% PMTKsimpleModel student
 p = exp(studentLogprob(struct('mu',mu, 'Sigma', sigma2, 'dof', dof), x));
 p = p(:)';
 

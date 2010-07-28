@@ -4,7 +4,7 @@ function [model] = studentFit(X, dof)
 % If dof is unknown, set it to [].
 % model  is a structure containing fields: mu, Sigma, dof
 % For a scalar distribution, Sigma is the variance
-
+% PMTKsimpleModel student
 % default algorithm is EM
 if nargin < 2, dof = []; end
 model = studentFitEm(X, 'dof', dof);

@@ -1,6 +1,6 @@
 function modelHgivenV = studentCondition(model, v, visValues)
 % p(xh|xv=visValues)
-
+% PMTKsimpleModel student
 mu    = model.mu(:);
 Sigma = model.Sigma;
 dof   = model.dof;

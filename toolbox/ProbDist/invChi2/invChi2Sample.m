@@ -2,6 +2,7 @@ function S = invChi2Sample(arg1, arg2, arg3)
 % Sample from an inverse Chi^2 distribution
 % See Gelman p580
 % S = invChi2Sample(model, n); OR S = invChi2Sample(dof, scale, n);
+% PMTKsimpleModel invChi2
 %%
 if isstruct(arg1)
     model = arg1;

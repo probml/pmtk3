@@ -1,5 +1,6 @@
 function out=normalExpGammaNeglogpdfDeriv(z,shape,scale)
 % Derivative of normal exponential gamma negative logpdf function
+% PMTKsimpleModel normalExpGamma
 % gamma^2 = c = scale
 lambda = shape;
 gamma = sqrt(scale);

@@ -4,7 +4,7 @@ function model = discreteCreate(T)
 %     K       - the number of states, i.e. nunique(X)
 %     T       - a K-by-d stochastic matrix, (each *column* represents a
 %               different distribution).
-
+% PMTKsimpleModel discrete
 [K, d] = size(T); 
 model = structure(T, K, d);
 model.modelType = 'discrete'; 

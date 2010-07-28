@@ -21,6 +21,7 @@ function model = discreteFit(X, alpha, K)
 %      OR
 % alpha = [1 3 3 5 9];
 % model = discreteFit(X, alpha);
+% PMTKsimpleModel discrete
 
 SetDefaultValue(4, 'K', max(X(:))); 
 d = size(X, 2);

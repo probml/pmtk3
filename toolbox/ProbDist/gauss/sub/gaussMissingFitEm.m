@@ -4,6 +4,7 @@ function [model, loglikHist] = gaussMissingFitEm(data, varargin)
 % See emAlgo() for EM related optional args
 %PMTKauthor Cody Severinski
 %PMTKmodified Kevin Murphy
+
 %%
 [n, d]      = size(data);
 ismissing   = isnan(data);

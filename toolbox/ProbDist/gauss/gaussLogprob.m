@@ -11,7 +11,7 @@ function logp = gaussLogprob(arg1, arg2, arg3)
 % L  = gaussLogprob(zeros(3,1), randpd(3), rand(10,3))
 % L  = gaussLogprob(zeros(3,1), diag(randpd(3)), rand(10,3))
 % L = gaussLogprob(structure(mu, Sigma), X)
-
+% PMTKsimpleModel gauss
 switch nargin
   case 3,  mu = arg1; Sigma = arg2; X = arg3;
   case 2, model = arg1; mu = model.mu; Sigma = model.Sigma; X = arg2;

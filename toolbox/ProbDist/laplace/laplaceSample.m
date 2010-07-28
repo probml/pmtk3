@@ -2,7 +2,7 @@ function X = laplaceSample(arg1, arg2, arg3)
 % X(1:n, j) ~ laplace(mu(j), b(j))
 % X = laplaceSample(model, n); OR X = laplaceSample(mu, b, n); 
 % See http://en.wikipedia.org/wiki/Laplace_distribution
-
+% PMTKsimpleModel laplace
 if isstruct(arg1)
     model = arg1;
     mu    = model.mu;

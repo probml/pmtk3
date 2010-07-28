@@ -5,6 +5,7 @@ function S = gaussSample(arg1, arg2, arg3)
 % S = gaussSample(mu, Sigma, 10)
 % S = gaussSample(model, 100)
 % S = gaussSample(struct('mu',[0], 'Sigma', eye(1)), 3)
+% PMTKsimpleModel gauss
 
 switch nargin
     case 3,  mu = arg1; Sigma = arg2; n = arg3;
