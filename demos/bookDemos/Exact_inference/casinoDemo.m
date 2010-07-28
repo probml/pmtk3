@@ -52,7 +52,7 @@ model.A = transmat;
 model.type = 'discrete';
 viterbiPath = hmmMap(model, observed);
 %% Do the same thing with a dgm
-dgm = hmm2Dgm(model, len); 
+dgm = hmmToDgm(model, len); 
 viterbiPathDGM = dgmMap(dgm, 'localev', observed);
 assert(isequal(viterbiPath, viterbiPathDGM)); 
 %% Sequence of Most Likely States (Max Marginals)

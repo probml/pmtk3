@@ -10,7 +10,7 @@ hmmSource = mkRndGaussHmm(nstates, d);
 Y         = cellwrap(Y);
 Z         = cellwrap(Z);
 %% create an hmm-like random dgm
-dgmModel  = hmm2Dgm(mkRndGaussHmm(nstates, d), T);  
+dgmModel  = hmmToDgm(mkRndGaussHmm(nstates, d), T);  
 % fit the hmm model
 hmmModel = hmmFitFullyObs(Z, Y, 'gauss'); 
 % convert data to dgm format

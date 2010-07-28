@@ -16,7 +16,7 @@ fprintf('fwdbck: %g seconds\n', t);
 %% infer single marginals using varelim
 if 0
     tic;
-    dgm        = hmm2Dgm(model, T, 'infEngine', 'varelim');
+    dgm        = hmmToDgm(model, T, 'infEngine', 'varelim');
     margVelim  = dgmInferNodes(dgm, 'localev', X);
     gammaVelim = tfMarg2Mat(margVelim);
     t = toc;
@@ -26,7 +26,7 @@ end
 %% Infer single marginals using jtree
 if 1
     tic;
-    dgm        = hmm2Dgm(model, T, 'infEngine', 'jtree');
+    dgm        = hmmToDgm(model, T, 'infEngine', 'jtree');
     [margJtree, logpDgm]  = dgmInferNodes(dgm, 'localev', X);
     gammaJtree = tfMarg2Mat(margJtree);
     t = toc;
@@ -36,7 +36,7 @@ end
 %%
 %% infer single marginals using libdai's Jtree code
 tic;
-dgm        = hmm2Dgm(model, T, 'infEngine', 'libdaiJtree');
+dgm        = hmmToDgm(model, T, 'infEngine', 'libdaiJtree');
 margLD     = dgmInferNodes(dgm, 'localev', X);
 gammaLD = tfMarg2Mat(margLD);
 t = toc;

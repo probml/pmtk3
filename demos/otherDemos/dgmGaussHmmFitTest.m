@@ -11,7 +11,7 @@ hmmSource = mkRndGaussHmm(nstates, d);
 Y         = cellwrap(Y);
 Z         = cellwrap(Z);
 %% create an hmm-like random dgm
-dgmModel  = hmm2Dgm(mkRndGaussHmm(nstates, d), T);  
+dgmModel  = hmmToDgm(mkRndGaussHmm(nstates, d), T);  
 %% convert data to dgm format
 localev  = hmmObs2LocalEv(Y); 
 data     = cell2mat(Z); 

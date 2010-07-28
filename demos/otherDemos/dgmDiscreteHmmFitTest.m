@@ -29,7 +29,7 @@ fprintf('HMM\n');
 hmmF = hmmFit(observed, nstates, 'discrete', 'verbose', true, ...
     'pi0', hmm.pi, 'trans0', hmm.A, 'emission0', hmm.emission); 
 %% convert to a dgm
-dgm = hmm2Dgm(hmm, T); 
+dgm = hmmToDgm(hmm, T); 
 dgm.CPDs{1}.prior = hmmF.piPrior(:);
 dgm.CPDs{2}.prior = hmmF.transPrior;
 dgm.localCPDs{1}.prior = hmmF.emissionPrior;
