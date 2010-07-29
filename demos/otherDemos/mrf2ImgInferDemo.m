@@ -100,9 +100,7 @@ for i=1:length(methods)
   printPmtkFigure(sprintf('mrfImgMeanOfMarginals%s', method))
   
 
-  [junk zhat] = max(nodeBel,[],2);
-  zhat1 = mrf2MapMarginals(model);
-  assert(isequal(zhat, zhat1))
+  [junk zhat] = max(nodeBel,[],2); % marginal map esimate
   figure; imagesc(reshape(zhat,nRows,nCols)); colormap gray;
   title(sprintf('max of marginals using %s', method));
   printPmtkFigure(sprintf('mrfImgMaxOfMarginals%s', method))
