@@ -1,6 +1,6 @@
 function ll = linregRobustStudentLogprob(model, X, y)
 % ll(i) = log p(y(i)|X(i,:), model)
-% PMTKsupervisedModel linregRobustStudent
+
 N = size(X,1);
 mu = linregPredict(model, X);
 sigma2 = model.sigma2;

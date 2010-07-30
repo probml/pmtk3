@@ -7,7 +7,7 @@ function logp = studentLogprob(arg1, arg2, arg3, arg4)
 % For the scalar case, Sigma is the variance not the standard deviation
 %
 % logp = studentLogprob(model, X); OR logp = studentLogprob(mu, Sigma, dof, X);
-% PMTKsimpleModel student
+%%
 if isstruct(arg1)
     model = arg1;
     mu    = model.mu;

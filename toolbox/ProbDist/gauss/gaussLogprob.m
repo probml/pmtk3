@@ -29,7 +29,7 @@ end
 [N, d] = size(X);
 
 X = bsxfun(@minus, X, rowvec(mu));
-if isvector(Sigma) % diagonal case
+if isvector(Sigma) && (numel(Sigma) > 1) % diagonal case
   sig2 = repmat(Sigma', N, 1);
   tmp  = -(X.^2)./(2*sig2) - 0.5*log(2*pi*sig2);
   logp = sum(tmp, 2); 

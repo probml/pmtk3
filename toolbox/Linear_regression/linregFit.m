@@ -26,27 +26,32 @@ function [model] = linregFit(X, y, varargin)
     'preproc'       , preprocessorCreate('addOnes', true, 'standardizeX', false));
 
 
-[preproc, X] = preprocessorApplyToTrain(preproc, X);
+
 
 switch lower(likelihood)
     
     case 'huber'
         
-        inlcudeOffset = false; % already taken care of by preproc
+        inlcudeOffset = preproc.addOnes;
         delta         = 1; 
         m             = linregRobustHuberFit(X, y, delta, inlcudeOffset);
-        model.w       = [m.w0;m.w(:)];
+        if includeOffset
+            model.w = [m.w0; m.w(:)];
+        else
+            model.w = m.w; 
+        end
         model.sigma2  = m.sigma2; 
         
     case 'student'
-    
+        
         m = linregRobustStudentFit(X, y); 
-        model.w      = [m.w0;m.w(:)];
-        model.simga2 = m.sigma2;
-        model.dof    = dof; 
+        model.w      = [m.w0; m.w(:)];
+        model.sigma2 = m.sigma2;
+        model.dof    = m.dof; 
+        preproc.addOnes = true;
         
     case 'gaussian'
-        
+        [preproc, X] = preprocessorApplyToTrain(preproc, X);
         [N,D] = size(X);
         if strcmpi(regType, 'none')
             if isempty(lambda)
