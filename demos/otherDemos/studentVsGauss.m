@@ -22,7 +22,7 @@ for i=1:N
     legendStr{i} = sprintf('t(%s=%2.1f)', '\nu', dof);
 end
 %ps = normpdf(xs, 0, 1);
-ps = gausspdf(xs, 0, 1);
+ps = gaussProb(xs, 0, 1);
 if useLog
   plot(xs,  log(ps), styleStr{N+1}, 'linewidth', 2, 'markersize', 12);
 else

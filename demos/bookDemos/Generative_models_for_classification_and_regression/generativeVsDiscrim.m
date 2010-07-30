@@ -5,8 +5,8 @@ figure;
 hold all;
 
 domain = 0:0.001:1;
-f1 = @(x)gausspdf(x,0.7,0.09.^2);
-f2 = @(x) 0.4*gausspdf(x,0.2,0.09.^2) + 0.6*gausspdf(x,0.5,0.09.^2);
+f1 = @(x)gaussProb(x,0.7,0.09.^2);
+f2 = @(x) 0.4*gaussProb(x,0.2,0.09.^2) + 0.6*gaussProb(x,0.5,0.09.^2);
 linespec = {'LineWidth',3};
 plot(domain,f1(domain),'-r',linespec{:});
 plot(domain,f2(domain),'-b',linespec{:});

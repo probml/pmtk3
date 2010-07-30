@@ -7,7 +7,7 @@ function plotPdfCdfDemo()
 
 
 
-pdf = @(x) (gausspdf(x,1,2.^2)+gausspdf(x,6,1))/2;
+pdf = @(x) (gaussProb(x,1,2.^2)+gaussProb(x,6,1))/2;
 fplot(pdf,[-10,10],'r');
 
 cdf = @(x) quad(pdf,-3.99,x)/5 + 0.01; % /5 + 0.01 is a hack to super impose it overtop the pdf.

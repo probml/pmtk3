@@ -4,7 +4,7 @@
 xs = -4:0.1:4;
 mu = 0; b = 1;
 pLap = 1/(2*b)*exp(-abs(xs-mu)/b);
-pGauss = gausspdf(xs,0, 1);
+pGauss = gaussProb(xs,0, 1);
 
 figure; hold on
 

@@ -110,7 +110,7 @@ legend('exact', 'vb')
 end
 
 function p = vbPost(mu, lambda, aN, bN, muN, kappaN)
-mup = gausspdf(mu, muN, (1/kappaN)); 
+mup = gaussProb(mu, muN, (1/kappaN)); 
 lambdap = exp(gammaLogprob(struct('a', aN, 'b', bN), lambda)); 
 p = mup .* lambdap;
 end

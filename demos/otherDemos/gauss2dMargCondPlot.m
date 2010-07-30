@@ -10,7 +10,7 @@ plotMarginal();
 plotConditional();
 annotate();
     function plot2d()
-        f = @(X)gausspdf(X, mu, sigma);
+        f = @(X)gaussProb(X, mu, sigma);
         [x,y] = meshgrid(-0.2:0.005:1.2, -0.2:0.005:1.2);
         [r, c]=size(x);
         data = [x(:) y(:)];
@@ -25,7 +25,7 @@ annotate();
         hold on;
     end
     function plotMarginal()
-        fmarge = @(x)gausspdf(x, mu(1), sigma(2, 2).^2);
+        fmarge = @(x)gaussProb(x, mu(1), sigma(2, 2).^2);
         margeAx = axes('Parent', fig, 'Position', [0.3,0.02,0.65,0.25]);
         res = 0.45:0.0001:0.55;
         plot(res,fmarge(res), '-b', 'LineWidth', 2, 'Parent', margeAx);
@@ -37,7 +37,7 @@ annotate();
         %p(x2|x1 = 0.4
         mu_cond = mu(2) + sigma(2,1)*(sigma(1,1)^(-1))*(0.4 - mu(1));
         sigma_cond = sigma(2,2) - sigma(2,1)*(sigma(1,1)^(-1))*sigma(1,2);
-        fcond = @(x)gausspdf(x, mu_cond, sigma_cond.^2);
+        fcond = @(x)gaussProb(x, mu_cond, sigma_cond.^2);
         condAx = axes('Parent', fig, 'Position', [0.05 0.35 0.22 0.57]);
         res = 0.43:0.001:0.465;
         plot(res, fcond(res), 'g', 'LineWidth', 2, 'Parent', condAx);

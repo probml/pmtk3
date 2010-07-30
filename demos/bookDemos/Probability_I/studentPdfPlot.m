@@ -5,7 +5,7 @@ xs = -4:0.2:4;
 v = 1;
 mu = 0;
 
-pr{1} = gausspdf(xs, mu, sqrt(v));
+pr{1} = gaussProb(xs, mu, sqrt(v));
 
 
 % variance of student = dof*sigma^2/(dof-2)

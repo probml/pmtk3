@@ -7,8 +7,8 @@ ymin = 0;ymax = 0.3;
 res = 0.01;
 domain = xmin:res:xmax;
 sigma = 1.5;
-f1 = @(x)gausspdf(x,0,sigma);
-f2 = @(x)gausspdf(x,4,sigma);
+f1 = @(x)gaussProb(x,0,sigma);
+f2 = @(x)gaussProb(x,4,sigma);
 
 linesize = {'LineWidth',2.5};
 plot(domain,f1(domain),'-b',linesize{:});

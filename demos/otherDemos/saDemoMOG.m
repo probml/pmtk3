@@ -53,7 +53,7 @@ K = length(mixWeights);
 N = length(x);
 p = zeros(N,1);
 for k=1:K
-  p = p + mixWeights(k)*gausspdf(x(:), mu(k), sigma(k));
+  p = p + mixWeights(k)*gaussProb(x(:), mu(k), sigma(k));
 end
 
 end

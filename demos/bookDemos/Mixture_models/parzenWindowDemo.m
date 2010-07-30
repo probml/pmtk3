@@ -10,7 +10,7 @@ mu = [0.25,0.75];
 n = 50;
 
 %% The true function, we are trying to recover
-f = @(x)mix(1)*gausspdf(x, mu(1), sigma(1)) + mix(2)*gausspdf(x, mu(2), sigma(2));
+f = @(x)mix(1)*gaussProb(x, mu(1), sigma(1)) + mix(2)*gaussProb(x, mu(2), sigma(2));
 %% Generate data
 data = generateData;
 domain = 0:0.001:1;
@@ -52,7 +52,7 @@ placeFigures('nrows',3,'ncols',1,'square',false);
         unif = @(x, a, b)exp(uniformLogprob(structure(a, b), x));
         for i=1:n
             switch kernel
-                case 'gauss', g = @(x)g(x) + (1/n)*gausspdf(x,data(i),h^2);
+                case 'gauss', g = @(x)g(x) + (1/n)*gaussProb(x,data(i),h^2);
                 case 'cube', g = @(x)g(x) + (1/n)*unif(x,data(i)-h/2, data(i)+h/2);
             end
         end

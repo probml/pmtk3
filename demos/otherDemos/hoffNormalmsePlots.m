@@ -49,7 +49,7 @@ var = w.^2*sigmaTrue^2/nSamples;
 thetaEst = w*thetaTrue + (1-w)*theta0;
 figure(); hold on;
 for k=k0
-  plot(xrange, gausspdf(xrange, thetaEst(k + 1), sqrt(var(k+1)))), opt{k+1};
+  plot(xrange, gaussProb(xrange, thetaEst(k + 1), sqrt(var(k+1)))), opt{k+1};
 end
 title('True sampling distribution based on theory');
 legend(strread(num2str(k0), '%s'), 'Location', 'Best');

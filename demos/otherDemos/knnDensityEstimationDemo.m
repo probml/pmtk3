@@ -11,7 +11,7 @@ mu = [0.25,0.75];
 n = 50;                 % number of training points
 
 %The true function, we are trying to recover
-f = @(x)mix(1)*gausspdf(x,mu(1),sigma(1)) + mix(2)*gausspdf(x,mu(2),sigma(2));
+f = @(x)mix(1)*gaussProb(x,mu(1),sigma(1)) + mix(2)*gaussProb(x,mu(2),sigma(2));
 
 data = generateData;
 domain = 0:0.001:1;  % also the test points

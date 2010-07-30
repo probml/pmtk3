@@ -7,7 +7,7 @@ function quantileDemo
     width = 2*scrsz(3)/3;
     height = width/2;
     figure('Position',[(scrsz(3)-width)/2,(scrsz(4)-height)/2,width,height]);
-    f = @(x)gausspdf(x, 0, 1);
+    f = @(x)gaussProb(x, 0, 1);
     x = -4:0.1:4;
     y = f(x);
     plot(x,y,'r','LineWidth',2.5);

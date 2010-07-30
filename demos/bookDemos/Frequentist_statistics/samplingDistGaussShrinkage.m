@@ -16,7 +16,7 @@ for ki=1:length(k0s)
   w = n / (n + k0);
   v = w^2*sigmaTrue^2/n;
   thetaEst = w*thetaTrue + (1-w)*thetaPrior % since E[xbar] = thetaTrue
-  plot(xrange, gausspdf(xrange, thetaEst, sqrt(v)), [colors(ki), styles{ki}], ...
+  plot(xrange, gaussProb(xrange, thetaEst, sqrt(v)), [colors(ki), styles{ki}], ...
     'linewidth', 3, 'markersize', 10);
   names{ki} = sprintf('postMean%d', k0s(ki));
 end

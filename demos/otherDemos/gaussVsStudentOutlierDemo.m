@@ -32,7 +32,7 @@ end
 function plotPDFs(data)
     Xbar = mean(data);
     sigma = std(data);
-    gauss = @(X)gausspdf(X,Xbar,sigma.^2);
+    gauss = @(X)gaussProb(X,Xbar,sigma.^2);
     %% use pmtk's EM algorithm
     model = studentFitEm(data);
     sT = @(X)exp(studentLogprob(model, X));

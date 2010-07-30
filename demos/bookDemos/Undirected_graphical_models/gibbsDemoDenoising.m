@@ -37,7 +37,7 @@ sigmas = [sigma sigma];
 Npixels = M*N;
 localEvidence = zeros(Npixels, 2);
 for k=1:2
-    localEvidence(:,k) = gausspdf(y(:), mus(k), sigmas(k).^2);
+    localEvidence(:,k) = gaussProb(y(:), mus(k), sigmas(k).^2);
 end
 guess = maxidx(localEvidence, [], 2);  % start with best local guess
 X = ones(M, N);

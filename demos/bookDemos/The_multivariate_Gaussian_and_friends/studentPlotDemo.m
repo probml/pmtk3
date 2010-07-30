@@ -35,7 +35,7 @@ end
 
 
 figure;
-p = gausspdf(X, [0 0], C);
+p = gaussProb(X, [0 0], C);
 surf(X1,X2,reshape(p,n,n));
 title(sprintf('Gaussian'))
 

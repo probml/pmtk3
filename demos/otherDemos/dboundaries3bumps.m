@@ -3,9 +3,9 @@
 %%
 domain = -3:0.01:13;
 sigma = 1.5.^2;
-r1 = gausspdf(domain, 0, sigma);
-r2 = gausspdf(domain, 5, sigma);
-r3 = gausspdf(domain, 10, sigma);
+r1 = gaussProb(domain, 0, sigma);
+r2 = gaussProb(domain, 5, sigma);
+r3 = gaussProb(domain, 10, sigma);
 linesize = {'LineWidth',2.5};
 
 plot(domain,r1,'-r',linesize{:});

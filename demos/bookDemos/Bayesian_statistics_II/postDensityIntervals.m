@@ -2,7 +2,7 @@
 %
 %%
 function postDensityIntervals
-f = @(x)gausspdf(x, 0, 1) + gausspdf(x, 6, 1);
+f = @(x)gaussProb(x, 0, 1) + gaussProb(x, 6, 1);
 domain = -4:0.001:10;
 h = plot(domain , f(domain), '-r', 'LineWidth', 2.5);
 axis([-4, 10, 0, 0.5]);

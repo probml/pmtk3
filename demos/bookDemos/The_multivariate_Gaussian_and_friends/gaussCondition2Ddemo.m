@@ -20,14 +20,14 @@ x2 = 1; line([-5 5], [x2 x2],  'color', 'k', 'linewidth', 2);
 %% unconditional marginal
 marg.mu = mu(1); marg.Sigma = S(1, 1);
 xs = -5:0.2:5;
-ps = gausspdf(xs(:), marg.mu, marg.Sigma);
+ps = gaussProb(xs(:), marg.mu, marg.Sigma);
 ps = 50*normalize(ps);
 plot(xs, 0+ps, 'bx:', 'linewidth',2 );
 %% conditional marginals
 model = struct('mu', mu, 'Sigma', S);
 modelHgivenV = gaussCondition(model, 2, x2);
 [muHgivenV, SigmaHgivenV] = structvals(modelHgivenV, 'mu', 'Sigma');
-ps = gausspdf(xs(:), muHgivenV, SigmaHgivenV);
+ps = gaussProb(xs(:), muHgivenV, SigmaHgivenV);
 ps = 50*normalize(ps);
 plot(xs, 1+ps, 'ko-.', 'linewidth',2 );
 postMu = muHgivenV;

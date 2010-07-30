@@ -30,7 +30,7 @@ for tied=[false true]
         [x,y] = meshgrid(linspace(50,80,100), linspace(80,280,100));
         [m,n]=size(x);
         X = [reshape(x, n*m, 1) reshape(y, n*m, 1)];
-        g{c} = reshape(gausspdf(X, mu{c}(:)', Sigma{c}), [m n]);
+        g{c} = reshape(gaussProb(X, mu{c}(:)', Sigma{c}), [m n]);
         contour(x,y,g{c}, colors(c));
     end
     xlabel('height'); ylabel('weight')

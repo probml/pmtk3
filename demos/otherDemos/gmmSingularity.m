@@ -1,8 +1,8 @@
 %% Illustration of a GMM singularity
 %
 %%
-f1 = @(x) gausspdf(x,0.5,0.12.^2);
-f2 = @(x) gausspdf(x,0.88,0.03.^2)/2;
+f1 = @(x) gaussProb(x,0.5,0.12.^2);
+f2 = @(x) gaussProb(x,0.88,0.03.^2)/2;
 f3 = @(x) f1(x) + f2(x);
 domain = 0:0.001:1;
 dataPoints = [0.21 0.25 0.32 0.45 0.58 0.72 0.88];

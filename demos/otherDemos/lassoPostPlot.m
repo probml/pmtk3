@@ -17,8 +17,8 @@ for i=1:length(taus)
    tau = taus(i);
    muPlus = bols - tau*v2;
    muMinus = bols + tau*v2;
-   a = gausscdf(-muMinus/v)/gausspdf(0,muMinus,v);
-   b = gausscdf(muPlus/v)/gausspdf(0, muPlus, v);
+   a = gaussProb(-muMinus/v)/gaussProb(0,muMinus,v);
+   b = gaussProb(muPlus/v)/gaussProb(0, muPlus, v);
    w = a/(a+b);
    beta = -1:0.1:5;
    post = w*gaussTrunc(beta, muMinus, v, false) + ...
@@ -41,8 +41,8 @@ function p = gaussTrunc(t, m, s, plus)
 s = s.^2; 
 t = t(:);
 if plus
-   p = gausspdf(t, m, s)/gausscdf(m/s) .* (t >= 0);
+   p = gaussProb(t, m, s)/gausscdf(m/s) .* (t >= 0);
 else
-   p = gausspdf(t, m, s)/gausscdf(-m/s) .* (t < 0);
+   p = gaussProb(t, m, s)/gausscdf(-m/s) .* (t < 0);
 end
 end

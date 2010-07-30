@@ -15,7 +15,7 @@ sigma = 0.2*[0.045,0.045,0.045,0.1,0.2,0.25,0.3,0.21,0.15,0.11];
 
 f = @(x)0;
 for i=1:10
-    f = @(x)f(x) + 0.1*gausspdf(x, mu(i,:)', sigma(i).*eye(2));
+    f = @(x)f(x) + 0.1*gaussProb(x, mu(i,:)', sigma(i).*eye(2));
 end
 
 stepsize = 0.005;

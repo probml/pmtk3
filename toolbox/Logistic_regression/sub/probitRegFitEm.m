@@ -30,6 +30,6 @@ function [ess, loglik] = estep(model, data, objfn)
 X      = data(:, 1:end-1);
 y      = data(:, end);
 u      = X*model.w;
-ess.Z  = u + gausspdf(u, 0, 1)./((y==1) - gausscdf(-u));
+ess.Z  = u + gaussProb(u, 0, 1)./((y==1) - gausscdf(-u));
 loglik = objfn(model.w);
 end

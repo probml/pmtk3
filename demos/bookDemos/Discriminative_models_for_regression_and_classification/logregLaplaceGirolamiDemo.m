@@ -44,7 +44,7 @@ printPmtkFigure('logregLaplaceGirolamiData')
 
 %% Plot prior, likelihood, posterior
 f=W*X';
-Log_Prior = log(gausspdf(W, zeros(1,D), eye(D).*alpha));
+Log_Prior = log(gaussProb(W, zeros(1,D), eye(D).*alpha));
 Log_Like = W*X'*t - sum(log(1+exp(f)),2); 
 Log_Joint = Log_Like + Log_Prior;
 
@@ -88,7 +88,7 @@ pp =  preprocessorCreate('addOnes', false, 'standardizeX', false);
 model = logregFitBayes(X, t, 'method', 'laplace', 'lambda', 1/alpha, 'preproc', pp);
 wMAP = model.wN;
 C = model.VN; 
-Log_Laplace_Posterior = log(gausspdf(W, wMAP', C)+eps);
+Log_Laplace_Posterior = log(gaussProb(W, wMAP', C)+eps);
 
 figure;
 contour(w1,w2,reshape(-Log_Laplace_Posterior,[n,n]),30);

@@ -32,7 +32,7 @@ stepSize = 0.5; % 0.1 is better for contours, 0.1 for surfc
 [r, c]=size(x);
 %% data(k,:) = [x(k) y(k)] for pixel k
 data = [x(:) y(:)];
-p = gausspdf(data, mu', S);
+p = gaussProb(data, mu', S);
 p = reshape(p, r, c);
 %% scale density so it sums to 1
 % p2(x,y)  defeq  p(x: x+dx, y: y+ dy) approx p(x,y) dx dy
