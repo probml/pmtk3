@@ -14,14 +14,14 @@ switch lower(likelihood)
     
     case 'gaussian'
         
-        logp = gaussLogprob(mu(:), sigma2, y(:)); 
+        logp = gaussLogprob(mu(:), sigma2, y(:));
         
     case 'student'
         
-        logp = studentLogprob(mu(:), sigma2, model.dof, y(:)); 
+        logp = studentLogprob(mu, sigma2, model.dof, y); 
         
     otherwise
-        error('linregLobprob does not support %s likelihoods'); 
+        error('linregLobprob does not support %s likelihoods');
 end
 
 

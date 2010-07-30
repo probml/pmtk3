@@ -21,7 +21,7 @@ loglikEM  = zeros(1, length(dofs));
 for i = 1:length(dofs)
     dof = dofs(i);
     modelEM{i} = linregRobustStudentFitEm(X, y, dof);
-    loglikEM(i) = sum(linregRobustStudentLogprob(modelEM{i}, X, y));
+    loglikEM(i) = sum(linregLogprob(modelEM{i}, X, y));
     
     % debug - use objective fn from linregRobustStudentFitConstr
     sigma2 = modelEM{i}.sigma2; w = [modelEM{i}.w0; modelEM{i}.w];
@@ -32,7 +32,7 @@ for i = 1:length(dofs)
     %assert(approxeq(nll, -loglikEM(i))) % FAILS!
     
     modelConstr{i} = linregRobustStudentFitConstr(X, y, dof);
-    loglikConstr(i) = sum(linregRobustStudentLogprob(modelConstr{i}, X, y));
+    loglikConstr(i) = sum(linregLogprob(modelConstr{i}, X, y));
 end
 
 %% format output

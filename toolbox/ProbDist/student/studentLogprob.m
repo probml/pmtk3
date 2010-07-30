@@ -22,9 +22,15 @@ else
 end
 
 d = size(Sigma, 1);
-X = reshape(X, [], d);
-%XX = X;
-X = bsxfun(@minus, X, rowvec(mu));
+if size(X, 2) ~= d
+    X = X';
+end
+
+if d==1 % evaluate each data case under a different mu value
+    X = X(:) - mu(:);
+else
+    X = bsxfun(@minus, X, rowvec(mu));
+end
 mahal = sum((X/Sigma).*X,2);
 logc = gammaln(nu/2 + d/2) - gammaln(nu/2) - 0.5*logdet(Sigma) ...
     - (d/2)*log(nu) - (d/2)*log(pi);

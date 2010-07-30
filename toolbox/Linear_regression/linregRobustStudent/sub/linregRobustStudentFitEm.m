@@ -32,7 +32,8 @@ function [ess, loglik] = estep(model, data)
 %% Compute the expected sufficient statistics
 X      = data(:, 1:end-1);
 y      = data(:, end);
-loglik = sum(linregRobustStudentLogprob(model, X, y));
+model.likelihood = 'student';
+loglik = sum(linregLogprob(model, X, y));
 sigma2 = model.sigma2; 
 w      = model.w;
 dof    = model.dof;
@@ -61,5 +62,6 @@ end
 
 function nll = negloglikFn(model, dof, X, y)
 model.dof = dof;
-nll = -sum(linregRobustStudentLogprob(model, X, y));
+model.likelihood = 'student'; 
+nll = -sum(linregLogprob(model, X, y));
 end
