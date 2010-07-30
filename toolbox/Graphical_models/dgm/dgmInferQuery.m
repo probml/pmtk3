@@ -117,14 +117,8 @@ switch lower(engine)
         
     case 'enum'
         
-        factors  = cpds2Factors(CPDs, G, CPDpointers);   
-        factors  = multiplyInLocalFactors(factors, localFacs);
-        joint    = tabularFactorMultiply(factors); 
-        bels     = cell(nqueries, 1); 
-        for i=1:nqueries
-           [bels{i}, logZ] = tabularFactorCondition(joint, queries{i}, clamped); 
-        end
-        if numel(queries) == 1, bels = bels{1}; end
+        factors      = cpds2Factors(CPDs, G, CPDpointers);   
+        [logZ, bels] = enumRunInference(factors, queries, clamped, localFacs); 
         
     otherwise
         error('%s is not a valid inference engine', dgm.infEngine);

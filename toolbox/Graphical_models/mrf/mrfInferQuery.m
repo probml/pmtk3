@@ -56,6 +56,7 @@ switch lower(engine)
             jtree     = jtreeCreate(cg, 'cliqueConstraints', queries);
         end
         [logZ, bels] = jtreeRunInference(jtree, queries, localFacs);
+        
     case 'libdaijtree'
         
         assert(isWeaklyConnected(cg.G)); % libdai segfaults on disconnected graphs
@@ -73,14 +74,8 @@ switch lower(engine)
         [logZ, bels] = variableElimination(cg, queries);
         
     case 'enum'
-        
-        factors  = multiplyInLocalFactors(cg.Tfac, localFacs);
-        joint    = tabularFactorMultiply(factors); 
-        bels     = cell(nqueries, 1); 
-        for i=1:nqueries
-           [bels{i}, logZ] = tabularFactorCondition(joint, queries{i}, clamped); 
-        end
-        if numel(queries) == 1, bels = bels{1}; end
-        
+       
+        [logZ, bels] = enumRunInference(cg.Tfac, queries, clamped, localFacs); 
+       
     otherwise, error('%s is not a valid inference engine', mrf.infEngine);
 end
