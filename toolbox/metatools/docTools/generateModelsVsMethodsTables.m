@@ -2,6 +2,51 @@ function generateModelsVsMethodsTables()
 %% Make the models vs methods tables
 %
 %%
+
+latent = ...
+{
+
+
+};
+
+graphical = ...
+{
+
+
+};
+
+supervised = ...
+{
+
+
+};
+
+basic = ...
+{
+    'beta'
+    'betaBinom'
+    'binomial'
+    ''
+
+
+};
+
+titles = {
+    'Latent Variable Models'
+    'Graphical Models'
+    'Supervised Models'
+    'Basic Models'};
+
+fnames = {
+    'latentModels.html'
+    'graphicalModels.html'
+    'supervisedModels.html'
+    'basicModels.html'};
+
+
+
+
+%{
 exceptionThreshold = 1;
 dest = fullfile(pmtk3Root, 'docs', 'modelsByMethods');
 modelTags = {
@@ -141,3 +186,4 @@ end
 end
 
 
+%}
