@@ -1,5 +1,4 @@
-function p = betaprob(t,a,b)
+function p = betaProb(t,a,b)
 % p(i) =  p( t(i) | a, b)
-% PMTKsimpleModel beta
 p = t.^(a-1) .* (1-t).^(b-1) ./ beta(a,b);
 end

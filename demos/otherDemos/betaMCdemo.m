@@ -33,12 +33,12 @@ for i=1:size(data, 1)
 end
 end
 
-function p = betaprob(t,a,b)
+function p = betaProb(t,a,b)
 p = t.^(a-1) .* (1-t).^(b-1) ./ beta(a,b);
 end
 
 function out = integral(t1,t2,a1,b1,a2,b2)
-out = betaprob(t1,a1,b1) .* betaprob(t2,a2,b2) .* (t1 > t2);
+out = betaProb(t1,a1,b1) .* betaprob(t2,a2,b2) .* (t1 > t2);
 end
 
 
