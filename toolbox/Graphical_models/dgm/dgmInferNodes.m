@@ -32,76 +32,10 @@ function [nodeBels, logZ] = dgmInferNodes(dgm, varargin)
 % logZ       - log of the partition sum (if this is all you want, use
 %              dgmLogprob)
 %
-% PMTKgraphicalModel dgm
-%% Setup
-[clamped, softEv, localEv] = process_options(varargin, ...
-    'clamped', [], ...
-    'softev' , [], ...
-    'localev', []);
-
-engine    = dgm.infEngine;
-nnodes    = dgm.nnodes;
-
-localFacs = {}; 
-if ~isempty(localEv)
-    localFacs = softEvToFactors(localEvToSoftEv(dgm, localEv));
-end
-if ~isempty(softEv)
-    localFacs = [localFacs(:); colvec(softEvToFactors(softEv))];
-end
-visVars   = find(clamped);
-hidVars   = setdiffPMTK(1:nnodes, visVars);
-G         = dgm.G;
-%% Run inference
-switch lower(engine)
-    
-    case 'jtree'
-        
-        if isfield(dgm, 'jtree')
-            jtree          = jtreeSliceCliques(dgm.jtree, clamped);
-        else
-            doSlice        = true;
-            factors        = cpds2Factors(dgm.CPDs, G, dgm.CPDpointers);
-            factors        = addEvidenceToFactors(factors, clamped, doSlice);
-            nstates        = cellfun(@(f)f.sizes(end), factors); 
-            jtree          = jtreeCreate(cliqueGraphCreate(factors, nstates, G));
-        end
-        [jtree, logZlocal] = jtreeAddFactors(jtree, localFacs);
-        [jtree, logZ]      = jtreeCalibrate(jtree);
-        nodeBels           = jtreeQuery(jtree, num2cell(hidVars));
-        logZ = logZ + logZlocal; 
-        
-    case 'libdaijtree'
-        
-        assert(isWeaklyConnected(G)); % libdai segfaults on disconnected graphs
-        doSlice          = false;     % libdai often segfaults when slicing
-        factors          = cpds2Factors(dgm.CPDs, G, dgm.CPDpointers);
-        factors          = addEvidenceToFactors(factors, clamped, doSlice);
-        [logZ, nodeBels] = libdaiJtree([factors(:); localFacs(:)]);
-        
-    case 'varelim'
-        
-        doSlice          = true;
-        factors          = cpds2Factors(dgm.CPDs, G, dgm.CPDpointers);
-        factors          = addEvidenceToFactors(factors, clamped, doSlice);
-        factors          = multiplyInLocalFactors(factors, localFacs);
-        nstates          = cellfun(@(f)f.sizes(end), factors); 
-        cg               = cliqueGraphCreate(factors, nstates, G);
-        [logZ, nodeBels] = variableElimination(cg, num2cell(hidVars));
-        
-    case 'enum'
-        
-        factors  = cpds2Factors(dgm.CPDs, G, dgm.CPDpointers);
-        factors  = multiplyInLocalFactors(factors, localFacs);
-        joint    = tabularFactorMultiply(factors);
-        nodeBels = cell(nnodes, 1);
-        for i=1:numel(hidVars)
-            [nodeBels{i}, logZ] = tabularFactorCondition(joint, hidVars(i), clamped);
-        end
-        
-    otherwise, error('%s is not a valid inference engine', dgm.infEngine);
-        
-end
 %%
-nodeBels = insertClampedBels(nodeBels, visVars, hidVars);
+[clamped, args]  = process_options(varargin, 'clamped', []); %#ok
+visVars          = find(clamped);
+hidVars          = setdiffPMTK(1:dgm.nnodes, visVars);
+[nodeBels, logZ] = dgmInferQuery(dgm, num2cell(hidVars), varargin{:});
+nodeBels         = insertClampedBels(nodeBels, visVars, hidVars);
 end
