@@ -25,7 +25,7 @@ method = 'Tree';
 model = mrf2Create(adj, nStates, 'nodePot', nodePot, 'edgePot', edgePot, ...
   'method', method);
   
-[nodeBel, edgeBel, logZ] =  mrf2InferMarginals(model);
+[nodeBel, edgeBel, logZ] =  mrf2InferNodesAndEdges(model);
 
 mrfPmtk = mrfCreate(adj, 'nodePots', mat2cellRows(nodePot), 'edgePots', edgePot); 
 nodeBelPmtk  = mrfInferNodes(mrfPmtk); 
@@ -50,7 +50,7 @@ mapMrf  = mrfMap(mrfPmtk, 'clamped', clamped);
 assert(isequal(mapMrf2, mapMrf)); 
 
 
-[nodeBel, edgeBel, logZ] =  mrf2InferMarginals(model, clamped);
+[nodeBel, edgeBel, logZ] =  mrf2InferNodesAndEdges(model, clamped);
 nodeBelPmtk = mrfInferNodes(mrfPmtk, 'clamped', sparse(clamped')); 
 
 hidNodes = setdiffPMTK(1:nNodes, find(clamped)); 

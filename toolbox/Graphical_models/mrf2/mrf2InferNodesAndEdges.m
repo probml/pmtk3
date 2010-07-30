@@ -1,4 +1,4 @@
-function [nodeBel, edgeBel, logZ] = mrf2InferMarginals(model, clamped)
+function [nodeBel, edgeBel, logZ] = mrf2InferNodesAndEdges(model, clamped)
 % Compute node and edge marginals, and log partition function
 % clamped is an optional 1*D vector, where
 % clamped(i) = 0 means node i is not observed

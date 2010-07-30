@@ -93,7 +93,7 @@ for i=1:length(methods)
   args = methodArgs{i};
   [model] = mrf2MkLatticeX(X, method, args);
   
-  [nodeBel]  = mrf2InferMarginals(model);
+  [nodeBel]  = mrf2InferNodesAndEdges(model);
   p1 = nodeBel(:,2);  
   figure; imagesc(reshape(p1,nRows,nCols)); colormap gray;
   title(sprintf('mean of marginals using %s', method));

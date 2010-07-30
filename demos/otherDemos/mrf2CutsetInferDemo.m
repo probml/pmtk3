@@ -55,7 +55,7 @@ model = mrf2Create(adj, nStates, 'nodePot', nodePot, 'edgePot', edgePot, ...
 
 map =  mrf2Map(model)-1
 
-[nodeBel, edgeBel, logZ] =  mrf2InferMarginals(model);
+[nodeBel, edgeBel, logZ] =  mrf2InferNodesAndEdges(model);
 
 setSeed(0);
 samples = mrf2Sample(model, 100);
@@ -153,7 +153,7 @@ model = mrf2Create(adj, nStates, 'nodePot', nodePot, 'edgePot', edgePot, ...
 %% Unconditional inference
 map =  mrf2Map(model)-1
 
-[nodeBel, edgeBel, logZ] =  mrf2InferMarginals(model);
+[nodeBel, edgeBel, logZ] =  mrf2InferNodesAndEdges(model);
 
 setSeed(0);
 samples = mrf2Sample(model, 100);

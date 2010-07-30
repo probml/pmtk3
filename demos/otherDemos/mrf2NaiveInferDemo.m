@@ -27,7 +27,7 @@ model = mrf2Create(adj, nStates, 'nodePot', nodePot, ...
 
 map =  mrf2Map(model);
 
-[nodeBel, edgeBel, logZ] =  mrf2InferMarginals(model);
+[nodeBel, edgeBel, logZ] =  mrf2InferNodesAndEdges(model);
 
 setSeed(0);
 samples = mrf2Sample(model, 100);
@@ -40,6 +40,6 @@ clamped = zeros(nNodes,1);
 clamped(1) = 2;
 clamped(3) = 2;
 
-[nodeBel, edgeBel, logZ] =  mrf2InferMarginals(model, clamped)
+[nodeBel, edgeBel, logZ] =  mrf2InferNodesAndEdges(model, clamped)
 
 

@@ -75,7 +75,7 @@ for i=1:length(methods)
   args = methodArgs{i};
   [model] = mrf2MkLatticeXrgb(X, y, method, args);
   
-  [nodeBel]  = mrf2InferMarginals(model);
+  [nodeBel]  = mrf2InferNodesAndEdges(model);
   [junk zhat] = max(nodeBel,[],2);
   figure; imagesc(reshape(zhat,nRows,nCols)); 
   colormap([1 1 1;1 0 0;0 1 0;0 0 1]);
