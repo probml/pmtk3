@@ -1,6 +1,6 @@
-function [nodeBel, edgeBel, logZ] = crf2InferMarginals(model, Xnode, Xedge)
+function [nodeBel, edgeBel, logZ] = crf2InferNodesAndEdges(model, Xnode, Xedge)
 % Compute node and edge marginals for conditional random field
-% [nodeBel, edgeBel, logZ] = crf2InferMarginals(model, Xn, Xe)
+% [nodeBel, edgeBel, logZ] = crf2InferNodesAndEdges(model, Xn, Xe)
 % Input can be 
 % Xn is NnodeFeatures*Nnodes
 % Xe is NedgeFeatures*Nedges

@@ -51,7 +51,7 @@ yhat = crf2Map(model, Xnode(1:Ntest,:,:), Xedge(1:Ntest,:,:));
 figure; imagesc(yhat);
 title('MAP with month node and edge feature'); colormap(gray);
 
-nodeBel = crf2InferMarginals(model, Xnode(1:Ntest,:,:), Xedge(1:Ntest,:,:));
+nodeBel = crf2InferNodesAndEdges(model, Xnode(1:Ntest,:,:), Xedge(1:Ntest,:,:));
 figure; imagesc(nodeBel(:,:,1));
 title('mariginals with month node and edge feature'); colormap(gray);
 

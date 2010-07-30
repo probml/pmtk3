@@ -8,19 +8,19 @@ modelTags = {
     'PMTKlatentmodel'
     'PMTKgraphicalmodel';
     'PMTKsupervisedmodel'
-     'PMTKsimplemodel'};
+    'PMTKbasicmodel'};
 
 titles = {
     'Latent Variable Models'
     'Graphical Models'
     'Supervised Models'
-     'Simple Models'};
+    'Basic Models'};
 
 fnames = {
     'latentModels.html'
     'graphicalModels.html'
     'supervisedModels.html'
-    'simpleModels.html'};
+    'basicModels.html'};
 
 fnames = cellfuncell(@(f)fullfile(dest, f), fnames); 
 
