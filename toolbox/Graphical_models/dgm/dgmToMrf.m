@@ -11,4 +11,10 @@ end
 mrf = mrfCreate(G, 'nodePots', factors, 'localCPDs', ...
     dgm.localCPDs, 'localCPDpointers', dgm.localCPDpointers); 
 
+doms = cellfuncell(@(c)c.domain, mrf.jtree.cliques);
+mrf.edges = doms(cellfun('length', doms) > 1);
+
+
+
+
 end

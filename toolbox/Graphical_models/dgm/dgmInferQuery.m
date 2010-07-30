@@ -94,11 +94,7 @@ switch lower(engine)
             cg            = cliqueGraphCreate(factors, nstates, G);
             jtree         = jtreeCreate(cg, 'cliqueConstraints', queries);
         end
-        [jtree, logZlocal]= jtreeAddFactors(jtree, localFacs);
-        [jtree, logZ]     = jtreeCalibrate(jtree);
-        bels              = jtreeQuery(jtree, queries);
-        logZ = logZ + logZlocal; 
-        
+        [logZ, bels] = jtreeRunInference(jtree, queries, localFacs);
     case 'libdaijtree'
         
         assert(isWeaklyConnected(G)); % libdai segfaults on disconnected graphs
