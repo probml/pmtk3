@@ -43,6 +43,7 @@ switch lower(likelihood)
         m = linregRobustStudentFit(X, y); 
         model.w      = [m.w0;m.w(:)];
         model.simga2 = m.sigma2;
+        model.dof    = dof; 
         
     case 'gaussian'
         
@@ -90,6 +91,7 @@ end
 
 model.preproc  = preproc;
 model.modelType = 'linreg';
+model.likelihood = likelihood; 
 
 end % end of main function
 
