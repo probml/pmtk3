@@ -9,14 +9,14 @@ format compact
 thisDir = fileparts(which(mfilename()));
 cd(thisDir);
 addpath(thisDir);
-addpath(genpathPMTK(fullfile(thisDir, 'meta'))); 
+addpath(genpathPMTK(fullfile(thisDir, 'localUtil'))); 
 %%
 % Add matlab tools
 mtSource = getConfigValue('PMTKlocalMatlabToolsPath');
 if exist(mtSource, 'dir') % if local svn repository exists, use it
     addpath(genpathPMTK(mtSource));
 else                      % otherwise make sure we don't download twice
-    addpath(fullfile(thisDir, 'matlabTools')); % may be initially empty
+    addpath(genpathPMTK(fullfile(thisDir, 'matlabTools'))); % may be initially empty
 end
 if ~exist('matlabToolsRoot', 'file')
     url = 'http://matlabtools.googlecode.com/svn/trunk/matlabTools.zip';
