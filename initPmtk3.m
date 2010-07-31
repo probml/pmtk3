@@ -6,17 +6,34 @@ format compact
 %%
 % Change to the directory storing this function, which should be the
 % root PMTK3 directory.
-cd(fileparts(which(mfilename())));
+thisDir = fileparts(which(mfilename()));
+cd(thisDir);
+addpath(thisDir);
+addpath(genpathPMTK(fullfile(thisDir, 'meta'))); 
+%%
+% Add matlab tools
+mtSource = getConfigValue('PMTKlocalMatlabToolsPath');
+if exist(mtSource, 'dir') % if local svn repository exists, use it
+    addpath(genpathPMTK(mtSource));
+else                      % otherwise make sure we don't download twice
+    addpath(fullfile(thisDir, 'matlabTools')); % may be initially empty
+end
+if ~exist('matlabToolsRoot', 'file')
+    url = 'http://matlabtools.googlecode.com/svn/trunk/matlabTools.zip';
+    fprintf('downloading matlabTools...'); 
+    unzip(url, fullfile(thisDir, 'matlabTools')); 
+    addpath(genpathPMTK(fullfile(thisDir, 'matlabTools'))); 
+    fprintf('done\n'); 
+end
 %%
 % Add PMTK3 to the Matlab path
-addpath(pwd);
-addpath(genpathPMTK(fullfile(pwd, 'toolbox')));
-addpath(genpathPMTK(fullfile(pwd, 'demos')));
+addpath(genpathPMTK(fullfile(thisDir, 'toolbox')));
+addpath(genpathPMTK(fullfile(thisDir, 'demos')));
 
 % The following directories are initially empty
 % but may be filled with stuff on demand...
-addpath(genpathPMTK(fullfile(pwd, 'data')));
-addpath(genpathPMTK(fullfile(pwd, 'external')), '-end');
+addpath(genpathPMTK(fullfile(thisDir, 'data')));
+addpath(genpathPMTK(fullfile(thisDir, 'external')), '-end');
 %%
 % We store user specific pmtk info in a directory they are sure to have
 % write access to.
