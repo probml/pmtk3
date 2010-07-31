@@ -32,7 +32,7 @@ switch lower(likelihood)
     
     case 'huber'
         
-        inlcudeOffset = preproc.addOnes;
+        includeOffset = preproc.addOnes;
         delta         = 1; 
         m             = linregRobustHuberFit(X, y, delta, inlcudeOffset);
         if includeOffset

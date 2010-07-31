@@ -28,6 +28,6 @@ end
 
 S = zeros(n, d); 
 for i=1:d
-   S(:, i) = sampleDiscrete(T(:, i), n, 1);
+   S(:, i) = discreteSample(T(:, i), n, 1);
 end
 end
