@@ -34,7 +34,7 @@ switch lower(likelihood)
         
         includeOffset = preproc.addOnes;
         delta         = 1; 
-        m             = linregRobustHuberFit(X, y, delta, inlcudeOffset);
+        m             = linregRobustHuberFit(X, y, delta, includeOffset);
         if includeOffset
             model.w = [m.w0; m.w(:)];
         else
