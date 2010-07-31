@@ -65,7 +65,6 @@ function model = dgmCreate(G, CPDs, varargin)
 % model              - a struct which can be passed to e.g dgmInferNodes or
 %                      dgmInferQuery
 %
-% PMTKgraphicalModel dgm
 %%
 [infEngine, localCPDs, CPDpointers, ...
     localCPDpointers, precomputeJtree, initNstates] =...

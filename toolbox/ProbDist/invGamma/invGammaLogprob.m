@@ -3,7 +3,6 @@ function logp = invGammaLogprob(arg1, arg2, arg3)
 % logp = invGammaLogprob(model, X); OR logp = invGammaLogprob(a, b, X); 
 % a is the shape, 
 % b is the scale.
-% PMTKsimpleModel invGamma
 %%
 
 if isstruct(arg1)

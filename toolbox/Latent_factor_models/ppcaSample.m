@@ -1,6 +1,5 @@
 function X = ppcaSample(N,  W, mu, sigma2, evals, evecs)
 % Sample from a PPCA model
-%PMTKlatentModel ppca
 [d,K] = size(W);
 U = evecs(:,1:K);
 Lam = diag(evals(1:K));

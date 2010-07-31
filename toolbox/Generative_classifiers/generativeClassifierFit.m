@@ -15,7 +15,6 @@ function model = generativeClassifierFit(fitFn, X, y, pseudoCount)
 % Returns a struct storing the fitted class conditional densities, and
 % class prior, which can be passed to generativeClassifierPredict().
 %
-% PMTKsupervisedModel generativeClassifier
 %%
 model.modelType = 'generativeClassifier';
 [y, model.support] = canonizeLabels(y);

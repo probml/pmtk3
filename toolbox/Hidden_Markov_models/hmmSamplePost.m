@@ -4,7 +4,6 @@ function [samples] = hmmSamplePost(model, X, nsamples, varargin)
 % X must be a single sequence of size d-by-T
 % OUTPUT:
 % samples(t,s) = value of S(t)  in sample s
-%PMTKlatentModel hmm
 %%
 softev = process_options(varargin, 'softev', []);
 initDist = model.pi;

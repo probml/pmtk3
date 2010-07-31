@@ -2,7 +2,6 @@ function logp = gaussInvWishartMarginalLogprob(arg1, arg2, arg3, arg4, arg5)
 % logp(i) = int_S log p(X(i, :) | model)
 % logp = gaussInvWishartMarginalLogprob(model, X) OR
 % logp = gaussInvWishartMarginalLogprob(mu, Sigma, dof, k, X)
-% PMTKsimpleModel gaussInvWishart
 %%
 if isstruct(arg1)
     model = arg1;

@@ -21,7 +21,6 @@ function [model, logev] = linregFitBayes(X, y, varargin)
 %   p(w, beta | D) = N(w | wN, (1/beta) VN) Ga(beta | aN, bN)
 %
 % logev is  the log marginal likelihood
-%PMTKsupervisedModel linreg
 
 [prior, preproc,  beta, alpha, g, useARD] = ...
   process_options(varargin , ...

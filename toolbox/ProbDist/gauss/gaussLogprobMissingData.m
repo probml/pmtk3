@@ -2,7 +2,6 @@ function logp = gaussLogprobMissingData(model, X)
 % Same as gaussLogprob, but supports missing data, represented as NaN
 % values distributed through X. X(i, :) is still the ith case
 % and model has the fields mu and Sigma. 
-% PMTKsimpleModel gauss
 missRows = any(isnan(X),2);
 complRows = ~missRows;
 ndxMissRows = find(missRows);

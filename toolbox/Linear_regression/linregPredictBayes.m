@@ -1,6 +1,5 @@
 function [yhat, sigma2Hat] = linregPredictBayes(model, X)
 % Posterior predictive for linear regression model
-%PMTKsupervisedModel linreg
 [X] = preprocessorApplyToTest(model.preproc, X);
 if isfield(model, 'netlab')
   [yhat, sigma2Hat] = linregPredictNetlab(model, X);

@@ -1,7 +1,6 @@
 function dgm = hmmToDgm(model, T, varargin)
 %% Convert an hmm model to a dgm of by unrolling the hmm for T time steps
 % All other args are passed directly to dgmCreate
-% PMTKlatentModel hmm
 %%
 
 

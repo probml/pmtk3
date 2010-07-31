@@ -1,7 +1,6 @@
 function out = normalExpGammaNeglogpdf(z, shape, scale)
 % Normal exponential gamma negative logpdf
 % gamma^2 = c = scale
-% PMTKsimpleModel normalExpGamma
 [nrows, ncols] = size(z);
 z = colvec(z);
 lambda = colvec(shape);

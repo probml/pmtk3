@@ -9,7 +9,6 @@ function path = hmmMap(model, X)
 % X    - the local evidence vector (d-by-seqlen) where d=1 if type is
 %        discrete.
 %
-%PMTKlatentModel hmm
 pi = model.pi;
 A  = model.A;
 B  = mkSoftEvidence(model.emission, X);

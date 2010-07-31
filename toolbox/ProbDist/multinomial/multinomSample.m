@@ -18,7 +18,6 @@ function S = multinomSample(arg1, arg2, arg3)
 %      1     6     3
 %      3     6     1
 %
-% PMTKsimpleModel multinom
 %%
 if isstruct(arg1)
     model = arg1;

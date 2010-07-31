@@ -3,7 +3,6 @@ function [yhat, f] = svmPredict(model, Xtest)
 % model is a struct as returned by svmFit()
 % Xtest(i, :) is the ith case. 
 % f  is the signed distance to separating hyperplane
-% PMTKsupervisedModel svm
 
 if isfield(model, 'standardizeX') && model.standardizeX
     Xtest = mkUnitVariance(centerCols(Xtest)); 

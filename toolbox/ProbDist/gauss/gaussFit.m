@@ -4,7 +4,6 @@ function model = gaussFit(X, prior)
 % prior (optional) - parameters of a Gauss-inverseWishart distribution, 
 %                    namely mu, Sigma, dof, k 
 %
-% PMTKsimpleModel gauss
 %%
 if nargin < 2 || isempty(prior) || strcmpi(prior, 'none') % mle
     mu = mean(X);

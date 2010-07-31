@@ -12,7 +12,6 @@ function [model, loglikHist] = mixGaussFit(data, K, varargin)
 %   Sigma(:,:,k)
 %   mixweight(k)
 %%
-%PMTKlatentModel mixGauss
 [model, loglikHist] = mixGaussFitEm(data, K, varargin{:});
 model.modelType = 'mixGauss';
 end

@@ -1,6 +1,5 @@
 function out=normalGammaNeglogpdf(w,shape, scale)
 % Nomral gamma negative logpdf
-% PMTKsimpleModel normalGamma
 lambda = shape;
 gamma = sqrt(2*scale);
 %warning off

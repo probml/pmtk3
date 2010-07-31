@@ -3,7 +3,6 @@ function [observed, hidden] = hmmSample(model, len, nsamples)
 % observed{i}(t) ~ discrete(model.emission(hidden{i}(t), :))
 %                 or
 % observed{i}(1:d, t) ~ gauss(model.emission{hidden{i}(t)}))
-%PMTKlatentModel hmm
 SetDefaultValue(3, 'nsamples', 1);
 if numel(len) == 1
     len = repmat(len, nsamples, 1);

@@ -2,7 +2,6 @@ function [yhat, yprob] = knnPredict(model, Xtest)
 % K-nearest neighbors classifier
 % (ties broken by picking lowest class)
 % ypredProb(m, :) is the empirical distribution over classes
-% PMTKsupervisedModel knn
 
 Xtrain = model.X;
 ytrain = model.y;

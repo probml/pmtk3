@@ -1,6 +1,5 @@
 function S = invWishartSample(model, n)
 % S(:, :, 1:n) ~ IW(model.Sigma, model.dof)
-% PMTKsimpleModel invWishart
 if nargin < 2, n = 1; end
 Sigma = model.Sigma;
 dof   = model.dof;

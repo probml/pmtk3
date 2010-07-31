@@ -10,7 +10,6 @@ function logp = dirichletLogprob(arg1, X)
 %    This makes it easier to plot, as NaN values are just ignored by the
 %    plot functions. Use logp(isnan(logp)) = -Inf if desired.
 %%
-% PMTKsimpleModel dirichlet
 
 if isstruct(arg1)
     model = arg1;

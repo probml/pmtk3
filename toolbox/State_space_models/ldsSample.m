@@ -1,4 +1,4 @@
-function [x,y] = kalmanSample(F, H, Q, R, init_state, T, models, G, u)
+function [x,y] = ldsSample(F, H, Q, R, init_state, T, models, G, u)
 % Simulate a run of a (switching) stochastic linear dynamical system.
 % [x,y] = switching_lds_draw(F, H, Q, R, init_state, models, G, u)
 % 

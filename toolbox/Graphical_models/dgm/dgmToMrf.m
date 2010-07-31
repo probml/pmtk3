@@ -1,6 +1,5 @@
 function mrf = dgmToMrf(dgm)
 %% Convert a dgm to an undirected model
-% PMTKgraphicalModel dgm
 %%
 G = moralizeGraph(dgm.G); 
 if isfield(dgm, dgm.factors)

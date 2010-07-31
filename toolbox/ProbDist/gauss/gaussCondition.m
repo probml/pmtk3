@@ -1,6 +1,5 @@
 function modelHgivenV = gaussCondition(model, v, visValues)
 % p(xh|xv=visValues)
-% PMTKsimpleModel gauss
     mu = model.mu; Sigma = model.Sigma; 
     d = length(mu);
     h = setdiff(1:d, v);

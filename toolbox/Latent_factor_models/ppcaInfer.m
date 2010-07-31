@@ -2,7 +2,6 @@ function [postMean, postCov] = ppcaInfer(X, W, mu, sigma2, evals, evecs)
 % Probabilistic PCA - compute posterior on Z
 % postMean(i,:) = E[Z|X(i,:)]
 % postCov(:,:) is the same for all i
-%PMTKlatentModel ppca
 [d K] = size(W);
 [N d] = size(X);
 Lam = evals(1:K)';

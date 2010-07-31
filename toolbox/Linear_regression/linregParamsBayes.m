@@ -8,7 +8,6 @@ function out = linregParamsBayes(model, varargin)
 %
 % If you set display=true, it
 % prints the summary (as a latex table) to the screen
-%PMTKsupervisedModel linreg
 [doDisplay, useLatex] = process_options(varargin, ...
   'display', true, 'latex', false);
 

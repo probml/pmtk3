@@ -17,7 +17,6 @@ function [model, loglikHist] = mixDiscreteFit(X, nmix,  varargin)
 % Returns a struct with fields
 %    model.T(c,d,j) = p(xd=c|z=j) nstates*ndistributions*nmixtures
 % loglikHist - log likelihood history
-%PMTKlatentModel mixDiscrete
 [model, loglikHist] = mixDiscreteFitEm(X, nmix,  varargin{:});
 model.modelType = 'mixDiscrete'; 
 end

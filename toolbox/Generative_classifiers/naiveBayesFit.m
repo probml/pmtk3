@@ -8,7 +8,6 @@ function model = naiveBayesFit(Xtrain, ytrain, pseudoCount)
 % Model is a structure with these fields:
 % theta(c,j) = prob. bit j turns on in class c
 % model.classPrior(c) = p(y=c)
-%PMTKsupervisedModel naiveBayes
 
 if nargin < 3, pseudoCount = 1; end
 

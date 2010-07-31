@@ -10,7 +10,6 @@ function [nodeBel, edgeBel, logZ] = crf2InferNodesAndEdges(model, Xnode, Xedge)
 %
 % nodeBel is Nnodes*Nstates*Ncases
 % edgeBel is Nstates*Nstates*Nedges*Ncases
-% PMTKgraphicalModel crf2
 if isempty(model.infFun)
   fprintf('method %s does not support inference\n', model.methodName);
   return;

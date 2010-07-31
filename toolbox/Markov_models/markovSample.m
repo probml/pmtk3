@@ -4,7 +4,6 @@ function S = markovSample(model, len, nsamples)
 %
 % S is of size nsamples-by-len
 %
-% PMTKlatentModel markov
 if nargin < 3, nsamples = 1; end
 pi = model.pi;
 A = model.A;

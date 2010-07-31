@@ -1,7 +1,6 @@
 function X = invGammaSample(arg1, arg2, arg3)
 % Sample from an inverse gamma distribution with parameters a, b
 % X = invGammaSample(model, n); or X = invGammaSample(a, b, n);
-% PMTKsimpleModel invGamma
 
 if isstruct(arg1)
     model = arg1;

@@ -2,7 +2,6 @@ function [Xc] = mixGaussImpute(model, X, varargin)
 % Fill in NaN entries of X using posterior mode on each row
 % Xc(i,j) = E[X(i,j) | D]
 %PMTKauthor Hannes Bretschneider
-%PMTKlatentModel mixGauss
 if ~isfield(model, 'mu') || isempty(model.mu)
     if ~isfield(model, 'K') || isempty(model.K)
         model.K = 5;

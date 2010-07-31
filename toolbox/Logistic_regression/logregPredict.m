@@ -5,7 +5,6 @@ function [yhat, p] = logregPredict(model, X)
 % A column of 1s is added if this was done at training time
 % This works for both binary and multiclass and kernelized logistic
 % regression.
-% PMTKsupervisedModel logreg
 if ~strcmpi(model.type, 'logreg')
   error('can only call this funciton on models of type logreg')
 end

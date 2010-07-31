@@ -2,7 +2,6 @@ function [w, stderr, pval, R2, sigma2, confint, Zscore] = linregParamsFrequentis
 % Frequentist inference for regression weights in a linear regression model.
 % This is similar to  R's lm function or Matlab's regress function.
 % Each row ox X is a training case, excluding the first column of 1s
-%PMTKsupervisedModel linreg
 [n d] = size(XX);
 
 if nargin < 3 || isempty(names)

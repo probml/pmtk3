@@ -6,7 +6,6 @@ function model = mrf2Fit(model, y, varargin)
 % Optional parameters
 %
 % lambdaNode, lambdaEdge : strength of L2 regularizers
-% PMTKgraphicalModel mrf2
 [lambdaNode, lambdaEdge] = process_options(varargin, ...
    'lambdaNode', 1e-5, 'lambdaEdge', 1e-5);
 

@@ -2,7 +2,7 @@ function S = betaSample(arg1, arg2, arg3)
 % Return n samples from a beta distribution
 % S = betaSample(a, b, n); or S = betaSample(model, n);
 % with parameters model.a, model.b. 
-% PMTKsimpleModel beta
+
 
 
 if isstruct(arg1)

@@ -9,7 +9,6 @@ function map = crf2Map(model, Xnode, Xedge)
 % Xe is Ncases*NedgeFeatures*Nedges
 %
 % map is Ncases*Nnodes
-% PMTKgraphicalModel crf2
 %%
 if isempty(model.decodeFun)
   fprintf('method %s does not support MAP estimation\n', model.methodName);

@@ -7,7 +7,6 @@ function logp = invWishartLogprob(arg1, arg2, arg3)
 %
 % logp = invWishartLogprob(model, S); OR
 % logp = invWishartLogprob(Sigma, dof, S);
-% PMTKsimpleModel invWishart
 %%
 
 if isstruct(arg1)

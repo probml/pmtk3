@@ -2,7 +2,6 @@ function [logp, L] = poissonLogprob(arg1, X)
 % logp(i) = sum_j log p(X(i, j) | lambda(j))
 % L(i, j) = log(p(X(i, j) | lambda(j))
 % arg1 is either a model with field lambda, or just lambda itself. 
-% PMTKsimpleModel poisson
 %%
 if isstruct(arg1)
     model = arg1; 

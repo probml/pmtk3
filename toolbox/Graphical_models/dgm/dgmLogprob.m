@@ -3,7 +3,6 @@ function logZ = dgmLogprob(dgm, varargin)
 % See dgmInferNodes for optional args
 % (only handles a single observation sequence)
 %
-% PMTKgraphicalModel dgm
 %%
 [clamped, softEv, localEv] = process_options(varargin, ...
     'clamped', [], ...

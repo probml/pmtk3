@@ -6,7 +6,6 @@ function model = crf2Create(adj, nStates, varargin)
 % However, we let the user manually specify
 % the edge weights w and the node weights v,
 % or specify dummy Xnode and Xedge values to create random parameters
-% PMTKgraphicalModel crf2
 [w, v, Xnode, Xedge, other] = process_options(varargin, ...
   'w', [], 'v', [], 'Xnode', [], 'Xedge', []);
 

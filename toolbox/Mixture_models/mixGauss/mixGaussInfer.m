@@ -3,7 +3,6 @@ function [z, pz, ll] = mixGaussInfer(model, X)
 % pz(i,k) = p(z=k|X(i,:), model) soft responsibility
 % ll(i) = log p(X(i,:) | model)  logprob of observed data
 % This can handle NaNs in X
-%PMTKlatentModel mixGauss
 K = numel(model.mixweight);
 N = size(X,1);
 logPz = zeros(N, K);

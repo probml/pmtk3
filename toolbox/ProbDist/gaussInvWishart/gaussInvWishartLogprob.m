@@ -17,7 +17,6 @@ function logp = gaussInvWishartLogprob(arg1, arg2, arg3, arg4, arg5, arg6)
 % model has the following fields: mu, Sigma, dof, k
 %
 % *** Vectorized w.r.t. to both m and S ***  
-% PMTKsimpleModel gaussInvWishart
 %%
 
 if isstruct(arg1)

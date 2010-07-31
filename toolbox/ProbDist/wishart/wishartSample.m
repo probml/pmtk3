@@ -1,7 +1,6 @@
 function S = wishartSample(arg1, arg2, arg3)
 % S(:, :, 1:n) ~ Wi(Sigma, dof)
 % S = wishartSample(model, n); OR S = wishartSample(Sigma, dof, n);
-% PMTKsimpleModel wishart
 
 if isstruct(arg1)
     model = arg1;

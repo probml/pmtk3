@@ -1,6 +1,5 @@
 function ll = treeLogprob(model, X)
 % LL(n) = log p(X(n,:) | params)
-% PMTKgraphicalModel tree
 %%
 CPDs = model.CPDs; G = model.G;
 [N d] = size(X);

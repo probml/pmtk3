@@ -10,7 +10,6 @@ function model = crf2Fit(model, Xnode, Xedge, y, varargin)
  % CRFloss - MLE/ MAP
  % PL - pseudo likelihood
  % PLsubmod: PL with submodularity constraint
-% PMTKgraphicalModel crf2
 %%
 [lambdaNode, lambdaEdge, loss] = process_options(varargin, ...
   'lambdaNode', 0, 'lambdaEdge', 0, 'method', 'CRFloss');

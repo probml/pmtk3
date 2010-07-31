@@ -3,7 +3,6 @@ function map = mrf2Map(model, clamped)
 % clamped is an optional 1*D vector, where
 % clamped(i) = 0 means node i is not observed
 % and clamped(i) = k means node is clamped to state k
-% PMTKgraphicalModel mrf2
 if nargin < 2, clamped = []; end
 if isempty(clamped)
   map  = feval(model.decodeFun, model.nodePot, model.edgePot, ...

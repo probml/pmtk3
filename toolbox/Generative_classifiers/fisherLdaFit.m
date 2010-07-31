@@ -3,7 +3,6 @@ function [W, Z]  = fisherLdaFit(Xtrain, ytrain, K)
 % Xtrain is N*D, ytrain(i) is in {1,2,...,C}
 % W is D*K, where K <= C-1
 % Z is the project of Xtrain onto W, i.e. Xtrain*W
-% PMTKsupervisedModel fisherLda
 %%
 C = max(ytrain);
 if nargin < 3, K = C-1; end

@@ -3,7 +3,6 @@ function logp = gammaLogprob(arg1, arg2, arg3)
 % logp = gammaLogprob(model, X); OR logp = gammaLogprob(a, b, X); 
 % a is the shape,
 % b is the rate, i.e. 1/scale
-% PMTKsimpleModel gamma
 
 if isstruct(arg1)
     model = arg1;

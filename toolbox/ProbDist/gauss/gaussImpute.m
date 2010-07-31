@@ -2,7 +2,6 @@ function [Xc, V] = gaussImpute(model, X)
 % Fill in NaN entries of X using posterior mode on each row
 % Xc(i,j) = E[X(i,j) | D]
 % V(i,j) = Variance
-% PMTKsimpleModel gauss
 [n,d] = size(X);
 Xc = X;
 V = zeros(n,d);

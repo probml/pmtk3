@@ -1,7 +1,6 @@
 function logp = uniformLogprob(arg1, arg2, arg3)
 % logp(i) = log p(X(i) | a, b)
 % logp = uniformLogprob(a, b, X); or logp = uniformLogprob(model, X);
-% PMTKsimpleModel uniform
 %%
 if isstruct(arg1)
     model = arg1;

@@ -1,7 +1,6 @@
 function L = betaBinomLogprob(arg1, arg2, arg3, arg4)
 % L(i) = log p(X(i) | a(i), b(i), N(i)) where X(i) in 0:N
 % L = betaBinomLogprob(a, b, N, X); or L = betaBinomLogprob(model, X);
-% PMTKsimpleModel betaBinom
 %%
 
 if isstruct(arg1)

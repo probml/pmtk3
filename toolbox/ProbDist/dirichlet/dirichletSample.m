@@ -1,7 +1,6 @@
 function S = dirichletSample(arg1, arg2)
 %% S(1:n, :) ~ dir(alpha)
 % S = dirichletSample(alpha, n), OR S = dirichletSample(model, n)
-% PMTKsimpleModel dirichlet
 %%
 
 
