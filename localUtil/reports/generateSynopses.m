@@ -9,9 +9,9 @@ dest = fullfile(pmtk3Root(), 'docs', 'synopsis');
 %% Toolbox
 d = dirs(fullfile(pmtk3Root(), 'toolbox')); 
 for i=1:numel(d)
-   generateSynopsisTable(fullfile(pmtk3Root(), 'toolbox', d{i}), ...
-                     fullfile(dest, sprintf('%s.html', d{i})));
-    
+   directory = fullfile(pmtk3Root(), 'toolbox', d{i});
+   outputFile = fullfile(dest, sprintf('%s.html', d{i}));
+   generateSynopsisTable(directory, outputFile, pmtk3Root());
 end
 %%
 googleRoot = 'http://pmtk3.googlecode.com/svn/trunk/docs/synopsis';
