@@ -1,12 +1,29 @@
-function bels = beliefPropagation(Tfac, varargin)
+function bels = beliefPropagation(cg, varargin)
 %% Belief propagation
 %
 %%
 [maxIter, tol] = process_options(varargin, 'maxIter', 100, 'tol', 1e-3);
 
-[nbrs, sepSets, nstates] = computeNeighbors(Tfac);
+Tfac    = cg.Tfac; 
+nfacs   = numel(Tfac);
+nstates = cg.nstates; 
+G       = mkSymmetric(cg.G); 
+nbrs    = cell(nfacs, 1); 
+for i=1:nfacs
+   nbrs{i} = neighbors(G, i);  
+end
+sepSets = cell(nfacs, nfacs); 
+for i = 1:nfacs
+    domi = Tfac{i}.domain;
+    for j = i+1:nfacs
+        I       = intersectPMTK(domi, Tfac{j}.domain); 
+        sepSets{i, j} = I;
+        sepSets{j, i} = I; 
+    end
+end
+
 messages    = initializeMessages(sepSets, nstates);
-nfacs       = numel(Tfac);
+
 bels        = cell(nfacs, 1);
 psi         = cell(nfacs, 1); %psi{i} product of messages to i
 converged   = false;
@@ -36,6 +53,6 @@ while ~converged && iter <= maxIter
             end
         end
     end
-    iter = iter + 1
+    iter = iter + 1;
 end
 end

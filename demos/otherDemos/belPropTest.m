@@ -1,7 +1,7 @@
 %% Test that belief propagation gives exact results on a tree
 setSeed(0); 
-K = 2; 
-depth = 3; 
+K = 3; 
+depth = 5; 
 nvars = ((K.^depth)-1)/(K-1);
 nstates = 2; 
 dgm = mkRndTreeDgm(K, depth, nstates); 
@@ -10,7 +10,9 @@ nodeBelsJT = dgmInferNodes(dgm);
 %%
 
 
-cliques = beliefPropagation(dgm.factors);
+
+
+cliques = beliefPropagation(cliqueGraphCreate(dgm.factors, dgm.nstates, dgm.G));
 cliqueLookup = createFactorLookupTable(cliques); 
 nodeBelsBP = jtreeQuery(structure(cliques, cliqueLookup), num2cell(1:nvars)); 
 
