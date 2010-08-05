@@ -1,7 +1,8 @@
 function [bels, converged] = belPropSync(cg, varargin)
 %% Belief propagation with a simple synchronous update schedule 
-% A node updates itself and then sends out messages to its neighbors 
-% only once it has received messages from all of its neighbors.
+% By synchronous we mean only once a node has received messages from all 
+% of its neighbors does it update itself and send out messages. 
+%
 % See beliefPropagation 
 %% setup
 [maxIter, tol, lambda]  = process_options(varargin, ...
@@ -17,19 +18,16 @@ converged       = false;
 iter            = 1;
 bels            = Tfac;
 Nnbrs           = cellfun('length', nbrs)';
-msgCounter      = zeros(1, nfacs); % keep track of how many messages a node 
-                                   % has received. 
+assert(all(Nnbrs)); % does not support disconnected graphs
+msgCounter      = zeros(1, nfacs); 
+Q               = 1:nfacs;           % initially everyone is in the queue. 
 while ~converged && iter <= maxIter 
     oldBels        = bels; 
     oldMessages    = messages;
-    leftToSend     = true(1, nfacs); % make sure we give everyone a chance 
-                                     % to send, and that no one sends twice
-                                     % in a single iteration, even if
-                                     % ready.
-                                     
-    readyToSend = true(1, nfacs); % initially everyone is ready to send
+    leftToSend     = true(1, nfacs);            
     while any(leftToSend) 
-        i       = find(readyToSend & leftToSend, 1, 'first')
+        i       = Q(1); 
+        Q(1)    = []; %dequeue
         N       = nbrs{i};
         M       = [Tfac(i); messages(N, i)];
         bels{i} = tabularFactorNormalize(tabularFactorMultiply(M));
@@ -40,11 +38,13 @@ while ~converged && iter <= maxIter
             Mold           = oldMessages{i, j};
             messages{i, j} = tabularFactorConvexCombination(Mnew, Mold, lambda);
             msgCounter(j)  = msgCounter(j) + 1;
+            if msgCounter(j) == Nnbrs(j)
+                msgCounter(j) = 0;
+                Q(end+1) = j; %#ok enqueue
+            end
         end
         leftToSend(i)  = false; 
         msgCounter(i)  = 0; 
-        readyToSend(i) = false; 
-        readyToSend    = readyToSend | msgCounter == Nnbrs; % ready once all msgs have been collected
     end
     converged = all(cellfun(@(O, N)approxeq(O.T, N.T, tol), oldBels, bels));
     iter      = iter+1;

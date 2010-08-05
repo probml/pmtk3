@@ -20,9 +20,9 @@ nodeBelsBP = beliefPropagation(cliqueGraphCreate(factors, dgm.nstates, dgm.G), .
     num2cell(1:nvars));
 
 toc
-for i=1:nvars
-   [nodeBelsJT{i}.T(:) , nodeBelsBP{i}.T(:)]
-end
+% for i=1:nvars
+%    [nodeBelsJT{i}.T(:) , nodeBelsBP{i}.T(:)]
+% end
 
 
 assert(tfequal(nodeBelsJT, nodeBelsBP));
