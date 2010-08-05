@@ -1,6 +1,6 @@
 function cg = cliqueGraphCreate(Tfac, nstates, G)
 %% Construct a clique (a.k.a. cluster) graph
-% This used as as the input to many inference algorithms such 
+% This is used as as the input to many inference algorithms such 
 % as variable elimination, junction tree, and belief propagation. 
 %
 % Here we assume one potential function per clique as opposed a factor

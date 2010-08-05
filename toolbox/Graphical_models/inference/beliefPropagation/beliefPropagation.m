@@ -7,8 +7,9 @@ function [bels, converged] = beliefPropagation(cg, varargin)
 %
 %% Optional named inputs
 %
-% 'updateProtocol'  - ['async'] the message passing schedule to use
-%
+% 'updateProtocol'  - ['async'] or 'sync', the message passing schedule to
+%                      use.
+%                      
 % 'dampingFactor'   - [0.5] a value between 0 and 1. Messages are
 %                     calculated by taking a convex combination of the 
 %                     previous message, and the message calculated using the 
@@ -32,6 +33,8 @@ function [bels, converged] = beliefPropagation(cg, varargin)
 switch lower(updateProtocol)
     case 'async'
         [bels, converged] = belPropAsync(cg, args{:}); 
+    case 'sync'
+        [bels, converged] = belPropSync(cg, args{:}); 
     otherwise
         error('%s is not a valid update protocol');         
 end
