@@ -1,7 +1,8 @@
 function [bels, converged] = belPropAsync(cg, varargin)
-%% Belief propagation with a simple asynchronous (parallel) update schedule 
-% The nodes are updated in the fixed order in which they are passed in. 
-%  See beliefPropagation 
+%% Belief propagation with a simple asynchronous update schedule 
+% By asynchronous, we mean that a node can update itself without having to
+% wait for everyone else to first be ready. 
+% See beliefPropagation 
 %% setup
 [maxIter, tol, lambda]  = process_options(varargin, ...
     'maxIter'       , 100  , ...
@@ -15,30 +16,36 @@ messages        = initializeMessages(sepSets, cg.nstates);
 converged       = false;
 iter            = 1;
 bels            = Tfac;
-while ~converged && iter <= maxIter
-    %% distribute
-    % - everyone sends out messages before anyone collects - 
-    % In computing the message from i to j, we exclude j's previous message
-    % to i, rather than dividing it out later. 
-    oldMessages = messages; 
-    for i=1:nfacs
-        N = nbrs{i};
-        for j=N
+Nnbrs           = cellfun('length', nbrs)';
+assert(all(Nnbrs)); % does not support disconnected graphs
+msgCounter      = zeros(1, nfacs); 
+Q               = 1:nfacs;           % initially everyone is in the queue. 
+while ~converged && iter <= maxIter 
+    oldBels        = bels; 
+    oldMessages    = messages;
+    leftToSend     = true(1, nfacs);            
+    while any(leftToSend) 
+        i       = Q(1); 
+        Q(1)    = []; %dequeue
+        N       = nbrs{i};
+        M       = [Tfac(i); messages(N, i)];
+        bels{i} = tabularFactorNormalize(tabularFactorMultiply(M));
+        for j = N
             F              = [Tfac(i); messages(setdiffPMTK(N, j), i)];
             psi            = tabularFactorNormalize(tabularFactorMultiply(F));
             Mnew           = tabularFactorMarginalize(psi, sepSets{i, j});
-            Mold           = oldMessages{i, j}; 
-            messages{i, j} = tabularFactorConvexCombination(Mnew, Mold, lambda); 
+            Mold           = oldMessages{i, j};
+            messages{i, j} = tabularFactorConvexCombination(Mnew, Mold, lambda);
+            msgCounter(j)  = msgCounter(j) + 1;
+            if msgCounter(j) == Nnbrs(j)
+                msgCounter(j) = 0;
+                Q(end+1) = j; %#ok enqueue
+            end
         end
+        leftToSend(i)  = false; 
+        msgCounter(i)  = 0; 
     end
-    %% collect 
-    oldBels = bels;
-    for i=1:nfacs
-        M       = [Tfac(i); messages(nbrs{i}, i)];
-        bels{i} = tabularFactorNormalize(tabularFactorMultiply(M));
-    end
-    %% check convergence
     converged = all(cellfun(@(O, N)approxeq(O.T, N.T, tol), oldBels, bels));
-    iter = iter+1;
+    iter      = iter+1;
 end
 end
