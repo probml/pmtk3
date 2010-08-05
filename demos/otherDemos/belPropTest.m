@@ -13,12 +13,12 @@ tic
 toc
 %%
 
+factors = cpds2Factors(dgm.CPDs, dgm.G, dgm.CPDpointers); 
+% factors = dgm.factors;
 
 tic
-
-cliques = beliefPropagation(cliqueGraphCreate(dgm.factors, dgm.nstates, dgm.G));
-
-nodeBelsBP = queryCliques(cliques, num2cell(1:nvars)); 
+cliqueBels = beliefPropagation(cliqueGraphCreate(factors, dgm.nstates, dgm.G));
+nodeBelsBP = queryCliques(cliqueBels, num2cell(1:nvars)); 
 toc
 % for i=1:nvars
 %    [nodeBelsJT{i}.T(:) , nodeBelsBP{i}.T(:)]
