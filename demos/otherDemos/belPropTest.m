@@ -4,17 +4,19 @@ K = 3;
 depth = 5; 
 nvars = ((K.^depth)-1)/(K-1);
 nstates = 2; 
+
 dgm = mkRndTreeDgm(K, depth, nstates); 
 %drawNetwork(dgm.G);
+dgm = rmfield(dgm, 'jtree'); % get a better timing comparison
 tic
-nodeBelsJT = dgmInferNodes(dgm); 
+[nodeBelsJT] = dgmInferNodes(dgm); 
 toc
 %%
 
 
 tic
 
-cliques = beliefPropagation(cliqueGraphCreate(dgm.factors, dgm.nstates, dgm.G));
+[cliques] = beliefPropagation(cliqueGraphCreate(dgm.factors, dgm.nstates, dgm.G));
 cliqueLookup = createFactorLookupTable(cliques); 
 nodeBelsBP = jtreeQuery(structure(cliques, cliqueLookup), num2cell(1:nvars)); 
 toc
