@@ -31,7 +31,7 @@ while ~converged && iter <= maxIter
             messages{i, j} = tabularFactorConvexCombination(Mnew, Mold, lambda); 
         end
     end
-    %% collect
+    %% collect 
     oldBels = bels;
     for i=1:nfacs
         M       = [Tfac(i); messages(nbrs{i}, i)];
