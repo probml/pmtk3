@@ -95,6 +95,7 @@ switch lower(engine)
             jtree         = jtreeCreate(cg, 'cliqueConstraints', queries);
         end
         [logZ, bels] = jtreeRunInference(jtree, queries, localFacs);
+        
     case 'libdaijtree'
         
         assert(isWeaklyConnected(G)); % libdai segfaults on disconnected graphs
@@ -114,6 +115,18 @@ switch lower(engine)
         nstates      = cellfun(@(f)f.sizes(end), factors); 
         cg           = cliqueGraphCreate(factors, nstates, G);
         [logZ, bels] = variableElimination(cg, queries); 
+        
+    case 'bp'
+        
+        doSlice      = true; 
+        factors      = cpds2Factors(CPDs, G, CPDpointers);   
+        factors      = addEvidenceToFactors(factors, clamped, doSlice); 
+        factors      = multiplyInLocalFactors(factors, localFacs);
+        nstates      = cellfun(@(f)f.sizes(end), factors); 
+        cg           = cliqueGraphCreate(factors, nstates, G);
+        bels         = beliefPropagation(cg, queries, dgm.infEngArgs{:}); 
+        
+        logZ = 0; % not calculated
         
     case 'enum'
         

@@ -73,6 +73,15 @@ switch lower(engine)
         cg.Tfac      = factors; 
         [logZ, bels] = variableElimination(cg, queries);
         
+    case 'bp'
+        
+        factors      = addEvidenceToFactors(cg.Tfac, clamped, doSlice);
+        factors      = multiplyInLocalFactors(factors, localFacs);
+        cg.Tfac      = factors; 
+        bels         = beliefPropagation(cg, queries, mrf.infEngArgs{:}); 
+        
+        logZ = 0; % not calculated
+        
     case 'enum'
        
         [logZ, bels] = enumRunInference(cg.Tfac, queries, clamped, localFacs); 

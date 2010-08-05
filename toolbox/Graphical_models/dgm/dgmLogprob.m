@@ -2,7 +2,7 @@ function logZ = dgmLogprob(dgm, varargin)
 %% Estimate the log of the partition sum
 % See dgmInferNodes for optional args
 % (only handles a single observation sequence)
-%
+% Does not support dgm.infEngine = 'bp'
 %%
 [clamped, softEv, localEv] = process_options(varargin, ...
     'clamped', [], ...
