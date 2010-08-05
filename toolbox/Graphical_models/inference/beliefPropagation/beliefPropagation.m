@@ -1,43 +1,38 @@
-function bels = beliefPropagation(cg, varargin)
-%% Belief propagation
+function [bels, converged] = beliefPropagation(cg, varargin)
+%% (Loopy) belief propagation algorithm
+% 
+%% Inputs
 %
-%% setup
-[maxIter, tol, lambda]  = process_options(varargin, ...
-    'maxIter'       , 100  , ...
-    'tol'           , 1e-3 , ...
-    'dampingFactor' , 0);
+% cg                - a cliqueGraph, see cliqueGraphCreate
+%
+%% Optional named inputs
+%
+% 'updateProtocol'  - ['async'] the message passing schedule to use
+%
+% 'dampingFactor'   - [0.5] a value between 0 and 1. Messages are
+%                     calculated by taking a convex combination of the 
+%                     previous message, and the message calculated using the 
+%                     normal update equations. Set to 0 to ignore the
+%                     previous message. A non-zero value can help with
+%                     oscillations. 
+%
+% 'tol'             - [1e-3] convergence tolerance 
+%
+% 'maxIter'         - [100] maximum number of iterations
+%
+%% Output
+%
+% bels              - a cell array of tabular factors representing beliefs
+%                     for the original cliques in cg. 
+% 
+% converged         - true iff the the algorithm converged before maxIter 
+%                     iterations. 
 %%
-Tfac            = cg.Tfac;
-nfacs           = numel(Tfac);
-[nbrs, sepSets] = computeNeighbors(cg); 
-messages        = initializeMessages(sepSets, cg.nstates);
-converged       = false;
-iter            = 1;
-bels            = Tfac;
-while ~converged && iter <= maxIter
-    %% distribute
-    % - everyone sends out messages before anyone collects - 
-    % In computing the message from i to j, we exclude j's previous message
-    % to i, rather than dividing it out later. 
-    oldMessages = messages; 
-    for i=1:nfacs
-        N = nbrs{i};
-        for j=N
-            F              = [Tfac(i); messages(setdiffPMTK(N, j), i)];
-            psi            = tabularFactorNormalize(tabularFactorMultiply(F));
-            Mnew           = tabularFactorMarginalize(psi, sepSets{i, j});
-            Mold           = oldMessages{i, j}; 
-            messages{i, j} = tabularFactorConvexCombination(Mnew, Mold, lambda); 
-        end
-    end
-    %% collect
-    oldBels = bels;
-    for i=1:nfacs
-        M       = [Tfac(i); messages(nbrs{i}, i)];
-        bels{i} = tabularFactorNormalize(tabularFactorMultiply(M));
-    end
-    %% check convergence
-    converged = all(cellfun(@(O, N)approxeq(O.T, N.T, tol), oldBels, bels));
-    iter = iter+1;
+[updateProtocol, args] = process_options(varargin, 'updateProtocol', 'async');
+switch lower(updateProtocol)
+    case 'async'
+        [bels, converged] = belPropAsync(cg, args{:}); 
+    otherwise
+        error('%s is not a valid update protocol');         
 end
 end

@@ -16,9 +16,9 @@ toc
 
 tic
 
-[cliques] = beliefPropagation(cliqueGraphCreate(dgm.factors, dgm.nstates, dgm.G));
-cliqueLookup = createFactorLookupTable(cliques); 
-nodeBelsBP = jtreeQuery(structure(cliques, cliqueLookup), num2cell(1:nvars)); 
+cliques = beliefPropagation(cliqueGraphCreate(dgm.factors, dgm.nstates, dgm.G));
+
+nodeBelsBP = queryCliques(cliques, num2cell(1:nvars)); 
 toc
 % for i=1:nvars
 %    [nodeBelsJT{i}.T(:) , nodeBelsBP{i}.T(:)]
