@@ -19,7 +19,7 @@ converged       = false;
 iter            = 1;
 bels            = Tfac;
 while ~converged && iter <= maxIter
-    %% distribute
+    %% distribute (send out)
     % - everyone sends out messages before anyone collects - 
     % In computing the message from i to j, we exclude j's previous message
     % to i, rather than dividing it out later. 
@@ -34,7 +34,7 @@ while ~converged && iter <= maxIter
             messages{i, j} = tabularFactorConvexCombination(Mnew, Mold, lambda); 
         end
     end
-    %% collect 
+    %% collect (suck in)
     oldBels = bels;
     for i=1:nfacs
         M       = [Tfac(i); messages(nbrs{i}, i)];

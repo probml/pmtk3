@@ -1,7 +1,8 @@
 function [bels, converged] = belPropAsync(cg, varargin)
 %% Belief propagation with a simple asynchronous update schedule 
 % By asynchronous, we mean that a node can update itself without having to
-% wait for everyone else to first be ready. 
+% wait for everyone else to first be ready. A node is ready once it has
+% messages from each of its neighbors. 
 % See beliefPropagation 
 %% setup
 [maxIter, tol, lambda]  = process_options(varargin, ...
