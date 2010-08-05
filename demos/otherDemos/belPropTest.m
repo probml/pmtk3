@@ -14,15 +14,15 @@ toc
 %%
 
 factors = cpds2Factors(dgm.CPDs, dgm.G, dgm.CPDpointers); 
-% factors = dgm.factors;
 
 tic
-cliqueBels = beliefPropagation(cliqueGraphCreate(factors, dgm.nstates, dgm.G));
-nodeBelsBP = queryCliques(cliqueBels, num2cell(1:nvars)); 
+nodeBelsBP = beliefPropagation(cliqueGraphCreate(factors, dgm.nstates, dgm.G), ...
+    num2cell(1:nvars));
+
 toc
-% for i=1:nvars
-%    [nodeBelsJT{i}.T(:) , nodeBelsBP{i}.T(:)]
-% end
+for i=1:nvars
+   [nodeBelsJT{i}.T(:) , nodeBelsBP{i}.T(:)]
+end
 
 
 assert(tfequal(nodeBelsJT, nodeBelsBP));

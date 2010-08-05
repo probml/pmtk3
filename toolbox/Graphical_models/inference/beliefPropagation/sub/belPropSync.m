@@ -29,7 +29,7 @@ while ~converged && iter <= maxIter
                                      
     readyToSend = true(1, nfacs); % initially everyone is ready to send
     while any(leftToSend) 
-        i       = find(readyToSend & leftToSend, 1, 'first');
+        i       = find(readyToSend & leftToSend, 1, 'first')
         N       = nbrs{i};
         M       = [Tfac(i); messages(N, i)];
         bels{i} = tabularFactorNormalize(tabularFactorMultiply(M));
