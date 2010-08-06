@@ -27,6 +27,10 @@ function [bels, converged] = beliefPropagation(cg, queries, varargin)
 % 'doWarn'          - [true] if true, a warning is displayed if the
 %                     algorithm does not converge. 
 %
+% 'convFn'          - @(oldMsgs,  ) a handle to a function called each
+%                     iteration with the entire set of old and new beliefs,
+%                     convenient for monitoring convergence. 
+%
 %% Output
 %
 % bels              - a cell array of tabular factors representing beliefs
@@ -36,7 +40,7 @@ function [bels, converged] = beliefPropagation(cg, queries, varargin)
 %                     iterations. 
 %%
 [updateProtocol, doWarn, args] = process_options(varargin, ...
-    'updateProtocol', 'async', 'doWarn', true);
+    'updateProtocol', 'residual', 'doWarn', true);
 switch lower(updateProtocol)
     case 'async'
         [cliques, converged] = belPropAsync(cg, args{:}); 

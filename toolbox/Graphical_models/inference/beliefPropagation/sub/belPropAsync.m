@@ -5,10 +5,11 @@ function [bels, converged] = belPropAsync(cg, varargin)
 % messages from each of its neighbors. 
 % See beliefPropagation 
 %% setup
-[maxIter, tol, lambda]  = process_options(varargin, ...
+[maxIter, tol, lambda, convFn]  = process_options(varargin, ...
     'maxIter'       , 100  , ...
     'tol'           , 1e-3 , ...
-    'dampingFactor' , 0.5);
+    'dampingFactor' , 0.5  , ...
+    'convFn'        , []);
 %%
 Tfac            = cg.Tfac;
 nfacs           = numel(Tfac);
@@ -47,6 +48,9 @@ while ~converged && iter <= maxIter
         msgCounter(i)  = 0; 
     end
     converged = all(cellfun(@(O, N)approxeq(O.T, N.T, tol), oldBels, bels));
+    if ~isempty(convFn) %optionally monitor convergence
+       convFn(oldMessages, messages);  
+    end
     iter      = iter+1;
 end
 end
