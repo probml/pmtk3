@@ -47,8 +47,8 @@ while ~converged && iter < maxIter
     T(ndx)               = T(ndx) + r; 
     Nc                   = setdiffPMTK(nbrs{c}, b);
     for d = Nc
-        v = sum(T(tndx(all, c, d))); 
-        enqueue(Q, c, d, v); 
+        v = sum(full(T(tndx(all, c, d)))); 
+        Q = enqueue(Q, c, d, v); 
     end
     
     counter = counter + 1; 
@@ -102,7 +102,7 @@ end
 function [Q, a, b] = dequeue(Q)
 %% dequque the message (index) with the highest priority
 ndx    = argmax(Q); 
-Q(ndx) = 0; 
+Q(ndx) = eps; % reserve 0 for invalid portions of the matrix 
 a      = ndx(1); 
 b      = ndx(2); 
 end
