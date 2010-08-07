@@ -27,7 +27,7 @@ M               = initializeMessages(G, sepSets, cg.nstates);
 nmsg            = sum(G(:)); 
 msgNdx          = find(G); 
 Q               = initPriorityQueue(Tfac, G);                                   
-T               = sparse([], [], [], nfacs.^4, 1, nmsg.^2);         % total residuals
+T               = sparse([], [], [], nfacs.^3, 1, nmsg.^2);         % total residuals
 tndx            = @(a, b, c)Tindexer(a, b, c, repmat(nfacs, 1, 4)); % indexer into T
 computeMsg      = @(a, b, M)computeMessage(a, b, M, Tfac, nbrs, sepSets, lambda);
 ALL             = 1:nfacs; 
@@ -139,5 +139,5 @@ if n > 1
    if nc == 1, c = repmat(c, 1, n);    end
 end
 
-ndx = sub2ind(sz, a, b, b, c); 
+ndx = sub2ind(sz, a, b, c); 
 end
