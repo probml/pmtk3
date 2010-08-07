@@ -13,6 +13,15 @@ function [bels, converged] = belPropResidual(cg, varargin)
 % booktitle = uai
 % http://www.cs.umass.edu/~mccallum/papers/rbp0-uai07.pdf
 %%
+%
+% TODO - update belPropSync & belPropAsync to check for msg convergence
+% not belief convergence - update beliefs only after the messages have
+% converged. 
+%
+% 
+% don't use 'sparse' cell arrays for messages - takes up too much space
+% don't use sparse T for residuals - exceeds max variable size 
+%%
 [maxIter, tol, lambda, convFn]  = process_options(varargin, ...
     'maxIter'       , 100  , ...
     'tol'           , 1e-3 , ...
