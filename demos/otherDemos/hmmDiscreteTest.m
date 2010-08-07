@@ -19,7 +19,7 @@ trueModel.A = [0.6 0.15 0.20 0.05;
 trueModel.pi = [0.8 0.1 0.1 0];
 trueModel.type = 'discrete';
 %% Sample
-len = 100;
+len = 101;
 [observed, hidden] = hmmSample(trueModel, len);
 
 %% Learn the model using EM with random restarts

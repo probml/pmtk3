@@ -206,7 +206,7 @@ end
 if isempty(model.A) || isempty(model.pi)
     z = colvec(inferFn(mixModel, stackedData));
     if isempty(model.A)
-        A       = accumarray([z(1:end-1), z(2:end)], 1); % count transitions
+        A       = accumarray([z(1:end-1), z(2:end)], 1, [nstates, nstates]); % count transitions
         model.A = normalize(A + ones(size(A)), 2);       % regularize
     end
     if isempty(model.pi)
