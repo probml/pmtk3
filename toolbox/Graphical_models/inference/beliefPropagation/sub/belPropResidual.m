@@ -16,59 +16,62 @@ function [bels, converged] = belPropResidual(cg, varargin)
 [maxIter, tol, lambda, convFn]  = process_options(varargin, ...
     'maxIter'       , 100  , ...
     'tol'           , 1e-3 , ...
-    'dampingFactor' , 0.5  , ...
+    'dampingFactor' , 0  , ...
     'convFn'        , []);
 %%
 Tfac            = cg.Tfac;
 nfacs           = numel(Tfac); 
 [nbrs, sepSets] = computeNeighbors(cg); 
-G               = cg.G; 
-M               = initializeMessages(sepSets, cg.nstates);
+G               = mkSymmetric(cg.G); 
+M               = initializeMessages(G, sepSets, cg.nstates);
 nmsg            = sum(G(:)); 
-Q               = initPriorityQueue(Tfac, G);                                
-[ii, jj]        = find(G);    
-T               = sparse(ii, jj, eps, nfacs^2, nfacs^2, nmsg^2); % total residuals
-tndx            = @(a, b, c)Tindexer(a, b, c, size(T), size(Q)); % indexer into T
+msgNdx          = find(G); 
+Q               = initPriorityQueue(Tfac, G);                                   
+T               = sparse([], [], [], nfacs.^4, 1, nmsg.^2);         % total residuals
+tndx            = @(a, b, c)Tindexer(a, b, c, repmat(nfacs, 1, 4)); % indexer into T
 computeMsg      = @(a, b, M)computeMessage(a, b, M, Tfac, nbrs, sepSets, lambda);
-all             = 1:nmsg; 
+ALL             = 1:nfacs; 
 iter            = 1; 
 counter         = 0; 
 converged       = false; 
+updateCounter   = zeros(nfacs, nfacs); 
 while ~converged && iter < maxIter
     
     Mold                 = M; 
     [Q, b, c]            = dequeue(Q); 
-    [mbc, rdamp]         = computeMsg(b, c, M); 
-    Q                    = enqueue(Q, b, c, rdamp); % see alg2 note on damping
+    [mbc, rdamp]         = computeMsg(b, c, M);
+    Q(b, c)              = rdamp; % enqueue  see alg2 note on damping
     r                    = computeResidual(Mold{b, c}, mbc); 
     M{b, c}              = mbc; 
-    T(tndx(all, all, c)) = eps;        
-    ndx                  = tndx(b, c, all); 
+    updateCounter(b, c)  = updateCounter(b, c) + 1; 
+    T(tndx(ALL, ALL, c)) = eps;        
+    ndx                  = tndx(b, c, ALL); 
     T(ndx)               = T(ndx) + r; 
     Nc                   = setdiffPMTK(nbrs{c}, b);
     for d = Nc
-        v = sum(full(T(tndx(all, c, d)))); 
-        Q = enqueue(Q, c, d, v); 
+        v = sum(full(T(tndx(ALL, c, d)))); 
+        Q(c, d) = v; % enqueue
     end
-    
+    %%
     counter = counter + 1; 
     if counter == nmsg 
        counter = 0;  
-       iter    = iter + 1; 
+       iter    = iter + 1;
        if ~isempty(convFn)
            convFn(Mold, M); 
        end
+       converged = all(updateCounter(msgNdx)) && ... 
+           all(cellfun(@(O, N)approxeq(O.T, N.T, tol), Mold(msgNdx), M(msgNdx)));     
     end
-    converged = max(nonzeros(Q)) < tol; 
     
 end
+
 %% final beliefs
 bels = cell(nfacs, 1); 
 for a = 1:nfacs
     psi     = tabularFactorMultiply([Tfac(a); M(nbrs{a}, a)]);
     bels{a} = tabularFactorNormalize(psi); 
 end
-
 end
 
 function r = computeResidual(old, new)
@@ -79,12 +82,15 @@ end
 
 function Q = initPriorityQueue(Tfac, G)
 %% Initialize the (lazy) 'priority queue'
+% We do linear search O(n) to dequeue, but get constant time insertions 
+% and priority updates, while avoiding the overhead of a full data structure. 
 % see eq 13 for init
 %%
-nfacs   = numel(Tfac); 
-msgNdx  = rowvec(find(G)); 
-nmsg    = numel(msgNdx); 
-Q       = sparse([], [], [], nfacs, nfacs, nmsg);
+nfacs    = numel(Tfac); 
+msgNdx   = rowvec(find(G)); 
+nmsg     = numel(msgNdx); 
+[ii, jj] = find(G);
+Q        = sparse(ii, jj, eps, nfacs, nfacs, nmsg);
 for ndx = msgNdx
     [c, d] = ind2sub([nfacs, nfacs], ndx); %#ok
     tc     = Tfac{c}.T(:);
@@ -93,18 +99,13 @@ for ndx = msgNdx
 end
 end
 
-function Q = enqueue(Q, a, b, v)
-%% enqueue a message (index) from a to b with priority v
-% lazy - just store the priority
-Q(a, b) = v; 
-end
-
 function [Q, a, b] = dequeue(Q)
 %% dequque the message (index) with the highest priority
-ndx    = argmax(Q); 
-Q(ndx) = eps; % reserve 0 for invalid portions of the matrix 
-a      = ndx(1); 
-b      = ndx(2); 
+ndx     = argmax(Q); 
+a       = ndx(1); 
+b       = ndx(2); 
+assert(a ~= b); 
+Q(a, b) = eps; % reserve 0 for invalid portions of the matrix 
 end
 
 function [mbc, r] = computeMessage(b, c, messages, Tfac, nbrs, sepSets, lambda)
@@ -117,28 +118,26 @@ psi     = tabularFactorMultiply([Tfac(b); messages(N, b)]);
 mbcOld  = messages{b, c}; 
 mbcFull = tabularFactorMarginalize(psi, sepSets{b, c}); 
 mbcFull = tabularFactorNormalize(mbcFull); 
-mbc     = tabularFactorConvexCombination(mbcFull, mbcOld, lambda); 
-r       = computeResidual(mbcFull, mbc);
-
+if lambda
+    mbc  = tabularFactorConvexCombination(mbcFull, mbcOld, lambda); 
+    r    = max(eps, computeResidual(mbcFull, mbc));
+else
+    mbc = mbcFull;  
+    r   = eps;
+end
 end
 
-function ndx = Tindexer(a, b, c, tsz, qsz)
+function ndx = Tindexer(a, b, c, sz)
 %% Compute the linear index into T corresponding to 'T(ab, bc)'
-%%
 na = numel(a);
 nb = numel(b);
 nc = numel(c); 
 n  = max([na, nb, nc]); 
 if n > 1
-   if na == 1
-       a = repmat(a, 1, n); 
-   end
-   if nb == 1
-       b = repmat(b, 1, n); 
-   end
-   if nc == 1
-       c = repmat(c, 1, n);
-   end
+   if na == 1, a = repmat(a, 1, n);    end
+   if nb == 1, b = repmat(b, 1, n);    end
+   if nc == 1, c = repmat(c, 1, n);    end
 end
-ndx = sub2ind(tsz, sub2ind(qsz, a, b), sub2ind(qsz, b, c)); 
+
+ndx = sub2ind(sz, a, b, b, c); 
 end

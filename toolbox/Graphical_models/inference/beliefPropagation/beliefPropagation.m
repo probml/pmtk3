@@ -40,7 +40,7 @@ function [bels, converged] = beliefPropagation(cg, queries, varargin)
 %                     iterations. 
 %%
 [updateProtocol, doWarn, args] = process_options(varargin, ...
-    'updateProtocol', 'async', 'doWarn', true);
+    'updateProtocol', 'residual', 'doWarn', true);
 switch lower(updateProtocol)
     case 'async'
         [cliques, converged] = belPropAsync(cg, args{:}); 
