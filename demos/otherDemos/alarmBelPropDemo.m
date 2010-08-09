@@ -37,7 +37,6 @@ title(sprintf('residual: %g seconds', t));
 xlabel('belief');
 ylabel('rmse'); 
 %% libdai
-
 dgm.infEngine = 'libdaibp';
 dgm.infEngArgs = {}; 
 tic
@@ -48,8 +47,4 @@ stem(compareFactors(nodeBels, belsLibdai));
 title(sprintf('libdai: %g seconds', t)); 
 xlabel('belief');
 ylabel('rmse'); 
-
-
 end
-
-
