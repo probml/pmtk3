@@ -40,7 +40,13 @@ function [bels, converged] = beliefPropagation(cg, queries, varargin)
 %                     iterations. 
 %%
 [updateProtocol, doWarn, args] = process_options(varargin, ...
-    'updateProtocol', 'residual', 'doWarn', true);
+    'updateProtocol', 'async', 'doWarn', true);
+
+
+if size(cg.G, 1) < numel(cg.Tfac)
+   cg.G = nodeGraphToCliqueGraph(cg.G, cg.Tfac);  
+end 
+    
 switch lower(updateProtocol)
     case 'async'
         [cliques, converged] = belPropAsync(cg, args{:}); 

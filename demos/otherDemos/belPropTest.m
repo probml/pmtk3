@@ -7,22 +7,12 @@ nstates = 2;
 
 dgm = mkRndTreeDgm(K, depth, nstates); 
 %drawNetwork(dgm.G);
-dgm = rmfield(dgm, 'jtree'); % get a better timing comparison
-tic
 [nodeBelsJT] = dgmInferNodes(dgm); 
-toc
 %%
-
-factors = cpds2Factors(dgm.CPDs, dgm.G, dgm.CPDpointers); 
-
-tic
-nodeBelsBP = beliefPropagation(cliqueGraphCreate(factors, dgm.nstates, dgm.G), ...
-    num2cell(1:nvars));
-
-toc
-% for i=1:nvars
-%    [nodeBelsJT{i}.T(:) , nodeBelsBP{i}.T(:)]
-% end
-
-
-assert(tfequal(nodeBelsJT, nodeBelsBP));
+dgm.infEngine = 'bp';
+protocols = {'async', 'sync', 'residual'};
+for i=1:numel(protocols)
+    dgm.infEngArgs = {'updateProtocol', protocols{i}}; 
+    nodeBelsBP = dgmInferNodes(dgm); 
+    assert(tfequal(nodeBelsJT, nodeBelsBP));
+end
