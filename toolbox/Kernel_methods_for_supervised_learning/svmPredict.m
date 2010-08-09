@@ -35,5 +35,8 @@ else
     % currrently only supported by svmQPclassif*
     [yhat, f] = predictFn(model, Xtest); 
 end
-
+switch model.outputType
+  case 'binary',
+    yhat = setSupport(yhat, model.ySupport, [-1 1]); %
+end
 end

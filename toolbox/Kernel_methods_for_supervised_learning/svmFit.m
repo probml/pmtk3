@@ -1,21 +1,29 @@
 function [model, varargout] = svmFit(X, y, varargin)
 % Fit a support vector machine.
-% Supports binary and multiclass classification, as well as regression,
-% however not all fit functions support all problem types / kernels.
-%% Cross Validation
-% Cross validation is run if a range of C values and/or kernelParam values
-% are specified.
+% Supports binary and multiclass classification, as well as regression.
+% This is a wrapper to SVMlight, libsvm, liblinear
+% and our own QP-based SVM code (which requires the quadprog function 
+% in the optimization toolbox).
+% See svmFitTest for examples of how to use this function.
+%
 %% INPUTS:
 % C           - regularizer, (1/lambda)
 % kernel      - string or @(X1, X2, param), e.g. 'rbf' or @kernelRbfGamma
 % kernelParam - e.g. gamma in kernelRbfGamma
 % fitFn       - string or @(X, y, C, kernelParam, kernel, fitOptions{:})
 % fitOptions  - a cell array of fit function specific options.
+% cvOptions   - used to control the cross valudation estimate
+%               of C and/or kernel params (if these are vectors)
 %% OUTPUT:
 % model is a struct with fit function specific information - this can
 % be passed directly to svmPredict().
 %% Fit functions:
-% Defaults are selected based on this table:
+% The following table shows the functionality of the different fitting
+% methods. The fastest suitable method is automatically chosen,
+% unless you specify one by hand. Specifically, if the kernel is a function
+% handle (custom kernel), it uses our QP code. If it is a string (i.e., the
+% name of a standard kernel), it uses libsvm
+% or liblinear (svmlight is never called by default).
 %
 %                 | binary | multiclass | regression | customKernel       
 % svmQPclassifFit |  yes   |    no      |    no      |   yes             
@@ -69,10 +77,16 @@ d = size(X, 2);
 K = nunique(y);
 if K <= 2
     type = 'binary';
+    [y, ySupport] = setSupport(y, [-1 1]);
+    outputType = 'binary';
 elseif isequal(y, round(y))
     type = 'multiclass';
+    [y, ySupport] = setSupport(y, 1:K);
+     outputType = 'multiclass';
 else
     type = 'regression';
+    ySupport = [];
+    outputType = 'regression';
 end
 
 %% Select default fit function
@@ -96,6 +110,7 @@ if isempty(fitFn)
 elseif ischar(fitFn)
     fitFn = str2func(fitFn);
 end
+fitFn
 %% Preprocess Data
 if standardizeX
     X = mkUnitVariance(centerCols(X));
@@ -127,4 +142,6 @@ if rescaleX
     model.minx = minx;
     model.rangex = rangex;
 end
+model.ySupport = ySupport;
+model.outputType = outputType;
 end

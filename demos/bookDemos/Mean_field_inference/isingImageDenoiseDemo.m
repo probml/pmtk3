@@ -1,5 +1,5 @@
 %% Image denoising using Ising prior and Gibbs sampling or mean field
-%
+
 %%
 function isingImageDenoiseDemo()
 
@@ -29,6 +29,8 @@ axis off;
 printPmtkFigure('isingImageDenoise');
 %%
 methods = {'Gibbs', 'MeanfieldH', 'MeanfieldHIP', 'Meanfield1', 'Meanfield1IP'};
+%methods = {'Gibbs'};
+
 for m=1:length(methods)
     method = methods{m};
     maxIter = 15;

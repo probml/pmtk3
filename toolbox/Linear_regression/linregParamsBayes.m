@@ -32,8 +32,14 @@ else
   credint = [what-tc*stderr what+tc*stderr];
 end
 
+ D = length(wn);
+ for i=1:D
+   L = credint(i,1); U = credint(i,2);
+   sig(i) = (L<0 && U<0) || (L>0 && U>0);
+ end
+ 
 if doDisplay
-  D = length(wn);
+ 
   
   if useLatex
     fprintf('coeff & mean & stddev & 95pc CI & sig\n');
@@ -42,9 +48,9 @@ if doDisplay
   end
   for i=1:D
     if model.preproc.addOnes, j=i-1; else j=i; end
-    L = credint(i,1); U = credint(i,2);
-    sig = (L<0 && U<0) || (L>0 && U>0);
-    if sig, sigStr = '*'; else sigStr = ''; end
+    %L = credint(i,1); U = credint(i,2);
+    %sig = (L<0 && U<0) || (L>0 && U>0);
+    if sig(i), sigStr = '*'; else sigStr = ''; end
     if useLatex
       fprintf('w%d & %3.3f & %3.5f & [%3.3f, %3.3f] & %s \\\\\n', ...
         j, what(i), stderr(i), credint(i,1), credint(i,2), sigStr)
@@ -56,6 +62,6 @@ if doDisplay
   fprintf('\n');
 end
 
-out = structure(what, stderr, credint);
+out = structure(what, stderr, credint, sig);
 
 end

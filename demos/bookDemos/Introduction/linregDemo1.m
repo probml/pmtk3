@@ -10,6 +10,12 @@ w = Xtrain1 \ ytrain;
 Xtest1 = [ones(size(Xtest,1),1) Xtest];
 ypredTest = Xtest1*w;
 
+%% Test simple linear regression equations
+xbar = mean(xtrain); ybar = mean(ytrain); N = length(ytrain);
+w1 = sum( (xtrain-xbar) .* (ytrain-ybar) ) / sum( (xtrain-xbar).^2 );
+w0 = ybar - w1*xbar;
+assert(approxeq([w0 w1], w))
+
 %% Use pmtk functions to do same thing
 model2 = linregFit(Xtrain, ytrain);
 [ypredTest2, v2] = linregPredict(model2, Xtest);
