@@ -1,4 +1,4 @@
-%% Image denoising using an mrf and exact
+%% Image denoising using an mrf and exact inference
 
 %% Generate Data
 %input matrix consisting of letter A. The body of letter A is made of 1's

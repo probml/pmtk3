@@ -82,6 +82,15 @@ switch lower(engine)
         
         logZ = 0; % not calculated
         
+    case 'libdaibp'
+        
+        assert(isWeaklyConnected(cg.G)); % libdai segfaults on disconnected graphs
+        doSlice = false;     % libdai often segfaults when slicing
+        factors = addEvidenceToFactors(cg.Tfac, clamped, doSlice);
+        factors = [factors(:); localFacs(:)];
+        [logZ, nodeBels, cliques, cliqueLookup] = libdaiBelProp(factors);
+        bels    = queryCliques(cliques, queries, cliqueLookup); 
+        
     case 'enum'
        
         [logZ, bels] = enumRunInference(cg.Tfac, queries, clamped, localFacs); 

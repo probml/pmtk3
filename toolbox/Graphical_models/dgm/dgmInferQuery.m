@@ -118,27 +118,37 @@ switch lower(engine)
         
     case 'bp'
         
-        doSlice      = true; 
-        factors      = cpds2Factors(CPDs, G, CPDpointers);   
-        factors      = addEvidenceToFactors(factors, clamped, doSlice); 
+        doSlice      = true;
+        factors      = cpds2Factors(CPDs, G, CPDpointers);
+        factors      = addEvidenceToFactors(factors, clamped, doSlice);
         factors      = multiplyInLocalFactors(factors, localFacs);
-        nstates      = cellfun(@(f)f.sizes(end), factors); 
+        nstates      = cellfun(@(f)f.sizes(end), factors);
         cg           = cliqueGraphCreate(factors, nstates, G);
-        bels         = beliefPropagation(cg, queries, dgm.infEngArgs{:}); 
+        bels         = beliefPropagation(cg, queries, dgm.infEngArgs{:});
         
         logZ = 0; % not calculated
         
+    case 'libdaibp'
+        
+        assert(isWeaklyConnected(G)); % libdai segfaults on disconnected graphs
+        doSlice = false;              % libdai often segfaults when slicing
+        factors = cpds2Factors(CPDs, G, CPDpointers);
+        factors = addEvidenceToFactors(factors, clamped, doSlice);
+        factors = [factors(:); localFacs(:)];
+        [logZ, nodeBels, cliques, cliqueLookup] = libdaiBelProp(factors);
+        bels    = queryCliques(cliques, queries, cliqueLookup); 
+        
     case 'enum'
         
-        factors      = cpds2Factors(CPDs, G, CPDpointers);   
-        [logZ, bels] = enumRunInference(factors, queries, clamped, localFacs); 
+        factors      = cpds2Factors(CPDs, G, CPDpointers);
+        [logZ, bels] = enumRunInference(factors, queries, clamped, localFacs);
         
     otherwise
         error('%s is not a valid inference engine', dgm.infEngine);
 end
 
 if doPrune % shift domain back
-    bels.domain = rowvec(remaining(bels.domain)); 
+    bels.domain = rowvec(remaining(bels.domain));
 end
 
 end

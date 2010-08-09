@@ -1,5 +1,5 @@
-function [logZ, nodeBels, clqBels, cliqueLookup] = libdaiJtree(tfacs)
-%% Bare bones interface to libdai's jtree algorithm 
+function [logZ, nodeBels, clqBels, cliqueLookup] = libdaiBelProp(tfacs)
+%% Bare bones interface to libdai's belief propagation algorithm 
 % 
 %% Input
 %
@@ -15,5 +15,5 @@ function [logZ, nodeBels, clqBels, cliqueLookup] = libdaiJtree(tfacs)
 %
 % cliqueLookup - an nvars-by-ncliques lookup table
 %%
-[logZ, nodeBels, clqBels, cliqueLookup] = libdaiInfer(tfacs, 'JTREE', '[updates=HUGIN]');
+[logZ, nodeBels, clqBels, cliqueLookup] = libdaiInfer(tfacs, 'BP', '[updates=SEQMAX,tol=1e-9,maxiter=10000,logdomain=0]');
 end
