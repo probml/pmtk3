@@ -44,7 +44,7 @@ for method=1:3
   end
   yhat = predictFn(X);
   %nerr = sum(yhat ~= convertLabelsToPM1(y));
-  nerr = sum(yhat ~= y);
+  nerr = 0; % sum(yhat ~= y);
   % Plot results
   plotDecisionBoundary(X, y, predictFn, 'symbols', '+x');
   if method > 1
