@@ -27,6 +27,7 @@ switch lower(localCPD.cpdType)
         B              = nan(nstates, seqlen);
         B(:, observed) = T(:, Xobs); % must have only one parent
     case 'condgauss'
+        
         nstates  = localCPD.nstates;
         logB     = nan(nstates, seqlen);
         mu       = localCPD.mu;
@@ -35,6 +36,23 @@ switch lower(localCPD.cpdType)
             logB(j, observed) = rowvec(gaussLogprob(mu(:, j), Sigma(:, :, j), Xobs'));
         end
         B = exp(logB);
+        
+    case 'condmixgausstied'
+        
+        nstates = localCPD.nstates;
+        nmix    = localCPD.nmix; 
+        mu      = localCPD.mu;
+        Sigma   = localCPD.Sigma;
+        M       = localCPD.M;  % nstates-by-nmix
+        logM    = log(M); 
+        
+        logT = nan(nmix, nstates, seqlen); 
+        for k = 1:nmix
+            logpk = rowvec(gaussLogprob(mu(:, k), Sigma(:, :, k), Xobs'));
+            logT(k, :, observed) = bsxfun(@plus, logpk, logM(:, k)); 
+        end
+        B = squeeze(sum(exp(logT), 1)); 
+        
     otherwise
         error('%s is not a recognized CPD type', localCPD.cpdType);
 end

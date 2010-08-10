@@ -12,7 +12,7 @@ function [bels, converged] = belPropResidual(cg, varargin)
 % year = 2007,
 % booktitle = uai
 % http://www.cs.umass.edu/~mccallum/papers/rbp0-uai07.pdf
-%%
+%% This is experimental code and may be buggy
 %
 %%
 [maxIter, tol, lambda, convFn]  = process_options(varargin, ...

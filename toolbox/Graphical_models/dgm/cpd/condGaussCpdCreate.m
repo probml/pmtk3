@@ -1,5 +1,5 @@
 function CPD = condGaussCpdCreate(mu, Sigma, varargin)
-%% Create a conditional Gaussian distribution for use in a DGM
+%% Create a conditional Gaussian distribution for use in a graphical model
 %
 % mu is a matrix of size d-by-nstates
 % Sigma is of size d-by-d-by-nstates
@@ -33,7 +33,6 @@ CPD.logPriorFn = @logPriorFn;
 CPD.rndInitFn  = @rndInit;
 
 end
-
 
 function cpd = rndInit(cpd)
 %% randomly initialize
