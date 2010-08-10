@@ -102,17 +102,20 @@ if isempty(model.emissionPrior)
 end
 if isempty(model.emission) || isempty(model.pi) || isempty(model.A)
     
+  
     
     mu          = zeros(d, nmix);
     Sigma       = zeros(d, d, nmix);
     for k = 1:nmix
         XX             = stackedData + randn(size(stackedData));
         mu(:, k)       = colvec(mean(XX));
-        Sigma(:, :, k) = cov(XX) + 2*eye(d); % regularize
+        Sigma(:, :, k) = cov(XX);
     end
     M = normalize(rand(nstates, nmix), 2);
     model.emission = condMixGaussTiedCpdCreate(mu, Sigma, M);
     model = rndInitPiA(model);
+    
+    
     
 end
 

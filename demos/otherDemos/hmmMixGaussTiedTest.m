@@ -4,7 +4,7 @@
 loadData('data45');
 data = [train4'; train5'];
 d = 13;
-nstates = 2;
+nstates = 3;
 nmix    = 2; % must specify nmix
 
 
