@@ -1,8 +1,10 @@
-function ess = condGaussCpdComputeEss(cpd, data, weights)
+function ess = condGaussCpdComputeEss(cpd, data, weights, B)
 %% Compute the expected sufficient statistics for a condGaussCpd
 % data is nobs-by-d
 % weights is nobs-by-nstates; the marginal probability of the discrete
 % parent for each observation. 
+% B is ignored, but required by the interface, (since mixture emissions use
+% it). 
 %%
 d       = cpd.d; 
 nstates = cpd.nstates; 

@@ -43,7 +43,7 @@ d = size(X, 2);
 T = zeros(nstates, d, nmix);
 Xsplit = randsplit(X, nmix);
 for k=1:nmix
-    m = discreteFit(Xsplit{k});
+    m = discreteFit(Xsplit{k}, 1, nstates);
     T(:, :, k) = m.T;
 end
 T = normalize(T + 0.2*rand(size(T)), 1); % add noise

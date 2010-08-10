@@ -18,6 +18,7 @@ else
     prior.dof = 15;
 end
 
+
 model = hmmFitEm(data, 2, 'gauss', 'verbose', true, 'piPrior', [3 2], ...
     'emissionPrior', prior, 'nRandomRestarts', 3)
 

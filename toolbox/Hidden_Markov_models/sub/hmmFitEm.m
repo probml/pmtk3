@@ -16,6 +16,7 @@ model.type = type;
     model.piPrior               , ...
     model.transPrior            , ...
     model.emissionPrior         , ...
+    model.nmix                  , ...
     EMargs                      ] ...
     = process_options(varargin  , ...
     'pi0'                       , []                        , ...
@@ -23,7 +24,9 @@ model.type = type;
     'emission0'                 , []                        , ...
     'piPrior'                   , 2*ones(1, nstates)        , ...
     'transPrior'                , 2*ones(nstates, nstates)  , ...
-    'emissionPrior'             , []);
+    'emissionPrior'             , []                        , ...
+    'nmix'                      , []);
+
 model.piPrior = rowvec(model.piPrior);
 if diff(size(model.transPrior))
     model.transPrior = repmat(rowvec(model.transPrior), nstates, 1);
@@ -32,11 +35,15 @@ end
 switch lower(type)
     case 'gauss'
         initFn          = @initGauss;
-        estepEmissionFn = @estepGaussEmission;
-        mstepFn         = @mstepGauss;
+        estepEmissionFn = @estepEmission;
+        mstepFn         = @mstep;
+    case 'mixgausstied'
+        initFn          = @initMixGaussTied;
+        estepEmissionFn = @estepEmission;
+        mstepFn         = @mstep;
     case 'discrete'
         initFn          = @initDiscrete;
-        estepEmissionFn = @estepDiscreteEmission;
+        estepEmissionFn = @estepDiscreteEmission; % customized for efficiency
         mstepFn         = @mstepDiscrete;
     otherwise
         error('%s is not a valid output distribution type');
@@ -77,11 +84,45 @@ if isempty(model.emission) || isempty(model.pi) || isempty(model.A)
 end
 end
 
+function model = initMixGaussTied(model, data, restartNum)
+%% Initialize the model given a tied mixGauss emission distribution
+
+assert(~isempty(model.nmix)); % you must specify the number of mixture components
+d = size(data{1}, 1);
+model.d = d;
+nstates     = model.nstates;
+nmix        = model.nmix;
+stackedData = cell2mat(data')';
+if isempty(model.emissionPrior)
+    model.emissionPrior.mu    = zeros(1, d);
+    model.emissionPrior.Sigma = 0.1*eye(d);
+    model.emissionPrior.k     = 0.01;
+    model.emissionPrior.dof   = d + 1;
+    model.emissionPrior.pseudoCounts = ones(nstates, nmix); 
+end
+if isempty(model.emission) || isempty(model.pi) || isempty(model.A)
+    
+    
+    mu          = zeros(d, nmix);
+    Sigma       = zeros(d, d, nmix);
+    for k = 1:nmix
+        XX             = stackedData + randn(size(stackedData));
+        mu(:, k)       = colvec(mean(XX));
+        Sigma(:, :, k) = cov(XX) + 2*eye(d); % regularize
+    end
+    M = normalize(rand(nstates, nmix), 2);
+    model.emission = condMixGaussTiedCpdCreate(mu, Sigma, M);
+    model = rndInitPiA(model);
+    
+end
+
+end
+
 function model = initDiscrete(model, data, restartNum) 
 %% Initialize the model given a discrete emission distribution
 model.d          = 1;
 nstates          = model.nstates;
-nObsStates       = nunique(cell2mat(data')');
+nObsStates       = max(cell2mat(data'));
 model.nObsStates = nObsStates; 
 if isempty(model.emissionPrior)
     model.emissionPrior = 2*ones(nstates, nObsStates);
@@ -108,37 +149,37 @@ nstates     = model.nstates;
 startCounts = zeros(1, nstates);
 transCounts = zeros(nstates, nstates);
 weights     = zeros(nstacked, nstates);
+B           = zeros(nstates, nstacked); 
 loglik      = 0;
 A           = model.A;
 nobs        = numel(data);
 for i = 1:nobs
     obs                            = data{i};
-    [gamma, llobs, alpha, beta, B] = hmmInferNodes(model, obs);
-    %fprintf('%g\n',llobs); 
+    [gamma, llobs, alpha, beta, Bi] = hmmInferNodes(model, obs);
     loglik                         = loglik + llobs;
-    xi_summed                      = hmmComputeTwoSlice(alpha, beta, A, B);
+    xi_summed                      = hmmComputeTwoSlice(alpha, beta, A, Bi);
     startCounts                    = startCounts + gamma(:, 1)';
     transCounts                    = transCounts + xi_summed;
     sz                             = size(gamma, 2);
     idx                            = seqidx(i);
     ndx                            = idx:idx+sz-1;
     weights(ndx, :)                = weights(ndx, :) + gamma';
+    B(:, ndx)                      = Bi; 
 end
 logprior                = log(A(:)+eps)'*(model.transPrior(:)-1) + ...
                           log(model.pi(:)+eps)'*(model.piPrior(:)-1);
 loglik                  = loglik + logprior;
-ess                     = structure(weights, startCounts, transCounts);
+ess                     = structure(weights, startCounts, transCounts, B);  
 [ess, logEmissionPrior] = emissionEstep(model, ess, stackedData);
 loglik                  = loglik + logEmissionPrior;
+
 end
 
-function [ess, logprior] = estepGaussEmission(model, ess, stackedData)
-%% Perform the Gaussian emission component of the estep.
+function [ess, logprior] = estepEmission(model, ess, stackedData)
+%% Perform the emission component of the e-step (generic version)
 emission       = model.emission; 
-emissionEss    = condGaussCpdComputeEss(emission, stackedData, ess.weights);
-ess.xbar       = emissionEss.xbar;
-ess.XX         = emissionEss.XX;
-ess.wsum       = emissionEss.wsum;
+emissionEss    = emission.essFn(emission, stackedData, ess.weights, ess.B);
+ess            = catStruct(ess, emissionEss); 
 emission.prior = model.emissionPrior; 
 logprior       = emission.logPriorFn(emission);
 end
@@ -168,17 +209,17 @@ end
 
 %% MSTEP
 
-function model = mstepGauss(model, ess)
-%% Maximize
+function model = mstep(model, ess)
+%% Generic mstep function
 model.pi       = normalize(ess.startCounts + model.piPrior -1);
 model.A        = normalize(ess.transCounts + model.transPrior -1, 2);
 emission       = model.emission;
 emission.prior = model.emissionPrior; 
-model.emission = condGaussCpdFitEss(emission, ess); 
+model.emission = emission.fitFnEss(emission, ess); 
 end
 
 function model = mstepDiscrete(model, ess)
-%% Maximize
+%% Custom mstep for discrete
 model.pi       = normalize(ess.startCounts + model.piPrior -1);
 model.A        = normalize(ess.transCounts + model.transPrior -1, 2);
 Epc            = model.emissionPrior - 1;
@@ -195,7 +236,7 @@ model.pi = normalize(rand(1, nstates) + model.piPrior -1);
 model.A  = normalize(rand(nstates) + model.transPrior -1, 2);
 end
 
-function model = initWithMixModel(model, data, fitFn, inferFn)
+function [model, mixModel] = initWithMixModel(model, data, fitFn, inferFn)
 %% Initialze using a mixture model, ignoring temporal structure
 stackedData = cell2mat(data')';
 nstates     = model.nstates;

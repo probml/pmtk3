@@ -42,17 +42,26 @@ CPD = structure(mu, Sigma, M, nmix, nstates, d, prior);
 CPD.cpdType    = 'condMixGaussTied';
 %% 'methods'
 %CPD.fitFn
-%CPD.fitFnEss
-CPD.essFn = @condMixGaussTiedCpdComputeEss;
-%CPD.logPriorFn
-CPD.rndInitFn = @rndInit;
+CPD.fitFnEss   = @condMixGaussTiedCpdFitEss;
+CPD.essFn      = @condMixGaussTiedCpdComputeEss;
+CPD.logPriorFn = @logPriorFn; 
+CPD.rndInitFn  = @rndInit;
 end
 
 
-
-
-
-
+function logp = logPriorFn(cpd)
+%% log prior
+prior = cpd.prior; 
+logp = 0;
+if ~isempty(prior)&& isstruct(prior)
+    nmix  = cpd.nmix;
+    mu    = cpd.mu;
+    Sigma = cpd.Sigma;
+    for k = 1:nmix
+        logp = logp + gaussInvWishartLogprob(prior, mu(:, k), Sigma(:, :, k));
+    end
+end
+end
 
 function cpd = rndInit(cpd)
 %% randomly initialize
