@@ -1,5 +1,5 @@
-function B = mkSoftEvidence(localCPD, X)
-%% Make a soft evidence matrix B(j, t) = p(X(:, t) | S(t) = j, localCPD)
+function logB = mkSoftEvidence(localCPD, X)
+%% Make a soft evidence matrix logB(j, t) = log p(X(:, t) | S(t) = j, localCPD)
 % where S(t) denotes the state of node t. 
 %
 %% Inputs:
@@ -22,10 +22,13 @@ observed    = ~any(isnan(X), 1);
 Xobs        = X(:, observed);
 switch lower(localCPD.cpdType)
     case 'tabular'
+        
         T              = localCPD.T;
         nstates        = size(T, 1); 
         B              = nan(nstates, seqlen);
         B(:, observed) = T(:, Xobs); % must have only one parent
+        logB = log(B); 
+        
     case 'condgauss'
         
         nstates  = localCPD.nstates;
@@ -35,7 +38,7 @@ switch lower(localCPD.cpdType)
         for j=1:nstates
             logB(j, observed) = rowvec(gaussLogprob(mu(:, j), Sigma(:, :, j), Xobs'));
         end
-        B = exp(logB);
+        
         
     case 'condmixgausstied'
         
@@ -58,6 +61,8 @@ switch lower(localCPD.cpdType)
            end
            B(j, observed) = Bj(observed); 
         end
+        
+        logB = log(B); 
         
     otherwise
         error('%s is not a recognized CPD type', localCPD.cpdType);

@@ -5,14 +5,16 @@ maxNstates = max(model.nstates);
 localCPDs = cellwrap(model.localCPDs);
 localCPDpointers = model.localCPDpointers;
 if numel(localCPDs) == 1 % vectorize
-    softev = mkSoftEvidence(localCPDs{1}, localev);
+    logB   = mkSoftEvidence(localCPDs{1}, localev);
+    softev = exp(logB); 
 else
-    softev = nan(maxNstates, nnodes);
+    logB = nan(maxNstates, nnodes);
     for t=1:nnodes
         lev = localev(:, t);
         lev = lev(~isnan(lev));
         if isempty(lev); continue; end
-        softev(:, t) = colvec(mkSoftEvidence(localCPDs{localCPDpointers(t)}, lev));
+        logB(:, t) = colvec(mkSoftEvidence(localCPDs{localCPDpointers(t)}, lev));
     end
+    softev = exp(logB); 
 end
 end

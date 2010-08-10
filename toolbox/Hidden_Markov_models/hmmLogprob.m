@@ -7,8 +7,11 @@ logp = zeros(nobs, 1);
 pi = model.pi;
 A = model.A;
 for i=1:nobs
-    B = mkSoftEvidence(model.emission, X{i}); 
+    logB = mkSoftEvidence(model.emission, X{i}); 
+    [logB, scale] = normalizeLogspace(logB'); 
+    B    = exp(logB'); 
     logp(i) = hmmFilter(pi, A, B);
+    logp(i) = logp(i) + sum(scale); 
 end
 
 end

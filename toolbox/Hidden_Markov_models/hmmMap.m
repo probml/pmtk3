@@ -11,6 +11,6 @@ function path = hmmMap(model, X)
 %
 pi = model.pi;
 A  = model.A;
-B  = mkSoftEvidence(model.emission, X);
-[path, j1, j2] = hmmViterbiC(log(pi+eps), log(A+eps), log(B+eps)); %#ok<NASGU>
+logB  = mkSoftEvidence(model.emission, X);
+[path, j1, j2] = hmmViterbiC(log(pi+eps), log(A+eps), logB); %#ok<NASGU>
 end

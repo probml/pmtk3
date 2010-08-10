@@ -6,10 +6,11 @@ function [gamma, logp, alpha, beta, B] = hmmInferNodes(model, X)
 % B - local evidence
 %*** X must be a single sequence of size d-by-T ***
 %
-pi                         = model.pi;
-A                          = model.A;
-B                          = mkSoftEvidence(model.emission, X); 
-[B, scale] = normalize(B, 1); 
+pi            = model.pi;
+A             = model.A;
+logB          = mkSoftEvidence(model.emission, X); 
+[logB, scale] = normalizeLogspace(logB'); 
+B             = exp(logB'); 
 [gamma, alpha, beta, logp] = hmmFwdBack(pi, A, B);
-logp = logp + sum(log(scale)); 
+logp = logp + sum((scale)); 
 end

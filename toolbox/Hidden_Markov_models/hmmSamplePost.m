@@ -9,7 +9,8 @@ softev = process_options(varargin, 'softev', []);
 initDist = model.pi;
 transmat = model.A;
 if isempty(softev)
-    softev = mkSoftEvidence(model.emission, X);
+    logB = mkSoftEvidence(model.emission, X);
+    softev = exp(logB); 
 end
 [K T] = size(softev);
 [loglik, alpha] = hmmFilter(initDist, transmat, softev);

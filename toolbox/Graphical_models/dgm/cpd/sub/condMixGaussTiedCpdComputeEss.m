@@ -13,8 +13,8 @@ function ess = condMixGaussTiedCpdComputeEss(cpd, data, gamma, B)
 [nobs, d] = size(data); 
 nmix      = cpd.nmix; 
 if nargin < 4
-    B = mkSoftEvidence(cpd, data'); 
-    B = normalize(B, 1);  % B(j, t) = p(x_t | S(t) = j)
+    logB = mkSoftEvidence(cpd, data'); 
+    B = exp(normalizeLogspace(logB')');  % B(j, t) = p(x_t | S(t) = j)
 end
 
 mu      = cpd.mu;    % d-by-nmix
