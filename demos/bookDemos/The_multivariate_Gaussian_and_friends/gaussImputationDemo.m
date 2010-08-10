@@ -15,41 +15,50 @@ Xmiss(missing) = NaN;
 
 %% Impute
 [model, LLtrace] = gaussMissingFitEm(Xmiss, 'verbose', false);
+
+if 1
+S = [Sigma zeros(d,2) model.Sigma];
+figure;imagesc(S); colorbar
+title('Sigma: truth on left, estimate on right')
+printPmtkFigure('mvnImputeSigma');
+
+M = [mu(:)'; zeros(1,d); model.mu(:)'];
+figure;imagesc(M); colorbar
+title('mu: truth on top, estimate on bottom')
+end
+
+figure; plot(LLtrace(1:3:end), 'o-', 'linewidth', 3); title('log likelihood vs iteration')
+printPmtkFigure('mvnImputeEMtrace');
+
 [XimputeEM] = gaussImpute(model, Xmiss);
 
-% oracle 
-[XimputeTruth] = gaussImpute(trueModel, Xmiss);
+[XimputeOracle] = gaussImpute(trueModel, Xmiss);
 
 
 %% Plotting
 Xmiss0 = Xmiss; Xmiss0(isnan(Xmiss0))=0;
-ndx = 1:20; % just plot first 20 rows
+ndx = 1:8; % just plot first 20 rows
+figure;
 hintonDiagram(Xmiss0(ndx,:)); title('observed data');
 printPmtkFigure('mvnImputeObs');
 
-if 0
-figure;
-imagesc(XimputeEM(ndx,:) - Xfull(ndx,:));
-colormap('gray'); colorbar
-title('imputed - truth');
-printPmtkFigure('mvnImputeDiff');
-end
 
-if 0
+
+if 1
 figure; hintonDiagram(XimputeEM(ndx,:)); title('imputation with em');
-printPmtkFigure('mvnImputeImputeEM');
+printPmtkFigure('mvnImputeEM');
 
-figure; hintonDiagram(XimputeTruth(ndx,:));
+figure; hintonDiagram(XimputeOracle(ndx,:));
 title('imputation with true params');
-printPmtkFigure('mvnImputeTruth')
+printPmtkFigure('mvnImputeOracle')
 
 figure; hintonDiagram(Xfull(ndx,:)); title('truth');
 printPmtkFigure('mvnImputeTruth');
 end
 
 % Scatter plots
+doPlot(Xmiss, Xfull, XimputeOracle, 'imputation with true params', 'mvnImputeScatterOracle')
 doPlot(Xmiss, Xfull, XimputeEM, 'imputation with em', 'mvnImputeScatterEm')
-doPlot(Xmiss, Xfull, XimputeTruth, 'imputation with true params', 'mvnImputeScatterTruth')
 
 end
 
