@@ -6,8 +6,10 @@
 
 
 c = 1;
-pas=.1;
-[X,Y] = meshgrid(-1:pas:1,-1:pas:1.1);
+%pas=0.01;
+%[X,Y] = meshgrid(-1:pas:1,-1:pas:1.1);
+range= [-1:0.01:-0.9, -0.9:0.1:-0.1, -0.1:0.01:0.1, 0.1:0.1:0.9, 0.9:0.01:1];
+[X,Y] = meshgrid(range, range);
 [styles, colors, symbols] =  plotColors; %#ok
 deltas = [0.01 0.75 1 2];
 
@@ -22,9 +24,7 @@ for i=1:length(deltas)
   cout = contour(X, Y, reshape(Z, size(X)), [0 0], styles{i}, ...
     'color', colors(i),   'linewidth', 3, 'displayname', str{i}); % 'name', str{i});
   %set(h(i), 'color', colors(i));
-  
   h(i) = plot(0, 0, [styles{i}, colors(i)], 'linewidth', 3); 
-  
 end
 legend(h, str)
 title(sprintf('penalty induced by normalGamma(%s,c) prior', '\delta'))
