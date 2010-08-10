@@ -74,5 +74,5 @@ for i=1:nmix
     Sigma(:, :, i) = randpd(d) + 2*eye(d); 
 end
 cpd.Sigma = Sigma; 
-cpd.M = normalize(rand(nstates, nmix), 2);
+cpd.M = normalize(rand(nstates, nmix), 1);
 end
