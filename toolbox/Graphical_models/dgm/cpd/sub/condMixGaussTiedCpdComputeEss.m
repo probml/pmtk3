@@ -25,8 +25,9 @@ logBmix = zeros(nobs, nmix);
 for k = 1:nmix
    logBmix(:, k) = gaussLogprob(mu(:, k), Sigma(:, :, k), data);  
 end
-
 Bmix  = exp(normalizeLogspace(logBmix)); % Bmix(t, k) =  p(x_t | M_t = k)
+% we account for the mixing weights on line 36
+
 B(B==0) = 1; 
 gamma = gamma./B'; % divide out message
 % line up dimensions
