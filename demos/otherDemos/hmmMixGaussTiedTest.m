@@ -4,12 +4,12 @@
 loadData('data45');
 data = [train4'; train5'];
 d = 13;
-nstates = 4;
-nmix    = 6; % must specify nmix
+nstates = 2;
+nmix    = 2; % must specify nmix
 
 
 
-model = hmmFit(data, nstates, 'mixGaussTied', 'verbose', true, 'piPrior', [3 2 2 2], ...
+model = hmmFit(data, nstates, 'mixGaussTied', 'verbose', true, ...
     'nRandomRestarts', 3, 'nmix', nmix);
 
 
