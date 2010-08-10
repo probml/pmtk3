@@ -1,6 +1,6 @@
 function logB = mkSoftEvidence(localCPD, X)
-%% Make a soft evidence matrix logB(j, t) = log p(X(:, t) | S(t) = j, localCPD)
-% where S(t) denotes the state of node t. 
+%% Make a soft evidence matrix logB(j, t) = log p(X(:, t), S(t) = j)
+% (unnormalized), where S(t) denotes the state of node t. 
 %
 %% Inputs:
 %
@@ -38,7 +38,6 @@ switch lower(localCPD.cpdType)
         for j=1:nstates
             logB(j, observed) = rowvec(gaussLogprob(mu(:, j), Sigma(:, :, j), Xobs'));
         end
-        
         
     case 'condmixgausstied'
         

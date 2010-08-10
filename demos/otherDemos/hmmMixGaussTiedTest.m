@@ -8,9 +8,6 @@ d = 13;
 nstates = 2;
 nmix    = 3; % must specify nmix
 
-  
-
-
 model = hmmFit(data, nstates, 'mixGaussTied', 'verbose', true, ...
     'nRandomRestarts', 3, 'nmix', nmix); 
 
