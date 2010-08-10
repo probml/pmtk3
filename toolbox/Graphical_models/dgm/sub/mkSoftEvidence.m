@@ -45,16 +45,12 @@ switch lower(localCPD.cpdType)
         Sigma   = localCPD.Sigma;
         M       = localCPD.M;  % nstates-by-nmix
         logM    = log(M); 
-        
-        
         logP = nan(nmix, seqlen); 
         for k=1:nmix
            logP(k, observed) = rowvec(gaussLogprob(mu(:, k), Sigma(:, :, k), Xobs')); 
         end
         
-        
         B = nan(nstates, seqlen); 
-        
         for j = 1:nstates
            Bj = zeros(1, seqlen); 
            for k = 1:nmix
@@ -62,7 +58,6 @@ switch lower(localCPD.cpdType)
            end
            B(j, observed) = Bj(observed); 
         end
-        B(:, observed) = normalize(B(:, observed), 1); 
         
     otherwise
         error('%s is not a recognized CPD type', localCPD.cpdType);

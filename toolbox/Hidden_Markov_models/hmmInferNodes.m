@@ -9,6 +9,7 @@ function [gamma, logp, alpha, beta, B] = hmmInferNodes(model, X)
 pi                         = model.pi;
 A                          = model.A;
 B                          = mkSoftEvidence(model.emission, X); 
+[B, scale] = normalize(B, 1); 
 [gamma, alpha, beta, logp] = hmmFwdBack(pi, A, B);
-
+logp = logp + sum(log(scale)); 
 end

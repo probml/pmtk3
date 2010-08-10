@@ -29,7 +29,7 @@ if isempty(prior)
     prior.Sigma = 0.1*eye(d);
     prior.k     = 0.01;
     prior.dof   = d + 1;
-    prior.pseudoCounts = ones(size(M));  
+    prior.pseudoCounts = 2*ones(size(M));  
 end
 
 if isvector(Sigma)
@@ -48,7 +48,6 @@ CPD.logPriorFn = @logPriorFn;
 CPD.rndInitFn  = @rndInit;
 end
 
-
 function logp = logPriorFn(cpd)
 %% log prior
 prior = cpd.prior; 
@@ -60,6 +59,7 @@ if ~isempty(prior)&& isstruct(prior)
     for k = 1:nmix
         logp = logp + gaussInvWishartLogprob(prior, mu(:, k), Sigma(:, :, k));
     end
+    logp = logp + log(cpd.M(:)+eps)'*(prior.pseudoCounts(:)-1);
 end
 end
 
