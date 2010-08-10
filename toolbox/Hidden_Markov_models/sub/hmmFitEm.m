@@ -108,9 +108,9 @@ if isempty(model.emission) || isempty(model.pi) || isempty(model.A)
         mixModel = mixGaussFit(stackedData, nmix, 'verbose', false, 'maxIter', 10);
         if isempty(model.emission)
             mu = mixModel.mu;
-            Sigma = mixModel.Sigma; 
+            Sigma = bsxfun(@plus, eye(d), mixModel.Sigma); 
             M = repmat(mixModel.mixweight, nstates, 1); 
-            M = normalize(M + rand(size(M)), 2); %break symmetry
+            M = normalize(M + rand(size(M)), 1); %break symmetry
             model.emission = condMixGaussTiedCpdCreate(mu, Sigma, M); 
         end
         model = rndInitPiA(model);
@@ -123,7 +123,7 @@ if isempty(model.emission) || isempty(model.pi) || isempty(model.A)
             mu(:, k)       = colvec(mean(XX));
             Sigma(:, :, k) = cov(XX);
         end
-        M = normalize(rand(nstates, nmix), 2);
+        M = normalize(rand(nstates, nmix), 1);
         model.emission = condMixGaussTiedCpdCreate(mu, Sigma, M);
         model = rndInitPiA(model);
         

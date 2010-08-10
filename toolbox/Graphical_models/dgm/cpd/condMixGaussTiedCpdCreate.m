@@ -11,7 +11,7 @@ function CPD = condMixGaussTiedCpdCreate(mu, Sigma, M, varargin)
 % mu is a matrix of size d-by-nmix
 % Sigma is of size d-by-d-by-nmix
 % M is a matrix of size nstates-by-nmix, where nstates is the number of
-% states of the parent. Each *row* of M sums to one.
+% states of the parent. 
 %
 % 'prior' is a Gauss-inverseWishart distribution, namely, a struct with
 % fields  mu, Sigma, dof, k. It also stores pseudoCounts, the prior for M,

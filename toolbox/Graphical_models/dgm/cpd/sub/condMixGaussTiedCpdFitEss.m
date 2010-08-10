@@ -23,9 +23,9 @@ else
 end
 %%
 if doMap
-    cpd.M = normalize(Wjk + pseudoCounts - 1, 2);
+    cpd.M = normalize(Wjk + pseudoCounts - 1, 1);
 else
-    cpd.M = normalize(Wjk, 2);
+    cpd.M = normalize(Wjk, 1);
 end
 %%
 Rk(Rk == 0) = 1; 
