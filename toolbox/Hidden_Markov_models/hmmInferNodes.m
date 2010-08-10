@@ -12,5 +12,5 @@ logB          = mkSoftEvidence(model.emission, X);
 [logB, scale] = normalizeLogspace(logB'); 
 B             = exp(logB'); 
 [gamma, alpha, beta, logp] = hmmFwdBack(pi, A, B);
-logp = logp + sum((scale)); 
+logp = logp + sum(scale); 
 end
