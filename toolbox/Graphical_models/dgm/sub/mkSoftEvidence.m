@@ -62,7 +62,7 @@ switch lower(localCPD.cpdType)
            end
            B(j, observed) = Bj(observed); 
         end
-        B = normalize(B, 1); 
+        B(:, observed) = normalize(B(:, observed), 1); 
         
     otherwise
         error('%s is not a recognized CPD type', localCPD.cpdType);
