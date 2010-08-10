@@ -20,14 +20,14 @@ end
 mu      = cpd.mu;    % d-by-nmix
 Sigma   = cpd.Sigma; % d-by-d-nmix
 M       = cpd.M;     % nstates-by-nmix
-logMsum = log(normalize(sum(M, 1))); % 1-by-nmix
+
 logBmix = zeros(nobs, nmix); 
 for k = 1:nmix
-   logBmix(:, k) = gaussLogprob(mu(:, k), Sigma(:, :, k), data) + logMsum(k);  
+   logBmix(:, k) = gaussLogprob(mu(:, k), Sigma(:, :, k), data);  
 end
 
-
 Bmix  = exp(normalizeLogspace(logBmix)); % Bmix(t, k) =  p(x_t | M_t = k)
+B(B==0) = 1; 
 gamma = gamma./B'; % divide out message
 % line up dimensions
 Mperm     = permute(M, [3, 1, 2]);     % Mperm is    1-states-by-nmix
