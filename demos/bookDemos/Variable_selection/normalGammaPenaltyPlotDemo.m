@@ -6,10 +6,11 @@
 
 
 c = 1;
-pas=.02;
-[X,Y]=meshgrid(-1:pas:1,-1:pas:1.1);
+pas=.1;
+[X,Y] = meshgrid(-1:pas:1,-1:pas:1.1);
 [styles, colors, symbols] =  plotColors; %#ok
 deltas = [0.01 0.75 1 2];
+
 
 if 1
 figure; hold on
@@ -18,11 +19,14 @@ for i=1:length(deltas)
    pen = @(X) normalGammaNeglogpdf(X, delta, c);
   Z=pen(X(:)) + pen(Y(:)) - pen(1) - pen(pas);
   str{i} = sprintf('%s=%3.2f, c=1', '\delta', delta);
-  [cout, h(i)]=contour(X,Y,reshape(Z, size(X)),[0 0], 'linestyle', styles{i}', ...
-    'color', colors(i),   'linewidth', 3); % 'name', str{i});
+  cout = contour(X, Y, reshape(Z, size(X)), [0 0], styles{i}, ...
+    'color', colors(i),   'linewidth', 3, 'displayname', str{i}); % 'name', str{i});
   %set(h(i), 'color', colors(i));
+  
+  h(i) = plot(0, 0, [styles{i}, colors(i)], 'linewidth', 3); 
+  
 end
-legend(str)
+legend(h, str)
 title(sprintf('penalty induced by normalGamma(%s,c) prior', '\delta'))
 printPmtkFigure('normalGammaPenalty')
 end
