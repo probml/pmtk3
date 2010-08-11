@@ -79,7 +79,7 @@ if nLocalCpds > 0
         eclass         = findEquivClass(localCPDpointers, k);               % combine data cases and weights from the same equivalence classes
         w              = localWeights{k}; 
         le             = localEv(:, :, eclass);
-        missing        = colvec(squeeze((any(isnan(le), 2))));
+        missing        = colvec(squeeze((any(isnan(le), 2)))');
         w(missing, :)  = []; 
         localData      = cell2mat(localEv2HmmObs(le)')'; % localData is now ncases*numel(eclass)-by-d in correspondence with localWeights
         emissionEss{k} = localCPD.essFn(localCPD, localData, w); 
