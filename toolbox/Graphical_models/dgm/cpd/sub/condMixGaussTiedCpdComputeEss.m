@@ -16,9 +16,9 @@ if nargin < 4
     logB = mkSoftEvidence(cpd, data'); 
     B    = exp(normalizeLogspace(logB')');  % B(j, t) = p(x_t | S(t) = j)
 end
-mu      = cpd.mu;    % d-by-nmix
-Sigma   = cpd.Sigma; % d-by-d-nmix
-M       = cpd.M;     % nstates-by-nmix
+mu      = cpd.mu;    % [d nmix] 
+Sigma   = cpd.Sigma; % [d d nmix]
+M       = cpd.M;     % [nstates nmix]
 
 logBmix = zeros(nobs, nmix); 
 for k = 1:nmix
@@ -36,10 +36,10 @@ BmixPerm  = permute(Bmix, [1, 3, 2]);  % BmixPerm is [nobs    1    nmix]
 gamma2    = msxfun(@times, gamma, Mperm, BmixPerm);  
 % gamma2(t, j, k) = p(St = j, Mt = k | x_{1:T} )
 
-Wjk  = squeeze(sum(gamma2, 1));  % nstates-by-nmix
-Rik  = squeeze(sum(gamma2, 2));  % nobs-by-nmix
+Wjk  = squeeze(sum(gamma2, 1));  % [nstates nmix]
+Rik  = squeeze(sum(gamma2, 2));  % [nobs    nmix]
 Rk   = sum(Rik, 1); 
-X    = data;                    % nobs-by-d
+X    = data;                     % [nobs d]
 XX   = zeros(d, d, nmix);
 xbar = zeros(d, nmix);
 for k = 1:nmix

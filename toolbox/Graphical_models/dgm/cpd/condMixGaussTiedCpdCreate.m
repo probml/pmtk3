@@ -8,10 +8,13 @@ function CPD = condMixGaussTiedCpdCreate(mu, Sigma, M, varargin)
 %
 %% Inputs
 %
-% mu is a matrix of size d-by-nmix
+% mu is a matrix of size d-by-nmix 
+%
 % Sigma is of size d-by-d-by-nmix
+%
 % M is a matrix of size nstates-by-nmix, where nstates is the number of
-% states of the parent. 
+% states of the parent: M(j, k) = p(Mt = k | St = j). Each column sums to
+% one. 
 %
 % 'prior' is a Gauss-inverseWishart distribution, namely, a struct with
 % fields  mu, Sigma, dof, k. It also stores pseudoCounts, the prior for M,
@@ -20,7 +23,6 @@ function CPD = condMixGaussTiedCpdCreate(mu, Sigma, M, varargin)
 % Set 'prior' to 'none' to do mle.
 %
 %%
-
 prior = process_options(varargin, 'prior', []);
 [nstates, nmix] = size(M);
 d = size(Sigma, 1);
@@ -41,7 +43,7 @@ end
 CPD = structure(mu, Sigma, M, nmix, nstates, d, prior);
 CPD.cpdType    = 'condMixGaussTied';
 %% 'methods'
-%CPD.fitFn
+CPD.fitFn      = @condMixGaussTiedCpdFit;
 CPD.fitFnEss   = @condMixGaussTiedCpdFitEss;
 CPD.essFn      = @condMixGaussTiedCpdComputeEss;
 CPD.logPriorFn = @logPriorFn; 
@@ -75,4 +77,8 @@ for i=1:nmix
 end
 cpd.Sigma = Sigma; 
 cpd.M = normalize(rand(nstates, nmix), 1);
+end
+
+function cpd = condMixGaussTiedCpdFit(cpd, Z, Y) 
+error('Fitting a condMixGaussTiedCpd given fully observed data is not supported'); 
 end

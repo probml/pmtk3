@@ -7,8 +7,8 @@ function [model, loglikHist] = hmmFit(data, nstates, type, varargin)
 %
 % nstates      - the number of hidden states
 %
-% type         - as string, either 'gauss', or 'discrete' depending on the
-%                desired emission (local) distribution.
+% type         - as string, either 'gauss', 'mixGaussTied' or 'discrete'
+%                depending on the desired emission (local) distribution.
 %
 % By default, we lightly regularize all parameters, so we are 
 % doing MAP estimation, not MLE. You can change the priors 
