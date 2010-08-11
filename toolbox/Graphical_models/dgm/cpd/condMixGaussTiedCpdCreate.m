@@ -79,6 +79,6 @@ cpd.Sigma = Sigma;
 cpd.M = normalize(rand(nstates, nmix), 1);
 end
 
-function cpd = condMixGaussTiedCpdFit(cpd, Z, Y) 
+function cpd = condMixGaussTiedCpdFit(cpd, Z, Y) % or perhaps (cpd, Z, M, Y) 
 error('Fitting a condMixGaussTiedCpd given fully observed data is not yet supported'); 
 end

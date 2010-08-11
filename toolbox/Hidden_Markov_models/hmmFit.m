@@ -5,10 +5,20 @@ function [model, loglikHist] = hmmFit(data, nstates, type, varargin)
 % data         - a cell array of observations; each observation j is
 %                d-by-seqLength(j), (where d is always 1 if type = 'discrete')
 %
+%                Note, unlike hmmFit, dgmFit does not use cell arrays,
+%                instead it takes an NaN-padded matrix of size
+%                nobs-by-d-max(seqLength). You can use the localEv2HmmObs
+%                and hmmObs2LocalEv functions to convert between these
+%                two formats.
+%
 % nstates      - the number of hidden states
 %
 % type         - as string, either 'gauss', 'mixGaussTied' or 'discrete'
 %                depending on the desired emission (local) distribution.
+%
+%                See condMixGaussTiedCpdCreate for more details on the
+%                'mixGaussTied' option.
+%
 %
 % By default, we lightly regularize all parameters, so we are 
 % doing MAP estimation, not MLE. You can change the priors 
