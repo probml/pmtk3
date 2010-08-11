@@ -25,3 +25,16 @@ logprobFn = @hmmLogprob;
 nerrors = sum(yhat ~= ytest);
 display(nerrors);
 
+
+
+%% Do the same thing with a tied mixture of Gaussians observation model
+nmix    = 3; 
+fitArgs = [fitArgs, {'nmix', nmix}];
+fitFn   = @(X)hmmFit(X, nstates, 'mixGaussTied', fitArgs{:}); 
+model = generativeClassifierFit(fitFn, Xtrain, ytrain); 
+[yhat, post] = generativeClassifierPredict(logprobFn, model, Xtest);
+%%
+nerrors = sum(yhat ~= ytest);
+display(nerrors);
+
+
