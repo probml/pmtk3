@@ -26,7 +26,6 @@ nerrors = sum(yhat ~= ytest);
 display(nerrors);
 
 
-
 %% Do the same thing with a tied mixture of Gaussians observation model
 nmix    = 3; 
 fitArgs = [fitArgs, {'nmix', nmix}];
