@@ -34,6 +34,9 @@ switch lower(model.type)
                 observed{i}(:, t) = colvec(gaussSample(mu(:, k), Sigma(:, :, k), 1));
             end
         end
+        
+    case mixGaussTied
+        error('not yet implemented'); 
     otherwise
         error('%s is not a valid hmm type', model.type);
 end
