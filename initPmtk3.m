@@ -111,7 +111,7 @@ end
 % We use the existence of the 'mexDone.txt' as a marker so that we only
 % check for uncompiled mex files the first time this is run. 
 if matlab
-    alreadyIncluded = {'mexw32'}; % compiled files are already included for these types
+    alreadyIncluded = {'mexw32', 'mexglx'}; % compiled files are already included for these types
     checkFile =  fullfile(pmtk3Root(), 'localUtil', 'mexDone.txt');
     if ~ismember(mexext(), alreadyIncluded) && ~exist(checkFile, 'file')
         installLightspeedPMTK();
