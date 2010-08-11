@@ -49,11 +49,13 @@ end
 function logp = logPriorFn(cpd)
 %% calculate the logprior
 logp = 0;
-nstates = cpd.nstates; 
 prior = cpd.prior; 
+if ~isempty(prior) && isstruct(prior)
+nstates = cpd.nstates; 
 mu = cpd.mu;
 Sigma = cpd.Sigma; 
 for k = 1:nstates
     logp = logp + gaussInvWishartLogprob(prior, mu(:, k), Sigma(:, :, k));
+end
 end
 end

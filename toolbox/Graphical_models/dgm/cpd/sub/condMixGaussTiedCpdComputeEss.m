@@ -9,7 +9,6 @@ function ess = condMixGaussTiedCpdComputeEss(cpd, data, gamma, B)
 %
 % See condMixGaussTiedCpdCreate
 %%
-
 [nobs, d] = size(data); 
 nmix      = cpd.nmix; 
 if nargin < 4
@@ -29,7 +28,8 @@ Bmix  = exp(normalizeLogspace(logBmix));
 
 B(B==0) = 1; 
 gamma = gamma./B'; % divide out message
-                                           % line up dimensions
+
+                                            % line up dimensions
                                        % gamma    is [nobs nstates  1  ]
 Mperm     = permute(M, [3, 1, 2]);     % Mperm    is [1    nstates nmix]
 BmixPerm  = permute(Bmix, [1, 3, 2]);  % BmixPerm is [nobs    1    nmix]

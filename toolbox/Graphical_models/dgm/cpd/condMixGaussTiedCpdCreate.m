@@ -13,7 +13,7 @@ function CPD = condMixGaussTiedCpdCreate(mu, Sigma, M, varargin)
 % Sigma is of size d-by-d-by-nmix
 %
 % M is a matrix of size nstates-by-nmix, where nstates is the number of
-% states of the parent: M(j, k) = p(Mt = k | St = j). Each column sums to
+% states of the parent: M(j, k) = p(Mt = k | St = j). Each *column* sums to
 % one. 
 %
 % 'prior' is a Gauss-inverseWishart distribution, namely, a struct with
