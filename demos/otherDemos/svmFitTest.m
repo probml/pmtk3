@@ -10,11 +10,13 @@ model = svmFit(Xtrain, ytrain);
 yhat  = svmPredict(model, Xtest);
 errorRateGen = mean(yhat ~= ytest);
 
-tic
-model = svmFit(Xtrain, ytrain, 'fitFn', @svmlightFit);
-yhat  = svmPredict(model, Xtest);
-errorRateSvmLight = mean(yhat ~= ytest);
-timeSvmLight = toc;
+if ispc % svmlight only works on windows
+    tic
+    model = svmFit(Xtrain, ytrain, 'fitFn', @svmlightFit);
+    yhat  = svmPredict(model, Xtest);
+    errorRateSvmLight = mean(yhat ~= ytest);
+    timeSvmLight = toc;
+end
 
 tic
 model = svmFit(Xtrain, ytrain, 'fitFn', @svmQPclassifFit);
@@ -29,7 +31,9 @@ errorRateSvmLib = mean(yhat ~= ytest);
 timeSvmLib=toc;
 
 fprintf('method \t error \t time \n');
-fprintf('svmLight \t %5.3f \t %5.3f\n', errorRateSvmLight, timeSvmLight);
+if ispc
+    fprintf('svmLight \t %5.3f \t %5.3f\n', errorRateSvmLight, timeSvmLight);
+end
 fprintf('svmQp \t %5.3f \t %5.3f\n', errorRateQp, timeQp);
 fprintf('svmLib \t %5.3f \t %5.3f\n', errorRateSvmLib, timeSvmLib);
 
