@@ -8,7 +8,7 @@ setSeed(0);
 
 if imagesToolboxInstalled
     sigma  = 1; % noise level
-    data   = loadData('lettera');
+    data   = loadData('letterA');
     img    = imresize(data.A, [8, 8], 'cubic');
     [M, N] = size(img);
     img    = double(img);

@@ -8,7 +8,7 @@ function isingImageDenoiseDemo()
 % while the background is made of -1's.
 setSeed(0);
 sigma  = 2; % noise level
-data   = loadData('lettera');
+data   = loadData('letterA');
 img    = data.A;
 [M, N] = size(img); %#ok
 img    = double(img);
