@@ -1,7 +1,10 @@
 %% Demonstrate the use of a Hopfield network for associative memory.
-% Requires the neural network toolbox
+% Requires the neural network and image processing toolboxes
+%PMTKneedsImagesToolbox
+%PMTKneedsNnetToolbox
 %PMTKslow
 %%
+requireImageToolbox
 loadData('binaryImages');     % 7 binary images, each 150x150
 newsize   = 30;          % new size 30x30
 nimages   = 7;

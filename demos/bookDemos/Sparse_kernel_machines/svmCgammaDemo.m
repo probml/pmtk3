@@ -18,7 +18,7 @@ cvopts = {5, 'useSErule', false, 'doPlot', true, 'plotArgs', plotArgs}; %{nfolds
 for i=1:numel(gammas)
     gamma = gammas(i); 
     svmFit(X, y, 'kernelParam', gamma, 'C', Crange, ...
-        'cvOptions', cvopts, 'fitFn', @svmlightFit);
+        'cvOptions', cvopts);
     title(['\gamma', sprintf(' = %.1f', gamma)]); 
     xlabel('C'); ylabel('cv error');
     printPmtkFigure(sprintf('svmCvGamma%d', 10*gamma));
@@ -27,8 +27,7 @@ end
 C = logspace(-1, 3.5, 10); 
 gammas = logspace(-1, 1, 10);
 [model, bestParams, CVmu, CVse] = svmFit...
-    (X, y, 'kernelParam', gammas, 'C', C, 'cvOptions', {5, 'useSErule', false, 'doPlot', true},...
-    'fitFn', @svmlightFit);
+    (X, y, 'kernelParam', gammas, 'C', C, 'cvOptions', {5, 'useSErule', false, 'doPlot', true});
 xlabel('C');
 ylabel('\gamma');
 set(gca, 'xscale', 'log', 'yscale', 'log'); 

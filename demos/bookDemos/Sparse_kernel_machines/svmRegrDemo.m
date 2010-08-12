@@ -25,7 +25,7 @@ Xtest = (-10:.1:10)';
 Xtest = mkUnitVariance(centerCols(Xtest)); 
 Ktest = kernelFn(Xtest, X);
 preproc.kernelFn = @(X1, X2)kernelRbfSigma(X1, X2, rbfScale);
-for method=1:4
+for method=1:3
     switch method
         case 1,
             
@@ -56,7 +56,7 @@ for method=1:4
             lossStr = sprintf('SVM(%s=%6.4f)', '\epsilon', epsilon);
             fname = 'SVMQP';
             yhat = svmPredict(model, Xtest);
-        case 4
+        case 4 % svmlight only works on windows
             C = 1/lambda;
             gamma = 1/(2*rbfScale^2);
             model = svmFit(X, y, 'C', C, 'kernel', 'rbf', ...
