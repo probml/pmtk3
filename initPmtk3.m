@@ -82,6 +82,7 @@ if matlab && ~verLessThan('matlab', '7.6.0')
        addtosystempath(gvizDir);  
     end
 end
+%%
 % add libdai
 source = getConfigValue('PMTKlibdaiPath'); 
 if exist(source, 'dir')
@@ -107,7 +108,9 @@ if exist(source, 'dir')
     addpath(genpathPMTK(source));
 end
 %% 
-if false % automated compilation does not work on all systems
+if false % automated compilation does not work on all systems since the
+         % Matlab versions for these OSs do not come with a built in
+         % compiler, e.g. 64bit windows.
     % Compile mex files
     % We use the existence of the 'mexDone.txt' as a marker so that we only
     % check for uncompiled mex files the first time this is run.

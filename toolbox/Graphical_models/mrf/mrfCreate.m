@@ -35,7 +35,7 @@ function mrf = mrfCreate(G, varargin)
 % 'localCPDpointers'    - if specified, localCPDs{localCPDpointers(j)} is
 %                        used as the localCPD whose parent is node j.
 %
-% 'infEngine'          - one of {'varelim', 'jtree', 'bp', 'jtreeLibdai'}
+% 'infEngine'          - one of {'varelim', 'jtree', 'bp', 'jtreeLibdai', 'libdaibp'}
 %
 % 'infEngArgs'          - optional inf engine specific args - a cell array
 %
