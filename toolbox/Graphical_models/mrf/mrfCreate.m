@@ -130,7 +130,8 @@ end
 %% package
 mrf = structure(G, cliqueGraph, localCPDs, localCPDpointers, ...
     localCPDpointers, infEngine, nnodes, edges, nstates, ...
-    nodePots, nodePotPointers, edgePots, edgePotPointers, infEngArgs); 
+    nodePots, nodePotPointers, edgePots, edgePotPointers, infEngArgs, ...
+    nodeFactors, edgeFactors); 
 
 mrf.isdirected = false;
 mrf.modelType = 'mrf';

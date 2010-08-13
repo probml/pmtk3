@@ -21,7 +21,7 @@ end
 function [ess, loglik] = estep(mrf, data, localEv)
 %% Compute the expected sufficient statistics
 
-nodePots         = mrf.nodePots;
+nodeFactors      = mrf.nodeFactors;
 nodePotPointers  = mrf.nodePotPointers; 
 localCPDpointers = mrf.localCPDpointers;
 nnodes           = mrf.nnodes;
@@ -34,7 +34,7 @@ localWeights     = cell(nLocalEqClasses, 1);
 for k = 1:nLocalEqClasses % preallocate localWeights
    eqClass         = localEqClasses{k}; 
    N               = nLocalEvCases*numel(eqClass); 
-   ns              = nodePots{nodePotPointers(eqClass(1))}.sizes(end);
+   ns              = nodeFactors{nodePotPointers(eqClass(1))}.sizes(end);
    localWeights{k} = zeros(N, ns);   
 end
 lwCounter = ones(1, nLocalEqClasses); 
@@ -42,7 +42,9 @@ loglik    = 0;
 for i = 1:ncases
     args = {'clamped', [], 'localev', []}; 
     if i <= nDataCases   ,  args{2} = data(i, :);                       end
-    if i <= nLocalEvCases,  args{4} = squeezeFirst(localEv(i, :, :));   end
+    if i <= nLocalEvCases,  
+        args{4} = squeezeFirst(localEv(i, :, :));  
+    end
     [pmarg, llobs] = mrfInferNodes(mrf, args{:}); 
     loglik                = loglik + llobs; 
     if nLocalEvCases
@@ -77,6 +79,9 @@ if nLocalCpds > 0
         missing        = colvec(squeeze((any(isnan(le), 2)))');
         w(missing, :)  = []; 
         localData      = cell2mat(localEv2HmmObs(le)')'; % localData is now ncases*numel(eclass)-by-d in correspondence with localWeights
+        if isrowvec(localData)
+            localData = localData';
+        end
         emissionEss{k} = localCPD.essFn(localCPD, localData, w); 
     end
 end
