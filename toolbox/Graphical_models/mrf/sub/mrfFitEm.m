@@ -23,7 +23,6 @@ function [ess, loglik] = estep(mrf, data, localEv)
 
 nodePots         = mrf.nodePots;
 nodePotPointers  = mrf.nodePotPointers; 
-CPDpointers      = mrf.CPDpointers;
 localCPDpointers = mrf.localCPDpointers;
 nnodes           = mrf.nnodes;
 localEqClasses   = computeEquivClasses(localCPDpointers);
