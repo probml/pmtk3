@@ -216,7 +216,11 @@ function [ess, logprior] = estepDiscreteEmission(model, ess, stackedData)
 % to one in the maximization step.
 logprior       = log(model.emission.T(:)+eps)'*(model.emissionPrior(:)-1);
 weights        = ess.weights;
-S              = bsxfun(@eq, stackedData(:), sparse(1:model.nObsStates));
+if isOctave
+    S = bsxfun(@eq, stackedData(:), 1:model.nObsStates);
+else
+    S = bsxfun(@eq, stackedData(:), sparse(1:model.nObsStates));
+end
 ess.dataCounts = weights'*S; % dataCounts is nstates-by-nObsStates
 ess.wsum       = sum(weights, 1)';
 end

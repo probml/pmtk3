@@ -84,7 +84,7 @@ switch lower(engine)
         
     case 'libdaibp'
         
-        assert(isWeaklyConnected(cg.G)); % libdai segfaults on disconnected graphs
+        %assert(isWeaklyConnected(cg.G)); % libdai segfaults on disconnected graphs
         doSlice = false;     % libdai often segfaults when slicing
         factors = addEvidenceToFactors(cg.Tfac, clamped, doSlice);
         factors = [factors(:); localFacs(:)];
