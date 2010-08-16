@@ -10,6 +10,12 @@ if nargin==0,
     return
 end
 
+if isempty(strfind(matlabroot, 'MATLAB')) % octave
+    p = genpathOctave(d); % faster version for Octave
+   return; 
+end
+    
+
 % initialise variables
 methodsep = '@';  % qualifier for overloaded method directories
 p = '';           % path to be returned
@@ -43,4 +49,31 @@ for i=1:length(dirs)
          p = [p genpathPMTK(fullfile(d, dirname))]; %#ok recursive calling of this function.
    end
 end
+end
+
+
+function p = genpathOctave(d)
+%% This version is faster in Octave. 
+
+fullp = genpath(d); 
+
+
+[start, finish] = regexp(fullp, ';');
+if isempty(start)
+    tokens = {fullp};
+else
+    tokens = cell(numel(start+1), 1);
+    tokens{1} = fullp(1:start(1)-1);
+    start = [start, length(fullp)+1];
+    for i=1:numel(finish)
+        tokens{i+1} = fullp(finish(i)+1:start(i+1)-1);
+    end
+end
+tokens(cellfun(@(c)isempty(c), tokens)) = []; 
+ndx = cellfun(@(c)~isempty(c), strfind(tokens, '.svn'));
+tokens(ndx) = [];
+tokens = cellfun(@(t)[t, ';'], tokens, 'uniformoutput', false); 
+p = [tokens{:}]; 
+
+
 end
