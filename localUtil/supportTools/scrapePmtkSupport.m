@@ -5,7 +5,7 @@ excludedDirs = tokenize(getConfigValue('PMTKmetaDirs'), ',')';
 url = 'http://pmtksupport.googlecode.com/svn/trunk/';
 
 raw = tokenize(urlread(url), '\n');
-packages = filterCell(raw, @(c)startswith(c, '<li>'));
+packages = filterCell(raw, @(c)startswith(strtrim(c), '<li>'));
 packages(1) = []; % remove '..'
 start = '<li><a href="';
 packages = cellfuncell(@(c)c(numel(start)+1:end), packages); 
