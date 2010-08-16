@@ -1,6 +1,8 @@
-function p = genpathPMTK(d)
+function p = genpathPMTK(d, isMatlab)
 % Like built-in genpath, but omits directories unwanted directories:
 % e.g. .svn, cvs, private, deprecated, +package
+% For best performance, optionally specify whether this is Matlab, (as
+% opposed to Octave). 
 %%
 if nargin==0,
     p = genpath(fullfile(matlabroot, 'toolbox'));
@@ -10,12 +12,11 @@ if nargin==0,
     return
 end
 
-if isempty(strfind(upper(matlabroot), 'MATLAB')) % octave
+if nargin > 1 && ~isMatlab %isempty(strfind(upper(matlabroot), 'MATLAB')) % octave
     p = genpathOctave(d); % faster version for Octave
    return; 
 end
     
-
 % initialise variables
 methodsep = '@';  % qualifier for overloaded method directories
 p = '';           % path to be returned
@@ -73,6 +74,8 @@ ndx = cellfun(@(c)~isempty(c), strfind(tokens, '.svn'));
 tokens(ndx) = [];
 tokens = cellfun(@(t)[t, ';'], tokens, 'uniformoutput', false); 
 p = [tokens{:}]; 
-
+if isempty(p)
+    p = '';
+end
 
 end
