@@ -10,7 +10,7 @@ if nargin==0,
     return
 end
 
-if isempty(strfind(matlabroot, 'MATLAB')) % octave
+if isempty(strfind(upper(matlabroot), 'MATLAB')) % octave
     p = genpathOctave(d); % faster version for Octave
    return; 
 end
@@ -53,10 +53,9 @@ end
 
 
 function p = genpathOctave(d)
-%% This version is faster in Octave. 
+%% This version is faster in Octave
 
 fullp = genpath(d); 
-
 
 [start, finish] = regexp(fullp, ';');
 if isempty(start)
