@@ -58,7 +58,7 @@ function p = genpathOctave(d)
 
 fullp = genpath(d); 
 
-[start, finish] = regexp(fullp, ';');
+[start, finish] = regexp(fullp, pathsep);
 if isempty(start)
     tokens = {fullp};
 else
@@ -72,7 +72,7 @@ end
 tokens(cellfun(@(c)isempty(c), tokens)) = []; 
 ndx = cellfun(@(c)~isempty(c), strfind(tokens, '.svn'));
 tokens(ndx) = [];
-tokens = cellfun(@(t)[t, ';'], tokens, 'uniformoutput', false); 
+tokens = cellfun(@(t)[t, pathsep], tokens, 'uniformoutput', false); 
 p = [tokens{:}]; 
 if isempty(p)
     p = '';
