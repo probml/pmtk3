@@ -1,6 +1,7 @@
 %% Fit the local CPDs of an mrf given an image / noisy image pair
-%
+%PMTKslow
 %%
+setSeed(2); 
 cmap = 'bone';
 imgs = loadData('tinyImages'); 
 img = double(imgs.matlabIconGray);
@@ -24,9 +25,12 @@ title('noisy copy (yTrain)');
 figure; imagesc(yTest); 
 colormap(cmap); 
 title('noisy copy (yTest)');
-localCPD = localCPD.fitFn(localCPD, img(:), yTrain(:));
 
-edgePot = exp(bsxfun(@(a, b)-abs(a-b), 1:nstates, (1:nstates)')); % will be replicated
+%localCPD = localCPD.fitFn(localCPD, img(:), yTrain(:));
+% Note, with fully observed data, we can always just fit the localCPD
+% directly, but we are testing mrfFitEm
+
+edgePot = exp(bsxfun(@(a, b)-abs(a-b), 1:nstates, (1:nstates)')./2); % will be replicated
 
 figure; imagesc(edgePot); colormap('default'); title('tied edge potential');
 nodePot = normalize(rand(1, nstates));
@@ -36,6 +40,10 @@ opts = {'TRWBP', '[updates=SEQFIX,tol=1e-9,maxiter=10000,logdomain=0,nrtrees=0]'
 
 mrf     = mrfCreate(G, 'nodePots', nodePot, 'edgePots', edgePot,...
     'localCPDs', localCPD, 'infEngine', infEngine, 'infEngArgs', opts);
+
+le = insertSingleton(rowvec(yTest), 1); 
+mrf = mrfFitEm(mrf, rowvec(img), 'localev', le, 'verbose', true);
+
 
 nodes = mrfInferNodes(mrf, 'localev', rowvec(yTest)); 
 maxMarginals = maxidx(tfMarg2Mat(nodes), [], 1);

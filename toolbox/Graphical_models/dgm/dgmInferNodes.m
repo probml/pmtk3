@@ -33,9 +33,13 @@ function [nodeBels, logZ] = dgmInferNodes(dgm, varargin)
 %              dgmLogprob)
 %
 %%
-[clamped, args]  = process_options(varargin, 'clamped', []); %#ok
+[clamped, doSlice, args]  = process_options(varargin, 'clamped', [], 'doSlice', false); %#ok
 visVars          = find(clamped);
 hidVars          = setdiffPMTK(1:dgm.nnodes, visVars);
-[nodeBels, logZ] = dgmInferQuery(dgm, num2cell(hidVars), varargin{:});
-nodeBels         = insertClampedBels(nodeBels, visVars, hidVars);
+[nodeBels, logZ] = dgmInferQuery(dgm, num2cell(hidVars), 'doSlice', doSlice, varargin{:});
+if doSlice
+    nodeBels  = insertUnitBels(nodeBels, visVars, hidVars);
+else
+    nodeBels = insertClampedBels(nodeBels, visVars, hidVars, dgm.nstates, clamped);
+end
 end

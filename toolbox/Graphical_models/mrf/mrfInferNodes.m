@@ -6,7 +6,8 @@ function [nodeBels, logZ, edgeBels] = mrfInferNodes(mrf, varargin)
 % Optional named args are the same as for dgmInferNodes
 %
 %%
-[clamped, args]   = process_options(varargin, 'clamped', []); %#ok
+[clamped, doSlice, args]   = process_options(varargin, 'clamped', [], ...
+    'doSlice', false); %#ok
 visVars           = find(clamped);
 hidVars           = setdiffPMTK(1:mrf.nnodes, visVars);
 edgeBelsRequested = nargout > 2;
@@ -15,7 +16,7 @@ query = num2cell(hidVars);
 if edgeBelsRequested
     query = [query(:); mrf.edges(:)]; 
 end
-[bels, logZ] = mrfInferQuery(mrf, query, varargin{:});
+[bels, logZ] = mrfInferQuery(mrf, query, 'doSlice', doSlice, varargin{:});
 if edgeBelsRequested
     nhid     = numel(hidVars);
     nodeBels = bels(1:nhid);
@@ -23,5 +24,9 @@ if edgeBelsRequested
 else
     nodeBels = bels;
 end
-nodeBels = insertClampedBels(nodeBels, visVars, hidVars);
+if doSlice
+    nodeBels = insertUnitBels(nodeBels, visVars, hidVars);
+else
+    nodeBels = insertClampedBels(nodeBels, visVars, hidVars, mrf.nstates, clamped); 
+end
 end

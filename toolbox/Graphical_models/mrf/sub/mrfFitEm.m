@@ -11,7 +11,6 @@ end
 
 function mrf = init(mrf, data, restartNum)
 %% Initialize
-if strcmpi(mrf.infEngine, 'jtree'); mrf = dgmRebuildJtree(mrf);  end
 % use current params for the first run
 if restartNum > 1
     mrf.localCPDs = cellfuncell(@(c)c.rndInitFn(c), mrf.localCPDs); 
@@ -45,6 +44,7 @@ for i = 1:ncases
     if i <= nLocalEvCases,  
         args{4} = squeezeFirst(localEv(i, :, :));  
     end
+    args = [args, {'doSlice', false}]; 
     [pmarg, llobs] = mrfInferNodes(mrf, args{:}); 
     loglik                = loglik + llobs; 
     if nLocalEvCases
@@ -96,5 +96,4 @@ for i = 1:numel(localCPDs)
     localCPDs{i} = localCPD.fitFnEss(localCPD, emissionEss{i});
 end
 mrf.localCPDs = localCPDs;
-if strcmpi(mrf.infEngine, 'jtree'); mrf = dgmRebuildJtree(mrf);  end
 end

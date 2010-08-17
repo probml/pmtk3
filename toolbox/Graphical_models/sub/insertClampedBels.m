@@ -1,7 +1,8 @@
-function padded = insertClampedBels(nodeBels, visVars, hidVars)
-% We insert unit factors for the clamped vars to maintain a one-to-one
-% corresponence between cell array position and domain, and to return
-% consistent results regardless of the inference method.
+function padded = insertClampedBels(nodeBels, visVars, hidVars, nstates, clamped)
+%% Insert clamped belief nodes. 
+% Similar to insertUnitBels, but we do not slice the observed node down to 
+% a unit factor, we just clamp it to its observed value. 
+
 if isempty(visVars)
     padded = nodeBels;
     return;
@@ -17,7 +18,8 @@ else
 end
 
 for v = visVars
-    padded{v} = tabularFactorCreate(1, v);
+    T = zeros(nstates(v), 1); 
+    T(clamped(v)) = 1;
+    padded{v} = tabularFactorCreate(T, v);
 end
-
 end
