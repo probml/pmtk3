@@ -15,80 +15,40 @@ imagesc(img); colormap('bone'); title('original image');
 localCPD  = condGaussCpdCreate( nstates*ones(1, nstates), ones(1, 1, nstates)); 
 
 
-sigma = 0.01; 
+sigma = 0.1; 
 yTrain = img./nstates + sigma*randn(M, N);
 yTest  = img./nstates + sigma*randn(M, N);
 figure;
-imagesc(yTrain);colormap('bone'); title('noisy copy');
+imagesc(yTrain);colormap('bone'); title('noisy copy (yTrain)');
 localCPD = localCPD.fitFn(localCPD, img(:), yTrain(:));
 
-edgePot = bsxfun(@(a, b)-(a-b).^2, 1:nstates, (1:nstates)'); % will be replicated
-edgePot = edgePot - min(edgePot(:));
-edgePot = normalize(edgePot + 1); 
+edgePot = bsxfun(@(a, b)-abs(a-b), 1:nstates, (1:nstates)'); % will be replicated
+edgePot = edgePot - min(edgePot(:)) + 1;
 
 figure; imagesc(edgePot); colormap('default'); title('tied edge potential');
 
-if 0
+if 1
     nodePot = normalize(rand(1, nstates));
 else
+    yGuess = floor(rescaleData(yTrain, 1, nstates));
     nodePot = cell(numel(img), 1);
     for i=1:numel(img)
         pot = zeros(1, nstates);
-        pot(img(i)) = 1;
+        guess = yGuess(i);
+        pot(guess) = 1;
         nodePot{i} = tabularFactorCreate(pot, i);
     end
 end
 G         = mkGrid(M, N);
 infEngine = 'libdai';
-opts = {'TRWBP', '[updates=SEQFIX,tol=1e-6,maxiter=100,logdomain=0,nrtrees=0]'};
+opts = {'TRWBP', '[updates=SEQFIX,tol=1e-9,maxiter=10000,logdomain=0,nrtrees=0]'};
 
 mrf     = mrfCreate(G, 'nodePots', nodePot, 'edgePots', edgePot,...
     'localCPDs', localCPD, 'infEngine', infEngine, 'infEngArgs', opts);
 
-
-
-
 nodes = mrfInferNodes(mrf, 'localev', rowvec(yTest)); 
-maxMarginals = max(tfMarg2Mat(nodes), [], 1);
-imagesc(reshape(maxMarginals, M, N)); colormap('bone'); 
+maxMarginals = maxidx(tfMarg2Mat(nodes), [], 1);
+figure; imagesc(reshape(maxMarginals, M, N)); colormap('bone'); 
+title('reconstructed image'); 
+placeFigures;
 
-
-
-
-if 0
-
-setSeed(0); 
-assert(isLibdaiInstalled); 
-infEngine = 'bp';
-imgs = loadData('tinyImages'); 
-img = double(imgs.matlabIconGray);
-[M, N] = size(img); 
-nstates = 16; 
-img = reshape(quantizePMTK(img(:), 'levels', nstates), M, N);
-imagesc(img); colormap('bone'); title('original image');
-
-
-sigma = 1; 
-y = img./nstates + sigma*randn(M, N);
-figure;
-imagesc(y);colormap('bone'); title('noisy copy');
-
-
-localCPD  = condGaussCpdCreate( nstates*rand(1, nstates), ones(1, 1, nstates)); % initial guess
-edgePot = bsxfun(@(a, b)-abs(a-b), 1:nstates, (1:nstates)') + nstates/2;
-imagesc(edgePot); colormap('default');
-nodePot   = repmat(1./nstates, 1, nstates); 
-G         = mkGrid(M, N);
-model     = mrfCreate(G, 'nodePots', nodePot, 'edgePots', edgePot,...
-    'localCPDs', localCPD, 'infEngine', infEngine);
-localev = insertSingleton(rowvec(y), 1); % single training case, size must be 1-by-d-by-nnodes
-model = mrfFitEm(model, rowvec(img), 'localev', localev, 'maxIter', 2); 
-
-model.infEngine = 'bp';  
-model.infEngArgs = {'maxIter', 10, 'verbose', true}; 
-nodes = mrfInferNodes(model, 'localev', rowvec(y)); 
-
-maxMarginals = max(tfMarg2Mat(nodes), [], 1);
-imagesc(reshape(maxMarginals, M, N)); colormap('bone'); 
-
-end
