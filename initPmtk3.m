@@ -78,11 +78,6 @@ if isMatlab && ~verLessThan('matlab', '7.6.0')
        addtosystempath(gvizDir);  
     end
 end
-%% include libdai
-source = getConfigValue('PMTKlibdaiPath'); 
-if exist(source, 'dir')
-    include(source, '-end'); 
-end
 %% add the svm executables to the system path.
 if exist('pmtkSupportRoot', 'file')
     folder = pmtkSupportRoot(); 

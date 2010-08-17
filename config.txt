@@ -14,5 +14,4 @@
 % PMTKlocalSupportPath     C:\path\to\pmtkSupport
 % PMTKlocalMatlabToolsPath C:\path\to\matlabTools
 % PMTKpmlBookSource        C:\path\to\PML\Text
-% PMTKlibdaiPath           C:\path\to\libdai 
 % PMTKlightSpeedDir        lightspeed2.3
