@@ -10,24 +10,37 @@ ns = 16;
 img = reshape(quantizePMTK(img(:), 'levels', ns), M, N);
 img = canonizeLabels(img); 
 nstates = max(img(:)); 
+figure;
 imagesc(img); colormap('bone'); title('original image');
 localCPD  = condGaussCpdCreate( nstates*ones(1, nstates), ones(1, 1, nstates)); 
 
 
-sigma = 0.1; 
+sigma = 0.01; 
 yTrain = img./nstates + sigma*randn(M, N);
 yTest  = img./nstates + sigma*randn(M, N);
 figure;
 imagesc(yTrain);colormap('bone'); title('noisy copy');
 localCPD = localCPD.fitFn(localCPD, img(:), yTrain(:));
 
-edgePot = bsxfun(@(a, b)-abs(a-b), 1:nstates, (1:nstates)') + nstates/2; % will be replicated
-imagesc(edgePot); colormap('default'); title('tied edge potential');
-nodePot   = repmat(1./nstates, 1, nstates); 
+edgePot = bsxfun(@(a, b)-(a-b).^2, 1:nstates, (1:nstates)'); % will be replicated
+edgePot = edgePot - min(edgePot(:));
+edgePot = normalize(edgePot + 1); 
 
+figure; imagesc(edgePot); colormap('default'); title('tied edge potential');
+
+if 0
+    nodePot = normalize(rand(1, nstates));
+else
+    nodePot = cell(numel(img), 1);
+    for i=1:numel(img)
+        pot = zeros(1, nstates);
+        pot(img(i)) = 1;
+        nodePot{i} = tabularFactorCreate(pot, i);
+    end
+end
 G         = mkGrid(M, N);
 infEngine = 'libdai';
-opts = {'TRWBP', '[updates=SEQFIX,tol=1e-6,maxiter=1000,logdomain=0,nrtrees=0]'};
+opts = {'TRWBP', '[updates=SEQFIX,tol=1e-6,maxiter=100,logdomain=0,nrtrees=0]'};
 
 mrf     = mrfCreate(G, 'nodePots', nodePot, 'edgePots', edgePot,...
     'localCPDs', localCPD, 'infEngine', infEngine, 'infEngArgs', opts);
