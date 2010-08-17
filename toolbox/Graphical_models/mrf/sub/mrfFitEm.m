@@ -15,6 +15,7 @@ function mrf = init(mrf, data, restartNum)
 if restartNum > 1
     mrf.localCPDs = cellfuncell(@(c)c.rndInitFn(c), mrf.localCPDs); 
 end
+mrf = removeFields(mrf, 'jtree');
 end
 
 function [ess, loglik] = estep(mrf, data, localEv)
@@ -96,4 +97,5 @@ for i = 1:numel(localCPDs)
     localCPDs{i} = localCPD.fitFnEss(localCPD, emissionEss{i});
 end
 mrf.localCPDs = localCPDs;
+mrf = removeFields(mrf, 'jtree'); 
 end
