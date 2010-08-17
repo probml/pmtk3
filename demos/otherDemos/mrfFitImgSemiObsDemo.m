@@ -2,6 +2,9 @@
 %PMTKslow
 %%
 setSeed(2); 
+H = 4; % hide every H values (set to 0 for fully observed case)
+%                            (set to 1 for fully hidden case)
+
 cmap = 'bone';
 imgs = loadData('tinyImages'); 
 img = double(imgs.matlabIconGray);
@@ -42,7 +45,10 @@ mrf     = mrfCreate(G, 'nodePots', nodePot, 'edgePots', edgePot,...
     'localCPDs', localCPD, 'infEngine', infEngine, 'infEngArgs', opts);
 
 le = insertSingleton(rowvec(yTest), 1); 
-mrf = mrfFitEm(mrf, rowvec(img), 'localev', le, 'verbose', true);
+
+data = rowvec(img); 
+data(1:H:end) = 0; 
+mrf = mrfFitEm(mrf, data, 'localev', le, 'verbose', true);
 
 
 nodes = mrfInferNodes(mrf, 'localev', rowvec(yTest)); 
