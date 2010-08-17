@@ -1,12 +1,10 @@
 %% Fit the local CPDs of an mrf given an image / noisy image pair
 %
 %%
-
-
 imgs = loadData('tinyImages'); 
 img = double(imgs.matlabIconGray);
 [M, N] = size(img); 
-ns = 16; 
+ns = 32; 
 img = reshape(quantizePMTK(img(:), 'levels', ns), M, N);
 img = canonizeLabels(img); 
 nstates = max(img(:)); 
@@ -14,16 +12,14 @@ figure;
 imagesc(img); colormap('bone'); title('original image');
 localCPD  = condGaussCpdCreate( nstates*ones(1, nstates), ones(1, 1, nstates)); 
 
-
 sigma = 0.1; 
 yTrain = img./nstates + sigma*randn(M, N);
 yTest  = img./nstates + sigma*randn(M, N);
-figure;
-imagesc(yTrain);colormap('bone'); title('noisy copy (yTrain)');
+figure; imagesc(yTrain);colormap('bone'); title('noisy copy (yTrain)');
+figure; imagesc(yTest);colormap('bone'); title('noisy copy (yTest)');
 localCPD = localCPD.fitFn(localCPD, img(:), yTrain(:));
 
-edgePot = bsxfun(@(a, b)-abs(a-b), 1:nstates, (1:nstates)'); % will be replicated
-edgePot = edgePot - min(edgePot(:)) + 1;
+edgePot = exp(bsxfun(@(a, b)-abs(a-b), 1:nstates, (1:nstates)')); % will be replicated
 
 figure; imagesc(edgePot); colormap('default'); title('tied edge potential');
 
