@@ -258,7 +258,7 @@ function [model, mixModel] = initWithMixModel(model, data, fitFn, inferFn)
 %% Initialze using a mixture model, ignoring temporal structure
 stackedData = cell2mat(data')';
 nstates     = model.nstates;
-mixModel    = fitFn(stackedData, nstates, 'verbose', false);
+mixModel    = fitFn(stackedData, nstates, 'verbose', false, 'maxIter', 10);
 if isempty(model.emission)
     model.emission = mixModel2Cpd(mixModel);
 end

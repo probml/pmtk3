@@ -41,10 +41,10 @@ if ~isempty(softEv)
     localFacs = [localFacs(:); colvec(lf(:))];
 end
 
-engine  = mrf.infEngine;
+engine  = lower(mrf.infEngine);
 cg      = mrf.cliqueGraph; 
 %% Run inference
-switch lower(engine)
+switch engine
     
     case 'jtree'
         
@@ -81,19 +81,25 @@ switch lower(engine)
         bels         = beliefPropagation(cg, queries, mrf.infEngArgs{:}); 
         
         logZ = 0; % not calculated
-        
-    case 'libdaibp'
-        
-        %assert(isWeaklyConnected(cg.G)); % libdai segfaults on disconnected graphs
-        doSlice = false;     % libdai often segfaults when slicing
-        factors = addEvidenceToFactors(cg.Tfac, clamped, doSlice);
-        factors = [factors(:); localFacs(:)];
-        [logZ, nodeBels, cliques, cliqueLookup] = libdaiBelProp(factors);
-        bels    = queryCliques(cliques, queries, cliqueLookup); 
-        
+             
     case 'enum'
        
         [logZ, bels] = enumRunInference(cg.Tfac, queries, clamped, localFacs); 
        
-    otherwise, error('%s is not a valid inference engine', mrf.infEngine);
+    otherwise
+        
+        if startswith(engine, 'libdai')
+            doSlice = false;     % libdai often segfaults when slicing
+            factors = addEvidenceToFactors(cg.Tfac, clamped, doSlice);
+            factors = [factors(:); localFacs(:)];
+            if isempty(mrf.infEngArgs)
+                args = getLibdaiDefault(engine(7:end));
+            else
+                args = mrf.infEngArgs;
+            end
+            [logZ, nodeBels, cliques, cliqueLookup] = libdaiInfer(factors, args{:});
+            bels    = queryCliques(cliques, queries, cliqueLookup);
+        else
+            error('%s is not a valid inference engine', mrf.infEngine);
+        end
 end

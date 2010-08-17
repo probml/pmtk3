@@ -19,10 +19,16 @@ function model = dgmCreate(G, CPDs, varargin)
 %% Optional named inputs
 %
 % 'infEngine'        - an inference engine, one of the following: 
-%                     {['jtree'], 'varelim', 'libdaiJtree', 'bp', 'enum'}
+%                     {['jtree'], 'varelim', 'bp', 'enum', 'libdai*'}
 %
-% 'infEngArgs'       - optional inf engine specific arguments - a cell array
-%                     (currently only used by beliefPropagation 'bp')
+%                     libdai* - replace * with any valid libdai inference
+%                     method or alias. Type 'help libdaiOptions' file for
+%                     a full list. If you want to specify non-default
+%                     config values, set them using
+%                     'infEngArgs', {'*', '[name1=val1, name2=val2, ...]'}
+%
+% 'infEngArgs'       - optional inf engine specific arguments - a cell
+%                      array, (currently only used by libdai methods). 
 %                     
 %
 % 'localCPDs'        - a cell array of local CPD structs. These represent 

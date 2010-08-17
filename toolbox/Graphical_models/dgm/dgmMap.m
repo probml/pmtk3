@@ -1,6 +1,7 @@
 function map = dgmMap(dgm, varargin)
 %% Find the mode, (map assignment)
 % Optional named args are the same as for dgmInferNodes
+% This uses jtree.
 %
 [clamped, softEv, localEv] = process_options(varargin, ...
     'clamped', [], ...

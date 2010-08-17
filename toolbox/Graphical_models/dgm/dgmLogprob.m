@@ -2,7 +2,8 @@ function logZ = dgmLogprob(dgm, varargin)
 %% Estimate the log of the partition sum
 % See dgmInferNodes for optional args
 % (only handles a single observation sequence)
-% Does not support dgm.infEngine = 'bp'
+% Uses jtree for inference. Use dgmInferNodes if you want to use
+% e.g. approximate inference. 
 %%
 [clamped, softEv, localEv] = process_options(varargin, ...
     'clamped', [], ...

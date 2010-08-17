@@ -81,7 +81,8 @@ if doPrune
     end
 end
 %% Run inference
-switch lower(engine)
+engine = lower(engine); 
+switch engine
     
     case 'jtree'
         
@@ -95,17 +96,7 @@ switch lower(engine)
             jtree         = jtreeCreate(cg, 'cliqueConstraints', queries);
         end
         [logZ, bels] = jtreeRunInference(jtree, queries, localFacs);
-        
-    case 'libdaijtree'
-        
-        assert(isWeaklyConnected(G)); % libdai segfaults on disconnected graphs
-        doSlice = false;              % libdai often segfaults when slicing
-        factors = cpds2Factors(CPDs, G, CPDpointers);   
-        factors = addEvidenceToFactors(factors, clamped, doSlice); 
-        factors = [factors(:); localFacs(:)]; 
-        [logZ, nodeBels, cliques, cliqueLookup] = libdaiJtree(factors); 
-        bels    = jtreeQuery(structure(cliques, cliqueLookup), queries);
-        
+            
     case 'varelim'
         
         doSlice      = true; 
@@ -128,23 +119,29 @@ switch lower(engine)
         
         logZ = 0; % not calculated
         
-    case 'libdaibp'
-        
-        assert(isWeaklyConnected(G)); % libdai segfaults on disconnected graphs
-        doSlice = false;              % libdai often segfaults when slicing
-        factors = cpds2Factors(CPDs, G, CPDpointers);
-        factors = addEvidenceToFactors(factors, clamped, doSlice);
-        factors = [factors(:); localFacs(:)];
-        [logZ, nodeBels, cliques, cliqueLookup] = libdaiBelProp(factors);
-        bels    = queryCliques(cliques, queries, cliqueLookup); 
-        
     case 'enum'
         
         factors      = cpds2Factors(CPDs, G, CPDpointers);
         [logZ, bels] = enumRunInference(factors, queries, clamped, localFacs);
-        
+             
     otherwise
-        error('%s is not a valid inference engine', dgm.infEngine);
+        
+        if startswith(engine, 'libdai')
+            doSlice = false;              % libdai often segfaults when slicing
+            factors = cpds2Factors(CPDs, G, CPDpointers);
+            factors = addEvidenceToFactors(factors, clamped, doSlice);
+            factors = [factors(:); localFacs(:)];
+            if isempty(dgm.infEngArgs)
+                args = getLibdaiDefault(engine(7:end));
+            else
+                args = dgm.infEngArgs;
+            end
+            [logZ, nodeBels, cliques, cliqueLookup] = libdaiInfer(factors, args{:});
+            bels = queryCliques(cliques, queries, cliqueLookup);
+        else
+            error('%s is not a valid inference engine', dgm.infEngine);
+        end
+        
 end
 
 if doPrune % shift domain back
@@ -152,3 +149,4 @@ if doPrune % shift domain back
 end
 
 end
+
