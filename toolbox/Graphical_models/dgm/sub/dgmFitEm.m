@@ -4,6 +4,10 @@ function [dgm, loglikHist] = dgmFitEm(dgm, data, varargin)
 % See dgmFit
 %%
 [localEv, EMargs] = process_options(varargin, 'localev', []);
+if ~isempty(localEv) && ndims(localEv) < 3
+   localEv = insertSingleton(localEv, 1);  
+end
+
 estepFn           = @(dgm, data)estep(dgm, data, localEv);
 [dgm, loglikHist] = emAlgo(dgm, data, @init, estepFn, @mstep, EMargs{:});
 end

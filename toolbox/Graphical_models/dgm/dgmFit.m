@@ -25,9 +25,9 @@ function dgm = dgmFit(dgm, varargin)
 %             to the localCPDs, (see dgmCreate for details).
 %             localev is of size *nobs-by-d-by-nnodes*. If some nodes do not
 %             have associated localCPDs, or if data is missing, use NaNs.
-%             If there is only one data case, localev must still be of size
-%             1-by-d-by-nnodes. If you have a d-by-nnodes matrix, you  can
-%             use insertSingleton(localev, 1). 
+%             If there is only one data case, you can pass in a d-by-nnodes
+%             matrix, and it will automatically be converted to size
+%             nobs-by-d-nnodes. 
 %
 % 'clamped' - if you set clamped(j) = k, node j is not updated, but
 %            'clamped' to state k. clamped(j) = 0 indicates that node j 

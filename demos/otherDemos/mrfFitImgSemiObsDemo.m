@@ -44,7 +44,7 @@ opts = {'TRWBP', '[updates=SEQFIX,tol=1e-9,maxiter=10000,logdomain=0,nrtrees=0]'
 mrf     = mrfCreate(G, 'nodePots', nodePot, 'edgePots', edgePot,...
     'localCPDs', localCPD, 'infEngine', infEngine, 'infEngArgs', opts);
 
-le = insertSingleton(rowvec(yTest), 1); 
+le = rowvec(yTest);
 
 data = rowvec(img); 
 data(1:H:end) = 0; 

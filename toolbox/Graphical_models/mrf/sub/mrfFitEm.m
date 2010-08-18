@@ -5,6 +5,9 @@ function [mrf, loglikHist] = mrfFitEm(mrf, data, varargin)
 % See mrfFit
 %%
 [localEv, EMargs] = process_options(varargin, 'localev', []);
+if ~isempty(localEv) && ndims(localEv) < 3
+   localEv = insertSingleton(localEv, 1);  
+end
 estepFn           = @(mrf, data)estep(mrf, data, localEv);
 [mrf, loglikHist] = emAlgo(mrf, data, @init, estepFn, @mstep, EMargs{:});
 end
