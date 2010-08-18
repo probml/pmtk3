@@ -29,7 +29,7 @@ if isbinary
 else
   [y, ySupport] = setSupport(y, 1:nclasses);
   if ~strcmpi(method, 'eb')
-    error(sprintf('use eb not %s for binary labels', method))
+    error(sprintf('use eb not %s for binary labels', method));
   end
 end
 

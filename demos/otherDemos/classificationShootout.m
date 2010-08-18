@@ -4,6 +4,7 @@ function results = classificationShootout()
 %%
 setSeed(0);
 split = 0.6; % 60% training data, 40% testing
+warning('off', 'Bayes:maxIter'); % max iterations reached
 dataSets = setupData();
 nDataSets = numel(dataSets);
 

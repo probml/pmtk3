@@ -20,7 +20,7 @@ if nargin < 3
     method = 'plugin'; % fastest
   end
 end
-method
+
 
 if isfield(model, 'preproc')
     [X] = preprocessorApplyToTest(model.preproc, X);
