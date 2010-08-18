@@ -2,7 +2,6 @@ function yhat = rvmPredict(model, Xtest)
 
 
 switch model.outputType
-    
     case 'binary'
         yhat = logregPredictBayes(model, Xtest, 'vb'); 
         
