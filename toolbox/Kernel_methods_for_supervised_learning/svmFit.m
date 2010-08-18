@@ -110,7 +110,7 @@ if isempty(fitFn)
 elseif ischar(fitFn)
     fitFn = str2func(fitFn);
 end
-fitFn
+
 %% Preprocess Data
 if standardizeX
     X = mkUnitVariance(centerCols(X));
