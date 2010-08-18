@@ -35,10 +35,16 @@ else
     % currrently only supported by svmQPclassif*
     [yhat, f] = predictFn(model, Xtest); 
 end
-%{
-switch model.outputType
-  case 'binary',
-    yhat = setSupport(yhat, model.ySupport, [-1 1]); %
+
+if isfield(model, 'outputType') 
+    % This field is set at the end of svmFit. If it hasn't been set,
+    % svmPredict is being called by cross validation, and we don't want to
+    % reset the support yet. 
+    switch model.outputType
+        case 'binary',
+            yhat = setSupport(yhat, model.ySupport, [-1 1]);
+        case 'multiclass'
+            yhat = setSupport(yhat, model.ySupport);
+    end
 end
-%}
 end
