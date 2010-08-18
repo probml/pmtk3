@@ -36,15 +36,15 @@ else
     [yhat, f] = predictFn(model, Xtest); 
 end
 
-if isfield(model, 'outputType') 
+if isfield(model, 'outputType')
     % This field is set at the end of svmFit. If it hasn't been set,
     % svmPredict is being called by cross validation, and we don't want to
-    % reset the support yet. 
+    % reset the support yet.
     switch model.outputType
         case 'binary',
             yhat = setSupport(yhat, model.ySupport, [-1 1]);
         case 'multiclass'
-            yhat = setSupport(yhat, model.ySupport);
+            yhat = setSupport(yhat, model.ySupport, 1:max(yhat));
     end
 end
 end

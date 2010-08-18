@@ -130,9 +130,15 @@ if numel(C) > 1 || numel(kernelParam) > 1
     fitcore = @(X, y, p)fitFn(X, y, p(1), p(2), kernel, fitOptions{:});
     [model, varargout{1}, varargout{2}, varargout{3}] = ...
         fitCv(paramSpace, fitcore, @svmPredict, lossFn, X, y, cvOptions{:});
+    C = varargout{1}(1); 
+    kernelParam = varargout{1}(2); 
 else
     model = fitFn(X, y, C, kernelParam, kernel, fitOptions{:});
 end
+
+model.C = C;
+model.kernelParam = kernelParam; 
+
 
 model.fitEngine = funcName(fitFn);
 model.type = type;
