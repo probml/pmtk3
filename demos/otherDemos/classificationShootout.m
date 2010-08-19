@@ -1,9 +1,10 @@
-function results = classificationShootout()
+function [results, latex] = classificationShootout()
 %% Compare different classification algorithms on a number of data sets
-%
+%PMTKverySlow
 %%
+tic
 setSeed(0);
-split = 0.6; % 60% training data, 40% testing
+split = 0.7; % 70% training data, 30% testing
 warning('off', 'Bayes:maxIter'); % max iterations reached
 dataSets = setupData();
 nDataSets = numel(dataSets);
@@ -14,18 +15,20 @@ results = cell(nDataSets, nMethods);
 
 for i=1:nDataSets
     gamma = pickGamma(dataSets{i});
+    fprintf('\ngamma=%g\n\n', gamma); 
     for j=1:nMethods
-        fprintf('%s:%s\n', dataSets{i}.name, methods{j}); 
+        fprintf('%s:%s', dataSets{i}.name, methods{j}); 
         results{i, j} = evaluateMethod(methods{j}, dataSets{i}, gamma, split);
+        fprintf(':%d/%d\n', results{i, j}.nerrs, results{i, j}.nTest); 
     end
 end
 
-displayResults(results);
-
+latex = displayResults(results);
+toc
 end
 
 function gamma = pickGamma(data)
-% Pick a value for gamma, which all of the methods will use, by cv on an svm
+%% Pick a value for gamma, which all of the methods will use, by cv on an svm
 gammaRange = logspace(-6, 2, 200);
 fitFn = @(X, y, gamma)svmFit(X, y, 'kernel', 'rbf', 'kernelParam', gamma);
 [model, gamma] = fitCv(gammaRange, fitFn, @svmPredict, @(a, b)mean(a~=b), data.X, data.y);
@@ -44,7 +47,7 @@ Xtest  = X(nTrain+1:end, :);
 yTrain = y(1:nTrain);
 yTest  = y(nTrain+1:end);
 
-lambdaRange = logspace(-7, 0, 30);
+lambdaRange = logspace(-7, 1, 200);
 
 switch method
     case 'SVM'
@@ -104,10 +107,10 @@ results.lambda      = lambda;
 
 end
 
-function displayResults(results)
+function latex = displayResults(results)
 %% Display the results in a table
 
-
+latex = '';
 end
 
 
@@ -145,33 +148,43 @@ dataSets{3}.y = y;
 dataSets{3}.name = 'Fglass';
 dataSets{3}.nClasses  = 6;
 dataSets{3}.nFeatures = 9;
-%% yeastUci
-loadData('yeastUci');
-y = canonizeLabels(y);
-[X, y] = shuffleRows(X, y);
-dataSets{4}.X = X;
-dataSets{4}.y = y;
-dataSets{4}.name = 'Yeast';
-dataSets{4}.nClasses  = 10;
-dataSets{4}.nFeatures = 8;
-%% ionosphere
-loadData('ionosphere')
-X = uci_ionosphere(:, 1:34);
-y = uci_ionosphere(:, 35);
-[X, y] = shuffleRows(X, y);
-dataSets{5}.X = X;
-dataSets{5}.y = y;
-dataSets{5}.name = 'Ionosophere';
-dataSets{5}.nClasses  = 2;
-dataSets{5}.nFeatures = 34;
-%% bankruptcy
+%% Bankruptcy
 loadData('bankruptcy'); 
 X = data(:, 2:end); 
 y = data(:, 1); 
 [X, y] = shuffleRows(X, y); 
+dataSets{4}.X = X;
+dataSets{4}.y = y;
+dataSets{4}.name = 'Bankruptcy';
+dataSets{4}.nClasses  = 2;
+dataSets{4}.nFeatures = 2;
+%% Soy
+loadData('soy')
+[X, y] = shuffleRows(X, Y); 
+dataSets{5}.X = X;
+dataSets{5}.y = y;
+dataSets{5}.name = 'Soy';
+dataSets{5}.nClasses = 3;
+dataSets{5}.nFeatures = 35; 
+%% Ionosphere
+loadData('ionosphere')
+X = uci_ionosphere(:, 1:34);
+y = uci_ionosphere(:, 35);
+[X, y] = shuffleRows(X, y);
 dataSets{6}.X = X;
 dataSets{6}.y = y;
-dataSets{6}.name = 'Bankruptcy';
+dataSets{6}.name = 'Ionosophere';
 dataSets{6}.nClasses  = 2;
-dataSets{6}.nFeatures = 2;
+dataSets{6}.nFeatures = 34;
+%% Pimatr
+loadData('pimatr')
+X = data(:, 2:end-1); 
+y = data(:, end); 
+[X, y] = shuffleRows(X, y); 
+dataSets{7}.X = X;
+dataSets{7}.y = y;
+dataSets{7}.name = 'Pima';
+dataSets{7}.nClasses  = 2;
+dataSets{7}.nFeatures = 7;
+
 end
