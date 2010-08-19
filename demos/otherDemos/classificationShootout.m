@@ -30,14 +30,14 @@ end
 function gamma = pickGamma(data)
 %% Pick a value for gamma, which all of the methods will use, by cv on an svm
 gammaRange = logspace(-6, 2, 200);
+X = rescaleData(data.X); 
 fitFn = @(X, y, gamma)svmFit(X, y, 'kernel', 'rbf', 'kernelParam', gamma);
-[model, gamma] = fitCv(gammaRange, fitFn, @svmPredict, @(a, b)mean(a~=b), data.X, data.y);
+[model, gamma] = fitCv(gammaRange, fitFn, @svmPredict, @(a, b)mean(a~=b), X, data.y);
 end
 
 function results = evaluateMethod(method, dataSet, gamma, split)
 %% Evaluate the performance of a method on a given data set.
-
-X      = dataSet.X;
+X      = rescaleData(dataSet.X); 
 y      = dataSet.y;
 N      = size(X, 1);
 nTrain = floor(split*N);
