@@ -150,4 +150,28 @@ if rescaleX
 end
 model.ySupport = ySupport;
 model.outputType = outputType;
+
+%% support vectors
+switch lower(model.fitEngine)
+    
+    case 'svmlibfit'
+        
+        model.supportVectors = full(model.SVs);
+        model.nsvecs         = size(model.supportVectors, 1); 
+        
+    case 'svmliblinearfit'
+        
+        model.supportVectors = NaN; % liblinear does not store the support vectors
+        model.nsvecs = NaN; 
+             
+    case 'svmlightfit'
+        
+        model.supportVectors = X(model.svi, :); 
+        model.nsvecs = numel(model.svi); 
+        
+    case {'svmqpclassiffit', 'svmqpregfit'}
+        
+        % nothing to do
+        
+end
 end

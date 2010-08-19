@@ -39,6 +39,10 @@ a       = quadprog(H,f,A,b,Aeq,beq,lb,ub, zeros(2*n, 1), options);
 alpha   =  a(1:n) - a(n+1:2*n);
 epsilon = C*1e-6;
 svi     = find( abs(alpha) > epsilon ); % support vectors
+model.supportVectors = X(svi, :); 
+model.nsvecs = numel(svi); 
+
+
 
 % find bias from average of support vectors with interpolation error e
 % SVs with interpolation error e have alphas: 0 < alpha < C
