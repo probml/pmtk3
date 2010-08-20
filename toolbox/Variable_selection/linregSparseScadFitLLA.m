@@ -13,7 +13,7 @@ iter = 1;
 done = false;
 while ~done
   wOld = w;
-  w = LassoShooting(X, y, derivPenalty(abs(w), alpha, lambda), 'w0', w);
+  w = LassoShooting(X, y, derivPenalty(abs(w), alpha, lambda));
   NLL(iter) = objFunc(X, y, w, alpha, lambda); %#ok
   
   if iter>1
