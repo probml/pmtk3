@@ -29,7 +29,7 @@ end
 function results = evaluateMethod(method, dataSet, split)
 %% Evaluate the performance of a method on a given data set.
 tic;
-X      = rescaleData(dataSet.X); 
+X      = rescaleData(standardizeCols(dataSet.X)); 
 y      = dataSet.y;
 N      = size(X, 1);
 nTrain = floor(split*N);
@@ -39,8 +39,8 @@ Xtest  = X(nTrain+1:end, :);
 yTrain = y(1:nTrain);
 yTest  = y(nTrain+1:end);
 
-lambdaRange = 1./(2.^(-5:15));
-gammaRange  = 2.^(-15:3); 
+lambdaRange = 1./(2.^(-5:0.5:15));
+gammaRange  = 2.^(-15:0.5:3); 
 twoDgrid = crossProduct(lambdaRange, gammaRange); 
 
 switch method
@@ -159,7 +159,7 @@ for j=1:ndata
 end
 
 rowNames = [methods(:); {'Out of'}]; 
-colNames = [dataSetNames(:)', {'train(min)', 'test(sec)'}];
+colNames = [dataSetNames(:)', {'train(minutes)', 'test(seconds)'}];
 
 if doHtml
     htmlTable('data', data, 'colNames', colNames, 'rowNames', rowNames); 
