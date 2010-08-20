@@ -161,9 +161,11 @@ switch lower(model.fitEngine)
         
     case 'svmliblinearfit'
         
-        model.supportVectors = NaN; % liblinear does not store the support vectors
-        model.nsvecs = NaN; 
-             
+        [model.svi, cols] = find(arrayfun(@(x)approxeq(x, 1, 0.01),... 
+            abs(X*model.w' + model.bias))); %#ok need to have two outputs
+        model.supportVectors = X(model.svi, :);
+        model.nsvecs = numel(model.svi);
+        
     case 'svmlightfit'
         
         model.supportVectors = X(model.svi, :); 
