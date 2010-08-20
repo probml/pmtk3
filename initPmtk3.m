@@ -7,7 +7,7 @@ if verbose
     disp('initializing pmtk3'); 
 end
 format compact
-more off; % especially important in Octave
+more off; % especially important in Octave - init may fail without it
 %% check if this is matlab or octave
 isMatlab = ~isempty(ver('matlab')); 
 include  = @(d, varargin)addpath(genpathPMTK(d, isMatlab), varargin{:}); 
