@@ -45,7 +45,6 @@ else % try and fetch it
         try
             destFolder = fullfile(destnRoot, dataset);
             unzip(dest, fileparts(dest));
-            delete(dest);
             addpath(destFolder)
             D = load([dataset, '.mat']);
             if ~quiet
@@ -54,6 +53,10 @@ else % try and fetch it
         catch %#ok
             fprintf('\n\n');
             error('loadData:postDownloadError', 'The %s data set was found, but could not be loaded', dataset);
+        end
+        try
+            delete(dest);
+        catch %#ok if we can't delete the zip file
         end
     else
         fprintf('\n\n');
