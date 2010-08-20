@@ -18,7 +18,7 @@ for i=1:nDataSets
     for j=1:nMethods
         fprintf('%s:%s', dataSets(i).name, methods{j}); 
         R = evaluateMethod(methods{j}, dataSets(i), split);
-        fprintf(':nerrs=%d/%d:(nsvecs=%d/%d)\n', R.nerrs, R.nTest, R.nsvecs, R.nTrain);
+        fprintf(':nerrs=%d/%d:(nsvecs=%d/%d)\n', R.nerrs, R.nTest, R.nsvecs, R.nTrain*R.nClasses);
         results{i, j} = R; 
     end
 end
