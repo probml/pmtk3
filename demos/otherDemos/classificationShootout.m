@@ -1,6 +1,6 @@
 function results = classificationShootout()
 %% Compare different classification algorithms on a number of data sets
-%PMTKreallySlow
+%PMTKreallySlow (about 8 hours with current cv grid resolution)
 %%
 tic
 setSeed(0);
