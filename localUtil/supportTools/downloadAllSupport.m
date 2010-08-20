@@ -25,7 +25,7 @@ for i=1:numel(packages)
     end
 end
 
-addpath(genpath(destnRoot), '-end'); % using genpathPMTK here causes problems for Octave
+addpath(genpath(destnRoot)); % using genpathPMTK here causes problems for Octave
 rootText = ...
 {
     'function r = pmtkSupportRoot()';

@@ -40,7 +40,7 @@ end
 include(fullfile(thisDir, 'toolbox')); 
 include(fullfile(thisDir, 'demos')); 
 include(fullfile(thisDir, 'data'));             % may be initially empty
-include(fullfile(thisDir, 'external'), '-end'); % may be initially empty
+include(fullfile(thisDir, 'external')); % may be initially empty
 %% we store user / system specific pmtk info in the systemInfo directory 
 pmtkInfoDir = fullfile(thisDir, 'localUtil', 'systemInfo');
 %% write isOctave function
@@ -71,7 +71,7 @@ end
 %% include PMTK support
 source = getConfigValue('PMTKlocalSupportPath');
 if exist(source, 'dir')
-    include(source, '-end'); 
+    include(source); 
 end
 if ~(exist('pmtkSupportRoot', 'file') == 2)
     downloadAllSupport();
