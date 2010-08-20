@@ -2,7 +2,6 @@ function results = classificationShootout()
 %% Compare different classification algorithms on a number of data sets
 %PMTKreallySlow (about 8 hours with current cv grid resolution)
 %%
-tic
 setSeed(0);
 doLatex = true; 
 doHtml  = true;
@@ -23,7 +22,6 @@ for i=1:nDataSets
     end
 end
 displayResults(results, methods, {dataSets.name}, doLatex, doHtml);
-toc
 end
 
 function results = evaluateMethod(method, dataSet, split)
