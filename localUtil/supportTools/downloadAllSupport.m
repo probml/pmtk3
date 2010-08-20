@@ -25,12 +25,16 @@ for i=1:numel(packages)
     end
 end
 
-addpath(genpathPMTK(destnRoot), '-end');
+addpath(genpath(destnRoot), '-end'); % using genpathPMTK here causes problems for Octave
 rootText = ...
 {
     'function r = pmtkSupportRoot()';
     '% Return directory name where pmtkSupport is stored';
-    '  r = fileparts(which(mfilename()));';
+    'w = which(mfilename());';
+    'if w(1) == ''.''';
+    '  w = fullfile(pwd, w(3:end)); ';
+    'end'
+    'r = fileparts(w);';
     'end';
 };
 writeText(rootText, fullfile(destnRoot, 'pmtkSupportRoot.m'));

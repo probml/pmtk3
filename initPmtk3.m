@@ -12,7 +12,12 @@ more off; % especially important in Octave
 isMatlab = ~isempty(ver('matlab')); 
 include  = @(d, varargin)addpath(genpathPMTK(d, isMatlab), varargin{:}); 
 %% change to the directory storing this function, (should be PMTK3 root).
-thisDir = fileparts(which(mfilename()));
+w = which(mfilename()); 
+if w(1) == '.' % for octave compatability
+    w = fullfile(pwd, w(3:end)); 
+end
+thisDir = fileparts(w);
+
 cd(thisDir);
 addpath(thisDir);
 %% include localUtil

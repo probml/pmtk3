@@ -43,7 +43,7 @@ else % try and fetch it
     ok     = downloadFile(source, dest);
     if ok
         try
-            destFolder = fullfile(fileparts(dest), dataset);
+            destFolder = fullfile(destnRoot, dataset);
             unzip(dest, fileparts(dest));
             delete(dest);
             addpath(destFolder)

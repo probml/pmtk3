@@ -46,6 +46,9 @@ end
 function [tags, lines] = getTags(textFile)
 %% get tags and lines from a config file
 w = which(textFile);
+if w(1) == '.'
+    w = fullfile(pwd, w(3:end)); 
+end
 if ~isempty(w)
     textFile = w;
 end
