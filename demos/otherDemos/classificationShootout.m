@@ -1,9 +1,11 @@
-function [results, latex] = classificationShootout()
+function results = classificationShootout()
 %% Compare different classification algorithms on a number of data sets
-%PMTKverySlow
+%PMTKreallySlow
 %%
 tic
 setSeed(0);
+doLatex = true; 
+doHtml  = true;
 split = 0.7; % 70% training data, 30% testing
 warning('off', 'Bayes:maxIter'); % max iterations reached
 dataSets = setupData();
@@ -12,31 +14,21 @@ nDataSets = numel(dataSets);
 methods = {'SVM', 'RVM', 'SMLR', 'RMLR'};
 nMethods = numel(methods);
 results = cell(nDataSets, nMethods);
-
 for i=1:nDataSets
-    gamma = pickGamma(dataSets{i});
-    fprintf('\ngamma=%g\n\n', gamma); 
     for j=1:nMethods
-        fprintf('%s:%s', dataSets{i}.name, methods{j}); 
-        results{i, j} = evaluateMethod(methods{j}, dataSets{i}, gamma, split);
-        fprintf(':%d/%d\n', results{i, j}.nerrs, results{i, j}.nTest); 
+        fprintf('%s:%s', dataSets(i).name, methods{j}); 
+        R = evaluateMethod(methods{j}, dataSets(i), split);
+        fprintf(':nerrs=%d/%d:(nsvecs=%d/%d)\n', R.nerrs, R.nTest, R.nsvecs, R.nTrain);
+        results{i, j} = R; 
     end
 end
-
-latex = displayResults(results);
+displayResults(results, methods, {dataSets.name}, doLatex, doHtml);
 toc
 end
 
-function gamma = pickGamma(data)
-%% Pick a value for gamma, which all of the methods will use, by cv on an svm
-gammaRange = logspace(-4, 3, 100);
-X = rescaleData(data.X); 
-fitFn = @(X, y, gamma)svmFit(X, y, 'kernel', 'rbf', 'kernelParam', gamma);
-[model, gamma] = fitCv(gammaRange, fitFn, @svmPredict, @(a, b)mean(a~=b), X, data.y);
-end
-
-function results = evaluateMethod(method, dataSet, gamma, split)
+function results = evaluateMethod(method, dataSet, split)
 %% Evaluate the performance of a method on a given data set.
+tic;
 X      = rescaleData(dataSet.X); 
 y      = dataSet.y;
 N      = size(X, 1);
@@ -47,53 +39,54 @@ Xtest  = X(nTrain+1:end, :);
 yTrain = y(1:nTrain);
 yTest  = y(nTrain+1:end);
 
-lambdaRange = logspace(-6, 1, 20);
+lambdaRange = 1./(2.^(-5:15));
+gammaRange  = 2.^(-15:3); 
+twoDgrid = crossProduct(lambdaRange, gammaRange); 
 
 switch method
     case 'SVM'
         
-        fitFn = @(X, y, lambda)...
-            svmFit(X, y, 'C', 1./lambda, 'kernelParam', gamma, 'kernel', 'rbf');
+        fitFn = @(X, y, param)...
+            svmFit(X, y, 'C', 1./param(1), 'kernelParam', param(2), 'kernel', 'rbf');
         predictFn = @svmPredict;
-        doCv = true;
+        paramSpace = twoDgrid;
         
     case 'RVM'
         
-        model  = rvmFit(Xtrain, yTrain, gamma);
-        yhat   = rvmPredict(model, Xtest);
-        lambda = 0;
-        nerrs  = sum(yhat ~= yTest);
-        doCv   = false;
+        fitFn = @rvmFit; 
+        predictFn = @rvmPredict;
+        paramSpace = gammaRange; 
         
     case 'SMLR'
         
-        fitFn = @(X, y, lambda)logregFit(X, y, ...
-            'lambda' , lambda, ...
+        fitFn = @(X, y, param)logregFit(X, y, ...
+            'lambda' , param(1), ...
             'regType', 'L1',...
             'preproc', preprocessorCreate('kernelFn',...
-            @(X1, X2)kernelRbfGamma(X1, X2, gamma)));
+            @(X1, X2)kernelRbfGamma(X1, X2, param(2))));
         predictFn = @logregPredict;
-        doCv = true;
+        paramSpace = twoDgrid; 
         
     case 'RMLR'
         
-        fitFn = @(X, y, lambda)logregFit(X, y, ...
-            'lambda' , lambda, ...
+       fitFn = @(X, y, param)logregFit(X, y, ...
+            'lambda' , param(1), ...
             'regType', 'L2',...
             'preproc', preprocessorCreate('kernelFn',...
-            @(X1, X2)kernelRbfGamma(X1, X2, gamma)));
+            @(X1, X2)kernelRbfGamma(X1, X2, param(2))));
         predictFn = @logregPredict;
-        doCv = true;
+        paramSpace = twoDgrid; 
         
 end
 
-if doCv
-    lossFn = @(yTest, yHat)mean(yHat ~= yTest);
-    nfolds = 5;
-    [model, lambda]  = fitCv(lambdaRange, fitFn, predictFn, lossFn, Xtrain, yTrain, nfolds);
-    yHat   = predictFn(model, Xtest);
-    nerrs  = sum(yHat ~= yTest);
-end
+lossFn = @(yTest, yHat)mean(yHat ~= yTest);
+nfolds = 5;
+[model, bestParams]  = fitCv(paramSpace, fitFn, predictFn, lossFn, Xtrain, yTrain, nfolds);
+results.trainingTime = toc;
+tic
+yHat   = predictFn(model, Xtest);
+results.testingTime = toc; 
+nerrs  = sum(yHat ~= yTest);
 
 results.method      = method;
 results.dataSetName = dataSet.name;
@@ -102,15 +95,79 @@ results.nFeatures   = dataSet.nFeatures;
 results.nTrain      = nTrain;
 results.nTest       = nTest;
 results.nerrs       = nerrs;
-results.gamma       = gamma;
-results.lambda      = lambda;
-
+results.bestParams  = bestParams; 
+%% record sparsity level
+switch method
+    case 'SVM'
+        results.nsvecs = model.nsvecs; % total for all classes
+    case 'RVM'
+        
+        if results.nClasses < 3
+            results.nsvecs = sum(~arrayfun(@(x)approxeq(x, 0), model.wN));
+        else
+            nsvecs = 0;
+            for i=1:results.nClasses
+                nsvecs = nsvecs +  sum(~arrayfun(@(x)approxeq(x, 0), model.modelClass{i}.wN));
+            end
+            results.nsvecs = nsvecs; 
+        end
+        
+    case 'SMLR'
+        
+        w = model.w;
+        nsvecs = 0;
+        for i=1:size(w, 2)
+           nsvecs = nsvecs +  sum(~arrayfun(@(x)approxeq(x, 0), w(:, i)));
+        end
+       results.nsvecs = nsvecs; 
+        
+    case 'RMLR'
+        results.nsvecs = nTrain*results.nClasses; 
+end
 end
 
-function latex = displayResults(results)
+function displayResults(results, methods, dataSetNames, doLatex, doHtml)
 %% Display the results in a table
 
-latex = '';
+[ndata, nmeth] = size(results); 
+data = cell(nmeth, ndata); 
+for i=1:nmeth
+    for j=1:ndata
+        R = results{j, i}; 
+        if ~isempty(R)
+           data{i, j} =  sprintf('%d (%d)', R.nerrs, R.nsvecs); 
+        end
+    end
+end
+
+trainingTime = zeros(nmeth, 1); 
+testingTime  = zeros(nmeth, 1); 
+for i=1:nmeth
+    for j=1:ndata
+        trainingTime(i) = trainingTime(i) + results{j, i}.trainingTime; 
+        testingTime(i) = testingTime(i) + results{j, i}.testingTime; 
+    end
+end
+data = [data, mat2cellRows(num2str(trainingTime/60, '%.2g')), mat2cellRows(num2str(testingTime, '%.2g'))];
+
+data = [data; cell(1, ndata + 2)];
+for j=1:ndata
+    R = results{j, 1};
+    if ~isempty(R)
+        data{nmeth+1, j} = sprintf('%d (%d)', R.nTest, R.nTrain*R.nClasses); 
+    end
+end
+
+rowNames = [methods(:); {'Out of'}]; 
+colNames = [dataSetNames(:)', {'train(min)', 'test(sec)'}];
+
+if doHtml
+    htmlTable('data', data, 'colNames', colNames, 'rowNames', rowNames); 
+end
+if doLatex
+    latextable(data, 'Horiz', rowNames, 'Vert', 'colNames'); 
+end
+
 end
 
 
@@ -123,57 +180,57 @@ loadData('crabs');
 X = [Xtrain; Xtest];
 y = [ytrain; ytest];
 [X, y] = shuffleRows(X, y);
-dataSets{1}.X = X;
-dataSets{1}.y = y;
-dataSets{1}.name = 'Crabs';
-dataSets{1}.nClasses  = 2;
-dataSets{1}.nFeatures = 5;
+dataSets(1).X = X;
+dataSets(1).y = y;
+dataSets(1).name = 'Crabs';
+dataSets(1).nClasses  = 2;
+dataSets(1).nFeatures = 5;
 %% fisherIris
 loadData('fisherIris');
 X = meas;
 y = canonizeLabels(species);
 [X, y] = shuffleRows(X, y);
-dataSets{2}.X = X;
-dataSets{2}.y = y;
-dataSets{2}.name = 'Iris';
-dataSets{2}.nClasses  = 3;
-dataSets{2}.nFeatures = 4;
+dataSets(2).X = X;
+dataSets(2).y = y;
+dataSets(2).name = 'Iris';
+dataSets(2).nClasses  = 3;
+dataSets(2).nFeatures = 4;
 %% Bankruptcy
 loadData('bankruptcy'); 
 X = data(:, 2:end); 
 y = data(:, 1); 
 [X, y] = shuffleRows(X, y); 
-dataSets{3}.X = X;
-dataSets{3}.y = y;
-dataSets{3}.name = 'Bankruptcy';
-dataSets{3}.nClasses  = 2;
-dataSets{3}.nFeatures = 2;
+dataSets(3).X = X;
+dataSets(3).y = y;
+dataSets(3).name = 'Bankruptcy';
+dataSets(3).nClasses  = 2;
+dataSets(3).nFeatures = 2;
 %% Pimatr
 loadData('pimatr')
 X = data(:, 2:end-1); 
 y = data(:, end); 
 [X, y] = shuffleRows(X, y); 
-dataSets{4}.X = X;
-dataSets{4}.y = y;
-dataSets{4}.name = 'Pima';
-dataSets{4}.nClasses  = 2;
-dataSets{4}.nFeatures = 7;
+dataSets(4).X = X;
+dataSets(4).y = y;
+dataSets(4).name = 'Pima';
+dataSets(4).nClasses  = 2;
+dataSets(4).nFeatures = 7;
 %% Soy
 loadData('soy')
 [X, y] = shuffleRows(X, Y); 
-dataSets{5}.X = X;
-dataSets{5}.y = y;
-dataSets{5}.name = 'Soy';
-dataSets{5}.nClasses = 3;
-dataSets{5}.nFeatures = 35; 
+dataSets(5).X = X;
+dataSets(5).y = y;
+dataSets(5).name = 'Soy';
+dataSets(5).nClasses = 3;
+dataSets(5).nFeatures = 35; 
 %% Fglass
 loadData('fglass');
 X = [Xtrain; Xtest];
 y = [ytrain; ytest];
 [X, y] = shuffleRows(X, y);
-dataSets{6}.X = X;
-dataSets{6}.y = y;
-dataSets{6}.name = 'Fglass';
-dataSets{6}.nClasses  = 6;
-dataSets{6}.nFeatures = 9;
+dataSets(6).X = X;
+dataSets(6).y = y;
+dataSets(6).name = 'Fglass';
+dataSets(6).nClasses  = 6;
+dataSets(6).nFeatures = 9;
 end
