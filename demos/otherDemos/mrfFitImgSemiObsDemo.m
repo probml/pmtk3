@@ -1,4 +1,17 @@
 %% Fit the local CPDs of an mrf given an image / noisy image pair
+% The model has the following form
+% y1<-  h1 - h2  -> y2
+%        |   |
+% y3 <-  h3 - h4 -> y4
+% where there are undirected edges between the hidden labels,
+% arranged in a 2d grid, and each hidden node has a directed local
+% evidence.
+% Currently we fit the p(yi|hi) CPDs (which are conditional Gaussian),
+% but not the hi-hj edge potentials.
+% We allow for a certain fraction of the h nodes to be hidden,
+% and fit the model using EM from a single image (with tied params)
+% For the E step, we use TRWBP.
+
 %PMTKslow
 %%
 setSeed(2); 
