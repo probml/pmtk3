@@ -61,8 +61,8 @@ switch method
         
     case 'RVM'
         
-        model  = rvmFit(Xtrain, yTrain, gamma);
-        yhat   = rvmPredict(model, Xtest);
+        model  = rvmSimpleFit(Xtrain, yTrain, gamma);
+        yhat   = rvmSimplePredict(model, Xtest);
         lambda = 0;
         nerrs  = sum(yhat ~= yTest);
         doCv   = false;

@@ -1,4 +1,4 @@
-function model = rvmFit(X, y, gamma, varargin)
+function model = rvmSimpleFit(X, y, gamma, varargin)
 %% Fit a relevence vector machine, i.e. logreg + rbf kernel + ard
 
 

@@ -55,8 +55,8 @@ switch method
         
     case 'RVM'
         
-        fitFn = @rvmFit; 
-        predictFn = @rvmPredict;
+        fitFn = @rvmSimpleFit; 
+        predictFn = @rvmSimplePredict;
         paramSpace = gammaRange; 
         
     case 'SMLR'

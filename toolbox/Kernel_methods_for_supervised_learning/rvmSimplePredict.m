@@ -1,4 +1,4 @@
-function yhat = rvmPredict(model, Xtest)
+function yhat = rvmSimplePredict(model, Xtest)
 
 
 switch model.outputType
