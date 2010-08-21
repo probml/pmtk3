@@ -5,7 +5,7 @@ function [mrf, loglikHist] = mrfFitEm(mrf, data, varargin)
 % See mrfFit
 %%
 [localEv, EMargs] = process_options(varargin, 'localev', []);
-if ~isempty(localEv) && ndims(localEv) < 3
+if ~isempty(localEv) && ndims(localEv) < 3 && mrf.nnodes > 1
    localEv = insertSingleton(localEv, 1);  
 end
 estepFn           = @(mrf, data)estep(mrf, data, localEv);

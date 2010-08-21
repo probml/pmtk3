@@ -4,7 +4,7 @@ function [dgm, loglikHist] = dgmFitEm(dgm, data, varargin)
 % See dgmFit
 %%
 [localEv, EMargs] = process_options(varargin, 'localev', []);
-if ~isempty(localEv) && ndims(localEv) < 3
+if ~isempty(localEv) && ndims(localEv) < 3 && dgm.nnodes > 1
    localEv = insertSingleton(localEv, 1);  
 end
 
