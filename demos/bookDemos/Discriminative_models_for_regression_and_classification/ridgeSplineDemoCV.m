@@ -2,7 +2,7 @@ function ridgeSplineDemoCV()
 % Demo of L2 regualrization of a piecewise constant function (splines) with fixed knots.
 % Based on code by John D'Errico
 % http://www.mathworks.com/matlabcentral/fileexchange/loadFile.do?objectId=8553&objectType=fileY
-
+%PMTKbroken missing his cv function?
 if 0
   randn('state',0); rand('state', 0);
   n = 50;
@@ -11,7 +11,7 @@ if 0
   lambdas = logspace(-1,2,20);
   lambdaOpt = 3;
 else
-  makePolyData;
+  [xtrain, ytrain] = makePolyData;
   x = rescaleData(xtrain);
   y = ytrain;
   %x = rescaleData(xtest);
