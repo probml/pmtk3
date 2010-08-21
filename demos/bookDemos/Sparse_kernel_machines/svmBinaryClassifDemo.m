@@ -1,5 +1,5 @@
 %% Compare SVM and kernelized logreg on synthetic 2 class data in 2d
-%PMTKbroken
+
 
 %% Load  Data
 % Load synthetic data generated from a mixture of 2 Gaussians. Source:
@@ -47,7 +47,7 @@ for method=1:3
   yhat = predictFn(X);
   nerr = sum(yhat ~= y);
   % Plot results
-  plotDecisionBoundary(X, y, predictFn, 'symbols', '+x');
+  plotDecisionBoundary(X, y, predictFn, 'symbols', '+x', 'resolution', 200);
   if method > 1
     plot(X(SV,1), X(SV,2), 'ok', 'linewidth', 1.5, 'markersize', 12);
   end
