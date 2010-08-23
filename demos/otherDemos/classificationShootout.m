@@ -5,6 +5,9 @@ function results = classificationShootout()
 % algorithms, and generalization bounds", Krishnapuram et al, PAMI 2005
 %
 %PMTKreallySlow (about 8 hours with current cv grid resolution)
+% See also classificationShootoutCvLambdaOnly
+% which is a faster version of this demo
+
 %%
 setSeed(0);
 doLatex = true; 
