@@ -1,6 +1,6 @@
 function yhat = rvmPredict(model, Xtest)
 %% Return predictions for an rvm fit via the rvmFit SparseBayes interface
-
+% We predict using the plugin approximation 
 Ktest = preprocessorApplyToTest(model.preproc, Xtest);
 
 binaryPredFn = @(model, X)double(SB2_Sigmoid(X*model.w) > 0.5);

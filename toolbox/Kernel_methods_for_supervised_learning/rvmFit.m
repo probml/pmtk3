@@ -12,7 +12,7 @@ if K <= 2
     [y, ySupport] = setSupport(y, [0, 1]);
     likelihood    = 'bernoulli'; 
     outputType    = 'binary';
-    model         = SparseBayes(likelihood, Xbasis, y, varargin{:}); 
+    model         = SB(likelihood, Xbasis, y, varargin{:}); 
     w = zeros(size(X, 1), 1); 
     w(model.Relevant) = model.Value;
     model.w = w;
@@ -23,7 +23,7 @@ elseif isequal(y, round(y))
     outputType    = 'multiclass';
     likelihood    = 'bernoulli'; 
     
-    binaryFitFn = @(X, y)SparseBayes(likelihood, X, y, varargin{:}); 
+    binaryFitFn = @(X, y)SB(likelihood, X, y, varargin{:}); 
     model = oneVsRestClassifFit(Xbasis, y, binaryFitFn, 'binaryRange', [0 1]);
     for i=1:numel(model.modelClass)
        M = model.modelClass{i};
@@ -37,7 +37,7 @@ else
     
     likelihood = 'gaussian'; 
     outputType = 'regression'; 
-    model = SparseBayes(likelihood, Xbasis, y, varargin{:}); 
+    model = SB(likelihood, Xbasis, y, varargin{:}); 
     ySupport = []; 
     
 end
@@ -48,4 +48,11 @@ model.likelihood = likelihood;
 model.ySupport   = ySupport; 
 
 
+end
+
+
+function model = SB(likelihood, X, y, varargin)
+[model, hyperParams, diag] = SparseBayes(likelihood, X, y, varargin{:}); 
+model.hyperParams = hyperParams;
+model.diag = diag; 
 end
