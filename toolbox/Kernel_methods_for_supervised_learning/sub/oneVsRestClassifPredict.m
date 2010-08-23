@@ -10,4 +10,5 @@ for c=1:C
 end
 [conf, yhat] = max(score, [], 2);
 
+
 end

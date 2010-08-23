@@ -1,11 +1,18 @@
-function model = oneVsRestClassifFit(X, y, fitFn)
+function model = oneVsRestClassifFit(X, y, fitFn, varargin)
 %% Fit a binary classifier to multiclass data using one vs the rest
+
+[binaryRange] = process_options(varargin, 'binaryRange', [-1 1]); 
+off = binaryRange(1);
+on  = binaryRange(2); 
+
+
 N = size(X, 1); 
 C = nunique(y);
 for c=1:C
-    yc = -1*ones(N, 1);
-    yc(y==c) = 1;
+    yc = off*ones(N, 1);
+    yc(y==c) = on;
     model.modelClass{c} = fitFn(X, yc);
 end
+model.binaryRange = binaryRange; 
 
 end
