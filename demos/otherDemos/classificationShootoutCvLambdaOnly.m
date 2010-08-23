@@ -1,10 +1,14 @@
-function results = classificationShootout()
+function results = classificationShootoutCvLambdaOnly()
 %% Compare different classification algorithms on a number of data sets
+% This is similar to classificationShootout, except we (1) pick a gamma for
+% all methods to use, and (2) also compare performance on larger data sets
+% using linear kernels. 
+%
 % Based on table 2 of 
 % ""Learning sparse Bayesian classifiers: multi-class formulation, fast
 % algorithms, and generalization bounds", Krishnapuram et al, PAMI 2005
 %
-%PMTKreallySlow (about 8 hours with current cv grid resolution)
+%PMTKslow
 %%
 setSeed(0);
 doLatex = true; 
@@ -19,9 +23,10 @@ methods = {'SVM', 'RVM', 'SMLR', 'RMLR'};
 nMethods = numel(methods);
 results = cell(nDataSets, nMethods);
 for i=1:nDataSets
+    gamma = pickGamma(dataSets(i)); 
     for j=1:nMethods
         fprintf('%s:%s', dataSets(i).name, methods{j}); 
-        R = evaluateMethod(methods{j}, dataSets(i), split);
+        R = evaluateMethod(methods{j}, dataSets(i), gamma, split);
         fprintf(':nerrs=%d/%d:(nsvecs=%d/%d)\n', R.nerrs, R.nTest, R.nsvecs, R.nTrain*R.nClasses);
         results{i, j} = R; 
     end
@@ -29,7 +34,15 @@ end
 displayResults(results, methods, {dataSets.name}, doLatex, doHtml);
 end
 
-function results = evaluateMethod(method, dataSet, split)
+function gamma = pickGamma(data)
+%% Pick a value for gamma, which all of the methods will use, by cv on an svm
+gammaRange = logspace(-15, 5, 200);
+X = rescaleData(data.X); 
+fitFn = @(X, y, gamma)svmFit(X, y, 'kernel', 'rbf', 'kernelParam', gamma);
+[model, gamma] = fitCv(gammaRange, fitFn, @svmPredict, @(a, b)mean(a~=b), X, data.y);
+end
+
+function results = evaluateMethod(method, dataSet, gamma, split)
 %% Evaluate the performance of a method on a given data set.
 tic;
 X      = rescaleData(standardizeCols(dataSet.X)); 
@@ -43,22 +56,21 @@ yTrain = y(1:nTrain);
 yTest  = y(nTrain+1:end);
 
 lambdaRange = 1./(2.^(-5:0.5:15));
-gammaRange  = 2.^(-15:0.5:3); 
-twoDgrid = crossProduct(lambdaRange, gammaRange); 
 
 switch method
     case 'SVM'
         
         fitFn = @(X, y, param)...
-            svmFit(X, y, 'C', 1./param(1), 'kernelParam', param(2), 'kernel', 'rbf');
+            svmFit(X, y, 'C', 1./param(1), 'kernelParam', gamma, 'kernel', 'rbf');
         predictFn = @svmPredict;
-        paramSpace = twoDgrid;
+        doCv = true;
         
     case 'RVM'
         
-        fitFn = @rvmFit; 
+        bestParams = gamma; 
+        model = rvmFit(Xtrain, yTrain, gamma); 
         predictFn = @rvmPredict;
-        paramSpace = gammaRange; 
+        doCv = false; 
         
     case 'SMLR'
         
@@ -66,9 +78,9 @@ switch method
             'lambda' , param(1), ...
             'regType', 'L1',...
             'preproc', preprocessorCreate('kernelFn',...
-            @(X1, X2)kernelRbfGamma(X1, X2, param(2))));
+            @(X1, X2)kernelRbfGamma(X1, X2, gamma)));
         predictFn = @logregPredict;
-        paramSpace = twoDgrid; 
+        doCv = true;
         
     case 'RMLR'
         
@@ -76,15 +88,16 @@ switch method
             'lambda' , param(1), ...
             'regType', 'L2',...
             'preproc', preprocessorCreate('kernelFn',...
-            @(X1, X2)kernelRbfGamma(X1, X2, param(2))));
+            @(X1, X2)kernelRbfGamma(X1, X2, gamma)));
         predictFn = @logregPredict;
-        paramSpace = twoDgrid; 
+        doCv = true; 
         
 end
-
-lossFn = @(yTest, yHat)mean(yHat ~= yTest);
-nfolds = 5;
-[model, bestParams]  = fitCv(paramSpace, fitFn, predictFn, lossFn, Xtrain, yTrain, nfolds);
+if doCv
+    lossFn = @(yTest, yHat)mean(yHat ~= yTest);
+    nfolds = 5;
+    [model, bestParams]  = fitCv(lambdaRange, fitFn, predictFn, lossFn, Xtrain, yTrain, nfolds);
+end
 results.trainingTime = toc;
 tic
 yHat   = predictFn(model, Xtest);
@@ -151,7 +164,7 @@ for i=1:nmeth
         testingTime(i) = testingTime(i) + results{j, i}.testingTime; 
     end
 end
-data = [data, mat2cellRows(num2str(trainingTime/60, '%.2g')), mat2cellRows(num2str(testingTime, '%.2g'))];
+data = [data, mat2cellRows(num2str(trainingTime, '%.2g')), mat2cellRows(num2str(testingTime, '%.2g'))];
 
 data = [data; cell(1, ndata + 2)];
 for j=1:ndata
@@ -162,7 +175,7 @@ for j=1:ndata
 end
 
 rowNames = [methods(:); {'Out of'}]; 
-colNames = [dataSetNames(:)', {'train(minutes)', 'test(seconds)'}];
+colNames = [dataSetNames(:)', {'train(seconds)', 'test(seconds)'}];
 
 if doHtml
     htmlTable('data', data, 'colNames', colNames, 'rowNames', rowNames); 
