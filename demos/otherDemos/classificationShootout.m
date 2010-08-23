@@ -9,9 +9,12 @@ function results = classificationShootout()
 setSeed(0);
 doLatex = true; 
 doHtml  = true;
-split = 0.7; % 70% training data, 30% testing
-warning('off', 'Bayes:maxIter'); % max iterations reached
-dataSets = setupData();
+split   = 0.7; % 70% training data, 30% testing
+
+
+
+%%
+dataSets = setupData(split);
 nDataSets = numel(dataSets);
 
 methods = {'SVM', 'RVM', 'SMLR', 'RMLR'};
@@ -55,8 +58,8 @@ switch method
         
     case 'RVM'
         
-        fitFn = @rvmSimpleFit; 
-        predictFn = @rvmSimplePredict;
+        fitFn = @rvmFit; 
+        predictFn = @rvmPredict;
         paramSpace = gammaRange; 
         
     case 'SMLR'
@@ -105,11 +108,11 @@ switch method
     case 'RVM'
         
         if results.nClasses < 3
-            results.nsvecs = sum(~arrayfun(@(x)approxeq(x, 0), model.wN));
+            results.nsvecs = numel(model.Relevant); 
         else
             nsvecs = 0;
             for i=1:results.nClasses
-                nsvecs = nsvecs +  sum(~arrayfun(@(x)approxeq(x, 0), model.modelClass{i}.wN));
+                nsvecs = nsvecs + numel(model.modelClass{i}.Relevant);
             end
             results.nsvecs = nsvecs; 
         end
@@ -167,14 +170,14 @@ if doHtml
     htmlTable('data', data, 'colNames', colNames, 'rowNames', rowNames); 
 end
 if doLatex
-    latextable(data, 'Horiz', rowNames, 'Vert', 'colNames'); 
+    latextable(data, 'Vert', rowNames, 'Horiz', colNames); 
 end
 
 end
 
 
 
-function dataSets = setupData()
+function dataSets = setupData(split)
 %% Load various dataSets, and standardize the format
 
 %% Crabs
@@ -235,4 +238,23 @@ dataSets(6).y = y;
 dataSets(6).name = 'Fglass';
 dataSets(6).nClasses  = 6;
 dataSets(6).nFeatures = 9;
+%% Display data set info in a latex table
+
+fprintf('Data Sets\n\n'); 
+nDataSets = numel(dataSets);
+table = zeros(4, nDataSets); 
+dnames = cell(1, nDataSets); 
+for i=1:nDataSets
+    table(1, i) = dataSets(i).nClasses;
+    table(2, i) = dataSets(i).nFeatures;
+    N = size(dataSets(i).X, 1);  
+    table(3, i) = floor(split*N);
+    table(4, i) =  N - table(3, i);
+    dnames{i} = dataSets(i).name; 
+end
+Vert = {'Num. Classes', 'Num. Features', 'Num. train', 'Num. test'};
+latextable(table, 'Horiz', dnames, 'Vert', Vert, 'format', '%d');
+fprintf('\n\n'); 
+
+
 end
