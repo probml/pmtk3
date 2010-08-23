@@ -35,27 +35,28 @@ switch lower(localCPD.cpdType)
         logB     = nan(nstates, seqlen);
         mu       = localCPD.mu;
         Sigma    = localCPD.Sigma;
+        XobsT    = Xobs';
         for j=1:nstates
-            logB(j, observed) = rowvec(gaussLogprob(mu(:, j), Sigma(:, :, j), Xobs'));
+            logB(j, observed) = gaussLogprob(mu(:, j), Sigma(:, :, j), XobsT);
         end
         
     case 'condmixgausstied'
         
         nstates = localCPD.nstates;
-        nmix    = localCPD.nmix; 
+        nmix    = localCPD.nmix;
         mu      = localCPD.mu;
         Sigma   = localCPD.Sigma;
         M       = localCPD.M;  % nstates-by-nmix
-        logM    = log(M); 
-        
-        logP = nan(nmix, seqlen); 
+        logM    = log(M);
+        logP    = nan(nmix, seqlen);
+        XobsT   = Xobs';
         for k=1:nmix
-           logP(k, observed) = rowvec(gaussLogprob(mu(:, k), Sigma(:, :, k), Xobs')); 
+            logP(k, observed) = gaussLogprob(mu(:, k), Sigma(:, :, k), XobsT);
         end
-        logB = nan(nstates, seqlen); 
+        logB = nan(nstates, seqlen);
         for j = 1:nstates
-           logBj = bsxfun(@plus, logM(j, :)', logP(:, observed)); 
-           logB(j, observed) = logsumexp(logBj, 1); 
+            logBj = bsxfun(@plus, logM(j, :)', logP(:, observed));
+            logB(j, observed) = logsumexp(logBj, 1);
         end
         
     otherwise

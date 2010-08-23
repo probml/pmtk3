@@ -41,6 +41,14 @@ else
     logp = -0.5*sum((X/Sigma).*X, 2);
     logZ = (d/2)*log(2*pi) + 0.5*logdet(Sigma);
     logp = logp - logZ;
+    
+% We could do a Cholesky decomp and reuse R for the logdet computation,
+% but its not much faster.
+%
+%     R = chol(Sigma); 
+%     logp2 = -0.5*sum(X/R/R'.*X, 2) - (d/2)*log(2*pi) - sum(log(diag(R)));
+%     assert(approxeq(logp, logp2));
+%     
 end
 
 end
