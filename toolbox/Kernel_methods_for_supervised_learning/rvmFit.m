@@ -42,7 +42,7 @@ else
     
 end
 
-model.prepproc = pp; 
+model.preproc = pp; 
 model.outputType = outputType;
 model.likelihood = likelihood; 
 model.ySupport   = ySupport; 
