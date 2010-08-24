@@ -155,38 +155,37 @@ end
 %% ESTEP
 function [ess, loglik] = estep(model, data, emissionEstep)
 %% Compute the expected sufficient statistics
-stackedData = cell2mat(data')';
-seqidx      = cumsum([1, cellfun(@(seq)size(seq, 2), data')]);
-seqidx      = seqidx(1:end-1);
-nstacked    = size(stackedData, 1);
-nstates     = model.nstates;
-startCounts = zeros(1, nstates);
-transCounts = zeros(nstates, nstates);
-weights     = zeros(nstacked, nstates);
-B           = zeros(nstates, nstacked); 
-loglik      = 0;
-A           = model.A;
-nobs        = numel(data);
-for i = 1:nobs
-    obs                            = data{i};
-    [gamma, llobs, alpha, beta, Bi] = hmmInferNodes(model, obs);
-    loglik                         = loglik + llobs;
-    xi_summed                      = hmmComputeTwoSliceSum(alpha, beta, A, Bi);
-    startCounts                    = startCounts + gamma(:, 1)';
-    transCounts                    = transCounts + xi_summed;
-    sz                             = size(gamma, 2);
-    idx                            = seqidx(i);
-    ndx                            = idx:idx+sz-1;
-    weights(ndx, :)                = weights(ndx, :) + gamma';
-    B(:, ndx)                      = Bi; 
+stackedData   = cell2mat(data')';
+seqidx        = cumsum([1, cellfun(@(seq)size(seq, 2), data')]);
+nstacked      = size(stackedData, 1);
+nstates       = model.nstates;
+startCounts   = zeros(1, nstates);
+transCounts   = zeros(nstates, nstates);
+weights       = zeros(nstacked, nstates);
+loglik        = 0;
+A             = model.A;
+pi            = model.pi;
+nobs          = numel(data);
+logB          = mkSoftEvidence(model.emission, stackedData'); 
+[logB, scale] = normalizeLogspace(logB'); 
+B             = exp(logB'); 
+for i=1:nobs
+    ndx                        = seqidx(i):seqidx(i+1)-1;
+    Bi                         = B(:, ndx); 
+    [gamma, alpha, beta, logp] = hmmFwdBack(pi, A, Bi);
+    loglik                     = loglik + logp; 
+    xi_summed                  = hmmComputeTwoSliceSum(alpha, beta, A, Bi);
+    startCounts                = startCounts + gamma(:, 1)';
+    transCounts                = transCounts + xi_summed;
+    weights(ndx, :)            = weights(ndx, :) + gamma';
 end
+loglik                  = loglik + sum(scale); 
 logprior                = log(A(:)+eps)'*(model.transPrior(:)-1) + ...
                           log(model.pi(:)+eps)'*(model.piPrior(:)-1);
 loglik                  = loglik + logprior;
 ess                     = structure(weights, startCounts, transCounts, B);  
 [ess, logEmissionPrior] = emissionEstep(model, ess, stackedData);
 loglik                  = loglik + logEmissionPrior;
-
 end
 
 function [ess, logprior] = estepEmission(model, ess, stackedData)
