@@ -36,6 +36,10 @@ end
 
 function gamma = pickGamma(data)
 %% Pick a value for gamma, which all of the methods will use, by cv on an svm
+if strcmpi(data.kernel, 'linear')
+    gamma = [];
+    return;
+end
 gammaRange = logspace(-15, 5, 200);
 X = rescaleData(data.X); 
 fitFn = @(X, y, gamma)svmFit(X, y, 'kernel', 'rbf', 'kernelParam', gamma);
@@ -59,39 +63,65 @@ lambdaRange = 1./(2.^(-5:0.5:15));
 
 switch method
     case 'SVM'
-        
-        fitFn = @(X, y, param)...
-            svmFit(X, y, 'C', 1./param(1), 'kernelParam', gamma, 'kernel', 'rbf');
-        predictFn = @svmPredict;
-        doCv = true;
-        
+
+        switch dataSet.kernel
+            case 'rbf'
+                fitFn = @(X, y, param)...
+                    svmFit(X, y, 'C', 1./param(1), 'kernelParam', gamma, 'kernel', 'rbf');
+            case 'linear'
+                fitFn = @(X, y, param)svmFit(X, y, 'C', 1./param(1), 'kernel', 'linear');
+        end
+         predictFn = @svmPredict;
+         doCv = true;
+                
     case 'RVM'
         
-        bestParams = gamma; 
-        model = rvmFit(Xtrain, yTrain, gamma); 
+        switch dataSet.kernel
+            case 'rbf'
+                model = rvmFit(Xtrain, yTrain, gamma);
+                bestParams = gamma;
+            case 'linear'
+                model = rvmFit(Xtrain, yTrain, [], 'kernelFn', @kernelLinear); 
+                bestParams = [];
+        end
         predictFn = @rvmPredict;
-        doCv = false; 
+        doCv = false;
         
     case 'SMLR'
         
-        fitFn = @(X, y, param)logregFit(X, y, ...
-            'lambda' , param(1), ...
-            'regType', 'L1',...
-            'preproc', preprocessorCreate('kernelFn',...
-            @(X1, X2)kernelRbfGamma(X1, X2, gamma)));
+        switch dataSet.kernel
+            case 'rbf'
+                fitFn = @(X, y, param)logregFit(X, y, ...
+                    'lambda' , param, ...
+                    'regType', 'L1',...
+                    'preproc', preprocessorCreate('kernelFn',...
+                    @(X1, X2)kernelRbfGamma(X1, X2, gamma)));
+            case 'linear'
+                fitFn = @(X, y, param)logregFit(X, y, ...
+                    'lambda' , param, ...
+                    'regType', 'L1',...
+                    'preproc', preprocessorCreate('kernelFn', @kernelLinear));
+        end
         predictFn = @logregPredict;
         doCv = true;
         
     case 'RMLR'
         
-       fitFn = @(X, y, param)logregFit(X, y, ...
-            'lambda' , param(1), ...
-            'regType', 'L2',...
-            'preproc', preprocessorCreate('kernelFn',...
-            @(X1, X2)kernelRbfGamma(X1, X2, gamma)));
+         switch dataSet.kernel
+            case 'rbf'
+                fitFn = @(X, y, param)logregFit(X, y, ...
+                    'lambda' , param, ...
+                    'regType', 'L2',...
+                    'preproc', preprocessorCreate('kernelFn',...
+                    @(X1, X2)kernelRbfGamma(X1, X2, gamma)));
+            case 'linear'
+                fitFn = @(X, y, param)logregFit(X, y, ...
+                    'lambda' , param, ...
+                    'regType', 'L2',...
+                    'preproc', preprocessorCreate('kernelFn', @kernelLinear));
+        end
         predictFn = @logregPredict;
-        doCv = true; 
-        
+        doCv = true;
 end
 if doCv
     lossFn = @(yTest, yHat)mean(yHat ~= yTest);
@@ -188,6 +218,7 @@ end
 
 
 
+
 function dataSets = setupData(split)
 %% Load various dataSets, and standardize the format
 
@@ -201,6 +232,7 @@ dataSets(1).y = y;
 dataSets(1).name = 'Crabs';
 dataSets(1).nClasses  = 2;
 dataSets(1).nFeatures = 5;
+dataSets(1).kernel = 'rbf';
 %% fisherIris
 loadData('fisherIris');
 X = meas;
@@ -211,6 +243,7 @@ dataSets(2).y = y;
 dataSets(2).name = 'Iris';
 dataSets(2).nClasses  = 3;
 dataSets(2).nFeatures = 4;
+dataSets(2).kernel = 'rbf';
 %% Bankruptcy
 loadData('bankruptcy'); 
 X = data(:, 2:end); 
@@ -221,6 +254,7 @@ dataSets(3).y = y;
 dataSets(3).name = 'Bankruptcy';
 dataSets(3).nClasses  = 2;
 dataSets(3).nFeatures = 2;
+dataSets(3).kernel = 'rbf';
 %% Pimatr
 loadData('pimatr')
 X = data(:, 2:end-1); 
@@ -231,6 +265,7 @@ dataSets(4).y = y;
 dataSets(4).name = 'Pima';
 dataSets(4).nClasses  = 2;
 dataSets(4).nFeatures = 7;
+dataSets(4).kernel = 'rbf';
 %% Soy
 loadData('soy')
 [X, y] = shuffleRows(X, Y); 
@@ -239,6 +274,7 @@ dataSets(5).y = y;
 dataSets(5).name = 'Soy';
 dataSets(5).nClasses = 3;
 dataSets(5).nFeatures = 35; 
+dataSets(5).kernel = 'rbf';
 %% Fglass
 loadData('fglass');
 X = [Xtrain; Xtest];
@@ -249,6 +285,27 @@ dataSets(6).y = y;
 dataSets(6).name = 'Fglass';
 dataSets(6).nClasses  = 6;
 dataSets(6).nFeatures = 9;
+dataSets(6).kernel = 'rbf';
+%% colon
+loadData('colon')
+[X, y] = shuffleRows(X, y); 
+dataSets(7).X = X;
+dataSets(7).y = y;
+dataSets(7).name = 'colon (linear)';
+dataSets(7).nClasses = 2;
+dataSets(7).nFeatures = 2000;
+dataSets(7).kernel = 'linear';
+%% amlAll
+loadData('amlAll');
+X = [Xtrain; Xtest];
+y = [ytrain; ytest];
+[X, y] = shuffleRows(X, y); 
+dataSets(8).X = X;
+dataSets(8).y = y;
+dataSets(8).name = 'amlAll (linear)';
+dataSets(8).nClasses = 2;
+dataSets(8).nFeatures = 7129;
+dataSets(8).kernel = 'linear';
 %% Display data set info in a latex table
 
 fprintf('Data Sets\n\n'); 
