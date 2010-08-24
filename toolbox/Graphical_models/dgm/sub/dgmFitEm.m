@@ -48,10 +48,6 @@ for i = 1:ncases
     args = {'clamped', [], 'localev', []}; 
     if i <= nDataCases   ,  args{2} = data(i, :);                       end
     if i <= nLocalEvCases
-        % localEv must be of size nobs-by-d-by-nnodes. If there is only
-        % one observation, it must be of size 1-by-d-nnodes, not
-        % d-by-nnodes. You can use insertSingleton(localEv, 1) if
-        % necessary.
         args{4} = squeezeFirst(localEv(i, :, :));   
     end
     [fmarg, llobs, pmarg] = dgmInferFamily(dgm, args{:}); % pmarg are the marg probs of the parents with localCPDs
