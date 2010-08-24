@@ -4,6 +4,7 @@
 % Load synthetic data generated from a mixture of 2 Gaussians. Source:
 % http://research.microsoft.com/~cmbishop/PRML/webdatasets/datasets.htm
 %
+% See also hastieSvmLrDemo
 
 loadData('bishop2class');
 y = Y(:);

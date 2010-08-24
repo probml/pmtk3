@@ -1,8 +1,8 @@
 function results = classificationShootoutCvLambdaOnly()
 %% Compare different classification algorithms on a number of data sets
 % This is similar to classificationShootout, except we (1) pick a gamma for
-% all methods to use, and (2) also compare performance on larger data sets
-% using linear kernels. 
+% all methods to use, (2) also compare performance on larger data sets
+% using linear kernels, (3) cross validate over a sparser range. 
 %
 % Based on table 2 of 
 % ""Learning sparse Bayesian classifiers: multi-class formulation, fast
@@ -40,7 +40,7 @@ if strcmpi(data.kernel, 'linear')
     gamma = [];
     return;
 end
-gammaRange = logspace(-15, 5, 200);
+gammaRange = logspace(-4, 3, 100);
 X = rescaleData(data.X); 
 fitFn = @(X, y, gamma)svmFit(X, y, 'kernel', 'rbf', 'kernelParam', gamma);
 [model, gamma] = fitCv(gammaRange, fitFn, @svmPredict, @(a, b)mean(a~=b), X, data.y);
@@ -59,7 +59,7 @@ Xtest  = X(nTrain+1:end, :);
 yTrain = y(1:nTrain);
 yTest  = y(nTrain+1:end);
 
-lambdaRange = 1./(2.^(-5:0.5:15));
+lambdaRange = logspace(-6, 1, 20);
 
 switch method
     case 'SVM'
