@@ -2,60 +2,8 @@ function generateModelsVsMethodsTables()
 %% Make the models vs methods tables
 %
 %PMTKneedsMatlab
-%% Models
-% List models here according to model class
-basic =      {
-    'beta'
-    'betaBinom'
-    'binomial'
-    'chi2'
-    'dirichlet'
-    'discrete'
-    'gamma'
-    'gauss'
-    'gaussInvWishart'
-    'invChi2'
-    'invGamma'
-    'invWishart'
-    'laplace'
-    'multinom'
-    'pareto'
-    'poisson'
-    'student'
-    'uniform'
-    'wishart'};
 
-supervised = {
-    'discrimAnalysis'
-    'fisherLda'
-    'generativeClassifier'
-    'knn'
-    'linreg'
-    'logreg'
-    'mlpClassif'
-    'mlpRegress'
-    'naiveBayes'
-    'probitReg'
-    'svm'    };
-
-latent =     {
-    'hmm'
-    'lds'
-    'markov'
-    'mixDiscrete'
-    'mixGauss'
-    'mixGaussDiscrete'
-    'mixGaussVb'
-    'mixStudent'
-    'ppca'   };
-
-graphical =  {
-    'crf2'
-    'dgm'
-    'ggm'
-    'mrf'
-    'mrf2'
-    'tree'   };
+[basic, supervised, latent, graphical] = classNameMappings();
 
 titles = {
     'Basic Models'    
