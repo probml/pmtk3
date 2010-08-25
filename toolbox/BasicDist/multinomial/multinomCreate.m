@@ -1,4 +1,4 @@
-function model = multinomialCreate(N, p)
+function model = multinomCreate(N, p)
 %% Create a multinomial distribution
 %PMTKdefn Mu(x | N, p)
 
