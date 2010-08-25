@@ -55,6 +55,7 @@ model.preproc = pp;
 model.outputType = outputType;
 model.likelihood = likelihood; 
 model.ySupport   = ySupport; 
+model.gamma      = gamma; 
 
 
 end
