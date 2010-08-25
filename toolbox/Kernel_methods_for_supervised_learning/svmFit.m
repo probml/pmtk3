@@ -150,7 +150,7 @@ if rescaleX
 end
 model.ySupport = ySupport;
 model.outputType = outputType;
-
+model.kernel = kernel; 
 %% support vectors
 switch lower(model.fitEngine)
     
