@@ -1,7 +1,7 @@
-function logp = gaussInvWishartMarginalLogprob(arg1, arg2, arg3, arg4, arg5)
+function logp = gaussInvWishartLogprobBayes(arg1, arg2, arg3, arg4, arg5)
 % logp(i) = int_S log p(X(i, :) | model)
-% logp = gaussInvWishartMarginalLogprob(model, X) OR
-% logp = gaussInvWishartMarginalLogprob(mu, Sigma, dof, k, X)
+% logp = gaussInvWishartLogprobBayes(model, X) OR
+% logp = gaussInvWishartLogprobBayes(mu, Sigma, dof, k, X)
 %%
 if isstruct(arg1)
     model = arg1;
