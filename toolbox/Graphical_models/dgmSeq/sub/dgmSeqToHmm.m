@@ -1,6 +1,6 @@
 function hmm = dgmSeqToHmm(dgmSeq)
 %% Convert a dgmSeq to an hmm
-
+% work in progress
 
 intra = dgmSeq.intra; 
 inter = dgmSeq.inter; 
