@@ -17,6 +17,7 @@ basic =      {
     'invGamma'
     'invWishart'
     'laplace'
+    'markov'
     'multinom'
     'pareto'
     'poisson'
@@ -40,7 +41,6 @@ supervised = {
 latent =     {
     'hmm'
     'lds'
-    'markov'
     'mixDiscrete'
     'mixGauss'
     'mixGaussDiscrete'
