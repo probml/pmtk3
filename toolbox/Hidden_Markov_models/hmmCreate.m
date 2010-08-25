@@ -1,6 +1,7 @@
-function model = hmmCreate(type, pi, A, emission, nstates)
+function model = hmmCreate(type, pi, A, emission)
 %% Create an hmm model
 % See also hmmFit
+nstates = numel(pi); 
 model = structure(type, pi, A, emission, nstates);
 model.modelType = 'hmm';
 if strcmpi(type, 'gauss')

@@ -244,6 +244,8 @@ denom          = ess.wsum + sum(Epc, 2);
 model.emission = tabularCpdCreate(bsxfun(@rdivide, ess.dataCounts + Epc, denom));
 end
 
+
+
 %% Init Helpers
 
 function model = rndInitPiA(model)
