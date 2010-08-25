@@ -2,11 +2,11 @@ function hmm = dgmSeqToHmm(dgmSeq)
 %% Convert a dgmSeq to an hmm
 % work in progress
 
-intra = dgmSeq.intra; 
-inter = dgmSeq.inter; 
-slice1CPDs   = dgmSeq.slice1CPDs;
-slice2CPDs   = dgmSeq.slice2CPDs;
-emission = dgmSeq.emission; 
+intra      = dgmSeq.intra; 
+inter      = dgmSeq.inter; 
+slice1CPDs = dgmSeq.slice1CPDs;
+slice2CPDs = dgmSeq.slice2CPDs;
+emission   = dgmSeq.emission; 
 
 intraH  = intra(1:end-1, 1:end-1); 
 interH  = inter(1:end-1, 1:end-1); 
@@ -16,45 +16,39 @@ G2T(1:nHnodes, 1:nHnodes) = intraH;
 G2T(1:nHnodes, nHnodes+1:end) = interH; 
 
 factors = cpds2Factors([slice1CPDs(:); slice2CPDs(:)], G2T); 
-ns    = rowvec(cellfun(@(c)c.sizes(end), factors(1:nHnodes))); 
-Qh    = prod(ns); 
-piFac = tabularFactorMultiply(factors(1:nHnodes)); 
-Afac  = tabularFactorMultiply(factors(nHnodes+1:end)); 
+ns      = rowvec(cellfun(@(c)c.sizes(end), factors(1:nHnodes))); 
+Qh      = prod(ns); 
+piFac   = tabularFactorMultiply(factors(1:nHnodes)); 
+Afac    = tabularFactorMultiply(factors(nHnodes+1:end)); 
 
-pi    = piFac.T(:); 
-A     = reshape(Afac.T, Qh, Qh); 
+pi      = piFac.T(:); 
+A       = reshape(Afac.T, Qh, Qh); 
+
+edom     = size(intra, 1); 
+P        = parents(intra, edom); 
 
 if isfield(emission, 'T')
     
-    Tsmall   = tabularFactorCreate(emission.T, [parents(intra, nHnodes), nHnodes]); 
-    sz       = Tsmall.sizes(end);
-    Tbig     = onesPMTK([ns, sz]); 
-    Tbig     = tabularFactorMultiply(Tbig, Tsmall); 
-    obsModel = tabularCpdCreate(reshape(Tbig.T, [], sz)); 
-    type     = 'discrete';
+    Tsmall     = emission.T; 
+    sz         = size(Tsmall); 
+    nObsStates = sz(end); 
+    T          = replicate(Tsmall, [P, edom], [ns, nObsStates]); 
+    obsModel   = tabularCpdCreate(reshape(T, [], nObsStates)); 
+    type       = 'discrete';
     
 elseif isfield(emission, 'mu')
-    
-    smallMu    = emission.mu; 
-    smallSigma = emission.Sigma; 
-    d          = size(smallSigma, 1); 
-    bigMu      = onesPMTK([d, ns]); 
-    bigDom     = [1, (1:nHnodes)+1]; 
-    smallDom   = [1, parents(intra, size(intra, 1))+1];
-    bigMu      = bsxTable(@times, bigMu, smallMu, bigDom, smallDom); 
-    bigMu      = reshape(bigMu, d, []); 
-    bigSigma   = onesPMTK([d, d, ns]); 
-    bigDom     = [1, 2, (1:nHnodes)+2]; 
-    smallDom   = [1, 2, parents(intra, size(intra, 1))+2];
-    bigSigma   = bsxTable(@times, bigSigma, smallSigma, bigDom, smallDom); 
-    bigSigma   = reshape(bigSigma, d, d, []); 
-    obsModel   = condGaussCpdCreate(bigMu, bigSigma);
-    type       = 'gaussian';
+        
+    d        = size(emission.Sigma, 1);     
+    mu       = replicate(emission.mu, [1 P+1], [d ns]); 
+    mu       = reshape(mu, d, []); 
+    Sigma    = replicate(emission.Sigma, [1 2 P+2], [d d ns]); 
+    Sigma    = reshape(Sigma, d, d, []); 
+    obsModel = condGaussCpdCreate(mu, Sigma);
+    type     = 'gaussian';
     
 else
    error('unrecognized emission type');  
 end
-
 hmm = hmmCreate(type, pi, A, obsModel); 
 end
 
@@ -85,8 +79,16 @@ slice2CPDs{3} = tabularCpdCreate(ones(ns(3), ns(3)));
 d = 5; 
 emission.mu = onesPMTK([d, ns]);
 emission.Sigma = onesPMTK([d d ns]); 
-sdgm = dgmSeqCreate(intra, inter, slice1CPDs, slice2CPDs, emission)
+sdgm = dgmSeqCreate(intra, inter, slice1CPDs, slice2CPDs, emission);
 
 hmm = dgmSeqToHmm(sdgm);
+
+nObsStates = 8; 
+emission2.T = onesPMTK([ns, nObsStates]); 
+sdgm2 = dgmSeqCreate(intra, inter, slice1CPDs, slice2CPDs, emission2);
+hmm2 = dgmSeqToHmm(sdgm2); 
+
+
+
 
 %}
