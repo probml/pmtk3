@@ -69,11 +69,11 @@ X = gaussSample(m, 5)
         Sigma: [2x2 double]
     modelType: 'gauss'
 X =
-    0.0662    0.6524
-    0.3271    1.0826
-    1.0061   -0.6509
-    0.2571   -0.9444
-   -1.3218    0.9248
+    0.5377    1.8339
+   -2.2588    0.8622
+    0.3188   -1.3077
+   -0.4336    0.3426
+    3.5784    2.7694
 </pre><p>The function 'gaussCreate' is called a constructor, since it creates an instance of the class. The function 'gaussSample' is a method. The methods that are supported depend on the type of model; details are given below.</p><p>To provide some overall structure, we group the model classes into two major types:</p><div><ul><li>unconditional / unsupervised</li><li>conditional / supervised</li></ul></div><p>These support different functions, as we explain below.</p><h2>Conditional (supervised) models<a name="6"></a></h2><p>This is a model of the form <img src="tutFoundations_eq31060.png" alt="$p(y|x, \theta)$">, where x is the set of covariats/ inputs, and y is the response. Currently we require y to be a scalar. If <img src="tutFoundations_eq14315.png" alt="$y \in R$">, we are performing regression; if <img src="tutFoundations_eq35391.png" alt="$y \in \{1,\ldots,C\}$">, we are performing classification. We discuss supervised models in more detail <a href="http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutSupervised.html">here</a>.</p><p>All conditional models should support the functions listed below. In the table,  'foo' is the name of the model class and '...' refers to optional or model-specific arguments (these will be explained later).</p><p>
 <TABLE BORDER=3 CELLPADDING=5 WIDTH="100%" >
 <TR ALIGN=left>
@@ -166,7 +166,7 @@ here> for details.
 <td> Find a MAP estimate of the graph structure (not yet implemented).
 </table>
 </p><p>A list of all the GMs can be found <a href="http://pmtk3.googlecode.com/svn/trunk/docs/modelLists/modelList.html">here</a></p><h2>Summary of models and methods<a name="19"></a></h2><p>A summary of the models and their main methods is shown below</p><p>
-<img src="modelsMethodsTree.png">.
+<img src="http://pmtk3.googlecode.com/svn/trunk/docs/classSystem/modelsMethodsTree.png">.
 </p><h2>Passing in optional arguments<a name="22"></a></h2><p>Many functions take a large number of optional arguments. For example, linregFit (which fit a linear regression model) has the following interface</p><pre>[model] = linregFit(X, y, varargin)</pre><p>varargin represents a variable number of arguments. The optional arguments, and their default values, are printed when you type help('linregFit').</p><pre class="codeinput">help <span class="string">linregFit</span>
 </pre><pre class="codeoutput">  Fit a linear regression model by MLE or MAP estimation
   INPUTS
@@ -189,7 +189,7 @@ m1 = linregFit(X, y, <span class="string">'regType'</span>, <span class="string"
 </pre><pre class="codeoutput">m1 = 
         lambda: 2
              w: [3x1 double]
-        sigma2: 0.0029
+        sigma2: 0.0093
        preproc: [1x1 struct]
      modelType: 'linreg'
     likelihood: 'gaussian'
@@ -199,7 +199,7 @@ m2 = linregFit(X, y, s)
 </pre><pre class="codeoutput">m2 = 
         lambda: 2
              w: [3x1 double]
-        sigma2: 0.0029
+        sigma2: 0.0093
        preproc: [1x1 struct]
      modelType: 'linreg'
     likelihood: 'gaussian'
@@ -423,7 +423,7 @@ X = gaussSample(m, 5)
 % A summary of the models and their main methods is shown below
 %%
 % <html>
-% <img src="modelsMethodsTree.png">.
+% <img src="http://pmtk3.googlecode.com/svn/trunk/docs/classSystem/modelsMethodsTree.png">.
 % </html>
 %%
 

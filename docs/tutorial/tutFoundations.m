@@ -211,10 +211,18 @@ X = gaussSample(m, 5)
 % here>
 %% Summary of models and methods
 % 
-% A summary of the models and their main methods is shown below
+% A summary of the abstract classes and their main methods is shown below
 %%
 % <html>
-% <img src="http://pmtk3.googlecode.com/svn/trunk/docs/classSystem/modelsMethodsTree.png">.
+% <img src="http://pmtk3.googlecode.com/svn/trunk/docs/classSystem/modelsMethodsTree.png"
+% height="2in">.
+% </html>
+%%
+% A summary of the concrete classes is shown below.
+%%
+% <html>
+% <img src="http://pmtk3.googlecode.com/svn/trunk/docs/classSystem/modelsConcreteTree.png"
+% height="2in">.
 % </html>
 %%
 
