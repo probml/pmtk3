@@ -16,7 +16,7 @@ for k=1:nstates
     Sigma(:, :, k) = randpd(d) + 2*eye(d);
 end
 emission = condGaussCpdCreate(randn(d, nstates), Sigma);
-model = hmmCreate('gauss', pi, A, emission, nstates);
+model = hmmCreate('gauss', pi, A, emission);
 end
 
 
