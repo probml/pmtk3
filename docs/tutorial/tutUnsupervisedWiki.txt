@@ -1,0 +1,143 @@
+#summary Tutorial on unsupervised learning using pmtk3
+
+= Basics =
+
+We can create  an unconditional density model of type 'foo' as follows
+
+{{{
+  model = fooCreate(...)
+  model = fooFit(X, ...)
+}}}
+
+The arguments '...' depends on the form of the model,
+and are explained below.
+
+Currently, 'foo' can be one of the following (in alphabetical order)
+
+ * crf2 (Conditional random field with discrete hidde nodes, pairwise potentials)
+ * hmm (hidden Markov model, any kind of observation)
+ * lds (linear dynamical system)
+ * markov (discrete time, discrete state Markov chain)
+ * mix (finite mixture models)
+ * mrf2 (Markov random field with discrete nodes, pairwise potentials)
+ * ppca (probabilistic principal components analysis)
+
+Below we describe the methods that each model supports.
+Note that not all models support all methods.
+Furthermore, this list is currently a specification of what the future
+interface will look like, rather than a description of the current interface
+(which can be inferred from the auto-generated documentation).
+To determine if a given model supports a given method,
+just type 'help fooMethod' and if Matlab says that 'fooMethod' is undefined,
+then it is not supported.
+
+The basic operations on an unconditional density model  are as follows 
+
+{{{
+model = fooTrain(model, X, ...) % Compute ML or MAP estimate of parameters
+ 
+L = fooLogprob(model, X) % L(i) = log p(X(i,:))
+ 
+E = fooEnergy(model, X) % E(i) = - log p(X(i,:) ) - log Z
+
+X = fooSample(model, N, ...) % X(i,:) ~ p(.), i=1:N
+
+}}}
+
+Note that fooFit(X,...) is shorthand for fooTrain(fooCreate(...),X,...).
+
+For some models,  fooEnergy  is the same as -fooLogprob, but for those
+with intractable normalization constants Z (e.g., MRFs), fooEnergy is more efficient to compute.
+
+X is an N*D matrix, as usual.
+It may have NaN's in it, which means the corresponding entry is
+missing (hidden). Whether NaN's  are supported depends on the
+particular model and the particular fitting/ inference method you
+choose; this is controlled by the optional arguments '...' passed to
+create and/or fit (see below for details).
+
+All of the above methods  are vectorized (conceptually, at least), in the
+sense that they work on a set of datacases in batch mode.
+
+For joint probability models (with more than one variable), it is possible to condition on one set of variables and infer the values of others. We therefore  define the following additional methods (datacase is like a single row of X, and may contain NaN's for 'unclamped' variables):
+
+
+{{{
+   Xhat = fooImpute(model, X)  % replace values of X which are NaN with predicted value
+
+  model = fooCondition(model, datacase) % new model represents p(hidden | datacase)
+      Only supported by a few models.
+
+  X = fooSampleConditional(model, N, datacase, ...) % X(i,:) ~ p(. |  datacase)
+      Conceptually the same as fooSample(fooCondition(model, datacase), N)
+      The conditioned-on nodes are clamped to their observed values.
+      If N=1, this is a bit like fooImpute.
+ }}} 
+
+For graphical models (with no explicit latent variables),
+we define the following additional methods (we assume hidden nodes are discrete):
+
+{{{
+xhat = fooEstNodes(model, datacase) % xhat(1,:) = argmax_x p(x|datacase) (MAP decoding)
+
+bel = fooQuery(model, datacase, queryNodes) % bel = p(Q|datacase)
+
+nodeBel = fooInferNodes(model, datacase) % nodeBel(n,k) = p(X(n)=k|datacase)
+        We set nodeBel(n,k)=0 if k > nstates(n)
+
+[nodeBel, edgeBel] = fooInferNodesAndEdges(model, datacase) % for pairwise models
+       returns nodelBel(n,:) and edgeBel(:,:,e) 
+
+[nodeBel, famBel] = fooInferNodesAndFamilies(model, datacase) % for DGMs
+       returns nodelBel{f}(:) and familyBel{f}(:,:,...:)
+}}}
+
+For models with latent variables, we define the following
+additional methods:
+
+{{{
+zhat = fooEstLatentNode(model, X) % Z(i,:) = argmax_z p(z|X(i,:))
+       for single LV (eg. mixture model or PCA)
+
+pz = fooInferLatentNode(model, X) % pz(i,k) = p(Z=k|X(i,:))
+       for single discrete LV (eg mixture model)
+
+[muZ, SigmaZ] = fooInferLatentNode(model, X) % [muZ(i,:), SigmaZ(:,:,i)] = p(Z|X(i,:))
+         for single Gaussian LV (eg PCA)
+
+nodeBel = fooInferLatentNodes(model, datacase) % nodeBel(k,n) = p(Zn=k | datacase)
+      for multiple discrete LVs (eg HMM)
+
+[mu, Sigma] = fooInferLatentNodes(model, datacase) % [mu(:,n), Sigma(:,:,n)] = p(Zn | datacase)
+      for multiple Gaussian LVs (eg LDS)
+
+[X,Z] = fooSample(model, N)  % [X(i,:),Z(i,:)] ~ p(.)
+
+Z = fooSampleLatent(model, N, datacase) % Z(i,:) ~ p(Z | datacase)
+}}}
+
+
+Below we describe some particular models in more detail.
+
+= Mixture models = 
+
+We will discuss mixtures of Gaussians as an example, but we can make mixtures of other kinds of distributions in a similar way.
+
+We can fit the model, consisting of K mixture components, as follows:
+
+{{{
+[model, loglikHist] = mixGaussFit(data, K);
+}}}
+
+We can then infer the posterior responsibilities of each data point (i.e., a soft clustering) using
+{{{
+[z, pz] = mixGaussInfer(model, X)
+}}}
+
+See the following demos for examples of how to use this code in practice:
+
+ * [http://pmtk3.googlecode.com/svn/trunk/docs/demoOutput/Mixture_models/mixGaussDemoFaithful.html mixGaussDemoFaithful] Fit a mixture of Gaussians  using EM to the Old Faithful dataset.
+
+ * [http://pmtk3.googlecode.com/svn/trunk/docs/demoOutput/Mixture_models/mixGaussVbDemoFaithful.html  mixGaussVbDemoFaithful] Fit a mixture of Gaussians  using variational Bayes to the Old Faithful dataset. This illustrates automatic 'killing off' of unwanted components.
+
+.

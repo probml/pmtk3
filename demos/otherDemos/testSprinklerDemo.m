@@ -7,7 +7,7 @@
 %  v
 %  W
 %%
-function joint = testSprinklerDemo()
+%testSprinklerDemo()
 % Specify the conditional probability tables as cell arrays
 % The left-most index toggles fastest, so entries are stored in this order:
 % (1,1,1), (2,1,1), (1,2,1), (2,2,1), etc.
