@@ -51,6 +51,7 @@ latent =     {
 graphical =  {
     'crf2'
     'dgm'
+    'dgmSeq'
     'ggm'
     'mrf'
     'mrf2'

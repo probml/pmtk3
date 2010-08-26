@@ -40,7 +40,7 @@ dgmModel.CPDs{1}            = tabularCpdCreate(pi0(:), 'prior', hmmModel.piPrior
 dgmModel.CPDs{2}            = tabularCpdCreate(trans0, 'prior', hmmModel.transPrior); 
 %% fit the dgm
 fprintf('\nDGM\n'); 
-tic; dgmModel = dgmFit(dgmModel, 'localev', localev, 'verbose', true);toc
+tic; dgmModel = dgmTrain(dgmModel, 'localev', localev, 'verbose', true);toc
 %% compare results
 hmmPi = hmmModel.pi(:); 
 dgmPi = dgmModel.CPDs{1}.T(:);

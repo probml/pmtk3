@@ -5,7 +5,7 @@ function [model, loglikHist] = hmmFit(data, nstates, type, varargin)
 % data         - a cell array of observations; each observation j is
 %                d-by-seqLength(j), (where d is always 1 if type = 'discrete')
 %
-%                Note, unlike hmmFit, dgmFit does not use cell arrays,
+%                Note, unlike hmmFit, dgmTrain does not use cell arrays,
 %                instead it takes an NaN-padded matrix of size
 %                nobs-by-d-max(seqLength). You can use the localEv2HmmObs
 %                and hmmObs2LocalEv functions to convert between these

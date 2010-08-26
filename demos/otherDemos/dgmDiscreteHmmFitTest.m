@@ -1,4 +1,4 @@
-%% Fit a discrete HMM via hmmFit and dgmFit, comparing the results
+%% Fit a discrete HMM via hmmFit and dgmTrain, comparing the results
 setSeed(0); 
 obsModel = [1/6 , 1/6 , 1/6 , 1/6 , 1/6 , 1/6  ;   
            1/10, 1/10, 1/10, 1/10, 1/10, 5/10 ];   
@@ -35,7 +35,7 @@ dgm.CPDs{2}.prior = hmmF.transPrior;
 dgm.localCPDs{1}.prior = hmmF.emissionPrior;
 %% fit the dgm
 fprintf('DGM\n'); 
-dgm = dgmFit(dgm, 'localev', permute(observed(:), [3 2 1]), 'verbose', true); 
+dgm = dgmTrain(dgm, 'localev', permute(observed(:), [3 2 1]), 'verbose', true); 
 %% compare results
 assert(approxeq(hmmF.pi(:), dgm.CPDs{1}.T(:))); 
 assert(approxeq(hmmF.A, dgm.CPDs{2}.T)); 

@@ -1,7 +1,7 @@
-function [dgm, loglikHist] = dgmFitEm(dgm, data, varargin)
+function [dgm, loglikHist] = dgmTrainEm(dgm, data, varargin)
 %% Fit a dgm with partially observed data via EM
 %
-% See dgmFit
+% See dgmTrain
 %%
 [localEv, EMargs] = process_options(varargin, 'localev', []);
 if ~isempty(localEv) && ndims(localEv) < 3 && dgm.nnodes > 1

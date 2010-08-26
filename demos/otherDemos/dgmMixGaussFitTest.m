@@ -1,4 +1,4 @@
-%% Fit a mixture of Gaussians comparing mixGaussFit and dgmFit
+%% Fit a mixture of Gaussians comparing mixGaussFit and dgmTrain
 %
 %%
 setSeed(0);
@@ -23,9 +23,9 @@ G           = 0; % graph of a single node with one localCPD
 CPD         = tabularCpdCreate(mix0');
 localCPD    = condGaussCpdCreate(mu0, Sigma0, 'prior', mixGauss.prior); 
 mixGaussDgm = dgmCreate(G, CPD, 'localCPDs', localCPD);
-%% fit using dgmFit
+%% fit using dgmTrain
 fprintf('DGM\n'); 
-mixGaussDgm = dgmFit(mixGaussDgm, 'localev', localEv, 'verbose', true);
+mixGaussDgm = dgmTrain(mixGaussDgm, 'localev', localEv, 'verbose', true);
 %% compare results
 assert(approxeq(mixGaussDgm.localCPDs{1}.mu, mixGauss.mu)); 
 assert(approxeq(mixGaussDgm.localCPDs{1}.Sigma, mixGauss.Sigma)); 

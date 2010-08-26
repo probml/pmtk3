@@ -20,17 +20,13 @@ outputFiles = {
     };
 
 outputDir          = fullfile(pmtk3Root, 'docs', 'modelsByMethods'); 
-exceptionThreshold = 1; 
+exceptionThreshold = 3; 
 excludedDirs = {
     'sub'
-    'util'
-    'metatools'
-    'graph'
-    'graphics'
     'Variable_selection'
     'svmFunctions'
     'linregRobustStudent'
-    'MCMC'
+    'Algorithms'
     };
 %%
 outputFiles        = cellfuncell(@(f)fullfile(outputDir, f), outputFiles);

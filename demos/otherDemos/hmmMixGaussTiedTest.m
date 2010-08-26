@@ -14,10 +14,10 @@ model = hmmFit(data, nstates, 'mixGaussTied', 'verbose', true, ...
 if 0
     
     localev = hmmObs2LocalEv(data);
-    localev(1:3:end) = nan; % use dgmFit for arbitrarily missing local ev
+    localev(1:3:end) = nan; % use dgmTrain for arbitrarily missing local ev
     Tmax = 131; % maximum length of the sequences.
     dgm = hmmToDgm(model, Tmax);
     
-    dgm2 = dgmFit(dgm, 'localev', localev, 'verbose', true);
+    dgm2 = dgmTrain(dgm, 'localev', localev, 'verbose', true);
     
 end

@@ -1,4 +1,4 @@
-%% Compare dgmFit and naiveBayesFit
+%% Compare dgmTrain and naiveBayesFit
 %
 %%
 function dgmNaiveBayesFitTest
@@ -23,7 +23,7 @@ CPDs = mkRndTabularCpds(G, nstates, 'prior', 'laplace');
 CPDs{1}.prior = 1;
 dgm = dgmCreate(G, CPDs); 
 %% fit the dgm
-dgm = dgmFitFullyObs(dgm, [y, X]); 
+dgm = dgmTrainFullyObs(dgm, [y, X]); 
 %% compare the results
 assert(approxeq(nb.classPrior(:), dgm.CPDs{1}.T(:))); 
 for i=1:d

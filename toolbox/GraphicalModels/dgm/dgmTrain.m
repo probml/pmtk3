@@ -1,4 +1,4 @@
-function dgm = dgmFit(dgm, varargin)
+function dgm = dgmTrain(dgm, varargin)
 %% Fit a dgm via mle/map
 % If data is missing, we fit using EM
 %
@@ -48,9 +48,9 @@ function dgm = dgmFit(dgm, varargin)
 
 if isempty(data) || ~all(data(:))
     assert(isempty(clamped)); % clamping is not supported when data is missing
-    dgm = dgmFitEm(dgm, data, args{:}); 
+    dgm = dgmTrainEm(dgm, data, args{:}); 
 else
-    dgm = dgmFitFullyObs(dgm, data, 'clamped', clamped, args{:}); 
+    dgm = dgmTrainFullyObs(dgm, data, 'clamped', clamped, args{:}); 
 end
 
 if buildJtree

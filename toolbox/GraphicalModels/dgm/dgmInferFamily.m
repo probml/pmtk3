@@ -3,7 +3,7 @@ function [familyBels, logZ, nodeBels] = dgmInferFamily(dgm, varargin)
 % Optional args are the same as for dgmInferQuery
 %
 % If requested, nodeBels{i} is the ith marginal, if the ith node has a local
-% CPD, and empty otherwise, (used by dgmFitEm).
+% CPD, and empty otherwise, (used by dgmTrainEm).
 %%
 calcNodeBels = nargout > 2; 
 nnodes       = dgm.nnodes; 

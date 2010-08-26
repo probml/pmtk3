@@ -21,7 +21,7 @@ dgmModel.CPDs{1}.prior = hmmModel.piPrior(:);
 dgmModel.CPDs{2}.prior = hmmModel.transPrior ;
 dgmModel.localCPDs{1}.prior = hmmModel.emissionPrior; 
 % fit dgm
-dgmModel = dgmFit(dgmModel,'data', data, 'localev', localev); 
+dgmModel = dgmTrain(dgmModel,'data', data, 'localev', localev); 
 %% compare results
 pi    = hmmModel.pi;
 A     = hmmModel.A; 

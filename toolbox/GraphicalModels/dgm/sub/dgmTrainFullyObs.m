@@ -1,7 +1,7 @@
-function dgm = dgmFitFullyObs(dgm, data, varargin)
+function dgm = dgmTrainFullyObs(dgm, data, varargin)
 %% Fit a dgm via mle/map given fully observed data
 %
-% See dgmFit
+% See dgmTrain
 %%
 [clamped, localEv] = process_options(varargin , 'clamped', [], 'localev', []); 
 if ~isempty(localEv) && ndims(localEv) < 3 && dgm.nnodes > 1
