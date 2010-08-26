@@ -50,6 +50,8 @@ text = { 'function answer = isOctave()'
          'end'
         };
 writeText(text, fullfile(pmtkInfoDir, 'isOctave.m'));
+%% write 
+
 %% write is*ToolboxInstalled functions
 toolbox = {'stats', 'bioinfo', 'optim', 'signal', 'images', 'symbolic',...
     'nnet', 'splines'};

@@ -10,9 +10,9 @@ u       = ~l;
 z       = zeros(n, 1);
 zbar    = zeros(n, 1);
 absp    = 2*abs(p); 
-zbar(l) = betaincinv(absp(l), 0.5, dof(l)/2, 'lower');
+zbar(l) = betainvPMTK(absp(l), 0.5, dof(l)/2, 'lower');
 z(l)    = 1 - zbar(l);
-z(u)    = betaincinv(absp(u), dof(u)/2, 0.5, 'upper');
+z(u)    = betainvPMTK(absp(u), dof(u)/2, 0.5, 'upper');
 zbar(u) = 1 - z(u);
 X       = sign(p) .* sqrt(dof .* (zbar./z));
 end
