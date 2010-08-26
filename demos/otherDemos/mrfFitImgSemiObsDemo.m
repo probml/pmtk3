@@ -44,7 +44,7 @@ title('noisy copy (yTest)');
 
 %localCPD = localCPD.fitFn(localCPD, img(:), yTrain(:));
 % Note, with fully observed data, we can always just fit the localCPD
-% directly, but we are testing mrfFitEm
+% directly, but we are testing mrfTrainEm
 
 edgePot = exp(bsxfun(@(a, b)-abs(a-b), 1:nstates, (1:nstates)')./2); % will be replicated
 
@@ -61,7 +61,7 @@ le = rowvec(yTest);
 
 data = rowvec(img); 
 data(1:H:end) = 0; 
-mrf = mrfFitEm(mrf, data, 'localev', le, 'verbose', true);
+mrf = mrfTrainEm(mrf, data, 'localev', le, 'verbose', true);
 
 
 nodes = mrfInferNodes(mrf, 'localev', rowvec(yTest)); 

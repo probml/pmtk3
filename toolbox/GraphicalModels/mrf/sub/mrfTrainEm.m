@@ -1,8 +1,8 @@
-function [mrf, loglikHist] = mrfFitEm(mrf, data, varargin)
-%% Fit an mrf with partially observed data via EM
+function [mrf, loglikHist] = mrfTrainEm(mrf, data, varargin)
+%% Train an mrf with partially observed data via EM
 % This does not currently update the undirected parameters, only the local
 % CPDs, but will be generalized at a later point. 
-% See mrfFit
+% See mrfTrain
 %%
 [localEv, EMargs] = process_options(varargin, 'localev', []);
 if ~isempty(localEv) && ndims(localEv) < 3 && mrf.nnodes > 1
