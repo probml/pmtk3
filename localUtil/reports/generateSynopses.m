@@ -20,13 +20,13 @@ for r = 1:nroot
         outputFile = fullfile(rd, sprintf('%s.html', subDirs{i}));
         generateSynopsisTable(srcDir, outputFile, pmtk3Root());
         if exist(outputFile, 'file') % directory might have been empty
-            Wsub{i} = sprintf(' * [%s/%s/%s.html %s]', googleRoot, rootDirs{r}, subDirs{i});
+            Wsub{i} = sprintf(' * [%s/%s.html %s]', googleRoot, rootDirs{r}, subDirs{i});
         end
     end
     wikiText = [wikiText; {
                           ''
                           ''
-                          sprintf('=== %s ===', rootDirs{r});
+                          sprintf('=== {{{%s}}} ===', rootDirs{r});
                           ''
                           ''
                           }; Wsub];  %#ok
