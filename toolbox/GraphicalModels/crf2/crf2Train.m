@@ -1,6 +1,6 @@
-function model = crf2Fit(model, Xnode, Xedge, y, varargin)
+function model = crf2Train(model, Xnode, Xedge, y, varargin)
 % Fit pairwise CRF using ML/MAP estimation with L2 prior
-% model = crfFit(model, y, Xn, Xe)
+% model = crfTrain(model, y, Xn, Xe)
 % y is Ncases*Nnodes (y(i,n)  in 1..nStates(n))
 % Xn is Ncases*NnodeFeatures*Nnodes
 % Xe is Ncases*NedgeFeatures*Nedges

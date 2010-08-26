@@ -24,7 +24,7 @@ nEdges = model.nEdges;
 Xnode = ones(nInstances,1,nNodes);
 Xedge = ones(nInstances,1,nEdges);
 
-model = crf2Fit(model, Xnode, Xedge, y);
+model = crf2Train(model, Xnode, Xedge, y);
 yhat = crf2Map(model, Xnode(1:Ntest,:,:), Xedge(1:Ntest,:,:));
 figure; imagesc(yhat);
 title('MAP with no features'); colormap(gray);
@@ -37,7 +37,7 @@ for m = 1:nFeatures
 end
 Xnode = [ones(nInstances,1,nNodes) Xnode];
 
-model = crf2Fit(model, Xnode, Xedge, y);
+model = crf2Train(model, Xnode, Xedge, y);
 yhat = crf2Map(model, Xnode(1:Ntest,:,:), Xedge(1:Ntest,:,:));
 figure; imagesc(yhat);
 title('MAP with month node feature'); colormap(gray);
@@ -46,7 +46,7 @@ title('MAP with month node feature'); colormap(gray);
 sharedFeatures = 1:13;
 Xedge = UGM_makeEdgeFeatures(Xnode, model.edgeStruct.edgeEnds, sharedFeatures);
 
-model = crf2Fit(model, Xnode, Xedge, y, 'lambdaEdge', 0, 'lambdaNode', 0);
+model = crf2Train(model, Xnode, Xedge, y, 'lambdaEdge', 0, 'lambdaNode', 0);
 yhat = crf2Map(model, Xnode(1:Ntest,:,:), Xedge(1:Ntest,:,:));
 figure; imagesc(yhat);
 title('MAP with month node and edge feature'); colormap(gray);

@@ -33,7 +33,7 @@ Xedge = UGM_makeEdgeFeatures(Xnode,edgeStruct.edgeEnds,sharedFeatures);
 
 %% Fit by PL, decode by ICM
 model = crf2Create(adj, nStates, 'ising', ising, 'tied', tied, 'method', 'ICM');
-model = crf2Fit(model, Xnode, Xedge, y, 'method', 'PL');
+model = crf2Train(model, Xnode, Xedge, y, 'method', 'PL');
 yDecode = crf2Map(model, Xnode, Xedge);
 
 figure;
@@ -46,7 +46,7 @@ title('ICM Decoding with pseudo-likelihood parameters');
 sharedFeatures = [1 0];
 Xedge = UGM_makeEdgeFeaturesInvAbsDif(Xnode,edgeStruct.edgeEnds,sharedFeatures);
 model = crf2Create(adj, nStates, 'ising', ising, 'tied', tied, 'method', 'GraphCut');
-model = crf2Fit(model, Xnode, Xedge, y, 'method', 'PLsubmod');
+model = crf2Train(model, Xnode, Xedge, y, 'method', 'PLsubmod');
 
 figure;
 imagesc(reshape(yDecode,nRows,nCols)); colormap gray

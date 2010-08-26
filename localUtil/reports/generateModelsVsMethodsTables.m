@@ -20,7 +20,7 @@ outputFiles = {
     };
 
 outputDir          = fullfile(pmtk3Root, 'docs', 'modelsByMethods'); 
-exceptionThreshold = 3; 
+exceptionThreshold = 2; % 'methods' must occur strictly more than exceptionThreshold times to appear as a separate column
 excludedDirs = {
     'sub'
     'Variable_selection'
