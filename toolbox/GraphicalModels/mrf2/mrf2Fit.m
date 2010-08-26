@@ -1,6 +1,6 @@
 function model = mrf2Fit(model, y, varargin)
 % Fit pairwise MRF using ML/MAP estimation with L2 prior
-% model = mrfFit(model, y, ...)
+% model = mrf2Fit(model, y, ...)
 % y is Ncases*Nnodes (y(i,n)  in 1..nStates(n))
 %
 % Optional parameters
