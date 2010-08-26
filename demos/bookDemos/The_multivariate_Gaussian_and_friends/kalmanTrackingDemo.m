@@ -53,7 +53,7 @@ figure;
 hold on
 plot(y(1,:), y(2,:), 'go',  'linewidth', 3, 'markersize', 12);
 plot(xfilt(1,:), xfilt(2,:), 'rx-',  'linewidth', 3, 'markersize', 12);
-for t=1:T, plotgauss2d(xfilt(1:2,t), 0.1*Vfilt(1:2, 1:2, t)); end
+for t=1:T, gaussPlot2d(xfilt(1:2,t), 0.1*Vfilt(1:2, 1:2, t), 'color', 'b', 'plotMarker', false); end
 hold off
 legend('observed', 'filtered')
 axis equal
@@ -64,7 +64,7 @@ figure;
 hold on
 plot(y(1,:), y(2,:), 'go', 'linewidth', 3, 'markersize', 12);
 plot(xsmooth(1,:), xsmooth(2,:), 'rx-', 'linewidth', 3, 'markersize', 12);
-for t=1:T, plotgauss2d(xsmooth(1:2,t), 0.1*Vsmooth(1:2, 1:2, t)); end
+for t=1:T, gaussPlot2d(xsmooth(1:2,t), 0.1*Vsmooth(1:2, 1:2, t), 'color', 'b', 'plotMarker', false); end
 hold off
 legend('observed', 'smoothed')
 axis equal
