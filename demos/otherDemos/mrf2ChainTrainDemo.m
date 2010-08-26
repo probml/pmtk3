@@ -34,7 +34,7 @@ imagesc(samples); colormap(gray);
 title('Samples from untrained MRF model');
 
 %% Fit model
-model = mrf2Fit(model, y);
+model = mrf2Train(model, y);
 samples = mrf2Sample(model, nSamples);
 figure;
 imagesc(samples); colormap(gray);
