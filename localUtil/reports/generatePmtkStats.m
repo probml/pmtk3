@@ -11,7 +11,7 @@ outputFile                  = fullfile(pmtk3Root, 'docs', 'pmtkStats.html');
 recursive                   = true;
 %%
 colNames = {'directory', 'LOC matlab', 'LOC matlab (contrib)',...
-    'LOC non-matlab', 'LOC non-matlab (contrib)', 'total LOC'};
+    'LOC non-matlab (contrib)', 'total LOC'};
 mmask    = '*.m';
 omask    = {'*.c', '*.cpp', '*.h', '*.py'};
 pmtkRed  = getConfigValue('PMTKred');
@@ -37,9 +37,9 @@ for i=1:numel(fullDirs)
     contribMatlab = sum(cellfun(@(f)countLinesOfCode(f, excludeComments), contribFiles));
     data(i, 1) = totalMatlab - contribMatlab;
     data(i, 2) = contribMatlab;
-    data(i, 3) = totalOther - contribOther;
-    data(i, 4) = contribOther;
-    data(i, 5) = totalMatlab + totalOther;
+    %data(i, 3) = totalOther - contribOther;
+    data(i, 3) = contribOther;
+    data(i, 4) = totalMatlab + totalOther;
 end
 
 if excludeComments
