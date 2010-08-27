@@ -59,6 +59,31 @@ switch lower(localCPD.cpdType)
             logB(j, observed) = logsumexp(logBj, 1);
         end
         
+    case 'condstudent'
+        
+        nstates  = localCPD.nstates;
+        logB     = nan(nstates, seqlen);
+        mu       = localCPD.mu;
+        Sigma    = localCPD.Sigma;
+        dof      = localCPD.dof; 
+        XobsT    = Xobs';
+        for j=1:nstates
+            logB(j, observed) = ...
+                studentLogprob(mu(:, j), Sigma(:, :, j), dof(j), XobsT);
+        end
+        
+    case 'conddiscreteprod'
+        
+        T  = localCPD.T;
+        [nObsStats, nstates, d]  = size(T); 
+        logB           = nan(nstates, seqlen);
+        logT           = log(T); 
+        L = zeros(nstates, numel(observed), d);
+        for j = 1:d
+            L(:, :, d) = logT(Xobs(j, :), :, j)';
+        end
+        logB(:, observed) = sum(L, 3); 
+        
     otherwise
         error('%s is not a recognized CPD type', localCPD.cpdType);
 end

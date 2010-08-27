@@ -15,7 +15,7 @@ if isempty(prior)
 end
 [nObsStates, nstates, d] = size(T); 
 CPD            = structure(T, nObsStates, nstates, d, prior);
-CPD.cpdType    = 'condProdDiscrete';
+CPD.cpdType    = 'condDiscreteProd';
 CPD.fitFn      = @condDiscreteProdCpdFit;
 CPD.fitFnEss   = @condDiscreteProdCpdFitEss;
 CPD.essFn      = @condDiscreteProdCpdComputeEss;
