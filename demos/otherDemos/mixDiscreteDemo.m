@@ -1,4 +1,4 @@
-%% Simple test of MixDiscreteFitEM
+%% Simple test of a discrete mixture model
 %% Create Data
 setSeed(13);
 nmix = 6; 
