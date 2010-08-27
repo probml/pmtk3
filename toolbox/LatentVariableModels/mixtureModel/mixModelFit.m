@@ -49,7 +49,7 @@ function [model, loglikHist] = mixModelFit(data, nmix, type, varargin)
 % See emAlgo for additional EM related inputs
 %% Outputs
 % 
-% A structure - see mixGaussCreate for field descriptions
+% A structure - see mixModelCreate for field descriptions
 % loglikHist  - a record of the log likelihood at each EM iteration. 
 %% 
 [model, loglikHist] = mixModelFitEm(data, nmix, type, varargin{:});

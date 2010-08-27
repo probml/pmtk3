@@ -118,7 +118,7 @@ end
 %% MstepOR
 function [model, valid] = mstepGaussOr(model, modelBO, eta)
 %% Over-relaxed Gaussian mstep 
-[D, D, nmix] = size(modelBO.Sigma);
+[D, D, nmix] = size(modelBO.cpd.Sigma);
 % Since weights are constrained to sum to one, we do update in softmax
 % parameterization
 mixWeight = model.mixWeight.*(modelBO.mixWeight ./ model.mixWeight).^eta;
@@ -126,16 +126,22 @@ mixWeight = normalize(mixWeight);
 Sigma     = zeros(D, D, nmix);
 mu        = zeros(D, nmix);
 valid = true;
+
+muReg    = model.cpd.mu;
+muBO     = modelBO.cpd.mu;
+SigmaReg = model.cpd.Sigma;
+SigmaBO  = modelBO.cpd.Sigma; 
+
 for c = 1:nmix
     % Regular update
-    mu(:, c) = model.mu(:, c) + eta*(modelBO.mu(:, c) - model.mu(:, c));
+    mu(:, c) = muReg(:, c) + eta*(muBO(:, c) - muReg(:, c));
     %Since Sigma is constrained to positive definite matrices, the updation
     %of Sigma is done in the Log-Euclidean space. (ref: "Fast and Simple
     %Calculus on Tensors in the Log-Euclidean Framework", Vincent Arsigny,
     %Pierre Fillard, Xavier Pennec, and Nicholas Ayache)
     try
-        matLogSigma    = logm(model.Sigma(:, :, c));
-        matLogSigma_BO = logm(modelBO.Sigma(:, :, c));
+        matLogSigma    = logm(SigmaReg(:, :, c));
+        matLogSigma_BO = logm(SigmaBO(:, :, c));
         matLogSigma    = matLogSigma + eta*(matLogSigma_BO - matLogSigma);
         Sigma(:, :, c) = expm(matLogSigma);
     catch %#ok
@@ -145,8 +151,8 @@ for c = 1:nmix
         valid = false; return;
     end
 end
-model.mu        = mu;
-model.Sigma     = Sigma;
+model.cpd.mu    = mu;
+model.cpd.Sigma = Sigma;
 model.mixWeight = mixWeight;
 end
 

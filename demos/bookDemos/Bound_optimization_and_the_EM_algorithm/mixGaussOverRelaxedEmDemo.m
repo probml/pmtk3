@@ -13,9 +13,8 @@ for trial = 1:ntrials
     for k=1:Clusters
         Sigma(:,:,k) = randpd(D);
     end
-    trueModel = struct('K', Clusters, 'mu', mu, 'Sigma', Sigma, ...
-        'mixweight', mixweight);
-    [fullData] = mixGaussSample(trueModel, N);
+    trueModel = mixModelCreate(condGaussCpdCreate(mu, Sigma), 'gauss', Clusters, mixweight); 
+    [fullData] = mixModelSample(trueModel, N);
     Ks = [5 10];
     verbose = true;
     eta = {[], 1, 1.25, 2, 5}; % over-relaxation increase factor
@@ -26,15 +25,12 @@ for trial = 1:ntrials
     [styles, colors, symbols] =  plotColors();
     for k = 1:length(Ks)
         K = Ks(k);
-        [mu,Sigma,mixweight] = kmeansInitMixGauss(fullData, K);
         for m=1:nmethods
             tic
-            [models{m}, llHist{m}] = mixGaussFitEm(fullData, K, ...
-                'Sigma', Sigma, 'mu', mu, 'mixweight', mixweight, ...
-                'overRelaxFactor',eta{m}, 'verbose', verbose, 'doMAP', 1);
+            [models{m}, llHist{m}] = mixModelFit(fullData, K, 'gauss',...
+                'overRelaxFactor',eta{m}, 'verbose', verbose); 
             tim(m) = toc;
         end
-        
         figure
         hold on
         for m=1:nmethods
