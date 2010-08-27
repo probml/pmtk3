@@ -68,8 +68,6 @@ hmmDiscreteTest;
 knnClassifyDemo;
 pcaDemo2d;
 close all
-mixGaussFitEm(loadData('faithful'), 2);
-close all
 gammaRainfallDemo;
 kalmanTrackingDemo;
 bernoulliBetaSequentialUpdate;

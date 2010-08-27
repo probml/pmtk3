@@ -12,7 +12,7 @@ for k=1:K
   Sigma(:,:,k) = randpd(d);
 end
 trueModel = struct('mu', mu, 'Sigma', Sigma, 'mixweight', mixweight);
-[Xfull] = mixGaussSample(trueModel, n);
+[Xfull] = mixGaussSample(mu, Sigma, mixweight, n);
 
 
 missing = rand(n,d) < pcMissing;

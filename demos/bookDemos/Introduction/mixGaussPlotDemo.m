@@ -48,8 +48,8 @@ function mixGaussPlotDemo()
     printPmtkFigure('mixgauss3Surf');
 %%    
     nsamples = 1000;
-    m.mu = mu; m.Sigma = Sigma; m.mixweight = mixmat;
-    X = mixGaussSample(m, nsamples);
+    %m.mu = mu; m.Sigma = Sigma; m.mixweight = mixmat;
+    X = mixGaussSample(mu, Sigma, mixmat, nsamples);
     figure;
     plotDistribution(@(X)mixGaussLogprob(model, X), 'useLog', false, 'useContour', true, 'npoints', 200, 'xrange', xrangeMix);
     hold on

@@ -33,8 +33,8 @@ orangeMix.mu = means(11:end, :)';
 %% Create data
 if regenerateData
     ntrain = 100; % per class
-    Xtrain = [mixGaussSample(blueMix  , ntrain);
-              mixGaussSample(orangeMix, ntrain)];
+    Xtrain = [mixGaussSample(blueMix.mu, blueMix.Sigma, blueMix.mixweight, ntrain);
+              mixGaussSample(orangeMix.mu, orangeMix.Sigma, orangeMix.mixweight, ntrain)];
     ytrain = [-1*ones(ntrain, 1); ones(ntrain, 1)];
     [Xtrain, ytrain] = shuffleRows(Xtrain, ytrain);
 else
@@ -43,8 +43,8 @@ else
     [Xtrain, ytrain] = shuffleRows(Xtrain, ytrain);
 end
 ntest = 5000; % per class
-Xtest = [mixGaussSample(blueMix  , ntest);
-         mixGaussSample(orangeMix, ntest)];
+Xtest = [mixGaussSample(blueMix.mu, blueMix.Sigma, blueMix.mixweight  , ntest);
+         mixGaussSample(orangeMix.mu, orangeMix.Sigma, orangeMix.mixweight, ntest)];
 ytest = [-1*ones(ntest, 1); ones(ntest, 1)];
 [Xtest, ytest] = shuffleRows(Xtest, ytest);
 %% Create the generative model to plot the Bayesian decision boundary

@@ -3,7 +3,6 @@
 %%
 function mixGaussDemoFaithful
 
-
 setSeed(0);
 K = 2;
 X = loadData('faithful');
@@ -11,17 +10,18 @@ X = standardizeCols(X);
 [N,D] = size(X);
 
 % specify initial params to make for a pretty plot
-mu = [-1.5 1.5; 1.5 -1.5]' + 1*randn(2,2);
-Sigma = repmat(0.1*eye(2),[1 1 K]);
-mixweight = normalize(ones(1,K));
-model.mu  = mu; model.Sigma = Sigma; model.mixweight = mixweight; model.K = K;
-plotfn(model, X, struct('post',mkStochastic(ones(N,K))), -inf, 0); 
+initParams.mu = [-1.5 1.5; 1.5 -1.5]' + 1*randn(2,2);
+initParams.Sigma = repmat(0.1*eye(2),[1 1 K]);
+initParams.mixWeight = normalize(ones(1,K));
+
+model = mixModelCreate(condGaussCpdCreate(initParams.mu, initParams.Sigma),...
+    'gauss', K, initParams.mixWeight);
+plotfn(model, X, struct('weights', mkStochastic(ones(N,K))), -inf, 0); 
 
 
 % Fit
-[model, loglikHist] = mixGaussFitEm(X, K, ...
-  'maxIter', 10, 'plotfn', @plotfn,...
-  'mu', mu, 'Sigma', Sigma, 'mixweight', mixweight, 'overRelaxFactor', 2); %#ok
+[model, loglikHist] = mixModelFit(X, K,  'gauss', 'initParams', initParams, ...
+  'maxIter', 10, 'plotfn', @plotfn, 'overRelaxFactor', 2); 
 
 % Plot objective function
 figure;
@@ -31,7 +31,7 @@ ylabel('average loglik')
 end
 
 function plotfn(model, X, ess, loglik, iter)
-post = ess.post; mu = model.mu; Sigma = model.Sigma;
+post = ess.weights; mu = model.cpd.mu; Sigma = model.cpd.Sigma;
 str = sprintf('iteration %d, loglik %5.4f\n', iter, loglik);
 n = size(X, 1);
 colors = [post(:,1), zeros(n, 1), post(:,2)]; % fraction of red and blue
@@ -53,7 +53,7 @@ end
 
 
 
-function plotfnOld(X, mu, Sigma, mixweight, post, loglik, iter) %#ok
+function plotfnOld(X, mu, Sigma, mixWeight, post, loglik, iter) %#ok
 str = sprintf('iteration %d, loglik %5.4f\n', iter, loglik);
 n = size(X, 1);
 colors = [post(:,1), zeros(n, 1), post(:,2)]; % fraction of red and blue

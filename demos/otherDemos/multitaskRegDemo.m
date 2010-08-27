@@ -36,7 +36,7 @@ for seedi=1:length(seeds)
             Sigma = repmat(0.01*randpd(D), [1 1 K]);
             mixweight = normalize(ones(1,K));
             %W = gaussSample(struct('mu', mu, 'Sigma', Sigma), T)';
-            [W, z]= mixGaussSample(struct('mu', mu, 'Sigma', Sigma, 'mixweight', mixweight), T);
+            [W, z]= mixGaussSample(mu, Sigma, mixweight, T);
             W = W'; % W(:,t) is weight vector for task t
             %figure; imagesc(W);
             %figure; plot(z)

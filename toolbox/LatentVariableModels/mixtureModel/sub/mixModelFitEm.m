@@ -105,6 +105,7 @@ function [ess, loglik] = estep(model, data)
 [weights, ll] = mixModelInferLatent(model, data); 
 cpd           = model.cpd;
 ess           = cpd.essFn(cpd, data, weights); 
+ess.weights   = weights; % useful for plotting
 loglik        = sum(ll) + cpd.logPriorFn(cpd) + model.mixPriorFn(model); 
 end
 

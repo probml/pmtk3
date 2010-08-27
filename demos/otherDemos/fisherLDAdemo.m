@@ -6,11 +6,11 @@ function fisherLDAdemo()
 %
 %% Generate data
 setSeed(0);
-model.mu = [1 3; 3 1];
-model.Sigma = repmat([4 0.01; 0.01 0.1], [1, 1, 3]);
-model.mixweight = [0.5 0.5];
+mu = [1 3; 3 1];
+Sigma = repmat([4 0.01; 0.01 0.1], [1, 1, 3]);
+mixweight = [0.5 0.5];
 nsamples = 200;
-[X, Y] = mixGaussSample(model, nsamples); 
+[X, Y] = mixGaussSample(mu, Sigma, mixweight, nsamples); 
 %%
 maleNdx = (Y == 1);
 femaleNdx = (Y == 2);

@@ -12,7 +12,7 @@ end
 model.Sigma = Sigma;
 model.mixweight = normalize(rand(1, nmix) + ones(1, nmix)); 
 nsamples = 100;
-X = mixGaussSample(model, nsamples);
+X = mixGaussSample(model.mu, model.Sigma, model.mixweight, nsamples);
 Xmissing = X;
 Xmissing(1:7:end) = NaN;
 %%
