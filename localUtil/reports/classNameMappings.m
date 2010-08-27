@@ -41,7 +41,7 @@ supervised = {
 latent =     {
     'hmm'
     'lds'
-    'mixtureModel'
+    'mixModel'
     'mixGaussDiscrete'
     'mixGaussBayes'
     'ppca'   };

@@ -1,8 +1,6 @@
 function [model, loglikHist] = mixModelFitEm(data, nmix, type, varargin)
 %% Fit a mixture model via EM
-% See mixModelFit
-% 
-%
+% Identical interface to mixModelFit
 %%
 [initParams, prior, mixPrior, overRelaxFactor, EMargs] = ...
     process_options(varargin, ...
@@ -10,37 +8,28 @@ function [model, loglikHist] = mixModelFitEm(data, nmix, type, varargin)
     'prior'             , [], ...
     'mixPrior'          , [], ...
     'overRelaxFactor'   , []);
-%%
 [n, d]      = size(data);
 model.type  = type;
 model.nmix  = nmix;
 model.d     = d;
 mstepOrFn   = [];
-if isempty(mixPrior)
-    model.mixPrior = 2*ones(1, nmix);
-end
-if ischar('none') && strcmpi(mixPrior, 'none'); 
-    model.mixPrior = ones(1, nmix);
-    model.mixPriorFn = @(m)0;
-else
-    model.mixPriorFn  = @(m)log(m.mixWeight(:))'*(m.mixPrior(:)-1);
-end
-if isscalar(model.mixPrior)
-    model.mixPrior = repmat(model.mixPrior, 1, nmix); 
-end
+model       = setMixPrior(model, mixPrior);
 switch lower(type)
     case 'gauss'
-        if ~isempty(overRelaxFactor);
-            mstepOrFn = @mstepGaussOr;
+        if ~isempty(overRelaxFactor); 
+            mstepOrFn = @mstepGaussOr;  
         end
-        initFn  = @(m, X, r)initGauss   (m, X, r, initParams, prior);
-    case 'discrete'
-        initFn  = @(m, X, r)initDiscrete(m, X, r, initParams, prior);
+        initFn = @initGauss;
+    case 'discrete', 
+        initFn = @initDiscrete;
     case 'student'
-        initFn  = @(m, X, r)initStudent (m, X, r, initParams, prior);
+        initFn = @initStudent;
 end
+initFn = @(m, X, r)initFn(m, X, r, initParams, prior); 
 [model, loglikHist] = emAlgo(model, data, initFn, @estep, @mstep, ...
-    'mstepOR', mstepOrFn , 'overRelaxFactor' , overRelaxFactor, EMargs{:});
+    'mstepOR'         , mstepOrFn ,...
+    'overRelaxFactor' , overRelaxFactor,...
+    EMargs{:});
 end
 
 %% Initialization
@@ -88,6 +77,7 @@ end
 
 function model = initStudent(model, X, restartNum, initParams, prior)
 %% Initialize
+% Initialize of the back of initGauss, and then just add dof
 model = initGauss(model, X, restartNum, initParams, prior); 
 if ~isempty(initParams)
     dof = initParam.dof;
@@ -97,7 +87,8 @@ end
 initCpd   = model.cpd; 
 dofEstimator = @(cpd, ess)estimateDofNll(cpd, ess, X, model.mixPrior);
 model.cpd = condStudentCpdCreate(initCpd.mu, initCpd.Sigma, dof, ...
-    'prior', prior, 'dofEstimator', dofEstimator); 
+    'prior'       , prior          , ...
+    'dofEstimator', dofEstimator   ); 
 end
 
 function [ess, loglik] = estep(model, data)
@@ -172,7 +163,26 @@ for k=1:nmix
     dof(k) = fminbnd(@(v)mixStudentNll(m, data, k, v), dofMin, dofMax);
 end
 end
+
 function out = mixStudentNll(model, X, curK, v)
+%% mixStudent neg-logLikelihood
 model.cpd.dof(curK) = v;
 out = -sum(mixModelLogprob(model, X));
+end
+
+function model = setMixPrior(model, mixPrior)
+%% Set the mixture prior
+nmix = model.nmix; 
+if isempty(mixPrior)
+    model.mixPrior = 2*ones(1, nmix);
+end
+if ischar('none') && strcmpi(mixPrior, 'none'); 
+    model.mixPrior = ones(1, nmix);
+    model.mixPriorFn = @(m)0;
+else
+    model.mixPriorFn  = @(m)log(m.mixWeight(:))'*(m.mixPrior(:)-1);
+end
+if isscalar(model.mixPrior)
+    model.mixPrior = repmat(model.mixPrior, 1, nmix); 
+end
 end

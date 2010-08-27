@@ -6,9 +6,9 @@ truth.nmix = nmix;
 truth.d = 80;
 truth.nstates = 8;
 truth.mixweight = normalize(rand(1, truth.nmix));
-truth.T = normalize(rand(truth.nstates, truth.d, truth.nmix), 1);
+truth.T = normalize(rand(truth.nstates, truth.nmix, truth.d), 2);
 nsamples = 1000;
-[X, y] = mixDiscreteSample(truth, nsamples); 
+[X, y] = mixDiscreteSample(truth.T, truth.mixweight, nsamples); 
 
 %% Fit
 [model, llhist] = mixModelFit(X, nmix, 'discrete', 'verbose', true);
