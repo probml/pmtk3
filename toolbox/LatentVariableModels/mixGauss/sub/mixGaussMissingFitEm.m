@@ -36,15 +36,15 @@ end
 if isempty(model.mu) || isempty(model.Sigma) || isempty(model.mixweight)
     dataFilled = data;
     dataFilled(ismissing) = randn(nnz(ismissing), 1);
-    initModel = mixGaussFitEm(dataFilled, K, 'verbose', false, 'doMap', true);
+    initModel = mixModelFit(dataFilled, K, 'gauss', 'verbose', false);
     if isempty(model.mu)
-        model.mu = initModel.mu;
+        model.mu = initModel.cpd.mu;
     end
     if isempty(model.Sigma)
-        model.Sigma = initModel.Sigma + repmat(eye(model.d), [1 1 K]);
+        model.Sigma = initModel.cpd.Sigma + repmat(eye(model.d), [1 1 K]);
     end
     if isempty(model.mixweight)
-        model.mixweight = normalize(initModel.mixweight + 0.1);
+        model.mixweight = normalize(initModel.mixWeight + 0.1);
     end
 end
 model.ismissing = ismissing;
