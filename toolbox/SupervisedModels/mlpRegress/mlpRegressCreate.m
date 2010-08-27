@@ -1,6 +1,11 @@
 function model = mlpRegressCreate(w, sigma2, nHidden)
 %% Construct a mlpRegress model
 
-model = structure(w, sigma2, nHidden); 
+
+model.w  = w;
+model.sigma2 = sigma2;
+model.nHidden = nHidden;
+model.modelType = 'mlpRegress';
+ 
 
 end

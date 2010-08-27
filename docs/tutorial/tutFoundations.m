@@ -25,7 +25,7 @@
 % and then draw 5 samples from it
 %%
 m = gaussCreate([0 0], eye(2))
-X = gaussSample(m, 5)
+setSeed(0); X = gaussSample(m, 5)
 %%
 % The function 'gaussCreate' is called a constructor,
 % since it creates an instance of the class.
@@ -138,22 +138,67 @@ X = gaussSample(m, 5)
 
 %% Basic models
 % Basic models support the functions listed above.
-% We have already illustrated the 'create' constructor
-% and 'sample' method. Let us now illustrate the remaining methods
+% We have already illustrated the |gaussCreate| constructor
+% and |gaussSample| method.
+% We now discuss some other methods.
+%
+% First, as a piece of useful shorthand,
+% some widely used basic models (such as Gaussian)
+% let you write |fooSample(params,N)|
+% instead of |fooSample(fooCreate(params),N)|.
+% For example
 %%
-X = rand(5,2);
-m = gaussFit(X)
+setSeed(0); gaussSample(zeros(2,1), eye(2), 5)
+%%
+% Now we illustrate model fitting.
+% First we use MLE to fit a D=50 dimensional Gaussian
+% to N = 1000 data points.
+%%
+N = 1000; D = 50;
+X = rand(N,D);
+m = gaussFit(X);
+%%
+% Let us check that the resulting  estimate
+%  matches the usual MLE formula:
+%%
 assert(approxeq(m.mu, mean(X)))
-assert(approxeq(m.Sigma, cov(X, 1))) % MLE
-L = gaussLogprob(m, X)
+assert(approxeq(m.Sigma, cov(X, 1)))
 %%
-% The methods behave similarly on other models.
+% Let us also check that $\hat{\Sigma}$ is well conditioned
+%%
+cond(m.Sigma)
+%%
+% Now consider what happens when N=50.
+%%
+m2 = gaussFit(X(1:50,:));
+cond(m2.Sigma)
+%% 
+% We see that the resulting matrix is close
+% to singular. MLE only works well when $N \gg D$. In all
+% other cases, we should use MAP estimation.
+% We can do this as follows, using a simple vague data-dependent prior:
+%%
+m3 = gaussFit(X(1:50,:), 'map');
+cond(m3.Sigma)
+%%
+% See
+% <http://pmtk3.googlecode.com/svn/trunk/demos/bookDemos/The_multivariate_Gaussian_and_friends/shrinkcovDemo.m shrinkCovDemo>
+% for a more extensive demo of regularized estimation
+% of covariance matrices.
+%
+% Now let us consider another useful operation:
+% evaluating the log likelihood of a dataset:
+%%
+L = sum(gaussLogprob(m3, X))
+%%
+% These methods behave similarly on other models.
 % A list of all the basic models can be found
 % <http://pmtk3.googlecode.com/svn/trunk/docs/modelLists/modelList.html
 % here>.
 % A complete list of the methods
 % implemented by each basic class is shown
 % <http://pmtk3.googlecode.com/svn/trunk/docs/modelsByMethods/basicModels.html here>.
+
 
 %% Latent variable models
 % A list of all the LVMs can be found
@@ -325,17 +370,13 @@ assert(approxeq(m1.w, m2.w))
 % We mention just a few of the most useful ones below
 %
 % * whoCallsMe('foo'): list all files that call foo.m
-% * which('foo'): print directory where foo.m/ foo.mex is stored.
-%     This will help you determine if the function is builtin, part of
-%     PMTK, part of some other toolbox, etc.
+% * wwhich('foo*'): which with wildcards. This prints full filenames of all files starting
+%   with the string 'foo'. Can also use wwhich('*foo*') etc.
+% * edit('foo'): open foo.m in editor, lets you look at source code
+%   (be careful not to change things accidently!). This also works
+%   for built-in Matlab functions. 
 % * help('foo'): prints any initial documentation for foo.m that
 %     the implementer may have provided; all builtin Matlab functions
 %     are properly documented. Unfortuntately that is not the case for
 %     all the PMTK functions... but you can always read the source.
-%     (Since pmtk is open source, we open members of the community
-%      will help improve the quality of the code and the documentation
-%      over time.)
-% * edit('foo'): open foo.m in editor, lets you look at source code
-%   (be careful not to change things accidently!). This also works
-%   for built-in Matlab functions. 
-%
+

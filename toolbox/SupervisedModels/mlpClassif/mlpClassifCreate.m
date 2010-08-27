@@ -1,6 +1,9 @@
 function model = mlpClassifCreate(w, nHidden)
-%% Construct a mlpRegress model
+%% Constructor
 
-model = structure(w, nHidden); 
+model.w  = w;
+model.nHidden = nHidden;
+model.modelType = 'mlpClassif';
+ 
 
 end

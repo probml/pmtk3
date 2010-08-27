@@ -4,7 +4,9 @@
 %
 % We provide a description of the main models and algorithms supported by
 % pmtk for solving supervised learning problems (i.e., univariate
-% conditional density estimation).
+% conditional density estimation). We do not yet support
+% multivariate conditional density estimation (structured output
+% classification).
 %
 %
 %% Models
@@ -54,9 +56,15 @@
 % <td> Discrim
 % <td> Param
 % <tr>
-% <td> mlp
+% <td> mlpClassif
 % <td> multi-layer perceptron (aka feedforward neural network)
-% <td> Both
+% <td> Classif
+% <td> Discrim
+% <td> Param
+% <tr>
+% <td> mlpRegress
+% <td> multi-layer perceptron (aka feedforward neural network)
+% <td> Regr
 % <td> Discrim
 % <td> Param
 % <tr>
@@ -66,10 +74,15 @@
 % <td> Gen
 % <td> Param
 % <tr> 
+% <td> rvm
+% <td> Relevance vector machine
+% <td> Both
+% <td> Discrim
+% <td> Nonparam
 % <td> svm
 % <td> Support vector machine
 % <td> Both
-% <td> Discrimg
+% <td> Discrim
 % <td> Nonparam
 % </table>
 % </html>
