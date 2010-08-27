@@ -25,6 +25,9 @@ if ischar('none') && strcmpi(mixPrior, 'none');
 else
     model.mixPriorFn  = @(m)log(m.mixWeight(:))'*(m.mixPrior(:)-1);
 end
+if isscalar(model.mixPrior)
+    model.mixPrior = repmat(model.mixPrior, 1, nmix); 
+end
 switch lower(type)
     case 'gauss'
         if ~isempty(overRelaxFactor);
