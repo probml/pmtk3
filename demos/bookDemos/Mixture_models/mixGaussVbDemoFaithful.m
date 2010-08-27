@@ -7,9 +7,9 @@ function mixGaussVbDemoFaithful
 setSeed(0);
 X = loadData('faithful'); % 272x2
 X = standardizeCols(X);
-%% Run mixGaussVbFit
+%% Run mixGaussBayesFit
 K = 6;
-[model, loglikHist] = mixGaussVbFit(X, K, 'maxIter', 200, 'plotFn', @plotFn); 
+[model, loglikHist] = mixGaussBayesFit(X, K, 'maxIter', 200, 'plotFn', @plotFn); 
 %%  Plot
 figure();
 plot(loglikHist, 'o-', 'linewidth', 3)

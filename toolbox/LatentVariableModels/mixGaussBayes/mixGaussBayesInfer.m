@@ -1,4 +1,4 @@
-function [z, r, logSumRho, logr, Nk] = mixGaussVbInfer(model, X)
+function [z, r, logSumRho, logr, Nk] = mixGaussBayesInfer(model, X)
 % z(i) = argmax_k p(z=k|X(i,:), model) hard clustering
 % pz(i,k) = p(z=k|X(i,:), model) soft responsibility
 % ll(i) = log p(X(i,:) | model)  logprob of observed data

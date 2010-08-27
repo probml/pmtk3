@@ -1,4 +1,4 @@
-function [model, loglikHist] = mixGaussVbFit(X, K, varargin)
+function [model, loglikHist] = mixGaussBayesFit(X, K, varargin)
 % Variational Bayes for fitting mixture of K gaussians
 % data(i,:) is i'th case
 % See Bishop sec 10.2 for details
@@ -20,7 +20,7 @@ beta = 1*ones(1,K); % low precision for mean
 W = 200*repmat(eye(D),[1 1 K]);
 %v = 5*(D+2)*ones(1,K); % smallest valid dof
 v = 20*ones(1,K);
-model.priorParams = mixGaussVbStructure(alpha, beta, m, v, W, []);
+model.priorParams = mixGaussBayesStructure(alpha, beta, m, v, W, []);
 model.K = K;
 
 
@@ -53,7 +53,7 @@ iter = 1;
 done = false;
 while ~done
   % E step 
-  [z, rnk, ll, logrnk] = mixGaussVbInfer(model, X); %#ok
+  [z, rnk, ll, logrnk] = mixGaussBayesInfer(model, X); %#ok
   [Nk, xbar, S] = computeEss(X, rnk);
   loglikHist(iter) = lowerBound(model,  Nk, xbar, S, rnk, logrnk, iter); %#ok
    
@@ -121,7 +121,7 @@ for k=1:K
     v(k) = v0(k) + Nk(k); % 10.63
   end
 end
-postParams = mixGaussVbStructure(alpha, beta, m, v, [], invW);
+postParams = mixGaussBayesStructure(alpha, beta, m, v, [], invW);
 end
 
 
@@ -189,7 +189,7 @@ end
 end
 
 
-function params = mixGaussVbStructure(alpha, beta, m, v, W, invW)
+function params = mixGaussBayesStructure(alpha, beta, m, v, W, invW)
 if isempty(invW)
   [D, D2, K] = size(W); %#ok
 else
