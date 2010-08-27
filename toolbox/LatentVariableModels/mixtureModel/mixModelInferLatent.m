@@ -6,7 +6,7 @@ nmix   = model.nmix;
 [n, d] = size(X); 
 logMix = log(rowvec(model.mixWeight)); 
 logPz  = zeros(n, nmix); 
-switch model.type  
+switch lower(model.type)
     case 'gauss'
         
         mu    = model.cpd.mu;
@@ -32,6 +32,9 @@ switch model.type
         for k = 1:nmix
              logPz(:, k) = logMix(k) + studentLogprob(mu(:, k), Sigma(:, :, k), dof(k), X);
         end
+        
+    otherwise
+        error('%s is not a recognized mixture model type', model.type); 
 end
 [logPz, ll] = normalizeLogspace(logPz);
 pZ          = exp(logPz);
