@@ -3,3 +3,7 @@
 % <http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/tutGM.m>.
 %
 % To be finished.
+% See also
+% <http://bnt.googlecode.com BNT>
+% and
+% <http://people.kyb.tuebingen.mpg.de/jorism/libDAI/ libDAI>. 

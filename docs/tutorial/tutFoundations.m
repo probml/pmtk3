@@ -138,17 +138,27 @@ X = gaussSample(m, 5)
 
 %% Basic models
 % Basic models support the functions listed above.
-% Some models (e.g, Gauss) support additional functions.
+% We have already illustrated the 'create' constructor
+% and 'sample' method. Let us now illustrate the remaining methods
+%%
+X = rand(5,2);
+m = gaussFit(X)
+assert(approxeq(m.mu, mean(X)))
+assert(approxeq(m.Sigma, cov(X, 1))) % MLE
+L = gaussLogprob(m, X)
+%%
+% The methods behave similarly on other models.
 % A list of all the basic models can be found
 % <http://pmtk3.googlecode.com/svn/trunk/docs/modelLists/modelList.html
-% here>
+% here>.
+% A complete list of the methods
+% implemented by each basic class is shown
+% <http://pmtk3.googlecode.com/svn/trunk/docs/modelsByMethods/basicModels.html here>.
 
 %% Latent variable models
-% We discuss LVMs in more detail 
-% <http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutLVM.html
+% A list of all the LVMs can be found
+% <http://pmtk3.googlecode.com/svn/trunk/docs/modelLists/modelList.html
 % here>
-% Unlike basic distributions, there is a model selection
-% problem of choosing the 'right' number of latent variables.
 % From a functional point of view, an LVM supports
 % all the methods for a generic unconditional model,
 % plus the following functions.
@@ -171,16 +181,14 @@ X = gaussSample(m, 5)
 % </table>
 % </html>
 %%
-% A list of all the LVMs can be found
-% <http://pmtk3.googlecode.com/svn/trunk/docs/modelLists/modelList.html
-% here>
+% We discuss LVMs in more detail 
+% <http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutLVM.html
+% here>.
 
 %% Graphical models
-% We discuss graphical models in more detail
-% <http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutGM.html
-% here>.
-% Unlike basic distributions, there is a model selection
-% problem of choosing the 'right' graph structure.
+% A list of all the GMs can be found
+% <http://pmtk3.googlecode.com/svn/trunk/docs/modelLists/modelList.html
+% here>
 % From a functional point of view, a GM supports
 % all the methods for a generic unconditional model,
 % plus the following functions.
@@ -206,25 +214,62 @@ X = gaussSample(m, 5)
 % </table>
 % </html>
 %%
-% A list of all the GMs can be found
-% <http://pmtk3.googlecode.com/svn/trunk/docs/modelLists/modelList.html
-% here>
+% We discuss graphical models in more detail
+% <http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutGM.html
+% here>.
 %% Summary of models and methods
 % 
 % A summary of the abstract classes and their main methods is shown below
 %%
 % <html>
-% <img src="http://pmtk3.googlecode.com/svn/trunk/docs/classSystem/modelsMethodsTree.png"
-% height="2in">.
+% <img src="http://pmtk3.googlecode.com/svn/trunk/docs/classSystem/modelsMethodsTree.png">.
 % </html>
 %%
-% A summary of the concrete classes is shown below.
+% A summary of the concrete classes (which are leaves in the class
+% hierarchy) is shown below.
 %%
 % <html>
-% <img src="http://pmtk3.googlecode.com/svn/trunk/docs/classSystem/modelsConcreteTree.png"
-% height="2in">.
+% <img src="http://pmtk3.googlecode.com/svn/trunk/docs/classSystem/modelsConcreteTree.png">.
 % </html>
 %%
+
+%% Bayesian methods
+% So far, we have been focusing on fitting models
+% using ML or MAP parameter estimation.
+% Furthermore, prediction and inference has used
+% the plugin approximation, treating the parameters
+% as known constants.
+% PMTK3 has some limited support for Bayesian methods
+% of model fitting/ prediction, as we now explain.
+%
+% For supervised models, just use |fooFitBayes|
+% which computes $p(\theta|D)$,
+% and |fooPredictBayes|, which computes
+%%
+% $$p(y|x,D) = \int p(y|x,\theta) p(\theta|D) d\theta$$
+%%
+%
+% For unsupervised models, instead of |fooInfer| use
+% |fooInferBayes|, which computes
+%%
+% $$p(z|x,D) = \int p(z|x,\theta) p(\theta|D) d\theta$$
+%%
+% where z are the latent variables and x are the observed variables.
+% Also, instead of |fooLogprob| use |fooLogprobBayes|, which computes
+%%
+% $$L(i) = \int p(X(i,:) | \theta) p(\theta|D) d\theta$$
+%%
+% We will give examples of these methods later.
+%
+% 'Under the hood', things are a bit more complicated in
+% the Bayesian context compared to MAP estimation, since we don't store model
+% parameters but a posterior distribution over model 
+% parameters. Furthermore, the form of this posterior
+% may differ across inference algorithms, e.g., it might
+% be a Gaussian approximation, or a bag of samples.
+% However, from a user's point of view, these things
+% should not matter. 
+% 
 
 %% Passing in optional arguments
 % Many functions take a large number of optional arguments.
