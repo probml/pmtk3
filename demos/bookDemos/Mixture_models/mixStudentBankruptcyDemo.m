@@ -15,14 +15,14 @@ X = standardizeCols(X);
 K = 2;
 
 
-[model] = mixStudentFitEm(X, K);
-[zhat] = mixStudentInfer(model, X);
+[model] = mixModelFit(X, K, 'student');
+[zhat] = mixModelMapLatent(model, X);
 figure;
 process(model, zhat, X, Y, 'student');
 printPmtkFigure('robustMixGaussBankruptcy')
 
-[model] = mixGaussFitEm(X, K);
-[zhat] = mixGaussInfer(model, X);
+[model] = mixModelFit(X, K, 'gauss');
+[zhat] = mixModelMapLatent(model, X);
 figure;
 process(model, zhat, X, Y, 'gauss');
 printPmtkFigure('robustMixStudentBankruptcy')
@@ -31,11 +31,11 @@ end
 
 function process(model, classes, X, Y, name)
 
-K = model.K;
+K = model.nmix;
 % Plot class conditional densities
 hold on;
 for c=1:K
-	gaussPlot2d(model.mu(:,c), model.Sigma(:,:,c));
+	gaussPlot2d(model.cpd.mu(:,c), model.cpd.Sigma(:,:,c));
 end
 
 % Check whether class 1 should be bankrupt or otherwise
