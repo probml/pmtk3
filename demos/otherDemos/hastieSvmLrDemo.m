@@ -48,15 +48,19 @@ Xtest = [mixGaussSample(blueMix.mu, blueMix.Sigma, blueMix.mixweight  , ntest);
 ytest = [-1*ones(ntest, 1); ones(ntest, 1)];
 [Xtest, ytest] = shuffleRows(Xtest, ytest);
 %% Create the generative model to plot the Bayesian decision boundary
+blueFullModel = mixModelCreate(condGaussCpdCreate(blueMix.mu, blueMix.Sigma),...
+    'gauss', numel(blueMix.mixweight), blueMix.mixweight);
+orangeFullModel = mixModelCreate(condGaussCpdCreate(orangeMix.mu, orangeMix.Sigma),...
+    'gauss', numel(orangeMix.mixweight), orangeMix.mixweight);
 genmodel.nclasses = 2;
-genmodel.classConditionals = {blueMix, orangeMix};
+genmodel.classConditionals = {blueFullModel, orangeFullModel};
 genmodel.support = [-1 1];
 prior.T = [0.5; 0.5];
 prior.K = 2;
 prior.d = 1;
 genmodel.prior = prior;
 bayesPredictFn = @(X)generativeClassifierPredict...
-                  (@mixGaussLogprob, genmodel, X);
+                  (@mixModelLogprob, genmodel, X);
 bayesError = mean(bayesPredictFn(Xtest) ~= ytest);
 %%
 Cvalues = [10000, 0.1];
