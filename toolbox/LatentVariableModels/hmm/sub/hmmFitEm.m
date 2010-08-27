@@ -65,7 +65,7 @@ if isempty(model.emissionPrior)
 end
 if isempty(model.emission) || isempty(model.pi) || isempty(model.A)
     if restartNum == 1
-        model = initWithMixModel(model, data, @mixGaussFit, @mixGaussInfer);
+        model = initWithMixModel(model, data);
         Sigma = bsxfun(@plus, model.emission.Sigma, eye(model.d));
         model.emission.Sigma = Sigma;  % regularize MLE
     else 
@@ -105,11 +105,11 @@ if isempty(model.emission) || isempty(model.pi) || isempty(model.A)
     if restartNum == 1
         stackedData = cell2mat(data')';
         nmix = model.nmix;
-        mixModel = mixGaussFit(stackedData, nmix, 'verbose', false, 'maxIter', 10);
+        mixModel = mixModelFit(stackedData, nmix, 'gauss', 'verbose', false, 'maxIter', 10);
         if isempty(model.emission)
-            mu = mixModel.mu;
-            Sigma = bsxfun(@plus, eye(d), mixModel.Sigma); 
-            M = repmat(mixModel.mixweight, nstates, 1); 
+            mu = mixModel.cpd.mu;
+            Sigma = bsxfun(@plus, eye(d), mixModel.cpd.Sigma); 
+            M = repmat(mixModel.mixWeight, nstates, 1); 
             M = normalize(M + rand(size(M)), 1); %break symmetry
             model.emission = condMixGaussTiedCpdCreate(mu, Sigma, M); 
         end
@@ -143,7 +143,7 @@ if isempty(model.emissionPrior)
 end
 if isempty(model.emission) || isempty(model.pi) || isempty(model.A)
     if restartNum == 1
-        model = initWithMixModel(model, data, @mixDiscreteFit, @mixDiscreteInfer); 
+        model = initWithMixModel(model, data); 
     else
         T = normalize(rand(nstates, nObsStates), 2);
         model.emission = tabularCpdCreate(T);
@@ -255,16 +255,16 @@ model.pi = normalize(rand(1, nstates) + model.piPrior -1);
 model.A  = normalize(rand(nstates) + model.transPrior -1, 2);
 end
 
-function [model, mixModel] = initWithMixModel(model, data, fitFn, inferFn)
+function [model, mixModel] = initWithMixModel(model, data)
 %% Initialze using a mixture model, ignoring temporal structure
 stackedData = cell2mat(data')';
 nstates     = model.nstates;
-mixModel    = fitFn(stackedData, nstates, 'verbose', false, 'maxIter', 10);
+mixModel    = mixModelFit(stackedData, nstates, model.type, 'verbose', false, 'maxIter', 10);
 if isempty(model.emission)
-    model.emission = mixModel2Cpd(mixModel);
+    model.emission = mixModel.cpd; 
 end
 if isempty(model.A) || isempty(model.pi)
-    z = colvec(inferFn(mixModel, stackedData));
+    z = colvec(mixModelMapLatent(mixModel, stackedData));
     if isempty(model.A)
         A       = accumarray([z(1:end-1), z(2:end)], 1, [nstates, nstates]); % count transitions
         model.A = normalize(A + ones(size(A)), 2);       % regularize
