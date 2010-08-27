@@ -27,8 +27,8 @@ model = cell(1, NK);
 for i=1:NK
     K = Kvalues(i);
     fprintf('Fitting K = %d \n', K)
-    model{i}  = mixDiscreteFitEm(Xtrain, K, options{:});
-    logp(i)   = sum(mixDiscreteLogprob(model{i}, Xtest));
+    model{i}  = mixModelFit(Xtrain, K, 'discrete', options{:});
+    logp(i)   = sum(mixModelLogprob(model{i}, Xtest));
     nParams   = K*d + K-1;
     bicVal(i) = -2*logp(i) + nParams*log(n);
 end
@@ -40,11 +40,11 @@ for i=1:NK
     if K==10
         ynum = 2; xnum = 5;
     end
-    TK = model{i}.T; 
-    mixweightK = model{i}.mixweight;
+    TK = model{i}.cpd.T; 
+    mixweightK = model{i}.mixWeight;
     for j=1:K
         subplot(ynum, xnum, j);
-        imagesc(reshape(TK(2, :, j), 28, 28)); 
+        imagesc(reshape(TK(2, j, :), 28, 28)); 
         colormap('gray');
         title(sprintf('%1.2f', mixweightK(j)));
         axis off

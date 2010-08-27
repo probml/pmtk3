@@ -1,7 +1,8 @@
 %% Simple test of MixDiscreteFitEM
 %% Create Data
 setSeed(13);
-truth.nmix = 6;
+nmix = 6; 
+truth.nmix = nmix;
 truth.d = 80;
 truth.nstates = 8;
 truth.mixweight = normalize(rand(1, truth.nmix));
@@ -10,9 +11,9 @@ nsamples = 1000;
 [X, y] = mixDiscreteSample(truth, nsamples); 
 
 %% Fit
-[model, llhist] = mixDiscreteFitEm(X, truth.nmix, 'verbose', true);
+[model, llhist] = mixModelFit(X, nmix, 'discrete', 'verbose', true);
 %% Compare against the best permutation of the cluster labels.
-ypred = mixDiscreteInfer(model, X);
+ypred = mixModelMapLatent(model, X);
 allperms = perms(1:truth.nmix);
 nperms = size(allperms, 1); 
 errors = zeros(nperms, 1); 
