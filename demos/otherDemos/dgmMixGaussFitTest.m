@@ -1,4 +1,4 @@
-%% Fit a mixture of Gaussians comparing mixGaussFit and dgmTrain
+%% Fit a mixture of Gaussians comparing mixModelFit and dgmTrain
 %
 %%
 setSeed(0);
@@ -14,7 +14,7 @@ end
 mix0 = normalize(rand(1, nstates)); 
 %% random data
 localEv = randn(nobs, d); 
-%% fit using mixGaussFit
+%% fit using mixModelFit
 fprintf('Mix Gauss\n');
 initParams.mu = mu0;
 initParams.Sigma = Sigma0;

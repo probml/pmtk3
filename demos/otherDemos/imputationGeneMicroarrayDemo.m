@@ -33,8 +33,9 @@ for di=1:length(datasets)
     opts = {'verbose', true, 'doMAP', true};
     methodNames = {'row mean', 'col mean', 'knn1', 'knn5', 'mixGauss1'}; % 'mixGauss5'};
     imputeRows = @(X)imputeColumns(X')';
+    m = struct('mu', [], 'Sigma', [], 'mixweight', [], 'K', 1); 
     imputeFns = {imputeRows, @imputeColumns, @(X)imputeKnn(X, 1), @(X)imputeKnn(X, 5), ...
-        @(X)mixGaussImpute(mixGaussCreate([], [], [], 1), X, opts{:})};
+        @(X)mixGaussImpute(m, X, opts{:})};
     %@(X)imputeMixGauss(X, 5, opts{:})};
     nMethod = length(methodNames);
     
