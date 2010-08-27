@@ -26,4 +26,4 @@ end
 
 
 %modelMissing = mixGaussMissingFitEm(Xmissing, nmix);
-modelNotMissing = mixGaussFitEm(X, nmix, 'doMAP', true);
+modelNotMissing = mixModelFit(X, nmix, 'gauss');
