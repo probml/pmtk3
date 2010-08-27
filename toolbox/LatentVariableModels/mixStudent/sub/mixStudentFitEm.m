@@ -72,7 +72,7 @@ K      = model.K;
 [N, D] = size(X); 
 
 [z, post, ll] = mixStudentInfer(model, X);
-loglik = sum(ll)/N;
+loglik = sum(ll);
 
 R   = sum(post, 1);
 Sw  = zeros(1, K);
