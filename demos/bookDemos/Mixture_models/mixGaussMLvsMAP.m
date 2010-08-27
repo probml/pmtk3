@@ -23,6 +23,7 @@ errorSet = {      'logdet:posdef'
                   'MATLAB:singularMatrix'
            };
 %%
+
 NmleFail = zeros(length(dims), 1); 
 NmapFail = zeros(length(dims), 1); 
 for dimi = 1:length(dims)
@@ -46,11 +47,14 @@ for dimi = 1:length(dims)
         X = [X(:,:,1); X(:,:,2)];
         mu0 = rand(D,K);
         mixweight = normalize(ones(K,1));
+        initParams.mu = mu0;
+        initParams.Sigma = Sigma;
+        initParams.mixWeight = mixweight; 
         %% Fit
         try
             lastwarn('');
-            [modelGMM, loglikHistGMM] = mixGaussFitEm(X, K,...
-                'mu', mu0, 'Sigma', Sigma, 'mixweight', mixweight, 'doMAP', 0);
+            [modelGMM, loglikHistGMM] = mixModelFit(X, K, 'gauss',...
+                'initParams', initParams, 'prior', 'none', 'mixPrior', 'none');
             [msg, id] = lastwarn();
             if ~isempty(msg) && ismember(id, errorClass)
                error('warning caught');
@@ -61,8 +65,9 @@ for dimi = 1:length(dims)
         end
         try
             lastwarn('');
-            [modelGMMMAP, loglikHistGMMMAP] = mixGaussFitEm(X, K, ...
-                'mu', mu0, 'Sigma', Sigma, 'mixweight', mixweight,  'doMAP', 1);
+            prior = makeGaussInvWishartDataDependentPrior(X, K);
+            [modelGMMMAP, loglikHistGMMMAP] = mixModelFit(X, K, 'gauss',...
+                'initParams', initParams, 'prior', prior);
            [msg, id] = lastwarn();
             if ~isempty(msg) && ismember(id, errorClass)
                 error('warning caught');
