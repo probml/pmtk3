@@ -11,7 +11,9 @@ hidden   = cell(nsamples, 1);
 observed = cell(nsamples, 1);
 switch lower(model.type)
     case 'discrete'
+        
         E = model.emission.T;
+        assert(size(E, 3) == 1); % not yet implemetned for the vector valued case
         for i=1:nsamples
             T = len(i);
             hidden{i}   = rowvec(markovSample(model, T, 1));

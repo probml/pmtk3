@@ -46,7 +46,7 @@ end
 function [ess, loglik] = estep(model, data)
 %% Compute the expected sufficient statistics
 stackedData   = cell2mat(data')';
-seqidx        = cumsum([1, cellfun(@(seq)size(seq, 2), data')]);
+seqidx        = cumsum([1, cellfun(@(seq)size(seq, 2), data')]); % keep track of where sequences start
 nstacked      = size(stackedData, 1);
 nstates       = model.nstates;
 startCounts   = zeros(1, nstates);
@@ -64,21 +64,20 @@ for i=1:nobs
     Bi                         = B(:, ndx); 
     [gamma, alpha, beta, logp] = hmmFwdBack(pi, A, Bi);
     loglik                     = loglik + logp; 
-    xiSummed                  = hmmComputeTwoSliceSum(alpha, beta, A, Bi);
+    xiSummed                   = hmmComputeTwoSliceSum(alpha, beta, A, Bi);
     startCounts                = startCounts + gamma(:, 1)';
     transCounts                = transCounts + xiSummed;
     weights(ndx, :)            = weights(ndx, :) + gamma';
 end
-loglik                  = loglik + sum(scale); 
-logprior                = log(A(:)+eps)'*(model.transPrior(:)-1) + ...
-                          log(model.pi(:)+eps)'*(model.piPrior(:)-1);
-loglik                  = loglik + logprior;
-ess                     = structure(weights, startCounts, transCounts, B);  
+loglik   = loglik + sum(scale); 
+logprior = log(A(:)+eps)'*(model.transPrior(:)-1) + log(pi(:)+eps)'*(model.piPrior(:)-1);
+loglik   = loglik + logprior;
 %% emission component (generic)
-emission    = model.emission; 
-emissionEss = emission.essFn(emission, stackedData, ess.weights, ess.B);
-ess         = catStruct(ess, emissionEss); 
-loglik      = loglik + emission.logPriorFn(emission);
+emission        = model.emission; 
+ess             = emission.essFn(emission, stackedData, weights, B);
+ess.startCounts = startCounts; 
+ess.transCounts = transCounts; 
+loglik          = loglik + emission.logPriorFn(emission);
 end
 
 function model = mstep(model, ess)
@@ -188,7 +187,8 @@ end
 
 function model = initDiscrete(model, data, restartNum, emissionPrior) 
 %% Initialize the model given a discrete emission distribution
-model.d          = 1;
+d                = size(data{1}, 1);
+model.d          = d;
 nstates          = model.nstates;
 nObsStates       = max(cell2mat(data'));
 model.nObsStates = nObsStates; 
@@ -196,7 +196,7 @@ if isempty(model.emission) || isempty(model.pi) || isempty(model.A)
     if restartNum == 1
         model = initWithMixModel(model, data); 
     else
-        T = normalize(rand(nstates, nObsStates), 2);
+        T = normalize(rand(nstates, nObsStates, d), 2);
         model.emission = condDiscreteProdCpdCreate(T);
         model = rndInitPiA(model); 
     end
