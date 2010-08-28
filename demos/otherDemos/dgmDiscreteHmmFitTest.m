@@ -32,7 +32,6 @@ hmmF = hmmFit(observed, nstates, 'discrete', 'verbose', true, ...
 dgm = hmmToDgm(hmm, T); 
 dgm.CPDs{1}.prior = hmmF.piPrior(:);
 dgm.CPDs{2}.prior = hmmF.transPrior;
-dgm.localCPDs{1}.prior = hmmF.emissionPrior;
 %% fit the dgm
 fprintf('DGM\n'); 
 dgm = dgmTrain(dgm, 'localev', permute(observed(:), [3 2 1]), 'verbose', true); 

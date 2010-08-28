@@ -44,7 +44,7 @@ for i=1:NK
     mixweightK = model{i}.mixWeight;
     for j=1:K
         subplot(ynum, xnum, j);
-        imagesc(reshape(TK(2, j, :), 28, 28)); 
+        imagesc(reshape(TK(j, 2, :), 28, 28)); 
         colormap('gray');
         title(sprintf('%1.2f', mixweightK(j)));
         axis off

@@ -19,7 +19,7 @@ data     = cell2mat(Z);
 % make sure they have the same priors
 dgmModel.CPDs{1}.prior = hmmModel.piPrior(:); 
 dgmModel.CPDs{2}.prior = hmmModel.transPrior ;
-dgmModel.localCPDs{1}.prior = hmmModel.emissionPrior; 
+dgmModel.localCPDs{1}.prior = hmmModel.emission.prior; 
 % fit dgm
 dgmModel = dgmTrain(dgmModel,'data', data, 'localev', localev); 
 %% compare results

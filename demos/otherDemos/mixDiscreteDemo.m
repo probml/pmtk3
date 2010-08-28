@@ -1,12 +1,12 @@
 %% Simple test of a discrete mixture model
 %% Create Data
-setSeed(13);
+setSeed(0);
 nmix = 6; 
 truth.nmix = nmix;
 truth.d = 80;
-truth.nstates = 8;
+truth.nstates = 8; % number of observed states
 truth.mixweight = normalize(rand(1, truth.nmix));
-truth.T = normalize(rand(truth.nstates, truth.nmix, truth.d), 2);
+truth.T = normalize(rand(truth.nmix, truth.nstates, truth.d), 2);
 nsamples = 1000;
 [X, y] = mixDiscreteSample(truth.T, truth.mixweight, nsamples); 
 

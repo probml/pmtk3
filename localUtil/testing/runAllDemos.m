@@ -10,6 +10,7 @@
 %minFunc_applications;                   pclear(2); % PMTKinteractive
 %pagerankDemo;                           pclear(2); % PMTKinteractive
 %pcaYeast;                               pclear(2); % PMTKinteractive
+%ridgeSplineDemoCV;                      pclear(2); % PMTKbroken
 %surfer;                                 pclear(2); % PMTKinteractive
 agglomDemo;                              pclear(2);
 alarmBelPropDemo;                        pclear(2);
@@ -47,6 +48,7 @@ centralLimitDemo;                        pclear(2);
 changeOfVarsDemo1d;                      pclear(2);
 changeOfVarsDemoPolar;                   pclear(2);
 chowliuTreeDemo;                         pclear(2);
+classificationShootoutCvLambdaOnly;      pclear(2);
 clusterYeast;                            pclear(2);
 coinsModelSelDemo;                       pclear(2);
 confintDemo;                             pclear(2);
@@ -138,6 +140,7 @@ hmmDiscreteTest;                         pclear(2);
 hmmGaussTest;                            pclear(2);
 hmmMixGaussTiedTest;                     pclear(2);
 hmmSelfLoopDist;                         pclear(2);
+hmmStudentTest;                          pclear(2);
 hoffNormalmsePlots;                      pclear(2);
 hopfieldDemo;                            pclear(2);
 huberLossDemo;                           pclear(2);
@@ -372,6 +375,7 @@ softmaxDemo2;                            pclear(2);
 sparseLinRegBabackDemo;                  pclear(2);
 sparseLinRegMargDistDemo;                pclear(2);
 sparseSensingDemo;                       pclear(2);
+splineBasisDemo;                         pclear(2);
 sprinklerGMdemo;                         pclear(2);
 steepestDescentDemo;                     pclear(2);
 studentFitDemo;                          pclear(2);
@@ -383,6 +387,7 @@ subgradientPlot;                         pclear(2);
 surfaceFitDemo;                          pclear(2);
 svdImageDemo;                            pclear(2);
 svmBinaryClassifBishopDemo;              pclear(2);
+svmBinaryClassifDemo;                    pclear(2);
 svmCgammaDemo;                           pclear(2);
 svmFitTest;                              pclear(2);
 svmLogregComparison;                     pclear(2);

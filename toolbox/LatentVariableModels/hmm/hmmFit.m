@@ -13,11 +13,12 @@ function [model, loglikHist] = hmmFit(data, nstates, type, varargin)
 %
 % nstates      - the number of hidden states
 %
-% type         - as string, either 'gauss', 'mixGaussTied' or 'discrete'
-%                depending on the desired emission (local) distribution.
+% type         - as string, either 'gauss', 'mixGaussTied', 'discrete', or
+%                'student', depending on the desired emission i.e observation
+%                (local) distribution.
 %
 %                See condMixGaussTiedCpdCreate for more details on the
-%                'mixGaussTied' option.
+%                'mixGaussTied' option. 
 %
 %
 % By default, we lightly regularize all parameters, so we are 

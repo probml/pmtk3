@@ -75,12 +75,12 @@ switch lower(localCPD.cpdType)
     case 'conddiscreteprod'
         
         T  = localCPD.T;
-        [nObsStats, nstates, d]  = size(T); 
+        [nstates, nObsStates, d]  = size(T); 
         logB           = nan(nstates, seqlen);
-        logT           = log(T); 
+        logT           = log(T);   % T is of size nstates-nObsStates-d
         L = zeros(nstates, numel(observed), d);
         for j = 1:d
-            L(:, :, d) = logT(Xobs(j, :), :, j)';
+            L(:, :, d) = logT(:, Xobs(j, :), j);
         end
         logB(:, observed) = sum(L, 3); 
         

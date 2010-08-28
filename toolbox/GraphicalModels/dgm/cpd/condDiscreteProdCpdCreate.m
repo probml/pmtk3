@@ -1,9 +1,9 @@
 function CPD = condDiscreteProdCpdCreate(T, varargin)
 %% Create a conditional discrete product distribution
 % This differs from a tabularCPD in that it supports vector valued discrete
-% observations assumed to be conditionally independent given the parent. 
+% observations, (it also supports scalar value observations). 
 %
-% T is of size nObsStates-by-nstates-d
+% T is of size nstates-by-nOBsStates-d
 %
 %% Optional inputs
 % 'prior' - a struct with the the field 'alpha', which must be
@@ -13,8 +13,8 @@ prior = process_options(varargin, 'prior', []);
 if isempty(prior)
    prior.alpha = 2; % implicitly replicated 
 end
-[nObsStates, nstates, d] = size(T); 
-CPD            = structure(T, nObsStates, nstates, d, prior);
+[nstates, nObsStates, d] = size(T); 
+CPD            = structure(T, nstates, nObsStates, d, prior);
 CPD.cpdType    = 'condDiscreteProd';
 CPD.fitFn      = @condDiscreteProdCpdFit;
 CPD.fitFnEss   = @condDiscreteProdCpdFitEss;
@@ -25,7 +25,7 @@ end
 
 function CPD = rndInit(CPD)
 %% Randomly initialize
-CPD.T = normalize(rand(size(CPT.T), 1)); 
+CPD.T = normalize(rand(size(CPT.T), 2)); 
 end
 
 function CPD = condDiscreteProdCpdFit(CPD, Z, Y)
@@ -42,7 +42,7 @@ else
     alpha = CPD.prior.alpha;
 end
 for k = 1:nstates
-   T(:, k, :) = normalize(histc(Y(Z==k, :) + alpha - 1, 1:nObsStates), 1); 
+   T(k, :, :) = normalize(histc(Y(Z==k, :) + alpha - 1, 1:nObsStates), 2); 
 end
 end
 
@@ -53,16 +53,16 @@ function ess = condDiscreteProdCpdComputeEss(cpd, data, weights, B)
 % B        -  ignored, but required by the interface, 
 %             (since mixture emissions, e.g. condMixGaussTied, use it). 
 %%
-[nObsStates, nstates, d] = size(cpd.T);
-counts  = zeros(nObsStates, nstates, d);% counts(c, k, d) = p(x_d = c | Z = k)
+[nstates, nObsStates, d] = size(cpd.T);
+counts  = zeros(nstates, nObsStates, d);% counts(k, c, d) = p(x_d = c | Z = k)
 if d < nObsStates*nstates
     for j = 1:d
-        counts(:, :, j) = (weights'*bsxfun(@eq, data(:, j), 1:nObsStates))';
+        counts(:, :, j) = weights'*bsxfun(@eq, data(:, j), 1:nObsStates);
     end
 else
     for c = 1:nObsStates
         for k = 1:nstates
-            counts(c, k, :) = sum(bsxfun(@times, (data==c), weights(:, k)));
+            counts(k, c, :) = sum(bsxfun(@times, (data==c), weights(:, k)));
         end
     end
 end
@@ -78,5 +78,5 @@ if isempty(prior)
 else
     alpha = prior.alpha;
 end
-cpd.T = normalize(ess.counts + alpha-1, 1); 
+cpd.T = normalize(ess.counts + alpha-1, 2); 
 end

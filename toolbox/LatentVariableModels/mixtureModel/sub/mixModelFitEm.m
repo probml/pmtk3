@@ -26,10 +26,10 @@ switch lower(type)
         initFn = @initStudent;
 end
 initFn = @(m, X, r)initFn(m, X, r, initParams, prior); 
-[model, loglikHist] = emAlgo(model, data, initFn, @estep, @mstep, ...
-    'mstepOR'         , mstepOrFn ,...
-    'overRelaxFactor' , overRelaxFactor,...
-    EMargs{:});
+[model, loglikHist] = emAlgo(model, data, initFn, @estep, @mstep , ...
+                            'mstepOR'         , mstepOrFn        , ...
+                            'overRelaxFactor' , overRelaxFactor  , ...
+                                                EMargs{:});
 end
 
 %% Initialization
@@ -63,13 +63,13 @@ else
     % randomly partition data, fit each partition separately, add noise.
     nmix    = model.nmix;
     d       = size(X, 2);
-    T       = zeros(nObsStates, nmix, d);
+    T       = zeros(nmix, nObsStates, d);
     Xsplit  = randsplit(X, nmix);
     for k=1:nmix
         m = discreteFit(Xsplit{k}, 1, nObsStates);
-        T(:, k, :) = m.T;
+        T(k, :, :) = m.T;
     end
-    T               = normalize(T + 0.2*rand(size(T)), 1); % add noise
+    T               = normalize(T + 0.2*rand(size(T)), 2); % add noise
     model.mixWeight = normalize(10*rand(1, nmix) + ones(1, nmix));
 end
 model.cpd = condDiscreteProdCpdCreate(T, 'prior', prior); 

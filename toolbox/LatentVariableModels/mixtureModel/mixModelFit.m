@@ -39,7 +39,7 @@ function [model, loglikHist] = mixModelFit(data, nmix, type, varargin)
 %
 % mixPrior   - these are pseudoCounts for the mixture distribution. This
 %              must be a scalar or of size 1-by-nmix. Set to 'none' to do
-%              MLE. A value of 1 effectively menas no prior, since the map
+%              MLE. A value of 1 effectively means no prior, since the map
 %              estimate adds mixPrior -1.
 %
 % overRelaxFactor - Currently only supported for 'gauss'. If set,

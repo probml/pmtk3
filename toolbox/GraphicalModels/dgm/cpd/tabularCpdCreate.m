@@ -21,19 +21,23 @@ end
 cpd = structure(T, prior, sizes, nstates);
 cpd.d = 1; 
 cpd.cpdType = 'tabular';
-
 update = @(cpd, x)tabularCpdCreate(mkStochastic(x + cpd.prior-1), 'prior', cpd.prior); 
 %% 'methods'
 cpd.fitFn      = @(cpd, data)   update(cpd, computeCounts(data, cpd.sizes)); 
-cpd.fitFnEss   = @(cpd, counts) update(cpd, reshape(counts, size(cpd.T))); 
+cpd.fitFnEss   = @(cpd, ess)    update(cpd, reshape(ess.counts, size(cpd.T))); 
 cpd.rndInitFn  = @(cpd)         update(cpd, rand(size(cpd.T)));
 cpd.logPriorFn = @(cpd)         log(cpd.T(:) + eps)'*(cpd.prior(:)-1);
 cpd.essFn      = @tabularEssFn;  
 end
 
-function counts = tabularEssFn(cpd, data, weights)
+function ess = tabularEssFn(cpd, data, weights, B)
 %% Compute the excpected suff stats for a tabular CPD
-% (note, this is only used if a tabularCPD is used as a localCPD)
+% (note, this is only used if a tabularCPD is used as a localCPD) B is
+% ignored, but required by the interface, (for e.g. condMixGaussTiedCpd)
+% A better choice for a localCPD given discrete observations is
+% condDiscreteProdCpd, which supports scalar and vector valued discrete
+% observations - see condDiscreteProdCpdCreate
+%%
 nstates = cpd.nstates; 
 nstatesParent = size(weights, 2); 
 counts = zeros(nstatesParent, nstates); 
@@ -42,5 +46,5 @@ for c=1:nstates
         counts(p, c) = sum(bsxfun(@times, (data(:)==c), weights(:, p)));
     end
 end
-counts = counts(:); 
+ess.counts = counts(:); 
 end

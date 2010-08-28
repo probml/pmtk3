@@ -3,7 +3,7 @@ function model =  hmmFitFullyObs(Z, Y, type, varargin)
 %
 % Z       - a cell array of observations of the discrete Markov backbone;
 %           each observation j is 1-by-seqLength(j).
-% 
+%
 % Y        - a cell array of emission observations; each observation j is
 %            d-by-seqLength(j) (where d is always 1 if type = 'discrete')
 %
@@ -12,11 +12,11 @@ function model =  hmmFitFullyObs(Z, Y, type, varargin)
 % See hmmFit for details on priors
 %
 %%
-Z        = cellwrap(Z); 
-Y        = cellwrap(Y); 
+Z        = cellwrap(Z);
+Y        = cellwrap(Y);
 Zstacked = cell2mat(Z')'; % sum(seqLength)-by-1
 Ystacked = cell2mat(Y')'; % sum(seqLength)-by-d
-nstatesZ = max(Zstacked); 
+nstatesZ = max(Zstacked);
 
 [piPrior, transPrior, emissionPrior] = process_options(varargin , ...
     'piPrior'                   , 2*ones(1, nstatesZ)           , ...
@@ -26,47 +26,36 @@ nstatesZ = max(Zstacked);
 if diff(size(transPrior))
     transPrior = repmat(rowvec(transPrior), nstatesZ, 1);
 end
-A        = countTransitions(Z, nstatesZ); 
-model.A  = normalize(A + transPrior-1, 2); 
+A        = countTransitions(Z, nstatesZ);
+model.A  = normalize(A + transPrior-1, 2);
 seqidx   = cumsum([1, cellfun(@(seq)size(seq, 2), Z')]);
 pi       = rowvec(histc(Zstacked(seqidx(1:end-1)), 1:nstatesZ));
-model.pi = normalize(pi + rowvec(piPrior) - 1);       
+model.pi = normalize(pi + rowvec(piPrior) - 1);
+d      = size(Ystacked, 2);
 switch lower(type)
     case 'gauss'
         
-        d = size(Ystacked, 2); 
-        if isempty(emissionPrior)
-            emissionPrior.mu    = zeros(1, d);
-            emissionPrior.Sigma = 0.1*eye(d);
-            emissionPrior.k     = 0.01;
-            emissionPrior.dof   = d + 1; 
-        end
-        cpd.d = d;
-        cpd.prior = emissionPrior; 
-        cpd.nstates = nstatesZ;
-        model.emission = condGaussCpdFit(cpd, Zstacked, Ystacked); 
+        emission = condGaussCpdCreate(ones(d, nstatesZ), ones(d, d, nstatesZ), 'prior', emissionPrior);
+        model.emission = emission.fitFn(emission, Zstacked, Ystacked);
+        
+    case 'student'
+        
+        emission = condStudentCpdCreate(ones(d, nstatesZ), ones(d, d, nstatesZ), 'prior', ones(1, nstatesZ), emissionPrior);
+        model.emission = emission.fitFn(emission, Zstacked, Ystacked);
         
     case 'discrete'
         
-        nstatesY = max(Ystacked); 
-        if isempty(emissionPrior)
-            emissionPrior = 2*ones(nstatesZ, nstatesY);
-        end
-        T = zeros(nstatesZ, nstatesY); 
-        for s=1:nstatesZ
-            data = Ystacked(Zstacked == s);
-            T(s, :) = histc(data, 1:nstatesY); 
-        end
-        T = normalize(T + emissionPrior - 1, 2);  
-        model.emission = tabularCpdCreate(T); 
-        model.d = 1; 
+        nstatesY = max(Ystacked);
+        emission = condDiscreteProdCpdCreate(ones(nstatesZ, nstatesY, d), 'prior', emissionPrior);
+        model.emission = emission.fitFn(emission, Zstacked, Ystacked);
         
+    case 'mixgausstiedcpd'
+        error('fitting a condMixGaussTiedCpd given fully obs data is not yet supported');
     otherwise
-        error('%s is not a supported emission type', type); 
+        error('%s is not a supported emission type', type);
 end
-
-model.type = type; 
-model.piPrior = piPrior; 
+model.type = type;
+model.piPrior = piPrior;
 model.transPrior = transPrior;
-model.emissionPrior = emissionPrior; 
+
 end

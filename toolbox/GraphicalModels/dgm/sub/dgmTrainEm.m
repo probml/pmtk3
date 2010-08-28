@@ -99,7 +99,8 @@ counts = ess.counts;
 CPDs = dgm.CPDs;
 for k = 1:numel(CPDs); 
     CPD = CPDs{k};
-    CPD = CPD.fitFnEss(CPD, counts{k});
+    ess.counts = counts{k};
+    CPD = CPD.fitFnEss(CPD, ess);
     CPDs{k} = CPD;
 end
 dgm.CPDs = CPDs;

@@ -5,6 +5,7 @@
 %bolassoDemo;                            pclear(2); % PMTKreallySlow
 %cancerHighDimClassifDemo;               pclear(2); % PMTKslow
 %classificationShootout;                 pclear(2); % PMTKreallySlow
+%classificationShootoutCvLambdaOnly;     pclear(2); % PMTKslow
 %demoMinfuncHighdim;                     pclear(2); % PMTKslow
 %demoRosenHighDim;                       pclear(2); % PMTKinteractive
 %gibbsDemoNoBlindspot;                   pclear(2); % PMTKslow
@@ -29,6 +30,7 @@
 %pcaYeast;                               pclear(2); % PMTKinteractive
 %randDgmTimingTest;                      pclear(2); % PMTKslow
 %rbfNetworkSarcosDemo;                   pclear(2); % PMTKslow
+%ridgeSplineDemoCV;                      pclear(2); % PMTKbroken
 %sparseSensingDemo;                      pclear(2); % PMTKslow
 %surfer;                                 pclear(2); % PMTKinteractive
 %svmCgammaDemo;                          pclear(2); % PMTKslow
@@ -157,6 +159,7 @@ hmmDiscreteTest;                         pclear(2);
 hmmGaussTest;                            pclear(2);
 hmmMixGaussTiedTest;                     pclear(2);
 hmmSelfLoopDist;                         pclear(2);
+hmmStudentTest;                          pclear(2);
 hoffNormalmsePlots;                      pclear(2);
 huberLossDemo;                           pclear(2);
 invGammaPlotDemo;                        pclear(2);
@@ -376,6 +379,7 @@ sigmoidPlot;                             pclear(2);
 softmaxDemo2;                            pclear(2);
 sparseLinRegBabackDemo;                  pclear(2);
 sparseLinRegMargDistDemo;                pclear(2);
+splineBasisDemo;                         pclear(2);
 sprinklerGMdemo;                         pclear(2);
 steepestDescentDemo;                     pclear(2);
 studentFitDemo;                          pclear(2);
@@ -387,6 +391,7 @@ subgradientPlot;                         pclear(2);
 surfaceFitDemo;                          pclear(2);
 svdImageDemo;                            pclear(2);
 svmBinaryClassifBishopDemo;              pclear(2);
+svmBinaryClassifDemo;                    pclear(2);
 svmLogregComparison;                     pclear(2);
 svmRegrDemo;                             pclear(2);
 svmSmoothRegrDemo;                       pclear(2);

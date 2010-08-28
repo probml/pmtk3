@@ -20,9 +20,9 @@ switch lower(model.type)
         logT = log(model.cpd.T + eps); 
         Lijk = zeros(n, d, nmix);
         for j = 1:d
-            Lijk(:, j, :) = logT(X(:, j), :, j);
+            Lijk(:, j, :) = logT(:, X(:, j), j)'; % T is of size [nstates, nObsStates, d]
         end
-        logPz = bsxfun(@plus, logMix, squeeze(sum(Lijk, 2)));
+        logPz = bsxfun(@plus, logMix, squeeze(sum(Lijk, 2))); % sum across d
 
     case 'student'
         

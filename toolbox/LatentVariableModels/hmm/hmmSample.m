@@ -35,7 +35,7 @@ switch lower(model.type)
             end
         end
         
-    case mixGaussTied
+    case {'mixgausstied', 'student'}
         error('not yet implemented'); 
     otherwise
         error('%s is not a valid hmm type', model.type);

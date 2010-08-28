@@ -35,7 +35,7 @@ hmmModel = hmmFitEm(Y, nstates, 'gauss', ...
 toc
 %% initialize the dgm 
 dgmModel.localCPDs          = {emission0};
-dgmModel.localCPDs{1}.prior = hmmModel.emissionPrior; 
+dgmModel.localCPDs{1}.prior = hmmModel.emission.prior; 
 dgmModel.CPDs{1}            = tabularCpdCreate(pi0(:), 'prior', hmmModel.piPrior(:)); 
 dgmModel.CPDs{2}            = tabularCpdCreate(trans0, 'prior', hmmModel.transPrior); 
 %% fit the dgm
