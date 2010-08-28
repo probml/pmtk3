@@ -47,11 +47,12 @@ function [model, loglikHist] = hmmFit(data, nstates, type, varargin)
 %                 nstates-by-nstates or 1-by-nstates in which case it is
 %                 automatically replicated.
 %
-% emissionPrior - If type is 'discrete', these are pseduoCounts in an
-%                 nstates-by-nObsStates matrix. If type is 'gauss',
-%                 emissionPrior is a struct with the parameters of a
-%                 Gauss-inverseWishart distribution, namely,
-%                 mu, Sigma, dof, k.
+% emissionPrior - If type is 'discrete', this is a struct with field 'alpha'
+%                 an nstates-by-nObsStates matrix of pseudoCounts. If type
+%                 is 'gauss', or 'mixGaussTied', emissionPrior is a struct 
+%                 with the parameters of a Gauss-inverseWishart 
+%                 distribution, namely, mu, Sigma, dof, k. We don't
+%                 currently support an emission prior for type 'student'.
 %
 %% EM related inputs
 % *** See emAlgo for additional EM related optional inputs ***
