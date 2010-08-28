@@ -64,9 +64,9 @@ for i=1:nobs
     Bi                         = B(:, ndx); 
     [gamma, alpha, beta, logp] = hmmFwdBack(pi, A, Bi);
     loglik                     = loglik + logp; 
-    xi_summed                  = hmmComputeTwoSliceSum(alpha, beta, A, Bi);
+    xiSummed                  = hmmComputeTwoSliceSum(alpha, beta, A, Bi);
     startCounts                = startCounts + gamma(:, 1)';
-    transCounts                = transCounts + xi_summed;
+    transCounts                = transCounts + xiSummed;
     weights(ndx, :)            = weights(ndx, :) + gamma';
 end
 loglik                  = loglik + sum(scale); 
