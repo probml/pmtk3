@@ -29,7 +29,7 @@ if isfield(emission, 'T')
     sz         = size(Tsmall);
     nObsStates = sz(end);
     T          = replicate(Tsmall, [P, edom], [ns, nObsStates]);
-    obsModel   = tabularCpdCreate(reshape(T, [], nObsStates));
+    obsModel   = tabularCpdCreate(reshape(T, [], nObsStates)); % may want to use condDiscreteProdCpdCreate, which supports vector-valued inputs
     type       = 'discrete';
     
 elseif isfield(emission, 'mu')

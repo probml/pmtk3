@@ -1,6 +1,6 @@
 function sdgm = dgmSeqCreate(intra, inter, slice1CPDs, slice2CPDs, emission)
 %% Create a sequential directed graphical model, (aka a dynamic Bayes net)
-% work in progress
+% *** work in progress ***
 % To create the model you need only specify the two-slice dgm, (2TDBN) as 
 % follows, and it will be automatically unrolled by e.g. dgmSeqFit or
 % dgmSeqInferNodes.
