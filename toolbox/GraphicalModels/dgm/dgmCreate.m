@@ -35,7 +35,9 @@ function model = dgmCreate(G, CPDs, varargin)
 %                     'private' child nodes of the CPDs above and are used 
 %                      primarily to deal with continuous observations. They
 %                      are not represnted explicity in the graph G. See 
-%                      condGaussCpdCreate. 
+%                      condGaussCpdCreate, condMixGaussCpdCreate,
+%                      condStudentCpdCreate, condDiscreteProdCpdCreate,
+%                      etc.
 %
 %                      The usual idiom is to specify localCPDs here and
 %                      pass in local evidence at inference time. You can

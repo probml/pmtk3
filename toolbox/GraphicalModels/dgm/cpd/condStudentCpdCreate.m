@@ -6,6 +6,8 @@ function CPD = condStudentCpdCreate(mu, Sigma, dof, varargin)
 [prior, dofEstimator] = process_options(varargin, ...
     'prior'       , [], ...          % prior not currently used
     'dofEstimator', @(varargin)dof); % by default don't update dof
+                                     % see mixModelFitEm for an example
+                                     % estimator.
 
 d = size(Sigma, 1);
 if isvector(Sigma)
@@ -57,7 +59,7 @@ cpd.Sigma = Sigma;
 cpd.dof   = dof;
 end
 
-function ess = condStudentCpdComputeEss(cpd, data, weights, B)
+function ess = condStudentCpdComputeEss(cpd, data, weights, B) %#ok that B is unused
 %% Compute the expected sufficient statistics for a condStudentCpd
 % data is nobs-by-d
 % weights is nobs-by-nstates; the marginal probability of the discrete
@@ -84,9 +86,6 @@ for c = 1:nstates
     SXX(:, :, c) = Xw'*data;
 end
 ess = structure(wsum, Sw, SX, SXX);
-
-
-
 end
 
 function cpd = condStudentCpdFitEss(cpd, ess, dofEstimator)
