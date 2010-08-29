@@ -104,10 +104,14 @@ if isempty(model.emission) || isempty(model.pi) || isempty(model.A)
     if restartNum == 1
         model = initWithMixModel(model, data);
         Sigma = bsxfun(@plus, model.emission.Sigma, eye(model.d));
-        model.emission.Sigma = Sigma;  % regularize MLE
-        if fixDof
-            model.emission.dof = dof; 
+        mu    = model.emission.mu; 
+        if ~fixDof
+           dof = model.emission.dof; 
         end
+        % we do not estimate the dof in the hmm model; we use the either
+        % a user set value, or a value(s) estimated once ignoring temporal
+        % structure. 
+        model.emission = condStudentCpdCreate(mu, Sigma, dof, 'prior', emissionPrior, 'estimateDof', false); 
     else 
         nstates     = model.nstates;
         stackedData = cell2mat(data')';
@@ -118,10 +122,7 @@ if isempty(model.emission) || isempty(model.pi) || isempty(model.A)
             mu(:, k)       = colvec(mean(XX));
             Sigma(:, :, k) = cov(XX);
         end
-        model.emission = condStudentCpdCreate(mu, Sigma, dof, 'estimateDof', false);
-        % we do not estimate the dof in the hmm model; we use the either
-        % a hand set value, or the value(s) estimated ignoring temporal
-        % structure. 
+        model.emission = condStudentCpdCreate(mu, Sigma, dof, 'prior', emissionPrior, 'estimateDof', false);
         model = rndInitPiA(model); 
     end
 end
