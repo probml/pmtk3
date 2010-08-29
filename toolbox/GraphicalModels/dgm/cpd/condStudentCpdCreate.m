@@ -1,6 +1,6 @@
 function CPD = condStudentCpdCreate(mu, Sigma, dof, varargin)
 %% Create a conditional student distribution for use in a graphical model
-%
+% 
 % Adapted from code written by Robert Tseng
 %%
 [prior, estimateDof] = process_options(varargin,  'prior' , [], 'estimateDof', true); % prior not currently used
@@ -110,7 +110,8 @@ function dof = dofEstimator(cpd, ess)
 % This optimizes w.r.t the negative log likelihood of the observed data,
 % and does nmix independent 1D optimizations, (line searches). It looks
 % more complicated than it really is, since it caches and reuses as much as
-% possible. 
+% possible. This is only valid in the mixture model setting, not a temporal
+% model. 
 %% 
 dofMin  = 0.1;
 dofMax  = 200;
