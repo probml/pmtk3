@@ -20,6 +20,10 @@ function [model, loglikHist] = hmmFit(data, nstates, type, varargin)
 %                See condMixGaussTiedCpdCreate for more details on the
 %                'mixGaussTied' option. 
 %
+%                Note, if type is student, we do not estimate the dof. If
+%                you specify emission0, we use this value, otherwise we
+%                estimate it once ignoring temporal structure.
+%
 %
 % By default, we lightly regularize all parameters, so we are 
 % doing MAP estimation, not MLE. You can change the priors 
