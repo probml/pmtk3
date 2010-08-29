@@ -3,8 +3,7 @@
 % PMTKauthor Francois Caron
 % PMTKmodified Kevin Murphy
 %%
-
-
+function normalGammaPenaltyPlotDemo()
 c = 1;
 pas=0.01;
 %[X,Y] = meshgrid(-1:pas:1,-1:pas:1.1);
@@ -47,4 +46,4 @@ printPmtkFigure('NEGPenalty')
 end
   
 
-
+end
