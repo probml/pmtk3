@@ -3,12 +3,7 @@ function CPD = condStudentCpdCreate(mu, Sigma, dof, varargin)
 %
 % Adapted from code written by Robert Tseng
 %%
-[prior, dofEstimator] = process_options(varargin, ...
-    'prior'       , [], ...          % prior not currently used
-    'dofEstimator', @(varargin)dof); % by default don't update dof
-                                     % see mixModelFitEm for an example
-                                     % estimator.
-
+[prior, estimateDof] = process_options(varargin,  'prior' , [], 'estimateDof', true); % prior not currently used
 d = size(Sigma, 1);
 if isvector(Sigma)
     Sigma = permute(rowvec(Sigma), [1 3 2]);
@@ -21,20 +16,22 @@ dof = rowvec(dof);
 CPD = structure(mu, Sigma, nstates, dof, d, prior);
 CPD.cpdType    = 'condStudent';
 CPD.fitFn      = @condStudentCpdFit;
-CPD.fitFnEss   = @(cpd, ess)condStudentCpdFitEss(cpd, ess, dofEstimator);
+CPD.fitFnEss   = @(cpd, ess)condStudentCpdFitEss(cpd, ess, estimateDof);
 CPD.essFn      = @condStudentCpdComputeEss;
 CPD.logPriorFn = @(varargin)0; % does not currently support a prior
-CPD.rndInitFn  = @rndInit;
+CPD.rndInitFn  = @(cpd)rndInit(cpd, estimateDof);
 end
 
-function cpd = rndInit(cpd)
+function cpd = rndInit(cpd, estimateDof)
 %% randomly initialize
 d           = cpd.d;
 nstates     = cpd.nstates;
 cpd.mu      = randn(d, nstates);
 regularizer = 2;
 cpd.Sigma   = stackedRandpd(d, nstates, regularizer);
-cpd.dof     = 10*ones(1, nstates);
+if estimateDof
+    cpd.dof     = 10*ones(1, nstates);
+end
 end
 
 function cpd = condStudentCpdFit(cpd, Z, Y)
@@ -86,9 +83,10 @@ for c = 1:nstates
     SXX(:, :, c) = Xw'*data;
 end
 ess = structure(wsum, Sw, SX, SXX);
+ess.X = data; % needed for dof estimation
 end
 
-function cpd = condStudentCpdFitEss(cpd, ess, dofEstimator)
+function cpd = condStudentCpdFitEss(cpd, ess, estimateDof)
 %% Fit a condStudentCpd given expected sufficient statistics
 nstates = cpd.nstates;
 Sigma   = cpd.Sigma;
@@ -102,5 +100,60 @@ for c = 1:nstates
 end
 cpd.mu    = bsxfun(@rdivide, SX', Sw);
 cpd.Sigma = Sigma;
-cpd.dof   = dofEstimator(cpd, ess); 
+if estimateDof
+    cpd.dof   = dofEstimator(cpd, ess); 
 end
+end
+
+function dof = dofEstimator(cpd, ess)
+%% Estimate the dof fixing the other params
+% This optimizes w.r.t the negative log likelihood of the observed data,
+% and does nmix independent 1D optimizations, (line searches). It looks
+% more complicated than it really is, since it caches and reuses as much as
+% possible. 
+%% 
+dofMin  = 0.1;
+dofMax  = 200;
+mu      = cpd.mu;
+Sigma   = cpd.Sigma;
+initDof = cpd.dof; 
+logMix  = log(normalize(ess.wsum)); 
+nmix    = numel(logMix); 
+data    = ess.X; 
+[n, d]  = size(data); 
+logDets = zeros(1, nmix); 
+mahalCache = zeros(n, nmix); 
+for k=1:nmix
+    X = bsxfun(@minus, data, mu(:, k)'); 
+    mahalCache(:, k) = sum((X/Sigma(:, :, k)).*X, 2);
+    logDets(k) = 0.5*logdet(Sigma(:, :, k)); 
+end
+L = zeros(size(data, 1), nmix);
+for k = 1:nmix
+    nu = initDof(k); 
+    L(:, k) = logMix(k)             + ...
+              gammaln(0.5*(nu + d)) - ...
+              gammaln(0.5*nu)       - ...
+              logDets(k)            - ...
+              0.5*d*log(nu)         - ...
+              0.5*(nu+d)*log1p(mahalCache(:, k)./nu);
+end
+objective = @(k, nu)mixStudentNll(logMix, L, logDets, mahalCache, d, k, nu); 
+dof = zeros(1, nmix);
+for k=1:nmix
+    dof(k) = fminbnd(@(nu)objective(k, nu), dofMin, dofMax); 
+end
+end
+
+function nll = mixStudentNll(logMix, L, logDets, mahalCache, d, k, nu)
+% objective used by estimateMixStudentDofNll above
+L(:, k) = logMix(k)               + ...
+          gammaln(0.5*(nu+d))     - ...
+          gammaln(0.5*nu)         - ...
+          logDets(k)              - ...
+          0.5*d*log(nu)           - ...
+          0.5*(nu+d)*log1p(mahalCache(:, k)./nu);
+nll = -sum(logsumexp(L));
+end
+
+

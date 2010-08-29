@@ -85,10 +85,7 @@ else
     dof = 10*ones(1, model.nmix); 
 end
 initCpd   = model.cpd; 
-dofEstimator = @(cpd, ess)estimateDofNll(cpd, ess, X, model.mixPrior);
-model.cpd = condStudentCpdCreate(initCpd.mu, initCpd.Sigma, dof, ...
-    'prior'       , prior          , ...
-    'dofEstimator', dofEstimator   ); 
+model.cpd = condStudentCpdCreate(initCpd.mu, initCpd.Sigma, dof, 'prior', prior); 
 end
 
 function [ess, loglik] = estep(model, data)
@@ -96,7 +93,7 @@ function [ess, loglik] = estep(model, data)
 [weights, ll] = mixModelInferLatent(model, data); 
 cpd           = model.cpd;
 ess           = cpd.essFn(cpd, data, weights); 
-ess.weights   = weights; % useful for plotting
+ess.weights   = weights; % useful for plottings
 loglik        = sum(ll) + cpd.logPriorFn(cpd) + model.mixPriorFn(model); 
 end
 
@@ -146,28 +143,6 @@ end
 model.cpd.mu    = mu;
 model.cpd.Sigma = Sigma;
 model.mixWeight = mixWeight;
-end
-
-function dof = estimateDofNll(cpd, ess, data, mixPrior)
-%% Optimize -log likelihood of observed data using gradient free optimizer
-wsum        = ess.wsum; 
-nmix        = numel(wsum); 
-m.mixWeight = normalize(wsum + mixPrior - 1); 
-m.cpd       = cpd;
-m.nmix      = nmix;
-m.type      = 'student';
-dofMin      = 0.1;
-dofMax      = 1000;
-dof         = zeros(1, nmix); 
-for k=1:nmix
-    dof(k) = fminbnd(@(v)mixStudentNll(m, data, k, v), dofMin, dofMax);
-end
-end
-
-function out = mixStudentNll(model, X, curK, v)
-%% mixStudent neg-logLikelihood
-model.cpd.dof(curK) = v;
-out = -sum(mixModelLogprob(model, X));
 end
 
 function model = setMixPrior(model, mixPrior)

@@ -92,12 +92,22 @@ end
 function model = initStudent(model, data, restartNum, emissionPrior)
 %% Initialize the model given a student emission distribution 
 d = size(data{1}, 1);
+if ~isempty(model.emission) && ~isempty(model.emission.dof)
+    dof = model.emission.dof; 
+    fixDof = true;
+else
+    dof = 10*ones(1, model.nstates); 
+    fixDof = false;
+end
 model.d = d;
 if isempty(model.emission) || isempty(model.pi) || isempty(model.A)
     if restartNum == 1
         model = initWithMixModel(model, data);
         Sigma = bsxfun(@plus, model.emission.Sigma, eye(model.d));
         model.emission.Sigma = Sigma;  % regularize MLE
+        if fixDof
+            model.emission.dof = dof; 
+        end
     else 
         nstates     = model.nstates;
         stackedData = cell2mat(data')';
@@ -108,8 +118,10 @@ if isempty(model.emission) || isempty(model.pi) || isempty(model.A)
             mu(:, k)       = colvec(mean(XX));
             Sigma(:, :, k) = cov(XX);
         end
-        dof = 10*ones(1, nstates); 
-        model.emission = condStudentCpdCreate(mu, Sigma, dof);
+        model.emission = condStudentCpdCreate(mu, Sigma, dof, 'estimateDof', false);
+        % we do not estimate the dof in the hmm model; we use the either
+        % a hand set value, or the value(s) estimated ignoring temporal
+        % structure. 
         model = rndInitPiA(model); 
     end
 end
