@@ -1,6 +1,5 @@
 function [assignment, cost] = assignmentoptimal(distMatrix)
-%PMTKmex
-%ASSIGNMENTOPTIMAL    Compute optimal assignment by Munkres algorithm
+% Compute optimal assignment by Munkres algorithm
 %		ASSIGNMENTOPTIMAL(DISTMATRIX) computes the optimal assignment (minimum
 %		overall costs) for the given rectangular distance or cost matrix, for
 %		example the assignment of tracks (in rows) to observations (in
@@ -22,8 +21,8 @@ function [assignment, cost] = assignmentoptimal(distMatrix)
 %		Markus Buehren
 %		Last modified 30.01.2008
 %
-%author Markus Buehren
-%url http://www.mathworks.com/matlabcentral/fileexchange/6543
+% PMTKauthor Markus Buehren
+% PMTKurl http://www.mathworks.com/matlabcentral/fileexchange/6543
 
 % save original distMatrix for cost computation
 originalDistMatrix    = distMatrix;
