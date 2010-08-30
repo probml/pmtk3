@@ -28,10 +28,6 @@ Some files are tagged as follows:<br>
 </TR><TR>
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/SupervisedModels/linearRegression/linregLogprob.m">linregLogprob</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>log p(y(i)|X(i,:), model)</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
 </TR><TR>
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/SupervisedModels/linearRegression/linregParamsBayes.m">linregParamsBayes</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Return summaries of the posterior distribution of the regression weights</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
-</TR><TR>
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/SupervisedModels/linearRegression/linregParamsFrequentist.m">linregParamsFrequentist</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Frequentist inference for regression weights in a linear regression model.</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
-</TR><TR>
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/SupervisedModels/linearRegression/linregPredict.m">linregPredict</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Prediction with linear regression</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
 </TR><TR>
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/SupervisedModels/linearRegression/linregPredictBayes.m">linregPredictBayes</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Posterior predictive for linear regression model</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
@@ -72,6 +68,8 @@ Some files are tagged as follows:<br>
 </TR><TR>
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/SupervisedModels/linearRegression/sub/linregFitVb.m">sub\linregFitVb</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Variational bayes inference for linear regression</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
 </TR><TR>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/SupervisedModels/linearRegression/sub/linregFrequentistSummary.m">sub\linregFrequentistSummary</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Frequentist inference for regression weights in a linear regression model.</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
+</TR><TR>
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/SupervisedModels/linearRegression/sub/linregLambdas.m">sub\linregLambdas</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Choose a reasonable range of lambdas to cv over for linear regression</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
 </TR><TR>
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/SupervisedModels/linearRegression/sub/LinregLoss.m">sub\LinregLoss</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
@@ -79,6 +77,8 @@ Some files are tagged as follows:<br>
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/SupervisedModels/linearRegression/sub/LinregLossScaled.m">sub\LinregLossScaled</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Average mean squared error for linear regression</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
 </TR><TR>
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/SupervisedModels/linearRegression/sub/linregMultitaskMixPriorFitEm.m">sub\linregMultitaskMixPriorFitEm</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>multitask regression using a mixture of Gaussian prior</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
+</TR><TR>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/SupervisedModels/linearRegression/sub/linregPostSummary.m">sub\linregPostSummary</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Return summaries of the posterior distribution of the regression weights</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
 </TR><TR>
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/SupervisedModels/linearRegression/sub/linregPredictNetlab.m">sub\linregPredictNetlab</a></font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Compute E[y|x] and optionally Var[y|x] for each row of X</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
 </TR><TR>
