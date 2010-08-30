@@ -1,4 +1,4 @@
-%% Rosenbrock onstrained optimization demom
+%% Rosenbrock constrained optimization demo
 %
 %%
 function demoRosenConstrained()
