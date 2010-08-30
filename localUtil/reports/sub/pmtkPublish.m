@@ -14,7 +14,7 @@ for i=1:numel(text)
    toks = tokenize(line, ' '); 
    ndx =  find(cellfun(@(c)endswith(strtrim(c), '.m'), toks)); 
    for j=1:numel(ndx)
-       t = strtrim(toks{ndx}); 
+       t = strtrim(toks{ndx(j)}); 
        link = googleCodeLink(t, t, 'publish'); 
        if ~isempty(link)
           line = strrep(line, t, link);  
