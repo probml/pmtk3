@@ -9,6 +9,8 @@ function [model] = linregFit(X, y, varargin)
 % lambda        ... regularizer
 % fitOptions    ... optional  args (a cell array) to fitFn
 % preproc       ... a struct, passed to preprocessorApplyToTtrain
+%  Set preproc.addOnes = true if you want this model
+%   to add a column of 1s to X for you (at train and test time)
 %
 % OUTPUTS:
 % model         ... a struct, which you can pass directly to linregPredict

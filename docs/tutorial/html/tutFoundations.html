@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>Tutorial on  pmtk3</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-08-27"><meta name="m-file" content="tutFoundations"><style type="text/css">
+      --><title>Tutorial on  pmtk3</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-08-30"><meta name="m-file" content="tutFoundations"><style type="text/css">
 
 body {
   background-color: white;
@@ -153,7 +153,9 @@ cond(m2.Sigma)
 cond(m3.Sigma)
 </pre><pre class="codeoutput">ans =
   177.0245
-</pre><p>See <a href="http://pmtk3.googlecode.com/svn/trunk/demos/bookDemos/The_multivariate_Gaussian_and_friends/shrinkcovDemo.m">shrinkCovDemo</a> for a more extensive demo of regularized estimation of covariance matrices.</p><p>Now let us consider another useful operation: evaluating the log likelihood of a dataset:</p><pre class="codeinput">L = sum(gaussLogprob(m3, X))
+</pre><p>See <a href="http://pmtk3.googlecode.com/svn/trunk/demos/bookDemos/The_multivariate_Gaussian_and_friends/shrinkcovDemo.m">shrinkCovDemo.m</a> for a more extensive demo of regularized estimation of covariance matrices. See <a href="http://pmtk3.googlecode.com/svn/trunk/demos/bookDemos/The_multivariate_Gaussian_and_friends/shrinkcovDemo.m">shrinkCovDemo</a></p><pre class="codeinput"><span class="comment">% Now let us consider another useful operation:</span>
+<span class="comment">% evaluating the log likelihood of a dataset:</span>
+</pre><pre class="codeinput">L = sum(gaussLogprob(m3, X))
 </pre><pre class="codeoutput">L =
  -2.8987e+007
 </pre><p>These methods behave similarly on other models. A list of all the basic models can be found <a href="http://pmtk3.googlecode.com/svn/trunk/docs/modelLists/modelList.html">here</a>. A complete list of the methods implemented by each basic class is shown <a href="http://pmtk3.googlecode.com/svn/trunk/docs/modelsByMethods/basicModels.html">here</a>.</p><h2>Latent variable models<a name="27"></a></h2><p>A list of all the LVMs can be found <a href="http://pmtk3.googlecode.com/svn/trunk/docs/modelLists/modelList.html">here</a> From a functional point of view, an LVM supports all the methods for a generic unconditional model, plus the following functions.</p><p>
@@ -418,11 +420,12 @@ cond(m2.Sigma)
 m3 = gaussFit(X(1:50,:), 'map');
 cond(m3.Sigma)
 %%
-% See
-% <http://pmtk3.googlecode.com/svn/trunk/demos/bookDemos/The_multivariate_Gaussian_and_friends/shrinkcovDemo.m shrinkCovDemo>
+% See <http://pmtk3.googlecode.com/svn/trunk/demos/bookDemos/The_multivariate_Gaussian_and_friends/shrinkcovDemo.m shrinkCovDemo.m>
 % for a more extensive demo of regularized estimation
 % of covariance matrices.
-%
+% See
+% <http://pmtk3.googlecode.com/svn/trunk/demos/bookDemos/The_multivariate_Gaussian_and_friends/shrinkcovDemo.m shrinkCovDemo>
+
 % Now let us consider another useful operation:
 % evaluating the log likelihood of a dataset:
 %%

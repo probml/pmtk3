@@ -25,8 +25,13 @@ end
 f = which(file); 
 bak =  fullfile(fileparts(f), [fnameOnly(f), '.bak']); 
 evalc('system(sprintf(''move /Y %s %s'', f, bak))'); 
-writeText(text, f); 
-publish(file, varargin{:}); 
+writeText(text, f);
+if isempty(varargin)
+  opts.maxHeight = 200; opts.maxWidth = 200;
+  publish(file, opts);
+else
+  publish(file, varargin{:});
+end
 pause(0.1); 
 fclose all; 
 evalc('system(sprintf(''move /Y %s %s'', bak, f))'); 

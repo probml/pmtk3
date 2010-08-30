@@ -1,4 +1,4 @@
-function [model, logev] = linregFitBayes(X, y, varargin)
+function [model, logev, postSummary] = linregFitBayes(X, y, varargin)
 % Bayesian inference for a linear regression model
 % The model is p(y|x) = N(y | w'*[1 x], (1/beta))
 % so beta is the precision of the measurement  noise
@@ -14,22 +14,31 @@ function [model, logev] = linregFitBayes(X, y, varargin)
 %- 'zellner' means use N(0, 1/g*inv(X'*X)) Ga(sigma|0,0)
 %      Must specify g
 % preproc       ... a struct, passed to preprocessorApplyToTtrain
+% displaySummary ... set to true to display summary of posterior
 %
 % If the prior is Gaussian, the posterior is
 %   p(w|D) = N(w| wN, VN)
 % If beta is unknwon, the posterior is
 %   p(w, beta | D) = N(w | wN, (1/beta) VN) Ga(beta | aN, bN)
 %
+% OUTPUTS
+% model contains the parameters of the posterior,
+% suitable for input to linregPredictBayes
+%
 % logev is  the log marginal likelihood
+%
+% postSummary is a summary of the posterior;
+% see linregPostSummary for details
 
-[prior, preproc,  beta, alpha, g, useARD] = ...
+[prior, preproc,  beta, alpha, g, useARD, displaySummary] = ...
   process_options(varargin , ...
   'prior', 'uninf', ...
   'preproc', preprocessorCreate('addOnes', true, 'standardizeX', false), ...      
   'beta', [], ...
   'alpha', [], ...
   'g', [], ...
-  'useARD', false);
+  'useARD', false, ...
+  'displaySummary', false);
 
 % The prior is p(w) = N(w|0, (1/alpha) I)
 % which shrinks the offset term w(1) as well.
@@ -37,16 +46,27 @@ function [model, logev] = linregFitBayes(X, y, varargin)
 % Currently the EB and VB code cannot handle this
 % The VB ARD code could be modified to do so, but this has not been done 
 
+if strcmpi(prior, 'eb')
+  prior = 'ebnetlab';
+end
+
 switch lower(prior)
   case 'uninf', [model, logev] = linregFitBayesJeffreysPrior(X, y, preproc);
   case 'gauss', [model, logev] = linregFitBayesGaussPrior(X, y, alpha, beta, preproc);
   case 'zellner', [model, logev] = linregFitBayesZellnerPrior(X, y, g, preproc);
   case 'vb', [model, logev] = linregFitVb(X, y, preproc, useARD);
-  case {'eb', 'ebnetlab'}, [model, logev] = linregFitEbNetlab(X, y, preproc);
+  case 'ebnetlab', [model, logev] = linregFitEbNetlab(X, y, preproc);
   case 'ebchen', [model, logev] = linregFitEbChen(X, y, preproc);
 end
 
 model.modelType = 'linregBayes';
+model.prior = prior;
+
+if ~strcmpi(prior, 'ebnetlab')
+  postSummary = linregPostSummary(model, 'displaySummary', displaySummary);
+else
+  postSummary  = [];
+end
 
 end % end of main function
 

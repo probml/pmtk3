@@ -1,5 +1,5 @@
 %% Bayesian linear regression with an uninformative prior 
-%PMTKneedsStatsToolbox regress
+%PMTKneedsStatsToolbox regress, ridge
 %%
 requireStatsToolbox
 X = loadData('caterpillar'); % from http://www.ceremade.dauphine.fr/~xian/BCS/caterpillar
@@ -20,13 +20,22 @@ end
 printPmtkFigure('caterpillarScatter')
 end
 
-%% uninformative prior
+%% MLE
+[model] = linregFit(X, y) 
+X1 = [ones(size(X,1),1) X];
+what = X1\y;
+assert(approxeq(model.w, what))
 
-model = linregFitBayes(X, y, 'prior', 'uninf');
-post = linregParamsBayes(model, 'display', true, 'latex', false);
+
+
+%% inference with uninformative prior
+
+[model, logev, postSummary] = linregFitBayes(X, y, 'prior', 'uninf', ...
+  'displaySummary', true);
+%post = linregParamsBayes(model, 'display', true, 'latex', false);
 
 if 0
-  % direct calculaiton
+  % direct calculation of posterior - sanity check
   [Q,R] = qr(X1,0);
   what = R\(Q'*y); % posterior mean
   Rinv = inv(R); % upper triangular, easy to invert
@@ -49,15 +58,16 @@ if 0
 end
 
 
-
+%%
 % check that Bayesian credible interval is same as freq conf int
 % needs stats toolbox
+% (see also linregFrequentistSummary)
 X1 = [ones(n,1), X];
 [b, bint, residuals, residualInt, stats] = regress(y, X1);
 R2 = stats(1); Fstat  = stats(2); pval = stats(3); sigma2 = stats(4);
 % b(j) is coefficient j, bint(j,:) = lower and upper 95% conf interval
-assert(approxeq(b, post.what))
-assert(approxeq(bint, post.credint))
+assert(approxeq(b, postSummary.what))
+assert(approxeq(bint, postSummary.credint))
 for i=1:length(b)
   fprintf('%8.3f, [%8.3f, %8.3f]\n', b(i), bint(i,1), bint(i,2));
 end
