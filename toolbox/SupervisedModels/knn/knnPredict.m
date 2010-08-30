@@ -3,15 +3,11 @@ function [yhat, yprob] = knnPredict(model, Xtest)
 % (ties broken by picking lowest class)
 % ypredProb(m, :) is the empirical distribution over classes
 
-Xtrain = model.X;
-ytrain = model.y;
-K = model.K;
-
-[yhat, yprob] = knnClassify(Xtrain, ytrain, Xtest, K);
+[yhat, yprob] = knnClassify(model.X, model.y, Xtest, model.K, model.C);
 
 end
 
-function [ypred, ypredProb] = knnClassify(Xtrain, ytrain, Xtest, K)
+function [ypred, ypredProb] = knnClassify(Xtrain, ytrain, Xtest, K, C)
 % K-nearest-neighbour classifier
 % Xtrain(n, :) = n'th example (d-dimensional)
 % ytrain(n) in {1,2,...,C} where C is the number of classes
@@ -21,7 +17,7 @@ function [ypred, ypredProb] = knnClassify(Xtrain, ytrain, Xtest, K)
 % ypredProb(m, :) is the empirical distribution over classes
 %%
 Ntrain = size(Xtrain, 1);
-Nclasses = max(ytrain);
+Nclasses = C; % max(ytrain);
 if K > Ntrain
     fprintf('reducing K = %d to Ntrain = %d\n', K, Ntrain-1);
     K = Ntrain - 1;

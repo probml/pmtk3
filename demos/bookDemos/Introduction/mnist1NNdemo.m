@@ -1,5 +1,7 @@
 %% Classify the MNIST digits using a one nearest neighbour classifier and Euclidean distance
-%
+% See mnistKNNdeno for a simple minded implemenation.
+% This demo uses various tricks to scale the method up to large
+% data sets.
 %%
 % PMTKslow
 %%
@@ -8,7 +10,8 @@ if 0
   % test on all data- 255 seconds, 3.09% error
   trainndx = 1:60000; testndx =  1:10000;
 else
-  % test on subset - 8 seconds, 3.80% error
+   % train on 10k, test on 1k - 1.39 seconds, 8.00% error
+  % train on 60k, test on 1k - 8 seconds, 3.80% error
   trainndx = 1:60000; 
   testndx =  1:1000; 
 end

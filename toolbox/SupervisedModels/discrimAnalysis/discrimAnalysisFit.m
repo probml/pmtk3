@@ -109,7 +109,7 @@ end
 end
 
 function model = shrunkenCentroidsFit(model, Xtrain, ytrain, lambda)
-% author Robert Tseng
+%author Robert Tseng
 
 C = length(unique(ytrain));
 [N, D] = size(Xtrain);

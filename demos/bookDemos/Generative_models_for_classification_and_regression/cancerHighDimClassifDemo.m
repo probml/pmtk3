@@ -19,7 +19,7 @@ clear Xtest Xtrain
 % The dataset is so small that some classes might not be present
 % in any given training fold. The Hastie folds have been carefully
 % chosen to avoid this (although it is really the algorithm's job
-% to handle this eg by using priors).
+% to handle this - the user should not have to worry about this).
 if 1
     folds = folds.data(:,2:size(folds.data,2));
     Nfolds = [];
