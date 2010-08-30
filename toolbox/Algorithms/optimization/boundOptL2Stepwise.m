@@ -1,5 +1,4 @@
 function [w, output] = boundOptL2Stepwise(X,Y,lambda)
-%#eml
 % Fit the weights for L2 penalized multinomial logistic regression by
 % updating each component of each weight sequentially in O(ndc)time where n
 % is the number of training examples, d is the number of dimensions and c

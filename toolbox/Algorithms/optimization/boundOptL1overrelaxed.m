@@ -1,5 +1,4 @@
 function [W,output]  = boundOptL1overrelaxed(X, Y, lambda)
-%#eml
 % Fit the weights for L1 penalized multinomial logistic regression via
 % overrelaxed bound optimization in O((cd)^3)) where c is the number of
 % classes and d is the number of dimensions.
