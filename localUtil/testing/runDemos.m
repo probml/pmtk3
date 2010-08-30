@@ -350,6 +350,7 @@ rbfGramDemo;                             pclear(2);
 relevanceNetworkNewsgroupDemo;           pclear(2);
 residualsDemo;                           pclear(2);
 ridgePathProstate;                       pclear(2);
+ridgeTest;                               pclear(2);
 riskFnBernoulli;                         pclear(2);
 riskFnGauss;                             pclear(2);
 robustDemo;                              pclear(2);
