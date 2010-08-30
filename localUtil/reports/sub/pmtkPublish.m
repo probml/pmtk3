@@ -22,12 +22,12 @@ for i=1:numel(text)
    end
    text{i} = line; 
 end
-f = which(file); 
-bak =  fullfile(fileparts(f), [fnameOnly(f), '.bak']); 
+f = which(file)
+bak =  fullfile(fileparts(f), [fnameOnly(f), '.bak'])
 evalc('system(sprintf(''move /Y %s %s'', f, bak))'); 
 writeText(text, f);
 if isempty(varargin)
-  opts.maxHeight = 200; opts.maxWidth = 200;
+  opts.maxHeight = 300; opts.maxWidth = 300;
   publish(file, opts);
 else
   publish(file, varargin{:});
