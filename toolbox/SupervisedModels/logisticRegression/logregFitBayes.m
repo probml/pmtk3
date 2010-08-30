@@ -1,4 +1,4 @@
-function [model, logev] = logregFitBayes(X, y, varargin)
+function [model, logev, postSummary] = logregFitBayes(X, y, varargin)
 % Fit logistic regression using Bayesian inference
 % X is n*d, y is d*1, can be 0/1 or -1/+1 or 1..C
 % Do not add a column of 1s
@@ -18,9 +18,9 @@ function [model, logev] = logregFitBayes(X, y, varargin)
 % logev is  the log marginal likelihood
 
 
-[preproc, method, lambda, useARD] = process_options(varargin, ...
+[preproc, method, lambda, useARD, displaySummary] = process_options(varargin, ...
   'preproc', preprocessorCreate('addOnes', true, 'standardizeX', true), ...
-  'method', 'laplace', 'lambda', 0, 'useARD', false);
+  'method', 'laplace', 'lambda', 0, 'useARD', false, 'displaySummary', false);
 
 nclasses = nunique(y);
 isbinary = nclasses < 3;
@@ -48,5 +48,7 @@ end
 model.type = 'logregBayes';
 model.ySupport = ySupport;
 model.binary = isbinary;
+
+postSummary = logregPostSummary(model, 'displaySummary', displaySummary);
 
 end
