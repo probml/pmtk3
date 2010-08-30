@@ -10,7 +10,7 @@ function [model, loglikHist] = mixModelFit(data, nmix, type, varargin)
 % data     - data(i, :) is the ith case, i.e. data is of size n-by-d
 % nmix     - the number of mixture components to use
 % type     - a string, either 'gauss', 'student', or 'discrete'
-%            note the 'discrete' means a product of discrete distributions,
+%            note that 'discrete' means a product of discrete distributions,
 %            hence data can (optionally) be vector valued.
 %
 %% Optional named Inputs
@@ -26,8 +26,8 @@ function [model, loglikHist] = mixModelFit(data, nmix, type, varargin)
 %               using kmeans, and 'discrete' by fitting each component on
 %               random subsets of the data.
 %
-% prior      - a struct with type-dependent fields. For 'guass', this is an
-%              invWishart distribution, hence the fields are 'mu', 'Sigma',
+% prior      - a struct with type-dependent fields. For 'guass', this is a
+%              gaussInvWishart distribution, hence the fields are 'mu', 'Sigma',
 %              'dof', 'k'. We don't currently support a prior for
 %              'student'. For 'discrete', use 'alpha', the pseudo
 %              counts. Alpha must be either a scalar or of size
