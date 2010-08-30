@@ -4,7 +4,7 @@ function pmlFigureCodeReport(dest, includeEx, includeSol)
 %
 %% Inputs
 %
-% dest   - this script create a whole directory structure, specify the root
+% dest   - this script creates a whole directory structure, specify the root
 %          destination.
 %
 % includeEx   - [false] if true, pml exercises are included
