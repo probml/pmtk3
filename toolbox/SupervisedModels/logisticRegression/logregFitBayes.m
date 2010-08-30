@@ -49,6 +49,8 @@ model.type = 'logregBayes';
 model.ySupport = ySupport;
 model.binary = isbinary;
 
-postSummary = logregPostSummary(model, 'displaySummary', displaySummary);
+if nargout >= 3
+  postSummary = logregPostSummary(model, 'displaySummary', displaySummary);
+end
 
 end

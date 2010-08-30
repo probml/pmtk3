@@ -62,10 +62,9 @@ end
 model.modelType = 'linregBayes';
 model.prior = prior;
 
-if ~strcmpi(prior, 'ebnetlab')
-  postSummary = linregPostSummary(model, 'displaySummary', displaySummary);
-else
-  postSummary  = [];
+postSummary = [];
+if nargout >= 3 && ~strcmpi(prior, 'ebnetlab')
+    postSummary = linregPostSummary(model, 'displaySummary', displaySummary);
 end
 
 end % end of main function
