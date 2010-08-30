@@ -306,7 +306,7 @@ end
 % As another example of this, consider fitting a binary logistic regression
 % model to some SAT scores, where the response is whether the student
 % passed or failed the class. First we compute the MLE and use a plugin
-% approximation for prediction, as is standard practice (from logregSATdemo.m)
+% approximation for prediction, as is standard practice (from logregSATdemo.m )
 %
 %%
 close all; clear all
@@ -364,7 +364,7 @@ end
 % estimate of the labels for each row.
 % As an example of this, consider the famous XOR dataset.
 % Let us try fitting a logistic regression model to it in the original
-% feature space (from |logregXorLinearDemo|)
+% feature space (from logregXorLinearDemo.m )
 %%
 close all; clear all;
 [X, y] = createXORdata();
@@ -409,7 +409,7 @@ errorRate = mean(yhat ~= y)
 %
 % Below we show an example where we fit the XOR data using kernelized
 % logistic regression, with various kernels and prototypes
-% (from |logregXorDemo|).
+% (from logregXorDemo.m ).
 %%
 clear all; close all
 [X, y] = createXORdata();
@@ -449,7 +449,7 @@ end
 % This means that the model fits the training set well, but is overly complex
 % and consequently performs poorly on test data. This is easiest to
 % illustrate in the context of polynomial regression in 1d, as shown below (based on
-% linregPolyVsRegDemo.m)
+% linregPolyVsRegDemo.m )
 %%
 
 close all; clear all;
@@ -512,7 +512,8 @@ plot(xtest, ypredTest, 'k', 'linewidth', 3);
 % (since the function is too smooth). This is illustrated below, where we
 % examine the mean squared error on the training and  test sets as a function
 % of $\lambda$. This illustrates the characteristic U-shape on the test
-% set.
+% set
+% (based on linregPolyVsRegDemo.m ).
 
 %%
 lambdas = logspace(-10,1.3,10);
@@ -563,7 +564,8 @@ end
 % We use the cvEstimate.m function, which can be used
 % to estimate the frequentist risk of any estimation procedure
 % (here each procedure corresponds to ridge regression with a
-% different value of lambda).
+% different value of lambda)
+% (based on linregPolyVsRegDemo.m )
 %%
 for k=1:NL
   lambda = lambdas(k);
@@ -601,6 +603,7 @@ verticalLine(ndx(idx_opt), 'color','b', 'linewidth',2);
 % (To simplify things, we use the known noise variance)
 % When we plot the log evidence vs alpha,
 % it exhibits the same (inverted) U shape as the test error.
+% (based on linregPolyVsRegDemo.m )
 
 beta = 1/sigma2;
 alphas = beta * lambdas;
@@ -631,7 +634,10 @@ title('log evidence')
 % of values. We just specify that the prior is of type
 % 'eb', which stands for empirical Bayes. This is illustrated below.
 % The vertical line corresponds to the best ML-II estimate.
-% (This feature uses netlab.)
+% (This feature uses
+% <http://www1.aston.ac.uk/eas/research/groups/ncrg/resources/netlab/
+% netlab>.)
+% (The code below is based on linregPolyVsRegDemo.m )
 %%
 [modelEB, logevEB] = linregFitBayes(Xtrain, ytrain, 'preproc', pp, 'prior', 'eb');
 alphaEB = modelEB.netlab.alpha;
@@ -643,7 +649,8 @@ verticalLine(log(alphaEB), 'linewidth', 3, 'color', 'r');
 % the posterior over $\alpha$ and $\beta$. This is illustrated
 % below. The posterior mean value for $\alpha$ is
 % shown by the blue line. We see this is very similar
-% to the ML-II estimate, since we used a vague prior.
+% to the ML-II (EB) estimate, since we used a vague prior.
+% (The code below is based on linregPolyVsRegDemo.m )
 %%
 [modelVB, logevVB] = linregFitBayes(Xtrain, ytrain, 'preproc', pp, 'prior', 'vb');
 alphaVB = modelVB.expectAlpha;

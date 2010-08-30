@@ -4,10 +4,10 @@ function pmtkPublish(file, varargin)
 % suite of google code repositories, it is replaced with its full html
 % link. The html display name used is the file name itself. 
 %%
-text = getText(file); 
+text = getText(file);
 recycle on; % make sure deleting puts things in recycle bin
 for i=1:numel(text)
-   line = text{i}; 
+   line = text{i};
    if ~startswith(strtrim(line), '%')
        continue; 
    end
@@ -22,8 +22,8 @@ for i=1:numel(text)
    end
    text{i} = line; 
 end
-f = which(file)
-bak =  fullfile(fileparts(f), [fnameOnly(f), '.bak'])
+f = which(file);
+bak =  fullfile(fileparts(f), [fnameOnly(f), '.bak']);
 evalc('system(sprintf(''move /Y %s %s'', f, bak))'); 
 writeText(text, f);
 if isempty(varargin)

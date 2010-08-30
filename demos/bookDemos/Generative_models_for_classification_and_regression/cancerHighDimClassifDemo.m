@@ -34,14 +34,14 @@ end
 % L1 is very slow, L2 is somewhat slow
 
 %methods = {'nsc', 'nb', 'rda', 'knn', 'l2logreg', 'svm', 'l1logreg'};
-%methods = {'nsc', 'nb', 'rda', 'knn', 'l2logreg', 'svm'};
 %methods = {'nsc', 'nb', 'rda', 'knn', 'svm'};
-methods = {'nsc', 'nb', 'rda', 'knn', 'svm'};
+methods = {'rda'};
 
 % warning - l1logreg can take upwards of 6 hours to run.
 M = length(methods);
 
 for m=1:M
+  tic;
     method = methods{m};
     switch method
         case 'nsc'
@@ -60,13 +60,21 @@ for m=1:M
             name{m} = 'Regularized discriminant analysis';
             %params = linspace(0, 2, 10)';
             params = linspace(0, 2, 5)';
-            % we don't have to do multiple SVDs, since we
-            % are just changing the weighting term
-            [U S V] = svd(xtrain_std, 'econ');
-            R = U*S;
-            %fitFn = @(X, y, gamma)RDAfit(X, y, gamma, 'R', R, 'V', V);
-            %predictFn = @RDApredict;
-            fitFn = @(X,y, lambda) discrimAnalysisFit(X, y, 'rda', 'lambda', lambda, 'R', R, 'V', V);
+            
+            if 0
+              fitFn = @(X,y, lambda) discrimAnalysisFit(X, y, 'rda', 'lambda', lambda);
+            else
+              % we do a single SVD on all the training data 
+              % since we are just changing the weighting term.
+              % This is faster than the above, but also gives
+              % different answers since it does not compute
+              % a different SVD per fold
+              [U S V] = svd(xtrain_std, 'econ');
+              R = U*S;
+              fitFn = @(X,y, lambda) discrimAnalysisFit(X, y, 'rda', 'lambda', lambda, ...
+                'R', R, 'V', V);
+            end
+            
             predictFn = @discrimAnalysisPredict;
             noGenesFn = @(model)D;
         case 'knn'
@@ -106,15 +114,16 @@ for m=1:M
     yhat = predictFn(model{m}, xtest_std);
     lossTest(m) = sum(zeroOneLossFn(yhat, ytest));
     noGenes(m) = noGenesFn(model{m});
+    time(m) = toc;
 end
 
 %% Print results
-latextable([lossTest' noGenes' bestParam'],...
-    'Horiz', {'Test errors', 'Genes used', 'Best Param'},...
+latextable([lossTest' noGenes' bestParam' time'],...
+    'Horiz', {'Test errors', 'Genes used', 'Best Param', 'Time'},...
     'Vert', name, 'name', '')
 
 for m=1:M
-    fprintf('method %s, test errors %d, ngenes %d, best param %5.3f\n', ...
-        name{m}, lossTest(m), noGenes(m), bestParam(m));
+    fprintf('method %s, test errors %d, ngenes %d, best param %5.3f, time %5.3f\n', ...
+        name{m}, lossTest(m), noGenes(m), bestParam(m), time(m));
 end
 

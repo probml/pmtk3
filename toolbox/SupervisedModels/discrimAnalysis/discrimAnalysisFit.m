@@ -58,6 +58,10 @@ switch lower(type)
     case 'shrunkencentroids'
         model = shrunkenCentroidsFit(model, X, y, lambda);
     case 'rda',
+      if isempty(R)
+        [U S V] = svd(X, 'econ');
+        R = U*S;
+      end
         model = rdaFit(model, X, y, lambda, R, V);
     case {'qda', 'quadratic'}
         model.Sigma = zeros(D, D, Nclasses);

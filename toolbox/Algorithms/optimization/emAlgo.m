@@ -57,6 +57,7 @@ end
     'verbose'    , false , ...
     'restartNum' , 1   );
 
+  if verbose, fprintf('initializing model for EM\n'); end
 model = init(model, data, restartNum);
 iter = 1;
 done = false;

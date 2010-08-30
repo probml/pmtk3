@@ -14,12 +14,14 @@
 % $$p(y,x|\theta) = p(y|\pi) \prod_{j=1}^D p(x_j|y,\theta)$$
 %%
 % We can fit and predict with this model using
-% naiveBayesFit.m and naiveBayesPredict.m
+% naiveBayesFit.m and  naiveBayesPredict.m
 % For simplicity, the current implementation
 % assumes  all the features are binary,
 % so $p(x_j|y=c,\theta) = Ber(x_j|\theta_{jc})$.
 % It fits by MAP estimation
 % with a vague Dirichlet prior (add-one-smoothing).
+% Typically results are not too sensitive to the
+% setting of this prior (unlike discriminative models).
 %
 % Below is an example (from naiveBayesBowDemo.m )
 % which fits a model to some bag of words data,
@@ -60,11 +62,11 @@ fprintf('misclassification rates  on train = %5.2f pc, on test = %5.2f pc\n', ..
 % <td> $\Sigma_c$ is different for each class.
 % Induces quadratic decision boundaries.
 % <tr>
-% <td> LDA (linear)
+% <td> LDA 
 % <td>  $\Sigma_c=\Sigma$ is the same (tied) for each class.
 % Induces linear decision boundaries.
 % <tr>
-% <td> diag
+% <td> DDA
 % <td> $\Sigma_c$ is diagonal, so the features are conditionally
 % independent; this is an example of a naive Bayes classifier.
 % Induces linear decision boundaries.
@@ -80,7 +82,7 @@ fprintf('misclassification rates  on train = %5.2f pc, on test = %5.2f pc\n', ..
 % We give more details below.
 
 %% QDA/ LDA/ NBC
-% Below we give an example (from discrimAnalaysisFisherIrisDemo.m)
+% Below we give an example (from discrimAnalysisFisherIrisDemo.m )
 % of how to fit a QDA/LDA/ diagDA model.
 % We apply it to a subset of the Fisher Iris dataset.
 %%
@@ -113,10 +115,15 @@ end
 % where |lambda| controls the amount of regularization.
 % See cancerHighDimClassifDemo.m
 % for an example, which reproduces
-% table 18.1 from "Elements of statistical learning" 2nd edn p656.
-% (We don't run this demo here since it is a bit slow,
-% since the data has 16,000 features.)
+% table 18.1 from
+% <http://www-stat.stanford.edu/~tibs/ElemStatLearn/ Elements of statistical learning>
+% 2nd edn p656.
+% (We don't run this demo here since it requires computing
+% the SVD of Xtrain (which has size 144* 16063, with 14 classes)
+% which takes
+% more seconds than we are willing to wait (about 40 sec)).
 %
+
 %% Nearest shrunken centroid
 % Consider a naive Bayes model in which the diagonal covariance
 % is tied. This has O(D) parameters for the covariance, but O(C D) for the mean.
@@ -124,12 +131,13 @@ end
 % the overall mean; this technique is called nearest shrunken centroids. We
 % can fit this model using |discrimAnalysisFit(X, y, 'shrunkenCentroids',
 % lambda)|. We given an example of this below (from
-%  shrunkenCentroidsSRBCTdemo.m),
+%  shrunkenCentroidsSRBCTdemo.m ),
 % where we apply the method to
-% the SRBCT gene microarray dataset, which has N=144 training examples,
-% D=16063 features and C=4 classes.
-% This roughly reproduces figure 18.4 from "Elements of statistical
-% learning" 2nd ed.
+% the SRBCT gene microarray dataset, whose training set
+% has size 63*2308 with  C=4 classes.
+% This roughly reproduces figure 18.4 from
+% <http://www-stat.stanford.edu/~tibs/ElemStatLearn/ Elements of statistical learning>
+% 2nd edn p656.
 %%
 close all; clear all;
 loadData('srbct');
@@ -159,6 +167,96 @@ legend('Training', 'Test', 'Location', 'northwest');
 xlabel('Amount of shrinkage')
 ylabel('misclassification rate')
 title('SRBCT data')
+%%
+% We can also visualize the MAP (blue) and ML (gray) estimate of the means
+% for each class.
+%% 
+bestModel = fitFn(Xtrain, ytrain, 4);
+centShrunk = bestModel.shrunkenCentroids;
+model = fitFn(Xtrain, ytrain, 0);
+centUnshrunk = model.shrunkenCentroids;
+
+[numGroups D] = size(centShrunk);
+for g=1:3 % numGroups
+    %subplot(4,1,g);
+    figure; hold on;
+    plot(1:D, centUnshrunk(g,:), 'Color', [.8 .8 .8]);
+    plot(1:D, centShrunk(g,:), 'b', 'LineWidth', 2);
+    title(sprintf('Class %d', g));
+    hold off;
+    printPmtkFigure(sprintf('shrunkenCentroidsClass%d', g))
+end
+
+
+%% Robust discriminant analysis
+% We can use any joint probability model for the class conditional
+% density in a generative classifier.
+% To train we just call |generativeClassifierFit(fitFn, X, y)|
+% where |fitFn| fits $p(x|y=c,\theta)$.
+% To predict we just call 
+% |[yhat, post] = generativeClassifierPredict(logprobFn, model, Xtest)|,
+% where |logprobFn| computes $p(x|y=c,\theta)$.
+%
+% As a simple example, we can make each class conditional density
+% be a Student distribution, to implement robust discriminant
+% analysis. Here is part of robustDiscrimAnalysisBankruptcyDemo.m 
+% which illustrates the syntax:
+%%
+% modelS = generativeClassifierFit(@studentFit, Xtrain, ytrain); 
+%[yhat] = generativeClassifierPredict(@studentLogprob, modelS, Xtest);
+%%
+% Now we run the entire demo, which uses Student and Gaussian
+% class conditional densities, as well as the QDA code.
+% We see that the Student distribution is more robust
+% than the Gaussian, and that the QDA code gives the same
+% results as using a Gaussian model inside the generative
+% classifier code, as it should
+%%
+robustDiscrimAnalysisBankruptcyDemo
+%%
+
+%% Using HMMs as class conditional densities
+% As a more interesting example, consider the problem of classifying time series,
+% such as spoken digits.
+% Since each data vector has variable length, it is natural
+% to use a Markov or hidden Markov model for the class conditional
+% densities.
+% (HMMs are discussed in more detail 
+% <http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutLVM.html
+% here>.)
+% For real-valued data, a linear-Gaussian Markov model is not
+% expressive enough, but an HMM with Gaussian emissions
+% is quite flexible.
+%
+% Suppose we have two sequences, corresponding to the spoken words
+% "four" and "five". We can train and test the model
+% using the code below
+% (from isolatedWordClassificationWithHmmsDemo.m ).
+% It fits two HMMs, one per class.
+%%
+loadData('data45'); 
+% Xtrain{i} is a 13 x T(i) sequence of MFCC data, where T(i) is the length
+nstates = 5;
+setSeed(0); 
+Xtrain = [train4'; train5'];
+ytrain = [repmat(4, numel(train4), 1) ; repmat(5, numel(train5), 1)];
+[Xtrain, ytrain] = shuffleRows(Xtrain, ytrain);
+Xtest = test45'; 
+ytest = labels'; 
+[Xtest, ytest] = shuffleRows(Xtest, ytest); 
+% Initial Guess for params
+pi0 = [1, 0, 0, 0, 0];
+transmat0 = normalize(diag(ones(nstates, 1)) + ...
+            diag(ones(nstates-1, 1), 1), 2);
+% Fit
+fitArgs = {'pi0', pi0, 'trans0', transmat0, 'maxIter', 10, 'verbose', true};
+fitFn   = @(X)hmmFit(X, nstates, 'gauss', fitArgs{:}); 
+model = generativeClassifierFit(fitFn, Xtrain, ytrain); 
+% Predict
+logprobFn = @hmmLogprob;
+[yhat, post] = generativeClassifierPredict(logprobFn, model, Xtest);
+nerrors = sum(yhat ~= ytest)
+%%
 
 %% K-nearest neighbor classifier
 % One can view a KNN classifier as a generative
@@ -166,7 +264,7 @@ title('SRBCT data')
 % kernel density estimator.
 % Below we give an example where we apply
 % a 1-NN classifier to a subset of the MNIST digit set
-% (from mnistKNNdemo.m: see mnist1NNdemo.m for special-purpose
+% (from mnistKNNdemo.m : see mnist1NNdemo.m for special-purpose
 % code that can handle the full dataset).
 %%
 loadData('mnistAll');
@@ -185,3 +283,44 @@ ypred = knnPredict(m, Xtest);
 errorRate = mean(ypred ~= ytest);
 fprintf('Error Rate: %.2f%%\n',100*errorRate);
 %%
+% Below are the test error rates and running times (train + test)
+% for 1NN on different sizes of training and test data
+% (generated using mnist1NNdemo.m  ).
+% Note that the standard training set is 60k 
+% and the standard test set is 10k.
+% Reassuringly, our error rate of 3.09% for 1NN on this standard
+% train/ test split is the same as that
+% reported  by Kenneth Wilder at
+% <http://yann.lecun.com/exdb/mnist/ this league table>.
+%%
+% <html>
+% <table border=1>
+% <TR ALIGN=left>
+% <td> Ntrain
+% <td> Ntest
+% <td> Error rate
+% <td> Time
+% <tr>
+% <td> 60k
+% <td> 10k
+% <td> 3.09%
+% <td> 255s
+% <tr>
+% <td> 60k
+% <td> 1k
+% <td> 3.80%
+% <td> 8s
+% <tr>
+% <td>  10k
+% <td> 1k
+% <td> 8.00%
+% <td> 1.39s
+% </table>
+% </html>
+%%
+% From this, we see that increasing the size of the training
+% set dramatically reduces the error rate (perhaps a symptom of
+% overfitting?). Also, increasing the size of the test set
+% dramatically increases the cost of testing (due to the need
+% to loop over mini-batches of examples, to save memory).
+
