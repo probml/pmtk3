@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>minFunc_applications</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="minFunc_applications"><style type="text/css">
+      --><title>Minfunc demo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="minFunc_applications"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,12 +62,10 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">minfunc demo</a></li><li><a href="#3">Huber robust regression</a></li><li><a href="#4">Probit regression</a></li><li><a href="#5">Logistic regression and L2-regularized logistic regression</a></li><li><a href="#6">Kernel logistic regression</a></li><li><a href="#7">Multinomial logistic regression with L2-regularization</a></li><li><a href="#8">Kernel multinomial logistic regression</a></li><li><a href="#9">Regression with neural networks</a></li><li><a href="#10">Classification with Neural Network with multiple hidden layers</a></li><li><a href="#11">Smooth support vector machine</a></li><li><a href="#12">Smooth support vector regression</a></li><li><a href="#13">Kernel smooth support vector machine</a></li><li><a href="#14">Multi-class smooth support vector machine</a></li><li><a href="#15">Sparse Gaussian graphical model precision matrix estimation</a></li><li><a href="#16">Chain-structured conditional random field</a></li><li><a href="#17">Tree-structured Markov random field with exp(linear) potentials</a></li><li><a href="#18">Lattice-structured conditional random field</a></li></ul></div><h2>minfunc demo<a name="1"></a></h2><pre class="codeinput"><span class="comment">%%PMTKinteractive</span>
-<span class="comment">%PMTKslow</span>
-</pre><pre class="codeinput">f = 1;
+  </style></head><body><div class="content"><h1>Minfunc demo</h1><!--introduction--><p>PMTKinteractive PMTKslow</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Huber robust regression</a></li><li><a href="#3">Probit regression</a></li><li><a href="#4">Logistic regression and L2-regularized logistic regression</a></li><li><a href="#5">Kernel logistic regression</a></li><li><a href="#6">Multinomial logistic regression with L2-regularization</a></li><li><a href="#7">Kernel multinomial logistic regression</a></li><li><a href="#8">Regression with neural networks</a></li><li><a href="#9">Classification with Neural Network with multiple hidden layers</a></li><li><a href="#10">Smooth support vector machine</a></li><li><a href="#11">Smooth support vector regression</a></li><li><a href="#12">Kernel smooth support vector machine</a></li><li><a href="#13">Multi-class smooth support vector machine</a></li><li><a href="#14">Sparse Gaussian graphical model precision matrix estimation</a></li><li><a href="#15">Chain-structured conditional random field</a></li><li><a href="#16">Tree-structured Markov random field with exp(linear) potentials</a></li><li><a href="#17">Lattice-structured conditional random field</a></li></ul></div><pre class="codeinput">f = 1;
 
 options.Display = <span class="string">'none'</span>;
-</pre><h2>Huber robust regression<a name="3"></a></h2><pre class="codeinput"><span class="comment">% Generate linear regression data set with outliers</span>
+</pre><h2>Huber robust regression<a name="2"></a></h2><pre class="codeinput"><span class="comment">% Generate linear regression data set with outliers</span>
 nInstances = 400;
 nVars = 1;
 [X,y] = makeData(<span class="string">'regressionOutliers'</span>,nInstances,nVars);
@@ -90,7 +88,7 @@ set(h1,<span class="string">'LineWidth'</span>,3);
 set(h2,<span class="string">'LineWidth'</span>,3);
 legend([h1 h2],{<span class="string">'Least Squares'</span>,<span class="string">'Huber Loss'</span>});
 pause;
-</pre><h2>Probit regression<a name="4"></a></h2><pre class="codeinput"><span class="comment">% Generate linear classification data set with some variables flipped</span>
+</pre><h2>Probit regression<a name="3"></a></h2><pre class="codeinput"><span class="comment">% Generate linear classification data set with some variables flipped</span>
 nVars = 2;
 [X,y] = makeData(<span class="string">'classificationFlip'</span>,nInstances,nVars);
 
@@ -107,7 +105,7 @@ figure(f);f=f+1;
 
 plotClassifier(X,y,wProbit,<span class="string">'Probit Regression'</span>);
 pause;
-</pre><h2>Logistic regression and L2-regularized logistic regression<a name="5"></a></h2><pre class="codeinput"><span class="comment">% Make a separable data set</span>
+</pre><h2>Logistic regression and L2-regularized logistic regression<a name="4"></a></h2><pre class="codeinput"><span class="comment">% Make a separable data set</span>
 [X,y] = makeData(<span class="string">'classification'</span>,nInstances,nVars);
 
 <span class="comment">% Add bias</span>
@@ -138,7 +136,7 @@ fprintf(<span class="string">'Comparison of norms of parameters for MLE and MAP:
 norm_wMLE = norm(wMLE)
 norm_wMAP = norm(wMAP)
 pause;
-</pre><h2>Kernel logistic regression<a name="6"></a></h2><pre class="codeinput"><span class="comment">% Generate non-linear data set</span>
+</pre><h2>Kernel logistic regression<a name="5"></a></h2><pre class="codeinput"><span class="comment">% Generate non-linear data set</span>
 [X,y] = makeData(<span class="string">'classificationNonlinear'</span>,nInstances,nVars);
 
 lambda = 1e-2;
@@ -189,7 +187,7 @@ plotClassifier(X,y,uPoly,<span class="string">'Kernel-Poly Logistic Regression'<
 subplot(1,2,2);
 plotClassifier(X,y,uRBF,<span class="string">'Kernel-RBF Logistic Regression'</span>,@kernelRBF,rbfScale);
 pause;
-</pre><h2>Multinomial logistic regression with L2-regularization<a name="7"></a></h2><pre class="codeinput">nClasses = 5;
+</pre><h2>Multinomial logistic regression with L2-regularization<a name="6"></a></h2><pre class="codeinput">nClasses = 5;
 [X,y] = makeData(<span class="string">'multinomial'</span>,nInstances,nVars,nClasses);
 
 <span class="comment">% Add bias</span>
@@ -210,7 +208,7 @@ trainErr = sum(yhat~=y)/length(y)
 figure(f);f=f+1;
 plotClassifier(X,y,wSoftmax,<span class="string">'Multinomial Logistic Regression'</span>);
 pause;
-</pre><h2>Kernel multinomial logistic regression<a name="8"></a></h2><pre class="codeinput"><span class="comment">% Generate Data</span>
+</pre><h2>Kernel multinomial logistic regression<a name="7"></a></h2><pre class="codeinput"><span class="comment">% Generate Data</span>
 [X,y] = makeData(<span class="string">'multinomialNonlinear'</span>,nInstances,nVars,nClasses);
 
 lambda = 1e-2;
@@ -258,7 +256,7 @@ plotClassifier(X,y,uPoly,<span class="string">'Kernel-Poly Multinomial Logistic 
 subplot(1,2,2);
 plotClassifier(X,y,uRBF,<span class="string">'Kernel-RBF Multinomial Logistic Regression'</span>,@kernelRBF,rbfScale);
 pause;
-</pre><h2>Regression with neural networks<a name="9"></a></h2><pre class="codeinput"><span class="comment">% Generate non-linear regression data set</span>
+</pre><h2>Regression with neural networks<a name="8"></a></h2><pre class="codeinput"><span class="comment">% Generate non-linear regression data set</span>
 nVars = 1;
 [X,y] = makeData(<span class="string">'regressionNonlinear'</span>,nInstances,nVars);
 
@@ -288,7 +286,7 @@ h=plot(Xtest(:,2),yhat,<span class="string">'g-'</span>);
 set(h,<span class="string">'LineWidth'</span>,3);
 legend({<span class="string">'Data'</span>,<span class="string">'Neural Net'</span>});
 pause;
-</pre><h2>Classification with Neural Network with multiple hidden layers<a name="10"></a></h2><pre class="codeinput">nVars = 2;
+</pre><h2>Classification with Neural Network with multiple hidden layers<a name="9"></a></h2><pre class="codeinput">nVars = 2;
 [X,y] = makeData(<span class="string">'classificationNonlinear'</span>,nInstances,nVars);
 
 X = [ones(nInstances,1) X];
@@ -314,7 +312,7 @@ fprintf(<span class="string">'Making plot...\n'</span>);
 figure(f);f=f+1;
 plotClassifier(X,y,wMLP,<span class="string">'Neural Net (multiple hidden layers)'</span>,nHidden);
 pause;
-</pre><h2>Smooth support vector machine<a name="11"></a></h2><pre class="codeinput">nVars = 2;
+</pre><h2>Smooth support vector machine<a name="10"></a></h2><pre class="codeinput">nVars = 2;
 [X,y] = makeData(<span class="string">'classification'</span>,nInstances,nVars);
 
 <span class="comment">% Add bias</span>
@@ -335,7 +333,7 @@ SV = 1-y.*(X*wSSVM) &gt;= 0;
 h=plot(X(SV,2),X(SV,3),<span class="string">'o'</span>,<span class="string">'color'</span>,<span class="string">'r'</span>);
 legend(h,<span class="string">'Support Vectors'</span>);
 pause;
-</pre><h2>Smooth support vector regression<a name="12"></a></h2><pre class="codeinput">nVars = 1;
+</pre><h2>Smooth support vector regression<a name="11"></a></h2><pre class="codeinput">nVars = 1;
 [X,y] = makeData(<span class="string">'regressionNonlinear'</span>,nInstances,nVars);
 
 X = [ones(nInstances,1) X];
@@ -366,7 +364,7 @@ plot(Xtest(:,2),yhat+changePoint,<span class="string">'c--'</span>);
 plot(Xtest(:,2),yhat-changePoint,<span class="string">'c--'</span>);
 legend({<span class="string">'Data'</span>,<span class="string">'Smooth SVR'</span>,<span class="string">'Support Vectors'</span>,<span class="string">'Eps-Tube'</span>});
 pause;
-</pre><h2>Kernel smooth support vector machine<a name="13"></a></h2><pre class="codeinput"><span class="comment">% Generate non-linear data set</span>
+</pre><h2>Kernel smooth support vector machine<a name="12"></a></h2><pre class="codeinput"><span class="comment">% Generate non-linear data set</span>
 nVars = 2;
 [X,y] = makeData(<span class="string">'classificationNonlinear'</span>,nInstances,nVars);
 
@@ -388,7 +386,7 @@ SV = 1-y.*(Krbf*uRBF) &gt;= 0;
 h=plot(X(SV,1),X(SV,2),<span class="string">'o'</span>,<span class="string">'color'</span>,<span class="string">'r'</span>);
 legend(h,<span class="string">'Support Vectors'</span>);
 pause;
-</pre><h2>Multi-class smooth support vector machine<a name="14"></a></h2><pre class="codeinput"><span class="comment">% Generate Data</span>
+</pre><h2>Multi-class smooth support vector machine<a name="13"></a></h2><pre class="codeinput"><span class="comment">% Generate Data</span>
 nVars = 2;
 nClasses = 5;
 [X,y] = makeData(<span class="string">'multinomialNonlinear'</span>,nInstances,nVars,nClasses);
@@ -435,7 +433,7 @@ plotClassifier(X,y,uPoly,<span class="string">'Kernel-Poly Multi-Class Smooth SV
 subplot(1,2,2);
 plotClassifier(X,y,uRBF,<span class="string">'Kernel-RBF Multi-Class Smooth SVM'</span>,@kernelRBF,rbfScale);
 pause;
-</pre><h2>Sparse Gaussian graphical model precision matrix estimation<a name="15"></a></h2><pre class="codeinput"><span class="comment">% Generate a sparse positive-definite precision matrix</span>
+</pre><h2>Sparse Gaussian graphical model precision matrix estimation<a name="14"></a></h2><pre class="codeinput"><span class="comment">% Generate a sparse positive-definite precision matrix</span>
 nNodes = 10;
 adj = triu(rand(nNodes) &gt; .75,1);
 adj = setdiag(adj+adj',1);
@@ -496,7 +494,7 @@ subplot(1,2,2);
 imagesc(Ksparse);
 title(<span class="string">'Estimated Sparse Precision Matrix'</span>);
 pause;
-</pre><h2>Chain-structured conditional random field<a name="16"></a></h2><pre class="codeinput"><span class="comment">% Generate Data</span>
+</pre><h2>Chain-structured conditional random field<a name="15"></a></h2><pre class="codeinput"><span class="comment">% Generate Data</span>
 nWords = 1000;
 nStates = 4;
 nFeatures = [2 3 4 5]; <span class="comment">% When inputting a data set, this can be set to maximum values in columns of X</span>
@@ -565,7 +563,7 @@ imagesc([y yhat]);
 colormap <span class="string">gray</span>
 title(<span class="string">'True sequence (left), sequence of marginally most likely states (right)'</span>);
 pause;
-</pre><h2>Tree-structured Markov random field with exp(linear) potentials<a name="17"></a></h2><pre class="codeinput">nInstances = 500;
+</pre><h2>Tree-structured Markov random field with exp(linear) potentials<a name="16"></a></h2><pre class="codeinput">nInstances = 500;
 nNodes = 18;
 nStates = 3;
 
@@ -628,7 +626,7 @@ imagesc(ySimulated);
 colormap <span class="string">gray</span>
 title(<span class="string">'Samples from learned MRF'</span>);
 pause;
-</pre><h2>Lattice-structured conditional random field<a name="18"></a></h2><pre class="codeinput">nInstances = 1;
+</pre><h2>Lattice-structured conditional random field<a name="17"></a></h2><pre class="codeinput">nInstances = 1;
 ising = 1;
 tied = 1;
 
@@ -706,9 +704,9 @@ title(<span class="string">'Loopy train/decode'</span>);
 </pre><p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
-%% minfunc demo
-%%PMTKinteractive
-%PMTKslow
+%% Minfunc demo
+% PMTKinteractive
+% PMTKslow
 %%
 f = 1;
 

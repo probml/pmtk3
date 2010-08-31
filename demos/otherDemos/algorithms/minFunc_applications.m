@@ -1,6 +1,6 @@
-%% minfunc demo
-%%PMTKinteractive
-%PMTKslow
+%% Minfunc demo
+% PMTKinteractive
+% PMTKslow
 %%
 f = 1;
 
