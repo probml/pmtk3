@@ -1,7 +1,7 @@
 %% Comparison of methods for imputing missing values in UCI adult census data
-%PMTKslow
-%PMTKauthor Kevin Murphy
-%PMTKneedsStatsToolbox boxplot
+% PMTKslow
+% PMTKauthor Kevin Murphy
+% PMTKneedsStatsToolbox boxplot
 %%
 requireStatsToolbox
 setSeed(0);
@@ -19,7 +19,7 @@ X(:,iscont) = standardize(X(:,iscont));
 setSeed(0);
 [N, D] = size(X);
 pc = [0.01, 0.1];
-ntrials = 3;
+ntrials = 2;
 opts = {'verbose', true};
 methodNames = {'knn1', 'knn5', 'knn10', ...
     'mix1', 'mix5', 'mix10'};
@@ -50,7 +50,7 @@ for pidx = 1:length(pc)
             errors(trial, method) = imputationLossMixed(X, Ximpute, missing, types);
         end
     end
-    %% Plot
+    % Plot
     figure;
     boxplot(errors, 'labels', methodNames);
     title(sprintf('Loss, pcMissing = %5.3f', pc(pidx)));
@@ -61,4 +61,4 @@ for pidx = 1:length(pc)
     title(sprintf('time, pcMissing = %5.3f', pc(pidx)));
     printPmtkFigure(sprintf('imputationMixedAdultTime%dpc', pc(pidx)*100));
     
-end % p
+end 
