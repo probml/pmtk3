@@ -1,5 +1,7 @@
-function dgm = mkLungCancerDgm(varargin)
 %% Make the lung cancer dgm
+%
+%%
+function dgm = mkLungCancerDgm(varargin)
 %     S
 %    / \
 %   v  v
