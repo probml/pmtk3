@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>Linreg frequentist caterpillar demo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="linregFreqCaterpillar"><style type="text/css">
+      --><title>Linreg frequentist caterpillar demo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-31"><meta name="m-file" content="linregFreqCaterpillar"><style type="text/css">
 
 body {
   background-color: white;
@@ -69,7 +69,7 @@ y = log(X(:,11)); <span class="comment">% log numner of nests</span>
 X = X(:,1:10);
 
 [w, stderr, pval, R2, sigma2, confint, Zs] = <span class="keyword">...</span>
-  linregParamsFrequentist(y, X, [], true);
+  linregFrequentistSummary(y, X, [], true);
 
 <span class="comment">% use stats toolbox</span>
 [n d] = size(X);
@@ -82,10 +82,23 @@ assert(approxeq(b, w))
 assert(approxeq(bint, confint))
 assert(approxeq(stats(1), R2))
 assert(approxeq(stats(4), sigma2))
-</pre><pre class="codeoutput">Undefined function or method 'linregParamsFrequentist' for input arguments of type 'double'.
+</pre><pre class="codeoutput">
+linear regression n=33, d=10, R-squared=   0.69494
 
-Error in ==&gt; linregFreqCaterpillar at 9
-[w, stderr, pval, R2, sigma2, confint, Zs] = ...
+             estimate    std err    t value    p(&gt;|t|)      
+ intercept &amp;   10.99841 &amp;    3.06027 &amp;    3.59393 &amp;    0.00161 **\\
+      x1:  &amp;   -0.00443 &amp;    0.00156 &amp;   -2.84635 &amp;    0.00939 **\\
+      x2:  &amp;   -0.05383 &amp;    0.02190 &amp;   -2.45801 &amp;    0.02232 *\\
+      x3:  &amp;    0.06794 &amp;    0.09947 &amp;    0.68300 &amp;    0.50174 \\
+      x4:  &amp;   -1.29364 &amp;    0.56381 &amp;   -2.29445 &amp;    0.03168 *\\
+      x5:  &amp;    0.23164 &amp;    0.10438 &amp;    2.21921 &amp;    0.03709 *\\
+      x6:  &amp;   -0.35680 &amp;    1.56646 &amp;   -0.22777 &amp;    0.82193 \\
+      x7:  &amp;   -0.23747 &amp;    1.00601 &amp;   -0.23605 &amp;    0.81558 \\
+      x8:  &amp;    0.18106 &amp;    0.23672 &amp;    0.76486 &amp;    0.45248 \\
+      x9:  &amp;   -1.28532 &amp;    0.86485 &amp;   -1.48618 &amp;    0.15142 \\
+     x10:  &amp;   -0.43311 &amp;    0.73487 &amp;   -0.58936 &amp;    0.56162 \\
+
+Signif. codes: *** [0,0.001), ** [0.001, 0.01), * [0.01,0.05) . [0.05,1)
 </pre><p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
@@ -98,7 +111,7 @@ y = log(X(:,11)); % log numner of nests
 X = X(:,1:10);
 
 [w, stderr, pval, R2, sigma2, confint, Zs] = ...
-  linregParamsFrequentist(y, X, [], true);
+  linregFrequentistSummary(y, X, [], true);
 
 % use stats toolbox
 [n d] = size(X);
