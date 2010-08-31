@@ -1,7 +1,7 @@
 %% Demonstrate  inference  in a small 2d grid of a noisy image of an X
 % Based on
 % http://www.cs.ubc.ca/~schmidtm/Software/UGM/linprog.html
-
+%%
 %PMTKrequireOptimToolbox linprog is called by UGM_Decode_LinProg
 %PMTKrequireOptimToolbox bintprog is called by UGM_Decode_IntProg
 
