@@ -1,5 +1,6 @@
+%% RosenBrock Demo
 %
-% RosenBrock Demo
+%%
 %PMTKinteractive
 %PMTKneedsOptimToolbox
 % "A note on the extended rosenbrock function" Evol. Comp. 2006
