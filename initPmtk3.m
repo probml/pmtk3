@@ -31,7 +31,7 @@ else
 end
 if ~exist('matlabToolsRoot', 'file')
     url = 'http://matlabtools.googlecode.com/svn/trunk/matlabTools.zip';
-    fprintf('downloading matlabTools...'); 
+    fprintf('downloading matlabTools........'); 
     unzip(url, fullfile(thisDir, 'matlabTools')); % download from googleCode 
     include(fullfile(thisDir, 'matlabTools')); 
     fprintf('done\n'); 

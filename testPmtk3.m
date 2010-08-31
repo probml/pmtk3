@@ -56,23 +56,19 @@ if isOctave()
 end
 
 fprintf('Testing selected code............\n\n\n\n');
-%try
 logregL2FitTest;
 newcombDemo
 close all
-gprDemoNoiseFree;
 discrimAnalysisDboundariesDemo;
+close all
 testSprinklerDemo;
 close all
 hmmDiscreteTest;
 knnClassifyDemo;
 pcaDemo2d;
 close all
-gammaRainfallDemo;
 kalmanTrackingDemo;
 bernoulliBetaSequentialUpdate;
-close all
-mcmcMvn2d
 close all;
 fprintf('\n.......................\n');
 if ~gvizErr
