@@ -1,5 +1,5 @@
 %% Compare PMTK ridge with stats toolbox
-%PMTKneedsStatsToolbox ridge
+% PMTKneedsStatsToolbox ridge
 %%
 requireStatsToolbox
 X = loadData('caterpillar'); % from http://www.ceremade.dauphine.fr/~xian/BCS/caterpillar

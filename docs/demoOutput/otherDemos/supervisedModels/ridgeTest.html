@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>ridgeTest</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="ridgeTest"><style type="text/css">
+      --><title>Compare PMTK ridge with stats toolbox</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-31"><meta name="m-file" content="ridgeTest"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,24 +62,23 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Compare PMTK ridge with stats toolbox</a></li><li><a href="#3">MLE</a></li><li><a href="#4">MAP with Gaussian prior</a></li></ul></div><h2>Compare PMTK ridge with stats toolbox<a name="1"></a></h2><pre class="codeinput"><span class="comment">%PMTKneedsStatsToolbox ridge</span>
-</pre><pre class="codeinput">requireStatsToolbox
+  </style></head><body><div class="content"><h1>Compare PMTK ridge with stats toolbox</h1><!--introduction--><p>PMTKneedsStatsToolbox ridge</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">MLE</a></li><li><a href="#3">MAP with Gaussian prior</a></li></ul></div><pre class="codeinput">requireStatsToolbox
 X = loadData(<span class="string">'caterpillar'</span>); <span class="comment">% from http://www.ceremade.dauphine.fr/~xian/BCS/caterpillar</span>
 y = log(X(:,11)); <span class="comment">% log number of nests</span>
 X = X(:,1:10);
 [n,d] = size(X);
-</pre><h2>MLE<a name="3"></a></h2><pre class="codeinput">[model] = linregFit(X, y)
+</pre><h2>MLE<a name="2"></a></h2><pre class="codeinput">[model] = linregFit(X, y)
 X1 = [ones(size(X,1),1) X];
 what = X1\y;
 assert(approxeq(model.w, what))
 </pre><pre class="codeoutput">model = 
         lambda: 0
              w: [11x1 double]
-        sigma2: 0.585169717834974
+        sigma2: 0.5852
        preproc: [1x1 struct]
      modelType: 'linreg'
     likelihood: 'gaussian'
-</pre><h2>MAP with Gaussian prior<a name="4"></a></h2><pre class="codeinput">lambda = 0.1;
+</pre><h2>MAP with Gaussian prior<a name="3"></a></h2><pre class="codeinput">lambda = 0.1;
 <span class="comment">%XS = standardize(X);</span>
 pp = preprocessorCreate(<span class="string">'addOnes'</span>, true);
 [model] = linregFit(X, y, <span class="string">'regType'</span>, <span class="string">'L2'</span>, <span class="string">'lambda'</span>, lambda, <span class="string">'preproc'</span>, pp);
@@ -90,36 +89,24 @@ model.w'
 
 <span class="comment">%assert(approxeq(model.w, what))</span>
 </pre><pre class="codeoutput">ans =
-  Columns 1 through 2
-  10.726038053253417  -0.004363295970360
-  Columns 3 through 4
-  -0.053519518920329   0.054103992758300
-  Columns 5 through 6
-  -1.185262434660062   0.215348558766661
-  Columns 7 through 8
-  -0.134119248861125  -0.336969664477204
-  Columns 9 through 10
-   0.145221594109178  -1.274693885034770
+  Columns 1 through 5
+   10.7260   -0.0044   -0.0535    0.0541   -1.1853
+  Columns 6 through 10
+    0.2153   -0.1341   -0.3370    0.1452   -1.2747
   Column 11
-  -0.367841626228175
+   -0.3678
 ans =
-  Columns 1 through 2
-  10.723961115045352  -0.004408551951685
-  Columns 3 through 4
-  -0.053928337321904   0.059597092255857
-  Columns 5 through 6
-  -1.234434800320978   0.226692752531470
-  Columns 7 through 8
-  -0.256587079965902  -0.250796383760788
-  Columns 9 through 10
-   0.146212830310497  -1.186446900830064
+  Columns 1 through 5
+   10.7240   -0.0044   -0.0539    0.0596   -1.2344
+  Columns 6 through 10
+    0.2267   -0.2566   -0.2508    0.1462   -1.1864
   Column 11
-  -0.396072381800769
+   -0.3961
 </pre><p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Compare PMTK ridge with stats toolbox
-%PMTKneedsStatsToolbox ridge
+% PMTKneedsStatsToolbox ridge
 %%
 requireStatsToolbox
 X = loadData('caterpillar'); % from http://www.ceremade.dauphine.fr/~xian/BCS/caterpillar

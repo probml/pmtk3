@@ -1,6 +1,6 @@
 %% Simple Tests of the svmFit interface
-%PMTKslow
-%PMTKneedsOptimToolbox quadprog
+% PMTKslow
+% PMTKneedsOptimToolbox quadprog
 %% First we check that the 3 implementations give the same
 % results on a simple binary dataset
 requireOptimToolbox
