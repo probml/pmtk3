@@ -1,7 +1,6 @@
 %% Test PMTK mrf code against mrf2
-
-
-
+%
+%%
 nNodes = 60;
 adj = chainAdjMatrix(nNodes);
 nStates = 7*ones(1,nNodes);

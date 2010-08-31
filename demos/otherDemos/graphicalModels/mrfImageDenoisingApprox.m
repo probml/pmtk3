@@ -1,4 +1,6 @@
 %% Image denoising using an mrf and approximate inference
+%
+%%
 %PMTKneedsImageToolbox
 requireImageToolbox
 assert(isLibdaiInstalled); 

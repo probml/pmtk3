@@ -1,8 +1,11 @@
 %% Fit the local CPDs of an mrf given an image / noisy image pair
-% The model has the following form
-% y1<-  h1 - h2  -> y2
-%        |   |
-% y3 <-  h3 - h4 -> y4
+%
+%%
+%  The model has the following form
+%  y1<-  h1 - h2  -> y2
+%         |    |
+%  y3 <-  h3 - h4 -> y4
+%%
 % where there are undirected edges between the hidden labels,
 % arranged in a 2d grid, and each hidden node has a directed local
 % evidence.

@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>mrfImageDenoisingApprox</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="mrfImageDenoisingApprox"><style type="text/css">
+      --><title>Image denoising using an mrf and approximate inference</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="mrfImageDenoisingApprox"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,7 +62,7 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Image denoising using an mrf and approximate inference</a></li><li><a href="#2">Create the model</a></li></ul></div><h2>Image denoising using an mrf and approximate inference<a name="1"></a></h2><pre class="codeinput"><span class="comment">%PMTKneedsImageToolbox</span>
+  </style></head><body><div class="content"><h1>Image denoising using an mrf and approximate inference</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Create the model</a></li></ul></div><pre class="codeinput"><span class="comment">%PMTKneedsImageToolbox</span>
 requireImageToolbox
 assert(isLibdaiInstalled);
 setSeed(0);
@@ -102,6 +102,8 @@ colormap(<span class="string">'gray'</span>); title(<span class="string">'margin
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Image denoising using an mrf and approximate inference
+%
+%%
 %PMTKneedsImageToolbox
 requireImageToolbox
 assert(isLibdaiInstalled); 

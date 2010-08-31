@@ -62,7 +62,10 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h1>Fit the local CPDs of an mrf given an image / noisy image pair</h1><p>The model has the following form y1&lt;-  h1 - h2  -&gt; y2        |   | y3 <a href="-"> h3 - h4 -</a> y4 where there are undirected edges between the hidden labels, arranged in a 2d grid, and each hidden node has a directed local evidence. Currently we fit the p(yi|hi) CPDs (which are conditional Gaussian), but not the hi-hj edge potentials. We allow for a certain fraction of the h nodes to be hidden, and fit the model using EM from a single image (with tied params) For the E step, we use TRWBP.</p><pre class="codeinput"><span class="comment">%PMTKslow</span>
+  </style></head><body><div class="content"><h1>Fit the local CPDs of an mrf given an image / noisy image pair</h1><!--introduction--><!--/introduction--><pre>The model has the following form
+y1&lt;-  h1 - h2  -&gt; y2
+      |   |
+y3 &lt;-  h3 - h4 -&gt; y4</pre><p>where there are undirected edges between the hidden labels, arranged in a 2d grid, and each hidden node has a directed local evidence. Currently we fit the p(yi|hi) CPDs (which are conditional Gaussian), but not the hi-hj edge potentials. We allow for a certain fraction of the h nodes to be hidden, and fit the model using EM from a single image (with tied params) For the E step, we use TRWBP.</p><pre class="codeinput"><span class="comment">%PMTKslow</span>
 </pre><pre class="codeinput">setSeed(2);
 H = 4; <span class="comment">% hide every H values (set to 0 for fully observed case)</span>
 <span class="comment">%                            (set to 1 for fully hidden case)</span>
@@ -118,14 +121,25 @@ maxMarginals = maxidx(tfMarg2Mat(nodes), [], 1);
 figure; imagesc(reshape(maxMarginals, M, N)); colormap(cmap);
 title(<span class="string">'reconstructed image'</span>);
 placeFigures;
-</pre><p class="footer"><br>
+</pre><pre class="codeoutput">initializing model for EM
+1	 loglik: -178125
+2	 loglik: -3645.52
+3	 loglik: -3626.64
+4	 loglik: -3623.5
+5	 loglik: -3622.17
+6	 loglik: -3621.62
+7	 loglik: -3621.5
+</pre><img vspace="5" hspace="5" src="mrfFitImgSemiObsDemo_01.png" alt=""> <img vspace="5" hspace="5" src="mrfFitImgSemiObsDemo_02.png" alt=""> <img vspace="5" hspace="5" src="mrfFitImgSemiObsDemo_03.png" alt=""> <img vspace="5" hspace="5" src="mrfFitImgSemiObsDemo_04.png" alt=""> <img vspace="5" hspace="5" src="mrfFitImgSemiObsDemo_05.png" alt=""> <img vspace="5" hspace="5" src="mrfFitImgSemiObsDemo_06.png" alt=""> <p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Fit the local CPDs of an mrf given an image / noisy image pair
-% The model has the following form
-% y1<-  h1 - h2  -> y2
+%
+%%
+%  The model has the following form
+%  y1<-  h1 - h2  -> y2
 %        |   |
-% y3 <-  h3 - h4 -> y4
+%  y3 <-  h3 - h4 -> y4
+%%
 % where there are undirected edges between the hidden labels,
 % arranged in a 2d grid, and each hidden node has a directed local
 % evidence.
