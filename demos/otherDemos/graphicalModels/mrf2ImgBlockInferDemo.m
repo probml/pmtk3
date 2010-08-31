@@ -1,9 +1,7 @@
 %% Demonstrate block-based inference  in a 2d grid of a noisy image of an X
 % Based on
 % http://www.cs.ubc.ca/~schmidtm/Software/UGM/block.html
-
-%PMTKslow
-
+% PMTKslow
 %% Get model and data
 setSeed(0);
 load X.mat % binary image of an 'X'
