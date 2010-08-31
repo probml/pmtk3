@@ -42,7 +42,9 @@ include(fullfile(thisDir, 'toolbox'));
 include(fullfile(thisDir, 'demos')); 
 include(fullfile(thisDir, 'data'));             % may be initially empty
 include(fullfile(thisDir, 'external')); % may be initially empty
-include(fullfile(thisDir, 'docs', 'tutorial')); 
+if exist(fullfile(thisDir, 'docs', 'tutorial'), 'dir')
+    include(fullfile(thisDir, 'docs', 'tutorial')); 
+end
 %% we store user / system specific pmtk info in the systemInfo directory 
 pmtkInfoDir = fullfile(thisDir, 'localUtil', 'systemInfo');
 %% write isOctave function
@@ -52,8 +54,6 @@ text = { 'function answer = isOctave()'
          'end'
         };
 writeText(text, fullfile(pmtkInfoDir, 'isOctave.m'));
-%% write 
-
 %% write is*ToolboxInstalled functions
 toolbox = {'stats', 'bioinfo', 'optim', 'signal', 'images', 'symbolic',...
     'nnet', 'splines'};

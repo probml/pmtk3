@@ -41,7 +41,11 @@ end
 gvizErr = false; 
 if ~isOctave && ~verLessThan('matlab', '7.6.0')
     fprintf('Checking for graphviz............');
-    
+    try
+        graphViz4Matlab();
+        close all; 
+    catch %#ok
+    end
     [j, err] = evalc('system([''dot'','' -V'']);');
     if ~err
         fprintf('PASSED\n');
