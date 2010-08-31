@@ -143,7 +143,9 @@ end
 if ~exist('matlabToolsRoot', 'file')
     url = 'http://matlabtools.googlecode.com/svn/trunk/matlabTools.zip';
     fprintf('downloading matlabTools.............');
-    unzip(url, fullfile(thisDir, 'matlabTools')); % download from googleCode
+    dest = fullfile(thisDir, 'matlabTools', 'matlabTools.zip');
+    downloadFile(url, dest);       % more reliable than unzip(url, ...
+    unzip(dest, fileparts(dest)); 
     addpath(genpath(fullfile(thisDir, 'matlabTools')));
     fprintf('done\n');
 end
