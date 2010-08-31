@@ -1,5 +1,5 @@
 %% Bayesian linear regression with an uninformative prior 
-%PMTKneedsStatsToolbox regress, ridge
+% PMTKneedsStatsToolbox regress, ridge
 %%
 requireStatsToolbox
 X = loadData('caterpillar'); % from http://www.ceremade.dauphine.fr/~xian/BCS/caterpillar

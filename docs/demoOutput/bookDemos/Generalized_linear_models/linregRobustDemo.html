@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>linregRobustDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="linregRobustDemo"><style type="text/css">
+      --><title>Robust linear regression demo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="linregRobustDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,8 +62,7 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Robust linear regression demo</a></li><li><a href="#4">Laplace loss</a></li><li><a href="#5">Student loss</a></li><li><a href="#6">Laplace and student on same plot</a></li><li><a href="#7">Huber loss</a></li></ul></div><h2>Robust linear regression demo<a name="1"></a></h2><pre class="codeinput"><span class="comment">%PMTKneedsOptimToolbox linprog</span>
-</pre><pre class="codeinput"><span class="keyword">function</span> linregRobustDemo()
+  </style></head><body><div class="content"><h1>Robust linear regression demo</h1><!--introduction--><p>PMTKneedsOptimToolbox linprog</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#3">Laplace loss</a></li><li><a href="#4">Student loss</a></li><li><a href="#5">Laplace and student on same plot</a></li><li><a href="#6">Huber loss</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> linregRobustDemo()
 </pre><pre class="codeinput">requireOptimToolbox
 seed = 0; setSeed(seed);
 x = sort(rand(10,1));
@@ -79,15 +78,15 @@ modelLS = linregFit(Xtrain, y, <span class="string">'lambda'</span>, 0);<span cl
 xs = 0:0.1:1;
 Xtest = xs(:);
 yhatLS = linregPredict(modelLS, Xtest);
-</pre><h2>Laplace loss<a name="4"></a></h2><pre class="codeinput">modelLP = linregRobustLaplaceFitLinprog(Xtrain, y);
+</pre><h2>Laplace loss<a name="3"></a></h2><pre class="codeinput">modelLP = linregRobustLaplaceFitLinprog(Xtrain, y);
 yhatLaplace = linregPredict(modelLP, Xtest);
 </pre><pre class="codeoutput">Optimization terminated.
-</pre><h2>Student loss<a name="5"></a></h2><pre class="codeinput">modelStudent = linregRobustStudentFit(Xtrain, y);
+</pre><h2>Student loss<a name="4"></a></h2><pre class="codeinput">modelStudent = linregRobustStudentFit(Xtrain, y);
 yhatStudent = linregPredict(modelStudent, Xtest);
-</pre><h2>Laplace and student on same plot<a name="6"></a></h2><pre class="codeinput">legendStr ={<span class="string">'least squares'</span>, <span class="string">'laplace'</span>, sprintf(<span class="string">'student, dof=%5.3f'</span>, modelStudent.dof)};
+</pre><h2>Laplace and student on same plot<a name="5"></a></h2><pre class="codeinput">legendStr ={<span class="string">'least squares'</span>, <span class="string">'laplace'</span>, sprintf(<span class="string">'student, dof=%5.3f'</span>, modelStudent.dof)};
 doPlot(x, y,  {yhatLS, yhatLaplace, yhatStudent}, legendStr)
 printPmtkFigure(<span class="string">'linregRobustLaplaceStudent'</span>)
-</pre><img vspace="5" hspace="5" src="linregRobustDemo_01.png" alt=""> <h2>Huber loss<a name="7"></a></h2><pre class="codeinput"><span class="keyword">if</span> 1
+</pre><img vspace="5" hspace="5" src="linregRobustDemo_01.png" alt=""> <h2>Huber loss<a name="6"></a></h2><pre class="codeinput"><span class="keyword">if</span> 1
   legendStr = {<span class="string">'Least Squares'</span>};
   deltas = [1 5];
   <span class="keyword">for</span> i=1:length(deltas)
@@ -128,7 +127,7 @@ set(gca,<span class="string">'ylim'</span>,[-6 4])
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Robust linear regression demo
-%PMTKneedsOptimToolbox linprog
+% PMTKneedsOptimToolbox linprog
 %%
 function linregRobustDemo()
 requireOptimToolbox

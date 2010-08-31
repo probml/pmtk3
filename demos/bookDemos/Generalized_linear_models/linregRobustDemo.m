@@ -1,5 +1,5 @@
 %% Robust linear regression demo
-%PMTKneedsOptimToolbox linprog
+% PMTKneedsOptimToolbox linprog
 %%
 function linregRobustDemo()
 requireOptimToolbox

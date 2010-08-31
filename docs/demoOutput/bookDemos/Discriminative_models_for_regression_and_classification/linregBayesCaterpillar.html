@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>linregBayesCaterpillar</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="linregBayesCaterpillar"><style type="text/css">
+      --><title>Bayesian linear regression with an uninformative prior</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="linregBayesCaterpillar"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,13 +62,12 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Bayesian linear regression with an uninformative prior</a></li><li><a href="#3">plot the data</a></li><li><a href="#4">MLE</a></li><li><a href="#5">inference with uninformative prior</a></li></ul></div><h2>Bayesian linear regression with an uninformative prior<a name="1"></a></h2><pre class="codeinput"><span class="comment">%PMTKneedsStatsToolbox regress, ridge</span>
-</pre><pre class="codeinput">requireStatsToolbox
+  </style></head><body><div class="content"><h1>Bayesian linear regression with an uninformative prior</h1><!--introduction--><p>PMTKneedsStatsToolbox regress, ridge</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">plot the data</a></li><li><a href="#3">MLE</a></li><li><a href="#4">inference with uninformative prior</a></li></ul></div><pre class="codeinput">requireStatsToolbox
 X = loadData(<span class="string">'caterpillar'</span>); <span class="comment">% from http://www.ceremade.dauphine.fr/~xian/BCS/caterpillar</span>
 y = log(X(:,11)); <span class="comment">% log number of nests</span>
 X = X(:,1:10);
 [n,d] = size(X);
-</pre><h2>plot the data<a name="3"></a></h2><pre class="codeinput"><span class="keyword">if</span> 0
+</pre><h2>plot the data<a name="2"></a></h2><pre class="codeinput"><span class="keyword">if</span> 0
 figure;
 <span class="keyword">for</span> i=1:9
    subplot(3,3,i);
@@ -78,7 +77,7 @@ figure;
 <span class="keyword">end</span>
 printPmtkFigure(<span class="string">'caterpillarScatter'</span>)
 <span class="keyword">end</span>
-</pre><h2>MLE<a name="4"></a></h2><pre class="codeinput">[model] = linregFit(X, y)
+</pre><h2>MLE<a name="3"></a></h2><pre class="codeinput">[model] = linregFit(X, y)
 X1 = [ones(size(X,1),1) X];
 what = X1\y;
 assert(approxeq(model.w, what))
@@ -89,7 +88,7 @@ assert(approxeq(model.w, what))
        preproc: [1x1 struct]
      modelType: 'linreg'
     likelihood: 'gaussian'
-</pre><h2>inference with uninformative prior<a name="5"></a></h2><pre class="codeinput">[model, logev, postSummary] = linregFitBayes(X, y, <span class="string">'prior'</span>, <span class="string">'uninf'</span>, <span class="keyword">...</span>
+</pre><h2>inference with uninformative prior<a name="4"></a></h2><pre class="codeinput">[model, logev, postSummary] = linregFitBayes(X, y, <span class="string">'prior'</span>, <span class="string">'uninf'</span>, <span class="keyword">...</span>
   <span class="string">'displaySummary'</span>, true);
 <span class="comment">%post = linregParamsBayes(model, 'display', true, 'latex', false);</span>
 
@@ -154,7 +153,7 @@ fprintf(<span class="string">'\n'</span>);
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Bayesian linear regression with an uninformative prior 
-%PMTKneedsStatsToolbox regress, ridge
+% PMTKneedsStatsToolbox regress, ridge
 %%
 requireStatsToolbox
 X = loadData('caterpillar'); % from http://www.ceremade.dauphine.fr/~xian/BCS/caterpillar
