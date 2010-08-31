@@ -11,7 +11,6 @@
 %minFunc_applications;                   pclear(2); % PMTKinteractive
 %pagerankDemo;                           pclear(2); % PMTKinteractive
 %pcaYeast;                               pclear(2); % PMTKinteractive
-%ridgeSplineDemoCV;                      pclear(2); % PMTKbroken
 %surfer;                                 pclear(2); % PMTKinteractive
 agglomDemo;                              pclear(2);
 alarmBelPropDemo;                        pclear(2);
@@ -346,6 +345,7 @@ rbfNetworkSarcosDemo;                    pclear(2);
 relevanceNetworkNewsgroupDemo;           pclear(2);
 residualsDemo;                           pclear(2);
 ridgePathProstate;                       pclear(2);
+ridgeSplineDemoCV;                       pclear(2);
 ridgeTest;                               pclear(2);
 riskFnBernoulli;                         pclear(2);
 riskFnGauss;                             pclear(2);
