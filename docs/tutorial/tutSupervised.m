@@ -160,6 +160,8 @@
 %
 % * <http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutDiscrimClassif.html
 % Discriminative models>
+% * <http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutKernelClassif.html
+% Kernel-based models>
 % * <http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutGenClassif.html
 % Generative models>
 
