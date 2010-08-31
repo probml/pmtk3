@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>wiPlotDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="wiPlotDemo"><style type="text/css">
+      --><title>Plot Some Wishart Distributions</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="wiPlotDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,8 +62,7 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Plot Some Wishart Distributions</a></li><li><a href="#4">Plot marginals</a></li></ul></div><h2>Plot Some Wishart Distributions<a name="1"></a></h2><pre class="codeinput"><span class="comment">%PMTKneedsStatsToolbox ksdensity</span>
-</pre><pre class="codeinput">requireStatsToolbox
+  </style></head><body><div class="content"><h1>Plot Some Wishart Distributions</h1><!--introduction--><p>PMTKneedsStatsToolbox ksdensity</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#3">Plot marginals</a></li></ul></div><pre class="codeinput">requireStatsToolbox
 setSeed(2);
 S = [3.1653, -0.0262; -0.0262, 0.6477];
 dofs = [20 3];
@@ -86,7 +85,7 @@ nsamples = 9;
         dofs(i), M(1,1), M(1,2), M(2,1), M(2,2), <span class="string">'\rho'</span>, R(1,2));
     suptitle(t);
     printPmtkFigure(sprintf(<span class="string">'WiDof%dEllipse'</span>, dofs(i)));
-</pre><img vspace="5" hspace="5" src="wiPlotDemo_01.png" alt=""> <img vspace="5" hspace="5" src="wiPlotDemo_05.png" alt=""> <h2>Plot marginals<a name="4"></a></h2><pre class="codeinput">    marg1.a = wiModel.dof / 2;
+</pre><img vspace="5" hspace="5" src="wiPlotDemo_01.png" alt=""> <img vspace="5" hspace="5" src="wiPlotDemo_05.png" alt=""> <h2>Plot marginals<a name="3"></a></h2><pre class="codeinput">    marg1.a = wiModel.dof / 2;
     marg1.b = 1/(2*wiModel.Sigma(1, 1));
     marg2.a = wiModel.dof / 2;
     marg2.b = 1/(2*wiModel.Sigma(2, 2));
@@ -112,11 +111,11 @@ nsamples = 9;
     printPmtkFigure(sprintf(<span class="string">'WiDof%dPlot'</span>, dofs(i)));
 </pre><img vspace="5" hspace="5" src="wiPlotDemo_04.png" alt=""> <img vspace="5" hspace="5" src="wiPlotDemo_08.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
 placeFigures();
-</pre><p class="footer"><br>
+</pre><img vspace="5" hspace="5" src="wiPlotDemo_09.png" alt=""> <img vspace="5" hspace="5" src="wiPlotDemo_10.png" alt=""> <img vspace="5" hspace="5" src="wiPlotDemo_11.png" alt=""> <img vspace="5" hspace="5" src="wiPlotDemo_12.png" alt=""> <img vspace="5" hspace="5" src="wiPlotDemo_13.png" alt=""> <p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Plot Some Wishart Distributions
-%PMTKneedsStatsToolbox ksdensity
+% PMTKneedsStatsToolbox ksdensity
 %%
 requireStatsToolbox
 setSeed(2);

@@ -1,5 +1,5 @@
 %% Plot Some Wishart Distributions
-%PMTKneedsStatsToolbox ksdensity
+% PMTKneedsStatsToolbox ksdensity
 %%
 requireStatsToolbox
 setSeed(2);
