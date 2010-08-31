@@ -1,5 +1,5 @@
 %% Gauss Imputation Demo
-%PMTKneedsStatsToolbox regstats
+% PMTKneedsStatsToolbox regstats
 %%
 function gaussImputationDemo()
 requireStatsToolbox
