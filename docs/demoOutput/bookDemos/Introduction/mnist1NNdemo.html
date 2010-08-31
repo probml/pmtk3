@@ -62,7 +62,7 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h1>Classify the MNIST digits using a one nearest neighbour classifier and Euclidean distance</h1><!--introduction--><p>See mnistKNNdeno for a simple minded implemenation. This demo uses various tricks to scale the method up to large data sets.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#3">Classify</a></li><li><a href="#4">Report</a></li></ul></div><p>PMTKslow</p><pre class="codeinput">loadData(<span class="string">'mnistAll'</span>);
+  </style></head><body><div class="content"><h1>Classify the MNIST digits using a one nearest neighbour classifier and Euclidean distance</h1><!--introduction--><p>See mnistKNNdeno for a simple minded implemenation. This demo uses various tricks to scale the method up to large data sets.</p><!--/introduction--><p>PMTKslow</p><pre class="codeinput">loadData(<span class="string">'mnistAll'</span>);
 <span class="keyword">if</span> 0
   <span class="comment">% test on all data- 255 seconds, 3.09% error</span>
   trainndx = 1:60000; testndx =  1:10000;
@@ -103,16 +103,20 @@ XtestSOS  = sum(Xtest.^2,2);
 batches = mat2cell(1:ntest,1,(ntest/nbatches)*ones(1,nbatches));
 ypred = zeros(ntest,1);
 <span class="keyword">if</span> ~isOctave(), wbar = waitbar(0,sprintf(<span class="string">'%d of %d classified'</span>,0,ntest)); <span class="keyword">end</span> <span class="comment">% waitbar only works in Matlab</span>
-</pre><h2>Classify<a name="3"></a></h2><pre class="codeinput"><span class="keyword">for</span> i=1:nbatches
+<span class="comment">% Classify</span>
+<span class="keyword">for</span> i=1:nbatches
     t = toc; <span class="keyword">if</span> ~isOctave(), waitbar(i/nbatches,wbar,sprintf(<span class="string">'%d of %d Classified\nElapsed Time: %.2f seconds'</span>,(i-1)*(ntest/nbatches),ntest,t));<span class="keyword">end</span>
     dst = sqDistance(Xtest(batches{i},:),Xtrain,XtestSOS(batches{i},:),XtrainSOS);
     [junk,closest] = min(dst,[],2);
     ypred(batches{i}) = ytrain(closest);
 <span class="keyword">end</span>
-</pre><h2>Report<a name="4"></a></h2><pre class="codeinput"><span class="keyword">if</span> ~isOctave(), close(wbar); <span class="keyword">end</span>
+<span class="comment">% Report</span>
+<span class="keyword">if</span> ~isOctave(), close(wbar); <span class="keyword">end</span>
 errorRate = mean(ypred ~= ytest);
 fprintf(<span class="string">'Error Rate: %.2f%%\n'</span>,100*errorRate);
 t = toc; fprintf(<span class="string">'Total Time: %.2f seconds\n'</span>,t);
+</pre><pre class="codeoutput">Error Rate: 3.80%
+Total Time: 64.49 seconds
 </pre><p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
@@ -164,14 +168,14 @@ end
 batches = mat2cell(1:ntest,1,(ntest/nbatches)*ones(1,nbatches));
 ypred = zeros(ntest,1);
 if ~isOctave(), wbar = waitbar(0,sprintf('%d of %d classified',0,ntest)); end % waitbar only works in Matlab
-%% Classify
+% Classify
 for i=1:nbatches
     t = toc; if ~isOctave(), waitbar(i/nbatches,wbar,sprintf('%d of %d Classified\nElapsed Time: %.2f seconds',(i-1)*(ntest/nbatches),ntest,t));end
     dst = sqDistance(Xtest(batches{i},:),Xtrain,XtestSOS(batches{i},:),XtrainSOS);
     [junk,closest] = min(dst,[],2);
     ypred(batches{i}) = ytrain(closest);
 end
-%% Report
+% Report
 if ~isOctave(), close(wbar); end
 errorRate = mean(ypred ~= ytest);
 fprintf('Error Rate: %.2f%%\n',100*errorRate);

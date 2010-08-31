@@ -46,14 +46,14 @@ end
 batches = mat2cell(1:ntest,1,(ntest/nbatches)*ones(1,nbatches));
 ypred = zeros(ntest,1);
 if ~isOctave(), wbar = waitbar(0,sprintf('%d of %d classified',0,ntest)); end % waitbar only works in Matlab
-%% Classify
+% Classify
 for i=1:nbatches
     t = toc; if ~isOctave(), waitbar(i/nbatches,wbar,sprintf('%d of %d Classified\nElapsed Time: %.2f seconds',(i-1)*(ntest/nbatches),ntest,t));end
     dst = sqDistance(Xtest(batches{i},:),Xtrain,XtestSOS(batches{i},:),XtrainSOS);
     [junk,closest] = min(dst,[],2);
     ypred(batches{i}) = ytrain(closest);
 end
-%% Report
+% Report
 if ~isOctave(), close(wbar); end
 errorRate = mean(ypred ~= ytest);
 fprintf('Error Rate: %.2f%%\n',100*errorRate);
