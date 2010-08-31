@@ -1,5 +1,7 @@
-function dgm = mkSprinklerDgm(varargin)
 %% Make the sprinkler dgm
+%
+%%
+function dgm = mkSprinklerDgm(varargin)
 %    C
 %   / \
 %  v  v

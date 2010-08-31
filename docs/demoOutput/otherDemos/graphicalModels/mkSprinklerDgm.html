@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>mkSprinklerDgm</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="mkSprinklerDgm"><style type="text/css">
+      --><title>Make the sprinkler dgm</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="mkSprinklerDgm"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,14 +62,15 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Make the sprinkler dgm</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> dgm = mkSprinklerDgm(varargin)
-</pre><h2>Make the sprinkler dgm<a name="2"></a></h2><pre>  C
- / \
-v  v
-S  R
- \/
- v
- W</pre><pre class="codeinput">C = 1; S = 2; R = 3; W = 4;
+  </style></head><body><div class="content"><h1>Make the sprinkler dgm</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="keyword">function</span> dgm = mkSprinklerDgm(varargin)
+</pre><pre class="codeinput"><span class="comment">%    C</span>
+<span class="comment">%   / \</span>
+<span class="comment">%  v  v</span>
+<span class="comment">%  S  R</span>
+<span class="comment">%   \/</span>
+<span class="comment">%   v</span>
+<span class="comment">%   W</span>
+</pre><pre class="codeinput">C = 1; S = 2; R = 3; W = 4;
 
 G = zeros(4,4);
 G(C,[S R]) = 1;
@@ -101,8 +102,10 @@ dgm = dgmCreate(G, CPTs, varargin{:});
 </pre><p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
-function dgm = mkSprinklerDgm(varargin)
 %% Make the sprinkler dgm
+%
+%%
+function dgm = mkSprinklerDgm(varargin)
 %    C
 %   / \
 %  v  v
