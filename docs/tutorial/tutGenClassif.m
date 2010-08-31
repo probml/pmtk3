@@ -6,7 +6,7 @@
 % outputs and inputs
 % of the form $p(y,x|\theta)$.
 % We consider various examples below.
-
+%
 %% Naive Bayes classifier
 % We now a simple kind of generative classifier
 % called naive Bayes, which is a model of the form

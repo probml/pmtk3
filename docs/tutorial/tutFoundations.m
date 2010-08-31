@@ -291,9 +291,17 @@ L = sum(gaussLogprob(m3, X))
 % hierarchy) is shown below.
 %%
 % <html>
-% <img src="http://pmtk3.googlecode.com/svn/trunk/docs/classSystem/modelsConcreteTree.png">.
+% <img
+% src="http://pmtk3.googlecode.com/svn/trunk/docs/classSystem/modelsConcreteTree.png">
 % </html>
 %%
+% See also 
+%%
+% * <http://code.google.com/p/pmtk3/wiki/modelLists list of models>
+% * <http://code.google.com/p/pmtk3/wiki/ModelsByMethods list of methods
+% x models>.
+%%
+
 
 %% Bayesian methods
 % So far, we have been focusing on fitting models

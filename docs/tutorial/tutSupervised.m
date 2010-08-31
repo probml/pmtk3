@@ -139,13 +139,14 @@
 % The difference between |predict| and |predictBayes| is as follows.
 % |predict| computes
 %%
-% $$p(y|x,\hat{\theta})$$
+% $$p(y|x,\hat{\theta}(D))$$
 %%
 % which "plugs in" a point estimate
 % of the parameters, while |predictBayes| computes
 %%
 % $$p(y|x,D) = \int p(y|x,\theta) p(\theta|D) d\theta$
 %%
+% which integrates out the unknown parameter.
 % This is called the (posterior) predictive density.
 % In practice, the Bayesian approach results in similar (often identical)
 % values for yhat, but quite different values for py. In particular, the
@@ -163,7 +164,7 @@
 % * <http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutDiscrimClassif.html
 % Discriminative models for classification>
 % * <http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutSparseClassif.html
-% Sparse conditional models and variable selection>
+% Sparse discriminative models and variable selection>
 % * <http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutKernelClassif.html
 % Kernel-based models for classification and regression>
 % * <http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutGenClassif.html
