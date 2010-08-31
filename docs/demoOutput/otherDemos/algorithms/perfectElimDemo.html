@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>perfectElimDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="perfectElimDemo"><style type="text/css">
+      --><title>Demonstrate perfect elimination ordering</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="perfectElimDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,9 +62,7 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Non-chordal Example from Fig 3.6</a></li><li><a href="#3">Chordal Example  from fig 3.7</a></li></ul></div><pre class="codeinput"><span class="comment">% Demonstrate perfect elimination ordering</span>
-<span class="comment">% Based on Lauritzen's Saint-Flour notes 2006</span>
-</pre><h2>Non-chordal Example from Fig 3.6<a name="2"></a></h2><pre class="codeinput">G = zeros(7,7);
+  </style></head><body><div class="content"><h1>Demonstrate perfect elimination ordering</h1><!--introduction--><p>Based on Lauritzen's Saint-Flour notes 2006</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Non-chordal Example from Fig 3.6</a></li><li><a href="#2">Chordal Example  from fig 3.7</a></li></ul></div><h2>Non-chordal Example from Fig 3.6<a name="1"></a></h2><pre class="codeinput">G = zeros(7,7);
 G(1,[2 3 4])=1;
 G(2,[1 3 6])=1;
 G(3,[1 2 4 5 7])=1;
@@ -77,7 +75,7 @@ assert(isequal(G,G'));
 
 [order, chordal] = perfectElimOrder(G);
 assert(~chordal)
-</pre><h2>Chordal Example  from fig 3.7<a name="3"></a></h2><pre class="codeinput">G2 = G;
+</pre><h2>Chordal Example  from fig 3.7<a name="2"></a></h2><pre class="codeinput">G2 = G;
 G2(3,7)=0; G2(7,3)=0; <span class="comment">% remove edge</span>
 G2(1,3)=1; G2(3,1)=1; <span class="comment">% add edge</span>
 [order, chordal, cliques, numpa] = perfectElimOrder(G2)
@@ -107,9 +105,8 @@ jtree =
 </pre><p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
-% Demonstrate perfect elimination ordering
+%% Demonstrate perfect elimination ordering
 % Based on Lauritzen's Saint-Flour notes 2006
-
 %% Non-chordal Example from Fig 3.6 
 G = zeros(7,7);
 G(1,[2 3 4])=1;
