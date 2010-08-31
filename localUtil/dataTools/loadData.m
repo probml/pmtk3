@@ -18,11 +18,7 @@ function varargout = loadData(dataset, destnRoot, quiet)
 %
 % s = loadData('sat', 'C:/mydir')
 %
-%% note
-% I only discovered after writing this file, that Matlab's builtin unzip
-% function can unzip a file directly from an online url, (also supported
-% in Octave). As the current setup is working fine, I haven't changed the
-% code, but this may be worth doing in the future.  - Matt July 30, 2010
+%%
 
 %%
 if nargin < 2, destnRoot = fullfile(pmtk3Root(), 'data'); end
