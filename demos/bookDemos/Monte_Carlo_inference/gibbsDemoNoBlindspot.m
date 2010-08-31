@@ -1,6 +1,6 @@
 %% Denoising an Image Using Gibbs Sampling
 % Here we use an Ising Prior and a Gaussian likelihood.
-%PMTKslow
+%
 %%
 setSeed(4);
 sigma = 1; % noise level

@@ -62,8 +62,7 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h1>Denoising an Image Using Gibbs Sampling</h1><p>Here we use an Ising Prior and a Gaussian likelihood.</p><pre class="codeinput"><span class="comment">%PMTKslow</span>
-</pre><pre class="codeinput">setSeed(4);
+  </style></head><body><div class="content"><h1>Denoising an Image Using Gibbs Sampling</h1><!--introduction--><p>Here we use an Ising Prior and a Gaussian likelihood. PMTKslow</p><!--/introduction--><pre class="codeinput">setSeed(4);
 sigma = 1; <span class="comment">% noise level</span>
 A = loadData(<span class="string">'letterA'</span>);
 y = A.AwithoutHole;
@@ -121,12 +120,12 @@ maxIter = 100000;
         <span class="comment">%</span>
     <span class="keyword">end</span>
 <span class="keyword">end</span>
-</pre><p class="footer"><br>
+</pre><img vspace="5" hspace="5" src="gibbsDemoNoBlindspot_01.png" alt=""> <img vspace="5" hspace="5" src="gibbsDemoNoBlindspot_02.png" alt=""> <p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Denoising an Image Using Gibbs Sampling
 % Here we use an Ising Prior and a Gaussian likelihood.
-%PMTKslow
+% PMTKslow
 %%
 setSeed(4);
 sigma = 1; % noise level
