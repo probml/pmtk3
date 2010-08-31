@@ -1,4 +1,6 @@
 %% Fit an HMM and an equivalent DGM and make sure the results agree
+%
+%%
 setSeed(2); 
 %% sample data
 nstates   = 10;

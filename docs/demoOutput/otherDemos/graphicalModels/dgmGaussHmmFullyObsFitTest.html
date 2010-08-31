@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>dgmGaussHmmFullyObsFitTest</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="dgmGaussHmmFullyObsFitTest"><style type="text/css">
+      --><title>Fit an HMM and an equivalent DGM and make sure the results agree</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="dgmGaussHmmFullyObsFitTest"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,7 +62,7 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Fit an HMM and an equivalent DGM and make sure the results agree</a></li><li><a href="#2">sample data</a></li><li><a href="#3">create an hmm-like random dgm</a></li><li><a href="#4">compare results</a></li></ul></div><h2>Fit an HMM and an equivalent DGM and make sure the results agree<a name="1"></a></h2><pre class="codeinput">setSeed(2);
+  </style></head><body><div class="content"><h1>Fit an HMM and an equivalent DGM and make sure the results agree</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">sample data</a></li><li><a href="#3">create an hmm-like random dgm</a></li><li><a href="#4">compare results</a></li></ul></div><pre class="codeinput">setSeed(2);
 </pre><h2>sample data<a name="2"></a></h2><pre class="codeinput">nstates   = 10;
 d         = 13;
 T         = 11;
@@ -97,6 +97,8 @@ assert(approxeq(Ehmm.Sigma, Edgm.Sigma));
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Fit an HMM and an equivalent DGM and make sure the results agree
+%
+%%
 setSeed(2); 
 %% sample data
 nstates   = 10;

@@ -1,4 +1,6 @@
 %% Convert a dgm to a pairwise mrf
+%
+%%
 dgm = mkSprinklerDgm;
 %% first compute marginals using dgmInferNodes
 nodeBels = dgmInferNodes(dgm); 
