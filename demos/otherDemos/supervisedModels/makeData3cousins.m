@@ -1,13 +1,11 @@
+%% Simulation example from "a tale of three cousins: lasso, l2boosting, and dantzig"
+% Meinshausen, Rocha and Yu
+% [y w s X]=three_cousin(options) creates measurements y with weights w and
+% selected variables s, and matrix X options has the following fields: n -
+% number of measurements d - number of variables rho - correlation
+% coefficients sigma2 - noise variance Written by Emt and Kevin
+%%
 function [y w s X]=makeData3cousins(options)
-% Simulation example from "a tale of three cousins: lasso, l2boosting, and
-% dantzig", Meinshausen, Rocha and Yu
-% [y w s X]=three_cousin(options) creates measurements y with weights w and selected variables s, and matrix X
-% options has the following fields:
-% n - number of measurements
-% d - number of variables
-% rho - correlation coefficients
-% sigma2 - noise variance
-% Written by Emt and Kevin
 if nargin == 0, options = {}; end
 [n,d,rho,sigma2,amp] = myProcessOptions(options,'n',40,'d',60,'rho',0.1,'sigma2',0.2,'amp',1);
 
