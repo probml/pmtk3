@@ -62,8 +62,7 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h1>Computing pairwise mutual information, timing comparison</h1><pre class="codeinput"><span class="comment">%PMTKneedsStatsToolbox hist3</span>
-requireStatsToolbox
+  </style></head><body><div class="content"><h1>Computing pairwise mutual information, timing comparison</h1><!--introduction--><p>PMTKneedsStatsToolbox hist3 PMTKslow</p><!--/introduction--><pre class="codeinput">requireStatsToolbox
 loadData(<span class="string">'20news_w100'</span>);
 X = documents';
 tic; [mi] = mutualInfoAllPairsDiscrete(X);toc
@@ -72,18 +71,20 @@ tic; [mi3] = mutualInfoAllPairsMixed(X, [], <span class="string">'useSpeedup'</s
 
 approxeq(mi, mi2)
 approxeq(mi, mi3)
-</pre><pre class="codeoutput">Elapsed time is 2.343439 seconds.
-Elapsed time is 2.238687 seconds.
-Elapsed time is 57.457194 seconds.
+</pre><pre class="codeoutput">Elapsed time is 2.793218 seconds.
+Elapsed time is 2.219286 seconds.
+Elapsed time is 45.811798 seconds.
 ans =
      1
 ans =
      1
-</pre><img vspace="5" hspace="5" src="miDemo_01.png" alt=""> <p class="footer"><br>
+</pre><p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Computing pairwise mutual information, timing comparison
-%PMTKneedsStatsToolbox hist3
+% PMTKneedsStatsToolbox hist3
+% PMTKslow
+%%
 requireStatsToolbox
 loadData('20news_w100');
 X = documents';
@@ -93,5 +94,6 @@ tic; [mi3] = mutualInfoAllPairsMixed(X, [], 'useSpeedup', false); toc
 
 approxeq(mi, mi2)
 approxeq(mi, mi3)
+%%
 ##### SOURCE END #####
 --></body></html>

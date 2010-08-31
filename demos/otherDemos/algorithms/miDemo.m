@@ -1,5 +1,6 @@
 %% Computing pairwise mutual information, timing comparison
 % PMTKneedsStatsToolbox hist3
+% PMTKslow
 %%
 requireStatsToolbox
 loadData('20news_w100');
