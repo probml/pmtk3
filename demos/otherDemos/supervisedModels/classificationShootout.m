@@ -1,9 +1,9 @@
-function results = classificationShootout()
 %% Compare different classification algorithms on a number of data sets
 % Based on table 2 of 
 % ""Learning sparse Bayesian classifiers: multi-class formulation, fast
 % algorithms, and generalization bounds", Krishnapuram et al, PAMI 2005
-%
+%%
+function results = classificationShootout()
 %PMTKreallySlow (about 8 hours with current cv grid resolution)
 % See also classificationShootoutCvLambdaOnly
 % which is a faster version of this demo
