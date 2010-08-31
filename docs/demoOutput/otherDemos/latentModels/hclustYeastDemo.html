@@ -1,0 +1,158 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>Hierarchical Clustering Demo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="hclustYeastDemo"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Hierarchical Clustering Demo</h1><pre class="codeinput"><span class="comment">%PMTKneedsStatsToobox cluster, pdist, linkage</span>
+<span class="comment">%PMTKneedsBioToolbox clustergram</span>
+</pre><pre class="codeinput">requireStatsToolbox
+requireBioinfoToolbox
+loadData(<span class="string">'yeastData310'</span>) <span class="comment">% 'X', 'genes', 'times');</span>
+
+corrDist = pdist(X, <span class="string">'corr'</span>);
+clusterTree = linkage(corrDist, <span class="string">'average'</span>);
+clusters = cluster(clusterTree, <span class="string">'maxclust'</span>, 16);
+figure(1);clf
+<span class="keyword">for</span> c = 1:16
+    subplot(4,4,c);
+    plot(times,X((clusters == c),:)');
+    axis <span class="string">tight</span>
+<span class="keyword">end</span>
+suptitle(<span class="string">'Hierarchical Clustering of Profiles'</span>)
+printPmtkFigure(<span class="string">'clusterYeastHier16'</span>)
+
+
+figure(5);clf
+clustergram(X(:,2:end),<span class="string">'RowLabels'</span>,genes, <span class="string">'ColumnLabels'</span>,times(2:end))
+title(<span class="string">'hierarchical clustering'</span>)
+printPmtkFigure(<span class="string">'clusterYeastRowPerm'</span>)
+
+
+figure(6); clf
+dendrogram(linkage(corrDist, <span class="string">'average'</span>));
+title(<span class="string">'average link'</span>)
+set(gca,<span class="string">'xticklabel'</span>,<span class="string">''</span>)
+printPmtkFigure(<span class="string">'clusterYeastAvgLink'</span>)
+
+figure(7); clf
+dendrogram(linkage(corrDist, <span class="string">'complete'</span>))
+title(<span class="string">'complete link'</span>)
+set(gca,<span class="string">'xticklabel'</span>,<span class="string">''</span>)
+printPmtkFigure(<span class="string">'clusterYeastCompleteLink'</span>)
+
+figure(8); clf
+dendrogram(linkage(corrDist, <span class="string">'single'</span>))
+title(<span class="string">'single link'</span>)
+set(gca,<span class="string">'xticklabel'</span>,<span class="string">''</span>)
+printPmtkFigure(<span class="string">'clusterYeastSingleLink'</span>)
+</pre><pre class="codeoutput">Clustergram object with 310 rows of nodes and 6 columns of nodes.
+
+</pre><img vspace="5" hspace="5" src="hclustYeastDemo_01.png" alt=""> <img vspace="5" hspace="5" src="hclustYeastDemo_02.png" alt=""> <img vspace="5" hspace="5" src="hclustYeastDemo_03.png" alt=""> <img vspace="5" hspace="5" src="hclustYeastDemo_04.png" alt=""> <img vspace="5" hspace="5" src="hclustYeastDemo_05.png" alt=""> <img vspace="5" hspace="5" src="hclustYeastDemo_06.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Hierarchical Clustering Demo
+%PMTKneedsStatsToobox cluster, pdist, linkage
+%PMTKneedsBioToolbox clustergram
+%%
+requireStatsToolbox
+requireBioinfoToolbox
+loadData('yeastData310') % 'X', 'genes', 'times');
+
+corrDist = pdist(X, 'corr');
+clusterTree = linkage(corrDist, 'average');
+clusters = cluster(clusterTree, 'maxclust', 16);
+figure(1);clf
+for c = 1:16
+    subplot(4,4,c);
+    plot(times,X((clusters == c),:)');
+    axis tight
+end
+suptitle('Hierarchical Clustering of Profiles')
+printPmtkFigure('clusterYeastHier16')
+
+
+figure(5);clf
+clustergram(X(:,2:end),'RowLabels',genes, 'ColumnLabels',times(2:end))
+title('hierarchical clustering')
+printPmtkFigure('clusterYeastRowPerm')
+
+
+figure(6); clf
+dendrogram(linkage(corrDist, 'average'));
+title('average link')
+set(gca,'xticklabel','')
+printPmtkFigure('clusterYeastAvgLink')
+
+figure(7); clf
+dendrogram(linkage(corrDist, 'complete'))
+title('complete link')
+set(gca,'xticklabel','')
+printPmtkFigure('clusterYeastCompleteLink')
+
+figure(8); clf
+dendrogram(linkage(corrDist, 'single'))
+title('single link')
+set(gca,'xticklabel','')
+printPmtkFigure('clusterYeastSingleLink')
+
+##### SOURCE END #####
+--></body></html>

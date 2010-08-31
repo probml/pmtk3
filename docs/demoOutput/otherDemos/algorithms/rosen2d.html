@@ -1,0 +1,118 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>2D Rosenbrock Function</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="rosen2d"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>2D Rosenbrock Function</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="keyword">function</span> [f g H] = rosen2d(x)
+
+<span class="keyword">if</span> nargin == 0;
+   [f g H] = rosen2d(randn(100, 1));
+   <span class="keyword">return</span>
+<span class="keyword">end</span>
+
+<span class="keyword">if</span> isvector(x)
+  f = 100*(x(2) - x(1)^2)^2 + (1-x(1))^2; <span class="comment">% row or column vector</span>
+<span class="keyword">else</span>
+  f = 100*(x(:,2) - x(:,1).^2).^2 + (1-x(:,1)).^2; <span class="comment">%  each row of x is an input</span>
+<span class="keyword">end</span>
+<span class="keyword">if</span> nargout &gt; 1 <span class="comment">% column vector</span>
+  g = [-400*(x(2)-x(1)^2)*x(1)-2*(1-x(1));
+    200*(x(2)-x(1)^2)];
+<span class="keyword">end</span>
+<span class="keyword">if</span> nargout &gt; 2 <span class="comment">% 2x2 matrix</span>
+  H = [1200*x(1)^2-400*x(2)+2, -400*x(1);
+    -400*x(1), 200];
+<span class="keyword">end</span>
+
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">ans =
+    3.453007460872039e+002
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
+##### SOURCE BEGIN #####
+%% 2D Rosenbrock Function
+%
+%%
+function [f g H] = rosen2d(x)
+
+if nargin == 0;
+   [f g H] = rosen2d(randn(100, 1));
+   return
+end
+
+if isvector(x)
+  f = 100*(x(2) - x(1)^2)^2 + (1-x(1))^2; % row or column vector
+else
+  f = 100*(x(:,2) - x(:,1).^2).^2 + (1-x(:,1)).^2; %  each row of x is an input
+end
+if nargout > 1 % column vector
+  g = [-400*(x(2)-x(1)^2)*x(1)-2*(1-x(1));
+    200*(x(2)-x(1)^2)];
+end
+if nargout > 2 % 2x2 matrix
+  H = [1200*x(1)^2-400*x(2)+2, -400*x(1);
+    -400*x(1), 200];
+end
+
+end
+##### SOURCE END #####
+--></body></html>

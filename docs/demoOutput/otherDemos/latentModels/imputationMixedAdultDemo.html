@@ -1,0 +1,191 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>imputationMixedAdultDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="imputationMixedAdultDemo"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Comparison of methods for imputing missing values in UCI adult census data</a></li><li><a href="#3">For each percentage of missing, do several trials</a></li><li><a href="#5">Plot</a></li></ul></div><h2>Comparison of methods for imputing missing values in UCI adult census data<a name="1"></a></h2><pre class="codeinput"><span class="comment">%PMTKslow</span>
+<span class="comment">%PMTKauthor Kevin Murphy</span>
+<span class="comment">%PMTKneedsStatsToolbox boxplot</span>
+</pre><pre class="codeinput">requireStatsToolbox
+setSeed(0);
+adult = loadData(<span class="string">'adultCensus'</span>);
+
+X = adult.X;
+types = adult.types;
+<span class="comment">% both binary and multinomial are discrete</span>
+types(types==<span class="string">'m'</span>)=<span class="string">'d'</span>;
+types(types==<span class="string">'b'</span>)=<span class="string">'d'</span>;
+X = X(1:1000,:);
+iscont = (types==<span class="string">'c'</span>);
+X(:,iscont) = standardize(X(:,iscont));
+
+setSeed(0);
+[N, D] = size(X);
+pc = [0.01, 0.1];
+ntrials = 3;
+opts = {<span class="string">'verbose'</span>, true};
+methodNames = {<span class="string">'knn1'</span>, <span class="string">'knn5'</span>, <span class="string">'knn10'</span>, <span class="keyword">...</span>
+    <span class="string">'mix1'</span>, <span class="string">'mix5'</span>, <span class="string">'mix10'</span>};
+imputeFns = {@(X)imputeKnnMixed(X, 1), <span class="keyword">...</span>
+    @(X)imputeKnnMixed(X, 5), <span class="keyword">...</span>
+    @(X)imputeKnnMixed(X, 10), <span class="keyword">...</span>
+    @(X)imputeMixGaussDiscrete(X, 1, types, opts{:}), <span class="keyword">...</span>
+    @(X)imputeMixGaussDiscrete(X, 5, types, opts{:}),<span class="keyword">...</span>
+    @(X)imputeMixGaussDiscrete(X, 10, types, opts{:})
+    };
+nMethod = length(methodNames);
+</pre><h2>For each percentage of missing, do several trials<a name="3"></a></h2><pre class="codeinput"><span class="keyword">for</span> pidx = 1:length(pc)
+</pre><pre class="codeinput">    errors = zeros(ntrials, nMethod);
+    times = zeros(ntrials, nMethod);
+    <span class="keyword">for</span> trial = 1:ntrials
+        missing = rand(N,D) &lt; pc(pidx);
+        Xmiss = X;
+        Xmiss(missing) = NaN;
+        <span class="keyword">for</span> method = 1:nMethod
+            fn = imputeFns{method};
+            tic
+            fprintf(<span class="string">'p %3.5f, trial %d, method %s\n'</span>, pc(pidx), trial, methodNames{method});
+            Ximpute = fn(Xmiss);
+            t=toc;
+            times(trial, method) = t;
+            errors(trial, method) = imputationLossMixed(X, Ximpute, missing, types);
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><h2>Plot<a name="5"></a></h2><pre class="codeinput">    figure;
+    boxplot(errors, <span class="string">'labels'</span>, methodNames);
+    title(sprintf(<span class="string">'Loss, pcMissing = %5.3f'</span>, pc(pidx)));
+    printPmtkFigure(sprintf(<span class="string">'imputationMixedAdultError%dpc'</span>, pc(pidx)*100));
+
+    figure;
+    boxplot(times, <span class="string">'labels'</span>, methodNames);
+    title(sprintf(<span class="string">'time, pcMissing = %5.3f'</span>, pc(pidx)));
+    printPmtkFigure(sprintf(<span class="string">'imputationMixedAdultTime%dpc'</span>, pc(pidx)*100));
+</pre><pre class="codeinput"><span class="keyword">end</span> <span class="comment">% p</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Comparison of methods for imputing missing values in UCI adult census data
+%PMTKslow
+%PMTKauthor Kevin Murphy
+%PMTKneedsStatsToolbox boxplot
+%%
+requireStatsToolbox
+setSeed(0);
+adult = loadData('adultCensus');
+
+X = adult.X;
+types = adult.types;
+% both binary and multinomial are discrete
+types(types=='m')='d';
+types(types=='b')='d';
+X = X(1:1000,:);
+iscont = (types=='c');
+X(:,iscont) = standardize(X(:,iscont));
+
+setSeed(0);
+[N, D] = size(X);
+pc = [0.01, 0.1];
+ntrials = 3;
+opts = {'verbose', true};
+methodNames = {'knn1', 'knn5', 'knn10', ...
+    'mix1', 'mix5', 'mix10'};
+imputeFns = {@(X)imputeKnnMixed(X, 1), ...
+    @(X)imputeKnnMixed(X, 5), ...
+    @(X)imputeKnnMixed(X, 10), ...
+    @(X)imputeMixGaussDiscrete(X, 1, types, opts{:}), ...
+    @(X)imputeMixGaussDiscrete(X, 5, types, opts{:}),...
+    @(X)imputeMixGaussDiscrete(X, 10, types, opts{:})
+    };
+nMethod = length(methodNames);
+
+%% For each percentage of missing, do several trials
+for pidx = 1:length(pc)
+    errors = zeros(ntrials, nMethod);
+    times = zeros(ntrials, nMethod);
+    for trial = 1:ntrials
+        missing = rand(N,D) < pc(pidx);
+        Xmiss = X;
+        Xmiss(missing) = NaN;
+        for method = 1:nMethod
+            fn = imputeFns{method};
+            tic
+            fprintf('p %3.5f, trial %d, method %s\n', pc(pidx), trial, methodNames{method});
+            Ximpute = fn(Xmiss);
+            t=toc;
+            times(trial, method) = t;
+            errors(trial, method) = imputationLossMixed(X, Ximpute, missing, types);
+        end
+    end
+    %% Plot
+    figure;
+    boxplot(errors, 'labels', methodNames);
+    title(sprintf('Loss, pcMissing = %5.3f', pc(pidx)));
+    printPmtkFigure(sprintf('imputationMixedAdultError%dpc', pc(pidx)*100));
+    
+    figure;
+    boxplot(times, 'labels', methodNames);
+    title(sprintf('time, pcMissing = %5.3f', pc(pidx)));
+    printPmtkFigure(sprintf('imputationMixedAdultTime%dpc', pc(pidx)*100));
+    
+end % p
+##### SOURCE END #####
+--></body></html>

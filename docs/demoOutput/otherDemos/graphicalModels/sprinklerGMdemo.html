@@ -1,0 +1,191 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>Water sprinkler network Example</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="sprinklerGMdemo"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Water sprinkler network Example</h1><!--introduction--><p>Make DAG    C   / \  v  v  S  R   \/   v   W</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Create the dgm</a></li><li><a href="#3">Dislay the graph</a></li><li><a href="#4">Display joint</a></li><li><a href="#5">Make sure it agrees with low level code</a></li><li><a href="#6">Inference</a></li></ul></div><pre class="codeinput">C = 1; S = 2; R = 3; W = 4;
+nvars = 4;
+</pre><h2>Create the dgm<a name="2"></a></h2><pre class="codeinput">dgmJ = mkSprinklerDgm(<span class="string">'infEngine'</span>, <span class="string">'jtree'</span>);
+dgmV = mkSprinklerDgm(<span class="string">'infEngine'</span>, <span class="string">'varelim'</span>);
+dgmE = mkSprinklerDgm(<span class="string">'infEngine'</span>, <span class="string">'enum'</span>);
+</pre><h2>Dislay the graph<a name="3"></a></h2><pre class="codeinput"><span class="keyword">if</span> ~isOctave
+    drawNetwork(<span class="string">'-adjMatrix'</span>, dgmJ.G, <span class="string">'-nodeLabels'</span>, {<span class="string">'C'</span>, <span class="string">'S'</span>, <span class="string">'R'</span>, <span class="string">'W'</span>},<span class="keyword">...</span>
+        <span class="string">'-layout'</span>, Treelayout);
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="sprinklerGMdemo_01.png" alt=""> <h2>Display joint<a name="4"></a></h2><pre class="codeinput">joint = dgmInferQuery(dgmV, [C S R W]);
+lab = cellfun(@(x) {sprintf(<span class="string">'%d '</span>,x)}, num2cell(ind2subv([2 2 2 2],1:16),2));
+figure;
+bar(joint.T(:))
+set(gca,<span class="string">'xtick'</span>,1:16);
+xticklabelRot(lab, 90, 10, 0.01)
+title(<span class="string">'joint distribution of water sprinkler UGM'</span>)
+</pre><img vspace="5" hspace="5" src="sprinklerGMdemo_02.png" alt=""> <h2>Make sure it agrees with low level code<a name="5"></a></h2><pre class="codeinput">fac{C} = tabularFactorCreate(reshape([0.5 0.5], 2, 1), [C]);
+fac{S} = tabularFactorCreate(reshape([0.5 0.9 0.5 0.1], 2, 2), [C S]);
+fac{R} = tabularFactorCreate(reshape([0.8 0.2 0.2 0.8], 2, 2), [C R]);
+fac{W} = tabularFactorCreate(reshape([1 0.1 0.1 0.01 0 0.9 0.9 0.99], 2, 2, 2), [S R W]);
+jointF = tabularFactorMultiply(fac);
+assert(tfequal(joint, jointF));
+</pre><h2>Inference<a name="6"></a></h2><pre class="codeinput">FALSE = 1; TRUE  = 2;
+</pre><pre class="codeinput">pWj = dgmInferQuery(dgmJ, W);
+pWv = dgmInferQuery(dgmV, W);
+pWe = dgmInferQuery(dgmE, W);
+assert(tfequal(pWj, pWv, pWe))
+assert(approxeq(pWj.T(TRUE), 0.6471), 1e-4)
+</pre><pre class="codeinput">pSWj = dgmInferQuery(dgmJ, [S, W]);
+pSWv = dgmInferQuery(dgmV, [S, W]);
+pSWe = dgmInferQuery(dgmE, [S, W]);
+assert(tfequal(pSWj, pSWv, pSWe));
+assert(approxeq(pSWj.T(TRUE, TRUE), 0.2781, 1e-4));
+</pre><pre class="codeinput">clamped = sparsevec(W, TRUE, nvars);
+[pSgWj, logZj] = dgmInferQuery(dgmJ, S, <span class="string">'clamped'</span>, clamped);
+[pSgWv, logZv] = dgmInferQuery(dgmV, S, <span class="string">'clamped'</span>, clamped);
+[pSgWe, logZe] = dgmInferQuery(dgmE, S, <span class="string">'clamped'</span>, clamped);
+logZ = dgmLogprob(dgmJ, <span class="string">'clamped'</span>, clamped);
+assert(approxeq(logZj, logZv));
+assert(approxeq(logZv, logZe));
+assert(approxeq(logZe, logZ));
+assert(tfequal(pSgWj, pSgWv, pSgWe));
+assert(approxeq(pSgWj.T(TRUE), 0.4298, 1e-4));
+</pre><pre class="codeinput">clamped = sparsevec([W R], [TRUE TRUE], nvars);
+pSgWRj  = dgmInferQuery(dgmJ, S, <span class="string">'clamped'</span>, clamped);
+pSgWRv  = dgmInferQuery(dgmV, S, <span class="string">'clamped'</span>, clamped);
+pSgWRe  = dgmInferQuery(dgmE, S, <span class="string">'clamped'</span>, clamped);
+assert(tfequal(pSgWRj, pSgWRv, pSgWRe));
+assert(approxeq(pSgWRj.T(TRUE), 0.1945, 1e-4)); <span class="comment">% explaining away</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Water sprinkler network Example
+%
+% Make DAG
+%    C
+%   / \
+%  v  v
+%  S  R
+%   \/
+%   v
+%   W
+%%
+C = 1; S = 2; R = 3; W = 4;
+nvars = 4; 
+%% Create the dgm
+dgmJ = mkSprinklerDgm('infEngine', 'jtree'); 
+dgmV = mkSprinklerDgm('infEngine', 'varelim'); 
+dgmE = mkSprinklerDgm('infEngine', 'enum'); 
+%% Dislay the graph
+if ~isOctave
+    drawNetwork('-adjMatrix', dgmJ.G, '-nodeLabels', {'C', 'S', 'R', 'W'},...
+        '-layout', Treelayout);
+end
+%% Display joint
+joint = dgmInferQuery(dgmV, [C S R W]);
+lab = cellfun(@(x) {sprintf('%d ',x)}, num2cell(ind2subv([2 2 2 2],1:16),2));
+figure;
+bar(joint.T(:))
+set(gca,'xtick',1:16);
+xticklabelRot(lab, 90, 10, 0.01)
+title('joint distribution of water sprinkler UGM')
+%% Make sure it agrees with low level code
+fac{C} = tabularFactorCreate(reshape([0.5 0.5], 2, 1), [C]);
+fac{S} = tabularFactorCreate(reshape([0.5 0.9 0.5 0.1], 2, 2), [C S]);
+fac{R} = tabularFactorCreate(reshape([0.8 0.2 0.2 0.8], 2, 2), [C R]);
+fac{W} = tabularFactorCreate(reshape([1 0.1 0.1 0.01 0 0.9 0.9 0.99], 2, 2, 2), [S R W]);
+jointF = tabularFactorMultiply(fac);
+assert(tfequal(joint, jointF)); 
+%% Inference
+FALSE = 1; TRUE  = 2;
+%%
+pWj = dgmInferQuery(dgmJ, W);
+pWv = dgmInferQuery(dgmV, W);
+pWe = dgmInferQuery(dgmE, W);
+assert(tfequal(pWj, pWv, pWe))
+assert(approxeq(pWj.T(TRUE), 0.6471), 1e-4) 
+%%
+pSWj = dgmInferQuery(dgmJ, [S, W]); 
+pSWv = dgmInferQuery(dgmV, [S, W]);
+pSWe = dgmInferQuery(dgmE, [S, W]);
+assert(tfequal(pSWj, pSWv, pSWe)); 
+assert(approxeq(pSWj.T(TRUE, TRUE), 0.2781, 1e-4)); 
+%%
+clamped = sparsevec(W, TRUE, nvars); 
+[pSgWj, logZj] = dgmInferQuery(dgmJ, S, 'clamped', clamped);
+[pSgWv, logZv] = dgmInferQuery(dgmV, S, 'clamped', clamped);
+[pSgWe, logZe] = dgmInferQuery(dgmE, S, 'clamped', clamped);
+logZ = dgmLogprob(dgmJ, 'clamped', clamped); 
+assert(approxeq(logZj, logZv));
+assert(approxeq(logZv, logZe)); 
+assert(approxeq(logZe, logZ)); 
+assert(tfequal(pSgWj, pSgWv, pSgWe)); 
+assert(approxeq(pSgWj.T(TRUE), 0.4298, 1e-4)); 
+%%
+clamped = sparsevec([W R], [TRUE TRUE], nvars); 
+pSgWRj  = dgmInferQuery(dgmJ, S, 'clamped', clamped);
+pSgWRv  = dgmInferQuery(dgmV, S, 'clamped', clamped);
+pSgWRe  = dgmInferQuery(dgmE, S, 'clamped', clamped);
+assert(tfequal(pSgWRj, pSgWRv, pSgWRe)); 
+assert(approxeq(pSgWRj.T(TRUE), 0.1945, 1e-4)); % explaining away
+
+
+
+
+##### SOURCE END #####
+--></body></html>

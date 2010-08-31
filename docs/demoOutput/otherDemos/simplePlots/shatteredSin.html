@@ -1,0 +1,131 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>Shattered sin</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="shatteredSin"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Shattered sin</h1><!--introduction--><!--/introduction--><pre class="codeinput">domain = 0:0.0005:1.005;
+f = @(x)sin(50*x);
+
+hollow = [0.03,0.04,0.05,0.15,0.28,0.52,0.66,0.67,0.8];
+solid =  [0.22,0.23,0.35,0.58,0.6,0.71,0.86,0.97,0.98];
+
+
+plot(domain,f(domain),<span class="string">'-r'</span>,<span class="string">'LineWidth'</span>,3); hold <span class="string">on</span>;
+
+plot(hollow,zeros(1,numel(hollow)),<span class="string">'sg'</span>,<span class="string">'LineWidth'</span>,2,<span class="string">'MarkerSize'</span>,12);
+plot(solid,zeros(1,numel(solid)),<span class="string">'sb'</span>,<span class="string">'LineWidth'</span>,6,<span class="string">'MarkerSize'</span>,6);
+
+
+set(gca,<span class="string">'XTick'</span>     ,0:0.2:1,<span class="keyword">...</span>
+        <span class="string">'YTick'</span>     ,-1:1,<span class="keyword">...</span>
+        <span class="string">'XLim'</span>      ,[0,1.005],<span class="keyword">...</span>
+        <span class="string">'YLim'</span>      ,[-1.0,1.0],<span class="keyword">...</span>
+        <span class="string">'FontSize'</span>  ,14,<span class="keyword">...</span>
+        <span class="string">'LineWidth'</span> ,2,<span class="keyword">...</span>
+        <span class="string">'box'</span>       ,<span class="string">'on'</span>);
+
+xlabel(<span class="string">'x'</span>,<span class="string">'FontSize'</span>,16);
+ylabel(<span class="string">'sin(50x)'</span>,<span class="string">'FontSize'</span>,16);
+
+maximizeFigure();
+p = get(gcf,<span class="string">'Position'</span>);
+p(4) = p(4) / 2;
+set(gcf,<span class="string">'Position'</span>,p);
+</pre><img vspace="5" hspace="5" src="shatteredSin_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Shattered sin
+%
+%%
+domain = 0:0.0005:1.005;
+f = @(x)sin(50*x);
+
+hollow = [0.03,0.04,0.05,0.15,0.28,0.52,0.66,0.67,0.8];
+solid =  [0.22,0.23,0.35,0.58,0.6,0.71,0.86,0.97,0.98];
+
+
+plot(domain,f(domain),'-r','LineWidth',3); hold on;
+
+plot(hollow,zeros(1,numel(hollow)),'sg','LineWidth',2,'MarkerSize',12);
+plot(solid,zeros(1,numel(solid)),'sb','LineWidth',6,'MarkerSize',6);
+
+
+set(gca,'XTick'     ,0:0.2:1,...
+        'YTick'     ,-1:1,...
+        'XLim'      ,[0,1.005],...
+        'YLim'      ,[-1.0,1.0],...
+        'FontSize'  ,14,...
+        'LineWidth' ,2,...
+        'box'       ,'on');
+
+xlabel('x','FontSize',16);
+ylabel('sin(50x)','FontSize',16);
+
+maximizeFigure();
+p = get(gcf,'Position');
+p(4) = p(4) / 2;
+set(gcf,'Position',p);
+
+
+
+##### SOURCE END #####
+--></body></html>

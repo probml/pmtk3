@@ -1,0 +1,200 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>Reproduce fig 4.11 of "Elements of statistical learning" 2e</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="fisherDiscrimVowelDemo"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Reproduce fig 4.11 of "Elements of statistical learning" 2e</h1><!--introduction--><!--/introduction--><pre class="codeinput">loadData(<span class="string">'vowelTrain'</span>); <span class="comment">% from http://www-stat.stanford.edu/~tibs/ElemStatLearn/datasets/vowel.train</span>
+[N,D] = size(Xtrain);
+C = max(ytrain);
+
+<span class="comment">% PCA projection to 2d</span>
+[B,Z] = pcaPmtk(Xtrain, 2);
+muC = zeros(C,D);
+<span class="keyword">for</span> c=1:C
+  muC(c,:) = mean(Xtrain(ytrain==c,:),1);
+<span class="keyword">end</span>
+[Bmu, muC2d] = pcaPmtk(muC, 2);
+
+
+<span class="comment">%colors = pmtkColors;</span>
+<span class="comment">% We try to match the Hastie color scheme</span>
+lightblue = [55 155 255] / 255;
+orange    = [255 128 0   ] / 255;
+green     = [0   255 64  ] / 255;
+magenta   = [255 0   128 ] / 255;
+green2    = [132 199 71  ] / 255;
+cyan      = [61  220 176 ] / 255;
+yellow    = [255 255 0   ] / 255;
+brown     = [128 64  0   ] / 255;
+blue      = [0   0   255 ] / 255;
+red      = [255   0   0 ] / 255;
+black      = [0   0   0 ] / 255;
+gray      = [128   128   128 ] / 255;
+
+colors = {black, blue, brown, magenta, orange, cyan, gray, yellow, black, red, green2};
+
+<span class="comment">%muC2d = -muC2d;</span>
+<span class="comment">%Z  = -Z;</span>
+figure; hold <span class="string">on</span>
+symbols = <span class="string">'+ovd*.xs^d&gt;&lt;ph'</span>;
+<span class="keyword">for</span> c=1:C
+  ndx = ytrain==c;
+  plot(Z(ndx,1), Z(ndx,2), symbols(c), <span class="string">'color'</span>, colors{c},<span class="keyword">...</span>
+    <span class="string">'linewidth'</span>, 2, <span class="string">'markersize'</span>, 8);
+  plot(muC2d(c,1), muC2d(c,2),  <span class="string">'o'</span>, <span class="string">'color'</span>, colors{c},<span class="keyword">...</span>
+    <span class="string">'linewidth'</span>, 5, <span class="string">'markersize'</span>, 15);
+  <span class="comment">%text(muC2d(c,1), muC2d(c,2), sprintf('%d', c), 'fontsize', 20);</span>
+<span class="keyword">end</span>
+printPmtkFigure(<span class="string">'fisherDiscrimVowelPCA'</span>)
+
+<span class="comment">% Fisher projection to 2d</span>
+[W] = fisherLdaFit(Xtrain, ytrain, 2);
+W(:,1) = -W(:,1); <span class="comment">% make it look like the Hastie figure</span>
+Xlda = Xtrain*W;
+model = discrimAnalysisFit(Xlda, ytrain, <span class="string">'linear'</span>);
+
+<span class="comment">% Plot</span>
+stipple = true;
+plotDecisionBoundary(Xlda, ytrain, @(X) discrimAnalysisPredict(model,X), <span class="keyword">...</span>
+  <span class="string">'stipple'</span>, stipple, <span class="string">'colors'</span>, colors);
+hold <span class="string">on</span>
+muC2dlda =  muC*W;
+<span class="keyword">for</span> c=1:C
+  ndx = ytrain==c;
+  plot(muC2dlda(c,1), muC2dlda(c,2),  <span class="string">'o'</span>, <span class="string">'color'</span>, colors{c},<span class="keyword">...</span>
+    <span class="string">'linewidth'</span>, 5, <span class="string">'markersize'</span>, 15);
+  <span class="comment">%text(muC2dlda(c,1), muC2dlda(c,2), sprintf('%d', c), 'fontsize', 20);</span>
+<span class="keyword">end</span>
+printPmtkFigure(<span class="string">'fisherDiscrimVowelLDA'</span>)
+</pre><img vspace="5" hspace="5" src="fisherDiscrimVowelDemo_01.png" alt=""> <img vspace="5" hspace="5" src="fisherDiscrimVowelDemo_02.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Reproduce fig 4.11 of "Elements of statistical learning" 2e
+%
+%%
+loadData('vowelTrain'); % from http://www-stat.stanford.edu/~tibs/ElemStatLearn/datasets/vowel.train
+[N,D] = size(Xtrain);
+C = max(ytrain);
+
+% PCA projection to 2d
+[B,Z] = pcaPmtk(Xtrain, 2);
+muC = zeros(C,D);
+for c=1:C
+  muC(c,:) = mean(Xtrain(ytrain==c,:),1);
+end
+[Bmu, muC2d] = pcaPmtk(muC, 2);
+
+
+%colors = pmtkColors;
+% We try to match the Hastie color scheme
+lightblue = [55 155 255] / 255;
+orange    = [255 128 0   ] / 255;
+green     = [0   255 64  ] / 255;
+magenta   = [255 0   128 ] / 255;
+green2    = [132 199 71  ] / 255;
+cyan      = [61  220 176 ] / 255;
+yellow    = [255 255 0   ] / 255;
+brown     = [128 64  0   ] / 255;
+blue      = [0   0   255 ] / 255;
+red      = [255   0   0 ] / 255;
+black      = [0   0   0 ] / 255;
+gray      = [128   128   128 ] / 255;
+
+colors = {black, blue, brown, magenta, orange, cyan, gray, yellow, black, red, green2};
+
+%muC2d = -muC2d;
+%Z  = -Z;
+figure; hold on
+symbols = '+ovd*.xs^d><ph';
+for c=1:C
+  ndx = ytrain==c;
+  plot(Z(ndx,1), Z(ndx,2), symbols(c), 'color', colors{c},...
+    'linewidth', 2, 'markersize', 8);
+  plot(muC2d(c,1), muC2d(c,2),  'o', 'color', colors{c},...
+    'linewidth', 5, 'markersize', 15);
+  %text(muC2d(c,1), muC2d(c,2), sprintf('%d', c), 'fontsize', 20);
+end
+printPmtkFigure('fisherDiscrimVowelPCA')
+
+% Fisher projection to 2d
+[W] = fisherLdaFit(Xtrain, ytrain, 2);
+W(:,1) = -W(:,1); % make it look like the Hastie figure
+Xlda = Xtrain*W;
+model = discrimAnalysisFit(Xlda, ytrain, 'linear');
+
+% Plot
+stipple = true;
+plotDecisionBoundary(Xlda, ytrain, @(X) discrimAnalysisPredict(model,X), ...
+  'stipple', stipple, 'colors', colors); 
+hold on
+muC2dlda =  muC*W;
+for c=1:C
+  ndx = ytrain==c;
+  plot(muC2dlda(c,1), muC2dlda(c,2),  'o', 'color', colors{c},...
+    'linewidth', 5, 'markersize', 15);
+  %text(muC2dlda(c,1), muC2dlda(c,2), sprintf('%d', c), 'fontsize', 20);
+end
+printPmtkFigure('fisherDiscrimVowelLDA')
+
+
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,198 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>Bernoulli Risk Function Demo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="riskFnBernoulli"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Bernoulli Risk Function Demo</h1><!--introduction--><!--/introduction--><pre class="codeinput">Ns = [1 10 50];
+<span class="keyword">for</span> i=1:length(Ns)
+  n = Ns(i);
+  figure();
+
+  ps = 0:0.01:1;
+
+  R = ps.*(1-ps)/n;
+  plot(ps, R, <span class="string">'b-o'</span>);
+  hold <span class="string">on</span>
+
+  a = 1;  b = a;
+  R = (n*ps.*(1-ps)) ./ ((a+b+n)^2) + ((n*ps + a)./(a+b+n) - ps).^2;
+  plot(ps, R, <span class="string">'r:x'</span>);
+
+
+  a = sqrt(n/4); b = a;
+  R = (n*ps.*(1-ps)) ./ ((a+b+n)^2) + ((n*ps + a)./(a+b+n) - ps).^2;
+  plot(ps, R, <span class="string">'g--*'</span>);
+
+  str = sprintf(<span class="string">'sqrt(n/4)'</span>);
+  legend(<span class="string">'mle'</span>, <span class="string">'Beta(1,1)'</span>, sprintf(<span class="string">'Beta(%s,%s)'</span>,str,str), <span class="string">'location'</span>, <span class="string">'southwest'</span>)
+  xlabel(<span class="string">'\theta'</span>)
+  ylabel(<span class="string">'R'</span>)
+  title(sprintf(<span class="string">'risk functions for n=%d'</span>,n))
+  printPmtkFigure(sprintf(<span class="string">'riskFnBernoulliN%d'</span>, n));
+<span class="keyword">end</span>
+
+ns = 1:40;
+figure();
+R = 1./(6*ns);
+plot(ns,R, <span class="string">'bo-'</span>, <span class="string">'linewidth'</span>, 2);
+hold <span class="string">on</span>
+
+R = 1./(6*(2+ns));
+plot(ns,R, <span class="string">'r:x'</span>, <span class="string">'linewidth'</span>, 2);
+
+R = ns./(4* (ns+sqrt(ns)).^2);
+plot(ns,R, <span class="string">'g--*'</span>, <span class="string">'linewidth'</span>, 2);
+
+xlabel(<span class="string">'n'</span>);
+ylabel(<span class="string">'bayes risk for uniform prior'</span>)
+legend(<span class="string">'mle'</span>, <span class="string">'Beta(1,1)'</span>, sprintf(<span class="string">'Beta(%s,%s)'</span>,str,str), <span class="string">'location'</span>, <span class="string">'northeast'</span>);
+printPmtkFigure(<span class="string">'riskFnBernoulliBayes'</span>);
+
+
+ns = 15:40;
+
+figure();
+R = 1./(6*ns);
+plot(ns,R, <span class="string">'bo-'</span>, <span class="string">'linewidth'</span>, 2);
+hold <span class="string">on</span>
+
+R = 1./(6*(2+ns));
+plot(ns,R, <span class="string">'r:x'</span>, <span class="string">'linewidth'</span>, 2);
+
+R = ns./(4* (ns+sqrt(ns)).^2);
+plot(ns,R, <span class="string">'g--*'</span>, <span class="string">'linewidth'</span>, 2);
+
+xlabel(<span class="string">'n'</span>);
+ylabel(<span class="string">'bayes risk for uniform prior'</span>)
+legend(<span class="string">'mle'</span>, <span class="string">'Beta(1,1)'</span>, sprintf(<span class="string">'Beta(%s,%s)'</span>,str,str), <span class="string">'location'</span>, <span class="string">'northeast'</span>);
+printPmtkFigure(<span class="string">'riskFnBernoulliBayes15to40'</span>);
+</pre><img vspace="5" hspace="5" src="riskFnBernoulli_01.png" alt=""> <img vspace="5" hspace="5" src="riskFnBernoulli_02.png" alt=""> <img vspace="5" hspace="5" src="riskFnBernoulli_03.png" alt=""> <img vspace="5" hspace="5" src="riskFnBernoulli_04.png" alt=""> <img vspace="5" hspace="5" src="riskFnBernoulli_05.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Bernoulli Risk Function Demo
+%
+%%
+Ns = [1 10 50];
+for i=1:length(Ns)
+  n = Ns(i);
+  figure();
+
+  ps = 0:0.01:1;
+  
+  R = ps.*(1-ps)/n;
+  plot(ps, R, 'b-o');
+  hold on
+  
+  a = 1;  b = a;
+  R = (n*ps.*(1-ps)) ./ ((a+b+n)^2) + ((n*ps + a)./(a+b+n) - ps).^2;
+  plot(ps, R, 'r:x');
+  
+  
+  a = sqrt(n/4); b = a;
+  R = (n*ps.*(1-ps)) ./ ((a+b+n)^2) + ((n*ps + a)./(a+b+n) - ps).^2;
+  plot(ps, R, 'gREPLACE_WITH_DASH_DASH*');
+  
+  str = sprintf('sqrt(n/4)');
+  legend('mle', 'Beta(1,1)', sprintf('Beta(%s,%s)',str,str), 'location', 'southwest')
+  xlabel('\theta')
+  ylabel('R')
+  title(sprintf('risk functions for n=%d',n))
+  printPmtkFigure(sprintf('riskFnBernoulliN%d', n));
+end
+
+ns = 1:40;
+figure();
+R = 1./(6*ns);
+plot(ns,R, 'bo-', 'linewidth', 2);
+hold on
+
+R = 1./(6*(2+ns));
+plot(ns,R, 'r:x', 'linewidth', 2);
+
+R = ns./(4* (ns+sqrt(ns)).^2);
+plot(ns,R, 'gREPLACE_WITH_DASH_DASH*', 'linewidth', 2);
+
+xlabel('n');
+ylabel('bayes risk for uniform prior')
+legend('mle', 'Beta(1,1)', sprintf('Beta(%s,%s)',str,str), 'location', 'northeast');
+printPmtkFigure('riskFnBernoulliBayes'); 
+
+
+ns = 15:40;
+
+figure();
+R = 1./(6*ns);
+plot(ns,R, 'bo-', 'linewidth', 2);
+hold on
+
+R = 1./(6*(2+ns));
+plot(ns,R, 'r:x', 'linewidth', 2);
+
+R = ns./(4* (ns+sqrt(ns)).^2);
+plot(ns,R, 'gREPLACE_WITH_DASH_DASH*', 'linewidth', 2);
+
+xlabel('n');
+ylabel('bayes risk for uniform prior')
+legend('mle', 'Beta(1,1)', sprintf('Beta(%s,%s)',str,str), 'location', 'northeast');
+printPmtkFigure('riskFnBernoulliBayes15to40'); 
+##### SOURCE END #####
+--></body></html>
