@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>hastieSvmLrDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="hastieSvmLrDemo"><style type="text/css">
+      --><title>Reproduce figures 12.2, 12.3 and 12.5 in Hastie ESL 2nd ed.</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-31"><meta name="m-file" content="hastieSvmLrDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,8 +62,7 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Reproduce figures 12.2, 12.3 and 12.5 in Hastie ESL 2nd ed.</a></li><li><a href="#2">Generating Models</a></li><li><a href="#3">Create data</a></li><li><a href="#4">Create the generative model to plot the Bayesian decision boundary</a></li><li><a href="#6">Plot the Bayesian decision boundary</a></li><li><a href="#8">Fit the SVM</a></li><li><a href="#9">Plot the SVM decision boundary and the +-1 margins</a></li><li><a href="#10">Find support vectors on margin</a></li><li><a href="#12">Fit LR</a></li><li><a href="#13">Plot the LR decision boundary and the 25%/75% margins</a></li><li><a href="#15">Annotate</a></li></ul></div><h2>Reproduce figures 12.2, 12.3 and 12.5 in Hastie ESL 2nd ed.<a name="1"></a></h2><pre class="codeinput"><span class="comment">%PMTKneedsOptimToolbox</span>
-</pre><h2>Generating Models<a name="2"></a></h2><p>Generate data as per Hastie 2ed, pg 16: two classes, blue and orange, each with a mixture of 10, 2D Gaussians.</p><pre class="codeinput"><span class="comment">%PMTKslow</span>
+  </style></head><body><div class="content"><h1>Reproduce figures 12.2, 12.3 and 12.5 in Hastie ESL 2nd ed.</h1><!--introduction--><p>PMTKneedsOptimToolbox</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Generating Models</a></li><li><a href="#2">Create data</a></li><li><a href="#3">Create the generative model to plot the Bayesian decision boundary</a></li><li><a href="#5">Plot the Bayesian decision boundary</a></li><li><a href="#7">Fit the SVM</a></li><li><a href="#8">Plot the SVM decision boundary and the +-1 margins</a></li><li><a href="#9">Find support vectors on margin</a></li><li><a href="#11">Fit LR</a></li><li><a href="#12">Plot the LR decision boundary and the 25%/75% margins</a></li><li><a href="#14">Annotate</a></li></ul></div><h2>Generating Models<a name="1"></a></h2><p>Generate data as per Hastie 2ed, pg 16: two classes, blue and orange, each with a mixture of 10, 2D Gaussians.</p><pre class="codeinput"><span class="comment">%PMTKslow</span>
 requireOptimToolbox
 setSeed(42);
 ncenters = 10;
@@ -90,7 +89,7 @@ data = loadHastieMixtureData();
 <span class="keyword">end</span>
 blueMix.mu   = means(1:10,   :)';
 orangeMix.mu = means(11:end, :)';
-</pre><h2>Create data<a name="3"></a></h2><pre class="codeinput"><span class="keyword">if</span> regenerateData
+</pre><h2>Create data<a name="2"></a></h2><pre class="codeinput"><span class="keyword">if</span> regenerateData
     ntrain = 100; <span class="comment">% per class</span>
     Xtrain = [mixGaussSample(blueMix.mu, blueMix.Sigma, blueMix.mixweight, ntrain);
               mixGaussSample(orangeMix.mu, orangeMix.Sigma, orangeMix.mixweight, ntrain)];
@@ -106,7 +105,7 @@ Xtest = [mixGaussSample(blueMix.mu, blueMix.Sigma, blueMix.mixweight  , ntest);
          mixGaussSample(orangeMix.mu, orangeMix.Sigma, orangeMix.mixweight, ntest)];
 ytest = [-1*ones(ntest, 1); ones(ntest, 1)];
 [Xtest, ytest] = shuffleRows(Xtest, ytest);
-</pre><h2>Create the generative model to plot the Bayesian decision boundary<a name="4"></a></h2><pre class="codeinput">blueFullModel = mixModelCreate(condGaussCpdCreate(blueMix.mu, blueMix.Sigma),<span class="keyword">...</span>
+</pre><h2>Create the generative model to plot the Bayesian decision boundary<a name="3"></a></h2><pre class="codeinput">blueFullModel = mixModelCreate(condGaussCpdCreate(blueMix.mu, blueMix.Sigma),<span class="keyword">...</span>
     <span class="string">'gauss'</span>, numel(blueMix.mixweight), blueMix.mixweight);
 orangeFullModel = mixModelCreate(condGaussCpdCreate(orangeMix.mu, orangeMix.Sigma),<span class="keyword">...</span>
     <span class="string">'gauss'</span>, numel(orangeMix.mixweight), orangeMix.mixweight);
@@ -148,13 +147,13 @@ penalties = {<span class="string">'svm'</span>, <span class="string">'logreg'</s
         nc = 1;
     <span class="keyword">end</span>
     <span class="keyword">for</span> i=1:nc
-</pre><h2>Plot the Bayesian decision boundary<a name="6"></a></h2><pre class="codeinput">        plotDecisionBoundary(Xtrain, ytrain, bayesPredictFn,<span class="keyword">...</span>
+</pre><h2>Plot the Bayesian decision boundary<a name="5"></a></h2><pre class="codeinput">        plotDecisionBoundary(Xtrain, ytrain, bayesPredictFn,<span class="keyword">...</span>
             <span class="string">'contourProps'</span>   , contourProps                ,<span class="keyword">...</span>
             <span class="string">'markerLineWidth'</span>, 1.5);
         hold <span class="string">on</span>;
-</pre><pre class="codeinput">        <span class="keyword">switch</span> penalty
+</pre><img vspace="5" hspace="5" src="hastieSvmLrDemo_01.png" alt=""> <img vspace="5" hspace="5" src="hastieSvmLrDemo_05.png" alt=""> <img vspace="5" hspace="5" src="hastieSvmLrDemo_09.png" alt=""> <img vspace="5" hspace="5" src="hastieSvmLrDemo_13.png" alt=""> <img vspace="5" hspace="5" src="hastieSvmLrDemo_17.png" alt=""> <img vspace="5" hspace="5" src="hastieSvmLrDemo_20.png" alt=""> <pre class="codeinput">        <span class="keyword">switch</span> penalty
             <span class="keyword">case</span> <span class="string">'svm'</span>
-</pre><h2>Fit the SVM<a name="8"></a></h2><pre class="codeinput">                svmModel = svmFit(Xtrain, ytrain, <span class="string">'C'</span>, Cvalues(i),<span class="keyword">...</span>
+</pre><h2>Fit the SVM<a name="7"></a></h2><pre class="codeinput">                svmModel = svmFit(Xtrain, ytrain, <span class="string">'C'</span>, Cvalues(i),<span class="keyword">...</span>
                  <span class="string">'kernel'</span>, kernel{j}, kernelArgs{j}{:}, <span class="keyword">...</span>
                  <span class="string">'fitFn'</span> , @svmQPclassifFit);
 
@@ -162,30 +161,30 @@ penalties = {<span class="string">'svm'</span>, <span class="string">'logreg'</s
                 trainError = mean(ytrain ~= yhatTrain);
                 [yhatTest, ftest] = svmPredict(svmModel, Xtest);
                 testError = mean(ytest ~= yhatTest);
-</pre><h2>Plot the SVM decision boundary and the +-1 margins<a name="9"></a></h2><p>These are contours of the function values f:</p><pre class="codeinput">                plotContour(@(x)argout(2, @svmPredict, svmModel, x), <span class="keyword">...</span>
+</pre><h2>Plot the SVM decision boundary and the +-1 margins<a name="8"></a></h2><p>These are contours of the function values f:</p><pre class="codeinput">                plotContour(@(x)argout(2, @svmPredict, svmModel, x), <span class="keyword">...</span>
                     axis(), [0 0], <span class="string">'-k'</span>, <span class="string">'linewidth'</span>, 1.5);
 
                 [h,p,c] = plotContour(@(x)argout(2, @svmPredict, svmModel, x), <span class="keyword">...</span>
                     axis(), [-1 1], <span class="string">'--k'</span>, <span class="string">'linewidth'</span>, 1);
                 t = sprintf(<span class="string">'C = %g'</span>,  Cvalues(i));
-</pre><h2>Find support vectors on margin<a name="10"></a></h2><pre class="codeinput">                SV = Xtrain(svmModel.svi, :);
+</pre><img vspace="5" hspace="5" src="hastieSvmLrDemo_02.png" alt=""> <img vspace="5" hspace="5" src="hastieSvmLrDemo_06.png" alt=""> <img vspace="5" hspace="5" src="hastieSvmLrDemo_10.png" alt=""> <img vspace="5" hspace="5" src="hastieSvmLrDemo_14.png" alt=""> <h2>Find support vectors on margin<a name="9"></a></h2><pre class="codeinput">                SV = Xtrain(svmModel.svi, :);
                 D = sqDistance(SV, c');
                 S = SV(any(D &lt; 0.005, 2), :);
                 plot(S(:, 1), S(:, 2), <span class="string">'.k'</span>, <span class="string">'markersize'</span>, 20);
 </pre><pre class="codeinput">            <span class="keyword">case</span> <span class="string">'logreg'</span>
-</pre><h2>Fit LR<a name="12"></a></h2><pre class="codeinput">                preproc.kernelFn = @(X1, X2)kernel{j}(X1, X2, kernelArgs{j}{2});
+</pre><h2>Fit LR<a name="11"></a></h2><pre class="codeinput">                preproc.kernelFn = @(X1, X2)kernel{j}(X1, X2, kernelArgs{j}{2});
                 lrModel = logregFit(Xtrain, ytrain, <span class="string">'regType'</span>, <span class="string">'l2'</span>,<span class="keyword">...</span>
                     <span class="string">'lambda'</span>, 1/Cvalues(i), <span class="string">'preproc'</span>, preproc);
                 trainError = mean(ytrain~= logregPredict(lrModel, Xtrain));
                 testError  = mean(ytest ~= logregPredict(lrModel, Xtest ));
-</pre><h2>Plot the LR decision boundary and the 25%/75% margins<a name="13"></a></h2><pre class="codeinput">                plotContour(@(x)argout(2, @logregPredict, lrModel, x), <span class="keyword">...</span>
+</pre><h2>Plot the LR decision boundary and the 25%/75% margins<a name="12"></a></h2><pre class="codeinput">                plotContour(@(x)argout(2, @logregPredict, lrModel, x), <span class="keyword">...</span>
                     axis(), [0.5 0.5], <span class="string">'-k'</span>, <span class="string">'linewidth'</span>, 1.5);
 
                 plotContour(@(x)argout(2, @logregPredict, lrModel, x), <span class="keyword">...</span>
                     axis(), [0.25 0.75], <span class="string">'--k'</span>, <span class="string">'linewidth'</span>, 1);
                 t = sprintf(<span class="string">'%s = %g'</span>, <span class="string">'\lambda'</span>, 1/Cvalues(i));
-</pre><pre class="codeinput">        <span class="keyword">end</span>
-</pre><h2>Annotate<a name="15"></a></h2><pre class="codeinput">        title({titleStr{k}{j}; t});
+</pre><img vspace="5" hspace="5" src="hastieSvmLrDemo_18.png" alt=""> <img vspace="5" hspace="5" src="hastieSvmLrDemo_21.png" alt=""> <pre class="codeinput">        <span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="hastieSvmLrDemo_03.png" alt=""> <img vspace="5" hspace="5" src="hastieSvmLrDemo_07.png" alt=""> <img vspace="5" hspace="5" src="hastieSvmLrDemo_11.png" alt=""> <img vspace="5" hspace="5" src="hastieSvmLrDemo_15.png" alt=""> <h2>Annotate<a name="14"></a></h2><pre class="codeinput">        title({titleStr{k}{j}; t});
         text = {sprintf(<span class="string">'Training Error: %.2f'</span>, trainError);
             sprintf(<span class="string">'Test Error:       %.2f'</span>, testError);
             sprintf(<span class="string">'Bayes Error:    %.2f'</span>, bayesError)};
@@ -195,14 +194,14 @@ penalties = {<span class="string">'svm'</span>, <span class="string">'logreg'</s
             <span class="string">'FontWeight'</span>     , <span class="string">'demi'</span>               , <span class="keyword">...</span>
             <span class="string">'FitBoxToText'</span>   , <span class="string">'on'</span>                 , <span class="keyword">...</span>
             <span class="string">'LineStyle'</span>      , <span class="string">'none'</span>);
-</pre><pre class="codeinput">    <span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="hastieSvmLrDemo_04.png" alt=""> <img vspace="5" hspace="5" src="hastieSvmLrDemo_08.png" alt=""> <img vspace="5" hspace="5" src="hastieSvmLrDemo_12.png" alt=""> <img vspace="5" hspace="5" src="hastieSvmLrDemo_16.png" alt=""> <img vspace="5" hspace="5" src="hastieSvmLrDemo_19.png" alt=""> <img vspace="5" hspace="5" src="hastieSvmLrDemo_22.png" alt=""> <pre class="codeinput">    <span class="keyword">end</span>
 <span class="keyword">end</span>
 <span class="keyword">end</span>
 </pre><p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Reproduce figures 12.2, 12.3 and 12.5 in Hastie ESL 2nd ed.
-%PMTKneedsOptimToolbox
+% PMTKneedsOptimToolbox
 %% Generating Models
 % Generate data as per Hastie 2ed, pg 16: two classes, blue and orange,
 % each with a mixture of 10, 2D Gaussians.
