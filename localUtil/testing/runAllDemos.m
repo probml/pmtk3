@@ -5,6 +5,7 @@
 %bolassoDemo;                            pclear(2); % PMTKreallySlow
 %classificationShootout;                 pclear(2); % PMTKreallySlow
 %demoRosenHighDim;                       pclear(2); % PMTKinteractive
+%linregSparseEmBiscuitsDemo;             pclear(2); % PMTKreallySlow
 %linregSparseEmSynthDemo;                pclear(2); % PMTKreallySlow
 %linregSparseEmSynthDemoOld;             pclear(2); % PMTKreallySlow
 %minFunc_applications;                   pclear(2); % PMTKinteractive
@@ -188,7 +189,6 @@ linregPostPredDemo;                      pclear(2);
 linregPostPredLinearDemo;                pclear(2);
 linregRbfDemo;                           pclear(2);
 linregRobustDemo;                        pclear(2);
-linregSparseEmBiscuitsDemo;              pclear(2);
 linregStudentStacklossDemo;              pclear(2);
 linregStudentTest;                       pclear(2);
 linregWedgeDemo2;                        pclear(2);
@@ -256,6 +256,7 @@ mlpRegressDemo;                          pclear(2);
 mlpRegressDemoBishop;                    pclear(2);
 mlpRegressDemoSchmidt;                   pclear(2);
 mnist1NNdemo;                            pclear(2);
+mnistKNNdemo;                            pclear(2);
 mrf2ChainInferDemo;                      pclear(2);
 mrf2ChainTrainDemo;                      pclear(2);
 mrf2CutsetInferDemo;                     pclear(2);

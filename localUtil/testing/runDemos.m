@@ -8,16 +8,16 @@
 %classificationShootoutCvLambdaOnly;     pclear(2); % PMTKslow
 %demoMinfuncHighdim;                     pclear(2); % PMTKslow
 %demoRosenHighDim;                       pclear(2); % PMTKinteractive
-%gibbsDemoNoBlindspot;                   pclear(2); % PMTKslow
 %gpDemoChangeHparams2d;                  pclear(2); % PMTKslow
 %hastieSvmLrDemo;                        pclear(2); % PMTKslow
 %hopfieldDemo;                           pclear(2); % PMTKslow
 %imputationGeneMicroarrayDemo;           pclear(2); % PMTKslow
 %imputationMixedAdultDemo;               pclear(2); % PMTKslow
-%linregSparseEmBiscuitsDemo;             pclear(2); % PMTKslow
+%linregSparseEmBiscuitsDemo;             pclear(2); % PMTKreallySlow
 %linregSparseEmSynthDemo;                pclear(2); % PMTKreallySlow
 %linregSparseEmSynthDemoOld;             pclear(2); % PMTKreallySlow
 %logregKernelCrabsDemo;                  pclear(2); % PMTKslow
+%miDemo;                                 pclear(2); % PMTKslow
 %minFunc_applications;                   pclear(2); % PMTKinteractive & PMTKslow
 %mlpClassifDemoSchmidt;                  pclear(2); % PMTKslow
 %mnist1NNdemo;                           pclear(2); % PMTKslow
@@ -145,6 +145,7 @@ gaussVsStudentOutlierDemo;               pclear(2);
 generativeVsDiscrim;                     pclear(2);
 ggmFitDemo;                              pclear(2);
 ggmLassoDemo;                            pclear(2);
+gibbsDemoNoBlindspot;                    pclear(2);
 gmmSingularity;                          pclear(2);
 gprDemoChangeHparams;                    pclear(2);
 gprDemoNoiseFree;                        pclear(2);
@@ -235,7 +236,6 @@ mcmcMvn2d;                               pclear(2);
 mcQuantileDemo;                          pclear(2);
 memoryMapDemo;                           pclear(2);
 mhGmmDemo;                               pclear(2);
-miDemo;                                  pclear(2);
 miMixedDemo;                             pclear(2);
 minfuncRosen2dDemo;                      pclear(2);
 misconceptionRank;                       pclear(2);
@@ -268,6 +268,7 @@ mlpRegHmcDemo;                           pclear(2);
 mlpRegressDemo;                          pclear(2);
 mlpRegressDemoBishop;                    pclear(2);
 mlpRegressDemoSchmidt;                   pclear(2);
+mnistKNNdemo;                            pclear(2);
 mrf2ChainInferDemo;                      pclear(2);
 mrf2ChainTrainDemo;                      pclear(2);
 mrf2CutsetInferDemo;                     pclear(2);
