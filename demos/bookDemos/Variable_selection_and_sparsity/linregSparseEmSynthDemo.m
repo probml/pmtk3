@@ -3,8 +3,8 @@
 % Caron and Doucet, ICML08
 % We do not include normalInverseGaussian
 % but we do include normalExpGaussian  (see Griffin and Brown)
-%PMTKreallySlow
-%PMTKneedsStatsToolbox boxplot
+% PMTKreallySlow
+% PMTKneedsStatsToolbox boxplot
 %%
 function linregSparseEmSynthDemo()
 
