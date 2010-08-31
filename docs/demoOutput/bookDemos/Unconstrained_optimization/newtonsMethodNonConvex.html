@@ -62,8 +62,10 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h1>Illustration of Newton's method for a non convex function.</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#3">x^(k)</a></li><li><a href="#4">x^(k) + v^(k)</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> newtonsMethodNonConvex
-</pre><pre class="codeinput">figure(); hold <span class="string">on</span>;
+  </style></head><body><div class="content"><h1>Illustration of Newton's method for a non convex function.</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="keyword">function</span> newtonsMethodNonConvex
+
+
+figure(); hold <span class="string">on</span>;
 xmin   = -4;  xmax = 13;
 ymin   = -50; ymax = 600;
 domain = xmin:0.01:xmax;
@@ -81,12 +83,14 @@ plot(Xk, f(Xk), <span class="string">'.k'</span>, <span class="string">'MarkerSi
 plot([Xk, Xk], [ymin, f(Xk)], <span class="string">':k'</span>);
 plot(maximum, t(maximum),<span class="string">'.k'</span>, <span class="string">'MarkerSize'</span>, 25);
 plot([maximum,  maximum], [ymin, t(maximum)], <span class="string">':k'</span>);
-</pre><img vspace="5" hspace="5" src="newtonsMethodNonConvex_01.png" alt=""> <h2>x^(k)<a name="3"></a></h2><pre class="codeinput">annotation(gcf,<span class="string">'textbox'</span>        , [0.65 0 0.09946 0.11] , <span class="keyword">...</span>
+<span class="comment">% x^(k)</span>
+annotation(gcf,<span class="string">'textbox'</span>        , [0.65 0 0.09946 0.11] , <span class="keyword">...</span>
                <span class="string">'String'</span>         , {<span class="string">'x_{k}'</span>}             , <span class="keyword">...</span>
                <span class="string">'FontSize'</span>       , 18                    , <span class="keyword">...</span>
                <span class="string">'FitBoxToText'</span>   , <span class="string">'off'</span>                 , <span class="keyword">...</span>
                <span class="string">'LineStyle'</span>      , <span class="string">'none'</span>                );
-</pre><img vspace="5" hspace="5" src="newtonsMethodNonConvex_02.png" alt=""> <h2>x^(k) + v^(k)<a name="4"></a></h2><pre class="codeinput">annotation(gcf,<span class="string">'textbox'</span>        , [0.76 0 0.09946 0.11] ,<span class="keyword">...</span>
+<span class="comment">% x^(k) + v^(k)</span>
+annotation(gcf,<span class="string">'textbox'</span>        , [0.76 0 0.09946 0.11] ,<span class="keyword">...</span>
                <span class="string">'String'</span>         , {<span class="string">'x_{k}+d_{k}'</span>}       ,<span class="keyword">...</span>
                <span class="string">'FontSize'</span>       , 18                    ,<span class="keyword">...</span>
                <span class="string">'FitBoxToText'</span>   , <span class="string">'off'</span>                 ,<span class="keyword">...</span>
@@ -101,8 +105,8 @@ set(gca, <span class="string">'XTick'</span>, [Xk, maximum] , <span class="keywo
     <span class="string">'LineWidth'</span>,2               );
 
 printPmtkFigure(<span class="string">'newtonsMethodNonConvex'</span>);
-</pre><img vspace="5" hspace="5" src="newtonsMethodNonConvex_03.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
-</pre><p class="footer"><br>
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="newtonsMethodNonConvex_01.png" alt=""> <p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Illustration of Newton's method for a non convex function. 
@@ -129,13 +133,13 @@ plot(Xk, f(Xk), '.k', 'MarkerSize', 25);
 plot([Xk, Xk], [ymin, f(Xk)], ':k');
 plot(maximum, t(maximum),'.k', 'MarkerSize', 25);
 plot([maximum,  maximum], [ymin, t(maximum)], ':k');
-%% x^(k)
+% x^(k)
 annotation(gcf,'textbox'        , [0.65 0 0.09946 0.11] , ...
                'String'         , {'x_{k}'}             , ...
                'FontSize'       , 18                    , ...
                'FitBoxToText'   , 'off'                 , ...
                'LineStyle'      , 'none'                );
-%% x^(k) + v^(k)
+% x^(k) + v^(k)
 annotation(gcf,'textbox'        , [0.76 0 0.09946 0.11] ,...
                'String'         , {'x_{k}+d_{k}'}       ,...
                'FontSize'       , 18                    ,...
