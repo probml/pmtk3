@@ -1,5 +1,5 @@
 %% Imputation for a mixture of Gaussians
-%PMTKneedsStatsToolbox regstats
+% PMTKneedsStatsToolbox regstats
 %% 
 function mixGaussImputationDemo()
 requireStatsToolbox

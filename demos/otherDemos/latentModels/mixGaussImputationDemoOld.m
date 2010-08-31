@@ -1,5 +1,6 @@
 %% Imputation for a mixture of Gaussians
-%PMTKneedsStatsToolbox regstats
+% PMTKneedsStatsToolbox regstats
+%%
 requireStatsToolbox
 %% Make data
 setSeed(1);

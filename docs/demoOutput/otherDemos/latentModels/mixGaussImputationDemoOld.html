@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>mixGaussImputationDemoOld</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="mixGaussImputationDemoOld"><style type="text/css">
+      --><title>Imputation for a mixture of Gaussians</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-31"><meta name="m-file" content="mixGaussImputationDemoOld"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,8 +62,7 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Imputation for a mixture of Gaussians</a></li><li><a href="#2">Make data</a></li><li><a href="#3">Impute</a></li><li><a href="#4">Plotting</a></li></ul></div><h2>Imputation for a mixture of Gaussians<a name="1"></a></h2><pre class="codeinput"><span class="comment">%PMTKneedsStatsToolbox regstats</span>
-requireStatsToolbox
+  </style></head><body><div class="content"><h1>Imputation for a mixture of Gaussians</h1><!--introduction--><p>PMTKneedsStatsToolbox regstats</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Make data</a></li><li><a href="#3">Impute</a></li><li><a href="#4">Plotting</a></li></ul></div><pre class="codeinput">requireStatsToolbox
 </pre><h2>Make data<a name="2"></a></h2><pre class="codeinput">setSeed(1);
 d = 10; n = 100; pcMissing = 0.5;
 
@@ -115,7 +114,8 @@ printPmtkFigure(<span class="string">'mixGaussImputeScatterEm'</span>);
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Imputation for a mixture of Gaussians
-%PMTKneedsStatsToolbox regstats
+% PMTKneedsStatsToolbox regstats
+%%
 requireStatsToolbox
 %% Make data
 setSeed(1);
