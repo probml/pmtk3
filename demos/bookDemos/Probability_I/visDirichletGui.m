@@ -1,9 +1,9 @@
+%% Dirichlet Distribution Visualization
+%
+%% 
 function visDirichletGui(arg1)
-% VISDIRICHLETGUI
 %
-% function visDirichletGui(arg1)
-%
-% Dirichlet Distribution Visualization
+% 
 % to run, just type visDirichletGui.
 %
 %PMTKauthor Jonathan Huang
