@@ -1,15 +1,15 @@
-function results = classificationShootoutCvLambdaOnly()
 %% Compare different classification algorithms on a number of data sets
 % This is similar to classificationShootout, except we (1) pick a gamma for
 % all methods to use, (2) also compare performance on larger data sets
 % using linear kernels, (3) cross validate over a sparser range. 
-%
+%%
 % Based on table 2 of 
 % ""Learning sparse Bayesian classifiers: multi-class formulation, fast
 % algorithms, and generalization bounds", Krishnapuram et al, PAMI 2005
 %
 %PMTKslow
 %%
+function results = classificationShootoutCvLambdaOnly()
 setSeed(0);
 doLatex = true; 
 doHtml  = true;
