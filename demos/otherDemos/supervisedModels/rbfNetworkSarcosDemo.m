@@ -1,6 +1,6 @@
 %% RBF Network Demo
-%PMTKslow
-%%s
+% PMTKslow
+%%
  
  loadData('sarcosData')
  setSeed(0);

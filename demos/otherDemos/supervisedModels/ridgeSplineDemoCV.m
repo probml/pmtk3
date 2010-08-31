@@ -1,8 +1,9 @@
-function ridgeSplineDemoCV()
-% Demo of L2 regualrization of a piecewise constant function (splines) with fixed knots.
+%% Demo of L2 regualrization of a piecewise constant function (splines) with fixed knots
 % Based on code by John D'Errico
 % http://www.mathworks.com/matlabcentral/fileexchange/loadFile.do?objectId=8553&objectType=fileY
-%PMTKbroken missing his cv function?
+%%
+function ridgeSplineDemoCV()
+
 if 0
   randn('state',0); rand('state', 0);
   n = 50;
@@ -70,22 +71,22 @@ ylabel 'y'
 % action for the same spline fit. First, we'll plot the prediction
 % error sums of squares (PRESS) as a function of lambda.
 
-
-
-[n d] = size(X);
-K = n; % LOOCV
 nl = length(lambdas);
-for i=1:nl
-  [trainErr, testErr] = cv(X, y, K, @ridgeQRSimple, lambdas(i)*D);
-  meanErr(i) = mean(testErr);
-  stdErr(i) = std(testErr)/sqrt(K);
+if 0 % missing cv function?
+    [n d] = size(X);
+    K = n; % LOOCV
+    
+    for i=1:nl
+        [trainErr, testErr] = cv(X, y, K, @ridgeQRSimple, lambdas(i)*D);
+        meanErr(i) = mean(testErr);
+        stdErr(i) = std(testErr)/sqrt(K);
+    end
+    figure
+    errorbar(log10(lambdas), meanErr, stdErr, 'o-')
+    xlabel('log10(\lambda)')
+    ylabel('MSE')
+    title('LOOCV')
 end
-figure
-errorbar(log10(lambdas), meanErr, stdErr, 'o-')
-xlabel('log10(\lambda)')
-ylabel('MSE')
-title('LOOCV')
-
 press = zeros(1,nl);
 % loop over lambda values for the plot
 for i = 1:nl

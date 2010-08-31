@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>ridgeSplineDemoCV</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="ridgeSplineDemoCV"><style type="text/css">
+      --><title>Demo of L2 regualrization of a piecewise constant function (splines) with fixed knots</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-31"><meta name="m-file" content="ridgeSplineDemoCV"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,11 +62,8 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> ridgeSplineDemoCV()
-<span class="comment">% Demo of L2 regualrization of a piecewise constant function (splines) with fixed knots.</span>
-<span class="comment">% Based on code by John D'Errico</span>
-<span class="comment">% http://www.mathworks.com/matlabcentral/fileexchange/loadFile.do?objectId=8553&amp;objectType=fileY</span>
-<span class="comment">%PMTKbroken missing his cv function?</span>
+  </style></head><body><div class="content"><h1>Demo of L2 regualrization of a piecewise constant function (splines) with fixed knots</h1><!--introduction--><p>Based on code by John D'Errico <a href="http://www.mathworks.com/matlabcentral/fileexchange/loadFile.do?objectId=8553&amp;objectType=fileY">http://www.mathworks.com/matlabcentral/fileexchange/loadFile.do?objectId=8553&amp;objectType=fileY</a></p><!--/introduction--><pre class="codeinput"><span class="keyword">function</span> ridgeSplineDemoCV()
+
 <span class="keyword">if</span> 0
   randn(<span class="string">'state'</span>,0); rand(<span class="string">'state'</span>, 0);
   n = 50;
@@ -134,22 +131,22 @@ ylabel <span class="string">'y'</span>
 <span class="comment">% action for the same spline fit. First, we'll plot the prediction</span>
 <span class="comment">% error sums of squares (PRESS) as a function of lambda.</span>
 
-
-
-[n d] = size(X);
-K = n; <span class="comment">% LOOCV</span>
 nl = length(lambdas);
-<span class="keyword">for</span> i=1:nl
-  [trainErr, testErr] = cv(X, y, K, @ridgeQRSimple, lambdas(i)*D);
-  meanErr(i) = mean(testErr);
-  stdErr(i) = std(testErr)/sqrt(K);
-<span class="keyword">end</span>
-figure
-errorbar(log10(lambdas), meanErr, stdErr, <span class="string">'o-'</span>)
-xlabel(<span class="string">'log10(\lambda)'</span>)
-ylabel(<span class="string">'MSE'</span>)
-title(<span class="string">'LOOCV'</span>)
+<span class="keyword">if</span> 0 <span class="comment">% missing cv function?</span>
+    [n d] = size(X);
+    K = n; <span class="comment">% LOOCV</span>
 
+    <span class="keyword">for</span> i=1:nl
+        [trainErr, testErr] = cv(X, y, K, @ridgeQRSimple, lambdas(i)*D);
+        meanErr(i) = mean(testErr);
+        stdErr(i) = std(testErr)/sqrt(K);
+    <span class="keyword">end</span>
+    figure
+    errorbar(log10(lambdas), meanErr, stdErr, <span class="string">'o-'</span>)
+    xlabel(<span class="string">'log10(\lambda)'</span>)
+    ylabel(<span class="string">'MSE'</span>)
+    title(<span class="string">'LOOCV'</span>)
+<span class="keyword">end</span>
 press = zeros(1,nl);
 <span class="comment">% loop over lambda values for the plot</span>
 <span class="keyword">for</span> i = 1:nl
@@ -191,14 +188,19 @@ plot(x,y,<span class="string">'go'</span>,[knots(1:(end-1));knots(2:end)], <span
 title(sprintf(<span class="string">'lambda = %5.3f'</span>, lambdaOpt))
 xlabel <span class="string">'x'</span>
 ylabel <span class="string">'y'</span>
-</pre><p class="footer"><br>
+</pre><pre class="codeoutput">n =
+    21
+d =
+   100
+</pre><img vspace="5" hspace="5" src="ridgeSplineDemoCV_01.png" alt=""> <img vspace="5" hspace="5" src="ridgeSplineDemoCV_02.png" alt=""> <img vspace="5" hspace="5" src="ridgeSplineDemoCV_03.png" alt=""> <img vspace="5" hspace="5" src="ridgeSplineDemoCV_04.png" alt=""> <p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
-function ridgeSplineDemoCV()
-% Demo of L2 regualrization of a piecewise constant function (splines) with fixed knots.
+%% Demo of L2 regualrization of a piecewise constant function (splines) with fixed knots
 % Based on code by John D'Errico
 % http://www.mathworks.com/matlabcentral/fileexchange/loadFile.do?objectId=8553&objectType=fileY
-%PMTKbroken missing his cv function?
+%%
+function ridgeSplineDemoCV()
+
 if 0
   randn('state',0); rand('state', 0);
   n = 50;
@@ -266,22 +268,22 @@ ylabel 'y'
 % action for the same spline fit. First, we'll plot the prediction
 % error sums of squares (PRESS) as a function of lambda.
 
-
-
-[n d] = size(X);
-K = n; % LOOCV
 nl = length(lambdas);
-for i=1:nl
-  [trainErr, testErr] = cv(X, y, K, @ridgeQRSimple, lambdas(i)*D);
-  meanErr(i) = mean(testErr);
-  stdErr(i) = std(testErr)/sqrt(K);
+if 0 % missing cv function?
+    [n d] = size(X);
+    K = n; % LOOCV
+    
+    for i=1:nl
+        [trainErr, testErr] = cv(X, y, K, @ridgeQRSimple, lambdas(i)*D);
+        meanErr(i) = mean(testErr);
+        stdErr(i) = std(testErr)/sqrt(K);
+    end
+    figure
+    errorbar(log10(lambdas), meanErr, stdErr, 'o-')
+    xlabel('log10(\lambda)')
+    ylabel('MSE')
+    title('LOOCV')
 end
-figure
-errorbar(log10(lambdas), meanErr, stdErr, 'o-')
-xlabel('log10(\lambda)')
-ylabel('MSE')
-title('LOOCV')
-
 press = zeros(1,nl);
 % loop over lambda values for the plot
 for i = 1:nl

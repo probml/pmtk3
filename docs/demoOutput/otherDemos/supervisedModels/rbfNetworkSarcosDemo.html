@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>rbfNetworkSarcosDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="rbfNetworkSarcosDemo"><style type="text/css">
+      --><title>RBF Network Demo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-31"><meta name="m-file" content="rbfNetworkSarcosDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,10 +62,7 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">RBF Network Demo</a></li><li><a href="#2">standard linear regression on response 1 - sanity check</a></li><li><a href="#3">ridge</a></li><li><a href="#4">RBF</a></li></ul></div><h2>RBF Network Demo<a name="1"></a></h2><pre class="codeinput"><span class="comment">%PMTKslow</span>
-<span class="comment">%%s</span>
-
- loadData(<span class="string">'sarcosData'</span>)
+  </style></head><body><div class="content"><h1>RBF Network Demo</h1><!--introduction--><p>PMTKslow</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">standard linear regression on response 1 - sanity check</a></li><li><a href="#3">ridge</a></li><li><a href="#4">RBF</a></li></ul></div><pre class="codeinput"> loadData(<span class="string">'sarcosData'</span>)
  setSeed(0);
 
  <span class="comment">% Standardize the inputs so they have zero mean and unit variance on the</span>
@@ -117,6 +114,215 @@ p.footer {
      ypred = linregPredict(model, Xtest);
      SMSE_ridge(traini,j) = sum((ytest(:,j)-ypred).^2)/(Ntest*sigma2(j))
      wSaveRidge(:,j) = model.w(:);
+</pre><pre class="codeoutput">SMSE_ridge =
+    0.2362
+</pre><pre class="codeoutput">SMSE_ridge =
+    0.2362    0.2854
+</pre><pre class="codeoutput">SMSE_ridge =
+    0.2362    0.2854    0.3032
+</pre><pre class="codeoutput">SMSE_ridge =
+    0.2362    0.2854    0.3032    0.0793
+</pre><pre class="codeoutput">SMSE_ridge =
+    0.2362    0.2854    0.3032    0.0793    0.3272
+</pre><pre class="codeoutput">SMSE_ridge =
+  Columns 1 through 5
+    0.2362    0.2854    0.3032    0.0793    0.3272
+  Column 6
+    1.2688
+</pre><pre class="codeoutput">SMSE_ridge =
+  Columns 1 through 5
+    0.2362    0.2854    0.3032    0.0793    0.3272
+  Columns 6 through 7
+    1.2688    0.4644
+</pre><pre class="codeoutput">SMSE_ridge =
+  Columns 1 through 5
+    0.2362    0.2854    0.3032    0.0793    0.3272
+    0.0959         0         0         0         0
+  Columns 6 through 7
+    1.2688    0.4644
+         0         0
+</pre><pre class="codeoutput">SMSE_ridge =
+  Columns 1 through 5
+    0.2362    0.2854    0.3032    0.0793    0.3272
+    0.0959    0.1186         0         0         0
+  Columns 6 through 7
+    1.2688    0.4644
+         0         0
+</pre><pre class="codeoutput">SMSE_ridge =
+  Columns 1 through 5
+    0.2362    0.2854    0.3032    0.0793    0.3272
+    0.0959    0.1186    0.1178         0         0
+  Columns 6 through 7
+    1.2688    0.4644
+         0         0
+</pre><pre class="codeoutput">SMSE_ridge =
+  Columns 1 through 5
+    0.2362    0.2854    0.3032    0.0793    0.3272
+    0.0959    0.1186    0.1178    0.0615         0
+  Columns 6 through 7
+    1.2688    0.4644
+         0         0
+</pre><pre class="codeoutput">SMSE_ridge =
+  Columns 1 through 5
+    0.2362    0.2854    0.3032    0.0793    0.3272
+    0.0959    0.1186    0.1178    0.0615    0.2130
+  Columns 6 through 7
+    1.2688    0.4644
+         0         0
+</pre><pre class="codeoutput">SMSE_ridge =
+  Columns 1 through 5
+    0.2362    0.2854    0.3032    0.0793    0.3272
+    0.0959    0.1186    0.1178    0.0615    0.2130
+  Columns 6 through 7
+    1.2688    0.4644
+    0.4322         0
+</pre><pre class="codeoutput">SMSE_ridge =
+  Columns 1 through 5
+    0.2362    0.2854    0.3032    0.0793    0.3272
+    0.0959    0.1186    0.1178    0.0615    0.2130
+  Columns 6 through 7
+    1.2688    0.4644
+    0.4322    0.0752
+</pre><pre class="codeoutput">SMSE_ridge =
+  Columns 1 through 5
+    0.2362    0.2854    0.3032    0.0793    0.3272
+    0.0959    0.1186    0.1178    0.0615    0.2130
+    0.0757         0         0         0         0
+  Columns 6 through 7
+    1.2688    0.4644
+    0.4322    0.0752
+         0         0
+</pre><pre class="codeoutput">SMSE_ridge =
+  Columns 1 through 5
+    0.2362    0.2854    0.3032    0.0793    0.3272
+    0.0959    0.1186    0.1178    0.0615    0.2130
+    0.0757    0.1027         0         0         0
+  Columns 6 through 7
+    1.2688    0.4644
+    0.4322    0.0752
+         0         0
+</pre><pre class="codeoutput">SMSE_ridge =
+  Columns 1 through 5
+    0.2362    0.2854    0.3032    0.0793    0.3272
+    0.0959    0.1186    0.1178    0.0615    0.2130
+    0.0757    0.1027    0.0928         0         0
+  Columns 6 through 7
+    1.2688    0.4644
+    0.4322    0.0752
+         0         0
+</pre><pre class="codeoutput">SMSE_ridge =
+  Columns 1 through 5
+    0.2362    0.2854    0.3032    0.0793    0.3272
+    0.0959    0.1186    0.1178    0.0615    0.2130
+    0.0757    0.1027    0.0928    0.0544         0
+  Columns 6 through 7
+    1.2688    0.4644
+    0.4322    0.0752
+         0         0
+</pre><pre class="codeoutput">SMSE_ridge =
+  Columns 1 through 5
+    0.2362    0.2854    0.3032    0.0793    0.3272
+    0.0959    0.1186    0.1178    0.0615    0.2130
+    0.0757    0.1027    0.0928    0.0544    0.1813
+  Columns 6 through 7
+    1.2688    0.4644
+    0.4322    0.0752
+         0         0
+</pre><pre class="codeoutput">SMSE_ridge =
+  Columns 1 through 5
+    0.2362    0.2854    0.3032    0.0793    0.3272
+    0.0959    0.1186    0.1178    0.0615    0.2130
+    0.0757    0.1027    0.0928    0.0544    0.1813
+  Columns 6 through 7
+    1.2688    0.4644
+    0.4322    0.0752
+    0.3433         0
+</pre><pre class="codeoutput">SMSE_ridge =
+  Columns 1 through 5
+    0.2362    0.2854    0.3032    0.0793    0.3272
+    0.0959    0.1186    0.1178    0.0615    0.2130
+    0.0757    0.1027    0.0928    0.0544    0.1813
+  Columns 6 through 7
+    1.2688    0.4644
+    0.4322    0.0752
+    0.3433    0.0693
+</pre><pre class="codeoutput">SMSE_ridge =
+  Columns 1 through 5
+    0.2362    0.2854    0.3032    0.0793    0.3272
+    0.0959    0.1186    0.1178    0.0615    0.2130
+    0.0757    0.1027    0.0928    0.0544    0.1813
+    0.0742         0         0         0         0
+  Columns 6 through 7
+    1.2688    0.4644
+    0.4322    0.0752
+    0.3433    0.0693
+         0         0
+</pre><pre class="codeoutput">SMSE_ridge =
+  Columns 1 through 5
+    0.2362    0.2854    0.3032    0.0793    0.3272
+    0.0959    0.1186    0.1178    0.0615    0.2130
+    0.0757    0.1027    0.0928    0.0544    0.1813
+    0.0742    0.1010         0         0         0
+  Columns 6 through 7
+    1.2688    0.4644
+    0.4322    0.0752
+    0.3433    0.0693
+         0         0
+</pre><pre class="codeoutput">SMSE_ridge =
+  Columns 1 through 5
+    0.2362    0.2854    0.3032    0.0793    0.3272
+    0.0959    0.1186    0.1178    0.0615    0.2130
+    0.0757    0.1027    0.0928    0.0544    0.1813
+    0.0742    0.1010    0.0918         0         0
+  Columns 6 through 7
+    1.2688    0.4644
+    0.4322    0.0752
+    0.3433    0.0693
+         0         0
+</pre><pre class="codeoutput">SMSE_ridge =
+  Columns 1 through 5
+    0.2362    0.2854    0.3032    0.0793    0.3272
+    0.0959    0.1186    0.1178    0.0615    0.2130
+    0.0757    0.1027    0.0928    0.0544    0.1813
+    0.0742    0.1010    0.0918    0.0513         0
+  Columns 6 through 7
+    1.2688    0.4644
+    0.4322    0.0752
+    0.3433    0.0693
+         0         0
+</pre><pre class="codeoutput">SMSE_ridge =
+  Columns 1 through 5
+    0.2362    0.2854    0.3032    0.0793    0.3272
+    0.0959    0.1186    0.1178    0.0615    0.2130
+    0.0757    0.1027    0.0928    0.0544    0.1813
+    0.0742    0.1010    0.0918    0.0513    0.1413
+  Columns 6 through 7
+    1.2688    0.4644
+    0.4322    0.0752
+    0.3433    0.0693
+         0         0
+</pre><pre class="codeoutput">SMSE_ridge =
+  Columns 1 through 5
+    0.2362    0.2854    0.3032    0.0793    0.3272
+    0.0959    0.1186    0.1178    0.0615    0.2130
+    0.0757    0.1027    0.0928    0.0544    0.1813
+    0.0742    0.1010    0.0918    0.0513    0.1413
+  Columns 6 through 7
+    1.2688    0.4644
+    0.4322    0.0752
+    0.3433    0.0693
+    0.2824         0
+</pre><pre class="codeoutput">SMSE_ridge =
+  Columns 1 through 5
+    0.2362    0.2854    0.3032    0.0793    0.3272
+    0.0959    0.1186    0.1178    0.0615    0.2130
+    0.0757    0.1027    0.0928    0.0544    0.1813
+    0.0742    0.1010    0.0918    0.0513    0.1413
+  Columns 6 through 7
+    1.2688    0.4644
+    0.4322    0.0752
+    0.3433    0.0693
+    0.2824    0.0646
 </pre><h2>RBF<a name="4"></a></h2><pre class="codeinput">     lambda = 1;
      model = linregFit(Ktrain(1:ntrain,:), ytrain(1:ntrain,j), <span class="string">'regtype'</span>, <span class="string">'L2'</span>, <span class="string">'lambda'</span>, lambda);
      ypred = linregPredict(model, Ktest);
@@ -145,12 +351,36 @@ p.footer {
 
  figure; imagesc(wSaveRidge); title(<span class="string">'linear'</span>); colorbar
  figure; imagesc(wSaveRbf); title(<span class="string">'rbf'</span>); colorbar
-</pre><p class="footer"><br>
+</pre><pre class="codeoutput">SMSE_OLS =
+    0.0742
+SMSE_ridge =
+  Columns 1 through 5
+    0.2362    0.2854    0.3032    0.0793    0.3272
+    0.0959    0.1186    0.1178    0.0615    0.2130
+    0.0757    0.1027    0.0928    0.0544    0.1813
+    0.0742    0.1010    0.0918    0.0513    0.1413
+  Columns 6 through 7
+    1.2688    0.4644
+    0.4322    0.0752
+    0.3433    0.0693
+    0.2824    0.0646
+SMSE_rbf =
+  Columns 1 through 5
+    0.9818    0.9725    0.9842    0.9693    0.9891
+    0.9698    0.9719    0.9620    0.9556    0.9698
+    0.9603    0.9621    0.9577    0.9505    0.9779
+    0.9567    0.9459    0.9391    0.9288    0.9622
+  Columns 6 through 7
+    1.3342    0.9856
+    1.0850    0.9592
+    0.9922    0.9570
+    0.9806    0.9368
+</pre><img vspace="5" hspace="5" src="rbfNetworkSarcosDemo_01.png" alt=""> <img vspace="5" hspace="5" src="rbfNetworkSarcosDemo_02.png" alt=""> <img vspace="5" hspace="5" src="rbfNetworkSarcosDemo_03.png" alt=""> <img vspace="5" hspace="5" src="rbfNetworkSarcosDemo_04.png" alt=""> <img vspace="5" hspace="5" src="rbfNetworkSarcosDemo_05.png" alt=""> <img vspace="5" hspace="5" src="rbfNetworkSarcosDemo_06.png" alt=""> <img vspace="5" hspace="5" src="rbfNetworkSarcosDemo_07.png" alt=""> <img vspace="5" hspace="5" src="rbfNetworkSarcosDemo_08.png" alt=""> <img vspace="5" hspace="5" src="rbfNetworkSarcosDemo_09.png" alt=""> <p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 %% RBF Network Demo
-%PMTKslow
-%%s
+% PMTKslow
+%%
  
  loadData('sarcosData')
  setSeed(0);
