@@ -1,5 +1,8 @@
-function dgm = mkQmrNetwork(nfindings, ndiseases)
 %% Create a QMR-like network (dgm)
+%
+%%
+function dgm = mkQmrNetwork(nfindings, ndiseases)
+
 
 SetDefaultValue(1, 'nfindings', 10); 
 SetDefaultValue(2, 'ndiseases', 5); 
