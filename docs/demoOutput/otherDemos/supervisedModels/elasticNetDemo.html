@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>elasticNetDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="elasticNetDemo"><style type="text/css">
+      --><title>Reproduce figure 3 of Zou and Hastie JRSSB 2005</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-31"><meta name="m-file" content="elasticNetDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,11 +62,7 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% fig 3 of Zou and Hastie JRSSB 2005</span>
-
-
-
-loadData(<span class="string">'prostate'</span>);
+  </style></head><body><div class="content"><h1>Reproduce figure 3 of Zou and Hastie JRSSB 2005</h1><!--introduction--><!--/introduction--><pre class="codeinput">loadData(<span class="string">'prostate'</span>);
 ndx = find(istrain);
 y = y(ndx); X = X(ndx,:);
 X = centerCols(X);
@@ -386,8 +382,9 @@ Total Shoots: 8
 </pre><img vspace="5" hspace="5" src="elasticNetDemo_01.png" alt=""> <img vspace="5" hspace="5" src="elasticNetDemo_02.png" alt=""> <p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
-% fig 3 of Zou and Hastie JRSSB 2005
-
+%% Reproduce figure 3 of Zou and Hastie JRSSB 2005
+%
+%%
 
 
 loadData('prostate');

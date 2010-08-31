@@ -1,5 +1,6 @@
-% fig 3 of Zou and Hastie JRSSB 2005
-
+%% Reproduce figure 3 of Zou and Hastie JRSSB 2005
+%
+%%
 
 
 loadData('prostate');
