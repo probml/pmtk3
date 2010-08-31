@@ -1,6 +1,6 @@
 %% Fit a Gaussian Mixture Model using over-relaxed EM
 % We use synthetic data sampled from a GMM
-% PMTKauthor Krishna Nand, Keshava Murthy
+% PMTKauthor Krishna Nand Keshava Murthy
 %%
 ntrials = 2;
 for trial = 1:ntrials

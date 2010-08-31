@@ -163,10 +163,13 @@ end
 % is sufficient, fast first-order methods such as BB
 % are the way to go.
 % See also
-% <http://research.microsoft.com/en-us/um/people/minka/papers/logreg/
+%
+% * <http://research.microsoft.com/en-us/um/people/minka/papers/logreg/
 % A comparison of numerical optimizers for logistic regression>,
 % Tom Minka, tech report, 2003.
-
+% * <http://pmtk3.googlecode.com/svn/trunk/docs/demoOutput/otherDemos/algorithms/demoMinfuncHighdim.html
+% output of demoMinfuncHighdim>
+%
 
 %% Multi-layer perceptrons (feedforward neural networks)
 % MLPs are a form of nonlinear model for regression/ classification.

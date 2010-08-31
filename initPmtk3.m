@@ -42,6 +42,7 @@ include(fullfile(thisDir, 'toolbox'));
 include(fullfile(thisDir, 'demos')); 
 include(fullfile(thisDir, 'data'));             % may be initially empty
 include(fullfile(thisDir, 'external')); % may be initially empty
+include(fullfile(thisDir, 'docs', 'tutorial')); 
 %% we store user / system specific pmtk info in the systemInfo directory 
 pmtkInfoDir = fullfile(thisDir, 'localUtil', 'systemInfo');
 %% write isOctave function
