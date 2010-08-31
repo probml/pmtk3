@@ -1,6 +1,6 @@
 %% Ridge regression: visualize effect of changing lambda
 % and selecting it with CV and EB
- 
+ %%
 ns = [21 50];
 for n=ns(:)'
 setSeed(0);

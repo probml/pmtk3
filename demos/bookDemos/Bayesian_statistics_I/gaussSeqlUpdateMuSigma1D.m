@@ -16,7 +16,7 @@ xyrange = [-5 15 eps 15];
 figure; hold on;
 [styles, colors, symbols] =  plotColors();
 
-%%
+%
 ns = [5 25 100];
 str = {};
 ncontours = 3;

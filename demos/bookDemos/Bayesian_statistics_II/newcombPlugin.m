@@ -1,7 +1,7 @@
-% see if Newcomb's speed of light data is Gaussian
+%% Test to see if Newcomb's speed of light data is Gaussian
 % Similar to Gelman04 p77, except we use a plug-in approximation
 % See newcomb.m for the Bayesian version
-
+%%
 setSeed(0);
 
 % Data from http://www.stat.columbia.edu/~gelman/book/data/light.asc

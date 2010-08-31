@@ -1,5 +1,5 @@
 %% Lung cancer network Example
-% Make DAG
+%  Make DAG
 %     S
 %    / \
 %   v  v
@@ -8,6 +8,10 @@
 %    v     v
 %   SOB    X
 %%
+% 
+%  
+%  
+% 
 S = 1; CB = 2; LC = 3; SOB = 4; X = 5;
 nvars = 5; 
 dgm = mkLungCancerDgm();

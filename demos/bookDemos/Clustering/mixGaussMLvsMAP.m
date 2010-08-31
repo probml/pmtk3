@@ -1,7 +1,6 @@
 %% Demonstrate failure of MLE for GMMs in high-D case, whereas MAP works
-%PMKTauthor Hannes Bretschneider
-%PMTKmodified Matt Dunham 
-%%
+% PMKTauthor Hannes Bretschneider
+% PMTKmodified Matt Dunham 
 %% Create data
 setSeed(0); 
 trialsPerDeg = 10; 
