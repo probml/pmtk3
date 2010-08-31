@@ -95,7 +95,7 @@ for k=1:NL
   nfolds = 5;
   % since the data is sorted left to right, we must randomize the order
   [mu(k), se(k)] = cvEstimate(fitFn, predFn, lossFn, Xtrain, ytrain, nfolds, ...
-    'randomizeOrder', true);
+    'randomizeOrder', false);
 end
 
 figure; hold on
@@ -124,6 +124,13 @@ end
 verticalLine(ndx(idx_opt), 'color','b', 'linewidth',2);
 printPmtkFigure(sprintf('linregPolyVsRegCvN%d', n))
 
+% do it again using fitCV
+fitFn2 = @(Xtr,ytr,lam) linregFit(Xtr, ytr, 'lambda', lam, 'preproc', pp);
+[model2, bestParam2, mu2, se2] = ...
+    fitCv(lambdas, fitFn2, predFn, lossFn, Xtrain, ytrain,  nfolds);
+assert(approxeq(mu, mu2))
+assert(approxeq(se, se2))
+  
 
 %% Bayes
 % We  compute log evidence for each value of alpha

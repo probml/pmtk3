@@ -162,6 +162,8 @@
 % Discriminative models for regression>
 % * <http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutDiscrimClassif.html
 % Discriminative models for classification>
+% * <http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutSparseClassif.html
+% Sparse conditional models and variable selection>
 % * <http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutKernelClassif.html
 % Kernel-based models for classification and regression>
 % * <http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutGenClassif.html
