@@ -54,7 +54,7 @@ args = prepareArgs(varargin); % converts struct args to a cell array
   'outputType'    , outputType);
 
 if ~strcmpi(regType, 'l2')
-  error('mlpClassifFit currently only supports L2 regularization')
+  error('mlpFit currently only supports L2 regularization')
 end
 
 

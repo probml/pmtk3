@@ -19,13 +19,13 @@ lambda = 1e-2;
 %model = mlpClassifFitSchmidt(X, y, nhidden, lambda, options);
 %[yhat, py] = mlpClassifPredictSchmidt(model, X);
 
-model = mlpClassifFit(X, y, 'nhidden', nhidden, 'lambda', lambda, ...
+model = mlpFit(X, y, 'nhidden', nhidden, 'lambda', lambda, ...
   'fitOptions', options, 'method', 'schmidt');
-[yhat, py] = mlpClassifPredict(model, X);
+[yhat, py] = mlpPredict(model, X);
 
-model1 = mlpClassifFit(X, y, 'nhidden', nhidden, 'lambda', lambda, ...
+model1 = mlpFit(X, y, 'nhidden', nhidden, 'lambda', lambda, ...
   'fitOptions', options, 'method', 'netlab');
-[yhat1, py1] = mlpClassifPredict(model, X);
+[yhat1, py1] = mlpPredict(model, X);
 
 assert(approxeq(py, py1))
 

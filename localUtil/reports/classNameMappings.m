@@ -32,8 +32,7 @@ supervised = {
     'knn'
     'linreg'
     'logreg'
-    'mlpClassif'
-    'mlpRegress'
+    'mlp'
     'naiveBayes'
     'probitReg'
     'svm'    };
