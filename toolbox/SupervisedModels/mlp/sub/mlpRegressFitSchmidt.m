@@ -15,7 +15,7 @@ for h = 2:length(nHidden);
 end
 nParams = nParams+nHidden(end);
 
-funObj = @(weights)MLPregressionLoss(weights,X1,y,nHidden);
+funObj = @(weights)MLPregressionLoss_efficient(weights,X1,y,nHidden);
 w = randn(nParams,1); % initial params
 [w,f,exitflag,output] = minFunc(@penalizedL2,w,options,funObj,lambda); %#ok
 

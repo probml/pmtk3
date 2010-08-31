@@ -158,10 +158,12 @@
 % in more detail,
 % as follows:
 %
+% * <http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutRegr.html
+% Discriminative models for regression>
 % * <http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutDiscrimClassif.html
-% Discriminative models>
+% Discriminative models for classification>
 % * <http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutKernelClassif.html
-% Kernel-based models>
+% Kernel-based models for classification and regression>
 % * <http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutGenClassif.html
-% Generative models>
+% Generative models for classification and regression>
 

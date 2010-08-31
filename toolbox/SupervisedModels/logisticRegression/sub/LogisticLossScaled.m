@@ -5,19 +5,16 @@ function [nll,g,H] = LogisticLossScaled(w,X,y)
 % y: n*1, should be -1 or 1
 
 N = size(X,1);
-y01 = (y+1)/2;
-mu = sigmoid(X*w);
-mu = max(mu, eps); % bound away from 0
-mu = min(1-eps, mu); % bound away from 1
-nll = -sum(y01 .* log(mu) + (1-y01) .* log(1-mu));
-nll = nll/N;
-
-if nargout > 1
-  g = (1/N)*X'*(mu-y01);
-end
-
-if nargout > 2
-  H = (1/N)*X'*diag(mu.*(1-mu))*X;
+switch nargout
+  case 1
+    [nll] = LogisticLossSimple(w,X,y);
+    nll = nll/N;
+  case 2,
+    [nll,g] = LogisticLossSimple(w,X,y);
+    nll = nll/N; g = g/N;
+   case 3,
+    [nll,g,H] = LogisticLossSimple(w,X,y);
+    nll = nll/N; g = g/N; H = H/N;
 end
 
 end

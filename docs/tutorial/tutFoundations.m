@@ -393,13 +393,24 @@ assert(approxeq(m1.w, m2.w))
 % prints full filenames of all files starting
 %   with the string 'foo', and |wwhich('*foo*')| finds
 % files with 'foo' anywhere in their name.
-% * edit.m : |edit('foo')| will open foo.m in the matlab editor.
+% * |edit('foo')| will open foo.m in the matlab editor.
 % This lets you look at (and modify) the source code.
 %    This also works
 %   for built-in Matlab functions. 
 %   Be careful not to change things accidently!.
-% * help.m : |help('foo')| prints any initial documentation for foo.m that
+% * |help('foo')| prints any initial documentation for foo.m that
 %     the implementer may have provided; all builtin Matlab functions
 %     are properly documented. Unfortuntately that is not the case for
 %     all the PMTK functions... but you can always read the source :)
+% * placeFigures.m : this lays out all the currently open figures
+%   so you can see them all at the same time
+% * |dbstop if error| : open the debugger if there is an error.
+% See <http://yagtom.googlecode.com/svn/trunk/html/debugging.html here>
+% for more info on debugging.
+% * printPmtkFigure.m : this is used to make figures for
+% <http://www.cs.ubc.ca/~murphyk/MLbook/index.html my book>. It uses
+% <http://www.mathworks.com/matlabcentral/fileexchange/23629 export_fig.m>
+% to make the figures 'camera ready'. If you want to include figures
+% in your own document, you can modify printPmtkFigure appropriately.
+
 

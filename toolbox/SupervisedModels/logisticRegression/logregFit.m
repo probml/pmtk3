@@ -1,4 +1,4 @@
-function [model, X, lambdaVec] = logregFit(X, y, varargin)
+function [model, X, lambdaVec, opt] = logregFit(X, y, varargin)
 % Fit a logistic regression model, (supports multiclass)
 %% INPUTS: (specified as name value pairs)
 % regType       ... 'L1' or 'L2' or 'none'
@@ -9,6 +9,8 @@ function [model, X, lambdaVec] = logregFit(X, y, varargin)
 %% OUTPUTS:
 % model         ... a struct, which you can pass directly to logregPredict
 % X             ... possibly transformed input
+% lambdaVec     ... vector of regularizers, including 0 for offset
+% opt           ... output of optimizer 
 %%
 y = y(:);
 assert(size(y, 1) == size(X, 1));
@@ -56,10 +58,13 @@ winit  = zeros(D, nclasses-1);
 
 switch lower(regType)
   case 'l1'
-    w = L1GeneralProjection(loss, winit(:), lambdaVec(:), fitOptions);
+    [w, opt] = L1GeneralProjection(loss, winit(:), lambdaVec(:), fitOptions);
   case 'l2'
     penloss = @(w)penalizedL2(w, loss, lambdaVec(:));
-    w = minFunc(penloss, winit(:), fitOptions);
+    %w = minFunc(penloss, winit(:), fitOptions);
+    [w, opt.finalObj, opt.exitflag, opt.output] = ...
+      minFunc(penloss, winit(:), fitOptions);
+
 end
 
 if ~isbinary
