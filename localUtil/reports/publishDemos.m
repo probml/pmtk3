@@ -4,7 +4,7 @@ function publishDemos(wikiFile)
 % affect this function. 
 % PMTKneedsMatlab 
 %%
-wikiOnly = true;     % set true if you only want to regenerate the wiki and 
+wikiOnly = false;     % set true if you only want to regenerate the wiki and 
                      % index.html pages, and not republish. 
 svnAutomatically = false;
 
