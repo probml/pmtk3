@@ -62,7 +62,14 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h1>Lung cancer network Example</h1><!--introduction--><p>Make DAG     S    / \   v  v  CB  LC    \/   \    v     v   SOB    X</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Display joint</a></li><li><a href="#3">Conditional marginals</a></li><li><a href="#4">Unconditional marginals</a></li><li><a href="#5">Joint mode</a></li></ul></div><pre class="codeinput">S = 1; CB = 2; LC = 3; SOB = 4; X = 5;
+  </style></head><body><div class="content"><h1>Lung cancer network Example</h1><!--introduction--><pre>Make DAG
+   S
+  / \
+ v  v
+CB  LC
+  \/   \
+  v     v
+ SOB    X</pre><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Display joint</a></li><li><a href="#3">Conditional marginals</a></li><li><a href="#4">Unconditional marginals</a></li><li><a href="#5">Joint mode</a></li></ul></div><pre class="codeinput">S = 1; CB = 2; LC = 3; SOB = 4; X = 5;
 nvars = 5;
 dgm = mkLungCancerDgm();
 
@@ -128,7 +135,7 @@ p(XR=1)=0.020
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Lung cancer network Example
-% Make DAG
+%  Make DAG
 %     S
 %    / \
 %   v  v
@@ -137,6 +144,10 @@ p(XR=1)=0.020
 %    v     v
 %   SOB    X
 %%
+% 
+%  
+%  
+% 
 S = 1; CB = 2; LC = 3; SOB = 4; X = 5;
 nvars = 5; 
 dgm = mkLungCancerDgm();
