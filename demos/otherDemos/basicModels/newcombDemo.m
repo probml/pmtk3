@@ -38,7 +38,9 @@ for i=1:20
     set(gca,'xlim',[0 50])
     %title(sprintf('synth %d', i))
 end
-suplabel('posterior samples', 't')
+if ~isOctave
+    suplabel('posterior samples', 't')
+end
 %% compute distribution of test statistic
 testVal = zeros(1, S);
 for s=1:S

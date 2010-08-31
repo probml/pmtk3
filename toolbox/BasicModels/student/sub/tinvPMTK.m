@@ -10,9 +10,13 @@ u       = ~l;
 z       = zeros(n, 1);
 zbar    = zeros(n, 1);
 absp    = 2*abs(p); 
-zbar(l) = betainvPMTK(absp(l), 0.5, dof(l)/2, 'lower');
+if any(l)
+    zbar(l) = betainvPMTK(absp(l), 0.5, dof(l)/2, 'lower');
+end
 z(l)    = 1 - zbar(l);
 z(u)    = betainvPMTK(absp(u), dof(u)/2, 0.5, 'upper');
-zbar(u) = 1 - z(u);
+if any(u)
+    zbar(u) = 1 - z(u);
+end
 X       = sign(p) .* sqrt(dof .* (zbar./z));
 end

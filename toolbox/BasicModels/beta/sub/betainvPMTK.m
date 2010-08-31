@@ -5,7 +5,7 @@ function X = betainvPMTK(p, a, b, tail)
 
 upper = (nargin > 3) && strcmpi(tail, 'upper');
     
-if statsToolboxInstalled
+if statsToolboxInstalled || isOctave
     if upper
         X = betainv(1-p, a, b);
     else
