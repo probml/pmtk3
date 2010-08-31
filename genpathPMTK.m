@@ -13,7 +13,7 @@ if nargin==0,
 end
 
 if nargin > 1 && ~isMatlab %isempty(strfind(upper(matlabroot), 'MATLAB')) % octave
-    p = genpathOctave(d); % faster version for Octave
+    p = genpath(d); % genpathPMTK is not reliable in Octave
    return; 
 end
     
@@ -53,29 +53,29 @@ end
 end
 
 
-function p = genpathOctave(d)
-%% This version is faster in Octave
-
-fullp = genpath(d); 
-
-[start, finish] = regexp(fullp, pathsep);
-if isempty(start)
-    tokens = {fullp};
-else
-    tokens = cell(numel(start+1), 1);
-    tokens{1} = fullp(1:start(1)-1);
-    start = [start, length(fullp)+1];
-    for i=1:numel(finish)
-        tokens{i+1} = fullp(finish(i)+1:start(i+1)-1);
-    end
-end
-tokens(cellfun(@(c)isempty(c), tokens)) = []; 
-ndx = cellfun(@(c)~isempty(c), strfind(tokens, '.svn'));
-tokens(ndx) = [];
-tokens = cellfun(@(t)[t, pathsep], tokens, 'uniformoutput', false); 
-p = [tokens{:}]; 
-if isempty(p)
-    p = '';
-end
-
-end
+% function p = genpathOctave(d)
+% %% Prototoype version that may not work reliably
+% 
+% fullp = genpath(d); 
+% 
+% [start, finish] = regexp(fullp, pathsep);
+% if isempty(start)
+%     tokens = {fullp};
+% else
+%     tokens = cell(numel(start+1), 1);
+%     tokens{1} = fullp(1:start(1)-1);
+%     start = [start, length(fullp)+1];
+%     for i=1:numel(finish)
+%         tokens{i+1} = fullp(finish(i)+1:start(i+1)-1);
+%     end
+% end
+% tokens(cellfun(@(c)isempty(c), tokens)) = []; 
+% ndx = cellfun(@(c)~isempty(c), strfind(tokens, '.svn'));
+% tokens(ndx) = [];
+% tokens = cellfun(@(t)[t, pathsep], tokens, 'uniformoutput', false); 
+% p = [tokens{:}]; 
+% if isempty(p)
+%     p = '';
+% end
+% 
+% end
