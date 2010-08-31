@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>bayesfactorGeneDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="bayesfactorGeneDemo"><style type="text/css">
+      --><title>Bayes Factor Gene Demo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="bayesfactorGeneDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,8 +62,7 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Bayes Factor Gene Demo</a></li><li><a href="#4">BF = p(data|H0)/p(data|H1) where H0=no change</a></li><li><a href="#5">pval = prob(&gt;=data|H0), small pval means H0 unlikely</a></li></ul></div><h2>Bayes Factor Gene Demo<a name="1"></a></h2><pre class="codeinput"><span class="comment">%PMTKneedsStatsToolbox ttest2</span>
-</pre><pre class="codeinput"><span class="keyword">function</span> bayesfactorGeneDemo()
+  </style></head><body><div class="content"><h1>Bayes Factor Gene Demo</h1><!--introduction--><p>PMTKneedsStatsToolbox ttest2</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#3">BF = p(data|H0)/p(data|H1) where H0=no change</a></li><li><a href="#4">pval = prob(&gt;=data|H0), small pval means H0 unlikely</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> bayesfactorGeneDemo()
 </pre><pre class="codeinput">requireStatsToolbox
 <span class="comment">%load('bayesFactorGeneData.mat');</span>
 <span class="comment">%ngenes = size(Xtreat,1);</span>
@@ -77,13 +76,13 @@ truth(ndx) = 1; <span class="comment">% these entries are  differentially expres
 Xcontrol = repmat(mu1, ngenes, nsamples) + s1*randn(ngenes, nsamples);
 Xtreat = repmat(mu1, ngenes, nsamples) + s1*randn(ngenes, nsamples);
 Xtreat(ndx, :) = repmat(mu2, length(ndx), nsamples) + s2*randn(length(ndx), nsamples);
-</pre><h2>BF = p(data|H0)/p(data|H1) where H0=no change<a name="4"></a></h2><pre class="codeinput"><span class="keyword">for</span> i=1:ngenes
+</pre><h2>BF = p(data|H0)/p(data|H1) where H0=no change<a name="3"></a></h2><pre class="codeinput"><span class="keyword">for</span> i=1:ngenes
     <span class="comment">%BF(i) = bayesianTtest(Xtreat(i,:), Xcontrol(i,:), 0, 100);</span>
     <span class="comment">%BF(i) = bayesTtestOneSample(Xtreat(i,:)-Xcontrol(i,:));</span>
     BF(i) = bayesTtestTwoSample(Xtreat(i,:),Xcontrol(i,:));
 <span class="keyword">end</span>
 score = log(1./BF);
-</pre><h2>pval = prob(&gt;=data|H0), small pval means H0 unlikely<a name="5"></a></h2><pre class="codeinput"><span class="keyword">for</span> i=1:ngenes
+</pre><h2>pval = prob(&gt;=data|H0), small pval means H0 unlikely<a name="4"></a></h2><pre class="codeinput"><span class="keyword">for</span> i=1:ngenes
     [hyptest(i),pval(i)] = ttest2(Xtreat(i,:), Xcontrol(i,:));
 <span class="keyword">end</span>
 scoreFreq = 1./pval;
@@ -135,7 +134,7 @@ plot(scorePval(perm)); title(<span class="string">'log(1/pval)'</span>);
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Bayes Factor Gene Demo
-%PMTKneedsStatsToolbox ttest2
+% PMTKneedsStatsToolbox ttest2
 %%
 function bayesfactorGeneDemo()
 

@@ -1,5 +1,5 @@
 %% Bayes Factor Gene Demo
-%PMTKneedsStatsToolbox ttest2
+% PMTKneedsStatsToolbox ttest2
 %%
 function bayesfactorGeneDemo()
 

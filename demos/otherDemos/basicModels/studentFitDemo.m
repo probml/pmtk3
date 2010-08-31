@@ -1,5 +1,5 @@
-%% compare EM to matlab stats toolbox
-%PMTKneedsStatsToolbox mle
+%% Compare EM to matlab stats toolbox
+% PMTKneedsStatsToolbox mle
 %%
 requireStatsToolbox
 %% same data as gaussVsStudentOutlierDemo

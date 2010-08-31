@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>pairedTestDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="pairedTestDemo"><style type="text/css">
+      --><title>Plot posterior on difference in rates given paired contingency table</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="pairedTestDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,8 +62,7 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Plot posterior on difference in rates given paired contingency table</a></li><li><a href="#6">Unpaired</a></li></ul></div><h2>Plot posterior on difference in rates given paired contingency table<a name="1"></a></h2><p>MC approx to figure 1a of Shi and Bai 2008</p><pre class="codeinput"><span class="comment">%PMTKneedsStatsToolbox ksdensity</span>
-</pre><pre class="codeinput">requireStatsToolbox
+  </style></head><body><div class="content"><h1>Plot posterior on difference in rates given paired contingency table</h1><!--introduction--><p>MC approx to figure 1a of Shi and Bai 2008 PMTKneedsStatsToolbox ksdensity</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#5">Unpaired</a></li></ul></div><pre class="codeinput">requireStatsToolbox
 setSeed(1);
 ns = [20 20 10 50 30];
 n10s = [0 1 2 20 28];
@@ -84,7 +83,7 @@ legend(<span class="string">'location'</span>, <span class="string">'north'</spa
 box <span class="string">on</span>;
 title(<span class="string">'paired'</span>);
 printPmtkFigure(<span class="string">'pairedTestDemo'</span>)
-</pre><img vspace="5" hspace="5" src="pairedTestDemo_06.png" alt=""> <h2>Unpaired<a name="6"></a></h2><pre class="codeinput">figure; hold <span class="string">on</span>
+</pre><img vspace="5" hspace="5" src="pairedTestDemo_06.png" alt=""> <h2>Unpaired<a name="5"></a></h2><pre class="codeinput">figure; hold <span class="string">on</span>
 <span class="keyword">for</span> i=1:length(ns)
 </pre><pre class="codeinput">    n = ns(i); n10=n10s(i); n01=n01s(i);
     y1 = n10+n11; y2 = n01+n11;
@@ -105,7 +104,7 @@ printPmtkFigure(<span class="string">'unpairedTestDemo'</span>)
 ##### SOURCE BEGIN #####
 %% Plot posterior on difference in rates given paired contingency table
 % MC approx to figure 1a of Shi and Bai 2008
-%PMTKneedsStatsToolbox ksdensity
+% PMTKneedsStatsToolbox ksdensity
 %%
 requireStatsToolbox
 setSeed(1);

@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>studentFitDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="studentFitDemo"><style type="text/css">
+      --><title>Compare EM to matlab stats toolbox</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="studentFitDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,9 +62,8 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">compare EM to matlab stats toolbox</a></li><li><a href="#3">same data as gaussVsStudentOutlierDemo</a></li></ul></div><h2>compare EM to matlab stats toolbox<a name="1"></a></h2><pre class="codeinput"><span class="comment">%PMTKneedsStatsToolbox mle</span>
-</pre><pre class="codeinput">requireStatsToolbox
-</pre><h2>same data as gaussVsStudentOutlierDemo<a name="3"></a></h2><pre class="codeinput">n = 30;
+  </style></head><body><div class="content"><h1>Compare EM to matlab stats toolbox</h1><!--introduction--><p>PMTKneedsStatsToolbox mle</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">same data as gaussVsStudentOutlierDemo</a></li></ul></div><pre class="codeinput">requireStatsToolbox
+</pre><h2>same data as gaussVsStudentOutlierDemo<a name="2"></a></h2><pre class="codeinput">n = 30;
 setSeed(8);
 data = randn(n,1);
 outliers = [8 ; 8.75 ; 9.5];
@@ -97,8 +96,8 @@ sigma: matlab 0.777, em 0.804, ecme 0.801
 </pre><p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
-%% compare EM to matlab stats toolbox
-%PMTKneedsStatsToolbox mle
+%% Compare EM to matlab stats toolbox
+% PMTKneedsStatsToolbox mle
 %%
 requireStatsToolbox
 %% same data as gaussVsStudentOutlierDemo
