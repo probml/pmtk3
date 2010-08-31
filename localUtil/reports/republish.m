@@ -1,8 +1,10 @@
-function republish()
+function republish(evalCode)
 %% Republish the currently open (and selected) PMTK mfile
 %
 %%
-
+if nargin < 1
+    evalCode = true; 
+end
 w = which(currentlyOpenFile); 
 
 prefix = fullfile(pmtk3Root(), 'demos'); 
@@ -12,7 +14,7 @@ end
 
 f = w(length(prefix)+2:end); 
 
-previewPublished(w, true, fullfile(pmtk3Root(), 'docs', 'demoOutput', fileparts(f))); 
+previewPublished(w, evalCode, fullfile(pmtk3Root(), 'docs', 'demoOutput', fileparts(f))); 
 
 
 
