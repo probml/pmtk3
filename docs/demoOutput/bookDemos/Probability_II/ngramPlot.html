@@ -114,8 +114,7 @@ p.footer {
     grid <span class="string">off</span>;
     set(main,<span class="string">'Color'</span>,<span class="string">'w'</span>);
 <span class="keyword">end</span>
-
-<span class="keyword">if</span>(0) <span class="comment">% Print a table of unigram frequencies to the console</span>
+</pre><img vspace="5" hspace="5" src="ngramPlot_01.png" alt=""> <pre class="codeinput"><span class="keyword">if</span>(0) <span class="comment">% Print a table of unigram frequencies to the console</span>
     fprintf(<span class="string">'\n%10s %7s %12s\n\n'</span>,<span class="string">'Index'</span>,<span class="string">'Letter'</span>,<span class="string">'Frequency'</span>);
     <span class="keyword">for</span> i = 1:length(validSet)
         fprintf(<span class="string">'%8s %6s %15s\n'</span>,num2str(i),char(validSet(i)),num2str(ugramsNorm(i),<span class="string">'%4.3f'</span>));
@@ -132,7 +131,7 @@ p.footer {
 <span class="keyword">end</span>
 
 printPmtkFigure <span class="string">uniBigram</span>;
-</pre><img vspace="5" hspace="5" src="ngramPlot_01.png" alt=""> <p class="footer"><br>
+</pre><p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Plot unigrams and bigrams of Darwin's "On the origin of species"
@@ -191,7 +190,7 @@ if(1) % Plot unigram and bigram frequencies
     grid off;
     set(main,'Color','w');
 end
-
+%%
 if(0) % Print a table of unigram frequencies to the console
     fprintf('\n%10s %7s %12s\n\n','Index','Letter','Frequency');
     for i = 1:length(validSet)

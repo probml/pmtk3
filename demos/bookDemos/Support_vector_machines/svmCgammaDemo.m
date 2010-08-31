@@ -3,7 +3,7 @@
 % by Hastie, Tibshirani, Friedman,
 % We also show the 2D % surface similar to figure 7 in
 % http://www.csie.ntu.edu.tw/~cjlin/papers/guide/guide.pdf.
-%PMTKslow
+% PMTKslow
 %%
 %% Load Data
 setSeed(0);

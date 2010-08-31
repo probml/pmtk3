@@ -54,7 +54,7 @@ if(1) % Plot unigram and bigram frequencies
     grid off;
     set(main,'Color','w');
 end
-
+%%
 if(0) % Print a table of unigram frequencies to the console
     fprintf('\n%10s %7s %12s\n\n','Index','Letter','Frequency');
     for i = 1:length(validSet)
