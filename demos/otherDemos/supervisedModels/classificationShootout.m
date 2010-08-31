@@ -192,7 +192,7 @@ dataSets(1).name = 'Crabs';
 dataSets(1).nClasses  = 2;
 dataSets(1).nFeatures = 5;
 %% fisherIris
-loadData('fisherIris');
+loadData('fisherIrisData');
 X = meas;
 y = canonizeLabels(species);
 [X, y] = shuffleRows(X, y);

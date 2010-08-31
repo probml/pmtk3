@@ -1,6 +1,6 @@
 %% Multi-class logistic regression on iris data
 
-loadData('fisheriris')
+loadData('fisherIrisData')
 X = meas;  % 150x4
 [y, support] = canonizeLabels(species);
 pp = preprocessorCreate('standardizeX', false, 'addOnes', true);

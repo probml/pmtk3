@@ -86,7 +86,7 @@ fprintf('misclassification rates  on train = %5.2f pc, on test = %5.2f pc\n', ..
 % of how to fit a QDA/LDA/ diagDA model.
 % We apply it to a subset of the Fisher Iris dataset.
 %%
-loadData('fisheriris')
+loadData('fisherIrisData')
 X = meas(51:end, 1:2);  % for illustrations use 2 species, 2 features
 labels = species(51:end);
 [y, support] = canonizeLabels(labels);
