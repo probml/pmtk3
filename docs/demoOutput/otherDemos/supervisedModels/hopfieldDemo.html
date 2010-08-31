@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>Demonstrate the use of a Hopfield network for associative memory.</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="hopfieldDemo"><style type="text/css">
+      --><title>Demonstrate the use of a Hopfield network for associative memory.</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-31"><meta name="m-file" content="hopfieldDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,10 +62,7 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h1>Demonstrate the use of a Hopfield network for associative memory.</h1><p>Requires the neural network and image processing toolboxes</p><pre class="codeinput"><span class="comment">%PMTKneedsImagesToolbox</span>
-<span class="comment">%PMTKneedsNnetToolbox</span>
-<span class="comment">%PMTKslow</span>
-</pre><pre class="codeinput">requireImageToolbox
+  </style></head><body><div class="content"><h1>Demonstrate the use of a Hopfield network for associative memory.</h1><!--introduction--><p>Requires the neural network and image processing toolboxes PMTKneedsImagesToolbox PMTKneedsNnetToolbox PMTKslow</p><!--/introduction--><pre class="codeinput">requireImageToolbox
 loadData(<span class="string">'binaryImages'</span>);     <span class="comment">% 7 binary images, each 150x150</span>
 newsize   = 30;          <span class="comment">% new size 30x30</span>
 nimages   = 7;
@@ -120,14 +117,14 @@ annotation(gcf,<span class="string">'textbox'</span>,[0 0.4246 0.1 0.1],<span cl
 annotation(gcf,<span class="string">'textbox'</span>,[0 0.2436 0.1 0.1],<span class="string">'String'</span>,{<span class="string">'Recoverd'</span>,<span class="string">'Image'</span>},<span class="string">'HorizontalAlignment'</span>,<span class="string">'left'</span>,<span class="string">'FitBoxToText'</span>,<span class="string">'off'</span>,<span class="string">'LineStyle'</span>,<span class="string">'none'</span>,<span class="string">'FontSize'</span>,8);
 
 printPmtkFigure <span class="string">hopfieldDemo</span>
-</pre><p class="footer"><br>
+</pre><img vspace="5" hspace="5" src="hopfieldDemo_01.png" alt=""> <p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Demonstrate the use of a Hopfield network for associative memory.
 % Requires the neural network and image processing toolboxes
-%PMTKneedsImagesToolbox
-%PMTKneedsNnetToolbox
-%PMTKslow
+% PMTKneedsImagesToolbox
+% PMTKneedsNnetToolbox
+% PMTKslow
 %%
 requireImageToolbox
 loadData('binaryImages');     % 7 binary images, each 150x150
