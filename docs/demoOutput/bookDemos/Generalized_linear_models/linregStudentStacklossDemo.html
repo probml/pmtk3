@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>linregStudentStacklossDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="linregStudentStacklossDemo"><style type="text/css">
+      --><title>Reproduce table 1 from "Robust statistical modeling using the T distribution</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="linregStudentStacklossDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,12 +62,11 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Reproduce table 1 from "Robust statistical modeling using the T distribution</a></li><li><a href="#3">fit model</a></li><li><a href="#4">format output</a></li></ul></div><h2>Reproduce table 1 from "Robust statistical modeling using the T distribution<a name="1"></a></h2><p>Lange et al, JASA 1989 The estimated coefficients are similar However, this does <b>not</b> reproduce the log likelihoods correctly The reason for this is not clear - is Lange evaluating the expected complete data loglik instead?</p><pre class="codeinput"><span class="comment">%PMTKauthor Hannes Bretschneider</span>
-</pre><pre class="codeinput">saveLatex = false;
+  </style></head><body><div class="content"><h1>Reproduce table 1 from "Robust statistical modeling using the T distribution</h1><!--introduction--><p>Lange et al, JASA 1989 The estimated coefficients are similar However, this does <b>not</b> reproduce the log likelihoods correctly The reason for this is not clear - is Lange evaluating the expected complete data loglik instead?</p><p>PMTKauthor Hannes Bretschneider</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">fit model</a></li><li><a href="#3">format output</a></li></ul></div><pre class="codeinput">saveLatex = false;
 loadData(<span class="string">'stackloss'</span>);
 n = size(X,1);
 X1 = [ones(n,1) X];
-</pre><h2>fit model<a name="3"></a></h2><p>dof=0 means estimate from data dof=100 means effectively use Gaussian model</p><pre class="codeinput">dofs = [100, 8, 4, 3, 2, 1.1, 1, 0.5, 0];
+</pre><h2>fit model<a name="2"></a></h2><p>dof=0 means estimate from data dof=100 means effectively use Gaussian model</p><pre class="codeinput">dofs = [100, 8, 4, 3, 2, 1.1, 1, 0.5, 0];
 modelEM = cell(1,length(dofs));
 loglikEM  = zeros(1, length(dofs));
 <span class="keyword">for</span> i = 1:length(dofs)
@@ -86,7 +85,7 @@ loglikEM  = zeros(1, length(dofs));
     modelConstr{i} = linregRobustStudentFitConstr(X, y, dof);
     loglikConstr(i) = sum(linregLogprob(modelConstr{i}, X, y));
 <span class="keyword">end</span>
-</pre><h2>format output<a name="4"></a></h2><pre class="codeinput">fprintf(<span class="string">'estimated dof, EM %5.3f, constr %5.3f\n'</span>, <span class="keyword">...</span>
+</pre><h2>format output<a name="3"></a></h2><pre class="codeinput">fprintf(<span class="string">'estimated dof, EM %5.3f, constr %5.3f\n'</span>, <span class="keyword">...</span>
     modelEM{end}.dof, modelConstr{end}.dof);
 ndof = length(dofs);
 table = NaN(ndof,6);
@@ -173,8 +172,7 @@ table =
 % The reason for this is not clear - is Lange evaluating the expected
 % complete data loglik instead?
 %
-%PMTKauthor Hannes Bretschneider
-
+% PMTKauthor Hannes Bretschneider
 %%
 saveLatex = false;
 loadData('stackloss');

@@ -5,8 +5,7 @@
 % The reason for this is not clear - is Lange evaluating the expected
 % complete data loglik instead?
 %
-%PMTKauthor Hannes Bretschneider
-
+% PMTKauthor Hannes Bretschneider
 %%
 saveLatex = false;
 loadData('stackloss');

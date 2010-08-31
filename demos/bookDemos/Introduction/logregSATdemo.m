@@ -1,6 +1,5 @@
-%% Binary ogistic Regression on SAT data
+%% Binary Logistic Regression on SAT data
 % Example from Johnson and Albert p87
-
 %% Load data
 stat = loadData('sat');  y = stat(:,1); X = stat(:,4);
 

@@ -1,7 +1,6 @@
 %% Try to reproduce table 18.1 from "Elements of statistical learning" 2nd edn p656
-%PMTKauthor Hannes Bretschneider
-%PMTKslow
-%
+% PMTKauthor Hannes Bretschneider
+% PMTKslow
 %% Load data
 
 loadData('14cancer') % Xtrain is 144*16063, Xtest is 54*16063
