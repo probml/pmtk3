@@ -1,4 +1,6 @@
-
+%% Simple bolasso demo
+%
+%%
 setSeed(0);
 n = 1000;   %number of data points
 d = 25;     %number of dimensions
