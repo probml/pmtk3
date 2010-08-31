@@ -1,5 +1,5 @@
 %% Sparse linear regression with EM on biscuits data
-%PMTKreallySlow
+% PMTKreallySlow
 %%
 
 

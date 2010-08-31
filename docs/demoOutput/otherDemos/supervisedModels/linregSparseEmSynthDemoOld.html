@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>linregSparseEmSynthDemoOld</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="linregSparseEmSynthDemoOld"><style type="text/css">
+      --><title>Sparse linear regression with EM on synthetic data</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-31"><meta name="m-file" content="linregSparseEmSynthDemoOld"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,9 +62,7 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Sparse linear regression with EM on synthetic data</a></li><li><a href="#4">plot results</a></li></ul></div><h2>Sparse linear regression with EM on synthetic data<a name="1"></a></h2><pre class="codeinput"><span class="comment">%PMTKreallySlow</span>
-<span class="comment">%PMTKneedsStatsToolbox boxplot</span>
-</pre><pre class="codeinput">requireStatsToolbox
+  </style></head><body><div class="content"><h1>Sparse linear regression with EM on synthetic data</h1><!--introduction--><p>PMTKreallySlow PMTKneedsStatsToolbox boxplot</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#3">plot results</a></li></ul></div><pre class="codeinput">requireStatsToolbox
 setSeed(0);
 
 D=200; <span class="comment">% Number of coefficients to estimate</span>
@@ -169,7 +167,7 @@ sparsities = [0.05 0.25];
    <span class="comment">% null model</span>
    <span class="comment">%w=zeros(size(Xtrain,2),1);</span>
    <span class="comment">%mse(end+1)=mean((ytest-Xtest*w).^2);</span>
-</pre><h2>plot results<a name="4"></a></h2><pre class="codeinput">   figure;
+</pre><h2>plot results<a name="3"></a></h2><pre class="codeinput">   figure;
    bar(mse);
    set(gca,<span class="string">'xticklabel'</span>,names)
    title(sprintf(<span class="string">'mse test on trial %d, sparsity %5.3f'</span>, trial,sparsity))
@@ -197,8 +195,8 @@ printPmtkFigure(sprintf(<span class="string">'linregSparseEmSynthBoxplot%d'</spa
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Sparse linear regression with EM on synthetic data
-%PMTKreallySlow
-%PMTKneedsStatsToolbox boxplot
+% PMTKreallySlow
+% PMTKneedsStatsToolbox boxplot
 %%
 requireStatsToolbox
 setSeed(0);

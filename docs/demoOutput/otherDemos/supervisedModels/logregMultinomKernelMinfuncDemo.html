@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>logregMultinomKernelMinfuncDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="logregMultinomKernelMinfuncDemo"><style type="text/css">
+      --><title>Minfunc Kernelized Logreg Demo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-31"><meta name="m-file" content="logregMultinomKernelMinfuncDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,16 +62,7 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Minfunc Kernelized Logreg Demo</a></li><li><a href="#3">Linear</a></li><li><a href="#4">Polynomial</a></li><li><a href="#5">RBF</a></li><li><a href="#6">Compute training errors</a></li></ul></div><h2>Minfunc Kernelized Logreg Demo<a name="1"></a></h2><pre class="codeinput"><span class="comment">%PMTKauthor Mark Schmidt</span>
-<span class="comment">%PMTKmodified Kevin Murphy</span>
-<span class="comment">%PMTKurl http://people.cs.ubc.ca/~schmidtm/Software/minFunc/minFunc.html#7</span>
-<span class="comment">% It is modified by replacing penalizedKernelL2_matrix,</span>
-<span class="comment">% which uses sum_c w(:,c)' K w(:,c) as the regularizer,</span>
-<span class="comment">% with the simpler penalizedL2, which uses w' w as the regularizer.</span>
-<span class="comment">% The key difference is that we only use kernels to do basis funcion</span>
-<span class="comment">% expansion on X; we do not change the regularizer.</span>
-<span class="comment">% This makes hardly any difference to the training error.</span>
-</pre><pre class="codeinput">options.Display = <span class="string">'none'</span>;
+  </style></head><body><div class="content"><h1>Minfunc Kernelized Logreg Demo</h1><!--introduction--><p>PMTKauthor Mark Schmidt PMTKmodified Kevin Murphy PMTKurl <a href="http://people.cs.ubc.ca/~schmidtm/Software/minFunc/minFunc.html#7">It</a> is modified by replacing penalizedKernelL2_matrix, which uses sum_c w(:,c)' K w(:,c) as the regularizer, with the simpler penalizedL2, which uses w' w as the regularizer. The key difference is that we only use kernels to do basis funcion expansion on X; we do not change the regularizer. This makes hardly any difference to the training error.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Linear</a></li><li><a href="#3">Polynomial</a></li><li><a href="#4">RBF</a></li><li><a href="#5">Compute training errors</a></li></ul></div><pre class="codeinput">options.Display = <span class="string">'none'</span>;
 setSeed(0);
 nClasses = 5;
 <span class="comment">%nInstances = 1000;</span>
@@ -92,13 +83,13 @@ hold <span class="string">on</span>
    <span class="keyword">end</span>
 <span class="keyword">end</span>
 lambda = 1e-2;
-</pre><img vspace="5" hspace="5" src="logregMultinomKernelMinfuncDemo_01.png" alt=""> <h2>Linear<a name="3"></a></h2><pre class="codeinput">funObj = @(w)SoftmaxLoss2(w,X,y,nClasses);
+</pre><img vspace="5" hspace="5" src="logregMultinomKernelMinfuncDemo_01.png" alt=""> <h2>Linear<a name="2"></a></h2><pre class="codeinput">funObj = @(w)SoftmaxLoss2(w,X,y,nClasses);
 fprintf(<span class="string">'Training linear multinomial logistic regression model...\n'</span>);
 wLinear = minFunc(@penalizedL2,zeros(nVars*(nClasses-1),1),options,funObj,lambda);
 wLinear = reshape(wLinear,[nVars nClasses-1]);
 wLinear = [wLinear zeros(nVars,1)];
 </pre><pre class="codeoutput">Training linear multinomial logistic regression model...
-</pre><h2>Polynomial<a name="4"></a></h2><pre class="codeinput">polyOrder = 2;
+</pre><h2>Polynomial<a name="3"></a></h2><pre class="codeinput">polyOrder = 2;
 Kpoly = kernelPoly(X,X,polyOrder);
 funObj = @(u)SoftmaxLoss2(u,Kpoly,y,nClasses);
 fprintf(<span class="string">'Training kernel(poly) multinomial logistic regression model...\n'</span>);
@@ -107,7 +98,7 @@ uPoly = minFunc(@penalizedL2,randn(nInstances*(nClasses-1),1),options,funObj,lam
 uPoly = reshape(uPoly,[nInstances nClasses-1]);
 uPoly = [uPoly zeros(nInstances,1)];
 </pre><pre class="codeoutput">Training kernel(poly) multinomial logistic regression model...
-</pre><h2>RBF<a name="5"></a></h2><pre class="codeinput">rbfScale = 1;
+</pre><h2>RBF<a name="4"></a></h2><pre class="codeinput">rbfScale = 1;
 Krbf = kernelRbfSigma(X,X,rbfScale);
 funObj = @(u)SoftmaxLoss2(u,Krbf,y,nClasses);
 fprintf(<span class="string">'Training kernel(rbf) multinomial logistic regression model...\n'</span>);
@@ -116,7 +107,7 @@ uRBF = minFunc(@penalizedL2,randn(nInstances*(nClasses-1),1),options,funObj,lamb
 uRBF = reshape(uRBF,[nInstances nClasses-1]);
 uRBF = [uRBF zeros(nInstances,1)];
 </pre><pre class="codeoutput">Training kernel(rbf) multinomial logistic regression model...
-</pre><h2>Compute training errors<a name="6"></a></h2><pre class="codeinput">[junk yhat] = max(X*wLinear,[],2);
+</pre><h2>Compute training errors<a name="5"></a></h2><pre class="codeinput">[junk yhat] = max(X*wLinear,[],2);
 trainErr_linear = sum(y~=yhat)/length(y)
 [junk yhat] = max(Kpoly*uPoly,[],2);
 trainErr_poly = sum(y~=yhat)/length(y)
@@ -134,18 +125,18 @@ plotClassifier(X,y,uPoly,<span class="string">'Kernel-Poly Multinomial Logistic 
 figure;
 plotClassifier(X,y,uRBF,<span class="string">'Kernel-RBF Multinomial Logistic Regression'</span>,@kernelRbfSigma,rbfScale);
 </pre><pre class="codeoutput">trainErr_linear =
-   0.240000000000000
+    0.2400
 trainErr_poly =
-   0.140000000000000
+    0.1400
 trainErr_rbf =
-   0.190000000000000
+    0.1900
 </pre><img vspace="5" hspace="5" src="logregMultinomKernelMinfuncDemo_02.png" alt=""> <img vspace="5" hspace="5" src="logregMultinomKernelMinfuncDemo_03.png" alt=""> <img vspace="5" hspace="5" src="logregMultinomKernelMinfuncDemo_04.png" alt=""> <p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Minfunc Kernelized Logreg Demo
-%PMTKauthor Mark Schmidt
-%PMTKmodified Kevin Murphy
-%PMTKurl http://people.cs.ubc.ca/~schmidtm/Software/minFunc/minFunc.html#7
+% PMTKauthor Mark Schmidt
+% PMTKmodified Kevin Murphy
+% PMTKurl http://people.cs.ubc.ca/~schmidtm/Software/minFunc/minFunc.html#7
 % It is modified by replacing penalizedKernelL2_matrix,
 % which uses sum_c w(:,c)' K w(:,c) as the regularizer,
 % with the simpler penalizedL2, which uses w' w as the regularizer.

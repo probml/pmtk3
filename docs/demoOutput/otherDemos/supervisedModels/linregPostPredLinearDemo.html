@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>linregPostPredLinearDemo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="linregPostPredLinearDemo"><style type="text/css">
+      --><title>Posterior predictive density for Bayesian linear Regression in 1d</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-31"><meta name="m-file" content="linregPostPredLinearDemo"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,7 +62,7 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h1></h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Posterior predictive density for Bayesian linear Regression in 1d</a></li></ul></div><h2>Posterior predictive density for Bayesian linear Regression in 1d<a name="1"></a></h2><pre class="codeinput">setSeed(1);
+  </style></head><body><div class="content"><h1>Posterior predictive density for Bayesian linear Regression in 1d</h1><!--introduction--><!--/introduction--><pre class="codeinput">setSeed(1);
 [xtrain, ytrain, xtest] =  polyDataMake(<span class="string">'sampling'</span>, <span class="string">'sparse'</span>, <span class="string">'deg'</span>, 2);
 
 fitMethods = {@(x,y) linregFit(x,y), @(x,y) linregFitBayes(x,y)};
@@ -86,9 +86,9 @@ names = {<span class="string">'MLE'</span>, <span class="string">'Bayes'</span>}
 </pre><img vspace="5" hspace="5" src="linregPostPredLinearDemo_01.png" alt=""> <img vspace="5" hspace="5" src="linregPostPredLinearDemo_02.png" alt=""> <p class="footer"><br>
       Published with MATLAB&reg; 7.10<br></p></div><!--
 ##### SOURCE BEGIN #####
-
 %% Posterior predictive density for Bayesian linear Regression in 1d 
-
+%
+%%
 setSeed(1);
 [xtrain, ytrain, xtest] =  polyDataMake('sampling', 'sparse', 'deg', 2);
 

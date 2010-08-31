@@ -1,6 +1,6 @@
 %% Sparse linear regression with EM on synthetic data
-%PMTKreallySlow
-%PMTKneedsStatsToolbox boxplot
+% PMTKreallySlow
+% PMTKneedsStatsToolbox boxplot
 %%
 requireStatsToolbox
 setSeed(0);
