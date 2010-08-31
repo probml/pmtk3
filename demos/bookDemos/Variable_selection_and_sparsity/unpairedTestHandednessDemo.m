@@ -1,5 +1,5 @@
 %% Analysis of binomial differences on lefthand/righthand data
-%PMTKneedsStatsToolbox ksdensity
+% PMTKneedsStatsToolbox ksdensity
 %%
 requireStatsToolbox
 setSeed(0);
