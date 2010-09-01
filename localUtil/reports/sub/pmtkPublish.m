@@ -4,20 +4,49 @@ function pmtkPublish(file, varargin)
 % suite of google code repositories, it is replaced with its full html
 % link. The html display name used is the file name itself. 
 %%
+if nargin == 2 && isstruct(varargin{1}) && isfield(varargin{1}, 'outputDir')
+    outputDir = varargin{1}.outputDir;
+else
+    outputDir = fullfile(fileparts(which(file)), 'html'); 
+end
+
 text = getText(file);
 recycle on; % make sure deleting puts things in recycle bin
+
+
+%%
+latexExpand = false; % not a user setting - this gets toggled on and off automatically. 
 for i=1:numel(text)
    line = text{i};
+   
    if ~startswith(strtrim(line), '%')
        continue; 
    end
-   toks = tokenize(line, ' '); 
+   
+   if isSubstring('<html>', line)
+       latexExpand = true; 
+   elseif isSubstring('</html>', line)
+       latexExpand = false; 
+   end
+   
+   
+   %% mfile exapnsion
+   toks = tokenize(line, ' ');
    ndx =  find(cellfun(@(c)endswith(strtrim(c), '.m'), toks)); 
    for j=1:numel(ndx)
        t = strtrim(toks{ndx(j)}); 
        link = googleCodeLink(t, t, 'publish'); 
        if ~isempty(link)
           line = strrep(line, t, link);  
+       end
+   end
+   if latexExpand
+       %% latex expansions
+       toks = unSandwich(line, '$', '$');
+       for j=1:numel(toks)
+           t = toks{j};
+           htmlLink = texifyFormula(strtrim(t), genvarname(t), outputDir);
+           line = strrep(line, ['$', t, '$'], htmlLink);
        end
    end
    text{i} = line; 
