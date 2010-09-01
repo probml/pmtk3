@@ -24,9 +24,13 @@ function [model] = linregFit(X, y, varargin)
     'regType'       , 'none' , ...
     'likelihood'    , 'gaussian', ...
     'lambda'        ,  []    , ...
-    'fitOptions'    , {}     , ...
+    'fitOptions'    , []     , ...
     'preproc'       , preprocessorCreate('addOnes', true, 'standardizeX', false));
 
+
+if isempty(fitOptions)
+  fitOptions = defaultFitOptions(regType, size(X,2));
+end
 
 
 
@@ -102,5 +106,21 @@ model.likelihood = likelihood;
 
 end % end of main function
 
-
+function opts = defaultFitOptions(regType, D) 
+% Set options for minFunc
+opts.Display     = 'none';
+opts.verbose     = false;
+opts.TolFun      = 1e-3;
+opts.MaxIter     = 200;
+opts.Method      = 'lbfgs'; % for minFunc
+opts.MaxFunEvals = 2000;
+opts.TolX        = 1e-3;
+if strcmpi(regType, 'l1')
+  % set options for L1general
+  opts.order = -1; % Turn on L-BFGS
+  if D > 1000
+    opts.corrections = 10; %  num. LBFGS corections
+  end
+end
+end
 

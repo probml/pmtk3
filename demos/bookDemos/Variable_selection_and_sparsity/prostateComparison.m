@@ -1,13 +1,17 @@
 %% Compare L1, L2, allSubsets, and OLS linear regression on the prostate data set
-% Reproduced table 3.3 and fig 3.7 on p63 of "Elements of statistical
-% learning" 2e
+% Approximately reproduces table 3.3 and fig 3.7 on p63 of "Elements of statistical
+% learning" 2nd edn
+% (The OLS results should be identical  - the fact that they are not
+% suggests something strange is going on - most likely to do with
+% the offset term, which should be unregularized.)
 %%
 function prostateComparison() 
 
 setSeed(0);
 saveLatex = false;
 data = loadData('prostate');
-[Xtrain, ytrain] = shuffleRows(data.Xtrain, data.ytrain);  % there is an ordering effect
+[Xtrain, ytrain] = shuffleRows(data.Xtrain, data.ytrain); 
+% the data has been sorted which messes up CV
 
 Xtest   = data.Xtest;   
 ytest  = data.ytest;

@@ -410,6 +410,7 @@ assert(approxeq(m1.w, m2.w))
 %     the implementer may have provided; all builtin Matlab functions
 %     are properly documented. Unfortuntately that is not the case for
 %     all the PMTK functions... but you can always read the source :)
+% * |doc('foo')| opens the html documentation for built-in function foo.m
 % * placeFigures.m : this lays out all the currently open figures
 %   so you can see them all at the same time
 % * |dbstop if error| : open the debugger if there is an error.
