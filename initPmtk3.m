@@ -136,11 +136,6 @@ thisDir = fileparts(w);
 cd(thisDir);
 restoredefaultpath();
 addpath(genpath(pwd));
-%%
-mtSource = getConfigValue('PMTKlocalMatlabToolsPath');
-if exist(mtSource, 'dir') % if local svn repository exists, use it
-    addpath(genpath(mtSource));
-end
 if ~exist('matlabToolsRoot', 'file')
     url = 'http://matlabtools.googlecode.com/svn/trunk/matlabTools.zip';
     fprintf('downloading matlabTools.............');
@@ -172,18 +167,10 @@ for t=1:numel(toolbox)
     writeText(text, fullfile(pmtkInfoDir, [fname, '.m']));
 end
 %% include PMTK support
-source = getConfigValue('PMTKlocalSupportPath');
-if exist(source, 'dir')
-    addpath(genpath(source));
-end
 if ~(exist('pmtkSupportRoot', 'file') == 2)
     downloadAllSupport();
 end
-%% inlclude localDataPath
-source = getConfigValue('PMTKlocalDataPath');
-if exist(source, 'dir')
-    addpath(genpath(source));
-end
+restoredefaultpath();
 addpath(genpath(pwd));  % octave path management can be buggy - make sure
 disp('welcome to pmtk3');
 end
