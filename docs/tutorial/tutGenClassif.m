@@ -201,10 +201,11 @@ end
 % be a Student distribution, to implement robust discriminant
 % analysis. Here is part of robustDiscrimAnalysisBankruptcyDemo.m 
 % which illustrates the syntax:
-%%
-% modelS = generativeClassifierFit(@studentFit, Xtrain, ytrain); 
-%[yhat] = generativeClassifierPredict(@studentLogprob, modelS, Xtest);
-%%
+%
+% |modelS = generativeClassifierFit(@studentFit, Xtrain, ytrain)|
+%
+% |[yhat] = generativeClassifierPredict(@studentLogprob, modelS, Xtest)|
+%
 % Now we run the entire demo, which uses Student and Gaussian
 % class conditional densities, as well as the QDA code.
 % We see that the Student distribution is more robust
@@ -222,8 +223,7 @@ robustDiscrimAnalysisBankruptcyDemo
 % to use a Markov or hidden Markov model for the class conditional
 % densities.
 % (HMMs are discussed in more detail 
-% <http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutLVM.html
-% here>.)
+% tutLVM.html .)
 % For real-valued data, a linear-Gaussian Markov model is not
 % expressive enough, but an HMM with Gaussian emissions
 % is quite flexible.

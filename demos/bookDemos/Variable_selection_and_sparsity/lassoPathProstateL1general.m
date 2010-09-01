@@ -1,11 +1,13 @@
 %% Plot the full L1 regularization path for the prostate data set
 function lassoPathProstateL1general()
-%loadData('prostate');
-load prostate
+
+load prostateStnd
+
+wOLS = X\y;
 %% First use LARS
 w = lars(X, y, 'lasso');
-%lambdas = recoverLambdaFromLarsWeights(X, y, w);
-plotWeights(w, names);
+lambdas = recoverLambdaFromLarsWeights(X, y, w);
+plotWeights(w, names, lambdas, wOLS);
 
 %%
 % Now use L1general
@@ -22,20 +24,28 @@ for i=1:NL
   %model = linregFit(X, y, 'lambda', lambda, 'regType', 'L1', 'preproc', []);
   %weights(i,:) = rowvec(model.w);
   lambdaVec = lambda*ones(D,1); 
-  ww = L1GeneralProjection(@(ww) SquaredError(ww,X,y), winit, lambdaVec(:), opts);
+  %ww = L1GeneralProjection(@(ww) SquaredError(ww,X,y), winit, lambdaVec(:), opts);
+  %ww = L1GeneralSequentialQuadraticProgramming(@(ww) SquaredError(ww,X,y), winit, lambdaVec(:), opts);
+  tol = 1e-3; quiet = true;
+  ww = l1_ls(X, y, lambda, tol, quiet);
   weights(i,:) = ww(:)';
 end
-plotWeights(weights, names);
+plotWeights(weights, names, lambdas, wOLS);
 
 end
 
-function plotWeights(w, names)
+function plotWeights(w, names, lambdas, wOLS)
 figure;
 %plot(lambdas, w, '-o','LineWidth', 2);
-plot(w, '-o','LineWidth', 2);
+[N,D] = size(w);
+for i=1:N
+  l1norm(i) = norm(w(i,:), 1);
+  sfac(i) = l1norm(i)/norm(wOLS,1);
+end
+plot(sfac, w, '-o','LineWidth', 2);
 legend(names{1:end-1}, 'Location', 'NorthWest');
 title('LASSO path on prostate cancer data');
-xlabel('lambda')
+xlabel('shrinkage factor')
 ylabel('regression weights');
 end
 

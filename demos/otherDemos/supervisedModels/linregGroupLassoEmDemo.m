@@ -70,7 +70,7 @@ wHatLassoEmL = linregFitSparseEm(Xtrain, ytrain, 'laplace', 'lambda', lambdaL1);
 wHatLassoEmNG = linregFitSparseEm(Xtrain, ytrain, 'ng', 'shape', 1, 'scale', (0.5*lambdaL1)^2/2);
 end
 
-wHatGroup =  linregFitGroupLassoProj(Xtrain, ytrain, groups, lambdaGL1);
+wHatGroup =  linregFitGroupLasso(Xtrain, ytrain, groups, lambdaGL1);
 wHatGroupEmGL = linregFitSparseEm(Xtrain, ytrain, 'groupLasso', 'lambda', (lambdaGL1), 'groups', groups, 'verbose', true);
 wHatGroupEmGL1 = linregFitSparseEm(Xtrain, ytrain, 'glaplace', 'lambda', (lambdaGL1), 'groups', groups, 'verbose', true);
 wHatGroupEmGNG = linregFitSparseEm(Xtrain, ytrain, 'gng', 'lambda', (0.5*lambdaGL1), 'groups', groups, 'verbose', true);

@@ -63,33 +63,42 @@ nGroups = max(groups);
 predictFn = @(w, X) X*w;
 lossFn = @(yhat, y)  sum((yhat-y).^2);
 useSErule = false;
-Nfolds = 3;
+Nfolds = 5;
 
 maxLambda = lassoMaxLambda(Xtrain, ytrain);
-lambdasL1 = linspace(maxLambda, eps, 20);
+lambdasL1 = linspace(maxLambda, eps, 30);
 
 maxLambda = groupLassoMaxLambda(groups, Xtrain, ytrain);
-lambdasGL1 = linspace(maxLambda, eps, 20);
+lambdasGL1 = linspace(maxLambda, eps, 30);
 
 
 %% Fit 
-fitFn = @(X,y,lambda) linregFitLassoEm(X,y,  lambda); 
+%fitFn = @(X,y,lambda) linregFitLassoEm(X,y,  lambda); 
+fitFn = @(X,y,lambda)  linregFitSparseEm(X, y, 'laplace', 'lambda', lambda);
+%fitFn = @(X,y,lambda) l1_ls(X,y,  lambda, 1e-3, true); % slow
 [wHatLasso] = fitCv(lambdasL1, fitFn, predictFn, lossFn, Xtrain, ytrain,  Nfolds, 'useSErule', useSErule);
 
-fitFn = @(X,y,lambda) linregFitGroupLassoProj(X,y, groups, lambda);
+fitFn = @(X,y,lambda) linregFitGroupLasso(X,y, groups, lambda);
 [wHatGroup] = fitCv(lambdasGL1, fitFn, predictFn, lossFn, Xtrain, ytrain,  Nfolds, 'useSErule', useSErule);
 
 
 %% Plot
-figure; stem(wTrue); title('truth');  drawGroups(nStates, wTrue);
+figure;
+%subplot(1,3,1);
+stem(wTrue); title('truth');  drawGroups(nStates, wTrue);
 printPmtkFigure('groupLassoTruth')
 
-figure; stem(wHatGroup); title('group lasso'); drawGroups(nStates, wTrue);
+figure;
+%subplot(1,3,2);
+stem(wHatGroup); title('group lasso'); drawGroups(nStates, wTrue);
 printPmtkFigure('groupLassoGroup')
 
-figure; stem(wHatLasso); title('lasso'); drawGroups(nStates, wTrue);
+figure;
+%subplot(1,3,3);
+stem(wHatLasso); title('lasso'); drawGroups(nStates, wTrue);
 printPmtkFigure('groupLassoVanilla')
 
+%printPmtkFigure('groupLasso')
 
 end
 

@@ -2,7 +2,8 @@ function pmtkPublish(file, varargin)
 %% Just like builtin publish except for .m file html google link expansion
 % i.e. for every foo.m found in the comments, if foo.m is part of the PMTK
 % suite of google code repositories, it is replaced with its full html
-% link. The html display name used is the file name itself. 
+% link. Similarly for foo.html.
+% The display name used is the file name itself. 
 %%
 if nargin == 2 && isstruct(varargin{1}) && isfield(varargin{1}, 'outputDir')
     outputDir = varargin{1}.outputDir;
@@ -32,7 +33,9 @@ for i=1:numel(text)
    
    %% mfile exapnsion
    toks = tokenize(line, ' ');
-   ndx =  find(cellfun(@(c)endswith(strtrim(c), '.m'), toks)); 
+   ndxM =  find(cellfun(@(c)endswith(strtrim(c), '.m'), toks)); 
+   ndxH =  find(cellfun(@(c)endswith(strtrim(c), '.html'), toks));
+   ndx = [ndxM ndxH];
    for j=1:numel(ndx)
        t = strtrim(toks{ndx(j)}); 
        link = googleCodeLink(t, t, 'publish'); 

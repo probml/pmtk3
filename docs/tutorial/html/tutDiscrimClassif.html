@@ -123,13 +123,33 @@ methods = {<span class="string">'sd'</span>, <span class="string">'cg'</span>, <
 <span class="keyword">end</span>
 </pre><pre class="codeoutput">method =
 sd
+Warning: Matrix is close to singular or badly scaled.
+         Results may be inaccurate. RCOND = 2.328554e-025. 
 method =
 cg
+Warning: Matrix is close to singular or badly scaled.
+         Results may be inaccurate. RCOND = 5.380512e-026. 
+Warning: Matrix is close to singular or badly scaled.
+         Results may be inaccurate. RCOND = 5.880754e-026. 
+Warning: Matrix is close to singular or badly scaled.
+         Results may be inaccurate. RCOND = 3.138278e-026. 
+Warning: Matrix is close to singular or badly scaled.
+         Results may be inaccurate. RCOND = 9.105466e-027. 
+Warning: Matrix is close to singular or badly scaled.
+         Results may be inaccurate. RCOND = 1.798438e-024. 
+Warning: Matrix is close to singular or badly scaled.
+         Results may be inaccurate. RCOND = 6.013316e-027. 
+Warning: Matrix is close to singular or badly scaled.
+         Results may be inaccurate. RCOND = 2.735941e-027. 
+Warning: Matrix is close to singular or badly scaled.
+         Results may be inaccurate. RCOND = 3.530990e-027. 
+Warning: Matrix is close to singular or badly scaled.
+         Results may be inaccurate. RCOND = 2.312295e-027. 
 method =
 bb
 method =
 lbfgs
-</pre><img vspace="5" hspace="5" src="tutDiscrimClassif_04.png" alt=""> <img vspace="5" hspace="5" src="tutDiscrimClassif_05.png" alt=""> <img vspace="5" hspace="5" src="tutDiscrimClassif_06.png" alt=""> <img vspace="5" hspace="5" src="tutDiscrimClassif_07.png" alt=""> <p>Since the objective is convex, all methods find the same solution  if given enough time. If you want a very precise estimate, LBFGS is the method of choice, but if a somewhat sloppier estimate is sufficient, fast first-order methods such as BB are the way to go. See also <a href="http://research.microsoft.com/en-us/um/people/minka/papers/logreg/">A comparison of numerical optimizers for logistic regression</a>, Tom Minka, tech report, 2003.</p><h2>Multi-layer perceptrons (feedforward neural networks)<a name="15"></a></h2><p>MLPs are a form of nonlinear model for regression/ classification. The two key operations are:</p><div><ul><li>forwards propagation: compute <img src="tutDiscrimClassif_eq18672.png" alt="$f(x,\theta)$"> by passing <img src="tutDiscrimClassif_eq43551.png" alt="$x$"> through each layer</li><li>back propagation: compute the derivative of the loss function by passing the error signal back through each layer</li></ul></div><p>pmtk uses two different implementations of these functions. One is based on Mark Schmidt's code, available <a href="http://people.cs.ubc.ca/~schmidtm/Software/minFunc/minFunc.html#9">here</a>. This code currently only supports regression and binary classification, but could easily be extended. The other is based on Ian Nabney's <a href="http://www1.aston.ac.uk/eas/research/groups/ncrg/resources/netlab/">Netlab</a>. This supports regression, binary and multi-class classification, but only supports one hidden layer. (Combining the functionality of these two code bases is left as an exercise to the reader.)</p><p>Given a forwards and backwards propagation method, it is easy to implement the <a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/SupervisedModels/mlp/mlpFit.m">mlpFit.m</a> and <a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/SupervisedModels/mlp/mlpPredict.m">mlpPredict.m</a> methods. For fitting, we use <a href="http://pmtksupport.googlecode.com/svn/trunk/markSchmidt-7june2010/minFunc/minFunc.m">minfunc.m</a> . Note that the objective function for MLPs is not convex, so we may get stuck in local optima.</p><p>Below we give a simple example of an MLP for solving a nonlinear binary classification problem. (Based on <a href="http://pmtk3.googlecode.com/svn/trunk/demos/bookDemos/Neural_networks/mlpClassifDemo.m">mlpClassifDemo.m</a> )</p><pre class="codeinput">H = [3, 6, 9];
+</pre><img vspace="5" hspace="5" src="tutDiscrimClassif_04.png" alt=""> <img vspace="5" hspace="5" src="tutDiscrimClassif_05.png" alt=""> <img vspace="5" hspace="5" src="tutDiscrimClassif_06.png" alt=""> <img vspace="5" hspace="5" src="tutDiscrimClassif_07.png" alt=""> <p>Since the objective is convex, all methods find the same solution  if given enough time. If you want a very precise estimate, LBFGS is the method of choice, but if a somewhat sloppier estimate is sufficient, fast first-order methods such as BB are the way to go. See also</p><div><ul><li><a href="http://research.microsoft.com/en-us/um/people/minka/papers/logreg/">A comparison of numerical optimizers for logistic regression</a>, Tom Minka, tech report, 2003.</li><li><a href="http://pmtk3.googlecode.com/svn/trunk/docs/demoOutput/otherDemos/algorithms/demoMinfuncHighdim.html">output of demoMinfuncHighdim</a></li></ul></div><h2>Multi-layer perceptrons (feedforward neural networks)<a name="15"></a></h2><p>MLPs are a form of nonlinear model for regression/ classification. The two key operations are:</p><div><ul><li>forwards propagation: compute <img src="tutDiscrimClassif_eq18672.png" alt="$f(x,\theta)$"> by passing <img src="tutDiscrimClassif_eq43551.png" alt="$x$"> through each layer</li><li>back propagation: compute the derivative of the loss function by passing the error signal back through each layer</li></ul></div><p>pmtk uses two different implementations of these functions. One is based on Mark Schmidt's code, available <a href="http://people.cs.ubc.ca/~schmidtm/Software/minFunc/minFunc.html#9">here</a>. This code currently only supports regression and binary classification, but could easily be extended. The other is based on Ian Nabney's <a href="http://www1.aston.ac.uk/eas/research/groups/ncrg/resources/netlab/">Netlab</a>. This supports regression, binary and multi-class classification, but only supports one hidden layer. (Combining the functionality of these two code bases is left as an exercise to the reader.)</p><p>Given a forwards and backwards propagation method, it is easy to implement the <a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/SupervisedModels/mlp/mlpFit.m">mlpFit.m</a> and <a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/SupervisedModels/mlp/mlpPredict.m">mlpPredict.m</a> methods. For fitting, we use <a href="http://pmtksupport.googlecode.com/svn/trunk/markSchmidt-7june2010/minFunc/minFunc.m">minfunc.m</a> . Note that the objective function for MLPs is not convex, so we may get stuck in local optima.</p><p>Below we give a simple example of an MLP for solving a nonlinear binary classification problem. (Based on <a href="http://pmtk3.googlecode.com/svn/trunk/demos/bookDemos/Neural_networks/mlpClassifDemo.m">mlpClassifDemo.m</a> )</p><pre class="codeinput">H = [3, 6, 9];
 <span class="keyword">for</span> hi=1:length(H)
   nhidden = H(hi);
 setSeed(0);
@@ -149,7 +169,7 @@ str = sprintf(<span class="string">'mlp with %d hidden units, nerr = %d'</span>,
 plotDecisionBoundary(X, y, @(X)mlpPredict(model, X));
 title(str);
 <span class="keyword">end</span>
-</pre><img vspace="5" hspace="5" src="tutDiscrimClassif_08.png" alt=""> <img vspace="5" hspace="5" src="tutDiscrimClassif_09.png" alt=""> <img vspace="5" hspace="5" src="tutDiscrimClassif_10.png" alt=""> <p>We see that the training set error rate decreases monotonically with model complexity (number of hidden units). Eventually the model will overfit. Obviously we can use cvFit.m to choose <img src="tutDiscrimClassif_eq67619.png" alt="$H$"> and <img src="tutDiscrimClassif_eq23351.png" alt="$\lambda$">. But when each layer is allowed its own regularizer, using CV to tune them all becomes too slow. This is one motivation for Bayesian methods.</p><h2>Bayesian methods for neural networks<a name="18"></a></h2><p>Bayesian methods for MLPs are not supported by pmtk. If you are interested in this, check out the following packages</p><div><ul><li>Ian Nabney's <a href="http://www1.aston.ac.uk/eas/research/groups/ncrg/resources/netlab/">Netlab</a> package, which uses Laplace approximation (Matlab code).</li><li>Aki Vehtari's <a href="http://www.lce.hut.fi/research/mm/mcmcstuff">mcmcstuff</a> package, which uses MCMC (C and Matlab).</li><li>Radford Neal's <a href="http://www.cs.toronto.edu/~radford/fbm.software.html">FBM</a> package, which uses MCMC (C code).</li></ul></div><h2>Convolutional neural nets<a name="19"></a></h2><p>Convolutional neural nets are not supported by pmtk. If you are interested in this, check out the following packages</p><div><ul><li>Mihail Sirotenko's <a href="http://www.mathworks.com/matlabcentral/fileexchange/24291-cnn-convolutional-neural-network-class">CNN</a> package. Has GPU support. Matlab code.</li><li>Nikolay Chumerin's <a href="http://sites.google.com/site/chumerin/projects/mycnn">myCNN</a> package. Matlab code.</li><li>Jim Mutch's <a href="http://cbcl.mit.edu/jmutch/cns/">CNS</a> package, for 'cortical network simulator'. Has GPU support. Matlab/C++ code.</li><li><a href="http://torch5.sourceforge.net/index.html">Torch5</a>, a machine learning library with CNN support. Written in a scripting language called lua.</li></ul></div><p class="footer"><br>
+</pre><img vspace="5" hspace="5" src="tutDiscrimClassif_08.png" alt=""> <img vspace="5" hspace="5" src="tutDiscrimClassif_09.png" alt=""> <img vspace="5" hspace="5" src="tutDiscrimClassif_10.png" alt=""> <p>We see that the training set error rate decreases monotonically with model complexity (number of hidden units). Eventually the model will overfit. Obviously we can use <a href="http://matlabtools.googlecode.com/svn/trunk/stats/fitCv.m">fitCv.m</a> to choose <img src="tutDiscrimClassif_eq67619.png" alt="$H$"> and <img src="tutDiscrimClassif_eq23351.png" alt="$\lambda$">. But when each layer is allowed its own regularizer, using CV to tune them all becomes too slow. This is one motivation for Bayesian methods.</p><h2>Bayesian methods for neural networks<a name="18"></a></h2><p>Bayesian methods for MLPs are not supported by pmtk. If you are interested in this, check out the following packages</p><div><ul><li>Ian Nabney's <a href="http://www1.aston.ac.uk/eas/research/groups/ncrg/resources/netlab/">Netlab</a> package, which uses Laplace approximation (Matlab code).</li><li>Aki Vehtari's <a href="http://www.lce.hut.fi/research/mm/mcmcstuff">mcmcstuff</a> package, which uses MCMC (C and Matlab).</li><li>Radford Neal's <a href="http://www.cs.toronto.edu/~radford/fbm.software.html">FBM</a> package, which uses MCMC (C code).</li></ul></div><h2>Convolutional neural nets<a name="19"></a></h2><p>Convolutional neural nets are not supported by pmtk. If you are interested in this, check out the following packages</p><div><ul><li>Mihail Sirotenko's <a href="http://www.mathworks.com/matlabcentral/fileexchange/24291-cnn-convolutional-neural-network-class">CNN</a> package. Has GPU support. Matlab code.</li><li>Nikolay Chumerin's <a href="http://sites.google.com/site/chumerin/projects/mycnn">myCNN</a> package. Matlab code.</li><li>Jim Mutch's <a href="http://cbcl.mit.edu/jmutch/cns/">CNS</a> package, for 'cortical network simulator'. Has GPU support. Matlab/C++ code.</li><li><a href="http://torch5.sourceforge.net/index.html">Torch5</a>, a machine learning library with CNN support. Written in a scripting language called lua.</li></ul></div><p class="footer"><br>
       Published with MATLAB&reg; 7.9<br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Classification using parametric discriminative models in pmtk3
@@ -317,10 +337,13 @@ end
 % is sufficient, fast first-order methods such as BB
 % are the way to go.
 % See also
-% <http://research.microsoft.com/en-us/um/people/minka/papers/logreg/
+%
+% * <http://research.microsoft.com/en-us/um/people/minka/papers/logreg/
 % A comparison of numerical optimizers for logistic regression>,
 % Tom Minka, tech report, 2003.
-
+% * <http://pmtk3.googlecode.com/svn/trunk/docs/demoOutput/otherDemos/algorithms/demoMinfuncHighdim.html
+% output of demoMinfuncHighdim>
+%
 
 %% Multi-layer perceptrons (feedforward neural networks)
 % MLPs are a form of nonlinear model for regression/ classification.
@@ -379,7 +402,8 @@ end
 % We see that the training set error rate decreases monotonically
 % with model complexity (number of hidden units).
 % Eventually the model will overfit.
-% Obviously we can use cvFit.m to choose $H$ and $\lambda$.
+% Obviously we can use <http://matlabtools.googlecode.com/svn/trunk/stats/fitCv.m fitCv.m> to choose 
+% $H$ and $\lambda$.
 % But when each layer is allowed its own regularizer,
 % using CV to tune them all becomes too slow.
 % This is one motivation for Bayesian methods.

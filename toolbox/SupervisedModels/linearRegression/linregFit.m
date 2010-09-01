@@ -7,25 +7,36 @@ function [model] = linregFit(X, y, varargin)
 % regType       ... L1, L2, none, scad (only used if likelihood is 'gaussian')
 % likelihood    ... ['gaussian'], 'student', 'huber'
 % lambda        ... regularizer
-% fitOptions    ... optional  args (a cell array) to fitFn
 % preproc       ... a struct, passed to preprocessorApplyToTtrain
 %  Set preproc.addOnes = true if you want this model
 %   to add a column of 1s to X for you (at train and test time)
-%
+% fitOptions    ... optional  args (a cell array) to fitFn
+% fitFnName         ... For L1, default is
+%   'L1GeneralProjection'. Can be any other method available
+%   from http://www.cs.ubc.ca/~schmidtm/Software/L1General/L1General.html
+%   Can also specify 'l1ls', which uses
+%     code from http://www.stanford.edu/~boyd/l1_ls/
+
 % OUTPUTS:
 % model         ... a struct, which you can pass directly to linregPredict
 %%
+
+% default preprocessing
+pp = preprocessorCreate('addOnes', true, 'standardizeX', false);
+
 [   regType         ...
     likelihood      ...
     lambda          ...
     fitOptions      ...
     preproc         ...
+    fitFn           ...
     ] = process_options(varargin , ...
     'regType'       , 'none' , ...
     'likelihood'    , 'gaussian', ...
     'lambda'        ,  []    , ...
     'fitOptions'    , []     , ...
-    'preproc'       , preprocessorCreate('addOnes', true, 'standardizeX', false));
+    'preproc'       , pp, ...
+    'fitFn'         , @L1GeneralProjection);
 
 
 if isempty(fitOptions)
@@ -75,8 +86,20 @@ switch lower(likelihood)
         opts = fitOptions;
         winit = zeros(D,1);
         switch lower(regType)
-            case 'l1'  , % lasso
-                w = L1GeneralProjection(@(ww) SquaredError(ww,X,y), winit, lambdaVec(:), opts);
+            
+          case 'l1'  , % lasso
+              switch lower(fitFnName)
+                case 'l1generalprojection'
+                  w = L1GeneralProjection(@(ww) SquaredError(ww,X,y), winit, lambdaVec(:), opts);
+                case 'l1ls'
+                  % this cannot handle vector-valued lambda, so it regularizes
+                  % the offset term... So set addOnes to false before calling
+                  tol = 1e-3; quiet = true;
+                  w = l1_ls(X, y, lambda, tol, quiet);
+                otherwise
+                  error(['unrecognized fitFnName ' fitFnName])
+              end
+              
             case 'l2'  , % ridge using QR
                 if lambda == 0
                     w = X\y;
