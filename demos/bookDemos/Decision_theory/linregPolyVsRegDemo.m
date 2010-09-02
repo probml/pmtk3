@@ -131,6 +131,13 @@ fitFn2 = @(Xtr,ytr,lam) linregFit(Xtr, ytr, 'lambda', lam, 'preproc', pp);
 assert(approxeq(mu, mu2))
 assert(approxeq(se, se2))
   
+% do it again using path algo
+[bestModel, path] = linregFitPathCv(Xtrain, ytrain, 'regtype', 'l2',  'preproc', pp,...
+   'nfolds', nfolds);
+figure;
+plot(path.errMean)
+
+
 
 %% Bayes
 % We  compute log evidence for each value of alpha

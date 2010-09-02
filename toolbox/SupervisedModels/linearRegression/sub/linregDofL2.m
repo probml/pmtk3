@@ -1,10 +1,15 @@
-function df = dofRidge(X, lambdas)
+function df = linregDofL2(X, lambdas, doCenter)
 % Compute the degrees of freedom for a given lambda value
-% Elements 1e p63
+% Elements 1e p63, 2e p68
 % X should *not* include a column of 1s
+if nargin < 3, doCenter  = true; end
 [n,d] = size(X);
 if d==0, df = 0; return; end
-XC  = centerCols(X);
+if doCenter
+  XC  = centerCols(X);
+else
+  XC = X;
+end
 D22 = eig(XC'*XC); % evals of X'X = svals^2 of X
 D22 = sort(D22, 'descend');
 D22 = D22(1:min(n,d));

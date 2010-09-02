@@ -169,7 +169,23 @@ end
 % Tom Minka, tech report, 2003.
 % * <http://pmtk3.googlecode.com/svn/trunk/docs/demoOutput/otherDemos/algorithms/demoMinfuncHighdim.html
 % output of demoMinfuncHighdim>
+
+
+%% Sparse logistic regression
+% To create sparse classifiers,
+% we can perform MAP estimation using L1 regularization.
+% Analogously to the linear regression case,
+% we can use the following methods:
 %
+% * L1: |logregFit(X, y, 'regtype, 'L1', ...)|  
+% (uses <http://www.cs.ubc.ca/~schmidtm/Software/L1General/L1General.html
+% L1general>)
+% * L1path:  |logregFitPathCv(X, y, ...)|
+% (uses <http://www-stat.stanford.edu/~tibs/glmnet-matlab/ glmnet>)
+% * ARD: |logregFitBayes(X, y, 'prior', 'vb', 'useARD', true)|
+% (uses <http://www.bcs.rochester.edu/people/jdrugowitsch/code.html VB
+% code>).
+
 
 %% Multi-layer perceptrons (feedforward neural networks)
 % MLPs are a form of nonlinear model for regression/ classification.

@@ -16,34 +16,38 @@ function [model] = linregFit(X, y, varargin)
 %   from http://www.cs.ubc.ca/~schmidtm/Software/L1General/L1General.html
 %   Can also specify 'l1ls', which uses
 %     code from http://www.stanford.edu/~boyd/l1_ls/
-
+% winit         ...  Initial value of w; can be used for warm starting
+%
 % OUTPUTS:
 % model         ... a struct, which you can pass directly to linregPredict
 %%
 
 % default preprocessing
 pp = preprocessorCreate('addOnes', true, 'standardizeX', false);
+[N,D] = size(X);
 
 [   regType         ...
     likelihood      ...
     lambda          ...
     fitOptions      ...
     preproc         ...
-    fitFn           ...
+    fitFnName       ...
+    winit           ...
     ] = process_options(varargin , ...
     'regType'       , 'none' , ...
     'likelihood'    , 'gaussian', ...
     'lambda'        ,  []    , ...
     'fitOptions'    , []     , ...
     'preproc'       , pp, ...
-    'fitFn'         , @L1GeneralProjection);
-
+    'fitFnName'     , 'l1GeneralProjection', ...
+    'winit'         , []);
+  
+if preproc.addOnes,  D = D+1; end
+if isempty(winit), winit = zeros(D,1); end
 
 if isempty(fitOptions)
   fitOptions = defaultFitOptions(regType, size(X,2));
 end
-
-
 
 switch lower(likelihood)
     
@@ -84,7 +88,6 @@ switch lower(likelihood)
         end
         
         opts = fitOptions;
-        winit = zeros(D,1);
         switch lower(regType)
             
           case 'l1'  , % lasso

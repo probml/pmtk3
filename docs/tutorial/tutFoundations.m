@@ -51,6 +51,8 @@ setSeed(0); X = gaussSample(m, 5)
 % (Structured output classification is not yet supported.)
 %
 % All conditional models should support the functions listed below.
+% (Note that we treat generative classifiers as conditional
+% models, since they implement the interface below.)
 % In the table,  'foo' is the name of the model class
 % and '...' refers to optional or model-specific arguments
 % (these will be explained later).
@@ -229,8 +231,7 @@ L = sum(gaussLogprob(m3, X))
 % </html>
 %%
 % We discuss LVMs in more detail 
-% <http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutLVM.html
-% here>.
+% in tutLVM.html .
 % A list of all the LVMs can be found
 % <http://pmtk3.googlecode.com/svn/trunk/docs/modelLists/latentList.html
 % here>.
@@ -252,11 +253,12 @@ L = sum(gaussLogprob(m3, X))
 % <TH WIDTH=60% BGCOLOR=#00CCFF><FONT COLOR=000000>Description</FONT></TH>
 % </TR>
 % <td> [bel] = inferNodes(m, evidence).
-% <td> Here bel{i}(k) is the probability node i is in state k,
-% given the evidence. The evidence can be specified
+% <td> Here bel{i} is a tabular factor, 
+% where  bel{i}.T(k) is the probability node i is in state k, given the
+% evidence.
+% The evidence can be specified
 % in several different ways. See 
-% <a href="http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutGM.html">
-% here</a>
+% tutGM.html
 % for details.
 % <tr> 
 % <td> yhat = map(m, evidence)

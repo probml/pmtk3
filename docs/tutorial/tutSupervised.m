@@ -32,6 +32,12 @@
 % <td> Gen
 % <td> Param
 % <tr>
+% <td> generativeClassifier
+% <td> Any class conditional density 
+% <td> Classif
+% <td> Gen
+% <td> Param
+% <tr>
 % <td> knn
 % <td> k nearest neighbors
 % <td> Classif
@@ -163,8 +169,6 @@
 % Discriminative models for regression>
 % * <http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutDiscrimClassif.html
 % Discriminative models for classification>
-% * <http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutSparseClassif.html
-% Sparse discriminative models and variable selection>
 % * <http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutKernelClassif.html
 % Kernel-based models for classification and regression>
 % * <http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutGenClassif.html

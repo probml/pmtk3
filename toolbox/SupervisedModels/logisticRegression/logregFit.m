@@ -6,6 +6,7 @@ function [model, X, lambdaVec, opt] = logregFit(X, y, varargin)
 % lambda        ... regularizer 
 % fitOptions    ... optional fitMethod args (a struct)
 % preproc       ... a struct, passed to preprocessorApplyToTtrain
+% winit         ... initial value, used for warm starting
 %% OUTPUTS:
 % model         ... a struct, which you can pass directly to logregPredict
 % X             ... possibly transformed input
@@ -13,29 +14,30 @@ function [model, X, lambdaVec, opt] = logregFit(X, y, varargin)
 % opt           ... output of optimizer 
 %%
 y = y(:);
-assert(size(y, 1) == size(X, 1));
-%% process options
+assert(size(y, 1) == size(X,1));
+pp = preprocessorCreate('addOnes', true, 'standardizeX', true);
+
 args = prepareArgs(varargin); % converts struct args to a cell array
 [   nclasses      ...
     regType       ...
     lambda        ...
     preproc       ...
     fitOptions    ...
+    winit         ...
     ] = process_options(args    , ...
     'nclasses'      , nunique(y), ...
     'regType'       , 'l2'    , ...
     'lambda'        ,  0       , ...
-    'preproc'       ,  preprocessorCreate('addOnes', true, 'standardizeX', true)       , ...
-    'fitOptions'    , []);
-
+    'preproc'       ,  pp       , ...
+    'fitOptions'    , []      , ...
+    'winit'         , []);
 
 if isempty(fitOptions)
   fitOptions = defaultFitOptions(regType, size(X,2));
 end
 
 [preproc, X] = preprocessorApplyToTrain(preproc, X);
-[N,D] = size(X); %#ok
-
+D = size(X,2);
 
 isbinary = nclasses < 3;
 if isbinary
@@ -50,11 +52,13 @@ end
 model.lambda = lambda;
 
 lambdaVec = lambda*ones(D, nclasses-1);
-  
 if preproc.addOnes
     lambdaVec(1, :) = 0; % don't penalize bias term
 end
-winit  = zeros(D, nclasses-1);
+
+if isempty(winit)
+  winit  = zeros(D, nclasses-1);
+end
 
 switch lower(regType)
   case 'l1'
@@ -64,7 +68,6 @@ switch lower(regType)
     %w = minFunc(penloss, winit(:), fitOptions);
     [w, opt.finalObj, opt.exitflag, opt.output] = ...
       minFunc(penloss, winit(:), fitOptions);
-
 end
 
 if ~isbinary
