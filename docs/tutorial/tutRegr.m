@@ -409,7 +409,8 @@ assert(approxeq(mu, mu2))
 %
 % The package <http://www-stat.stanford.edu/~tibs/glmnet-matlab/ glmnet>
 % supports the computation of regularization paths for linear
-% and logistic regression using L2 and L1 regularization.
+% and logistic regression using L2 and L1 regularization,
+% using a coordinate descent method.
 % It automatically computes a suitable range of $\lambda$ values,
 % depending on the data and type of regularizer.
 % glmnet is included in pmtkSupport.

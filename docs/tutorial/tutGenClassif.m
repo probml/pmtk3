@@ -203,7 +203,6 @@ end
 % which illustrates the syntax:
 %
 % |modelS = generativeClassifierFit(@studentFit, Xtrain, ytrain)|
-%
 % |[yhat] = generativeClassifierPredict(@studentLogprob, modelS, Xtest)|
 %
 % Now we run the entire demo, which uses Student and Gaussian

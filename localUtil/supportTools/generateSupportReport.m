@@ -18,7 +18,7 @@ for j=1:npackages
     [tags, lines] = tagfinder(metafile);
     tagmap = createStruct(tags, lines);
     if isfield(tagmap, 'PMTKtitle')
-        data{j, 1} = tagmap.PMTKtitle; 
+        data{j, 1} = tagmap.PMTKtitle;
     end
     if isfield(tagmap, 'PMTKauthor')
         data{j, 2} = tagmap.PMTKauthor;
