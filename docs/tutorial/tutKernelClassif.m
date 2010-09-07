@@ -66,7 +66,51 @@ end
 % In the first example, we use an RBF kernel with centers at 4
 % manually chosen points, shown with black stars.
 % In the second and third examples, we use an RBF and polynomial kernel,
-% centered at all the training data. This only leaves the kernel parameters
-% ($\sigma$ and $d$) to be specified.
-%
+% centered at all the training data.
+% We can use L1 regularization to select a subset of the training
+% data, as we illustrate below.
+
+%% Using cross validation to choose the kernel parameters
+% We can create a grid of models, with different kernel params
+% and different strength regularizers, as shown in the example
+% below ( from logregKernelCrabsDemo.m ).
+% If CV does not pick a point on the edge of the grid,
+% we can be faily confident we have searched over
+% a reasonable range. For this reason,
+% it is helpful to plot the cost surface.
+%%
+clear all
+loadData('crabs');
+% Here we cross validate over both lambda and Sigma
+lambda     = logspace(-4, -2, 5); %logspace(-7, -4, 20); 
+Sigma      = 1:2:6; % 8:0.5:10;
+paramRange = crossProduct(lambda, Sigma); 
+regtypes = {'L1', 'L2'};
+for r=1:length(regtypes)
+  regtype = regtypes{r};
+  fitFn = @(X, y, param)...
+    logregFit(X, y, 'lambda', param(1), 'regType', regtype, 'preproc', ...
+    preprocessorCreate('kernelFn', @(X1, X2)kernelRbfSigma(X1, X2, param(2))));
+  predictFn = @logregPredict;
+  lossFn = @(ytest, yhat)mean(yhat ~= ytest);
+  nfolds = 5;
+  useSErule = true;
+  plotCv = true;
+  tic;
+  [LRmodel, lambdaStar, LRmu, LRse] = ...
+    fitCv(paramRange, fitFn, predictFn, lossFn, Xtrain, ytrain, nfolds, ...
+    'useSErule', useSErule, 'doPlot', plotCv, 'params1', lambda, 'params2', Sigma);
+  time(r) = toc
+  yhat = logregPredict(LRmodel, Xtest);
+  nerrors(r) = sum(yhat ~= ytest)
+end
+%%
+% We see that L2 regularization (which results in a dense model)
+% is both more accurate and faster to train, in this example
+% at least.
+
+
+
+
+
 
