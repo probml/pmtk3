@@ -36,6 +36,7 @@ end
 end
 
 %%%%%%%%%%%% DEPENDENCIES %%%%%%%%%%%%
+
 function X = addOnes(X)
     X = [ones(size(X, 1), 1), X];
 end
@@ -48,6 +49,7 @@ end
 X = bsxfun(@minus, X, mu);
 end
 
+.... many other functions omitted
 
 %%%%%%%% DATA STUFF %%%%%%%
 
@@ -98,6 +100,7 @@ end
 end
 
 %%%%%%%%%%%% START SCRIPT %%%%%%%%%%%%
+
 switch(args{1})
     case 'learn'
         [X, y] = mlcompReadData(args{2});

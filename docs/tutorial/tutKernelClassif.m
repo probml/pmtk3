@@ -540,7 +540,7 @@ disp(testErrRate)
 % It is easy to add other classifiers and data sets to this comparison.
 % For more extensive comparison of different classifiers
 % on different datasets, see
-% <http://mlcomp.org/>.
+% tutMLcomp.html .
 
 %% Gaussian processes
 % GPs are discussed in more detail

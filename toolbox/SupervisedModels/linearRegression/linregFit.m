@@ -8,19 +8,21 @@ function [model] = linregFit(X, y, varargin)
 % likelihood    ... ['gaussian'], 'student', 'huber'
 % lambda        ... regularizer
 % preproc       ... a struct, passed to preprocessorApplyToTtrain
-%  Set preproc.addOnes = true if you want this model
-%   to add a column of 1s to X for you (at train and test time)
+%    Set preproc.addOnes = true if you want this model
+%    to add a column of 1s to X for you (at train and test time)
 % fitOptions    ... optional  args (a cell array) to fitFn
-% fitFnName         ... For L1, default is
-%   'L1GeneralProjection'. Can be any other method available
-%   from http://www.cs.ubc.ca/~schmidtm/Software/L1General/L1General.html
-%   Can also specify 'l1ls', which uses
-%     code from http://www.stanford.edu/~boyd/l1_ls/
+% fitFnName         ... Name of fitting method to use.
+%    Currently the only method that you can modify is for
+%    lasso (likelihood=gaussian, regType=lasso).
+%    The default is 'L1GeneralProjection'.
+%    However, this can be any other method available
+%    from http://www.cs.ubc.ca/~schmidtm/Software/L1General/L1General.html
+%    You can also specify 'l1ls', which uses
+%    code from http://www.stanford.edu/~boyd/l1_ls/
 % winit         ...  Initial value of w; can be used for warm starting
 %
 % OUTPUTS:
 % model         ... a struct, which you can pass directly to linregPredict
-%%
 
 % default preprocessing
 pp = preprocessorCreate('addOnes', true, 'standardizeX', false);
