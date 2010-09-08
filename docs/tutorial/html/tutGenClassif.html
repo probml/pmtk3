@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>Supervised learning using generative models in pmtk3</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-09-01"><meta name="m-file" content="tutGenClassif"><style type="text/css">
+      --><title>Supervised learning using generative models in pmtk3</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-09-08"><meta name="m-file" content="tutGenClassif"><style type="text/css">
 
 body {
   background-color: white;
@@ -155,7 +155,7 @@ centUnshrunk = model.shrunkenCentroids;
     hold <span class="string">off</span>;
     printPmtkFigure(sprintf(<span class="string">'shrunkenCentroidsClass%d'</span>, g))
 <span class="keyword">end</span>
-</pre><img vspace="5" hspace="5" src="tutGenClassif_05.png" alt=""> <img vspace="5" hspace="5" src="tutGenClassif_06.png" alt=""> <img vspace="5" hspace="5" src="tutGenClassif_07.png" alt=""> <h2>Robust discriminant analysis<a name="19"></a></h2><p>We can use any joint probability model for the class conditional density in a generative classifier. To train we just call <tt>generativeClassifierFit(fitFn, X, y)</tt> where <tt>fitFn</tt> fits <img src="tutGenClassif_eq65669.png" alt="$p(x|y=c,\theta)$">. To predict we just call <tt>[yhat, post] = generativeClassifierPredict(logprobFn, model, Xtest)</tt>, where <tt>logprobFn</tt> computes <img src="tutGenClassif_eq65669.png" alt="$p(x|y=c,\theta)$">.</p><p>As a simple example, we can make each class conditional density be a Student distribution, to implement robust discriminant analysis. Here is part of <a href="http://pmtk3.googlecode.com/svn/trunk/demos/bookDemos/Generative_models_for_classification_and_regression/robustDiscrimAnalysisBankruptcyDemo.m">robustDiscrimAnalysisBankruptcyDemo.m</a> which illustrates the syntax:</p><p><tt>modelS = generativeClassifierFit(@studentFit, Xtrain, ytrain)</tt></p><p><tt>[yhat] = generativeClassifierPredict(@studentLogprob, modelS, Xtest)</tt></p><p>Now we run the entire demo, which uses Student and Gaussian class conditional densities, as well as the QDA code. We see that the Student distribution is more robust than the Gaussian, and that the QDA code gives the same results as using a Gaussian model inside the generative classifier code, as it should</p><pre class="codeinput">robustDiscrimAnalysisBankruptcyDemo
+</pre><img vspace="5" hspace="5" src="tutGenClassif_05.png" alt=""> <img vspace="5" hspace="5" src="tutGenClassif_06.png" alt=""> <img vspace="5" hspace="5" src="tutGenClassif_07.png" alt=""> <h2>Robust discriminant analysis<a name="19"></a></h2><p>We can use any joint probability model for the class conditional density in a generative classifier. To train we just call <tt>generativeClassifierFit(fitFn, X, y)</tt> where <tt>fitFn</tt> fits <img src="tutGenClassif_eq65669.png" alt="$p(x|y=c,\theta)$">. To predict we just call <tt>[yhat, post] = generativeClassifierPredict(logprobFn, model, Xtest)</tt>, where <tt>logprobFn</tt> computes <img src="tutGenClassif_eq65669.png" alt="$p(x|y=c,\theta)$">.</p><p>As a simple example, we can make each class conditional density be a Student distribution, to implement robust discriminant analysis. Here is part of <a href="http://pmtk3.googlecode.com/svn/trunk/demos/bookDemos/Generative_models_for_classification_and_regression/robustDiscrimAnalysisBankruptcyDemo.m">robustDiscrimAnalysisBankruptcyDemo.m</a> which illustrates the syntax:</p><p><tt>modelS = generativeClassifierFit(@studentFit, Xtrain, ytrain)</tt> <tt>[yhat] = generativeClassifierPredict(@studentLogprob, modelS, Xtest)</tt></p><p>Now we run the entire demo, which uses Student and Gaussian class conditional densities, as well as the QDA code. We see that the Student distribution is more robust than the Gaussian, and that the QDA code gives the same results as using a Gaussian model inside the generative classifier code, as it should</p><pre class="codeinput">robustDiscrimAnalysisBankruptcyDemo
 </pre><pre class="codeoutput">Num Errors using Student: 2
 Num Errors using Gaussian: 3
 Num Errors using QDA: 3
@@ -454,7 +454,6 @@ end
 % which illustrates the syntax:
 %
 % |modelS = generativeClassifierFit(@studentFit, Xtrain, ytrain)|
-%
 % |[yhat] = generativeClassifierPredict(@studentLogprob, modelS, Xtest)|
 %
 % Now we run the entire demo, which uses Student and Gaussian

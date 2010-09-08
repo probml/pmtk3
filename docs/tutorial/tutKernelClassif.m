@@ -138,13 +138,14 @@ for r=1:length(regtypes)
   useSErule = true;
   plotCv = true;
   tic;
-  [LRmodel, lambdaStar, LRmu, LRse] = ...
+  [LRmodel, bestParam, LRmu, LRse] = ...
     fitCv(paramRange, fitFn, predictFn, lossFn, Xtrain, ytrain, nfolds, ...
     'useSErule', useSErule, 'doPlot', plotCv, 'params1', lambdaRange, 'params2', gammaRange);
   time(r) = toc
   yhat = logregPredict(LRmodel, Xtest);
-  nerrors(r) = sum(yhat ~= ytest)
+  nerrors(r) = sum(yhat ~= ytest);
 end
+errRate = nerrors/nTest
 %%
 %
 % In the example above, we just use a 5x5 grid for speed,
@@ -186,7 +187,7 @@ end
 %  
 % regType  defaults to 'L1',
 % and lambdaRange defaults to logspace(-5, 2, 10),
-% so both thse parameters can be omitted. The kernelFn is mandatory,
+% so both these parameters can be omitted. The kernelFn is mandatory,
 % however.
 % After fitting, use smlrPredict.m to predict.
 
@@ -258,8 +259,8 @@ end
 % It can also choose the best kernel parameter.
 % Here is an example of the calling syntax.
 %
-% | model = svmFit(Xtrain, ytrain, 'C', logspace(-5, 1, 10),...
-%     'kernel', 'rbf', 'kernelParam', logspace(-2,2,5)); |
+% |model = svmFit(Xtrain, ytrain, 'C', logspace(-5, 1, 10),...
+%     'kernel', 'rbf', 'kernelParam', logspace(-2,2,5));|
 %
 % After fitting, use svmPredict.m to predict.
 
@@ -311,6 +312,8 @@ end
 %
 % In linearKernelDemo.m , we compare various kernelized
 % classifiers (using linear kernels) on the above data.
+% (We use linear kernels so we don't have to cross validate
+% over gamma in the RBF kernel.)
 % Below we show the median misclassification rates on the different data sets,
 % averaged over 3 random splits.
 % For each split, we use 70% of the data for training and 30% for testing.
@@ -364,7 +367,7 @@ end
 % </table>
 % </html>
 %%
-% In terms of median performace, all methods are similar,
+% In terms of median performance, all methods are similar,
 % with the exception of logregL2,
 % which is often much worse than the others.
 %
@@ -372,7 +375,7 @@ end
 % data are quite high (chance would be 5/6=0.83).
 % This is because we used a linear kernel,
 % but we only have 9 features. Using a nonlinear kernel
-% helps performance a lot on such low-dim datasets.
+% (as we did above) can sometimes help performance.
 % However, on high-dim datasets, linear kernels
 % are usually sufficient. Indeed, we can just as well
 % work in the original feature space and not use kernels at all
@@ -395,8 +398,7 @@ end
 %
 % * svm  is a wrapper to C code (libsvm)
 % * rvm is optimized Matlab (SparseBayes)
-% * SMLR and RMLR is unoptimized Matlab. The path version is much
-%  faster but gives worse results.
+% * SMLR and RMLR is unoptimized Matlab.
 % * logregL1path and logregL2path is a wrapper to Fortran code (glmnet)
 %
 %%
@@ -535,8 +537,12 @@ toc
 fprintf('test err\n');
 disp(testErrRate)
 %%
-% It is easy to add other classifiers to the mix.
+% It is easy to add other classifiers and data sets to this comparison.
 % For more extensive comparison of different classifiers
 % on different datasets, see
 % <http://mlcomp.org/>.
 
+%% Gaussian processes
+% GPs are discussed in more details
+% * <http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutGP.html
+% here>.

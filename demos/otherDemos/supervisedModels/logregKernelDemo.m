@@ -35,14 +35,14 @@ for r=1:length(regtypes)
   useSErule = true;
   plotCv = true;
   tic;
-  [LRmodel, lambdaStar, LRmu, LRse] = ...
+  [LRmodel, bestParam, LRmu, LRse] = ...
     fitCv(paramRange, fitFn, predictFn, lossFn, Xtrain, ytrain, nfolds, ...
     'useSErule', useSErule, 'doPlot', plotCv, 'params1', lambdaRange, 'params2', gammaRange);
   time(r) = toc
   yhat = logregPredict(LRmodel, Xtest);
-  nerrors(r) = sum(yhat ~= ytest)
+  nerrors(r) = sum(yhat ~= ytest);
 end
-
+errRate = nerrors/nTest
 
 
 

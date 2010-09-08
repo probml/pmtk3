@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>Basics of  pmtk3</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-08-31"><meta name="m-file" content="tutFoundations"><style type="text/css">
+      --><title>Basics of  pmtk3</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-09-08"><meta name="m-file" content="tutFoundations"><style type="text/css">
 
 body {
   background-color: white;
@@ -74,7 +74,7 @@ X =
    -1.1465    1.1909
     1.1892   -0.0376
     0.3273    0.1746
-</pre><p>The function <a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/BasicModels/gauss/gaussCreate.m">gaussCreate.m</a> is called a constructor, since it creates an instance of the class. The function <a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/BasicModels/gauss/gaussSample.m">gaussSample.m</a> is a method. The methods that are supported depend on the type of model; details are given below.</p><p>To provide some overall structure, we group the model classes into two major types:</p><div><ul><li>unconditional / unsupervised</li><li>conditional / supervised</li></ul></div><p>These support different functions, as we explain below.</p><h2>Conditional (supervised) models<a name="6"></a></h2><p>This is a model of the form <img src="tutFoundations_eq31060.png" alt="$p(y|x, \theta)$"> or <img src="tutFoundations_eq35640.png" alt="$p(y,x|\theta)$">, where x is the set of covariates/ inputs, and y is the response/ output. If <img src="tutFoundations_eq14315.png" alt="$y \in R$">, we are performing regression; if <img src="tutFoundations_eq35391.png" alt="$y \in \{1,\ldots,C\}$">, we are performing classification. (Structured output classification is not yet supported.)</p><p>All conditional models should support the functions listed below. In the table,  'foo' is the name of the model class and '...' refers to optional or model-specific arguments (these will be explained later).</p><p>
+</pre><p>The function <a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/BasicModels/gauss/gaussCreate.m">gaussCreate.m</a> is called a constructor, since it creates an instance of the class. The function <a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/BasicModels/gauss/gaussSample.m">gaussSample.m</a> is a method. The methods that are supported depend on the type of model; details are given below.</p><p>To provide some overall structure, we group the model classes into two major types:</p><div><ul><li>unconditional / unsupervised</li><li>conditional / supervised</li></ul></div><p>These support different functions, as we explain below.</p><h2>Conditional (supervised) models<a name="6"></a></h2><p>This is a model of the form <img src="tutFoundations_eq31060.png" alt="$p(y|x, \theta)$"> or <img src="tutFoundations_eq35640.png" alt="$p(y,x|\theta)$">, where x is the set of covariates/ inputs, and y is the response/ output. If <img src="tutFoundations_eq14315.png" alt="$y \in R$">, we are performing regression; if <img src="tutFoundations_eq35391.png" alt="$y \in \{1,\ldots,C\}$">, we are performing classification. (Structured output classification is not yet supported.)</p><p>All conditional models should support the functions listed below. (Note that we treat generative classifiers as conditional models, since they implement the interface below.) In the table,  'foo' is the name of the model class and '...' refers to optional or model-specific arguments (these will be explained later).</p><p>
 <TABLE BORDER=3 CELLPADDING=5 WIDTH="100%" >
 <TR ALIGN=left>
 <TH WIDTH=40%  BGCOLOR=#00CCFF><FONT COLOR=000000>Method</FONT></TH>
@@ -172,18 +172,19 @@ z(i,:) = E(z|X(i,:), m)
 and pz(i,:,:) = Cov(z|X(i,:), m).
 <tr>
 </table>
-</p><p>We discuss LVMs in more detail <a href="http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutLVM.html">here</a>. A list of all the LVMs can be found <a href="http://pmtk3.googlecode.com/svn/trunk/docs/modelLists/latentList.html">here</a>. A complete list of the methods currently implemented by each latent model is shown <a href="http://pmtk3.googlecode.com/svn/trunk/docs/modelsByMethods/latentModels.html">here</a>.</p><h2>Graphical models<a name="31"></a></h2><p>From a functional point of view, a GM supports all the methods for a generic unconditional model, plus the following functions.</p><p>
+</p><p>We discuss LVMs in more detail in <a href="http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutLVM.html">tutLVM.html</a> . A list of all the LVMs can be found <a href="http://pmtk3.googlecode.com/svn/trunk/docs/modelLists/latentList.html">here</a>. A complete list of the methods currently implemented by each latent model is shown <a href="http://pmtk3.googlecode.com/svn/trunk/docs/modelsByMethods/latentModels.html">here</a>.</p><h2>Graphical models<a name="31"></a></h2><p>From a functional point of view, a GM supports all the methods for a generic unconditional model, plus the following functions.</p><p>
 <TABLE BORDER=3 CELLPADDING=5 WIDTH="100%" >
 <TR ALIGN=left>
 <TH WIDTH=40%  BGCOLOR=#00CCFF><FONT COLOR=000000>Method</FONT></TH>
 <TH WIDTH=60% BGCOLOR=#00CCFF><FONT COLOR=000000>Description</FONT></TH>
 </TR>
 <td> [bel] = inferNodes(m, evidence).
-<td> Here bel{i}(k) is the probability node i is in state k,
-given the evidence. The evidence can be specified
+<td> Here bel{i} is a tabular factor,
+where  bel{i}.T(k) is the probability node i is in state k, given the
+evidence.
+The evidence can be specified
 in several different ways. See
-<a href="http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutGM.html">
-here</a>
+<http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutGM.html tutGM.html>
 for details.
 <tr>
 <td> yhat = map(m, evidence)
@@ -206,10 +207,16 @@ src="http://pmtk3.googlecode.com/svn/trunk/docs/classSystem/modelsConcreteTree.p
   regType       ... L1, L2, none, scad (only used if likelihood is 'gaussian')
   likelihood    ... ['gaussian'], 'student', 'huber'
   lambda        ... regularizer
-  fitOptions    ... optional  args (a cell array) to fitFn
   preproc       ... a struct, passed to preprocessorApplyToTtrain
    Set preproc.addOnes = true if you want this model
     to add a column of 1s to X for you (at train and test time)
+  fitOptions    ... optional  args (a cell array) to fitFn
+  fitFnName         ... For L1, default is
+    'L1GeneralProjection'. Can be any other method available
+    from http://www.cs.ubc.ca/~schmidtm/Software/L1General/L1General.html
+    Can also specify 'l1ls', which uses
+      code from http://www.stanford.edu/~boyd/l1_ls/
+  winit         ...  Initial value of w; can be used for warm starting
  
   OUTPUTS:
   model         ... a struct, which you can pass directly to linregPredict
@@ -236,7 +243,7 @@ m2 = linregFit(X, y, s)
      modelType: 'linreg'
     likelihood: 'gaussian'
 </pre><p>As a sanity check, let us check these are equal</p><pre class="codeinput">assert(approxeq(m1.w, m2.w))
-</pre><p>Internally, these optional arguments are processed using <a href="http://matlabtools.googlecode.com/svn/trunk/util/process_options.m">process_options.m</a> , written by Mark Paskin, and <a href="http://matlabtools.googlecode.com/svn/trunk/util/prepareArgs.m">prepareArgs.m</a> , written by Matt Dunham. For more detals, see <a href="http://yagtom.googlecode.com/svn/trunk/html/writingFunctions.html#40">this entry</a> in our Matlab tutorial.</p><h2>Generally useful Matlab functions<a name="57"></a></h2><p>PMTK uses a large number of  functions that are useful for many different purposes outside of machine learning. Many of these are stored in our <a href="http://code.google.com/p/matlabtools/">matlabTools</a> site. Others are built-in to Matlab, as explained in our <a href="http://code.google.com/p/yagtom/">Matlab tutorial</a>. We mention just a few of the most useful ones below</p><div><ul><li><a href="http://matlabtools.googlecode.com/svn/trunk/metaTools/whoCallsMe.m">whoCallsMe.m</a> : <tt>whoCallsMe('foo')</tt> will list all files that call foo.m</li><li><a href="http://matlabtools.googlecode.com/svn/trunk/metaTools/wwhich.m">wwhich.m</a> : which with wildcards. eg <tt>wwhich('foo*')</tt> prints full filenames of all files starting   with the string 'foo', and <tt>wwhich('*foo*')</tt> finds files with 'foo' anywhere in their name.</li><li><tt>edit('foo')</tt> will open foo.m in the matlab editor. This lets you look at (and modify) the source code.    This also works   for built-in Matlab functions.   Be careful not to change things accidently!.</li><li><tt>help('foo')</tt> prints any initial documentation for foo.m that     the implementer may have provided; all builtin Matlab functions     are properly documented. Unfortuntately that is not the case for     all the PMTK functions... but you can always read the source :)</li><li><a href="http://matlabtools.googlecode.com/svn/trunk/graphics/placeFigures.m">placeFigures.m</a> : this lays out all the currently open figures   so you can see them all at the same time</li><li><tt>dbstop if error</tt> : open the debugger if there is an error. See <a href="http://yagtom.googlecode.com/svn/trunk/html/debugging.html">here</a> for more info on debugging.</li><li><a href="http://matlabtools.googlecode.com/svn/trunk/graphics/printPmtkFigure.m">printPmtkFigure.m</a> : this is used to make figures for <a href="http://www.cs.ubc.ca/~murphyk/MLbook/index.html">my book</a>. It uses <a href="http://www.mathworks.com/matlabcentral/fileexchange/23629">export_fig.m</a> to make the figures 'camera ready'. If you want to include figures in your own document, you can modify printPmtkFigure appropriately.</li></ul></div><p class="footer"><br>
+</pre><p>Internally, these optional arguments are processed using <a href="http://matlabtools.googlecode.com/svn/trunk/util/process_options.m">process_options.m</a> , written by Mark Paskin, and <a href="http://matlabtools.googlecode.com/svn/trunk/util/prepareArgs.m">prepareArgs.m</a> , written by Matt Dunham. For more detals, see <a href="http://yagtom.googlecode.com/svn/trunk/html/writingFunctions.html#40">this entry</a> in our Matlab tutorial.</p><h2>Generally useful Matlab functions<a name="57"></a></h2><p>PMTK uses a large number of  functions that are useful for many different purposes outside of machine learning. Many of these are stored in our <a href="http://code.google.com/p/matlabtools/">matlabTools</a> site. Others are built-in to Matlab, as explained in our <a href="http://code.google.com/p/yagtom/">Matlab tutorial</a>. We mention just a few of the most useful ones below</p><div><ul><li><a href="http://matlabtools.googlecode.com/svn/trunk/metaTools/whoCallsMe.m">whoCallsMe.m</a> : <tt>whoCallsMe('foo')</tt> will list all files that call foo.m</li><li><a href="http://matlabtools.googlecode.com/svn/trunk/metaTools/wwhich.m">wwhich.m</a> : which with wildcards. eg <tt>wwhich('foo*')</tt> prints full filenames of all files starting   with the string 'foo', and <tt>wwhich('*foo*')</tt> finds files with 'foo' anywhere in their name.</li><li><tt>edit('foo')</tt> will open foo.m in the matlab editor. This lets you look at (and modify) the source code.    This also works   for built-in Matlab functions.   Be careful not to change things accidently!.</li><li><tt>help('foo')</tt> prints any initial documentation for foo.m that     the implementer may have provided; all builtin Matlab functions     are properly documented. Unfortuntately that is not the case for     all the PMTK functions... but you can always read the source :)</li><li><tt>doc('foo')</tt> opens the html documentation for built-in function foo.m</li><li><a href="http://matlabtools.googlecode.com/svn/trunk/graphics/placeFigures.m">placeFigures.m</a> : this lays out all the currently open figures   so you can see them all at the same time</li><li><tt>dbstop if error</tt> : open the debugger if there is an error. See <a href="http://yagtom.googlecode.com/svn/trunk/html/debugging.html">here</a> for more info on debugging.</li><li><a href="http://matlabtools.googlecode.com/svn/trunk/graphics/printPmtkFigure.m">printPmtkFigure.m</a> : this is used to make figures for <a href="http://www.cs.ubc.ca/~murphyk/MLbook/index.html">my book</a>. It uses <a href="http://www.mathworks.com/matlabcentral/fileexchange/23629">export_fig.m</a> to make the figures 'camera ready'. If you want to include figures in your own document, you can modify printPmtkFigure appropriately.</li></ul></div><p class="footer"><br>
       Published with MATLAB&reg; 7.9<br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Basics of  pmtk3
@@ -292,6 +299,8 @@ setSeed(0); X = gaussSample(m, 5)
 % (Structured output classification is not yet supported.)
 %
 % All conditional models should support the functions listed below.
+% (Note that we treat generative classifiers as conditional
+% models, since they implement the interface below.)
 % In the table,  'foo' is the name of the model class
 % and '...' refers to optional or model-specific arguments
 % (these will be explained later).
@@ -470,8 +479,7 @@ L = sum(gaussLogprob(m3, X))
 % </html>
 %%
 % We discuss LVMs in more detail 
-% <http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutLVM.html
-% here>.
+% in <http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutLVM.html tutLVM.html> .
 % A list of all the LVMs can be found
 % <http://pmtk3.googlecode.com/svn/trunk/docs/modelLists/latentList.html
 % here>.
@@ -493,11 +501,12 @@ L = sum(gaussLogprob(m3, X))
 % <TH WIDTH=60% BGCOLOR=#00CCFF><FONT COLOR=000000>Description</FONT></TH>
 % </TR>
 % <td> [bel] = inferNodes(m, evidence).
-% <td> Here bel{i}(k) is the probability node i is in state k,
-% given the evidence. The evidence can be specified
+% <td> Here bel{i} is a tabular factor, 
+% where  bel{i}.T(k) is the probability node i is in state k, given the
+% evidence.
+% The evidence can be specified
 % in several different ways. See 
-% <a href="http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutGM.html">
-% here</a>
+% <http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutGM.html tutGM.html>
 % for details.
 % <tr> 
 % <td> yhat = map(m, evidence)
@@ -651,6 +660,7 @@ assert(approxeq(m1.w, m2.w))
 %     the implementer may have provided; all builtin Matlab functions
 %     are properly documented. Unfortuntately that is not the case for
 %     all the PMTK functions... but you can always read the source :)
+% * |doc('foo')| opens the html documentation for built-in function foo.m
 % * <http://matlabtools.googlecode.com/svn/trunk/graphics/placeFigures.m placeFigures.m> : this lays out all the currently open figures
 %   so you can see them all at the same time
 % * |dbstop if error| : open the debugger if there is an error.

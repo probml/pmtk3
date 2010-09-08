@@ -13,6 +13,8 @@ function [model, logev, postSummary] = linregFitBayes(X, y, varargin)
 %    Must specify alpha and beta
 %- 'zellner' means use N(0, 1/g*inv(X'*X)) Ga(sigma|0,0)
 %      Must specify g
+% useArd: set to true to use N(0, inv(diag(alpha)) prior
+%   for automatic relevancy determination 
 % preproc       ... a struct, passed to preprocessorApplyToTtrain
 % displaySummary ... set to true to display summary of posterior
 %

@@ -6,7 +6,7 @@
    <!--
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
-      --><title>Regression using parametric discriminative models in pmtk3</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-09-01"><meta name="m-file" content="tutRegr"><style type="text/css">
+      --><title>Regression using parametric discriminative models in pmtk3</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-09-08"><meta name="m-file" content="tutRegr"><style type="text/css">
 
 body {
   background-color: white;
@@ -271,11 +271,11 @@ verticalLine(ndx(idx_opt), <span class="string">'color'</span>,<span class="stri
     fitCv(lambdas, fitFn2, predFn, lossFn, Xtrain, ytrain,  nfolds, <span class="keyword">...</span>
     <span class="string">'randomizeOrder'</span>, false);
 assert(approxeq(mu, mu2))
-</pre><h2>Regularization paths<a name="51"></a></h2><p>For some models and regularizers of strength <img src="tutRegr_eq23351.png" alt="$\lambda$">, it is possible to efficiently compute MAP estimates for a whole set of <img src="tutRegr_eq23351.png" alt="$\lambda$"> values. This is known as the regularization path. In fact, computing the path can be faster than computing a single (lightly regularized) solution, since the estimate <img src="tutRegr_eq14356.png" alt="$\hat{w}(\lambda)$"> can be used to warm-start the optimizer when computing <img src="tutRegr_eq23132.png" alt="$\hat{w}(\lambda')$"> for <img src="tutRegr_eq06975.png" alt="$\lambda' < \lambda$">.</p><p>The package <a href="http://www-stat.stanford.edu/~tibs/glmnet-matlab/">glmnet</a> supports the computation of regularization paths for linear and logistic regression using L2 and L1 regularization. It automatically computes a suitable range of <img src="tutRegr_eq23351.png" alt="$\lambda$"> values, depending on the data and type of regularizer. glmnet is included in pmtkSupport.</p><p>Of course, the regularization path is not a model, it is a set of models. But can use CV to pick the best. However, using <a href="http://matlabtools.googlecode.com/svn/trunk/stats/fitCv.m">fitCv.m</a> to do this would be inefficient, since it loops over models, and then loops over folds internally (inside <a href="http://matlabtools.googlecode.com/svn/trunk/stats/cvEstimate.m">cvEstimate.m</a> ): it is more efficient to loop over folds on the outside, and compute all the models at once on each fold in the inner loop.</p><p>The function <a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/SupervisedModels/linearRegression/linregFitPathCv.m">linregFitPathCv.m</a> does this in the case of linear regression with an L2 or L1 regularizer. Below we apply it to our running example and show that the estimated error has a similar profile to before.</p><pre class="codeinput">[bestModel, path] = linregFitPathCv(Xtrain, ytrain, <span class="string">'regtype'</span>, <span class="string">'l2'</span>,  <span class="string">'preproc'</span>, pp,<span class="keyword">...</span>
+</pre><h2>Regularization paths<a name="51"></a></h2><p>For some models and regularizers of strength <img src="tutRegr_eq23351.png" alt="$\lambda$">, it is possible to efficiently compute MAP estimates for a whole set of <img src="tutRegr_eq23351.png" alt="$\lambda$"> values. This is known as the regularization path. In fact, computing the path can be faster than computing a single (lightly regularized) solution, since the estimate <img src="tutRegr_eq14356.png" alt="$\hat{w}(\lambda)$"> can be used to warm-start the optimizer when computing <img src="tutRegr_eq23132.png" alt="$\hat{w}(\lambda')$"> for <img src="tutRegr_eq06975.png" alt="$\lambda' < \lambda$">.</p><p>The package <a href="http://www-stat.stanford.edu/~tibs/glmnet-matlab/">glmnet</a> supports the computation of regularization paths for linear and logistic regression using L2 and L1 regularization, using a coordinate descent method. It automatically computes a suitable range of <img src="tutRegr_eq23351.png" alt="$\lambda$"> values, depending on the data and type of regularizer. glmnet is included in pmtkSupport.</p><p>Of course, the regularization path is not a model, it is a set of models. But can use CV to pick the best. However, using <a href="http://matlabtools.googlecode.com/svn/trunk/stats/fitCv.m">fitCv.m</a> to do this would be inefficient, since it loops over models, and then loops over folds internally (inside <a href="http://matlabtools.googlecode.com/svn/trunk/stats/cvEstimate.m">cvEstimate.m</a> ): it is more efficient to loop over folds on the outside, and compute all the models at once on each fold in the inner loop.</p><p>The function <a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/SupervisedModels/linearRegression/linregFitPathCv.m">linregFitPathCv.m</a> does this in the case of linear regression with an L2 or L1 regularizer. Below we apply it to our running example and show that the estimated error has a similar profile to before.</p><pre class="codeinput">[bestModel, path] = linregFitPathCv(Xtrain, ytrain, <span class="string">'regtype'</span>, <span class="string">'l2'</span>,  <span class="string">'preproc'</span>, pp,<span class="keyword">...</span>
    <span class="string">'nfolds'</span>, nfolds);
 figure;
 plot(path.cvErr, <span class="string">'linewidth'</span>, 2)
-</pre><pre class="codeoutput">Warning: In the directory "C:\kmurphy\GoogleCode\pmtksupport\glmnet-matlab", glmnetMex.mexw32 now shadows glmnetMex.dll.
+</pre><pre class="codeoutput">Warning: In the directory "C:\kmurphy\GoogleCode\pmtkSupport\glmnet-matlab", glmnetMex.mexw32 now shadows glmnetMex.dll.
  Please see the MATLAB 7.1 Release Notes. 
 </pre><img vspace="5" hspace="5" src="tutRegr_12.png" alt=""> <h2>Bayesian approach to 'tuning'  ridge regression<a name="53"></a></h2><p>A Bayesian alternative to cross validation is to to compute the probability of each value of the regularizer, <img src="tutRegr_eq67685.png" alt="$p(\alpha|D) \propto p(D|\alpha) p(\alpha)$">. If we use a uniform prior for <img src="tutRegr_eq87919.png" alt="$\alpha$">, we can focus on the <img src="tutRegr_eq23729.png" alt="$p(D|\alpha)$"> term, which is called the marginal likelihood  or evidence. This quantity is given by</p><p><img src="tutRegr_eq68090.png" alt="$$p(D|\alpha,\beta) = \int p(y|X,w,\beta) p(w|\alpha) dw $$"></p><p>where, for simplicity, we assumed a known noise precision <img src="tutRegr_eq42727.png" alt="$\beta$">. For linear regression with a Gaussian prior, we can compute this in closed form.</p><pre class="codeinput">beta = 1/sigma2;
 alphas = beta * lambdas;
@@ -328,7 +328,7 @@ legend(names{1:size(X, 2)}, <span class="string">'Location'</span>, <span class=
 hold <span class="string">on</span>
 bestNdx = find(bestModel.lambda==lambdas2);
 verticalLine(bestNdx, <span class="string">'linewidth'</span>, 2, <span class="string">'color'</span>, <span class="string">'r'</span>);
-</pre><pre class="codeoutput">Warning: In the directory "C:\kmurphy\GoogleCode\pmtksupport\glmnet-matlab", glmnetMex.mexw32 now shadows glmnetMex.dll.
+</pre><pre class="codeoutput">Warning: In the directory "C:\kmurphy\GoogleCode\pmtkSupport\glmnet-matlab", glmnetMex.mexw32 now shadows glmnetMex.dll.
  Please see the MATLAB 7.1 Release Notes. 
 ndxKeep =
      1
@@ -756,7 +756,8 @@ assert(approxeq(mu, mu2))
 %
 % The package <http://www-stat.stanford.edu/~tibs/glmnet-matlab/ glmnet>
 % supports the computation of regularization paths for linear
-% and logistic regression using L2 and L1 regularization.
+% and logistic regression using L2 and L1 regularization,
+% using a coordinate descent method.
 % It automatically computes a suitable range of $\lambda$ values,
 % depending on the data and type of regularizer.
 % glmnet is included in pmtkSupport.

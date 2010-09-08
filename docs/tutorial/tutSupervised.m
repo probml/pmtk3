@@ -56,15 +56,9 @@
 % <td> Discrim
 % <td> Param
 % <tr>
-% <td> mlpClassif
+% <td> mlp
 % <td> multi-layer perceptron (aka feedforward neural network)
-% <td> Classif
-% <td> Discrim
-% <td> Param
-% <tr>
-% <td> mlpRegress
-% <td> multi-layer perceptron (aka feedforward neural network)
-% <td> Regr
+% <td> Both
 % <td> Discrim
 % <td> Param
 % <tr>
@@ -76,6 +70,12 @@
 % <tr> 
 % <td> rvm
 % <td> Relevance vector machine
+% <td> Both
+% <td> Discrim
+% <td> Nonparam
+% <tr>
+% <td> smlr
+% <td> Sparse multinomial logistic regression
 % <td> Both
 % <td> Discrim
 % <td> Nonparam
