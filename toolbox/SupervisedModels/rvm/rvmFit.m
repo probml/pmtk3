@@ -1,18 +1,15 @@
-function model = rvmFit(X, y, gamma, varargin)
-%% Fit a relevance vector machine using the SparseBayes package
+function model = rvmFit(X, y, varargin)
+%% Fit a relevance vector machine using the SparseBayes 2.0 package
 % 
-% You can optionally specify a custom kernel function, otherwise
-% @kernelRbfGamma is used. It must have this interface @(X1, X2, param).
+% model = rvmFit(X, y, 'kernelFn', kernelFn)
+% where kernelFn(X1,X2) computes the gram matrix.
 %
-% if kernel is @kernelRbfGamma, (default), gamma is the rbf kernel
-% parameter as in exp(-gamma ||X1(i,:) - X2(j,:)||^2 ), otherwise it 
-% is the parameter to your custom kernel, or [] if your kernel is e.g. linear. 
-%
-% All other args are passed directly to SparseBayes. 
+% model = rvmFit(X, y, 'kernelFn', kernelFn, 'args', args)
+% args are passed directly to SparseBayes. 
 %%
-[kernelFn, args] = process_options(varargin, 'kernelFn', @kernelRbfGamma); 
+[kernelFn, args] = process_options(varargin, 'kernelFn', @kernelLinear); 
 
-pp = preprocessorCreate('kernelFn', @(X1, X2)kernelFn(X1, X2, gamma));
+pp = preprocessorCreate('kernelFn', kernelFn);
 [pp, Xbasis] = preprocessorApplyToTrain(pp, X);
 
 K = nunique(y);
@@ -54,8 +51,7 @@ end
 model.preproc = pp; 
 model.outputType = outputType;
 model.likelihood = likelihood; 
-model.ySupport   = ySupport; 
-model.gamma      = gamma; 
+model.ySupport   = ySupport;  
 
 
 end
@@ -64,5 +60,5 @@ end
 function model = SB(likelihood, X, y, varargin)
 [model, hyperParams, diagnostics] = SparseBayes(likelihood, X, y, varargin{:}); 
 model.hyperParams = hyperParams;
-model.diag = diagnostics; 
+model.diagnostics = diagnostics; 
 end

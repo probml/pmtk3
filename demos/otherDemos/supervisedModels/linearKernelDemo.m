@@ -65,8 +65,9 @@ htmlTableSimple('data', [nClasses(:) nFeatures(:) nCases(:)], ...
 
 
 %% Models
-methods = {'SVM', 'RVM', 'SMLR', 'RMLR', 'logregL2', 'logregL1'};
-%methods = {'SVM'};
+methods = {'SVM', 'RVM', 'SMLR', 'RMLR', 'SMLRpath', 'RMLRpath', 'logregL2', 'logregL1'};
+%methods = {'SMLRpath', 'RMLRpath'};
+%methods = {'RVM'};
 
 nMethods = numel(methods);
 
@@ -97,17 +98,31 @@ for d=1:nDataSets
         Crange = logspace(-6, 1, 20); % if too small, libsvm crashes!
         model = svmFit(Xtrain, ytrain, 'C', Crange,  'kernel', 'linear');
         predFn = @(m,X) svmPredict(m,X);
-        chosenC(d,m,s) = model.C
+        chosenC(d,m,s) = model.C;
       case 'rvm'
-        model = rvmFit(Xtrain, ytrain, [], 'kernelFn', @kernelLinear);
+        model = rvmFit(Xtrain, ytrain, 'kernelFn', @kernelLinear);
+        %model =  rvmFit(X,y, 'kernelFn', @(X1, X2)kernelRbfGamma(X1, X2, 1));
         predFn = @(m,X) rvmPredict(m,X);
-      case 'smlr'
-        model = smlrFit(Xtrain, ytrain,  'kernelFn', @kernelLinear);
-        predFn = @(m,X) smlrPredict(m,X);
-      case 'rmlr'
+        
+      case 'smlrpath'
         model = smlrFit(Xtrain, ytrain, 'kernelFn', @kernelLinear, ...
-          'regtype', 'L2');
+          'regType', 'L1', 'usePath', true);
         predFn = @(m,X) smlrPredict(m,X);
+      case {'smlrnopath', 'smlr'}
+        model = smlrFit(Xtrain, ytrain,  'kernelFn', @kernelLinear, ...
+          'regType', 'L1', 'usePath', false);
+        predFn = @(m,X) smlrPredict(m,X);
+  
+      case 'rmlrpath'
+        model = smlrFit(Xtrain, ytrain, 'kernelFn', @kernelLinear, ...
+          'regtype', 'L2', 'usePath', true);
+        predFn = @(m,X) smlrPredict(m,X);
+      case {'rmlrnopath', 'rmlr'}
+        model = smlrFit(Xtrain, ytrain, 'kernelFn', @kernelLinear, ...
+          'regtype', 'L2', 'usePath', false);
+        predFn = @(m,X) smlrPredict(m,X);
+        
+ 
       case 'logregl2'
         model = logregFitPathCv(Xtrain, ytrain, 'regtype', 'L2');
         predFn = @(m,X) logregPredict(m,X);

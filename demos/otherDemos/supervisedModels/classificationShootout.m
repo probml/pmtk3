@@ -59,7 +59,9 @@ switch method
         
     case 'RVM'
         
-        fitFn = @rvmFit; 
+        %fitFn = @rvmFit; 
+        fitFn = @(X,y,gamma) rvmFit(X,y, 'kernelFn',...
+            @(X1, X2)kernelRbfGamma(X1, X2, gamma));
         predictFn = @rvmPredict;
         paramSpace = gammaRange; 
         

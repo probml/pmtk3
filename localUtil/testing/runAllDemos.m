@@ -199,7 +199,7 @@ logregBasisFnDemo;                       pclear(2);
 logregDemoGirolami;                      pclear(2);
 logregFitL2DualTest;                     pclear(2);
 logregIrisDemo;                          pclear(2);
-logregKernelCrabsDemo;                   pclear(2);
+logregKernelDemo;                   pclear(2);
 logregL2FitTest;                         pclear(2);
 logregLaplaceGirolamiDemo;               pclear(2);
 logregMultinomKernelDemo;                pclear(2);

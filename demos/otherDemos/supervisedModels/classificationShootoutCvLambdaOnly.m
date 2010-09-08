@@ -78,10 +78,12 @@ switch method
         
         switch dataSet.kernel
             case 'rbf'
-                model = rvmFit(Xtrain, yTrain, gamma);
+              model = rvmFit(Xtrain, yTrain, 'kernelFn',...
+                @(X1,X2) kernelRbfGamma(X1,X2,gamma)); 
+                %model = rvmFit(Xtrain, yTrain, gamma);
                 bestParams = gamma;
             case 'linear'
-                model = rvmFit(Xtrain, yTrain, [], 'kernelFn', @kernelLinear); 
+                model = rvmFit(Xtrain, yTrain, 'kernelFn', @kernelLinear); 
                 bestParams = [];
         end
         predictFn = @rvmPredict;

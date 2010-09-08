@@ -10,13 +10,14 @@ switch model.outputType
     case 'binary'
         
         %yhat = binaryPredFn(model, Ktest);
-        p = double(SB2_Sigmoid(Ktest*model.w));
+        %p = double(SB2_Sigmoid(Ktest*model.w));
+        p = double(sigmoid(Ktest*model.w));
         yhat = p>0.5;
         yhat = setSupport(yhat, model.ySupport, [0 1]);
         
     case 'multiclass'
         
-        yhat = oneVsRestClassifPredict(model, Ktest, @(m, X)SB2_Sigmoid(X*m.w));
+        yhat = oneVsRestClassifPredict(model, Ktest, @(m, X)sigmoid(X*m.w));
         yhat = setSupport(yhat, model.ySupport);
         p = [];
         
