@@ -1,5 +1,5 @@
 function model = rvmFit(X, y, gamma, varargin)
-%% Fit an rvm using the SparseBayes package
+%% Fit a relevance vector machine using the SparseBayes package
 % 
 % You can optionally specify a custom kernel function, otherwise
 % @kernelRbfGamma is used. It must have this interface @(X1, X2, param).
@@ -62,7 +62,7 @@ end
 
 
 function model = SB(likelihood, X, y, varargin)
-[model, hyperParams, diag] = SparseBayes(likelihood, X, y, varargin{:}); 
+[model, hyperParams, diagnostics] = SparseBayes(likelihood, X, y, varargin{:}); 
 model.hyperParams = hyperParams;
-model.diag = diag; 
+model.diag = diagnostics; 
 end

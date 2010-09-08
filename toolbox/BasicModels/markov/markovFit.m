@@ -21,7 +21,7 @@ end
 N = size(X, 1);
 
 %%
-model.pi = normalize(histc(X(:, 1), 1:nstates)' + rowvec(pseudoCountsPi - 1));
+model.pi = rowvec(normalize(histc(X(:, 1), 1:nstates)) + rowvec(pseudoCountsPi - 1));
 counts = zeros(nstates, nstates);
 for i=1:N
     counts = counts + ...

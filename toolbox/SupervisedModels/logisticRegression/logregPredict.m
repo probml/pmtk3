@@ -5,14 +5,14 @@ function [yhat, p] = logregPredict(model, X)
 % A column of 1s is added if this was done at training time
 % This works for both binary and multiclass and kernelized logistic
 % regression.
-if ~strcmpi(model.type, 'logreg')
+if ~strcmpi(model.modelType, 'logreg')
   error('can only call this funciton on models of type logreg')
 end
 
 if isfield(model, 'preproc')
     [X] = preprocessorApplyToTest(model.preproc, X);
 end
-if model.binary
+if size(model.w,2)==1 % numel(model.ySupport)==2 % model.binary
     p = sigmoid(X*model.w);
     yhat = p > 0.5;  % now in [0 1]
     yhat = setSupport(yhat, model.ySupport, [0 1]); % restore initial support 

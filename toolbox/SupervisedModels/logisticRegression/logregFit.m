@@ -7,12 +7,26 @@ function [model, X, lambdaVec, opt] = logregFit(X, y, varargin)
 % fitOptions    ... optional fitMethod args (a struct)
 % preproc       ... a struct, passed to preprocessorApplyToTtrain
 % winit         ... initial value, used for warm starting
+%                    of size D*C (first row is offset vector)
+%                    or size D*1 for binary
 %% OUTPUTS:
 % model         ... a struct, which you can pass directly to logregPredict
+%    model.w is a D*C matrix, where model.w(1,:) contains the offset vector
+%    if preproc.addOnes = true
+%   model.w is D*1 for binary 
 % X             ... possibly transformed input
 % lambdaVec     ... vector of regularizers, including 0 for offset
 % opt           ... output of optimizer 
 %%
+
+% Important change on 7 Sep 2010 by KPM
+% Now the weight matrix in the multiclass case is D*C
+% instead of D*(C-1), so we switch from SoftmaxLoss2 to SoftmaxLoss.
+% This means winit should be D*C as well.
+% This simplifies warm-starting, since the output (stored value)
+% has always been D*C.
+% (LambdaVec has been made D*C as well)
+
 y = y(:);
 assert(size(y, 1) == size(X,1));
 pp = preprocessorCreate('addOnes', true, 'standardizeX', true);
@@ -37,27 +51,38 @@ if isempty(fitOptions)
 end
 
 [preproc, X] = preprocessorApplyToTrain(preproc, X);
-D = size(X,2);
+D = size(X,2); % will be num features plus 1 if we added col of 1s
 
-isbinary = nclasses < 3;
+isbinary = nclasses ==2 ;
 if isbinary
     [y, model.ySupport] = setSupport(y, [-1 1]);
     loss = @(w) LogisticLossSimple(w, X, y);
      model.binary = true;
 else
     [y, model.ySupport] = setSupport(y, 1:nclasses);
-    loss = @(w) SoftmaxLoss2(w, X, y, nclasses);
+    %loss = @(w) SoftmaxLoss2(w, X, y, nclasses);
+    loss = @(w) SoftmaxLoss(w, X, y, nclasses);
     model.binary = false;
 end
 model.lambda = lambda;
 
-lambdaVec = lambda*ones(D, nclasses-1);
+if isbinary
+  lambdaVec = lambda*ones(D, 1);
+else
+  lambdaVec = lambda*ones(D, nclasses);
+end
 if preproc.addOnes
     lambdaVec(1, :) = 0; % don't penalize bias term
 end
 
 if isempty(winit)
-  winit  = zeros(D, nclasses-1);
+  %winit  = zeros(D, nclasses-1);
+  if isbinary
+    winit  = zeros(D, 1);
+  else
+    winit  = zeros(D, nclasses);
+  end
+  
 end
 
 switch lower(regType)
@@ -71,11 +96,12 @@ switch lower(regType)
 end
 
 if ~isbinary
-    w = [reshape(w, [D nclasses-1]) zeros(D, 1)];
+    %w = [reshape(w, [D nclasses-1]) zeros(D, 1)];
+    w = reshape(w, [D nclasses]);
 end
 model.w = w;
 model.preproc = preproc;
-model.type = 'logreg';
+model.modelType = 'logreg';
 end 
 
 function opts = defaultFitOptions(regType, D) 

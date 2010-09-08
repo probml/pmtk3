@@ -14,6 +14,12 @@ function [model, varargout] = svmFit(X, y, varargin)
 % fitOptions  - a cell array of fit function specific options.
 % cvOptions   - used to control the cross valudation estimate
 %               of C and/or kernel params (if these are vectors)
+%
+% libsvm's grid.py  uses the following range to CV over
+% for C and gamma (log base 2)
+% c_begin, c_end, c_step = -5,  15, 2
+% g_begin, g_end, g_step =  3, -15, -2
+%
 %% OUTPUT:
 % model is a struct with fit function specific information - this can
 % be passed directly to svmPredict().

@@ -1,6 +1,6 @@
 function model = rvmSimpleFit(X, y, gamma, varargin)
 %% Fit a relevence vector machine, i.e. logreg + rbf kernel + ard
-
+% Does not use sparseBayes package, so is much slower
 
 
 

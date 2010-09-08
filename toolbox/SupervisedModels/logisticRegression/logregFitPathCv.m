@@ -1,5 +1,5 @@
 function [model, path] = logregFitPathCv(X, y, varargin)
-% Fit a regularization path for binary logistic regression model 
+% Fit a regularization path for logistic regression model 
 % using L1 or L2 regularizer  and then pick best model.
 % Also return params on the path.
 % (This is a wrapper to the glmnet package.)
@@ -9,6 +9,7 @@ function [model, path] = logregFitPathCv(X, y, varargin)
 % OPTIONAL INPUTS:
 % regType       ... L1, L2
 % options       ... see glmnetSet
+%
 % preproc       ... a struct, passed to preprocessorApplyToTtrain
 %   glmnet computes offset term automatically.
 %   The (training) data is standardized by default.
@@ -55,19 +56,36 @@ switch lower(regType)
     error(['unknown regtype ' regType])
 end
 
-[y, ySupport] = setSupport(y, [1 2]);
+K = nunique(y);
+[y, ySupport] = setSupport(y, 1:K);
 
-CVerr = cvglmnet(X,y,nfolds,[], 'response', 'binomial', options, verbose);
+nfolds = 5; foldid = []; type = [];
+if K==2
+  family = 'binomial';
+else
+  family = 'multinomial';
+end
+
+verbose = 0;
+CVerr=cvglmnetMulticlass(X,y,nfolds,foldid, type, family, options, verbose);
+
 ndx  = find(CVerr.lambda_1se == CVerr.glmnetOptions.lambda);
 
 % create model corresponding to best param value
 models = CVerr.glmnet_object;
-w = models.beta(:, ndx); 
-w0 = models.a0(ndx);
-ww = [w0; w];
+if K==2 && strcmpi(family, 'binomial')
+  w = models.beta(:, ndx);
+else
+  w = zeros(D, K);
+  for k=1:K
+    w(:,k) = models.beta{k}(:,ndx);
+  end
+end
+w0 = models.a0(:,ndx);
+ww = [rowvec(w0); w];
 
 
-preproc.addOnes = true;
+preproc.addOnes = true; % for offset
 preproc.standardize = false;% params on original scale (undoing standardization)
 model = logregCreate(ww, preproc, ySupport);
 model.lambda = models.lambda(ndx);

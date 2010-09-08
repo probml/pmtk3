@@ -4,6 +4,8 @@ function model = logregCreate(w, preproc, ySupport)
 
 model = structure(w,  preproc, ySupport); 
 model.modelType = 'logreg';
-
+if numel(ySupport)==2
+  model.binary = true;
+end
 
 end
