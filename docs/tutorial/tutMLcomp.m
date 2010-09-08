@@ -14,22 +14,25 @@
 % by users requesting that certain (d,a) entries be computed.
 %
 % All computation is done on Amazon's EC2 cloud computing
-% service. Users must upload programs as standalone executables
-% which must conform to a simple interface.
-% Alternatively, they can upload an octave file, 'run.m',
-% with the following interface:
+% service. Users must upload their program as a standalone executable
+% called 'run',
+% which must conform to the following simple interface:
 %
-% |octave -qf run learn trainingDataFileName|
+% |run learn trainingDataFileName|
 %
-% |octave -qf run predict testDataFileName predictionsFileName| 
+% |run predict testDataFileName predictionsFileName| 
 % 
-% Thus run.m takes 1 or 3 arguments,
-% where the first argument must be the string
-% 'learn' or 'predict',
-% and the other arguments are filenames.
 % The data must be formated
 % according to the instructions
 % <http://mlcomp.org/help/quickstart.html here>.
+%
+% Alternatively, run can be a script file which invokes octave
+% (since octave is already on the EC2 server).
+% This octave function should
+% take 1 or 3 arguments,
+% where the first argument must be the string
+% 'learn' or 'predict',
+% and the other arguments are filenames.
 
 %% The pmtk interface to mlcomp
 % Since some of pmtk also runs in octave, it would be nice
@@ -38,8 +41,7 @@
 % However, you first have to generate an octave program
 % with the right interface.
 % Fortunately, this process can be automated by calling
-% mlcompCompiler.m .
-% The interface is as follows
+% mlcompCompiler.m as follows
 %
 % |mlcompCompiler(fitFn, predictFn, outputDir, fitOpts, predictOpts)|
 %
@@ -93,8 +95,17 @@
 % 
 % If things work within matlab, you should next check they
 % work within octave. If so, you are ready to upload
-% your files and data to mlcomp!
-
+% your files and data to mlcomp! If you upload
+% a single data file,
+% the mlcomp servers will automatically divide your dataset
+% into a 70% train/ 30 %test split.
+% However, you can also upload you own train/ test files.
+%
+% (Note that we do not support the |setHyperparameters|
+% command used by mlcomp, since it is rather complicated.
+% Besides, in our view hyper-parameter tuning should be done by
+% the fitting function.)
+%
 %% Limitations
 % The main limitation of mlcompCompiler is that all the functions
 % your code uses, _or might use_, must be octave compatible.
