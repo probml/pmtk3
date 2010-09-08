@@ -62,9 +62,9 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h1>pmtk3 interface to mlcomp</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">What is mlcomp?</a></li><li><a href="#2">The pmtk interface to mlcomp</a></li><li><a href="#3">Limitations</a></li></ul></div><h2>What is mlcomp?<a name="1"></a></h2><p><a href="http://mlcomp.org/">mlcomp</a> is "a free website for objectively comparing machine learning programs across various datasets for multiple problem domains". The basic idea is that it creates a data x algorithm table, which stores the performance of  many different algorithms on many different data sets. Users can upload their own data and/or their own algorithms. Users can also request to run any given algorithm on any given dataset. Thus the table of results is filled out on-demand, by users requesting that certain (d,a) entries be computed.</p><p>All computation is done on Amazon's EC2 cloud computing service. Users must upload programs as standalone executables which must conform to a simple interface. Alternatively, they can upload an octave file, 'run.m', with the following interface:</p><p><tt>octave -qf run learn trainingDataFileName</tt></p><p><tt>octave -qf run predict testDataFileName predictionsFileName</tt></p><p>Thus run.m takes 1 or 3 arguments, where the first argument must be the string 'learn' or 'predict', and the other arguments are filenames. The data must be formated according to the instructions <a href="http://mlcomp.org/help/quickstart.html">here</a>.</p><h2>The pmtk interface to mlcomp<a name="2"></a></h2><p>Since some of pmtk also runs in octave, it would be nice to be able to apply any pmtk algorithm to any dataset in mlcomp, and thus compare pmtk's performance to other methods. However, you first have to generate an octave program with the right interface. Fortunately, this process can be automated by calling <a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/SupervisedModels/mlcomp/mlcompCompiler.m">mlcompCompiler.m</a> . The interface is as follows</p><p><tt>mlcompCompiler(fitFn, predictFn, outputDir, fitOpts, predictOpts)</tt></p><p>where</p><div><ul><li><tt>fitFn</tt> is of the form <tt>model = fitFn(X, y, fitOpts{:})</tt></li><li><tt>predictFn</tt> is of the form <tt>yhat = predictFn(model, X, predictOpts{:})</tt></li><li><tt>outputDir</tt> is a directory to which the various files will be written</li><li><tt>fitOpts</tt> is an optional cell array passed to fitFn</li><li><tt>predictOpts</tt> is an optional cell array passed to predictFn</li></ul></div><p>For example, consider the following</p><pre>|mlcompCompiler('linregFitSimple', 'linregPredict', localdir, {0.1})|</pre><p>This generates the stand-alone octave program shown <a href="http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/mlcompExample-run.txt">here</a>. This contains all of the functions potentially called by linregFitSimple and linregPredict, which is why it is so long. (In fact, I  have shortened it somewhat by not including all these dependencies, to make things clearer.) Obviously all the (potentially) called functions must be octave compatible. In particular, this means they should have an 'end' statement at the end of the file, a convention matlab does not require. Furthermore, nested functions are not supported. (See <a href="http://code.google.com/p/yagtom/wiki/Octave">this link</a> for more information on octave/ matlab compatibility issues.)</p><p>Having 'compiled' your fit/ predict functions in this way. you need to convert your data to mlcomp format, which can be done as follows</p><p><tt>mlcompWriteData(X, y, fullfile(locadir, 'data'))</tt></p><p>Now you can execute the following commands from within matlab; these will invoke octave and call the generated script</p><p><tt>system(sprintf('octave -qf run learn data'));</tt> <tt>system(sprintf('octave -qf run predict data yhat'));</tt></p><p>Finally, you need to read the results back from the yhat file</p><p><tt>yhat = str2double(getText('yhat'))</tt></p><p>The script <a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/SupervisedModels/mlcomp/mlcompDemo.m">mlcompDemo.m</a> contains a demo of all these steps.</p><p>If things work within matlab, you should next check they work within octave. If so, you are ready to upload your files and data to mlcomp!</p><h2>Limitations<a name="3"></a></h2><p>The main limitation of mlcompCompiler is that all the functions your code uses, <i>or might use</i>, must be octave compatible. Unfortunately, Mark Schmidt's <a href="http://www.cs.ubc.ca/~schmidtm/Software/minFunc.html">minfunc.m</a> function, which is widely used inside of pmtk (e.g., when fitting a simple logistic regression model), is not octave compatible, because he did not close his subfunctions with 'end' statements. (Obviously this is an easy problem to fix, but any changes need to be incorporated by Mark, otherwise all the work will need to be repeated on the next release of minfunc...) However, various other pmtk functions (especially generative models) are octave compatible and should work fine with mlcomp, although we have not done extensive testing.</p><p>
+  </style></head><body><div class="content"><h1>pmtk3 interface to mlcomp</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">What is mlcomp?</a></li><li><a href="#2">The pmtk interface to mlcomp</a></li><li><a href="#3">Limitations</a></li></ul></div><h2>What is mlcomp?<a name="1"></a></h2><p><a href="http://mlcomp.org/">mlcomp</a> is "a free website for objectively comparing machine learning programs across various datasets for multiple problem domains". The basic idea is that it creates a data x algorithm table, which stores the performance of  many different algorithms on many different data sets. Users can upload their own data and/or their own algorithms. Users can also request to run any given algorithm on any given dataset. Thus the table of results is filled out on-demand, by users requesting that certain (d,a) entries be computed.</p><p>All computation is done on Amazon's EC2 cloud computing service. Users must upload programs as standalone executables which must conform to a simple interface. Alternatively, they can upload an octave file, 'run.m', with the following interface:</p><p><tt>octave -qf run learn trainingDataFileName</tt></p><p><tt>octave -qf run predict testDataFileName predictionsFileName</tt></p><p>Thus run.m takes 1 or 3 arguments, where the first argument must be the string 'learn' or 'predict', and the other arguments are filenames. The data must be formated according to the instructions <a href="http://mlcomp.org/help/quickstart.html">here</a>.</p><h2>The pmtk interface to mlcomp<a name="2"></a></h2><p>Since some of pmtk also runs in octave, it would be nice to be able to apply any pmtk algorithm to any dataset in mlcomp, and thus compare pmtk's performance to other methods. However, you first have to generate an octave program with the right interface. Fortunately, this process can be automated by calling <a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/SupervisedModels/mlcomp/mlcompCompiler.m">mlcompCompiler.m</a> . The interface is as follows</p><p><tt>mlcompCompiler(fitFn, predictFn, outputDir, fitOpts, predictOpts)</tt></p><p>where</p><div><ul><li><tt>fitFn</tt> is of the form <tt>model = fitFn(X, y, fitOpts{:})</tt></li><li><tt>predictFn</tt> is of the form <tt>yhat = predictFn(model, X, predictOpts{:})</tt></li><li><tt>outputDir</tt> is a directory to which the various files will be written</li><li><tt>fitOpts</tt> is an optional cell array passed to fitFn</li><li><tt>predictOpts</tt> is an optional cell array passed to predictFn</li></ul></div><p>For example, consider the following</p><p><tt>mlcompCompiler('linregFitSimple', 'linregPredict', localdir, {0.1})</tt></p><p>This generates the stand-alone octave program shown <a href="http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/mlcompExample-run.txt">here</a>. This contains all of the functions potentially called by linregFitSimple and linregPredict, which is why it is so long. (In fact, I  have shortened it somewhat by not including all these dependencies, to make things clearer.) Obviously all the (potentially) called functions must be octave compatible. In particular, this means they should have an 'end' statement at the end of the file, a convention matlab does not require. Furthermore, nested functions are not supported. (See <a href="http://code.google.com/p/yagtom/wiki/Octave">this link</a> for more information on octave/ matlab compatibility issues.)</p><p>Having 'compiled' your fit/ predict functions in this way, you need to convert your data to mlcomp format, which can be done as follows</p><p><tt>mlcompWriteData(X, y, fullfile(locadir, 'data'))</tt></p><p>Now you can execute the following commands from within matlab; these will invoke octave and call the generated script with the relevant arguments</p><p><tt>system(sprintf('octave -qf run learn data'));</tt></p><p><tt>system(sprintf('octave -qf run predict data yhat'));</tt></p><p>Finally, you need to read the results back from the yhat file</p><p><tt>yhat = str2double(getText('yhat'))</tt></p><p>The script <a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/SupervisedModels/mlcomp/mlcompDemo.m">mlcompDemo.m</a> contains a demo of all these steps.</p><p>If things work within matlab, you should next check they work within octave. If so, you are ready to upload your files and data to mlcomp!</p><h2>Limitations<a name="3"></a></h2><p>The main limitation of mlcompCompiler is that all the functions your code uses, <i>or might use</i>, must be octave compatible. Unfortunately, Mark Schmidt's <a href="http://www.cs.ubc.ca/~schmidtm/Software/minFunc.html">minfunc.m</a> function, which is widely used inside of pmtk (e.g., when fitting a simple logistic regression model), is not octave compatible, because he did not close his subfunctions with 'end' statements. (Obviously this is an easy problem to fix, but any changes need to be incorporated by Mark, otherwise all the work will need to be repeated on the next release of minfunc...) We can not even use <a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/SupervisedModels/linearRegression/linregFit.m">linregFit.m</a> for similar reasons, since it supports L1 regularization, which calls a different Mark Schmidt package, which is also octave incompatible.</p><p>However, it is often easy to make special purpose fitting/ prediction functions that don't rely on generic optimizers, as we did with <a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/SupervisedModels/linearRegression/sub/linregFitSimple.m">linregFitSimple.m</a> above. In addition,  many of the generative models in pmtk should be octave compatible as is, and hence should work fine with mlcomp, although we have not done extensive testing...</p><p>
 <hr>
-</p><p>This page was auto-generated by calling <i>pmtkPublish(tutMLcomp)</i>  on 08-Sep-2010 15:57:03</p><p class="footer"><br>
+</p><p>This page was auto-generated by calling <i>pmtkPublish(tutMLcomp)</i>  on 08-Sep-2010 16:04:52</p><p class="footer"><br>
       Published with MATLAB&reg; 7.9<br></p></div><!--
 ##### SOURCE BEGIN #####
 %% pmtk3 interface to mlcomp
@@ -122,7 +122,7 @@ p.footer {
 %
 % For example, consider the following
 %
-%  |mlcompCompiler('linregFitSimple', 'linregPredict', localdir, {0.1})|
+% |mlcompCompiler('linregFitSimple', 'linregPredict', localdir, {0.1})|
 %
 % This generates the stand-alone octave program
 % shown
@@ -140,7 +140,7 @@ p.footer {
 % (See <http://code.google.com/p/yagtom/wiki/Octave this link>
 % for more information on octave/ matlab compatibility issues.)
 %
-% Having 'compiled' your fit/ predict functions in this way.
+% Having 'compiled' your fit/ predict functions in this way,
 % you need to convert your data to mlcomp format, which can be done
 % as follows
 %
@@ -148,9 +148,10 @@ p.footer {
 %
 % Now you can execute the following commands from
 % within matlab; these will invoke octave and call
-% the generated script
+% the generated script with the relevant arguments
 %
 % |system(sprintf('octave -qf run learn data'));|
+%
 % |system(sprintf('octave -qf run predict data yhat'));|
 %
 % Finally, you need to read the results back from the yhat file
@@ -174,9 +175,16 @@ p.footer {
 % (Obviously this is an easy problem to fix, but 
 % any changes need to be incorporated by Mark, otherwise
 % all the work will need to be repeated on the next release of minfunc...)
-% However, various other pmtk functions (especially generative models)
-% are octave compatible and should work fine with mlcomp,
-% although we have not done extensive testing.
+% We can not even use <http://pmtk3.googlecode.com/svn/trunk/toolbox/SupervisedModels/linearRegression/linregFit.m linregFit.m> for similar reasons,
+% since it supports L1 regularization, which calls a different
+% Mark Schmidt package, which is also octave incompatible.
+% 
+% However, it is often easy to make special purpose fitting/ prediction
+% functions that don't rely on generic optimizers,
+% as we did with <http://pmtk3.googlecode.com/svn/trunk/toolbox/SupervisedModels/linearRegression/sub/linregFitSimple.m linregFitSimple.m> above.
+% In addition,  many of the generative models in pmtk
+% should be octave compatible as is, and hence should work fine with mlcomp,
+% although we have not done extensive testing...
 %%
 % <html>
 % <hr>
@@ -184,7 +192,7 @@ p.footer {
 %%
 
 %%
-% This page was auto-generated by calling _pmtkPublish(tutMLcomp)_  on 08-Sep-2010 15:57:03
+% This page was auto-generated by calling _pmtkPublish(tutMLcomp)_  on 08-Sep-2010 16:04:52
 
 
 ##### SOURCE END #####
