@@ -543,6 +543,6 @@ disp(testErrRate)
 % <http://mlcomp.org/>.
 
 %% Gaussian processes
-% GPs are discussed in more details
-% * <http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutGP.html
+% GPs are discussed in more detail
+% <http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutGP.html
 % here>.
