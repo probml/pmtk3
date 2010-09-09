@@ -9,6 +9,9 @@ function [model, dataSamples, LL] = gaussMissingFitGibbs(data, varargin)
 % verbose [false]
 %PMTKauthor Cody Severinski, Kevin Murphy
 
+% This file is from pmtk3.googlecode.com
+
+
 [mu0, Lambda0, k0, dof, nSamples, nburnin, verbose] = process_options(varargin, ...
     'mu0', [], 'Lambda0', [], 'k0', 0.01, 'dof', [], 'nSamples', 600, 'nburnin', 100, 'verbose', false);
 

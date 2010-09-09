@@ -1,6 +1,9 @@
 %% Compare Monte-Carlo and Numerical Integration
 % Gelman p95 exercise 3.10.2
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function betaMCdemo()
 data = [6 4 5 5; 60 40 52 48];
 S = 10000;

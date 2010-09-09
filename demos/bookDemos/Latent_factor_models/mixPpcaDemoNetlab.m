@@ -1,6 +1,9 @@
 %% Demonstrate density modelling with a PPCA mixture model
 % Slightly modified version of demgmm5 from netlab
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function mixPpcaDemoNetlab()
 
 

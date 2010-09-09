@@ -1,6 +1,9 @@
 %% Create a QMR-like network (dgm)
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function dgm = mkQmrNetwork(nfindings, ndiseases)
 
 

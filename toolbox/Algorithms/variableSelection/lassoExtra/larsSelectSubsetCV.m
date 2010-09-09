@@ -3,6 +3,9 @@ function [bestSelectedVars, w] = larsSelectSubsetCV(X,y,varargin)
 % using MLE on chosen subset and CV error
 % w size d x 1 is the MLE for the chosen subset (offset ignored)
 
+% This file is from pmtk3.googlecode.com
+
+
 [lambdaRidge, CVnfolds] = process_options(...
     varargin, 'lambdaRidge', 1e-5, 'nfolds', 5);
 

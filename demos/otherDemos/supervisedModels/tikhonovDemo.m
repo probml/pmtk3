@@ -1,6 +1,9 @@
 %% Tikhonov regularization for a piecewise smooth function
 % Based on code by Uri Ascher
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function  tikhonovDemo()
 setSeed(0);
 lambdas = [0.1 2 10];

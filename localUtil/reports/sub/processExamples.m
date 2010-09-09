@@ -36,6 +36,9 @@ function [text, excluded] = processExamples(includeTags, excludeTags, pauseTime,
 % text = processExamples({},{'PMTKinprogress','PMTKslow','PMTKbroken'})    % used to make testPMTK
 % text = processExamples({},{'PMTKinprogress','PMTKbroken'})               % used to make runDemos
 
+% This file is from pmtk3.googlecode.com
+
+
 if nargin < 1, includeTags = {}; end
 if nargin < 2, excludeTags = {}; end
 if nargin < 3, pauseTime = 0; end

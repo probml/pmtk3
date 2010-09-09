@@ -3,6 +3,9 @@
 % We modified the code so the model is as similar as possible
 % to the one in demev1, so we can compare MCMC with Laplace approx
 %% Create the data and do EB on the network
+
+% This file is from pmtk3.googlecode.com
+
 mlpRegEvidenceDemo;
 
 

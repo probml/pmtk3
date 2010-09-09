@@ -7,6 +7,9 @@ function Y = localEv2HmmObs(localev)
 % See also hmmObs2LocalEv
 %%
 
+% This file is from pmtk3.googlecode.com
+
+
 [nobs, d, Tmax] = size(localev);
 if Tmax == 1
     localev(any(isnan(localev), 2)) = [];

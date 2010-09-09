@@ -1,6 +1,9 @@
 %% Bayesian linear regression with an uninformative prior 
 % PMTKneedsStatsToolbox regress, ridge
 %%
+
+% This file is from pmtk3.googlecode.com
+
 requireStatsToolbox
 X = loadData('caterpillar'); % from http://www.ceremade.dauphine.fr/~xian/BCS/caterpillar
 y = log(X(:,11)); % log number of nests

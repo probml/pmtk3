@@ -2,6 +2,9 @@
 % We use a gaussian prior with fixed noise variance
 % We plot the posterior predictive density, and samples from it
 %%
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(1);
 [xtrain, ytrain, xtest, ytestNoisefree, ytest, sigma2] = ...
   polyDataMake('sampling', 'sparse', 'deg', 2);

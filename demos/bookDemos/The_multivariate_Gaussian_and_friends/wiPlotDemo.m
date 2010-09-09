@@ -1,6 +1,9 @@
 %% Plot Some Wishart Distributions
 % PMTKneedsStatsToolbox ksdensity
 %%
+
+% This file is from pmtk3.googlecode.com
+
 requireStatsToolbox
 setSeed(2);
 S = [3.1653, -0.0262; -0.0262, 0.6477];

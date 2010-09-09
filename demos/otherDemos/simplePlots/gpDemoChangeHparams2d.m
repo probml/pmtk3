@@ -3,6 +3,9 @@
 %PMTKauthor Carl Rasmussen
 %PMTKslow
 %%
+
+% This file is from pmtk3.googlecode.com
+
 n = 61^2; D=2;
 [x1,x2]=meshgrid(-3:0.1:3,-3:0.1:3);
 x=[x1(:),x2(:)];

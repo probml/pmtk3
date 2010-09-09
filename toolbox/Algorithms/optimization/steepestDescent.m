@@ -2,6 +2,9 @@ function x = steepestDescent(f, x0, varargin)
 % f is the function of the form [fx, gx] = f(x) where gx is a column vector
 % outputfn has the form stop = outputfn(x, optimValues, state)
 
+% This file is from pmtk3.googlecode.com
+
+
 [ftol, maxIter, exactLineSearch, outputFn, stepSize] = process_options(...
     varargin, 'ftol', 1e-3, 'maxIter', 500, 'exactLineSearch', true, ...
     'outputFn', [], 'stepSize', []);

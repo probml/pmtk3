@@ -12,6 +12,9 @@ function [X, y] = mixGaussSample(mu, Sigma, mixWeight, nsamples)
 % X          - an nsamples-by-d matrix 
 % y          - an nsamples-by-1 vector, the component labels in 1:C
 
+% This file is from pmtk3.googlecode.com
+
+
 m = mixModelCreate(condGaussCpdCreate(mu, Sigma), 'gauss', numel(mixWeight), mixWeight);
 [X, y] = mixModelSample(m, nsamples); 
 

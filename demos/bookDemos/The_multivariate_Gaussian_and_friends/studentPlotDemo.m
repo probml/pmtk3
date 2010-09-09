@@ -2,6 +2,9 @@
 %
 %%
 %[X1,X2] = meshgrid(linspace(-5,5,100)',linspace(-5,5,100)');
+
+% This file is from pmtk3.googlecode.com
+
 [X1,X2] = meshgrid(linspace(-2,2,30)',linspace(-2,2,30)');
 n = size(X1,1);
 X = [X1(:) X2(:)];

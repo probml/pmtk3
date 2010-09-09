@@ -1,6 +1,9 @@
 %% Illustrate the robustness of the student and laplace distributions compared to the Gaussian.
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function robustDemo()
 
 n = 30;

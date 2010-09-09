@@ -9,6 +9,9 @@ function [Rhat, m, s] = epsr(samples)
 % m = mean(samples)
 % s = std(samples)
 
+% This file is from pmtk3.googlecode.com
+
+
 [n m] = size(samples);
 meanPerChain = mean(samples,1); % each column of samples is a chain
 meanOverall = mean(meanPerChain);

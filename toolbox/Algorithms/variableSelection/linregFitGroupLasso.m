@@ -1,5 +1,8 @@
 function [w]=linregFitGroupLasso(X, y, groups, lambda, method)
 % Fits the grouped lasso model 
+
+% This file is from pmtk3.googlecode.com
+
 if nargin < 5, method = 'SPG'; end
 
 [N,D] = size(X); %#ok

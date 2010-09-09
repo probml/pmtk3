@@ -10,6 +10,9 @@ function [xi_summed, xi] = hmmComputeTwoSlice(alpha, beta, transmat, softev)
 % xi(i,j,t)  = p(Q(t)=i, Q(t+1)=j | y(1:T)) , t=2:T
 % xi_summed(i,j) = sum_{t=2}^{T} xi(i,j,t)
 %%
+
+% This file is from pmtk3.googlecode.com
+
 [K T] = size(softev);
 if nargout < 2
     computeXi = 0;

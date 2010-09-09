@@ -2,6 +2,9 @@
 % PMTKinteractive
 % PMTKslow
 %%
+
+% This file is from pmtk3.googlecode.com
+
 f = 1;
 
 options.Display = 'none';

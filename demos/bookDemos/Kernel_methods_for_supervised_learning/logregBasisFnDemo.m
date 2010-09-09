@@ -2,6 +2,9 @@
 %  based on Bishop fig 4.12
 %
 %% Parameters
+
+% This file is from pmtk3.googlecode.com
+
 mus      = [0 0; -1 -1; 1 1];
 sigma    = 0.05;
 N        = 100;

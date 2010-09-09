@@ -2,6 +2,9 @@ function X = chi2invPMTK(p, v)
 % Replacement for the stats toolbox chi2inv function
 % 
 %%
+
+% This file is from pmtk3.googlecode.com
+
 if statsToolboxInstalled
     X = chi2inv(p, v);
 else

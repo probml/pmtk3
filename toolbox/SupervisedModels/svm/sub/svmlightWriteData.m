@@ -4,6 +4,9 @@ function svmlightWriteData(X, y, fname, yformat)
 % y is nexamples-by-1
 % fname is the file name to which the data will be written.
 
+% This file is from pmtk3.googlecode.com
+
+
 [n, d] = size(X);
 data = zeros(n, 2*d+1);
 data(:, 1) = y;

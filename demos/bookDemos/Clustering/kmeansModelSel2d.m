@@ -1,6 +1,9 @@
 %% Kmeans Model Selection in 2D
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(0);
 d = 2; ncentres = 3;
 mix = gmm(d, ncentres, 'spherical');

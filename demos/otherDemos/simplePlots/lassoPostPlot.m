@@ -1,6 +1,9 @@
 %% Reproduce fig 1 of "Bayesian lasso regression", Chris Hans, 2009
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function lassoPostPlot()
 
 

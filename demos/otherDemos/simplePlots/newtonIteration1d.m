@@ -1,6 +1,9 @@
 %% An illustration of Newton's method in 1D
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 figure('Color',[1,1,1]);
 hold on;
 

@@ -1,6 +1,9 @@
 %% Relative MSE plot
 %PMTKneedsStatsToolbox ksdensity
 %%
+
+% This file is from pmtk3.googlecode.com
+
 requireStatsToolbox
 n = 1:50;
 k0 = 0:3;

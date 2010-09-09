@@ -1,6 +1,9 @@
 %% Illustration of Newton's method for a non convex function. 
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function newtonsMethodNonConvex
 
 

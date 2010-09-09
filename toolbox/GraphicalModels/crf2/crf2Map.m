@@ -10,6 +10,9 @@ function map = crf2Map(model, Xnode, Xedge)
 %
 % map is Ncases*Nnodes
 %%
+
+% This file is from pmtk3.googlecode.com
+
 if isempty(model.decodeFun)
   fprintf('method %s does not support MAP estimation\n', model.methodName);
   return;

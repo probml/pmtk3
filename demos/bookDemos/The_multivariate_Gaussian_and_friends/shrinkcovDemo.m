@@ -1,6 +1,9 @@
 %% covariance matrix shrinkage Demo
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(0);
 d = 50;
 %Sigma = randpd(d);

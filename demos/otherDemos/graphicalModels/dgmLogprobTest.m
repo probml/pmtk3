@@ -1,5 +1,8 @@
 %% Simple test to make sure the logZ calculation is correct
 
+% This file is from pmtk3.googlecode.com
+
+
 
 dgm = mkAlarmDgm();
 clamped = sparsevec(1:10, ones(1, 10), 37);

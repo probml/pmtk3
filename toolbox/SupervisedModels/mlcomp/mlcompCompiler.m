@@ -41,6 +41,9 @@ function mlcompCompiler(fitFn, predictFn, outputDir, fitOpts, predictOpts)
 % where data is in the mlcomp format. You should test your script locally
 % using these commands before uploading to mlcomp. 
 %%
+
+% This file is from pmtk3.googlecode.com
+
 if nargin < 3, outputDir   = pwd(); end
 if nargin < 4, fitOpts     = {};    end
 if nargin < 5, predictOpts = {};    end 

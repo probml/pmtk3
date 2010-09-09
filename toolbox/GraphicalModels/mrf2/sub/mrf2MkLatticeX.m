@@ -2,6 +2,9 @@ function [model] = mrf2MkLatticeX(X, method,  methodArgs)
 % Make a 2d lattice MRF suitable for denoising a particular image
 % Based on http://www.cs.ubc.ca/~schmidtm/Software/UGM/graphCuts.html
 
+% This file is from pmtk3.googlecode.com
+
+
 if nargin < 1, method = 'dummy'; end
 if nargin < 3, methodArgs = {}; end
 

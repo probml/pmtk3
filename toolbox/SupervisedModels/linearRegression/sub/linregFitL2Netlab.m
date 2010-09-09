@@ -5,6 +5,9 @@ function [model, logev] = linregNetlabFit(X, y, alpha)
 % alpha is fixed, beta is optimized
 % Computes log marginal likelihood with Gaussian prior
 
+% This file is from pmtk3.googlecode.com
+
+
 x = X; targets = y; 
 % Compute posterior p(w|D,alpha) and estimate beta
 [n,d] = size(x);

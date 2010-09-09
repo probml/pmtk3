@@ -9,6 +9,9 @@
 % x3 = even parity bit
 % yi = noisy copy
 
+% This file is from pmtk3.googlecode.com
+
+
 
 %% Build model
 xs = 1:3;

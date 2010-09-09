@@ -1,6 +1,9 @@
 %% Monte Carlo approximation to a probability of being in an interval
 %
 %% Model parameters
+
+% This file is from pmtk3.googlecode.com
+
 a = 1;
 b = 5;
 l = 0.3;

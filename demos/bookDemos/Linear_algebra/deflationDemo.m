@@ -1,6 +1,9 @@
 %% Compute largest K eigenvectors and eigenvalues of a symmetric matrix
 % We us the power method combined with successive deflation
 %%
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(0); 
 n = 10; d = 3;
 X = randn(n,d);

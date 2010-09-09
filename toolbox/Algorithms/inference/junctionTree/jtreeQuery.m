@@ -2,6 +2,9 @@ function bels = jtreeQuery(jtree, queries)
 %% Query a calibrated jtree for marginals
 % Multiple queries can be requested in a cell array
 
+% This file is from pmtk3.googlecode.com
+
+
 queries      = cellwrap(queries); 
 cliques      = jtree.cliques;
 cliqueLookup = jtree.cliqueLookup;

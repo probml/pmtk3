@@ -1,6 +1,9 @@
 %% Demo of group lasso compared to vanilla lasso
 % PMTKauthor Mark Schmidt
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function linregGroupLassoDemo()
 
 

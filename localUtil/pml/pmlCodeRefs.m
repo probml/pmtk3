@@ -12,6 +12,9 @@ function [codename, pg, datestr] = pmlCodeRefs(codeIndFile)
 % pg       - a cell array, each entry stores a list of the pages
 % datestr  - a date string indicating the last time the codeIndFile was
 %            modified. 
+
+% This file is from pmtk3.googlecode.com
+
 if nargin ==0
     codeIndFile =  fullfile(getConfigValue('PMTKpmlBookSource'), 'code.ind'); 
 end

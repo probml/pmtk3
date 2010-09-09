@@ -2,6 +2,9 @@
 % i.e., fit a 2 node disconnedted MRF  X1  X2
 % Example From
 % http://en.wikipedia.org/wiki/Iterative_proportional_fitting
+
+% This file is from pmtk3.googlecode.com
+
 C = [43 9;
      44 4];
 

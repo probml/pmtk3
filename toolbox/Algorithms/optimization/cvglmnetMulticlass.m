@@ -31,6 +31,9 @@ function CVerr = cvglmnetMulticlass(x,y,nfolds,foldid,type,family,options,verbos
 %PMTKmodified Kevin Murphy, to support multinomial responses
 % See also http://code.google.com/p/pmtk3/ for related code
 
+% This file is from pmtk3.googlecode.com
+
+
 glmnet_object = glmnet(x, y, family,options);
 options.lambda = glmnet_object.lambda;
 options.nlambda = length(options.lambda);

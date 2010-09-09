@@ -2,6 +2,9 @@
 % Based on code by Mark Girolami
 %%
 
+% This file is from pmtk3.googlecode.com
+
+
 D = loadData('rip');
 X = D.rip_dat_tr;
 Xt = D.rip_dat_te;

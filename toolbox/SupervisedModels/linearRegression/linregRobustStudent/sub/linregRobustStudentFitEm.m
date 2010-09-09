@@ -4,6 +4,9 @@ function [model, loglikHist] = linregRobustStudentFitEm(X, y, dof, varargin)
 %PMTKauthor Hannes Bretschneider
 %PMTKmodified Kevin Murphy, Matt Dunham
 %%
+
+% This file is from pmtk3.googlecode.com
+
 SetDefaultValue(3, 'dof', []);
 if dof==0
     dof = []; 

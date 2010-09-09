@@ -5,6 +5,9 @@ function logZ = dgmLogprob(dgm, varargin)
 % Uses jtree for inference. Use dgmInferNodes if you want to use
 % e.g. approximate inference. 
 %%
+
+% This file is from pmtk3.googlecode.com
+
 [clamped, softEv, localEv] = process_options(varargin, ...
     'clamped', [], ...
     'softev' , [], ...

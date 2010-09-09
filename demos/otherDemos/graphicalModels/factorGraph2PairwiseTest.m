@@ -2,6 +2,9 @@
 % by comparing the results of inference
 %%
 
+% This file is from pmtk3.googlecode.com
+
+
 setSeed(0); 
 nnodes     = 10;
 maxFanIn   = 2;

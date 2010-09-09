@@ -2,6 +2,9 @@
 %
 %%
 
+% This file is from pmtk3.googlecode.com
+
+
 setSeed(2);
 mu = [0 0; 0 1; 1 1; 1 0]; 
 sigma = 0.05;

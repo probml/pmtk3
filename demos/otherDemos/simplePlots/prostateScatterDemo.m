@@ -1,6 +1,9 @@
 %% Prostate pscatter demo
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 loadData('prostate');
 figure;
 pscatter([y X], 'vnames', {names{end}, names{1:end-1}})

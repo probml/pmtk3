@@ -1,6 +1,9 @@
 %% Bootstrap demo for the MLE for a Bernoulli
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 theta = 0.7;
 Ns = [10 100];
 for Ni=1:length(Ns)

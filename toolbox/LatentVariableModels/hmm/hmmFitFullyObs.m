@@ -12,6 +12,9 @@ function model =  hmmFitFullyObs(Z, Y, type, varargin)
 % See hmmFit for details on priors
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 Z        = cellwrap(Z);
 Y        = cellwrap(Y);
 Zstacked = cell2mat(Z')'; % sum(seqLength)-by-1

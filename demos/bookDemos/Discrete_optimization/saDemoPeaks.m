@@ -2,6 +2,9 @@
 % for finding the most probable point of a peaky 2D surface
 %PMTKneedsStatsToolbox hist3
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function saDemoPeaks()
 
 requireStatsToolbox

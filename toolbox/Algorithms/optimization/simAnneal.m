@@ -22,6 +22,9 @@ function [xopt, fval, samples, energies, acceptanceRate, temp] = simAnneal(targe
 % energies(s) is the function value at step s
 % acceptanceRate = fraction of  accepted moves
 
+% This file is from pmtk3.googlecode.com
+
+
 % Not sure where I got this code from...
 
 def = struct(...

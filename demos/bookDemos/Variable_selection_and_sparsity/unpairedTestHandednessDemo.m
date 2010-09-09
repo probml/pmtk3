@@ -1,6 +1,9 @@
 %% Analysis of binomial differences on lefthand/righthand data
 % PMTKneedsStatsToolbox ksdensity
 %%
+
+% This file is from pmtk3.googlecode.com
+
 requireStatsToolbox
 setSeed(0);
 y1 = 9; n1 = 52; y2 = 4; n2 = 48;

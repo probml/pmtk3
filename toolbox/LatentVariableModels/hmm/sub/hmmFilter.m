@@ -9,6 +9,9 @@ function [loglik, alpha] = hmmFilter(initDist, transmat, softev)
 % loglik = log p(y(1:T))
 % alpha(i,t)  = p(S(t)=i| y(1:t))
 
+% This file is from pmtk3.googlecode.com
+
+
 
 [K T] = size(softev);
 scale = zeros(T,1);

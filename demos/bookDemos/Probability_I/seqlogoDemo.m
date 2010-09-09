@@ -1,5 +1,8 @@
 %% DNA Sequence Demo
 %
+
+% This file is from pmtk3.googlecode.com
+
 close all; clear all
 setSeed(1);
 Nseq = 10;

@@ -1,5 +1,8 @@
 %% Image denoising using an mrf and exact inference
 
+% This file is from pmtk3.googlecode.com
+
+
 %% Generate Data
 %input matrix consisting of letter A. The body of letter A is made of 1's
 %while the background is made of -1's.

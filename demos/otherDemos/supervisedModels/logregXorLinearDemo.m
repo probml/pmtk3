@@ -3,6 +3,9 @@
 % We show that the data is not linearly separable
 % See logregXorDemo for a solution to this problem
 
+% This file is from pmtk3.googlecode.com
+
+
 function logregXorLinearDemo()
 [X, y] = createXORdata();
 lambda = 1e-2; % for numerical stability

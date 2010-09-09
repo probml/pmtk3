@@ -1,6 +1,9 @@
 %% Gauss Imputation Demo
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function gaussImputationDemoOld()
 
 setSeed(0);

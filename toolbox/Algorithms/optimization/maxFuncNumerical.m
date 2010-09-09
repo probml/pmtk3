@@ -2,6 +2,9 @@ function [mu f g H] = maxFuncNumerical(fn, start, options)
 % Maximize a function using numerical gradients and Hessians
 % fn(X(i,:)) returns the score function for that *row* vector
 
+% This file is from pmtk3.googlecode.com
+
+
 if nargin < 3, options = []; end
 options.Method = 'cg';
 options.Display = 'none';

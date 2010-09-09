@@ -6,6 +6,9 @@ function [muPost, SigmaPost, lambda] = varInferLogisticGauss(y, W, b, muPrior, S
 % where p(y|x) = prod_{i=1}^p  sigma( ystar(i) W(:,i)' * x(:) + b(i) )
 % where ystar(i) = 2 y(i) - 1  (y(i) = 0,1  so ystar(i) = -1,+1)
 
+% This file is from pmtk3.googlecode.com
+
+
 [maxIter] = process_options(varargin, 'maxIter', 3);
 [q p] = size(W);
 debug = 0;

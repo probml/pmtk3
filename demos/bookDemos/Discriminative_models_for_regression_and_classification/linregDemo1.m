@@ -1,6 +1,9 @@
 %% Linear Regression Demo
 %
 %% Make data
+
+% This file is from pmtk3.googlecode.com
+
 [xtrain, ytrain, xtest, ytestNoisefree, ytest] = polyDataMake('sampling','thibaux');
 Xtrain = xtrain; Xtest = xtest;
 

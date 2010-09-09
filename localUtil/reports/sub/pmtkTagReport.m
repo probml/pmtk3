@@ -29,6 +29,9 @@ function I = pmtkTagReport(root)
 %                    containing directory structure. 
 %%
 %
+
+% This file is from pmtk3.googlecode.com
+
 if nargin < 1, 
     searchDirs = tokenize(getConfigValue('PMTKcodeDirs'), ','); 
     root = cellfuncell(@(d)fullfile(pmtk3Root(), d), searchDirs); 

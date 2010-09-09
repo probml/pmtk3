@@ -8,6 +8,9 @@ function out = logregPostSummary(model, varargin)
 %
 % If you set display=true, it
 % prints the summary (as a latex table) to the screen
+
+% This file is from pmtk3.googlecode.com
+
 [doDisplay] = process_options(varargin, ...
   'displaySummary', true);
 

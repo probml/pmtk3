@@ -1,6 +1,9 @@
 %% Threshold Plot Demo
 % PMTKauthor Francois Caron
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function normalGammaThresholdPlotDemo()
 %z=-10:.1:10;
 z=-10:0.5:10;

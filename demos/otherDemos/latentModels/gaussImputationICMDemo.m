@@ -1,6 +1,9 @@
 %% Gauss Imputation Demo using ICM
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function gaussImputationICMDemo()
 
 setSeed(0);

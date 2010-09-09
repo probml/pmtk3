@@ -2,6 +2,9 @@ function insertCopyrightPmtk(fname)
 %% Insert a copyright notice into every pmtk3 .m file
 % or into just the specified file. 
 %%
+
+% This file is from pmtk3.googlecode.com
+
 exclusions = {'docs'};
 text = 'This file is from pmtk3.googlecode.com';
 

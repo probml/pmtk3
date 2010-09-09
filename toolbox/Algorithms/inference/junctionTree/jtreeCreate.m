@@ -7,6 +7,9 @@ function jtree = jtreeCreate(cg, varargin)
 %
 % cg is a cliqueGraph  - see cliqueGraphCreate
 %% setup
+
+% This file is from pmtk3.googlecode.com
+
 cc       = process_options(varargin, 'cliqueConstraints', {}); 
 factors  = cg.Tfac(:);
 nfactors = numel(factors);

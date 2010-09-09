@@ -12,6 +12,9 @@
 %  
 %  
 % 
+
+% This file is from pmtk3.googlecode.com
+
 S = 1; CB = 2; LC = 3; SOB = 4; X = 5;
 nvars = 5; 
 dgm = mkLungCancerDgm();

@@ -5,6 +5,9 @@ function model = mixModelCreate(cpd, type, nmix, mixWeight, mixPrior)
 % type is one of 'gauss', 'student', 'discrete'
 % 
 %% 
+
+% This file is from pmtk3.googlecode.com
+
 if nargin < 5
     mixPrior = ones(1, nmix); 
 end

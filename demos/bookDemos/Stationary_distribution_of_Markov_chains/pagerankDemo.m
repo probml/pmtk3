@@ -38,6 +38,9 @@
 % to numbers, for brevity and ease of comparison to entries in the matrix/vector
 % PMTKinteractive
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function pagerankDemo
 % Initial graph
 Graph = graphinit ;

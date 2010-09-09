@@ -1,6 +1,9 @@
 %% Bernoulli Risk Function Demo
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 Ns = [1 10 50];
 for i=1:length(Ns)
   n = Ns(i);

@@ -18,6 +18,9 @@ function [errors, warnings] = debugDemos(subFolder, exclusions)
 %            values are the warning messages
 % PMTKneedsMatlab 
 %%
+
+% This file is from pmtk3.googlecode.com
+
 warnState = warning('query', 'all');
 ignoredWarnings = {
    'MATLAB:RandStream:ReadingInactiveLegacyGeneratorState'  % caused by setSeed

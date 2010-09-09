@@ -1,6 +1,9 @@
 %% Binary Logistic Regression on SAT data
 % Example from Johnson and Albert p87
 %% Load data
+
+% This file is from pmtk3.googlecode.com
+
 stat = loadData('sat');  y = stat(:,1); X = stat(:,4);
 
 %% Fit model

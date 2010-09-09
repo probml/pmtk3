@@ -11,6 +11,9 @@ function [X, y] = mixDiscreteSample(T, mixWeight, nsamples)
 % y is of size nsamples-by-1 and y(i) is in the range 1:nmix
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 [nmix, nObsStates, d] = size(T); 
 y = sampleDiscrete(mixWeight, nsamples, 1); 
 X = zeros(nsamples, d);

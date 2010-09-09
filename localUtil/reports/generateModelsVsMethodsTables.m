@@ -3,6 +3,9 @@ function generateModelsVsMethodsTables()
 %
 %PMTKneedsMatlab
 
+% This file is from pmtk3.googlecode.com
+
+
 [basic, supervised, latent, graphical] = classNameMappings();
 
 titles = {

@@ -2,6 +2,9 @@ function [model, loglikHist] = hmmFitEm(data, nstates, type, varargin)
 %% Fit an HMM model via EM
 % Interface is identical to hmmFit
 %%
+
+% This file is from pmtk3.googlecode.com
+
 if ~iscell(data)
     if isvector(data) % scalar time series
         data = rowvec(data);

@@ -1,6 +1,9 @@
 %% Compare logistic regresion and probit regression on the crabs dataset
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(0);
 loadData('crabs');
 %% Logistic regression

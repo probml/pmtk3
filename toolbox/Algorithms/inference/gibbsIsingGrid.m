@@ -10,6 +10,9 @@ function avgX = gibbsIsingGrid(J, CPDs, logprobFn, visVals, varargin)
 %PMTKauthor Brani Vidakovic
 %PMTKmodified Kevin Murphy, Matt Dunham
 %%
+
+% This file is from pmtk3.googlecode.com
+
 [Nsamples, Nburnin, progressFn, maxIter] = process_options(...
     varargin, 'Nsamples', [], 'Nburnin', 0, ...
     'progressFn', [], 'maxIter', []);

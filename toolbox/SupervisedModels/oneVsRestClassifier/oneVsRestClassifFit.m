@@ -1,6 +1,9 @@
 function model = oneVsRestClassifFit(X, y, fitFn, varargin)
 %% Fit a binary classifier to multiclass data using one vs the rest
 
+% This file is from pmtk3.googlecode.com
+
+
 [binaryRange] = process_options(varargin, 'binaryRange', [-1 1]); 
 off = binaryRange(1);
 on  = binaryRange(2); 

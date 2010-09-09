@@ -6,6 +6,9 @@ function model = mrf2Train(model, y, varargin)
 % Optional parameters
 %
 % lambdaNode, lambdaEdge : strength of L2 regularizers
+
+% This file is from pmtk3.googlecode.com
+
 [lambdaNode, lambdaEdge] = process_options(varargin, ...
    'lambdaNode', 1e-5, 'lambdaEdge', 1e-5);
 

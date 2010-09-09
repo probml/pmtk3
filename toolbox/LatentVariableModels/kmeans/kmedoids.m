@@ -24,6 +24,9 @@
 %PMTKauthor Brendan J. Frey, Delbert Dueck
 %PMTKurl http://www.psi.toronto.edu/~frey/apm/kcc.m
 
+% This file is from pmtk3.googlecode.com
+
+
 % Simplified by Kevin Murphy
 
 function [idx,dpsim]=kmedoids(S,K,nruns,maxits)

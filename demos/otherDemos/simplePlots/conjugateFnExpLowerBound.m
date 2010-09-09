@@ -1,6 +1,9 @@
 %% Conjugate Function Lower Bound
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function conjugateFnExpLowerBound
 
 f = @(x) exp(-x);

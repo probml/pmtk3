@@ -1,6 +1,9 @@
 %% Compare Student and Gaussian pdfs
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 for useLog = [false true]
 
 dofs = [0.1 1 5];

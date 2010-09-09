@@ -1,6 +1,9 @@
 %% Determine if Newcomb's speed of light data is Gaussian
 % Example from Gelman04 p77
 %%
+
+% This file is from pmtk3.googlecode.com
+
 setSeed();
 %% Data from http://www.stat.columbia.edu/~gelman/book/data/light.asc
 D = [28 26 33 24 34 -44 27 16 40 -2  29 22 24 21 25 30 23 29 31 19 ...

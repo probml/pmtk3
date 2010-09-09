@@ -2,6 +2,9 @@
 %PMTKneedsStatsToolbox dendrogram, cophenet, linkage
 % Based on http://www.mathworks.com/access/helpdesk/help/toolbox/stats/index.html
 %%
+
+% This file is from pmtk3.googlecode.com
+
 requireStatsToolbox
 if 0 % Alpaydin data
     X = [1 3;

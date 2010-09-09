@@ -3,6 +3,9 @@
 % PMTKauthor Francois Caron
 % PMTKmodified Kevin Murphy
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function normalGammaPenaltyPlotDemo()
 c = 1;
 pas=0.01;

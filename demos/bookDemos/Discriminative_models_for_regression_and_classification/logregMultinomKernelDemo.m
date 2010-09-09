@@ -3,6 +3,9 @@
 % performing various basis expansions of the input features. This is a
 % simplification of logregMultinomKernelMinfuncDemo.
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function logregMultinomKernelDemo()
 %% Setup Data
 setSeed(0);

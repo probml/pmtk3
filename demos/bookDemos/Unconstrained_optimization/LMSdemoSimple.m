@@ -1,6 +1,9 @@
 %% LMS Demo
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 [X,y]=contoursSSEdemo(true); % X, y
 
 d = 2;

@@ -3,6 +3,9 @@ function S = dgmSample(dgm, nsamples)
 % Does not support evidence yet, and currenly only supports tabularCPDs
 % Each *row* of S is a sample
 %%
+
+% This file is from pmtk3.googlecode.com
+
 if nargin < 2, nsamples = 1; end
 G = dgm.G; 
 CPDs = dgm.CPDs; 

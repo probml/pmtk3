@@ -22,6 +22,9 @@ function model = discreteFit(X, alpha, K)
 % alpha = [1 3 3 5 9];
 % model = discreteFit(X, alpha);
 
+% This file is from pmtk3.googlecode.com
+
+
 SetDefaultValue(3, 'K', max(X(:))); 
 d = size(X, 2);
 counts = histc(X, 1:K); % works even when X is a matrix - no need to loop

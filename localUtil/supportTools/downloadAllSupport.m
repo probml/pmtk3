@@ -1,6 +1,9 @@
 function downloadAllSupport(destnRoot, quiet)
 %% Download pmtkSupport packages from pmtkSupport.googlecode.com
 
+% This file is from pmtk3.googlecode.com
+
+
 SetDefaultValue(1, 'destnRoot', fullfile(pmtk3Root(), 'external'));
 SetDefaultValue(2, 'quiet', false);
 googleRoot = ' http://pmtksupport.googlecode.com/svn/trunk';

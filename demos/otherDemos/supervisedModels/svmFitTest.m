@@ -3,6 +3,9 @@
 % PMTKneedsOptimToolbox quadprog
 %% First we check that the 3 implementations give the same
 % results on a simple binary dataset
+
+% This file is from pmtk3.googlecode.com
+
 requireOptimToolbox
 loadData('crabs'); 
 

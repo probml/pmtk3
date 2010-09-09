@@ -1,6 +1,9 @@
 function logp = gaussLogprobUnnormalized(model, X)
 % Same as gaussLogprob, but does not normalize logp - used by e.g. mcmc.
 
+% This file is from pmtk3.googlecode.com
+
+
 
 mu = model.mu; Sigma = model.Sigma;
 d = size(Sigma, 2);

@@ -1,6 +1,9 @@
 %% Fit an HMM and an equivalent DGM and make sure the results agree
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(2); 
 %% sample data
 nstates   = 10;

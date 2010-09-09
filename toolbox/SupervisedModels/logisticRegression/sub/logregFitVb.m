@@ -12,6 +12,9 @@ function [model, logev] = logregFitVb(X, y, pp, useARD)
 %
 % logev is the lower bound on the log marginal likelihood
 
+% This file is from pmtk3.googlecode.com
+
+
 
 y = setSupport(y, [-1 1]);
 [model.preproc, X] = preprocessorApplyToTrain(pp, X);

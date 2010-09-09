@@ -1,6 +1,9 @@
 %% Plot the softmax function as a histogram for various temperatures 
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 T = [100 10 1 0.1];
 eta = [3 0 1];
 figure();

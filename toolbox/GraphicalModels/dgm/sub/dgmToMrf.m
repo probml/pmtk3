@@ -1,6 +1,9 @@
 function mrf = dgmToMrf(dgm)
 %% Convert a dgm to an undirected model
 %%
+
+% This file is from pmtk3.googlecode.com
+
 G = moralizeGraph(dgm.G); 
 if isfield(dgm, dgm.factors)
     factors = dgm.factors; 

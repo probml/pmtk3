@@ -3,6 +3,9 @@ function df = numericalGradient(f, x, args)
 % where v(i)=f(X(:,i), args) computed in parallel
 % args is a cell array; use {} if no args required
 
+% This file is from pmtk3.googlecode.com
+
+
 n = length(x);
 df = zeros(n,1);
 method = 'complex';

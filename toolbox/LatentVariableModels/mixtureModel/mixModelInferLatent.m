@@ -2,6 +2,9 @@ function [pZ, ll] = mixModelInferLatent(model, X)
 %% Compute pZ(i, k) = p( Z = k | X(i, :), model) 
 % ll(i) = log p(X(i, :) | model)  
 %%
+
+% This file is from pmtk3.googlecode.com
+
 nmix   = model.nmix; 
 [n, d] = size(X); 
 logMix = log(rowvec(model.mixWeight)); 

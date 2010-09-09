@@ -1,6 +1,9 @@
 %% Example of the laplace approximation for logistic regression
 % Based on code written by Mark Girolami
 %%
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(0);
 
 %% We generate data from two Gaussians:

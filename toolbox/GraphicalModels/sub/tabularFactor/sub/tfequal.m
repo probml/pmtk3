@@ -1,6 +1,9 @@
 function eq = tfequal(varargin)
 %% Check for tabular factor (approximate) equality
 
+% This file is from pmtk3.googlecode.com
+
+
 if iscell(varargin{1})
     eq = all(cellfun(@tfequal, varargin{:})); 
     return;

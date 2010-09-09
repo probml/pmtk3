@@ -1,6 +1,9 @@
 %% Plot the full L1 regularization path for the prostate data set
 %PMTKauthor Mark Schmidt, Kevin Murphy
 
+% This file is from pmtk3.googlecode.com
+
+
 clear all
 load prostateStnd
 [N,D] = size(X); %#ok

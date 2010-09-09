@@ -13,6 +13,9 @@ function S = discreteSample(arg1, n)
 % S is of size n-by-d
 %%
 
+% This file is from pmtk3.googlecode.com
+
+
 if isstruct(arg1)
     model = arg1;
     T = model.T;

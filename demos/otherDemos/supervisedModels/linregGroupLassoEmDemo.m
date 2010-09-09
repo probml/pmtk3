@@ -1,6 +1,9 @@
 %% Compare group lasso solved using EM and projected gradients
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function linregGroupLassoEmDemo()
 
 

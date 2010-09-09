@@ -1,6 +1,9 @@
 %% A non convex function in 1d
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function nonConvexFn
 hold all;
 xmin = -4;  xmax = 13;

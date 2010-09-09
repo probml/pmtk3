@@ -1,6 +1,9 @@
 function logp = linregLogprob(model, X, y)
 %% log p(y(i)|X(i,:), model)
 
+% This file is from pmtk3.googlecode.com
+
+
 if isfield(model, 'likelihood')
     likelihood = model.likelihood;
 else

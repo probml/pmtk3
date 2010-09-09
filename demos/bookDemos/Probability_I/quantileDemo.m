@@ -2,6 +2,9 @@
 % Plot a standard normal distribution and shade in the left and right tails
 % together representing alpha % of the probability mass. 
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function quantileDemo
     scrsz = get(0,'ScreenSize');
     width = 2*scrsz(3)/3;

@@ -23,6 +23,9 @@ function [w, output] = logregBoundOptL2Stepwise(X,Y,lambda)
 %PMTKauthor Balaji Krishnapuram
 %PMTKmodified Kevin Murphy
 
+% This file is from pmtk3.googlecode.com
+
+
     [nexamples,nclasses]    =size(Y); %#ok
     [nexamples,ndimensions] =size(X);
     convergence_tol=1e-5;

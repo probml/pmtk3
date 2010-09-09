@@ -2,6 +2,9 @@
 %
 %%
 
+% This file is from pmtk3.googlecode.com
+
+
 loadData('data45');
 data = [train4'; train5'];
 d = 13;

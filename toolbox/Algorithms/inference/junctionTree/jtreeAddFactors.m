@@ -3,6 +3,9 @@ function [jtree, logZlocal] = jtreeAddFactors(jtree, facs)
 % by multiplying them into the smallest accommodating cliques.
 %%
 
+% This file is from pmtk3.googlecode.com
+
+
 if isempty(facs)
     logZlocal = 0;
     return;

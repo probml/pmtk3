@@ -1,5 +1,8 @@
 function [mu, Sigma, mixweight, counts] = kmeansInitMixGauss(data, K)
 % Initialize params of GMM with Kmeans
+
+% This file is from pmtk3.googlecode.com
+
 D = size(data,2);
 [mu, assign] = kmeansFit(data, K);
 Sigma = zeros(D,D,K);

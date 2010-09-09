@@ -8,6 +8,9 @@ function CPD = condGaussCpdCreate(mu, Sigma, varargin)
 % fields  mu, Sigma, dof, k
 % Set 'prior' to 'none' to do mle. 
 %%
+
+% This file is from pmtk3.googlecode.com
+
 prior = process_options(varargin, 'prior', []); 
 d = size(Sigma, 1); 
 if isempty(prior) 

@@ -3,6 +3,9 @@ function [Xtrain, ytrain, Xtest, ytest] = mnistLoad(classes, Ntrain)
 % Optionally take a subset of those to reduce training set size
 % There are about 6000 training examples of each class, 1000 test
 
+% This file is from pmtk3.googlecode.com
+
+
 if nargin < 1, classes = 0:9; end
 if nargin < 2, Ntrain = []; end
 

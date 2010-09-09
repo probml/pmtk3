@@ -8,6 +8,9 @@ function [C,lambda,S] = shrinkcov(X)
 % using the diagonal variance "target" T=diag(S) with the
 % unbiased sample cov S as the unconstrained estimate
 
+% This file is from pmtk3.googlecode.com
+
+
 %PMTKauthor Baback Moghaddam    
 %PMTKemail baback@jpl.nasa.gov     
 %PMTKdate January 25, 2009

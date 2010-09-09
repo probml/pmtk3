@@ -2,6 +2,9 @@
 %
 %%
 % Data source: Tommi Jaakkola
+
+% This file is from pmtk3.googlecode.com
+
 loadData('data45');
 
 figure; 

@@ -1,6 +1,9 @@
 %% Demonstrate perfect elimination ordering
 % Based on Lauritzen's Saint-Flour notes 2006
 %% Non-chordal Example from Fig 3.6 
+
+% This file is from pmtk3.googlecode.com
+
 G = zeros(7,7);
 G(1,[2 3 4])=1;
 G(2,[1 3 6])=1;

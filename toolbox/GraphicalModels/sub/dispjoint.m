@@ -1,6 +1,9 @@
 function dispjoint(J, useLatex)
 % Display the entries in a joint probability table
 
+% This file is from pmtk3.googlecode.com
+
+
 if nargin < 2
   sz = size(J);
   for i=1:prod(sz)

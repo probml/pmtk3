@@ -2,6 +2,9 @@
 %% Fit a mixture of Gaussians using variational Bayes
 % Reproduce Bishop fig 10.6
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function mixGaussVbDemoFaithful
 %% Load Data
 setSeed(0);

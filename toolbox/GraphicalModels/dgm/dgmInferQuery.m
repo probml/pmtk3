@@ -25,6 +25,9 @@ function [bels, logZ] = dgmInferQuery(dgm, queries, varargin)
 % logZ   - log of the partition sum (if this is all you want, use dgmLogprob)
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 [clamped, softEv, localEv, doPrune, doSlice] = process_options(varargin, ...
     'clamped', [], ...
     'softev' , [], ...

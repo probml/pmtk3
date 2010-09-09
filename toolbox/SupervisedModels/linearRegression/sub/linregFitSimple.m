@@ -1,5 +1,8 @@
 function model = linregFitSimple(X, y, lambda)
 % Ridge regression using QR
+
+% This file is from pmtk3.googlecode.com
+
 if lambda == 0
   w = X\y;
 else

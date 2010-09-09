@@ -1,6 +1,9 @@
 %% Hinge Loss Plot
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 y = 1;
 eta = -1:0.01:2;
 z = y*eta;

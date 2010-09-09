@@ -2,6 +2,9 @@
 % Based on code by Mike Li
 %%
 % Generate data
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(0);
 true_mu1 = -10;
 true_mu2 = 10;

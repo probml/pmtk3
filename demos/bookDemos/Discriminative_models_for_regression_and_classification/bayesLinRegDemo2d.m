@@ -2,6 +2,9 @@
 % The goal is to reproduce fig 3.7 from Bishop's book
 % We fit the linear model f(x,w) = w0 + w1 x and plot the posterior over w.
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function bayesLinRegDemo2d()
 setSeed(0);
 a0 = -0.3; %Parameters of the actual underlying model that we wish to recover

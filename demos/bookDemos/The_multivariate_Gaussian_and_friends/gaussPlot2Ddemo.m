@@ -1,6 +1,9 @@
 %% Plot an MVN in 2D
 %
 %%  
+
+% This file is from pmtk3.googlecode.com
+
 model = struct('mu', [0 0]', 'Sigma', [2 1.8; 1.8 2]);
 figure; plotContour(@(x)gaussProb(x, model.mu, model.Sigma), [-5 5 -10 10]);
 title('full');

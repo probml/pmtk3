@@ -1,6 +1,9 @@
 %% Bayesian inference of the mean of a 2D Gaussian with fixed Sigma
 %
 %% Sample Data
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(0);
 muTrue      = [0.5 0.5]'; 
 Ctrue       = 0.1*[2 1; 1 1];

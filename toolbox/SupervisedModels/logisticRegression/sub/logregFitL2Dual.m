@@ -1,6 +1,9 @@
 function [ model ] = logregFitL2Dual( X, y, lambda, varargin)
 %  L2-regularized logistic regression model in the dual space
 
+% This file is from pmtk3.googlecode.com
+
+
 %PMTKauthor Hannes Bretschneider
 
 [R, V, pp] = process_options(varargin, ...

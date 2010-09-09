@@ -7,6 +7,9 @@
 %
 % PMTKauthor Hannes Bretschneider
 %%
+
+% This file is from pmtk3.googlecode.com
+
 saveLatex = false;
 loadData('stackloss');
 n = size(X,1);

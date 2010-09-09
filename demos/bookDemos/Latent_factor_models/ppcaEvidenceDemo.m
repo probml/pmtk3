@@ -1,6 +1,9 @@
 %% Plot the posterior over model dimensionality 
 % See also ppcaVBdemo
 %%
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(0);
 n = 300;
 d = 10;

@@ -2,6 +2,9 @@
 % Based on code by John D'Errico
 % http://www.mathworks.com/matlabcentral/fileexchange/loadFile.do?objectId=8553&objectType=fileY
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function ridgeSplineDemoCV()
 
 if 0

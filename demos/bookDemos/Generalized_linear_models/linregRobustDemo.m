@@ -1,6 +1,9 @@
 %% Robust linear regression demo
 % PMTKneedsOptimToolbox linprog
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function linregRobustDemo()
 requireOptimToolbox
 seed = 0; setSeed(seed);

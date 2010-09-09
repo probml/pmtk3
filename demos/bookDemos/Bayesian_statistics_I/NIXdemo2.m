@@ -1,6 +1,9 @@
 %% Compare various Normal Inverse Chi Squared Distributions
 %
 %% gaussInvChi Params
+
+% This file is from pmtk3.googlecode.com
+
 mu = [0 0 0];
 k  = [1 5 1];
 v  = [1 1 5];

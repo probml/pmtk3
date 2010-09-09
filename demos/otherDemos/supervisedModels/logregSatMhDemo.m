@@ -2,6 +2,9 @@
 % Example from Johnson and Albert p87
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function [X, y, ws, perm] = logregGradeMH()
 
 [X,y] = satDataLoad;

@@ -1,6 +1,9 @@
 %% Reproduce figure 2.2 from GP book
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(0);
 L = 1;
 xs = (-5:0.2:5)';

@@ -1,6 +1,9 @@
 %% Illustration of a conjugate function
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function conjugateFunction
 
 f = @(x) -log(5*x) - 5;

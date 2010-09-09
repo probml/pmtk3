@@ -1,6 +1,9 @@
 %% Bernoulli mixture model for mnist digits
 %
 %% Setup data
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(0);
 binary     = true;
 keepSparse = false; 

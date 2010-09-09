@@ -1,6 +1,9 @@
 function[f,g,H] = aokiFn(x)
 % A function from Aoki's book
 
+% This file is from pmtk3.googlecode.com
+
+
 if isvector(x)
   f = 0.5*(x(1).^2 - x(2)).^2 + 0.5*(x(1)-1).^2;
 else

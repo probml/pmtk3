@@ -1,6 +1,9 @@
 %% Illustration of the Voronoi tessalation for 1 nearest neighbour
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(5); 
 x=rand(25,2);
 [vx, vy] = voronoi(x(:,1),x(:,2));

@@ -1,6 +1,9 @@
 %% Illustration of how singularities can arrise in the likelihood function  of GMMS
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 f1 = @(x) gaussProb(x,0.5,0.12);
 f2 = @(x) gaussProb(x,0.88,0.03)/2;
 f3 = @(x) f1(x) + f2(x);

@@ -4,6 +4,9 @@ function TF = tabularFactorMultiply(varargin)
 % Each factor is a struct as returned by tabularFactorCreate and has
 % fields T, domain, sizes.
 %%
+
+% This file is from pmtk3.googlecode.com
+
 if nargin == 1
     facs = varargin{1};
 else

@@ -1,6 +1,9 @@
 %% Illustrate the robustness of the t-distribution compared to the Gaussian
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function gaussVsStudentOutlierDemo()
 n = 30;
 setSeed(8);

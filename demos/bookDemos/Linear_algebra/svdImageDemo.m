@@ -1,6 +1,9 @@
 %% Visualize low rank approximations of an image
 % based on Cleve Moler's book ch10 p25
 %%
+
+% This file is from pmtk3.googlecode.com
+
 loadData('clown'); 
 r = rank(X);
 disp(r); 

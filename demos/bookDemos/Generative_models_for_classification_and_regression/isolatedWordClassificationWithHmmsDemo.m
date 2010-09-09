@@ -1,6 +1,9 @@
 %% Classifying a speech signal with an HMM as "four" or "five"
 % Xtrain{i} is a 13 x T(i) sequence of MFCC data, where T(i) is the length
 %%
+
+% This file is from pmtk3.googlecode.com
+
 loadData('data45'); 
 nstates = 5;
 setSeed(0); 

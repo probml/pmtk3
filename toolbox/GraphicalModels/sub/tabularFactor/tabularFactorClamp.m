@@ -1,6 +1,9 @@
 function clampedFac = tabularFactorClamp(Tfac, visVars, visValues)
 % Clamp a tabular factor
 %%
+
+% This file is from pmtk3.googlecode.com
+
 if isempty(visVars)
     clampedFac = Tfac; 
     return;

@@ -18,6 +18,9 @@
 % PMTKurl http://www.mathworks.com/moler/ncm/surfer.m
 % PMTKinteractive
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function [U,G] = surfer(root,n)
 
 

@@ -5,6 +5,9 @@ function generatePmtkDataTable(dataSource)
 % repository.
 % PMTKneedsMatlab 
 %%
+
+% This file is from pmtk3.googlecode.com
+
 excludedDirs = tokenize(getConfigValue('PMTKmetaDirs'), ',');
 if nargin == 0
     dataSource = getConfigValue('PMTKlocalDataPath');

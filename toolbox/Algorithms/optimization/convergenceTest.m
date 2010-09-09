@@ -7,6 +7,9 @@ function [converged] = convergenceTest(fval, previous_fval, threshold, warn)
 % 'threshold' defaults to 1e-4.
 % This stopping criterion is from Numerical Recipes in C p423
 
+% This file is from pmtk3.googlecode.com
+
+
 if nargin < 3, threshold = 1e-4; end
 if nargin < 4, warn = false; end
 

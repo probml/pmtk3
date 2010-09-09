@@ -4,6 +4,9 @@ function downloadAllData(destnRoot, quiet)
 % diffferent destnRoot. This function does not add the folders to the
 % matlab path. If the folders already exist, the contents are overwritten. 
 %%
+
+% This file is from pmtk3.googlecode.com
+
 SetDefaultValue(1, 'destnRoot', fullfile(pmtk3Root(), 'data'));
 SetDefaultValue(2, 'quiet', false);
 googleRoot = ' http://pmtkdata.googlecode.com/svn/trunk';

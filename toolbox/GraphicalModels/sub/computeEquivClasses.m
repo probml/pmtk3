@@ -7,6 +7,9 @@ function eqc = computeEquivClasses(pointers)
 %
 % ans = {[1], [2], [3:10]}
 %%
+
+% This file is from pmtk3.googlecode.com
+
 classes = 1:max(pointers); 
 nclasses = numel(classes); 
 eqc = cell(nclasses, 1); 

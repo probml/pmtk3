@@ -4,6 +4,9 @@ function mrf2 = factorGraphToMrf2(fg, varargin)
 % See mrf2Create for additional optional args
 %%
 
+% This file is from pmtk3.googlecode.com
+
+
 fg = factorGraphMakePairwise(fg); % does nothing if fg is already pairwise
 G = constructGraphFromFactors(fg.factors);
 args = {};

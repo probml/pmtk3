@@ -40,6 +40,9 @@ function [w, sigma, loglikHist]=linregFitSparseEm(X, y, prior, varargin)
 % PMTKauthor Francois Caron
 % PMTKmodified Kevin Murphy, Hannes Bretschneider
 %%
+
+% This file is from pmtk3.googlecode.com
+
 [shape, scale, lambda sigma, groups, convTol, EMargs] = process_options(varargin, ...
     'shape'   , [] , ...
     'scale'   , [] , ...

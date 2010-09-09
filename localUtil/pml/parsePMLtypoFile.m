@@ -8,6 +8,9 @@ function [table, M] = parsePMLtypoFile(fname)
 %% Example
 % parsePMLtypoFile('C:\users\matt\Desktop\typos.csv');
 
+% This file is from pmtk3.googlecode.com
+
+
 %% Setup
 text = getText(fname);
 text(1) = []; % header

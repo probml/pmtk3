@@ -1,6 +1,9 @@
 %% Plot the entropy of a Bernoulli random variable
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function bernoulliEntropyFig
 
 close all;

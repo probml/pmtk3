@@ -2,6 +2,9 @@
 %
 %%
 %setSeed(1);
+
+% This file is from pmtk3.googlecode.com
+
 n = 100; d = 5;
 X = randn(n,d);
 k = 2;

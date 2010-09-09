@@ -1,4 +1,7 @@
 %% Compare inference in a QMR like network (dgm)
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(0); 
 nfindings = 100; % turn down if you run out of memory
 ndiseases = 15; 

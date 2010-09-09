@@ -4,6 +4,9 @@
 %
 % Based on code by Baback Moghaddam
 %%
+
+% This file is from pmtk3.googlecode.com
+
 if ~exist('n','var'), n=12; end                 % n = dimension of x (#cols of A)
 if ~exist('m','var'), m=10*n; end               % m = dimension of y (#rows of A)
 if ~exist('nCases','var'), nCases = 20; end    % nCases = no. of MC trials

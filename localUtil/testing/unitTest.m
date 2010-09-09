@@ -29,6 +29,9 @@ function varargout = unitTest(fname, varargin)
 % runAllDemos
 % processExamples
 %%
+
+% This file is from pmtk3.googlecode.com
+
 [run, recursive, recache, excludeTags, debug] = process_options(varargin,...
     'run'       , true  , ...
     'recursive' , true   , ...

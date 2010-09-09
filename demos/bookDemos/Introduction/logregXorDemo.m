@@ -2,6 +2,9 @@
 % We show how RBF, and polynomial expansions of the features 'solve' it,
 % while using raw features does not.
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function logregXorDemo()
 [X, y] = createXORdata();
 lambda = 1e-2;

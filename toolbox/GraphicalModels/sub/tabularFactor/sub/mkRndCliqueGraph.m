@@ -1,6 +1,9 @@
 function model = mkRndCliqueGraph(nnodes, maxNstates, maxFanIn, maxFanOut)
 %% Create a random clique graph
 
+% This file is from pmtk3.googlecode.com
+
+
 G = mkRndDag(nnodes, maxFanIn, maxFanOut);
 
 Tfac    = cell(nnodes, 1);

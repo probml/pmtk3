@@ -1,6 +1,9 @@
 %% Fit loopy MRF 1-2-3-1 using iterative proportional fitting
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 clqs = {[1 2], [2 3], [1 3]};
 NC = length(clqs);
 N = 3;

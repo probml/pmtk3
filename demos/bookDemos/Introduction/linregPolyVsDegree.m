@@ -3,6 +3,9 @@
 % (Lecture 2 from http://www.cs.berkeley.edu/~asimma/294-fall06/)
 %%
 
+% This file is from pmtk3.googlecode.com
+
+
 
 N = 21;
 [xtrain, ytrain, xtest, ytestNoisefree, ytest] = ...

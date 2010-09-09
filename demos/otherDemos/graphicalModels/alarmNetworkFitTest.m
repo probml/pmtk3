@@ -1,6 +1,9 @@
 %% Test dgmTrain on the alarm network 
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(0); 
 dgmSource = mkAlarmDgm();
 G = dgmSource.G; 

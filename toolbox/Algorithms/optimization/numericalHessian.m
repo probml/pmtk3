@@ -3,6 +3,9 @@ n = length(x);
 H = zeros(n,n);
 method = 'centralDifference';
 %method = 'gradient';
+
+% This file is from pmtk3.googlecode.com
+
 switch method
   case 'gradient'
    h = 0.001;

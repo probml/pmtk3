@@ -1,6 +1,9 @@
 %% change of variables demo
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 mu = [0 0];
 Sigma = eye(2);
 xrange = [-1 1 -1 1]; npoints = 20;

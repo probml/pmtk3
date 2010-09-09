@@ -1,6 +1,9 @@
 %% Figure out rank of linear dependencies in misconception Markov network
 % Koller and Friedman ex 4.4.14
 %%
+
+% This file is from pmtk3.googlecode.com
+
 edges = {[1 2], [1 3], [2 4], [3 4]};
 ndx  = 1;
 F = zeros(0, 2^4);

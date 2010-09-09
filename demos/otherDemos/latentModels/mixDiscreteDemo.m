@@ -1,5 +1,8 @@
 %% Simple test of a discrete mixture model
 %% Create Data
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(0);
 nmix = 6; 
 truth.nmix = nmix;

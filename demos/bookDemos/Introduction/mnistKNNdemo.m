@@ -3,6 +3,9 @@
 % Compare to mnist1NNdemo, which uses various tricks
 % to scale things up 
 
+% This file is from pmtk3.googlecode.com
+
+
 loadData('mnistAll');
 trainndx = 1:10000;
 testndx =  1:1000;

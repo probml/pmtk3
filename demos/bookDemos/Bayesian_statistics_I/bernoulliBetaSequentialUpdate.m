@@ -3,6 +3,9 @@
 % sequentially fit a Beta-Bernoulli model, plotting the posterior of the
 % parameters at each iteration. 
 %% Sample
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(0);
 mu = 0.7;  % 70% probability of success
 n  = 100;  % number of samples 

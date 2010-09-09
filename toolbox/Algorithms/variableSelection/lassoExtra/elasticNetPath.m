@@ -4,6 +4,9 @@ function [w, mseTrain, mseTest, df] = ...
 % Elastic net for multiple parameter values (not optimized!)
 % w(:,i) for lambda1s(i) and lambda2s(i); first element is w0
 
+% This file is from pmtk3.googlecode.com
+
+
 if nargin < 7, doStandardize = 1; end
 
 if isscalar(lambda2s), lambda2s = lambda2s*ones(1,length(lambda1s)); end

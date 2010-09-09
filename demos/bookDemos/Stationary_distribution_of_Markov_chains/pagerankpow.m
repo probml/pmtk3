@@ -6,6 +6,9 @@
 % PMTKauthor Cleve Moler
 % PMTKurl http://www.mathworks.com/moler/ncm/pagerankpow.m
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function [x,cnt] = pagerankpow(G)
 
 

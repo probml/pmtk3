@@ -2,6 +2,9 @@
 % A is better than B. Plots true positive rate, (tpr) vs false positive
 % rate, (fpr).
 %%
+
+% This file is from pmtk3.googlecode.com
+
 domain = 0:0.01:1;
 fA = @(x)x.^(1/3);
 fB = @(x)x.^(2/3);

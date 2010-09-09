@@ -1,6 +1,9 @@
 %% Display four data sets each with the same correlation of 0.81.
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 loadData('anscombe'); %stacked columnwise, source: R - builtin dataset
 
 pointSpec = {'o','MarkerSize'     , 11,...

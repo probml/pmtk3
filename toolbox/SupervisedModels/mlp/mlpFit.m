@@ -19,6 +19,9 @@ function model = mlpFit(X, y, varargin)
 % schmidt method only handles regression and binary responses.
 % netlab method only handles single hidden layer.
 
+% This file is from pmtk3.googlecode.com
+
+
 y = y(:);
 assert(size(y, 1) == size(X, 1));
 

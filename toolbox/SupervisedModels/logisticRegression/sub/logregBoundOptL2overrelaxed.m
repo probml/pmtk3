@@ -22,6 +22,9 @@ function [W, output]  = logregBoundOptL2overrelaxed(X, Y, lambda)
 %PMTKauthor Balaji Krishnapuram
 %PMTKmodified Kevin Murphy
 
+% This file is from pmtk3.googlecode.com
+
+
 
     [nexamples ndimensions]= size(X);
     [nexamples nclasses] = size(Y); % 1 of C encoding

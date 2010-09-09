@@ -2,6 +2,9 @@
 %PMTKneedsStatsToobox cluster, pdist, linkage
 %PMTKneedsBioToolbox clustergram
 %%
+
+% This file is from pmtk3.googlecode.com
+
 requireStatsToolbox
 requireBioinfoToolbox
 loadData('yeastData310') % 'X', 'genes', 'times');

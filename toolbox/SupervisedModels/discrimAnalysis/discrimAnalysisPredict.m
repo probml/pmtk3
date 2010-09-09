@@ -3,6 +3,9 @@ function [yhat, post] = discrimAnalysisPredict(model, Xtest)
 % Computes post(i,c) = P(y=c|x(i,:), params)
 % and yhat(i) = arg max_c post(i,c)
 
+% This file is from pmtk3.googlecode.com
+
+
 
 [N, d] = size(Xtest);
 classPrior = model.classPrior;

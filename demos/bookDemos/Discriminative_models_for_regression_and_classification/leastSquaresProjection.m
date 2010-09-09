@@ -1,6 +1,9 @@
 %% An illustration of least squares projection
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function leastSquaresProjection()
 
 setSeed(2);

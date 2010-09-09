@@ -6,6 +6,9 @@ function model = svmQPregFit(X, y, C, kernelParam, kernelFn, e)
 % PMTKurl http://www.isis.ecs.soton.ac.uk/resources/svminfo/
 % PMTKmodified Kevin Murphy
 
+% This file is from pmtk3.googlecode.com
+
+
 if nargin < 3 || isempty(C), C = 1; end
 if nargin < 4 || isempty(kernelParam), kernelParam = 1/size(X, 2); end
 if nargin < 5 || isempty(kernelFn), kernelFn = @kernelRbfGamma; end

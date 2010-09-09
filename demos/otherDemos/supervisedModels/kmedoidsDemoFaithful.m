@@ -1,6 +1,9 @@
 %% Run Kmedoids on the old faithful data
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 X = loadData('faithful');
 X = standardizeCols(X);
 N = size(X,1);

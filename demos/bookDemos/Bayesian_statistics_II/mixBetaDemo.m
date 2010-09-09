@@ -1,6 +1,9 @@
 %% Plot a Mixture of Beta Distributions
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function mixBetaDemo()
 dataSS = [20 10];
 alphaPrior = [20 20 ; 30 10];

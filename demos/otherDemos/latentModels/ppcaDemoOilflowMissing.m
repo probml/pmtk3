@@ -3,6 +3,9 @@
 %
 % Data from http://www.ncrg.aston.ac.uk/GTM/3PhaseData.html
 %%
+
+% This file is from pmtk3.googlecode.com
+
 loadData('oilFlow3Class');
 ndx = 1:1000;
 X = DataTrn(ndx,:); % 1000x12

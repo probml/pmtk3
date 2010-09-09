@@ -1,6 +1,9 @@
 %% Fit multivariate student T distribution usign ECME
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(1);
 
 N = 100; D = 2;

@@ -3,6 +3,9 @@ function [wn, Sn] = normalEqnsBayes(X, y, Lam0, w0, sigma)
 % under Gaussian prior N(w | w0, Lam0^{-1}), where sigma is noise std
 % wn is the ridge (MAP) estimate, Sn is its covariance
 
+% This file is from pmtk3.googlecode.com
+
+
 
 if all(Lam0==0)
   [Q,R] = qr(X,0);

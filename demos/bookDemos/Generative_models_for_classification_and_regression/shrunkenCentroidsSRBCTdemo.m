@@ -1,5 +1,9 @@
 %% Reproduce figure 18.4 from "Elements of statistical learning" 2nd ed.
 %
+%%
+
+% This file is from pmtk3.googlecode.com
+
 
 loadData('srbct'); % Xtrain is 63*2308, Xtest is 25*2308, C=4
 

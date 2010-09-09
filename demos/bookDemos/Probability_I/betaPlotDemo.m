@@ -1,6 +1,9 @@
 %% Plotting Beta Distributions
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 as = [0.1 1 2 8]; bs = [0.1 1 3 4];
 figure;
 [styles, colors, symbols] = plotColors;

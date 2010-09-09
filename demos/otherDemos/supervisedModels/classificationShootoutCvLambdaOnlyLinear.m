@@ -9,6 +9,9 @@
 %
 %PMTKslow
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function results = classificationShootoutCvLambdaOnlyLinear()
 setSeed(0);
 doLatex = true; 

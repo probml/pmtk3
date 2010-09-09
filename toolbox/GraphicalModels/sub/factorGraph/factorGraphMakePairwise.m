@@ -3,6 +3,9 @@ function fg2 = factorGraphMakePairwise(fg)
 %  
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 if fg.isPairwise
     fg2 = fg;
     return;

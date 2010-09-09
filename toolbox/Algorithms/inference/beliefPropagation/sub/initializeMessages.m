@@ -13,6 +13,9 @@ function messages = initializeMessages(G, sepSets, nstates)
 %
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 nfacs    = size(sepSets, 1);
 messages = cell(nfacs, nfacs);
 for i = 1:nfacs

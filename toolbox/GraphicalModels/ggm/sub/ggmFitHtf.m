@@ -5,6 +5,9 @@ function [precMat, iter] = ggmFitHtf(S, G, maxIter)
 % We use the algorithm due to 
 % Hastie, Tibshirani & Friedman ("Elements" book, 2nd Ed, 2008, p633)
 
+% This file is from pmtk3.googlecode.com
+
+
 %PMTKauthor Baback Moghaddam
 
 p = length(S); 

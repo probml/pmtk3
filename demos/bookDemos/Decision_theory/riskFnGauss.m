@@ -1,6 +1,9 @@
 %% Reproduce Figure B.1 p447 from Bernardo94
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 ns = [5 20];
 [styles, colors, symbols] = plotColors;
 for ni=1:length(ns)

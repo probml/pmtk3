@@ -1,6 +1,9 @@
 %% Demonstration of the Central Limit Theorem, based on Bishop 2.6
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function centralLimitDemo
 
 

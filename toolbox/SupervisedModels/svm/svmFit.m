@@ -61,6 +61,9 @@ function [model, varargout] = svmFit(X, y, varargin)
 % addtosystempath(fullfile(pmtk3Root(),'foreign\liblinear-1.51\windows'))
 % addtosystempath(fullfile(pmtk3Root(),'\foreign\libsvm-mat-2.9-1'))
 %%
+
+% This file is from pmtk3.googlecode.com
+
 d = size(X, 2);
 [   C            ,... 
     kernel       ,... 

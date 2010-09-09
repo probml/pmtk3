@@ -39,6 +39,9 @@ function [bels, converged] = beliefPropagation(cg, queries, varargin)
 % converged         - true iff the the algorithm converged before maxIter 
 %                     iterations. 
 %%
+
+% This file is from pmtk3.googlecode.com
+
 [updateProtocol, doWarn, args] = process_options(varargin, ...
     'updateProtocol', 'async', 'doWarn', true);
 

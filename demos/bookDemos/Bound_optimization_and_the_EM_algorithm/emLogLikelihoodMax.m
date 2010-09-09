@@ -1,6 +1,9 @@
 %% Visualize EM Lower Bounds
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function emLogLikelihoodMax
 f1 = @(x) log(gaussProb(x,0,0.25.^2)')+1;
 f2 = @(x) log(gaussProb(x,1,0.2.^2)')+20;

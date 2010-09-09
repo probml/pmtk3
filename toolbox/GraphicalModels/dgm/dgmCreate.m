@@ -78,6 +78,9 @@ function model = dgmCreate(G, CPDs, varargin)
 %                      dgmInferQuery
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 [infEngine, infEngArgs localCPDs, CPDpointers, ...
     localCPDpointers, precomputeJtree, initNstates] =...
     process_options(varargin   , ...

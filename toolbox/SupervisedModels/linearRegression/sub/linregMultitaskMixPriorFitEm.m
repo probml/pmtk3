@@ -3,6 +3,9 @@ function models = linregMultitaskMixPriorFitEm(X, Y, K, varargin)
 % Returns a cell of model where models{t} is the linear regression model of task t
 % X is N*D, Y is N*T, K is num. mixture components
 
+% This file is from pmtk3.googlecode.com
+
+
 %PMTKauthor Robert Tseng
 
 [maxIter] = process_options(varargin, 'maxIter', 20)

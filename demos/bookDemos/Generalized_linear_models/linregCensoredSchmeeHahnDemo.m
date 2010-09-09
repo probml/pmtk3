@@ -1,6 +1,9 @@
 %% From Schmee and Hahn, "A simple method for regression analysis
 % PMTKauthor Hannes Bretschneider
 %% Load
+
+% This file is from pmtk3.googlecode.com
+
 loadData('schmeeHahn');
 
 % with censored data", technometrics 1979 table 1

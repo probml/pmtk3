@@ -7,6 +7,9 @@ function [path, j1, j2] = hmmViterbiC(logpi, logA, logB)
 % * called hmmViterbiC since Matlab has an hmmViterbi function already *
 %%
 
+% This file is from pmtk3.googlecode.com
+
+
 pi = exp(logpi);
 A = exp(logA);
 B = exp(logB); 

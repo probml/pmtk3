@@ -4,6 +4,9 @@ function P = ggmFitMinfunc(G, X, C)
 % precMat = ggmFitMinfunc(G, X) % X is N*D
 % or precMat = ggmFitMinfunc(G, [], C) % C is cov(X) D*D
 
+% This file is from pmtk3.googlecode.com
+
+
 %PMTKauthor Mark Schmidt
 %
 % Basically the same code as GWishartFit, except we use the 

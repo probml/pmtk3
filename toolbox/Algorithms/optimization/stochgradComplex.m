@@ -13,6 +13,9 @@ function [wavg, f, exitflag, output] = stochgrad(objFun, w0, options, X, y, vara
 %
 % Optional arguments:
 
+% This file is from pmtk3.googlecode.com
+
+
 %PMTKauthor Kevin Swersky, Kevin Murphy
 
 nTrain = size(X,1);

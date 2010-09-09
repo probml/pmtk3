@@ -6,6 +6,9 @@ function [nodeBels, logZ, edgeBels] = mrfInferNodes(mrf, varargin)
 % Optional named args are the same as for dgmInferNodes
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 [clamped, doSlice, args]   = process_options(varargin, 'clamped', [], ...
     'doSlice', false); %#ok
 visVars           = find(clamped);

@@ -2,6 +2,9 @@
 %
 %%
 %PMTKneedsImageToolbox
+
+% This file is from pmtk3.googlecode.com
+
 requireImageToolbox
 assert(isLibdaiInstalled); 
 setSeed(0); 

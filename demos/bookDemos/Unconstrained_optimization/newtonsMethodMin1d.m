@@ -1,6 +1,9 @@
 %% Illustration of Newton's method for minimizing a 1d function
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function newtonsMethodMin1d
 
 

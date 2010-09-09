@@ -1,4 +1,9 @@
 %% Naive bayes classifier applied to text data (bag of words)
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
 
 %% Load data
 if 1

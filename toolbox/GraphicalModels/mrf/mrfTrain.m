@@ -3,6 +3,9 @@ function [mrf, loglikHist] = mrfTrain(mrf, data, varargin)
 % This does not currently update the undirected parameters, only the local
 % CPDs, but will be generalized at a later point. 
 
+% This file is from pmtk3.googlecode.com
+
+
 
 
 [mrf, loglikHist] = mrfTrainEm(mrf, data, varargin{:}); 

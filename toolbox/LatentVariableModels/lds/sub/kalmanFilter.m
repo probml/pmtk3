@@ -38,6 +38,9 @@ function [m, V, loglik] = kalmanFilter(y, A, C, Q, R, init_m, init_V, varargin)
 % loglik = sum{t=1}^T log P(y(:,t))
 %
 
+% This file is from pmtk3.googlecode.com
+
+
 
 %PMTKauthor Kevin Murphy
 %PMTKdate 1998

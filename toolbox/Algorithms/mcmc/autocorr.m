@@ -1,5 +1,8 @@
 function c = autocorr(x,maxlag)
 % Autocorrelation function
+
+% This file is from pmtk3.googlecode.com
+
 if nargin < 2
     maxlag=length(x)-1;
 end

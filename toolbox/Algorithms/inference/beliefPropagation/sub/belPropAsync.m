@@ -5,6 +5,9 @@ function [bels, converged] = belPropAsync(cg, varargin)
 % messages from each of its neighbors. 
 % See beliefPropagation 
 %% setup
+
+% This file is from pmtk3.googlecode.com
+
 [maxIter, tol, lambda, convFn]  = process_options(varargin, ...
     'maxIter'       , 100  , ...
     'tol'           , 1e-3 , ...

@@ -2,6 +2,9 @@
 % We use synthetic data sampled from a GMM
 % PMTKauthor Krishna Nand Keshava Murthy
 %%
+
+% This file is from pmtk3.googlecode.com
+
 ntrials = 2;
 for trial = 1:ntrials
     setSeed(trial);

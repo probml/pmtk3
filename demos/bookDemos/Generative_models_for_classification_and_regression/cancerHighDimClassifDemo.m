@@ -3,6 +3,9 @@
 % PMTKreallySlow
 %% Load data
 
+% This file is from pmtk3.googlecode.com
+
+
 loadData('14cancer') % Xtrain is 144*16063, Xtest is 54*16063
 ytrain = colvec(ytrain);
 ytest = colvec(ytest);

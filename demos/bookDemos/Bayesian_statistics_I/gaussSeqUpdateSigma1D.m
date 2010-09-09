@@ -1,6 +1,9 @@
 %% Sequential Updating of Sigma in 1d given fixed mean
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(1);
 %% Prior
 nu = 0.001; 

@@ -7,6 +7,9 @@ function [xn,alpha] = linesearchSimple(f, x, p, fx, gx, sigma, alphamin)
 % gives sufficient descent in f, as specified by sigma.
 % Upon return, if alpha <= alphamin then failure
 
+% This file is from pmtk3.googlecode.com
+
+
 if nargin < 6, sigma = 1e-3; end
 if nargin < 7, alphamin = 1e-1; end
 

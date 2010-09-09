@@ -22,6 +22,9 @@ function B = pmlGrabBook(includeEx, includeSol)
 % The book must be capable of being compiled, i.e. no syntax errors. 
 % 
 %%
+
+% This file is from pmtk3.googlecode.com
+
 if nargin  == 0 
     includeEx = false;
     includeSol = false; 

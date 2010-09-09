@@ -20,6 +20,9 @@ function xiSummed = hmmComputeTwoSliceSum(alpha, beta, A, B)
 % The output constitutes the expected sufficient statistics for the 
 % transition matrix, for a given observation sequence. 
 %%
+
+% This file is from pmtk3.googlecode.com
+
 [K, T] = size(B);
 xiSummed = zeros(K, K);
 for t = T-1:-1:1

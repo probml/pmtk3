@@ -11,6 +11,9 @@ function [L, Lij] = discreteLogprob(arg1, X)
 % L   = sum(Lij, 2)  % i.e. summed across distributions, (not cases).
 %%
 
+% This file is from pmtk3.googlecode.com
+
+
 if any(isnan(X(:)))
     [L, Lij] = discreteLogprobMissingData(arg1, X);
     return;

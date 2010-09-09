@@ -1,6 +1,9 @@
 %% Online Bayesian linear regression using Kalman filter
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 standardize = false; %true;
 
 [xtrain, ytrain] = polyDataMake('sampling','thibaux');

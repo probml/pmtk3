@@ -10,6 +10,9 @@ function model = markovFit(X, nstates, pseudoCountsPi, pseudoCountsA)
 % where S(t) denotes the state at time step t.
 %
 
+% This file is from pmtk3.googlecode.com
+
+
 if nargin < 2, nstates = nunique(X(:)); end
 if nargin < 3, pseudoCountsPi = ones(1, nstates); end
 if nargin < 4, pseudoCountsA  = ones(nstates, nstates); end

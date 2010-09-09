@@ -1,6 +1,9 @@
 %% Simple bolasso demo
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(0);
 n = 1000;   %number of data points
 d = 25;     %number of dimensions

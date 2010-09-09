@@ -1,6 +1,9 @@
 function w = linregFitL2Minfunc(X, y, lambda, options)
 % Ridge regression using Newton's method
 
+% This file is from pmtk3.googlecode.com
+
+
 
 D = size(X,2);
 winit = zeros(D,1);

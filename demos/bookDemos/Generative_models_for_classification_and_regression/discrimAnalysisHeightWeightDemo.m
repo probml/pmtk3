@@ -1,6 +1,9 @@
 %% Linear/ quadratic discriminant analysis for Height Weight data
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 rawdata = loadData('heightWeight');
 data.Y = rawdata(:,1); % 1=male, 2=female
 data.X = [rawdata(:,2) rawdata(:,3)]; % height, weight

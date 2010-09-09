@@ -2,6 +2,9 @@ function [model, logev] = linregFitBayesGaussPrior(X, y, alpha, beta, pp)
 % Bayesian inference for a linear regression model with fixed noise
 % precision beta and diagonal gaussian prior with precision alpha
 
+% This file is from pmtk3.googlecode.com
+
+
 [model.preproc, X] = preprocessorApplyToTrain(pp, X);
 [N,d] = size(X);
 w0 = zeros(d,1);

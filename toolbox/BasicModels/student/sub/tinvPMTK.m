@@ -2,6 +2,9 @@ function X = tinvPMTK(p, dof)
 %% Replacement for the stats toolbox tinv function
 % Inverse of the student T CDF
 %%
+
+% This file is from pmtk3.googlecode.com
+
 p       = p(:) - 0.5;
 n       = length(p); 
 dof     = dof(:);

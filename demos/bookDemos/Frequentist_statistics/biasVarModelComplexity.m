@@ -1,6 +1,9 @@
 %% Illustration of the bias variance trade off as we vary the L2 regularizer.
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function biasVarModelComplexity
 
 setSeed(0);

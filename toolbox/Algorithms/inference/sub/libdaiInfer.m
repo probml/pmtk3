@@ -16,6 +16,9 @@ function [logZ, nodeBels, clqBels, cliqueLookup] = libdaiInfer(tfacs, varargin)
 %
 % cliqueLookup - an nvars-by-ncliques lookup table
 %%
+
+% This file is from pmtk3.googlecode.com
+
 if ~(exist('dai', 'file') == 3)
     error('could not find dai.%s', mexext); 
 end

@@ -2,6 +2,9 @@
 % throught the Bootstrap, by Francis R. Bach.
 %%
 %PMTKreallySlow
+
+% This file is from pmtk3.googlecode.com
+
 seed = 2008;
 rand('twister',seed);randn('state',seed);
 if(exist('bolassoDemoResults.mat','file'))

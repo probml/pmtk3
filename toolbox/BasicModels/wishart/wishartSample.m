@@ -2,6 +2,9 @@ function S = wishartSample(arg1, arg2, arg3)
 % S(:, :, 1:n) ~ Wi(Sigma, dof)
 % S = wishartSample(model, n); OR S = wishartSample(Sigma, dof, n);
 
+% This file is from pmtk3.googlecode.com
+
+
 if isstruct(arg1)
     model = arg1;
     Sigma = model.Sigma;

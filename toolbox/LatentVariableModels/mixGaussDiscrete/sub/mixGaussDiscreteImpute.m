@@ -2,6 +2,9 @@ function Ximpute = mixGaussDiscreteImpute( model, X )
 % Impute NaNs in a matrix of mixed cts/ discrete data
 % See mixGaussDiscreteFitEm for details of the model
 
+% This file is from pmtk3.googlecode.com
+
+
 %PMTKauthor Hannes Bretschneider
 
 labels = model.labels;

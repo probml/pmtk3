@@ -6,6 +6,9 @@ function BF = bayesianTtest(x1, x2, mu_delta, sigma2_delta)
 % The American Statistician, 59(3), 252:257, 2005
 % PMTKneedsStatsToolbox noncentraltpdf
 %%
+
+% This file is from pmtk3.googlecode.com
+
 m1 = mean(x1); n1 = length(x1); ss1 = sum((x1-m1).^2);
 m2 = mean(x2); n2 = length(x2); ss2 = sum((x2-m2).^2);
 nd = 1/((1/n1) + (1/n2));

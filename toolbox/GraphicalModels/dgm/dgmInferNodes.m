@@ -33,6 +33,9 @@ function [nodeBels, logZ] = dgmInferNodes(dgm, varargin)
 %              dgmLogprob)
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 [clamped, doSlice, args]  = process_options(varargin, 'clamped', [], 'doSlice', false); %#ok
 visVars          = find(clamped);
 hidVars          = setdiffPMTK(1:dgm.nnodes, visVars);

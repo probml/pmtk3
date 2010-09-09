@@ -2,6 +2,9 @@ function generateSupportReport()
 %% Generate the html table describing packages in pmtkSupport
 % PMTKneedsMatlab
 %% Setup
+
+% This file is from pmtk3.googlecode.com
+
 root      = getConfigValue('PMTKlocalSupportPath');
 dest      = fullfile(root, 'docs', 'authors');
 pmtkRed   = getConfigValue('PMTKred');

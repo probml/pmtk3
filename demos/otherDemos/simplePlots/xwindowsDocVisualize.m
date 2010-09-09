@@ -1,6 +1,9 @@
 %% Visualize word-document binary matrix
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 loadData('XwindowsDocData');% xtrain is 900x600 doc by words  (sparse logical  matrix)
 
 %% Visualize raw data

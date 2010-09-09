@@ -1,3 +1,6 @@
+
+% This file is from pmtk3.googlecode.com
+
 function [fHist, favgHist] = stochgradTracePostprocess(trace, objFun, X, y, varargin)
 
 

@@ -3,6 +3,9 @@ function logp = gaussInvWishartLogprobBayes(arg1, arg2, arg3, arg4, arg5)
 % logp = gaussInvWishartLogprobBayes(model, X) OR
 % logp = gaussInvWishartLogprobBayes(mu, Sigma, dof, k, X)
 %%
+
+% This file is from pmtk3.googlecode.com
+
 if isstruct(arg1)
     model = arg1;
     X = arg2;

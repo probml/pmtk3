@@ -2,6 +2,9 @@
 %
 %%
 
+% This file is from pmtk3.googlecode.com
+
+
 
 loadData('prostate');
 ndx = find(istrain);

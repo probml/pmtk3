@@ -3,6 +3,9 @@ function S = dirichletSample(arg1, arg2)
 % S = dirichletSample(alpha, n), OR S = dirichletSample(model, n)
 %%
 
+% This file is from pmtk3.googlecode.com
+
+
 
 if isstruct(arg1)
     model = arg1;

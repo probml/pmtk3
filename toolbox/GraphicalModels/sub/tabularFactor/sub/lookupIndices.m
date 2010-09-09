@@ -2,6 +2,9 @@ function ndx = lookupIndices(small, big)
 % ndx(i) = location of small(i) in big
 % e.g., small=[8,2], big=[2,4,8,7], ndx = [3 1]
 
+% This file is from pmtk3.googlecode.com
+
+
 n = numel(small);
 ndx = zeros(n,1);
 for i=1:n

@@ -1,6 +1,9 @@
 %% Plot the pareto distribution
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 figure; hold on;
 k = [0.5 1 2 3];
 [styles, colors] = plotColors();

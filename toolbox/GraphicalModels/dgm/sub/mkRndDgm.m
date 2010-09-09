@@ -1,6 +1,9 @@
 function dgm = mkRndDgm(nnodes, maxFanIn, maxFanOut, maxNstates, sparsityFactor, varargin)
 %% Create a random dgm
 
+% This file is from pmtk3.googlecode.com
+
+
 SetDefaultValue(1, 'nnodes', 10);
 SetDefaultValue(2, 'maxFanIn', 2);
 SetDefaultValue(3, 'maxFanOut', 2);

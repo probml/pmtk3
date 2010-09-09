@@ -1,6 +1,9 @@
 function [logp, ll] = ppcaLogprob(X, W, mu, sigma2, evals, evecs)
 % logp(i) = log N(X(i,:) | mu, C) where C = W W' + sigma^2 I(d)
 % Based on code by Ian Nabney
+
+% This file is from pmtk3.googlecode.com
+
 mu = mu(:)';
 [N d] = size(X);
 [d K] = size(W);

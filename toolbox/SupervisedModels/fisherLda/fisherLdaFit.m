@@ -4,6 +4,9 @@ function [W, Z]  = fisherLdaFit(Xtrain, ytrain, K)
 % W is D*K, where K <= C-1
 % Z is the project of Xtrain onto W, i.e. Xtrain*W
 %%
+
+% This file is from pmtk3.googlecode.com
+
 C = max(ytrain);
 if nargin < 3, K = C-1; end
 muC = partitionedMean(Xtrain, ytrain);

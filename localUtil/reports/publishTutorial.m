@@ -5,6 +5,9 @@ function publishTutorial()
 % are manually created - they link to the matlab-generated
 % html pages.
 %%
+
+% This file is from pmtk3.googlecode.com
+
 recursive = false; 
 exclusions = {'html', 'attic'};  % no need to exclude if recursive is false
 src = fullfile(pmtk3Root(), 'docs', 'tutorial');

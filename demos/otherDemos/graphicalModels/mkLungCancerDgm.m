@@ -1,6 +1,9 @@
 %% Make the lung cancer dgm
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function dgm = mkLungCancerDgm(varargin)
 %     S
 %    / \

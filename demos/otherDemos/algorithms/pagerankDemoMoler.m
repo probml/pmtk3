@@ -7,6 +7,9 @@
 %PMTKauthor Cleve Moler
 %PMTKurl http://www.mathworks.com/moler/ncm/pagerank.m
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function x = pagerankDemoMoler(U,G,p)
 
 if nargin == 0

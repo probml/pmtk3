@@ -51,6 +51,9 @@ function sdgm = dgmSeqCreate(intra, inter, slice1CPDs, slice2CPDs, emission)
 % dgmSeqMap. 
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 ndx = cellfun('isempty', slice2CPDs);
 slice2CPDs(ndx) = slice1CPDs(ndx); 
 sdgm = structure(intra, inter, slice1CPDs, slice2CPDs, emission); 

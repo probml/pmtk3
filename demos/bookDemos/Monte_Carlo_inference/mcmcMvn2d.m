@@ -2,6 +2,9 @@
 % Compare MH and Gibbs
 % We use a N(0, sigma*eye(2)) proposal and see the effect of changing sigma
 %%
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(0);
 Sigma = [1 -0.5; -0.5 1];
 mu = [1; 1];

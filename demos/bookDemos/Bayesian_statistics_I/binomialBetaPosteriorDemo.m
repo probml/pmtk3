@@ -1,6 +1,9 @@
 %% Example of parameter updating in a Beta-Binomial model
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 data(1).a  = 2;     data(2).a  = 5;
 data(1).b  = 2;     data(2).b  = 2;
 data(1).N1 = 3;     data(2).N1 = 11;

@@ -4,6 +4,9 @@ function [nll,g,H] = LogisticLossSimple(w,X,y)
 % X: n*d
 % y: n*1, should be -1 or 1
 
+% This file is from pmtk3.googlecode.com
+
+
 y01 = (y+1)/2;
 mu = sigmoid(X*w);
 mu = max(mu, eps); % bound away from 0

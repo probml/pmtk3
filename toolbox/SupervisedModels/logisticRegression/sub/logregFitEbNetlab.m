@@ -3,6 +3,9 @@ function [model, logev] = logregFitEbNetlab(X, y, pp)
 % X is n*d, y is d*1, can be binary or multiclass
 % Do not add a column of 1s
 
+% This file is from pmtk3.googlecode.com
+
+
 pp.addOnes = false; % netlab does this already
 [model.preproc, x] = preprocessorApplyToTrain(pp, X);
 

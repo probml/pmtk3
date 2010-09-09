@@ -11,6 +11,9 @@ function logp = dirichletLogprob(arg1, X)
 %    plot functions. Use logp(isnan(logp)) = -Inf if desired.
 %%
 
+% This file is from pmtk3.googlecode.com
+
+
 if isstruct(arg1)
     model = arg1;
     alpha = model.alpha;

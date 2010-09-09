@@ -1,6 +1,9 @@
 %% Run Kmeans on the old faithful data
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function kmeansDemoFaithful
 
 

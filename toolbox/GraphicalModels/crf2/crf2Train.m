@@ -11,6 +11,9 @@ function model = crf2Train(model, Xnode, Xedge, y, varargin)
  % PL - pseudo likelihood
  % PLsubmod: PL with submodularity constraint
 %%
+
+% This file is from pmtk3.googlecode.com
+
 [lambdaNode, lambdaEdge, loss] = process_options(varargin, ...
   'lambdaNode', 0, 'lambdaEdge', 0, 'method', 'CRFloss');
 

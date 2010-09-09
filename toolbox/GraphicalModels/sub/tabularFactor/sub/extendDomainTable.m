@@ -8,6 +8,9 @@ function B = extendDomainTable(A, smalldom, smallsz, bigdom, bigsz)
 % smalldom = [1 3], smallsz = [2 4], bigdom = [1 2 3 4], bigsz = [2 1 4 5],
 % so B(i,j,k,l) = A(i,k) for i in 1:2, j in 1:1, k in 1:4, l in 1:5
 
+% This file is from pmtk3.googlecode.com
+
+
 if isequal(size(A), [1 1]) % a scalar
     B = A; 
     return;

@@ -11,6 +11,9 @@ function [yhat, py] = mlpPredict(model, X)
 % mu(i) = E[y|X(i,:)]
 % s2(i) = Var[y|X(i,:)]
 
+% This file is from pmtk3.googlecode.com
+
+
 if isfield(model, 'preproc')
     [X] = preprocessorApplyToTest(model.preproc, X);
 end

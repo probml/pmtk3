@@ -2,6 +2,9 @@
 % Same as  Figure 12.6 in "The elements of statistical learning" 2e 
 % by Hastie, Tibshirani, Friedman
 %%
+
+% This file is from pmtk3.googlecode.com
+
 data   = loadData('hastieMixture');
 Xtrain = data.X;
 ytrain = convertLabelsToPM1(data.y);

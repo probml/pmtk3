@@ -6,6 +6,9 @@ function model = svmQPclassifFit(X, y, C, kernelParam, kernelFn)
 % PMTKmodified Kevin Murphy
 % PMTKneedsOptimToolbox
 %%
+
+% This file is from pmtk3.googlecode.com
+
 if nargin < 3 || isempty(C), C = 1; end
 if nargin < 4 || isempty(kernelParam), kernelParam = 1/size(X, 2); end
 if nargin < 5 || isempty(kernelFn), kernelFn = @kernelRbfGamma; end

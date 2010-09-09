@@ -1,5 +1,8 @@
 %% Test that belief propagation gives exact results on a tree
 %setSeed(0); 
+
+% This file is from pmtk3.googlecode.com
+
 K = 3; 
 depth = 4; 
 nvars = ((K.^depth)-1)/(K-1);

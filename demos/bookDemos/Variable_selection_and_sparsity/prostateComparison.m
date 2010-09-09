@@ -5,6 +5,9 @@
 % suggests something strange is going on - most likely to do with
 % the offset term, which should be unregularized.)
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function prostateComparison() 
 
 setSeed(0);

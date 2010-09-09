@@ -4,6 +4,9 @@ function [jtree, logZ] = jtreeCalibrate(jtree)
 %
 % logZ  - log of the partition sum
 %%
+
+% This file is from pmtk3.googlecode.com
+
 cliques          = jtree.cliques;
 preOrder         = jtree.preOrder;
 postOrder        = jtree.postOrder;

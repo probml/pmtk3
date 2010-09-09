@@ -4,6 +4,9 @@
 %   theta(:,t) | Z(t)=k ~ Dir(alpha(:,k))
 %   x(i,t) | theta(:,t) ~ Discrete(theta(:,t))
 
+% This file is from pmtk3.googlecode.com
+
+
 
 %% Data generation
 setSeed(1);

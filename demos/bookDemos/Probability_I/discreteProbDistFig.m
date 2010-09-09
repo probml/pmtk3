@@ -2,6 +2,9 @@
 % First a uniform distribution p(x = k) = 1/4.
 % Second a degenerate distribution p(x) = 1 if x=1 and 0 otherwise.
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function discreteProbDistFig
 
 close all;

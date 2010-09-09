@@ -29,6 +29,9 @@ function [TFmega, stateMap] = tabularFactorToMegaNode(TF, newId)
 %     2     2     2     2   -> 16
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 TFmega   = tabularFactorCreate(TF.T(:) , newId);
 stateMap = ind2subv(size(TF.T), 1:numel(TF.T)); 
 end

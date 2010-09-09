@@ -8,6 +8,9 @@ function [model, yhat, loglikHist] = linregCensoredFitEm(X, y, censored, varargi
 %PMTKauthor Hannes Bretschneider 
 %PMTKmodified Matt Dunham
 %%
+
+% This file is from pmtk3.googlecode.com
+
 X = addOnes(X); 
 model.censored = censored; 
 [model, loglikHist] = emAlgo(model, [X, y], @init, @estep, @mstep, ...

@@ -3,6 +3,9 @@ function model = mkRndGaussHmm(nstates, d)
 % nstates is the number of hidden states
 % d is the observation dimensionality
 %%
+
+% This file is from pmtk3.googlecode.com
+
 if nargin < 1
     nstates = 4;
 end

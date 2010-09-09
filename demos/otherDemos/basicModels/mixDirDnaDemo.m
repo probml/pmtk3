@@ -5,6 +5,9 @@
 %   x(i,t) | theta(:,t) ~ Discrete(theta(:,t))
 %%
 
+% This file is from pmtk3.googlecode.com
+
+
 %% Data generation
 setSeed(0);
 Nseq = 10;

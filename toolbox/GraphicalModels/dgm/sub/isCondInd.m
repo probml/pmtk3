@@ -20,6 +20,9 @@ function answer = isCondInd(G, A, B, C)
 % prune =
 %     1     2     4     7    10    12    13    18    36
 %%
+
+% This file is from pmtk3.googlecode.com
+
 if nargin == 0, test(); return; end
 
 if nargin < 4, C = []; end

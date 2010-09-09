@@ -13,6 +13,9 @@ function Wbig = interpolateLarsWeights(Wfull,lambdas,X,y)
 % are piecewise linear, we can just perform linear interpolation to
 % get the weights corresponding to lambdas between these points.
 
+% This file is from pmtk3.googlecode.com
+
+
 Wfull = Wfull(end:-1:1,:); %reverse order for interp1q, (now least regularized to most)
 %criticalPoints = recoverLambdaFromLarsWeights(X,y,Wfull)'; %in ascending order of magnitude.
 criticalPoints = 2*max(abs(X'*(bsxfun(@minus,y,X*Wfull'))),[],1)';%in ascending order of magnitude.

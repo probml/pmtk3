@@ -1,6 +1,9 @@
 %% Compare paired and unpaired Bayesian posteriors on contingency table differences
 %PMTKneedsStatsToolbox ksdensity
 %%
+
+% This file is from pmtk3.googlecode.com
+
 requireStatsToolbox
 setSeed(1);
 thetaX = [0.3 0.4  0.45];

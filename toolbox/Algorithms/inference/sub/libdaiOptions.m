@@ -1,3 +1,6 @@
+
+% This file is from pmtk3.googlecode.com
+
 % # This file contains reasonable default settings for various inference
 % # algorithms in libDAI. Each non-empty line should either be a comment
 % # (starting with #) or contain an alias definition in the format

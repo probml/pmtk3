@@ -1,6 +1,9 @@
 function [alpha, beta, entropy, invW, logDirConst, logLambdaTilde, logPiTilde,  logWishartConst, m, v, W] ...
   = mixGaussBayesDestructure(params)
 %% Destructure the parameters from mixGaussBayesFit
+
+% This file is from pmtk3.googlecode.com
+
 alpha = params.alpha;
 beta = params.beta;
 m = params.m;

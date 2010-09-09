@@ -1,6 +1,9 @@
 function generateSynopses(wikiFile)
 %% Generate the synopses listing files and one line desriptions
 % PMTKneedsMatlab
+
+% This file is from pmtk3.googlecode.com
+
 if nargin < 1
     wikiFile = fullfile(getConfigValue('PMTKlocalWikiPath'), 'synopsisPages.wiki');
 end

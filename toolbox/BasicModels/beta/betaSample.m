@@ -3,6 +3,9 @@ function S = betaSample(arg1, arg2, arg3)
 % S = betaSample(a, b, n); or S = betaSample(model, n);
 % with parameters model.a, model.b. 
 
+% This file is from pmtk3.googlecode.com
+
+
 
 
 if isstruct(arg1)

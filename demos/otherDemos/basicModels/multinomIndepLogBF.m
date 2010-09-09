@@ -1,6 +1,9 @@
 %% Multinomial Bayes Factor demo
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function multinomIndepLogBF()
 counts = [...
     15 29 14;

@@ -1,6 +1,9 @@
 function facs = addEvidenceToFactors(facs, evidence, doSlice)
 %% Slice (or clamp) multiple factors according to a sparse observation vector
 %
+
+% This file is from pmtk3.googlecode.com
+
 if nargin < 3, doSlice = true; end
 if doSlice
     fn = @tabularFactorSlice;

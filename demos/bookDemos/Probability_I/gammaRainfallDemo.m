@@ -1,6 +1,9 @@
 %% Fit a Gamma distribution to the rainfall data by MLE and moment matching
 % Rice (1995) p383
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function gammaRainfallDemo()
 
 X = loadData('rainfall'); 

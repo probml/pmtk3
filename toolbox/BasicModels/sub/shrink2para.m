@@ -9,6 +9,9 @@ function [sigma, shrinkage]=shrink2para(x,shrink)
 %    all covariances are the same
 % if shrink is specified, then this constant is used for shrinkage
 
+% This file is from pmtk3.googlecode.com
+
+
 % de-mean returns
 [t,n]=size(x);
 meanx=mean(x);

@@ -2,6 +2,9 @@
 % Based on figure 7.6 of the netlab book
 %%
 
+% This file is from pmtk3.googlecode.com
+
+
 seed = 0; randn('state', seed);
 n = 5;
 X=[randn(n,2)+2.*ones(n,2);2.*randn(n,2)-2.*ones(n,2)];

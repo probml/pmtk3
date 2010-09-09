@@ -3,6 +3,9 @@
 % as K increases for PCA, but likelihood for PPCA has U shaped curve
 %PMTKslow
 %%
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(0);
 
 %load('olivettifaces.mat'); % 0 to 255, from http://www.cs.toronto.edu/~roweis/data.html

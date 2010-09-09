@@ -4,6 +4,9 @@ function demos = makeRunDemos()
 % code to run all of the PMTK scripts located in the demos directory.
 % All of the work is done in processExamples().
 
+% This file is from pmtk3.googlecode.com
+
+
 fname = 'runDemos.m';                    % name of the file to create
 includeTags = {};                        % include everything
 excludeTags = {'PMTKbroken','PMTKinprogress', ...

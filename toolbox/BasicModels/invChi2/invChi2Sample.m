@@ -3,6 +3,9 @@ function S = invChi2Sample(arg1, arg2, arg3)
 % See Gelman p580
 % S = invChi2Sample(model, n); OR S = invChi2Sample(dof, scale, n);
 %%
+
+% This file is from pmtk3.googlecode.com
+
 if isstruct(arg1)
     model = arg1;
     dof   = model.dof;

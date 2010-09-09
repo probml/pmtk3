@@ -1,6 +1,9 @@
 %% Fit a student  distribution as class conditional density to the bankruptcy data
 %
 
+% This file is from pmtk3.googlecode.com
+
+
 function robustDiscrimAnalysisBankruptcyDemo()
 
 setSeed(0);

@@ -2,6 +2,9 @@ function padded = insertUnitBels(nodeBels, visVars, hidVars)
 % We insert unit factors for the clamped vars to maintain a one-to-one
 % corresponence between cell array position and domain, and to return
 % consistent results regardless of the inference method.
+
+% This file is from pmtk3.googlecode.com
+
 if isempty(visVars)
     padded = nodeBels;
     return;

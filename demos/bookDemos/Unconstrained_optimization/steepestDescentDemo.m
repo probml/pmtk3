@@ -1,6 +1,9 @@
 %% Visualize steepest descent optimization on a 2d function
 % We try fixed step size, and also line searching.
 
+% This file is from pmtk3.googlecode.com
+
+
 fn = @(x) aokiFn(x);
 [x1 x2] = meshgrid(0:0.1:2, -0.5:0.1:3);
 Z = fn([x1(:), x2(:)]);

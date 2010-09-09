@@ -1,6 +1,9 @@
 %% Josh Tenenbaum's Healthy Levels Game
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function healthyLevels()
 no = 0; yes = 1;
 data = generateData();     % [cholesterol, insulin]

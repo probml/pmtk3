@@ -3,6 +3,9 @@ function Tsmall = tabularFactorSlice(Tbig, visVars, visValues)
 % Return Tsmall(hnodes) = Tbig(visNodes=visValues, hnodes=:)
 % visVars are global names, which are looked up in the domain
 
+% This file is from pmtk3.googlecode.com
+
+
 %%
 if isempty(visVars),
     Tsmall = Tbig;

@@ -2,6 +2,9 @@
 %
 %%
 
+% This file is from pmtk3.googlecode.com
+
+
 xmin = -4;xmax = 8;
 ymin = 0;ymax = 0.3;
 res = 0.01;

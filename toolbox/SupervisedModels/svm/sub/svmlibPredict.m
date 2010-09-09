@@ -5,6 +5,9 @@ function yhat = svmlibPredict(model, Xtest)
 % libsvm requires that only specific fields be included in model - remove
 % all others;
 
+% This file is from pmtk3.googlecode.com
+
+
 allowed = {'Parameters', 'nr_class', 'totalSV', 'rho', 'Label', 'ProbA', ...
            'ProbB', 'nSV', 'sv_coef', 'SVs' };
 remove = setdiff(fieldnames(model), allowed);

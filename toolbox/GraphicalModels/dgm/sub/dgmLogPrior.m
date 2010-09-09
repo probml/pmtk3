@@ -1,5 +1,8 @@
 function logp = dgmLogPrior(dgm)
 %% Calculate the logprior of a dgm
+
+% This file is from pmtk3.googlecode.com
+
 CPDs      = dgm.CPDs; 
 %neq       = rowvec(cellfun('length', computeEquivClasses(dgm.CPDpointers))); 
 localCPDs = dgm.localCPDs; 

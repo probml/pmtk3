@@ -1,6 +1,9 @@
 %% Example of finding the MLE precision matrix for a GGM
 % HTF 2e p634
 %%
+
+% This file is from pmtk3.googlecode.com
+
 G = zeros(4,4);
 G(1,[2 4]) = 1;
 G(2,[3 1]) = 1;

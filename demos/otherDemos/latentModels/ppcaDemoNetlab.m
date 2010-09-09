@@ -1,6 +1,9 @@
 %% Compare ppcaFit to Netlab's verson
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(0);
 n = 50;
 d = 10;

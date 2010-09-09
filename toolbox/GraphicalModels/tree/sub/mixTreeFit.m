@@ -7,6 +7,9 @@ function [model] = mixTreeFit(X, K)
 % model.CPD{k}{i}(u,v) = p(i=v|pa(i)=u) for node i in tree k
 %PMTKbroken
 
+% This file is from pmtk3.googlecode.com
+
+
 values = unique(unique(full(X)));
 N = size(X,1); Maxiter = 30; 
 lls = zeros(Maxiter,1);

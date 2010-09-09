@@ -2,6 +2,9 @@ function hmm = dgmSeqToHmm(dgmSeq)
 %% Convert a dgmSeq to an hmm
 % work in progress
 
+% This file is from pmtk3.googlecode.com
+
+
 intra      = dgmSeq.intra;
 inter      = dgmSeq.inter;
 slice1CPDs = dgmSeq.slice1CPDs;

@@ -1,6 +1,9 @@
 %% Demonstrate inference in pairwise mrf using 4 node network
 % Based on http://www.cs.ubc.ca/~schmidtm/Software/UGM/small.html
 
+% This file is from pmtk3.googlecode.com
+
+
 %% Setup model
 nNodes = 4;
 adj = zeros(nNodes);

@@ -9,6 +9,9 @@ function model = naiveBayesFit(Xtrain, ytrain, pseudoCount)
 % theta(c,j) = prob. bit j turns on in class c
 % model.classPrior(c) = p(y=c)
 
+% This file is from pmtk3.googlecode.com
+
+
 if nargin < 3, pseudoCount = 1; end
 
 C = length(unique(ytrain));

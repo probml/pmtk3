@@ -2,6 +2,9 @@ function w = linregFitL2QR(X, y, lambda)
 % Ridge regression using QR
 % lambda can be a vector
 
+% This file is from pmtk3.googlecode.com
+
+
 if lambda == 0
   w = X\y;
 else

@@ -7,6 +7,9 @@ function model = linregRobustLaplaceFitLinprog(X, y)
 % PMTKmodified Kevin Murphy
 % PMTKurl http://www.mathworks.com/matlabcentral/fileexchange/loadFile.do?objectId=8553&objectType=FILE
 
+% This file is from pmtk3.googlecode.com
+
+
 [N,D] = size(X);
 D1 = D+1;
 f = [zeros(1,D1) ones(1,2*N)]';

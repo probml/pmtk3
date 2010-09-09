@@ -1,6 +1,9 @@
 %% Probit Regression Demo
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(0);
 N = 100; D = 2;
 X = randn(N,D);

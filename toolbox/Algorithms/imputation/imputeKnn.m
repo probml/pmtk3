@@ -2,6 +2,9 @@ function Ximpute = imputeKnn( X, K, distMeasure )
 % imputeKnn: Impute missing values using mean of k nearest fully observed neighbors
 % We only compute distance based on the features that are observed in current row
 
+% This file is from pmtk3.googlecode.com
+
+
 %PMTKauthor Hannes Bretschneider
 
 if nargin < 3

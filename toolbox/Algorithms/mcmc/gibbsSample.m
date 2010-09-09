@@ -8,6 +8,9 @@ function X = gibbsSample(fullCondSampler, xinit, Nsamples, Nburnin, thin)
 % OUTPUT
 % X(s, :) = sample s, for s=1:Nsamples (every thin'th sample after burnin)
 
+% This file is from pmtk3.googlecode.com
+
+
 if nargin < 4, Nburnin = floor(0.1*Nsamples); end
 if nargin < 5, thin = 1; end
 

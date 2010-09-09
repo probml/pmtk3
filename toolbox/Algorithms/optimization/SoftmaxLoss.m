@@ -7,6 +7,9 @@ function [nll,g,H] = SoftmaxLoss(w,X,y,k)
 % This is like SoftmaxLoss2, except w is D*C not D*(C-1),
 % since we don't assume the  weights for last class are fixed at 0
 
+% This file is from pmtk3.googlecode.com
+
+
 
 [n,p] = size(X);
 w = reshape(w,[p k]);

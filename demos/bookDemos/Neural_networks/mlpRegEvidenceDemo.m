@@ -4,6 +4,9 @@
 % without user intervention
 %%
 
+% This file is from pmtk3.googlecode.com
+
+
 disp('This demonstration illustrates the application of Bayesian')
 disp('re-estimation to determine the hyperparameters in a simple regression')
 disp('problem. It is based on a local quadratic approximation to a mode of')

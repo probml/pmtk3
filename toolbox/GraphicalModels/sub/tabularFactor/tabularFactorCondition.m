@@ -2,6 +2,9 @@ function [TQ, logZ] = tabularFactorCondition(TF, queryVars, clamped)
 %% Compute sum_H p(Q, H | V=v) through brute force enumeration
 % See also variableElimination
 
+% This file is from pmtk3.googlecode.com
+
+
 if nargin < 3
     clamped = []; 
 end

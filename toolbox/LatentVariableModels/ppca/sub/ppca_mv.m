@@ -20,6 +20,9 @@ function [C, ss, M, X,Ye] = ppca_mv(Ye,d,dia)
 %PMTKurl http://lear.inrialpes.fr/~verbeek
 %PMTKdate 2006
 
+% This file is from pmtk3.googlecode.com
+
+
 
 [N D]       = size(Ye); % N observations in D dimensions
 threshold   = 1e-4;     % minimal relative change in objective funciton to continue    

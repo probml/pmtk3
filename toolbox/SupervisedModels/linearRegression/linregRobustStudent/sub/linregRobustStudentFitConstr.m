@@ -6,6 +6,9 @@ function model = linregRobustStudentFitConstr(X, y, dof, sigma2, includeOffset)
 % model is a structure containing fields: w, dof, sigma2
 % where w = [w0 w1 ... wD] is a column vector, where w0 is the bias
 
+% This file is from pmtk3.googlecode.com
+
+
 %PMTKauthor Hannes Bretschneider
 %PMTKmodified Kevin Murphy
 

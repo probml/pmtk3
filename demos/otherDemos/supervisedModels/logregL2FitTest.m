@@ -1,6 +1,9 @@
 %% Test that the minfunc method and IRLS give same result
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(0); 
 N = 10; D = 2;
 X = randn(N, D);

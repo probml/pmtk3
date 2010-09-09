@@ -52,5 +52,8 @@ function [model, loglikHist] = mixModelFit(data, nmix, type, varargin)
 % A structure - see mixModelCreate for field descriptions
 % loglikHist  - a record of the log likelihood at each EM iteration. 
 %% 
+
+% This file is from pmtk3.googlecode.com
+
 [model, loglikHist] = mixModelFitEm(data, nmix, type, varargin{:});
 end

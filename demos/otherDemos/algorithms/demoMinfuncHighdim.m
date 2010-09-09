@@ -1,6 +1,9 @@
 %% Optimization in high dimensions using minFunc
 % PMTKslow
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function demoMinfuncHighdim()
 
 %methods = {'sd', 'cg',  'bb'};

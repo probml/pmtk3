@@ -4,6 +4,9 @@ function S = mc_sample(prior, trans, len, numex)
 %
 % STATE = SAMPLE_MC(PRIOR, TRANS, LEN, N) generates N rows each of length LEN.
 
+% This file is from pmtk3.googlecode.com
+
+
 if nargin==3
   numex = 1;
 end

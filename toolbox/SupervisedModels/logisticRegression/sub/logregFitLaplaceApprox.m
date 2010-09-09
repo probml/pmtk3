@@ -3,6 +3,9 @@ function [model] = logregFitLaplaceApprox(X, y, lambda, preproc)
 % We use a N(w | 0, diag(lambda) ) prior
 % We assume a column of 1s has already been added
 
+% This file is from pmtk3.googlecode.com
+
+
 [y] = setSupport(y, [-1, 1]);
 
 % First find mode - this will add ones for us

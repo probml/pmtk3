@@ -8,6 +8,9 @@ function out = linregPostSummary(model, varargin)
 %
 % If you set display=true, it
 % prints the summary (as a latex table) to the screen
+
+% This file is from pmtk3.googlecode.com
+
 [doDisplay, useLatex] = process_options(varargin, ...
   'displaySummary', true, 'latex', false);
 

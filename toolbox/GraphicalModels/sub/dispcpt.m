@@ -1,5 +1,8 @@
 function dispcpt(CPT)
 % Display a conditional probability table
+
+% This file is from pmtk3.googlecode.com
+
 n = ndims(CPT);
 parents_size = size(CPT);
 parents_size = parents_size(1:end-1);

@@ -17,6 +17,9 @@ load('prostateStnd');
 options = glmnetSet;
 
 % ridge path
+
+% This file is from pmtk3.googlecode.com
+
 options.alpha = 0; 
 options.nlambda = 10;
 fit = glmnet(X, y, 'gaussian', options);

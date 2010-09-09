@@ -6,6 +6,9 @@ function logp = markovLogprob(model, X)
 % where S(t) denotes the state at time step t.
 %
 % X(m, n) is in 1:length(model.pi), i.e. 1:nstates
+
+% This file is from pmtk3.googlecode.com
+
 N = size(X, 1);
 logA = log(model.A + eps);
 logPi = colvec(log(model.pi + eps));

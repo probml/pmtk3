@@ -13,6 +13,9 @@ function [BF01, probH0] = bayesTtestTwoSample(x,y,xbar,ybar,Nx,Ny,sx,sy)
 % "Bayesian t tests for accepting and rejecting the null hypothesis", 2009
 % J. Rouder and P. Speckman and D. Sun and R. Morey
 
+% This file is from pmtk3.googlecode.com
+
+
 if ~isempty(x)
   % compute sufficient statistics
   xbar         = mean(x);

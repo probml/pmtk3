@@ -1,6 +1,9 @@
 %% Time various pca methods w.r.t. n and d
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(0);
 %Ns = 1*[10 50 100];
 %Ds = [10 50 100];

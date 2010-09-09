@@ -3,6 +3,9 @@ function dgm = dgmTrainFullyObs(dgm, data, varargin)
 %
 % See dgmTrain
 %%
+
+% This file is from pmtk3.googlecode.com
+
 [clamped, localEv] = process_options(varargin , 'clamped', [], 'localev', []); 
 if ~isempty(localEv) && ndims(localEv) < 3 && dgm.nnodes > 1
    localEv = insertSingleton(localEv, 1);  

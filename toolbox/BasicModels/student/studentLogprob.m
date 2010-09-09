@@ -8,6 +8,9 @@ function logp = studentLogprob(arg1, arg2, arg3, arg4)
 %
 % logp = studentLogprob(model, X); OR logp = studentLogprob(mu, Sigma, dof, X);
 %%
+
+% This file is from pmtk3.googlecode.com
+
 if isstruct(arg1)
     model = arg1;
     mu    = model.mu;

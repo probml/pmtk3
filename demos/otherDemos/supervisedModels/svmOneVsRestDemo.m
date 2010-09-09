@@ -3,6 +3,9 @@
 % PMTKslow
 % PMTKneedsOptimToolbox quadprog
 %%
+
+% This file is from pmtk3.googlecode.com
+
 requireOptimToolbox
 loadData('soy'); %C=3, N=307, D=35
 setSeed(0);

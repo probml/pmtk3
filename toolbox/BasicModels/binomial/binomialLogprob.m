@@ -1,6 +1,9 @@
 function logp = binomialLogprob(arg1, arg2, arg3)
 % logp(i) = log p( X(i) | mu, N)
 % logp = binomialLogprob(arg1, arg2, arg3); 
+
+% This file is from pmtk3.googlecode.com
+
 if isstruct(arg1)
     model = arg1; 
     mu = model.mu; 

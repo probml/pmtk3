@@ -4,6 +4,9 @@ function Xhat = kmeansDecode(assign, mu)
 % mu(:,k) is the k'th code vector
 % Xhat(i,:) is the reconstruction
 
+% This file is from pmtk3.googlecode.com
+
+
 [d K] = size(mu);
 n = length(assign);
 Xhat = zeros(n,d);

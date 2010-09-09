@@ -25,6 +25,9 @@ function model = discrimAnalysisFit(X, y, type, varargin)
 % if type==shrunkenCentroids, model.SigmaPooledDiag(c)
 %    and (for plotting purposes) model.shrunkenCentroids(:,c)
 
+% This file is from pmtk3.googlecode.com
+
+
 %PMTKauthor Hannes Bretschneider, Robert Tseng, Kevin Murphy
 %%
 [lambda, R, V, pseudoCount] = process_options(varargin, ...

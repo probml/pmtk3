@@ -3,6 +3,9 @@ function [yhat, v] = linregPredict(model, X)
 % yhat(i) = E[y|X(i,:), model]
 % v(i) = Var[y|X(i,:), model]
 %%
+
+% This file is from pmtk3.googlecode.com
+
 if isfield(model, 'preproc')
     [X] = preprocessorApplyToTest(model.preproc, X);
 end

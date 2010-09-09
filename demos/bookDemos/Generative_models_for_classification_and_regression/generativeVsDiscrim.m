@@ -1,6 +1,9 @@
 %% Sketch of difference between Generative vs Discriminative classifier 
 %
 %% Class conditional densities
+
+% This file is from pmtk3.googlecode.com
+
 figure;
 hold all;
 

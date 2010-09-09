@@ -16,6 +16,9 @@ function logB = mkSoftEvidence(localCPD, X)
 %  Use NaN's in X for unobserved nodes. The corresponding column of B 
 % will contain NaNs.
 %%
+
+% This file is from pmtk3.googlecode.com
+
 assert(size(X, 1) == localCPD.d); 
 [d, seqlen] = size(X); 
 observed    = ~any(isnan(X), 1);

@@ -1,5 +1,8 @@
 %% Compute pairwise mutual information in autompg dataset
 
+% This file is from pmtk3.googlecode.com
+
+
 %loadData('adultCensus'); % make sure data is on path
 %[data] = adultDataPreprocess;
 data = loadData('autompg');

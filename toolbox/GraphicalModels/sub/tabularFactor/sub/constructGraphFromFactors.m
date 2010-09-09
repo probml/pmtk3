@@ -1,6 +1,9 @@
 function G = constructGraphFromFactors(factors)
 %% Construct the graph structure from a cell array of tabularFactors
 
+% This file is from pmtk3.googlecode.com
+
+
 
 facStruct = [factors{:}]; 
 nvars = max([facStruct.domain]); 

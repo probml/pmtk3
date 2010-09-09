@@ -1,6 +1,9 @@
 %% Shattered sin
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 domain = 0:0.0005:1.005;
 f = @(x)sin(50*x);
 

@@ -1,6 +1,9 @@
 %% Lagrange Demo
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 A = [1 1; 1 -1; -1 1; -1 -1];
 H = 2*eye(2);
 K = [H A'; A zeros(4)];

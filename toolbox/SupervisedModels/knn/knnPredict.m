@@ -3,6 +3,9 @@ function [yhat, yprob] = knnPredict(model, Xtest)
 % (ties broken by picking lowest class)
 % ypredProb(m, :) is the empirical distribution over classes
 
+% This file is from pmtk3.googlecode.com
+
+
 [yhat, yprob] = knnClassify(model.X, model.y, Xtest, model.K, model.C);
 
 end

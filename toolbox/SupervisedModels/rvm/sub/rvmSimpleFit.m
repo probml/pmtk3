@@ -2,6 +2,9 @@ function model = rvmSimpleFit(X, y, gamma, varargin)
 %% Fit a relevence vector machine, i.e. logreg + rbf kernel + ard
 % Does not use sparseBayes package, so is much slower
 
+% This file is from pmtk3.googlecode.com
+
+
 
 
 pp = preprocessorCreate('kernelFn', @(X1, X2)kernelRbfGamma(X1, X2, gamma));

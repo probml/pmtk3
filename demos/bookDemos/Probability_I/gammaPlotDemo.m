@@ -2,6 +2,9 @@
 %
 %%
 %as = [1 1.5 2  1 1.5 2]; bs = [1 1 1 1.5 1.5 1.5];
+
+% This file is from pmtk3.googlecode.com
+
 as = [1 1.5 2];
 b = 1;
 bs = b*ones(1,length(as));

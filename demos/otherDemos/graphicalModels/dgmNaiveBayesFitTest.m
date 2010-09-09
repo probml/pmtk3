@@ -1,6 +1,9 @@
 %% Compare dgmTrain and naiveBayesFit
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function dgmNaiveBayesFitTest
 C = 5;  % 5 classes
 d = 20; % each data case will be 20 dimensional 

@@ -3,6 +3,9 @@ function CPD = condStudentCpdCreate(mu, Sigma, dof, varargin)
 % 
 % Adapted from code written by Robert Tseng
 %%
+
+% This file is from pmtk3.googlecode.com
+
 [prior, estimateDof] = process_options(varargin,  'prior' , [], 'estimateDof', true); % prior not currently used
 d = size(Sigma, 1);
 if isvector(Sigma)

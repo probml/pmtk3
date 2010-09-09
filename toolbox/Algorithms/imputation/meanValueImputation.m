@@ -8,6 +8,9 @@ function [X, mu, mode] = meanValueImputation(Xmiss, type)
 % meanValueImputation(Xmiss, 'd') % [1 2 3 1 1 4 1]
 % meanValueImputation(Xmiss, 'c') % [1 2 3 1 2.2 4 2.2]
 
+% This file is from pmtk3.googlecode.com
+
+
 
 [N, D] = size(Xmiss);
 if nargin < 2, type = repmat('c', 1, D); end

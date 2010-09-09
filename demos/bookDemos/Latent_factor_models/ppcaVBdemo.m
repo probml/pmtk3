@@ -2,6 +2,9 @@
 % Reproduce Bishop fig 12.14
 % Needs BPCAfill package from http://hawaii.sys.i.kyoto-u.ac.jp/~oba/tools/
 %%
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(0);
 
 %n = 100;

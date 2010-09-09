@@ -1,6 +1,9 @@
 %% Multitask regression demo
 % PMTKslow
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function multitaskRegDemo()
 seeds = [1 2 3];
 plotFns = true; % set to false to reduce number of plots

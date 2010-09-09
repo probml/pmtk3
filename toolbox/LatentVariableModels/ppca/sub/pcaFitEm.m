@@ -14,6 +14,9 @@ function [W, Z, evals, Xrecon, mu, iter] = pcaFitEm(X, k, varargin)
 % Xrecon -  n*d - reconstructed from first K
 % mu     -  d*1
 %%
+
+% This file is from pmtk3.googlecode.com
+
 n = size(X, 1);
 SetDefaultValue(2, 'k', rank(X)); 
 mu = mean(X);

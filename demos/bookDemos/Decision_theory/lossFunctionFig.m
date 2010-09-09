@@ -1,6 +1,9 @@
 %% Plot various loss functions
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function lossFunctionFig
 
 qvals = [0.3,1,2,10];

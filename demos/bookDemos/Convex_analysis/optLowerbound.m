@@ -1,6 +1,9 @@
 %% Lowerbound illustration
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function optLowerbound
 
 f = @(x) exp(-x);

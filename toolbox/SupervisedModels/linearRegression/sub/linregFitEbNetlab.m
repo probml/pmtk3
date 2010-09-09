@@ -3,6 +3,9 @@ function [model, logev] = linregFitEbNetlab(X, y, pp)
 % X is n*d, y is d*1
 % Do not add a column of 1s
 
+% This file is from pmtk3.googlecode.com
+
+
 pp.addOnes = false; % netlab already does this
 [model.preproc, x] = preprocessorApplyToTrain(pp, X);
 targets = y;

@@ -6,6 +6,9 @@ function samples = crf2Sample(model, Xnode, Xedge, Nsamples)
 % Xe is NedgeFeatures*Nedges
 % samples is Nsamples*Nnodes
 %
+
+% This file is from pmtk3.googlecode.com
+
 if isempty(model.sampleFun)
   fprintf('method %s does not support sampling\n', model.methodName);
   return;

@@ -2,6 +2,9 @@ function dgm = dgmClampCpds(dgm, clamped)
 %% clamp unadjustable cpds prior to e.g. learning
 % removes precomputed jtree if any
 
+% This file is from pmtk3.googlecode.com
+
+
 if ~any(clamped)
     return;
 end

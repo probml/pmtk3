@@ -6,6 +6,9 @@
 % the offset term, which should be unregularized.)
 % Used to debug prostateComparison
 
+% This file is from pmtk3.googlecode.com
+
+
 data = loadData('prostate');
 w=[ones(67,1) data.Xtrain] \ data.ytrain
 

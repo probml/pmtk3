@@ -1,6 +1,9 @@
 %% Bayesian Sequential Updating of a Gaussian
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(0);
 muTrue = [0.5 0.5]'; Ctrue = 0.1*[2 1; 1 1];
 xrange = [-1 1 -1 1];

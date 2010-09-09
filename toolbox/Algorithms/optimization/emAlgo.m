@@ -21,6 +21,9 @@ function [model, loglikHist, llHists] = emAlgo(model, data, init, estep, mstep, 
 % nRandomRestarts: [1]
 % mstepOR: [] this function is required if you use over-relaxed EM
 
+% This file is from pmtk3.googlecode.com
+
+
 %% Random Restart
 [nRandomRestarts, verbose, restartNum, args] = process_options(varargin, ...
     'nrandomRestarts', 1, 'verbose', false, 'restartNum', 1);

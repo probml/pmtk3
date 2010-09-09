@@ -13,6 +13,9 @@ function [model, logev] = linregFitVb(X, y, pp, useARD)
 %
 % logev is the lower bound on the log marginal likelihood
 
+% This file is from pmtk3.googlecode.com
+
+
 [model.preproc, X] = preprocessorApplyToTrain(pp, X);
 if ~useARD
   [w, V, invV, logdetV, an, bn, E_a, L] = bayes_linear_fit(X, y); %#ok

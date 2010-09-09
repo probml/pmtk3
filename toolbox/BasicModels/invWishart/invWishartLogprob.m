@@ -9,6 +9,9 @@ function logp = invWishartLogprob(arg1, arg2, arg3)
 % logp = invWishartLogprob(Sigma, dof, S);
 %%
 
+% This file is from pmtk3.googlecode.com
+
+
 if isstruct(arg1)
     model = arg1;
     Sigma = model.Sigma;

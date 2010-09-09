@@ -8,6 +8,9 @@ src = [1 2 3 1];
 Ntest = length(src);
 % each example is a ROW vector
 
+% This file is from pmtk3.googlecode.com
+
+
 dataTestNoisy = zeros(Ntest, p);
 dataTestClean = zeros(Ntest, p);
 dataTestMissing = zeros(Ntest, p);

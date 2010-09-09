@@ -1,6 +1,9 @@
 %% Classify using KNN
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function knnClassifyDemo()
 
 %% load data

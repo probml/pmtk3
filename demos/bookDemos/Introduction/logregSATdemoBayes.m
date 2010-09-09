@@ -3,6 +3,9 @@
 % and MC approximation to postpred
 %
 
+% This file is from pmtk3.googlecode.com
+
+
 stat = loadData('sat');  y = stat(:,1); X = stat(:,4);
 
 %pp =  preprocessorCreate('standardizeX',true, 'addOnes', true);

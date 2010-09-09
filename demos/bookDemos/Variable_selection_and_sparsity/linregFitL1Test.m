@@ -1,5 +1,8 @@
 %% Linear Regression L1 Fit Test
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function linregFitL1Test()
 
 

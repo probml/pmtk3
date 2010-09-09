@@ -1,6 +1,9 @@
 %% Demonstrate a non-parametric (parzen) density estimator in 1D 
 % We use a Gaussian (i.e. rbf) kernel. 
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function parzenWindowDemo
 
 setSeed(2);

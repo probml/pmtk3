@@ -1,5 +1,8 @@
 function dataSets = scrapePmtkData()
 %% Scrape pmtkData.googleCode.com to get the names of all the data sets there
+
+% This file is from pmtk3.googlecode.com
+
 excludedDirs = tokenize(getConfigValue('PMTKmetaDirs'), ',')';
 
 url = 'http://pmtkdata.googlecode.com/svn/trunk/';

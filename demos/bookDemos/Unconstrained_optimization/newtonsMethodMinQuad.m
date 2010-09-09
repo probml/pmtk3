@@ -1,6 +1,9 @@
 %% Illustration of a function g and its second order approximation.
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function newtonsMethodMinQuad
 
 

@@ -9,6 +9,9 @@
 % expansion on X; we do not change the regularizer.
 % This makes hardly any difference to the training error.
 %%
+
+% This file is from pmtk3.googlecode.com
+
 options.Display = 'none';
 setSeed(0); 
 nClasses = 5;

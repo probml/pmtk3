@@ -9,6 +9,9 @@ function dgm = mkRndTreeDgm(K, depth, nstates, varargin)
 % Any additional args are passed directly to dgmCreate
 %%
 
+% This file is from pmtk3.googlecode.com
+
+
 G      = mkTreeDag(K, depth); 
 nnodes = size(G, 1); 
 CPDs   = cell(nnodes, 1); 

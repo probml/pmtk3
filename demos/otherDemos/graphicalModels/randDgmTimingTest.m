@@ -2,6 +2,9 @@
 %
 %%
 %PMTKslow
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(2);
 
 methods    = {'libdaiJtree', 'jtree', 'varelim'};

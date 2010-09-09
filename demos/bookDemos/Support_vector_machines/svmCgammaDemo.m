@@ -6,6 +6,9 @@
 % PMTKslow
 %%
 %% Load Data
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(0);
 data = loadData('hastieMixture'); 
 y = convertLabelsToPM1(data.y);

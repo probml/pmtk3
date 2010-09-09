@@ -2,6 +2,9 @@ function testPmtk3()
 %% Minimal test that PMTK3 is correctly installed and working on your system
 %
 %% matlab Tools
+
+% This file is from pmtk3.googlecode.com
+
 fprintf('Checking for matlabTools.........');
 if exist('onesPMTK.m', 'file') == 2 && exist('filelist.m', 'file') == 2;
     fprintf('PASSED\n');

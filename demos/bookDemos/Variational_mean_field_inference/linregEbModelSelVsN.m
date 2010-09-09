@@ -3,6 +3,9 @@
 % We use empirical Bayes (EB) and variational Bayes (VB)
 % to tune the hyper-parameter and approximate the marginal likelihood
 
+% This file is from pmtk3.googlecode.com
+
+
 % Based on a demo by Zoubin Ghahramani
 
 % For EB, we either use the pmtk wrapper to Tao Chen's code

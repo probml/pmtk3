@@ -6,6 +6,9 @@ function [model, L, Lhist] = linregFitEbChen(X, Y, pp, varargin)
 % L is log marginal likelihood
 % gamma is effective number of paramers
 
+% This file is from pmtk3.googlecode.com
+
+
 % we currently ignore whether we prepended 1s  to X or not
 
 

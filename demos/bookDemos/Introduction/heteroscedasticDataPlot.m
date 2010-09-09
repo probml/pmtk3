@@ -1,6 +1,9 @@
 %% Plot of heteroscedastic linear regression
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(0);
 n = 150; 
 X = sort(100*rand(n, 1)); 

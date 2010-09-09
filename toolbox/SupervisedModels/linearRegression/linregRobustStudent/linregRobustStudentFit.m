@@ -1,5 +1,8 @@
 function model = linregRobustStudentFit(X, y, dof, sigma2)
 %% Fit linear regression with Student noise model
+
+% This file is from pmtk3.googlecode.com
+
 if nargin < 3, dof = []; end
 if nargin < 4, sigma2 = []; end
 

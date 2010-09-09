@@ -11,6 +11,9 @@ function unzipData(dataSource, dest, threshold)
 % unzipData('C:\pmtkData', 'C:\users\Matt\Desktop\', 5);
 %%
 
+% This file is from pmtk3.googlecode.com
+
+
 SetDefaultValue(1, 'dataSource', 'C:\pmtkData'); 
 
 zipFiles = filelist(dataSource, '*.zip', true); 

@@ -1,5 +1,8 @@
 function S = invWishartSample(model, n)
 % S(:, :, 1:n) ~ IW(model.Sigma, model.dof)
+
+% This file is from pmtk3.googlecode.com
+
 if nargin < 2, n = 1; end
 Sigma = model.Sigma;
 dof   = model.dof;

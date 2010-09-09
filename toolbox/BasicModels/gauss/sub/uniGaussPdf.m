@@ -5,6 +5,9 @@ function p = uniGaussPdf(X, mu, sigma2)
 % different distribution, i.e. different mu and sigma2 values, otherwise
 % use gaussProb, which works in the uni and multivariate case. 
 %%
+
+% This file is from pmtk3.googlecode.com
+
 X      = colvec(X);
 mu     = colvec(mu);
 sigma2 = colvec(sigma2);

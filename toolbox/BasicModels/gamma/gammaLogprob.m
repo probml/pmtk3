@@ -4,6 +4,9 @@ function logp = gammaLogprob(arg1, arg2, arg3)
 % a is the shape,
 % b is the rate, i.e. 1/scale
 
+% This file is from pmtk3.googlecode.com
+
+
 if isstruct(arg1)
     model = arg1;
     X = arg2; 

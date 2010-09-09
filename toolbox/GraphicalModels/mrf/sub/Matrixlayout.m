@@ -4,6 +4,9 @@ classdef Matrixlayout < Abstractlayout
 %       2 5 8
 %       3 6 9];
 %%
+
+% This file is from pmtk3.googlecode.com
+
     properties
         xmin;               % The left most point on the graph axis in data units
         xmax;               % The right most point on the graph axis in data units

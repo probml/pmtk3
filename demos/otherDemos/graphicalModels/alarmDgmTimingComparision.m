@@ -2,6 +2,9 @@
 %
 %%
 
+% This file is from pmtk3.googlecode.com
+
+
 ntrials = 50;
 setSeed(1);
 loadData('alarmNetwork');

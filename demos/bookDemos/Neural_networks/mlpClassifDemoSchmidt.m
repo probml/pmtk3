@@ -2,6 +2,9 @@
 % Based on Mark Schmidt's Demo from
 %http://people.cs.ubc.ca/~schmidtm/Software/minFunc/minFunc.html#9
 %%
+
+% This file is from pmtk3.googlecode.com
+
 H = [3, 6, 9];
 H = 6;
 for hi=1:length(H)

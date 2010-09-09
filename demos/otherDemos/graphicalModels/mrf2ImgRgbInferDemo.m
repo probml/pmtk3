@@ -1,6 +1,9 @@
 %% Demonstrate inference  in a 2d grid of a multi-state noisy image of an X
 % Based on http://www.cs.ubc.ca/~schmidtm/Software/UGM/alphaBeta.html
 
+% This file is from pmtk3.googlecode.com
+
+
 %% Get model and data
 setSeed(0);
 loadData('XimgRgb');

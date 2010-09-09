@@ -1,5 +1,8 @@
 %% Compiles mex files for the lightspeed library.
 
+% This file is from pmtk3.googlecode.com
+
+
 % Written by Tom Minka
 % (c) Microsoft Corporation. All rights reserved.
 

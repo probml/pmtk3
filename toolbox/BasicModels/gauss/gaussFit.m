@@ -7,6 +7,9 @@ function model = gaussFit(X, prior)
 %   with  params mu, Sigma, dof, k 
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 [N, D] = size(X);
 if nargin < 2 || isempty(prior) || strcmpi(prior, 'none') % mle
     mu = mean(X);

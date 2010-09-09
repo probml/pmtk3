@@ -19,6 +19,9 @@ function [model, path] = linregFitPathCv(X, y, varargin)
 % path.w        ... w0(j) is offset
 % path.lambdas  ... contains lambdas values searched over
 
+% This file is from pmtk3.googlecode.com
+
+
 % default preprocessing
 pp = preprocessorCreate();
 

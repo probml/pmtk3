@@ -24,6 +24,9 @@ function [model, loglikHist] = ldsFitEm(data, nlatent, varargin)
 % loglikHist    - history of the log likelihood
 %
 
+% This file is from pmtk3.googlecode.com
+
+
 [model.useMap, model.useMap, EMargs] = process_options(varargin, ...
     'addOffset', true, 'useMap', true);
 

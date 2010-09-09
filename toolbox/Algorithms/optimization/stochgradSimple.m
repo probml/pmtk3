@@ -13,6 +13,9 @@ function [w, f, exitflag, output] = stochgradSimple(objFun, w0, options, X, y, v
 %
 % Optional arguments:
 
+% This file is from pmtk3.googlecode.com
+
+
 %PMTKauthor  Kevin Murphy
 
 batchsize =  getOpt(options,'batchsize',10);

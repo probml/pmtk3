@@ -65,6 +65,9 @@ function  [xn,Fn,gn,info,perf] = ...
 %
 % In both cases  info(2) = U'(am)/U'(0) .
 
+% This file is from pmtk3.googlecode.com
+
+
 %PMTKauthor Hans Bruun Nielsen
 %PMTKurl http://www2.imm.dtu.dk/~hbn/immoptibox/
 

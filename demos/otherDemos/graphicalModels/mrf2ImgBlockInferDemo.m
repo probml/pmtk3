@@ -3,6 +3,9 @@
 % http://www.cs.ubc.ca/~schmidtm/Software/UGM/block.html
 % PMTKslow
 %% Get model and data
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(0);
 load X.mat % binary image of an 'X'
 Xclean = X;

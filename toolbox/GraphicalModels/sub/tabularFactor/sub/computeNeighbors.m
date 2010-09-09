@@ -13,6 +13,9 @@ function [nbrs, sepSets] = computeNeighbors(cg)
 % sepSets     - the separating sets, i.e. the domain intersections of
 %               the cliques. 
 %%
+
+% This file is from pmtk3.googlecode.com
+
 Tfac      = cg.Tfac;
 facStruct = [Tfac{:}];
 doms      = {facStruct.domain};

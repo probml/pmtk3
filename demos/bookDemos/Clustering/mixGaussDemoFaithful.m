@@ -1,6 +1,9 @@
 %% Visualize fitting a mixture of Gaussians to the old faithful dataset
 % reproduce Bishop fig 9.8
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function mixGaussDemoFaithful
 
 setSeed(0);

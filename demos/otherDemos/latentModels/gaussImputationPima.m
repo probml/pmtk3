@@ -1,6 +1,9 @@
 %% Impute missing entries of the 4d Pima Indians data using an MVN  
 %PMTKauthor Cody Severinski
 %%
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(0);
 D = loadData('pimatr');
 pima = D.data; 

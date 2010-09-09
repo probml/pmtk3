@@ -3,6 +3,9 @@ function pi = mcStatDist(T, method)
 % Returns a row vector
 % Based on code by Andrew M. Ross http://www.lehigh.edu/~amr5/q/matlab.html
 
+% This file is from pmtk3.googlecode.com
+
+
 K = length(T);
 if nargin < 2, method = 2; end
 switch method

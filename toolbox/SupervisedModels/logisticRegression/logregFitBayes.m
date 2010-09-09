@@ -17,6 +17,9 @@ function [model, logev, postSummary] = logregFitBayes(X, y, varargin)
 % model.wN and model.VN contain posterior.
 % logev is  the log marginal likelihood
 
+% This file is from pmtk3.googlecode.com
+
+
 
 [preproc, method, lambda, useARD, displaySummary] = process_options(varargin, ...
   'preproc', preprocessorCreate('addOnes', true, 'standardizeX', true), ...

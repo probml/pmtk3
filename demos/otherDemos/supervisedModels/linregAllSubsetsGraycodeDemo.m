@@ -1,6 +1,9 @@
 %% All subsets regression
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(0);
 N = 20; D = 10;
 w = randn(D,1);

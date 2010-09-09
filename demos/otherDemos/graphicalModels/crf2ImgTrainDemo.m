@@ -1,6 +1,9 @@
 %% Demonstrate training a lattice-structured CRF
 % Based on http://people.cs.ubc.ca/~schmidtm/Software/UGM/trainApprox
 
+% This file is from pmtk3.googlecode.com
+
+
 
 %% Get  data
 setSeed(0);

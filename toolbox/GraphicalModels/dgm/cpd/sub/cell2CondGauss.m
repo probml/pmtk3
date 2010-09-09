@@ -1,6 +1,9 @@
 function cpd = cell2CondGauss(C)
 %% Convert a cell array of gauss models to a condGaussCpd
 
+% This file is from pmtk3.googlecode.com
+
+
 if isstruct(C) && isfield(C, 'cpdType'), cpd = C; return; end
 nstates = numel(C); 
 d = size(C{1}.Sigma, 1); 

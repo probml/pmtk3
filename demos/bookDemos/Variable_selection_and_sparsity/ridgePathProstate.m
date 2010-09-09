@@ -1,6 +1,9 @@
 %% Plot the full L2 regularization path for the prostate data set 
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 loadData('prostateStnd');
 setSeed(0);
 %[X, y] = shuffleRows(X, y);

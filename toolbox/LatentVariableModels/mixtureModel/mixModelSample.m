@@ -1,6 +1,9 @@
 function [X, y] = mixModelSample(model, nsamples)
 %% Sample from a mixture model 
 
+% This file is from pmtk3.googlecode.com
+
+
 y = sampleDiscrete(model.mixWeight, nsamples, 1);
 switch lower(model.type)
     

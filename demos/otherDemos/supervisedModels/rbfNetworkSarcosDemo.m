@@ -1,6 +1,9 @@
 %% RBF Network Demo
 % PMTKslow
 %%
+
+% This file is from pmtk3.googlecode.com
+
  
  loadData('sarcosData')
  setSeed(0);

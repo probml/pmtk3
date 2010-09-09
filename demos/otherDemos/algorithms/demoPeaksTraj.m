@@ -2,6 +2,9 @@
 %PMTKneedsOptimToolbox fminunc
 %%
 %[X,Y,Z] = peaks; % 49x49 surface surface
+
+% This file is from pmtk3.googlecode.com
+
 requireOptimToolbox;
 [X,Y] = meshgrid(linspace(-2.5,2.5,40),linspace(-3,3,50));
 Z = peaks(X,Y);

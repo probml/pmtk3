@@ -43,6 +43,9 @@ function dgm = dgmTrain(dgm, varargin)
 % If data is missing, see emAlgo for additional EM related optional args. 
 %%
 
+% This file is from pmtk3.googlecode.com
+
+
 [data, clamped, buildJtree, args] = process_options(varargin, ...
     'data', [], 'clamped', [], 'buildJtree', strcmpi(dgm.infEngine, 'jtree'));
 

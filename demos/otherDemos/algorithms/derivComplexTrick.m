@@ -38,6 +38,9 @@
 %PMTKurl http://www.mathworks.com/matlabcentral/files/11870/deriv.m
 %PMTKauthor Daniel Ellis 
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function dfdx=derivComplexTrick(f,x,h,method)
 
 DISP=0;  % Flag to turn on/off a plot of the result...this is of marginal utility, therefore the default is ZERO

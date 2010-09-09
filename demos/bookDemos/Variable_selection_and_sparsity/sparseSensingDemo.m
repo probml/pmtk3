@@ -4,6 +4,9 @@
 % PMTKmodified Kevin Murphy
 % PMTKslow
 %%
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(0);
 % n is the original signal length
 n = 2^12;

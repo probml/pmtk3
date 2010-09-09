@@ -15,6 +15,9 @@ function [bels, converged] = belPropResidual(cg, varargin)
 %% This is experimental code and may be buggy
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 [maxIter, tol, lambda, convFn]  = process_options(varargin, ...
     'maxIter'       , 100  , ...
     'tol'           , 1e-3 , ...

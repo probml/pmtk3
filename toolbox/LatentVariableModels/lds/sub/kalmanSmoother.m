@@ -5,6 +5,9 @@ function [msmooth, Vsmooth, loglik, VVsmooth] = ...
 % For learning with EM, we also need to compute
 % VVsmooth(:,:,t) = Cov[Z(t+1), Z(t) | y(1:T)] t=1:T-1
 
+% This file is from pmtk3.googlecode.com
+
+
 [os T] = size(y); % os = size of observation space
 ss = size(A,1); % size of state space
 

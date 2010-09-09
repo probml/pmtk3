@@ -5,6 +5,9 @@ function logp = invGammaLogprob(arg1, arg2, arg3)
 % b is the scale.
 %%
 
+% This file is from pmtk3.googlecode.com
+
+
 if isstruct(arg1)
     model = arg1;
     X = arg2;

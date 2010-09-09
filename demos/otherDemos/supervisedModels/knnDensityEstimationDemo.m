@@ -2,6 +2,9 @@
 % Contrast this with parzenWindowDemo(), where rather than fixing the
 % number of points, K, as we do here, we fix the window size.
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function knnDensityEstimationDemo()
 
 setSeed(0);

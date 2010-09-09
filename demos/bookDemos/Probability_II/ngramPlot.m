@@ -2,6 +2,9 @@
 %
 %%
 
+% This file is from pmtk3.googlecode.com
+
+
 loadData('ngramData'); % cotnains bigrams, ugrams, etc (use ngramMake to create this)
 if(0) % Plot bigram frequencies
     bigramFig = figure;

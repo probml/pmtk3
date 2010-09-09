@@ -3,6 +3,9 @@ function [model] = mlpClassifFitSchmidt(X, y, nHidden, lambda, options)
 % nHidden can be a vector of integers if there are multiple laters
 % We currenly assume the same L2 regularizer on all the parameters
 
+% This file is from pmtk3.googlecode.com
+
+
 if nargin < 5, options.Display = 'none';  end
 y = (2*(canonizeLabels(y)-1))-1; % ensure -1,+1
 [N,D] = size(X);

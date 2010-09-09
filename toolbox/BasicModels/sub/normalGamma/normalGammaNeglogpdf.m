@@ -1,5 +1,8 @@
 function out=normalGammaNeglogpdf(w,shape, scale)
 % Nomral gamma negative logpdf
+
+% This file is from pmtk3.googlecode.com
+
 lambda = shape;
 gamma = sqrt(2*scale);
 %warning off

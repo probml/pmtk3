@@ -1,6 +1,9 @@
 %% Compare Gauss, Student T, and Laplacian distributions
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 xs = -4:0.2:4;
 v = 1;
 mu = 0;

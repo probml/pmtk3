@@ -5,6 +5,9 @@
 %
 %%
 
+% This file is from pmtk3.googlecode.com
+
+
 setSeed(39)
 mu = [0.05:0.1:0.95;0.05:0.1:0.95];
 mu(1,:) = mu(1,randperm(10));

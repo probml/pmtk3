@@ -24,6 +24,9 @@ function [assignment, cost] = assignmentoptimal(distMatrix)
 % PMTKauthor Markus Buehren
 % PMTKurl http://www.mathworks.com/matlabcentral/fileexchange/6543
 
+% This file is from pmtk3.googlecode.com
+
+
 % save original distMatrix for cost computation
 originalDistMatrix    = distMatrix;
 

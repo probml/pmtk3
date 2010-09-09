@@ -3,6 +3,9 @@ function [W, b, muPost, logZ] = tippingEM(Y, q)
 % Y(i,n) is the n'th example - each COLUMN is an example
 % q is the number of latent variables
 
+% This file is from pmtk3.googlecode.com
+
+
 [p N] = size(Y);
 
 % initialization

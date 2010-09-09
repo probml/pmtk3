@@ -11,6 +11,9 @@
 % Specify the conditional probability tables as cell arrays
 % The left-most index toggles fastest, so entries are stored in this order:
 % (1,1,1), (2,1,1), (1,2,1), (2,2,1), etc.
+
+% This file is from pmtk3.googlecode.com
+
 C = 1; S = 2; R = 3; W = 4;
 CPD{C} = reshape([0.5 0.5], 2, 1);
 CPD{R} = reshape([0.8 0.2 0.2 0.8], 2, 2);

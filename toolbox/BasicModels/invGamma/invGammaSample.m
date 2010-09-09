@@ -2,6 +2,9 @@ function X = invGammaSample(arg1, arg2, arg3)
 % Sample from an inverse gamma distribution with parameters a, b
 % X = invGammaSample(model, n); or X = invGammaSample(a, b, n);
 
+% This file is from pmtk3.googlecode.com
+
+
 if isstruct(arg1)
     model = arg1;
     a = model.a;

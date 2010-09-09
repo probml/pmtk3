@@ -1,6 +1,9 @@
 %% Rosenbrock constrained optimization demo
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function demoRosenConstrained()
 
 % minimize 2d rosenbrock st x1^2 + x^2 <= 1

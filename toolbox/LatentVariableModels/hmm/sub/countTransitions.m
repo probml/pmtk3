@@ -3,6 +3,9 @@ function A = countTransitions(data, nstates)
 % data is a cell array of cases of potentially different lengths. 
 %%
 
+% This file is from pmtk3.googlecode.com
+
+
 if ~iscell(data)
    if isvector(data)
        data = {data};

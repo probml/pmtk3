@@ -2,6 +2,9 @@ function y=acf(x,lagmax)
 %ACF Autocorrelation function
 % ACF(X,maxlag)
 
+% This file is from pmtk3.googlecode.com
+
+
 x = x(:)'-mean(x);
 n = length(x);
 if nargin<2

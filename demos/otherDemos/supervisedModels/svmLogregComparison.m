@@ -1,6 +1,9 @@
 %% Compare kernalized L1 logistic regession to an svm. 
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 loadData('crabs');
 %% SVM
 gammas = logspace(-2, 2, 30);

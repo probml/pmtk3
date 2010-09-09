@@ -1,6 +1,9 @@
 %% Fit a discrete HMM via hmmFit and dgmTrain, comparing the results
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(0); 
 obsModel = [1/6 , 1/6 , 1/6 , 1/6 , 1/6 , 1/6  ;   
            1/10, 1/10, 1/10, 1/10, 1/10, 5/10 ];   

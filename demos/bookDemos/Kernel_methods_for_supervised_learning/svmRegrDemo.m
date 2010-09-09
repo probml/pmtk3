@@ -1,6 +1,9 @@
 %% SVM Regression Demo
 % PMTKneedsOptimToolbox quadprog
 %%
+
+% This file is from pmtk3.googlecode.com
+
 requireOptimToolbox
 nVars = 1;
 nInstances = 50;

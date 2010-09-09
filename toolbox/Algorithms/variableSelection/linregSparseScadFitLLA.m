@@ -3,6 +3,9 @@ function [ w, loglik ] = linregSparseScadFitLLA( X, y, lambda, varargin )
 % We assume lambda is a scalar
 %PMTKauthor Hannes Bretschneider
 
+% This file is from pmtk3.googlecode.com
+
+
 [maxIter, convTol, alpha] = process_options(varargin, ...
    'maxIter', 100, 'convTol', 1e-3, 'alpha', 3.7);
 

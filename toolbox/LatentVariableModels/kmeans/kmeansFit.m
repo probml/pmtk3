@@ -22,6 +22,9 @@ function [mu, assign, errHist] = kmeansFit(X, K, varargin)
 % [mu, assign, errHist] = kmeansFit(randn(1000, 10), 7, 'verbose', true);
 % 
 %% Parse inputs
+
+% This file is from pmtk3.googlecode.com
+
 [maxIter, thresh, plotfn, verbose, mu] = process_options(varargin, ...
     'maxIter' , 100           , ...
     'thresh'  , 1e-3          , ... 

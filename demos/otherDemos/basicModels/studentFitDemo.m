@@ -1,6 +1,9 @@
 %% Compare EM to matlab stats toolbox
 % PMTKneedsStatsToolbox mle
 %%
+
+% This file is from pmtk3.googlecode.com
+
 requireStatsToolbox
 %% same data as gaussVsStudentOutlierDemo
 n = 30;

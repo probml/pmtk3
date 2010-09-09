@@ -1,6 +1,9 @@
 %% Compare the class separations induced by PCA and Fisher LDA respectively.
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function fisherLDAdemo()
 
 %

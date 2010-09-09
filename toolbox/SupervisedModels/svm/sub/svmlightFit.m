@@ -12,6 +12,9 @@ function model = svmlightFit(X, y, C, kernelParam, kernelType, saveAlphas, optio
 % svm_learn.exe.
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 if nargin < 3 || isempty(C), 
     cswitch = '';
 else

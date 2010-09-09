@@ -1,6 +1,9 @@
 function smallT = margTable(bigT, bigdom, bigsz, onto, maximize)
 % Marginalize a table
 
+% This file is from pmtk3.googlecode.com
+
+
 if nargin < 5, maximize = 0; end
 
 smallT = reshapePMTK(bigT, bigsz);        % make sure it is a multi-dim array

@@ -1,6 +1,9 @@
 %% Cluster yeast data using Kmeans
 %PMTKneedBioToolbox redgreencmap
 %% 
+
+% This file is from pmtk3.googlecode.com
+
 requireBioinfoToolbox
 loadData('yeastData310') % 'X', 'genes', 'times');
 

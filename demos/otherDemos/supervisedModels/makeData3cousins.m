@@ -5,6 +5,9 @@
 % number of measurements d - number of variables rho - correlation
 % coefficients sigma2 - noise variance Written by Emt and Kevin
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function [y w s X]=makeData3cousins(options)
 if nargin == 0, options = {}; end
 [n,d,rho,sigma2,amp] = myProcessOptions(options,'n',40,'d',60,'rho',0.1,'sigma2',0.2,'amp',1);

@@ -22,6 +22,9 @@ function [x,y] = ldsSample(F, H, Q, R, init_state, T, models, G, u)
 % x(:,t)    - the hidden state vector at time t.
 % y(:,t)    - the observation vector at time t.
 
+% This file is from pmtk3.googlecode.com
+
+
 
 if ~iscell(F)
   F = num2cell(F, [1 2]);

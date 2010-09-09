@@ -1,6 +1,9 @@
 %% Illustration of decision regions for the 3 class case
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 domain = -3:0.01:13;
 sigma = 1.5.^2;
 r1 = gaussProb(domain, 0, sigma);

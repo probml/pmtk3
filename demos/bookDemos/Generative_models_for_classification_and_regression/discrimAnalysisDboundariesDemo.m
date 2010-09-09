@@ -1,6 +1,9 @@
 %% Plot Decision boundaries induced by a mixture of two or three 2D Gaussians
 % Based on code by Tommi Jaakkola
 
+% This file is from pmtk3.googlecode.com
+
+
 %% Two class linear
 model(1).classPrior  = [1 1]/2;
 model(1).mu          = [1.5 1.5 ; -1.5 -1.5]';

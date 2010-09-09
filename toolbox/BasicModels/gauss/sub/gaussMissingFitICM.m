@@ -6,6 +6,9 @@ function [model, loglikTrace] = gaussMissingFitICM(data, varargin)
 % tol  [1e-4] - convergence tolerance for the loglikelihood
 % verbose [false]
 
+% This file is from pmtk3.googlecode.com
+
+
 % Written by Cody Severinski and Kevin Murphy
 
 [maxIter, opttol, verbose] = process_options(varargin, ...

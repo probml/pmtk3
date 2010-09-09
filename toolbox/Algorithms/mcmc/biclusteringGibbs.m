@@ -13,6 +13,9 @@ function [biclusterRows, biclusterCols, rowPostProb, colPostProb, traceRow, trac
 %}
 %PMTKauthor Cody Severinski
 
+% This file is from pmtk3.googlecode.com
+
+
 [allRowThres, allColThres, nSamples, nBurnin, nRestarts, plot, verbose, trace, alpha, xiRow, xiCol, beta] = process_options(varargin, ...
       'allRowThres', [], ...
       'allColThres', [], ...

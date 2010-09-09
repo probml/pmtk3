@@ -1,6 +1,9 @@
 %% Demonstrate inference in undirected markov chain
 % Based on http://www.cs.ubc.ca/~schmidtm/Software/UGM/chain.html
 
+% This file is from pmtk3.googlecode.com
+
+
 %% Setup model
 nNodes = 60;
 adj = chainAdjMatrix(nNodes);

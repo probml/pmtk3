@@ -4,6 +4,9 @@
 % PMTKneedsNnetToolbox
 % PMTKslow
 %%
+
+% This file is from pmtk3.googlecode.com
+
 requireImageToolbox
 loadData('binaryImages');     % 7 binary images, each 150x150
 newsize   = 30;          % new size 30x30

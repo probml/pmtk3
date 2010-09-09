@@ -19,6 +19,9 @@ function S = multinomSample(arg1, arg2, arg3)
 %      3     6     1
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 if isstruct(arg1)
     model = arg1;
     N = model.N;

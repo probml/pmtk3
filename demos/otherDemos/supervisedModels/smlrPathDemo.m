@@ -4,6 +4,9 @@
 %
 % See also linearKernelDemo
 
+% This file is from pmtk3.googlecode.com
+
+
 % Results: rows  = soy, colon
 % cols = 'smlrPath', 'smlrNoPath', 'rmlrPath', 'rmlrNoPath'
 %{

@@ -5,6 +5,9 @@ function value = getConfigValue(var, ignoreLocal)
 %% Example
 % path = getConfigValue('PMTKsupportLink');
 
+% This file is from pmtk3.googlecode.com
+
+
 if nargin < 2, ignoreLocal = false; end % if true, ignore config-local.txt
 
 local = fullfile(pmtk3Root(), 'config-local.txt');

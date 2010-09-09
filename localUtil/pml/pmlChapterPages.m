@@ -11,6 +11,9 @@ function [pg, name] = pmlChapterPages(tocfile)
 % name - the name of the chapter, e.g. "Introduction", "The multivariate
 % Gaussian", etc. 
 
+% This file is from pmtk3.googlecode.com
+
+
 if nargin == 0
     tocfile = fullfile(getConfigValue('PMTKpmlBookSource'), 'pml.toc');
 end

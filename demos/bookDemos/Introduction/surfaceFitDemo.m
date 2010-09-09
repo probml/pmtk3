@@ -1,6 +1,9 @@
 %% Fit linear and quadratic surfaces to data
 % Based on code by Romain Thibaux <thibaux@eecs.berkeley.edu>
 %%
+
+% This file is from pmtk3.googlecode.com
+
 loadData('moteData'); % X,y
 
 N = size(X,1);

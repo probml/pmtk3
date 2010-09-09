@@ -13,6 +13,9 @@ function model = smlrFit(X, y, varargin)
 %  The latter seems to work better.
 % lambdaRange ... Range to search over if not using path
 
+% This file is from pmtk3.googlecode.com
+
+
 pathOpts = glmnetSet();
 pathOpts.standardize = false;
 

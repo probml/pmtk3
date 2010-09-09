@@ -250,6 +250,9 @@ function [selectedVars,Wlsq,varargout] = bolasso(X,y,varargin)
 %
 % VERSION: 2008-08-01
 %%  Setup 
+
+% This file is from pmtk3.googlecode.com
+
   
     noutputs = nargout;
     [nbootstraps, lambda     , consensusThreshold, modelSelectionMethod,   ...

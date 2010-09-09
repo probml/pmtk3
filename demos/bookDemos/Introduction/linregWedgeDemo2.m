@@ -1,6 +1,9 @@
 %% Plot Linear Gaussian CPD p(y|x) = N(Y|a + bx, sigma) 
 % Here a is the offset and b is the slope. 
 %%
+
+% This file is from pmtk3.googlecode.com
+
 [xtrain, ytrain, xtest, ytestNoisefree, ytest] = polyDataMake('sampling','thibaux');
 n = size(xtrain,1);
 Xtrain = [ones(n,1) xtrain];

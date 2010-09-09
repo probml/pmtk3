@@ -1,6 +1,9 @@
 function mlcompWriteData(X, y, fname)
 % Convert matlab data to mlcomp format. 
 
+% This file is from pmtk3.googlecode.com
+
+
 classification = isequal(y, round(y)); 
 [n, d] = size(X);
 fid = fopen(fname, 'w');

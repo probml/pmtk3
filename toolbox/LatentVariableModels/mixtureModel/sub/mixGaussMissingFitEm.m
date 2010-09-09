@@ -6,6 +6,9 @@ function [model, loglikHist] = mixGaussMissingFitEm(data, K, varargin)
 %PMTKauthor Kevin Murphy
 %PMTKmodified Hannes Bretschneider
 %%
+
+% This file is from pmtk3.googlecode.com
+
 [model.mu, model.Sigma, model.mixweight, model.doMap, model.diagCov, EMargs] = ...
     process_options(varargin , ...
     'mu0'         , [] , ...

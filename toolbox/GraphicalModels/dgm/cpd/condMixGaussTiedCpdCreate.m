@@ -23,6 +23,9 @@ function CPD = condMixGaussTiedCpdCreate(mu, Sigma, M, varargin)
 % Set 'prior' to 'none' to do mle.
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 prior = process_options(varargin, 'prior', []);
 [nstates, nmix] = size(M);
 d = size(Sigma, 1);

@@ -12,6 +12,9 @@ function [muPost, SigmaPost, lambda, logZ] = varInferLogisticGaussCanonical(...
 % If there are missing values in y, set them to NaN, and they will
 % be dropped from the likelihood
 
+% This file is from pmtk3.googlecode.com
+
+
 % The variational approximation to the logistic function
 % can be expressed as a canonical Gaussian CPD
 % as explained in "A Variational Approximation for Bayesian Networks

@@ -6,6 +6,9 @@ function [gamma, logp, alpha, beta, B] = hmmInferNodes(model, X)
 % B - soft evidence
 %*** X must be a single sequence of size d-by-T ***
 %
+
+% This file is from pmtk3.googlecode.com
+
 pi            = model.pi;
 A             = model.A;
 logB          = mkSoftEvidence(model.emission, X); 

@@ -15,6 +15,9 @@ function [samples, naccept] = metropolisHastings(target, proposal, xinit, Nsampl
 % samples(s,:) is the s'th sample (of size d)
 % naccept = number of accepted moves
 
+% This file is from pmtk3.googlecode.com
+
+
 if nargin < 5,  targetArgs = {}; end
 if nargin < 6,  proposalArgs = {}; end
 if nargin < 7, proposalProb = []; end

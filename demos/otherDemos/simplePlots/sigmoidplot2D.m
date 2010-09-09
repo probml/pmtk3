@@ -1,6 +1,9 @@
 %% Plot 2d sigmoid functions for various values of w1, w2.
 % i.e. sigmoid(w1*x1 +%w2*x2)
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function sigmoidplot2D
 
 

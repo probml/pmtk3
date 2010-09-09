@@ -1,6 +1,9 @@
 %% Least means squares (Widrow-Hoff) Demo
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 [X,y]=contoursSSEdemo; % makes data X, y and plots surface
 
 d = 2;

@@ -8,6 +8,9 @@ function [B, Z, evals, Xrecon, mu] = pcaPmtk(X, K, method)
 % Xrecon is n*d - reconstructed from first K
 % mu is d*1
 
+% This file is from pmtk3.googlecode.com
+
+
 [n d] = size(X);
 if nargin < 2
   %K = min(n,d); 

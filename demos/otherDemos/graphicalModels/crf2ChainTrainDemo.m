@@ -2,6 +2,9 @@
 % Based on
 % http://www.cs.ubc.ca/~schmidtm/Software/UGM/trainCRF.html
 
+% This file is from pmtk3.googlecode.com
+
+
 %% Get  data
 setSeed(0);
 load rain.mat % X is 1059*28

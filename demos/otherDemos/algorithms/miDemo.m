@@ -2,6 +2,9 @@
 % PMTKneedsStatsToolbox hist3
 % PMTKslow
 %%
+
+% This file is from pmtk3.googlecode.com
+
 requireStatsToolbox
 loadData('20news_w100');
 X = documents';

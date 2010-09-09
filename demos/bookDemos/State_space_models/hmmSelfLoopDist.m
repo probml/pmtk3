@@ -1,6 +1,9 @@
 %% HMM Self Loop
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 Ls = 1:10:1000;
 ns = 1:5;
 p = 0.99;

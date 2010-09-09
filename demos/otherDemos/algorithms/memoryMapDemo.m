@@ -1,6 +1,9 @@
 %% This is a simple demo of Matlab's memmapfile class
 % Here we memory map the MNIST digit data.
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function memoryMapDemo()
 if isOctave()
     fprintf('Sorry this demo will only work in Matlab\n');

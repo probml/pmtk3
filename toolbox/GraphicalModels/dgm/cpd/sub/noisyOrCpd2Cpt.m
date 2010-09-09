@@ -2,6 +2,9 @@ function T = noisyOrCpd2Cpt(CPD)
 %% Convert a noisyOr CPD to a CPT
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 q = [CPD.leakI CPD.parentsI(:)'];
 % q(i) is the prob. that the i'th parent will be inhibited (flipped from 1 to 0).
 % q(1) is the leak inhibition probability, and length(q) = n + 1.

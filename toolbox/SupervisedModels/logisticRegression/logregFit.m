@@ -19,6 +19,9 @@ function [model, X, lambdaVec, opt] = logregFit(X, y, varargin)
 % opt           ... output of optimizer 
 %%
 
+% This file is from pmtk3.googlecode.com
+
+
 % Important change on 7 Sep 2010 by KPM
 % Now the weight matrix in the multiclass case is D*C
 % instead of D*(C-1), so we switch from SoftmaxLoss2 to SoftmaxLoss.

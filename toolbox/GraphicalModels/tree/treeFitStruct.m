@@ -8,6 +8,9 @@ function model = treeFitStruct(X, domain, weights)
 % O(N d^2) time to compute p(i,j), N=#cases, d=#nodes.
 % O(d^2 K^2) tome to compute MI, K=#states
 % O(d^2) time to find MWST
+
+% This file is from pmtk3.googlecode.com
+
 if nargin < 2, domain = unique(X(:)); end
 N = size(X,1); 
 if nargin < 3, weights = ones(1,N); end

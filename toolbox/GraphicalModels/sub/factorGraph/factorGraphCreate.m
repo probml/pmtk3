@@ -37,6 +37,9 @@ function fg = factorGraphCreate(cliques, nstates)
 % isPairwise - true if all of the edge factors (if any) are pairwise
 % 
 %%
+
+% This file is from pmtk3.googlecode.com
+
 factors    = cliques;
 nfactors   = numel(factors);  
 nnodes     = length(nstates); 

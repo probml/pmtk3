@@ -1,6 +1,9 @@
 %% Plot p(mu, sigma^2 | D) in 2d using an uninformative prior for different n
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function gaussInferMuSigmaDemo()
 
 setSeed(1);

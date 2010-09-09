@@ -5,6 +5,9 @@ function [W,mu,sigma2,evals,evecs,Xproj,Xrecon]  = ppcaFit(X,K)
 % We also return the evecs and evals of the covariance matrix
 % which are useful for efficient evaluation of ppcaLogprob
 
+% This file is from pmtk3.googlecode.com
+
+
 [evecs, Xproj, evals, Xrecon, mu] = pcaPmtk(X,K); 
 [n,d] = size(X);
 sigma2 = mean(evals(K+1:end));

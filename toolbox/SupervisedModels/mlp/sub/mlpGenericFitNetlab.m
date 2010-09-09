@@ -7,6 +7,9 @@ function [model, output] = mlpGenericFitNetlab(X, y, H, lambda, options, type)
 % lambda is the strength of the L2 regularizer on the weights (not biases)
 % output is the return value from minFunc
 
+% This file is from pmtk3.googlecode.com
+
+
 if nargin < 6, options.Display = 'none';  end
 [N,D] = size(X);
 [N1,K] = size(y); %#ok

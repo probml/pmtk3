@@ -1,6 +1,9 @@
 %% Pareto Taxicab Example
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function paretoDemoTaxicab()
 as = 0.1:0.01:5;
 bs = [1, 1,  1, 0.001];

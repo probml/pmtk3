@@ -1,5 +1,8 @@
 %% Image denoising using Ising prior and Gibbs sampling or mean field
 
+% This file is from pmtk3.googlecode.com
+
+
 %%
 function isingImageDenoiseDemo()
 

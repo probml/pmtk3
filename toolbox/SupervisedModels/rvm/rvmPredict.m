@@ -2,6 +2,9 @@ function [yhat, p] = rvmPredict(model, Xtest)
 %% Predictions for a relevance vector machine
 % We predict using the plugin approximation 
 
+% This file is from pmtk3.googlecode.com
+
+
 Ktest = preprocessorApplyToTest(model.preproc, Xtest);
 
 %binaryPredFn = @(model, X)double(SB2_Sigmoid(X*model.w) > 0.5);

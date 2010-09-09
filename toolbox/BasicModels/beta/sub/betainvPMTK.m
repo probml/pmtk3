@@ -3,6 +3,9 @@ function X = betainvPMTK(p, a, b, tail)
 % Replacement for the stats toolbox betainv function
 %%
 
+% This file is from pmtk3.googlecode.com
+
+
 upper = (nargin > 3) && strcmpi(tail, 'upper');
     
 if statsToolboxInstalled || isOctave

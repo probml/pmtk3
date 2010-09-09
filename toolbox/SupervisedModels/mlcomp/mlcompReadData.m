@@ -1,6 +1,9 @@
 function [X, y, comments] = mlcompReadData(fpath)
 % Convert an mlcomp data file to matlab format.
 
+% This file is from pmtk3.googlecode.com
+
+
 
 raw = cellfun(@strtrim, getText(fpath), 'UniformOutput', false);
 iscomment = cellfun(@(s)s(1) == '#', raw);

@@ -5,6 +5,9 @@ function inv = betainvOct (x, a, b)
 % License version 3. It was modified to make it Matlab compatible, and to
 % use betacdfPMTK and betaProb instead of betacdf, and betapdf. 
 %%
+
+% This file is from pmtk3.googlecode.com
+
 sz = size (x);
 inv = zeros (sz);
 k = find ((x < 0) | (x > 1) | ~(a > 0) | ~(b > 0) | isnan (x));

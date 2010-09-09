@@ -3,6 +3,9 @@ function generatePmtkStats()
 %
 % PMTKneedsMatlab
 %% Settings
+
+% This file is from pmtk3.googlecode.com
+
 excludeComments             = false;
 includeMatlabTools          = true; 
 directories                 = {'toolbox', 'demos\bookDemos', 'demos\otherDemos', 'localUtil'};

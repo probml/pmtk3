@@ -8,6 +8,9 @@ function [k,p] = laplace_pca(data, e, d, n)
 % [k,p] = LAPLACE_PCA(...) also returns the log-probability of each 
 % dimensionality, starting at 1.  k is the argmax of p.
 
+% This file is from pmtk3.googlecode.com
+
+
 %PMTKauthor Tom Minka
 %PMTKurl http://research.microsoft.com/en-us/um/people/minka/papers/pca/
 

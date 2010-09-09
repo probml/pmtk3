@@ -2,6 +2,9 @@
 % PMKTauthor Hannes Bretschneider
 % PMTKmodified Matt Dunham 
 %% Create data
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(0); 
 trialsPerDeg = 10; 
 N = 100;

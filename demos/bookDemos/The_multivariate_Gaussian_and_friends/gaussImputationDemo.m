@@ -1,6 +1,9 @@
 %% Gauss Imputation Demo
 % PMTKneedsStatsToolbox regstats
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function gaussImputationDemo()
 requireStatsToolbox
 %% Make data

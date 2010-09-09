@@ -4,6 +4,9 @@ function [w, f, exitflag, output] = stochgrad(objFun, w0, options, X, y, varargi
 % This doesn't seem to work, in the sense that changing t0 makes
 % no visible difference...
 
+% This file is from pmtk3.googlecode.com
+
+
 [N,D] = size(X);
 % Try several values of t0 on small subset of data
 t0s = [1,  100, 10000];

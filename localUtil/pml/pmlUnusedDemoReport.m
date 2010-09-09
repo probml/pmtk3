@@ -11,6 +11,9 @@ function extra = pmlUnusedDemoReport(bookSource)
 %
 %  *** Also displays an html table ***
 %%
+
+% This file is from pmtk3.googlecode.com
+
 SetDefaultValue(1, 'bookSource', getConfigValue('PMTKpmlBookSource'));
 pmlCode = pmlCodeRefs(fullfile(bookSource, 'code.ind'));
 pmtkDemos = mfiles(fullfile(pmtk3Root(), 'bookDemos'), 'removeExt', true);

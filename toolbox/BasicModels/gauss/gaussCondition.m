@@ -1,5 +1,8 @@
 function modelHgivenV = gaussCondition(model, v, visValues)
 % p(xh|xv=visValues)
+
+% This file is from pmtk3.googlecode.com
+
     mu = model.mu; Sigma = model.Sigma; 
     d = length(mu);
     h = setdiff(1:d, v);

@@ -1,6 +1,9 @@
 %% Fit a mixture of Gaussians comparing mixModelFit and dgmTrain
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(0);
 nstates = 3; 
 d       = 10; 

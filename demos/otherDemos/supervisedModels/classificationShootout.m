@@ -3,6 +3,9 @@
 % ""Learning sparse Bayesian classifiers: multi-class formulation, fast
 % algorithms, and generalization bounds", Krishnapuram et al, PAMI 2005
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function results = classificationShootout()
 %PMTKreallySlow (about 8 hours with current cv grid resolution)
 % See also classificationShootoutCvLambdaOnly

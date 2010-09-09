@@ -1,6 +1,9 @@
 %% Find the mode of a mixture of 2, 1D Gaussians using Simulated Annealing
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function saDemoMOG()
 
 

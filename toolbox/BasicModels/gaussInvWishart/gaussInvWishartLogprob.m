@@ -19,6 +19,9 @@ function logp = gaussInvWishartLogprob(arg1, arg2, arg3, arg4, arg5, arg6)
 % *** Vectorized w.r.t. to both m and S ***  
 %%
 
+% This file is from pmtk3.googlecode.com
+
+
 if isstruct(arg1)
     model = arg1;
     m = arg2;

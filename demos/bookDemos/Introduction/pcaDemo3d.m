@@ -1,6 +1,9 @@
 %% Project 3D data onto a 2D basis using PCA
 % Based on an example by Hamid Bolouri
 %%
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(0)
 
 n = 100; d = 3;

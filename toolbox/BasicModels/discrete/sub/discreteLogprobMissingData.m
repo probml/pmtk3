@@ -1,6 +1,9 @@
 function [L, Lij] = discreteLogprobMissingData(arg1, X)
 % Same as discreteLogprob, except X may have NaNs
 %PMTKauthor Kevin Murphy
+
+% This file is from pmtk3.googlecode.com
+
 if isstruct(arg1)
     model = arg1;
     T = model.T;

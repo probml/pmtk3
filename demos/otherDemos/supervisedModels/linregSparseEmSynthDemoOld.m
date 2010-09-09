@@ -2,6 +2,9 @@
 % PMTKreallySlow
 % PMTKneedsStatsToolbox boxplot
 %%
+
+% This file is from pmtk3.googlecode.com
+
 requireStatsToolbox
 setSeed(0);
 

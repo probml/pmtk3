@@ -2,6 +2,9 @@
 %PMTKauthor Peter Perkins
 %PMTKurl http://www.mofeel.net/582-comp-soft-sys-matlab/86896.aspx
 
+% This file is from pmtk3.googlecode.com
+
+
 alphaVals = [10];
 for alpha=alphaVals(:)'
 

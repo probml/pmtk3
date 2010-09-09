@@ -2,6 +2,9 @@ function [w, loglikHist] = probitRegFitEm(X, y, lambdaVec, EMargs)
 %% Find MAP estimate (under L2 prior) for binary probit regression using EM
 % y(i) is +1,-1
 
+% This file is from pmtk3.googlecode.com
+
+
 % PMTKauthor  Francois Caron
 % PMTKmodified Kevin Murphy, Matt Dunham
 

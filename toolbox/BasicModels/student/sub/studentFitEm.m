@@ -35,6 +35,9 @@ function [model, loglikHist] = studentFitEm(X, varargin)
 %
 % loglikHist - the log likelihood history
 %%
+
+% This file is from pmtk3.googlecode.com
+
 [model.dof, model.mu, model.Sigma, dof0, useECME, useSpeedup, EMargs]...
     = process_options(varargin , ...
     'dof'        , []          , ...

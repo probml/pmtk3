@@ -2,6 +2,9 @@ function jtree = jtreeSliceCliques(jtree, clamped, doSlice)
 %% Slice cliques in a jtree according to the sparse evidence vector clamped
 % You can optionally clamp them instead, (useful for debugging, etc)
 
+% This file is from pmtk3.googlecode.com
+
+
 
 if nargin < 3 
     doSlice = false;

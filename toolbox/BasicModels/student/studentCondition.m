@@ -1,5 +1,8 @@
 function modelHgivenV = studentCondition(model, v, visValues)
 % p(xh|xv=visValues)
+
+% This file is from pmtk3.googlecode.com
+
 mu    = model.mu(:);
 Sigma = model.Sigma;
 dof   = model.dof;

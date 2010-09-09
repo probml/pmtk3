@@ -1,6 +1,9 @@
 %% Precision-recall curve for two hypothetical classifications systems.
 % A is better than B. 
 %%
+
+% This file is from pmtk3.googlecode.com
+
 domain = 0:0.01:1;
 fA = @(x)1-(x.^(3));
 fB = @(x)1-(x.^(3/2));

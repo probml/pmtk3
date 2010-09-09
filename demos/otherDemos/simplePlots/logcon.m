@@ -1,6 +1,9 @@
 %% Illustration of the concavity of the log function 
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 figure('Color',[1,1,1]);
 xmin = -1;xmax = 7;
 ymin = -2;ymax = 3;

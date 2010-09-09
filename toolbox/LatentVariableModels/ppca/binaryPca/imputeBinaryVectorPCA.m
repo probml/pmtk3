@@ -5,6 +5,9 @@ function [yhat, postPred,loglik] = imputeBinaryVectorPCA(y, W, b)
 % postPred(i) = p(y(i)=1)
 % loglik = log p(yobs)
 
+% This file is from pmtk3.googlecode.com
+
+
 [mu, Sigma, lambda, loglik] = varInferLogisticGaussCanonical(y(:), W, b);
 [L p]= size(W);
 X = [b(:) W']; % p * (L+1)

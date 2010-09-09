@@ -37,6 +37,9 @@ function model = svmlibFit(X, y, C, kernelParam, kernelType, varargin)
 % -b probability_estimates: whether to train a SVC or SVR model for probability estimates, 0 or 1 (default 0)
 % -wi weight: set the parameter C of class i to weight*C, for C-SVC (default 1)
 %%
+
+% This file is from pmtk3.googlecode.com
+
 y = colvec(y); 
 [shrink, epsilonTube, estProb, customOptions] = process_options...
     (varargin, 'shrink', 0, 'epsilonTube', 0.1, 'estProb', 0, 'customOptions', '');

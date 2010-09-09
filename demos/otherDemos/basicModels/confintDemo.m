@@ -1,6 +1,9 @@
 %% Larsen and Marx p332
 % PMTKneedsStatsToolbox mle, chi2inv (or Matlab version > 2009a)
 %% 
+
+% This file is from pmtk3.googlecode.com
+
 requireStatsToolbox
 D = [249 254 243 268 253 269 287 241 273 306 303 280 260 256 278 344 304 283 310];
 N = length(D);

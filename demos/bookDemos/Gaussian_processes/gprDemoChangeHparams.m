@@ -2,6 +2,9 @@
 % based on demo_gpr by Carl Rasmussen
 %
 %% Generate data
+
+% This file is from pmtk3.googlecode.com
+
 n = 20;
 rand('state',18);
 randn('state',20);

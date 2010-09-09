@@ -7,6 +7,9 @@ function model = logregBinaryFitL2IRLS(X, y, lambda, includeOffset)
 %
 % model.C is the asymptotic covariance matrix
 
+% This file is from pmtk3.googlecode.com
+
+
 % Based on code by David Martin, modified by Kevin Murphy
 
 if nargin < 3, lambda = 0; end

@@ -4,6 +4,9 @@ function [w, b] = perceptronFit(X, y)
 % y(i) = -1 or +1
 %PMTKauthor Thomas Hoffman
 
+% This file is from pmtk3.googlecode.com
+
+
 labels = y; features = X';
 [n d] = size(X);
 

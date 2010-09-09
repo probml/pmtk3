@@ -1,6 +1,9 @@
 %% Reproduced fig 5.3 from Bishop's book
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 fns = { @(x) x.^2, @(x) sin(x), @(x) abs(x), @(x) (x>0) };
 for fi=1:length(fns)
   fn = fns{fi};

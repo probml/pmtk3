@@ -15,6 +15,9 @@ function [P,W,m,nmax] = ggmLassoHtf(S, lambda, varargin)
 % Nouter is # of outer loop iterations used (based on 1e-4 tolerance)
 % MaxInner is the max # of inner cycle iteratios (pathwise cood descent) 
 
+% This file is from pmtk3.googlecode.com
+
+
 %PMTKauthor Baback Moghaddam    
 %PMTKemail baback@jpl.nasa.gov
 %PMTKdate February 7, 2009

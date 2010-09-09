@@ -1,6 +1,9 @@
 %% Sensor Fusion Demo 2D
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function sensorFusion2d()
 
 Sigmas = {0.01*eye(2), 0.01*eye(2)};

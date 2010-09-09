@@ -1,6 +1,9 @@
 %% Compute beta credible interval
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 S = 47; 
 N = 100; 
 a = S+1; 

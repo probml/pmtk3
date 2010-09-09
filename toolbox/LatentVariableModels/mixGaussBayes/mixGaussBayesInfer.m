@@ -4,6 +4,9 @@ function [z, r, logSumRho, logr, Nk] = mixGaussBayesInfer(model, X)
 % ll(i) = log p(X(i,:) | model)  logprob of observed data
 %
 % Calculate responsibilities using Bishop eqn 10.67
+
+% This file is from pmtk3.googlecode.com
+
 [alpha, beta, entropy, invW, logDirConst, logLambdaTilde, logPiTilde,  ...
     logWishartConst, m, v, W] = ...
   structvals(model.postParams, 'alpha', 'beta', 'entropy', 'invW', ...

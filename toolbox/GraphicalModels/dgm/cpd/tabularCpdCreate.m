@@ -1,6 +1,9 @@
 function cpd = tabularCpdCreate(T, varargin)
 %% Conditional probability density function p(y|x) for use in a DGM
 % T(a,b,...z) is distribution of z given parent values a, b,...
+
+% This file is from pmtk3.googlecode.com
+
 prior = process_options(varargin , 'prior', 'none');
 if isvector(T)
     T = T(:);

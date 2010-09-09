@@ -7,6 +7,9 @@ function Ximpute = imputeKnnMixed( X, K, varargin )
 % using the mean (for cts) or the mode (for discrete)
 %PMTKauthor Hannes Bretschneider
 
+% This file is from pmtk3.googlecode.com
+
+
 D = size(X,2);
 
 [distMeasure types] = process_options(varargin,...

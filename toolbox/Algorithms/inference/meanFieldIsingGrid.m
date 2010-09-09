@@ -5,6 +5,9 @@ function mu = meanFieldIsingGrid(J, CPDs, logprobFn, img, varargin)
 % logprobFn is a handle to a function that will be called with
 % logprobFn(CPDS{i}, img(:))
 %%
+
+% This file is from pmtk3.googlecode.com
+
 [maxIter, progressFn,  inplaceUpdates, rate] = process_options(...
     varargin, 'maxiter', 100, 'progressFn', [], ...
     'inplaceUpdates', true, 'updateRate', 1);

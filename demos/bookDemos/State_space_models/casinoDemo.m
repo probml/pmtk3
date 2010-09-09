@@ -13,6 +13,9 @@
 % Since we are not learning the parameters, we must specify the
 % observation/emission model, the transition matrix, and the distribution 
 % over starting states.
+
+% This file is from pmtk3.googlecode.com
+
 fair = 1; loaded = 2;
 %% Observation Model  
 % We will use a discrete observation model, one discrete distribution per

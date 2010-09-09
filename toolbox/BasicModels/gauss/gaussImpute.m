@@ -2,6 +2,9 @@ function [Xc, V] = gaussImpute(model, X)
 % Fill in NaN entries of X using posterior mode on each row
 % Xc(i,j) = E[X(i,j) | D]
 % V(i,j) = Variance
+
+% This file is from pmtk3.googlecode.com
+
 [n,d] = size(X);
 Xc = X;
 V = zeros(n,d);

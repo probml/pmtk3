@@ -5,6 +5,9 @@ function [model, loglikHist] = gaussMissingFitEm(data, varargin)
 %PMTKauthor Cody Severinski
 %PMTKmodified Kevin Murphy
 
+% This file is from pmtk3.googlecode.com
+
+
 %%
 [n, d]      = size(data);
 ismissing   = isnan(data);

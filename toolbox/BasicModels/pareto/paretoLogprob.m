@@ -2,6 +2,9 @@ function logp = paretoLogprob(arg1, arg2, arg3)
 % logp(i) = log p(X(i) | m, K); 
 % logp = paretoLogprob(model, X); or logp = paretoLogprob(m, K, X); 
 %%
+
+% This file is from pmtk3.googlecode.com
+
 if isstruct(arg1)
     model = arg1;
     m = model.m;

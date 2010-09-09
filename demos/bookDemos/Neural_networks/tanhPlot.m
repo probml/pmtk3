@@ -1,6 +1,9 @@
 %% Visually compare tanh and sigmoid functions
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 xs = -10:0.1:10;
 pt = tanh(xs);
 ps = 1./(1+exp(-xs));

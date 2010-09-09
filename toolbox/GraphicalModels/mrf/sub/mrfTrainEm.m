@@ -4,6 +4,9 @@ function [mrf, loglikHist] = mrfTrainEm(mrf, data, varargin)
 % CPDs, but will be generalized at a later point. 
 % See mrfTrain
 %%
+
+% This file is from pmtk3.googlecode.com
+
 [localEv, EMargs] = process_options(varargin, 'localev', []);
 if ~isempty(localEv) && ndims(localEv) < 3 && mrf.nnodes > 1
    localEv = insertSingleton(localEv, 1);  

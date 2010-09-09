@@ -67,6 +67,9 @@
 % -------------------------------------------------------------------------
 % NOTE: this script needs Raanan Yehezkel's "subsets1.m" function
 
+% This file is from pmtk3.googlecode.com
+
+
 %PMTKauthor Baback Moghaddam
 %PMTKdate 11 feb 2008
 

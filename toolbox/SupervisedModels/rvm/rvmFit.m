@@ -7,6 +7,9 @@ function model = rvmFit(X, y, varargin)
 % model = rvmFit(X, y, 'kernelFn', kernelFn, 'args', args)
 % args are passed directly to SparseBayes. 
 %%
+
+% This file is from pmtk3.googlecode.com
+
 [kernelFn, args] = process_options(varargin, 'kernelFn', @kernelLinear); 
 
 pp = preprocessorCreate('kernelFn', kernelFn);

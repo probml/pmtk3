@@ -1,6 +1,9 @@
 %% Run NaiveBayes on the mnist data
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 loadData('mnistAll')
 % train_images: [28x28x60000 uint8]
 % test_images: [28x28x10000 uint8]

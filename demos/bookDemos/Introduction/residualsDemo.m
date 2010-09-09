@@ -1,6 +1,9 @@
 %% Residuals Demo
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(2);
 %xTrainRaw = (-10:1:10)';
 n = 20;

@@ -7,6 +7,9 @@ function publishFolder(folder, wikiOnly, linkToPml)
 %
 % PMTKneedsMatlab
 %%
+
+% This file is from pmtk3.googlecode.com
+
 SetDefaultValue(2, 'wikiOnly', false); 
 SetDefaultValue(3, 'linkToPml', true);
 warnState = warning('query', 'all'); 

@@ -1,6 +1,9 @@
 %% Illustration of central vs high posterior density intervals
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function postDensityIntervals
 f = @(x)gaussProb(x, 0, 1) + gaussProb(x, 6, 1);
 domain = -4:0.001:10;

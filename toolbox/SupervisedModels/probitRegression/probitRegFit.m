@@ -16,6 +16,9 @@ function [model, loglikHist] = probitRegFit(X, y, varargin)
 %
 % model is a struct with fields, w, lambda
 % loglikHist is the history of the log likelihood
+
+% This file is from pmtk3.googlecode.com
+
 [lambda, method, preproc, fitOpts] = process_options(varargin, ...
   'lambda', 1e-5, ...
   'method', 'minfunc', ...

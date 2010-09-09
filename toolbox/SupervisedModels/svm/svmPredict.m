@@ -4,6 +4,9 @@ function [yhat, f] = svmPredict(model, Xtest)
 % Xtest(i, :) is the ith case. 
 % f  is the signed distance to separating hyperplane
 
+% This file is from pmtk3.googlecode.com
+
+
 if isfield(model, 'standardizeX') && model.standardizeX
     Xtest = mkUnitVariance(centerCols(Xtest)); 
 end

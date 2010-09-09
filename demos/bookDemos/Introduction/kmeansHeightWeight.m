@@ -1,6 +1,9 @@
 %% K-means clustering for Height Weight data
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 rawdata = loadData('heightWeight');
 X = [rawdata(:,2) rawdata(:,3)]; % height, weight
 [styles, colors, symbols] = plotColors();

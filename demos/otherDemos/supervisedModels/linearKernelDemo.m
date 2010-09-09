@@ -3,6 +3,9 @@
 % but at least the kernel has no hyper-params to tune...
 %PMTKslow
 
+% This file is from pmtk3.googlecode.com
+
+
 % See also classificationShootout and classificationShootoutCvLambdaOnly
 
 clear all

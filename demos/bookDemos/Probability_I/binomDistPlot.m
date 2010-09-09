@@ -1,6 +1,9 @@
 %% Plot Binomial Distributions as Histograms
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 thetas = [1/2 1/4 3/4 0.9];
 figure;
 for i=1:4

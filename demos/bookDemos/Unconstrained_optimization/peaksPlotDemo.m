@@ -1,6 +1,9 @@
 %% Display various plots of a multimodal 2D function, peaks()
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 [X, Y] = meshgrid(linspace(-2.5,2.5,40),linspace(-3,3,50));
 Z = peaks(X,Y);
 %% find optimum by exhaustive search

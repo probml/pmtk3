@@ -4,6 +4,9 @@
 % "Statistical methods for high throughput genomics", UBC 2009
 %PMTKauthor Hannes Bretschneider
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function mixStudentBankruptcyDemo()
 
 setSeed(0);

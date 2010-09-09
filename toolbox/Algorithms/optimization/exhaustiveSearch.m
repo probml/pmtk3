@@ -3,6 +3,9 @@ function [mbest, mu, sigma] = exhaustiveSearch(models, scoreFn, varargin)
 % If useStdErrorRule=1, we pick the simplest which is within
 % 1 std error of the best
 
+% This file is from pmtk3.googlecode.com
+
+
 N = length(models);
 mu = zeros(1,N); sigma = zeros(1,N);
 [maximize, useStdErrorRule, complexity, computeStdErr] = process_options(...

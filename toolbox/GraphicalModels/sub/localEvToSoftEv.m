@@ -1,6 +1,9 @@
 function softev = localEvToSoftEv(model, localev)
 %% Convert local evidence to soft evidence
 
+% This file is from pmtk3.googlecode.com
+
+
 maxNstates = max(model.nstates);
 localCPDs = cellwrap(model.localCPDs);
 localCPDpointers = model.localCPDpointers;

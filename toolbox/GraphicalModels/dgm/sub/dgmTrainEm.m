@@ -3,6 +3,9 @@ function [dgm, loglikHist] = dgmTrainEm(dgm, data, varargin)
 %
 % See dgmTrain
 %%
+
+% This file is from pmtk3.googlecode.com
+
 [localEv, EMargs] = process_options(varargin, 'localev', []);
 if ~isempty(localEv) && ndims(localEv) < 3 && dgm.nnodes > 1
    localEv = insertSingleton(localEv, 1);  

@@ -1,5 +1,8 @@
 function CPD = cpdClamp(CPD, value)
 %% Clamp a CPD to a particular value for the child
+
+% This file is from pmtk3.googlecode.com
+
 switch lower(CPD.cpdType)
     
     case 'tabular'

@@ -4,6 +4,9 @@ function m = tabularFactorCreate(T, domain)
 %
 % m is a struct with fields, T, domain, sizes.
 %% 
+
+% This file is from pmtk3.googlecode.com
+
 if isrowvec(T)
     T = T'; 
 end

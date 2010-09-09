@@ -3,6 +3,9 @@
 % determine the most likely strucutre to explain the college data.
 %%
 
+% This file is from pmtk3.googlecode.com
+
+
 loadData('sewellShah');
 X = X(:,2:end) + 1;
 [N, D] = size(X);

@@ -4,6 +4,9 @@ function generateModelLists()
 %PMTKneedsMatlab
 %%
 
+% This file is from pmtk3.googlecode.com
+
+
 outputDir = fullfile(pmtk3Root(), 'docs', 'modelLists');
 [basic, supervised, latent, graphical] = classNameMappings();
 defnTag = 'PMTKdefn';

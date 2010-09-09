@@ -1,6 +1,9 @@
 %% Run PCA on the height weight data
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 data = loadData('heightWeight'); % data(:,1) = class, 2 = height, 3 = weight
 X = data(:,2:3);
 

@@ -1,6 +1,9 @@
 %% Reproduce fig 3.5 on p56 of "Elements of statistical learning" 
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 loadData('prostate');
 [n, d] = size(X);
 X = standardizeCols(X); 

@@ -1,6 +1,9 @@
 %% Compare different inference methods for an HMM
 %
 %% Create a random hmm model
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(0);
 nstates = 250;
 d = 10;

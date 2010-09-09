@@ -24,6 +24,9 @@ function refreshZipFiles(localSource, refreshList)
 % export command.
 % PMTKneedsMatlab
 %%
+
+% This file is from pmtk3.googlecode.com
+
 excludedDirs = tokenize(getConfigValue('PMTKmetaDirs'), ',')'; % don't zip these up!
 %%
 SetDefaultValue(1, 'localSource', getConfigValue('PMTKlocalDataPath'));

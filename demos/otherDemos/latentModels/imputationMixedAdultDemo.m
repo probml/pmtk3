@@ -3,6 +3,9 @@
 % PMTKauthor Kevin Murphy
 % PMTKneedsStatsToolbox boxplot
 %%
+
+% This file is from pmtk3.googlecode.com
+
 requireStatsToolbox
 setSeed(0);
 adult = loadData('adultCensus');

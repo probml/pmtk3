@@ -1,6 +1,9 @@
 %% Power Method Demo
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(0);
 
 %C = randpd(3);

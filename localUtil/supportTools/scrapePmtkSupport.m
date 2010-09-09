@@ -1,5 +1,8 @@
 function packages = scrapePmtkSupport()
 %% Scrape pmtkSupport.googleCode.com to get the names of all the support packages there
+
+% This file is from pmtk3.googlecode.com
+
 excludedDirs = strtrim(tokenize(getConfigValue('PMTKmetaDirs'), ',')');
 
 url = 'http://pmtksupport.googlecode.com/svn/trunk/';

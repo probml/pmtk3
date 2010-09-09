@@ -3,6 +3,9 @@
 % This computes logBF(i) = log p(D|X(:,:)) / p(D|X(:,-j)) for each feature j 
 % using a g-prior
 %%
+
+% This file is from pmtk3.googlecode.com
+
 X = loadData('caterpillar');
 % from http://www.ceremade.dauphine.fr/~xian/BCS/caterpillar
 y = log(X(:,11)); % log number of nests

@@ -13,6 +13,9 @@ function [yhat, post] = generativeClassifierPredict(logprobFn, model, Xtest)
 %             to class j.
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 n = size(Xtest, 1);
 nclasses = model.nclasses;
 classConditionals = model.classConditionals;

@@ -1,6 +1,9 @@
 %% Embed the digit 3 into 2D and sample from the space
 % Reproduce fig 14.23 from Hastie's book p489
 %%
+
+% This file is from pmtk3.googlecode.com
+
 if 0
     loadData('uspsAll'); % data(1:256, 1:1100, 1:10)
     c = 3;

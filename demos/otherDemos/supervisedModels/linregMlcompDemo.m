@@ -1,6 +1,9 @@
 %% Run linear regression on the mlcomp system
 % See also mlcompLocalDemo
 %% we first compile some code that will run on the mlcomp server
+
+% This file is from pmtk3.googlecode.com
+
 if 0
 tmpFolder = 'C:\kmurphy\GoogleCode\mlcomp';
 else

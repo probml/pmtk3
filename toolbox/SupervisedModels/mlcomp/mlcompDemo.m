@@ -1,5 +1,8 @@
 %% Demo of mlcomp
 
+% This file is from pmtk3.googlecode.com
+
+
 addtosystempath('C:\Octave\3.2.3_gcc-4.4.0\bin');
 %localdir = tempdir(); %'C:\users\matt\desktop'; 
 localdir = fullfile(pmtk3Root(), 'data');

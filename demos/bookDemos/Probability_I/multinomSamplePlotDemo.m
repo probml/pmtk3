@@ -1,6 +1,9 @@
 %% Plot samples drawn from a multinomial
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(1);
 nsamples = 4;
 model.N  = 10;

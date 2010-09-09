@@ -1,6 +1,9 @@
 %% Illustration of Jensen's inequality
 %
 
+% This file is from pmtk3.googlecode.com
+
+
 figure;
 hold all;
 domain = -2:0.01:5.5;

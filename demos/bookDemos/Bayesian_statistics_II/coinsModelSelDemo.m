@@ -2,6 +2,9 @@
 % Attempt to determine if a coin is biased or not as we accumulate more and
 % more data, (coin flips). 
 %%
+
+% This file is from pmtk3.googlecode.com
+
 theta = 0.7; N = 5; alpha = 1;
 alphaH = alpha; alphaT = alpha;
 for i=1:(2^N)

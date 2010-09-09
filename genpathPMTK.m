@@ -4,6 +4,9 @@ function p = genpathPMTK(d, isMatlab)
 % For best performance, optionally specify whether this is Matlab, (as
 % opposed to Octave). 
 %%
+
+% This file is from pmtk3.googlecode.com
+
 if nargin==0,
     p = genpath(fullfile(matlabroot, 'toolbox'));
     if length(p) > 1,

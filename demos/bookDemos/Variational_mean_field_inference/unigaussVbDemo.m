@@ -1,6 +1,9 @@
 %% Variational bayes for univariate Gaussian
 % 
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function unigaussVbDemo()
 % PMTKauthor Robert Tseng
 % PMTKmodified Kevin Murphy

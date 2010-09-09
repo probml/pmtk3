@@ -1,6 +1,9 @@
 function libdaiParseAliasesConf()
 %% Parse the libdai aliases.conf file and save the results in a struct
 
+% This file is from pmtk3.googlecode.com
+
+
 %fpath = fullfile(getConfigValue('PMTKlibdaiPath'), 'tests', 'aliases.conf')
 fpath = 'C:\boost\libDAI-0.2.5\tests\aliases.conf'; 
 

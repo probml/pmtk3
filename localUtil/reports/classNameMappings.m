@@ -2,6 +2,9 @@ function [basic, supervised, latent, graphical] = classNameMappings()
 %% This file stores the mapping from classname to group name. 
 % It needs to be manually updated when new models are created. 
 
+% This file is from pmtk3.googlecode.com
+
+
 
 basic =      {
     'beta'

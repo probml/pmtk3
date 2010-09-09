@@ -2,6 +2,9 @@ function df = linregDofL2(X, lambdas, doCenter)
 % Compute the degrees of freedom for a given lambda value
 % Elements 1e p63, 2e p68
 % X should *not* include a column of 1s
+
+% This file is from pmtk3.googlecode.com
+
 if nargin < 3, doCenter  = true; end
 [n,d] = size(X);
 if d==0, df = 0; return; end

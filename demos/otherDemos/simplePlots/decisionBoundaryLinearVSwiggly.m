@@ -2,6 +2,9 @@
 % We make four misclassifications using the linear boundary and none using
 % the 'wiggly' boundary; however, in the latter case, we may have overfit.
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function decisionBoundaryLinearVSwiggly
 
 domain = 0:0.01:1;

@@ -7,6 +7,9 @@ function [yhat, p, pCI] = logregPredictBayes(model, X, method)
 % - 'mc': draws Monte Carlo samples from p(w). In this case
 %   p(i) = median{p(y=1)}. We also return 
 %    pCI(i, :) = [Q5 Q95] = 5% and 95% quantiles 
+
+% This file is from pmtk3.googlecode.com
+
 if ~strcmpi(model.type, 'logregBayes')
   error('can only call this function on models of type logregBayes')
 end

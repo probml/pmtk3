@@ -24,6 +24,9 @@ function [model] = linregFit(X, y, varargin)
 % OUTPUTS:
 % model         ... a struct, which you can pass directly to linregPredict
 
+% This file is from pmtk3.googlecode.com
+
+
 % default preprocessing
 pp = preprocessorCreate('addOnes', true, 'standardizeX', false);
 [N,D] = size(X);

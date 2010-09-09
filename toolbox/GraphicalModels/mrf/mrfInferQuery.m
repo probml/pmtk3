@@ -21,6 +21,9 @@ function [bels, logZ] = mrfInferQuery(mrf, queries, varargin)
 % logZ   - log of the partition sum 
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 [clamped, softEv, localEv, doSlice] = process_options(varargin, ...
     'clamped', [], ...
     'softev' , [], ...

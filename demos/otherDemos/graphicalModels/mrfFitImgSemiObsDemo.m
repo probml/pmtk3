@@ -15,6 +15,9 @@
 % and fit the model using EM from a single image (with tied params)
 % For the E step, we use TRWBP.
 
+% This file is from pmtk3.googlecode.com
+
+
 %PMTKslow
 %%
 setSeed(2); 

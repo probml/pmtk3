@@ -12,6 +12,9 @@ function [bestModel, w, gamma] = ARDwipf(X, y, varargin)
 % w - weight vector
 % gamma - posterior hyper params
 
+% This file is from pmtk3.googlecode.com
+
+
 %PMTKauthor David Wipf
 %PMTKurl http://dsp.ucsd.edu/~dwipf/sparse_learning.m
 %PMTKmodified Kevin Murphy

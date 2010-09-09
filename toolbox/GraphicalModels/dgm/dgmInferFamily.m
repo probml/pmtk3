@@ -5,6 +5,9 @@ function [familyBels, logZ, nodeBels] = dgmInferFamily(dgm, varargin)
 % If requested, nodeBels{i} is the ith marginal, if the ith node has a local
 % CPD, and empty otherwise, (used by dgmTrainEm).
 %%
+
+% This file is from pmtk3.googlecode.com
+
 calcNodeBels = nargout > 2; 
 nnodes       = dgm.nnodes; 
 queries      = allFamilies(dgm.G);

@@ -67,5 +67,8 @@ function [model, loglikHist] = hmmFit(data, nstates, type, varargin)
 % loglikHist(t)    -  observed data log likelihood at iteration t
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 [model, loglikHist] = hmmFitEm(data, nstates, type, varargin{:});
 end

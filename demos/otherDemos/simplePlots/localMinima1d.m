@@ -2,6 +2,9 @@
 %
 %%
 %xs = 0:0.1:(10*pi);
+
+% This file is from pmtk3.googlecode.com
+
 xs = 0:0.1:(4*pi);
 f1 = sin(xs);
 f2  = exp(-0.1*xs);

@@ -1,6 +1,9 @@
 %% Posterior predictive density for Bayesian linear Regression in 1d 
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(1);
 [xtrain, ytrain, xtest] =  polyDataMake('sampling', 'sparse', 'deg', 2);
 

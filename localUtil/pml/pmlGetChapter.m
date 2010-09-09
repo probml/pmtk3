@@ -4,6 +4,9 @@ function ch = pmlGetChapter(chpg, pg)
 % Given a list of the chapter starting pages, and a list of page numbers,
 % return a representative chapter. If the pages are from different
 % chapters, select the first, (unless this is chapter 1).
+
+% This file is from pmtk3.googlecode.com
+
 chaps = zeros(numel(pg), 1);
 for i=1:numel(pg)
     chaps(i) = sum(pg(i) >= chpg);

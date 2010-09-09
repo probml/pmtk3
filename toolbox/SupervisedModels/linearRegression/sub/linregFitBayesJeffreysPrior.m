@@ -1,6 +1,9 @@
 function [model, logev] = linregFitBayesJeffreysPrior(X, y, pp) 
 % Bayesian inference for a linear regression model with uninformative prior
 
+% This file is from pmtk3.googlecode.com
+
+
 [model.preproc, X] = preprocessorApplyToTrain(pp, X);
 [N,D] = size(X);
 

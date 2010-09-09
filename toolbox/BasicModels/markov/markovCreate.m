@@ -3,6 +3,9 @@ function model = markovCreate(pi, A, nstates)
 % PMTKdefn Markov(x | \pi, A)
 % See also markovFit
 %%
+
+% This file is from pmtk3.googlecode.com
+
 model = structure(pi, A, nstates);
 model.modelType = 'markov';
 end

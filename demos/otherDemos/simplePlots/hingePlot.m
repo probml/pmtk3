@@ -1,6 +1,9 @@
 %% Hinge loss illustration
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 y = 1;
 eta = -1:0.05:2;
 z = y*eta;

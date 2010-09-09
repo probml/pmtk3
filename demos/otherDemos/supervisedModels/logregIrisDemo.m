@@ -1,5 +1,8 @@
 %% Multi-class logistic regression on iris data
 
+% This file is from pmtk3.googlecode.com
+
+
 loadData('fisherIrisData')
 X = meas;  % 150x4
 [y, support] = canonizeLabels(species);

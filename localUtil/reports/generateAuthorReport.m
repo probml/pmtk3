@@ -1,6 +1,9 @@
 function generateAuthorReport()
 %% Generate the html contributing author report
 % PMTKneedsMatlab 
+
+% This file is from pmtk3.googlecode.com
+
 dest            = fullfile(pmtk3Root(), 'docs', 'authors');
 outputFile      = fullfile(dest, 'fileAuthors.html');
 excludedAuthors = tokenize(getConfigValue('PMTKauthors'), ',');

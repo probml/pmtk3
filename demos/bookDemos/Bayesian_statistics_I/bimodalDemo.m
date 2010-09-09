@@ -1,6 +1,9 @@
 %% Bimodal Spike Demo
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 mu = [0 2];
 sigma = [1 0.05];
 w = [0.5 0.5];

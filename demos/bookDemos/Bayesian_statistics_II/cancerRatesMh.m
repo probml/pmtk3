@@ -1,6 +1,9 @@
 %% Hierarchical Bayesian Estimation of Some Binomial Proportions
 % Johnson and Albert  p67
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function cancerRatesMh()
 
 %% Data

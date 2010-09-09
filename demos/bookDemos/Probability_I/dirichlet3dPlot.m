@@ -3,6 +3,9 @@
 % dimensional alpha vector, which we can do as the distribtion lives on a 
 % lower dimensional simplex due to the sum to one constraint. 
 
+% This file is from pmtk3.googlecode.com
+
+
 alphas = [10 0.1];
 for alpha=alphas(:)'
 xyrange = [0 1 0 1];

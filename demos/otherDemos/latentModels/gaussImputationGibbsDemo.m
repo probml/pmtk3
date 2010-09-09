@@ -1,6 +1,9 @@
 %% Gauss Imputation Demo using Gibbs
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function gaussImputationGibbsDemo()
 
 

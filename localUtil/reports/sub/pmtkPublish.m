@@ -7,6 +7,9 @@ function pmtkPublish(file, varargin)
 % and the appropriate hyper-link will be inserted.
 % In addition, we put a time stamp at the end of the file.
 %%
+
+% This file is from pmtk3.googlecode.com
+
 if nargin == 2 && isstruct(varargin{1}) && isfield(varargin{1}, 'outputDir')
     outputDir = varargin{1}.outputDir;
 else

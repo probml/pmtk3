@@ -1,6 +1,9 @@
 %% Illustration of an arbitrary PDF and its corresponding CDF
 % Reproduces Bishop Figure 1.12 
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function plotPdfCdfDemo()
 
 

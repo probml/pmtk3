@@ -7,6 +7,9 @@ function CPDs = mkRndTabularCpds(G, nstates, varargin)
 % See also mkRndDag and mkRndDgm
 %%
 
+% This file is from pmtk3.googlecode.com
+
+
 nnodes = size(G, 1);
 assert(nnodes == numel(nstates));
 nstates = rowvec(nstates);

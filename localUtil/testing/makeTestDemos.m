@@ -1,6 +1,9 @@
 function makeTestDemos()
 %% Make the testDemos script
 
+% This file is from pmtk3.googlecode.com
+
+
 exclusions = {'PMTKbroken','PMTKinprogress', 'PMTKinteractive', 'PMTKreallySlow'};    % commented out in runDemos.m
 demos = filenames(processExamples({}, exclusions, 0, false));
 text = {'function testDemos()'

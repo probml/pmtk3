@@ -3,6 +3,9 @@
 %     in the range -3<=x<=3 and -2<=y<=2. It has two global minima, namely
 %     f(-0.0898,0.7126) = f(0.0898,-0.7126) = -1.0316. 
 
+% This file is from pmtk3.googlecode.com
+
+
 %PMTKauthor Joachim Vandekerckhove
 %PMTKurl http://www.mathworks.com/matlabcentral/fileexchange/10548-general-simulated-annealing-algorithm
 

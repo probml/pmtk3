@@ -1,5 +1,8 @@
 function text = pmlExtraCodeLatex()
 % Generates the latex code for the extra demos
+
+% This file is from pmtk3.googlecode.com
+
 root = fullfile(pmtk3Root(), 'bookDemos');
 cd(root); 
 d = cellstr(ls()); 

@@ -5,6 +5,9 @@ function maxLambda = groupLassoMaxLambda(groups, X, y)
 % where the gradient is evaluated at the all 0s weight vector.
 % We exclude group 0 (representing the unregularized terms)
 
+% This file is from pmtk3.googlecode.com
+
+
 nVars = size(X,2);
 w = zeros(nVars,1);
 

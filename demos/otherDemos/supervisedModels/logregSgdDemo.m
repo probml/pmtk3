@@ -1,5 +1,8 @@
 %% Stochastic gradient descent for logistic regression problem
 
+% This file is from pmtk3.googlecode.com
+
+
 setSeed(0);
 % Use  classes 2,3 for simplicity
 Ntrain = [];

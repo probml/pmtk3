@@ -1,6 +1,9 @@
 %% Make the sprinkler dgm
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function dgm = mkSprinklerDgm(varargin)
 %    C
 %   / \

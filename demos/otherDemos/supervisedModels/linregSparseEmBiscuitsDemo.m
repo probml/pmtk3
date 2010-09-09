@@ -2,6 +2,9 @@
 % PMTKreallySlow
 %%
 
+% This file is from pmtk3.googlecode.com
+
+
 
 loadData('biscuits');
 ings = [1:4]; % fat, sucrose, flour, water

@@ -3,6 +3,9 @@ function [yhat, py] = mlpClassifPredictSchmidt(model, X)
 % yhat is  0 or 1
 % py(i) = p(y=1|X(i,:))
 
+% This file is from pmtk3.googlecode.com
+
+
 [N,D] = size(X);
 X = [ones(N,1) X];
 mu = MLPregressionPredict_efficient(model.w, X, model.nHidden);

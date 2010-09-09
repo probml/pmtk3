@@ -1,6 +1,9 @@
 %% LLA and LQA approximation - fig 1 of Zou & Li 2008
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function scadPlot()
 
 z = -10:0.01:10;

@@ -1,6 +1,9 @@
 %% Check that fitting L2-regularized logisitc regression using SVD trick
 %% is equivalent to standard method.
 
+% This file is from pmtk3.googlecode.com
+
+
 setSeed(0);
 N = 10; D = 2;
 X = randn(N,D);

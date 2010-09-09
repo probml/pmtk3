@@ -2,6 +2,9 @@
 % Similar to Gelman04 p77, except we use a plug-in approximation
 % See newcomb.m for the Bayesian version
 %%
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(0);
 
 % Data from http://www.stat.columbia.edu/~gelman/book/data/light.asc

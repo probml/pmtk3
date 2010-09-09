@@ -2,6 +2,9 @@ function p = gaussProb(X, mu, Sigma)
 % Multivariate Gaussian distribution, pdf
 % X(i,:) is i'th case
 
+% This file is from pmtk3.googlecode.com
+
+
 d = size(Sigma, 2);
 X  = reshape(X, [], d);  % make sure X is n-by-d and not d-by-n
 X = bsxfun(@minus, X, rowvec(mu));

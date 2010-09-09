@@ -2,6 +2,9 @@ function [model, loglikHist] = mixModelFitEm(data, nmix, type, varargin)
 %% Fit a mixture model via EM
 % Identical interface to mixModelFit
 %%
+
+% This file is from pmtk3.googlecode.com
+
 [initParams, prior, mixPrior, overRelaxFactor, EMargs] = ...
     process_options(varargin, ...
     'initParams'        , [], ...

@@ -1,6 +1,9 @@
 %% Optimization illustration
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function optMaxLambdaVal()
 f = @(x)x-(x-x.*log(-x));
 domain = -1:0.0005:0;

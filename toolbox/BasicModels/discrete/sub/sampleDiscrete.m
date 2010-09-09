@@ -4,6 +4,9 @@ function M = sampleDiscrete(prob, r, c)
 %
 % Example: sample_discrete([0.8 0.2], 1, 10) generates a row vector of 10 random integers from {1,2},
 % where the prob. of being 1 is 0.8 and the prob of being 2 is 0.2.
+
+% This file is from pmtk3.googlecode.com
+
 n = length(prob);
 
 if nargin == 1

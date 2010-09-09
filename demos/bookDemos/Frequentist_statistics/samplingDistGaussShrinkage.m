@@ -1,6 +1,9 @@
 %% Plot the sampling distribution of mean shrinkage estimators
 % Based on fig 5.6b of Hoff09 but applied to different data
 %%
+
+% This file is from pmtk3.googlecode.com
+
 k0s = [0 1 2 3];
 
 xrange = -1:0.05:2.5;

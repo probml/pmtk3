@@ -2,6 +2,9 @@ function loss = imputationLossMixed( Xtrue, Ximpute, missVal, types )
 % Combined Euclidean/ Hamming loss when comparing matrices of mixed type
 % type(j) = 'c' or 'd' for continuous or discrete (categorical)
 
+% This file is from pmtk3.googlecode.com
+
+
 %PMTKauthor Hannes Bretschneider
 
 [N D] = size(Xtrue);

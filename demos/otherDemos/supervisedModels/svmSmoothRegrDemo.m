@@ -2,6 +2,9 @@
 % PMTKauthor Mark Schmidt
 % PMTKurl http://people.cs.ubc.ca/~schmidtm/Software/minFunc/minFunc.html#11
 %%
+
+% This file is from pmtk3.googlecode.com
+
 nVars = 1;
 nInstances = 50;
 setSeed(0);

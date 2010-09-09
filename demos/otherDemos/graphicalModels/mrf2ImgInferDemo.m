@@ -5,6 +5,9 @@
 % http://people.cs.ubc.ca/~schmidtm/Software/UGM/MCMC.html
 % http://www.cs.ubc.ca/~schmidtm/Software/UGM/variational.html
 
+% This file is from pmtk3.googlecode.com
+
+
 %% Get model and data
 setSeed(0);
 X = loadData('Ximg');

@@ -4,6 +4,9 @@ function Gfull = nodeGraphToCliqueGraph(G, Tfac)
 % size(G, 1) factors in Tfac are node factors, and that the remaining
 % factors are edge factors. 
 %%
+
+% This file is from pmtk3.googlecode.com
+
 G = mkSymmetric(G); 
 nfacs = numel(Tfac); 
 nvars = size(G, 1); 

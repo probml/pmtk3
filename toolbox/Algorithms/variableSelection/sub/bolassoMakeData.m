@@ -38,6 +38,9 @@ function [Xdata,ydata,W] = bolassoMakeData(n,d,r,nDataSets,requireConsistent,noi
 % arrays.
 %
 
+% This file is from pmtk3.googlecode.com
+
+
 
 if nargin < 6, noise = 0.1; end
 

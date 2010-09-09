@@ -5,6 +5,9 @@ function [samples] = hmmSamplePost(model, X, nsamples, varargin)
 % OUTPUT:
 % samples(t,s) = value of S(t)  in sample s
 %%
+
+% This file is from pmtk3.googlecode.com
+
 softev = process_options(varargin, 'softev', []);
 initDist = model.pi;
 transmat = model.A;

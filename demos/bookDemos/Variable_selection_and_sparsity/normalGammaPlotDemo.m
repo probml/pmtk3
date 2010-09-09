@@ -1,6 +1,9 @@
 %% Normal Gamma Distribution Plot
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function normalGammaPlotDemo()
 
 xs = -1:0.01:1;

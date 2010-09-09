@@ -1,5 +1,8 @@
 %% Find the MLE tree from a word-document binary matrix
 
+% This file is from pmtk3.googlecode.com
+
+
 loadData('20news_w100'); % documents, wordlist, newsgroups
 %X is 16,642 documents by 100 words  (sparse logical  matrix)
 X = documents';

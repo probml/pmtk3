@@ -1,6 +1,9 @@
 function [precMat, covMat] = ggmLassoR(C, rho, varargin)
 % Use R code to find L1-penalized precision matrix
 
+% This file is from pmtk3.googlecode.com
+
+
 
 
 

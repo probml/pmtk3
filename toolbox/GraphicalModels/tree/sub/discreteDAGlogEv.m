@@ -3,6 +3,9 @@ function L = discreteDAGlogEv(X, G, alpha, ns)
 % X is an N*D matrix where X(i,j) in {1,..,K}
 % L = log p(X|G) assuming BDeu(alpha) parameterization
 
+% This file is from pmtk3.googlecode.com
+
+
 [N,D] = size(X);
 L = 0;
 if nargin < 3

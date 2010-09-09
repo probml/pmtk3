@@ -3,6 +3,9 @@ function [BF01, probH0] = bayesTtestOneSample(x)
 % Reference: "The Bayesian two-sample t-Test", 2005
 % M. Gonen and P. Westfall and W. Johnson and Y. Lu
 
+% This file is from pmtk3.googlecode.com
+
+
 N            = length(x);
 t            = mean(x)./(std(x)/sqrt(N));
 dof          = N-1;

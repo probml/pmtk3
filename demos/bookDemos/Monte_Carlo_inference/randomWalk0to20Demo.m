@@ -2,6 +2,9 @@
 % Visualize the probability of the the states for various time steps,
 % and different initial conditions.
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function randomWalk0to20Demo
 T = diag(repmat(0.5, 1, 20), -1) + diag(repmat(0.5, 1, 20), 1);
 T(1, 1) = 0.5; T(21, 21) = 0.5;

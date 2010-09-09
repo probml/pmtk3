@@ -2,6 +2,9 @@
 %PMTKauthor Mark Schmidt
 %PMTKurl  http://people.cs.ubc.ca/~schmidtm/Software/minFunc/minFunc.html
 %%
+
+% This file is from pmtk3.googlecode.com
+
 options.Display = 'none';
 setSeed(1); 
 nClasses = 5;

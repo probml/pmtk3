@@ -3,6 +3,9 @@ function [model, loglikHist] = gaussMissingFit(data, varargin)
 % data is an n*d design matrix with NaN values
 % See emAlgo() for EM related optional args
 % PMTKsimple gauss
+
+% This file is from pmtk3.googlecode.com
+
 [model, loglikHist] = gaussMissingFitEm(data, varargin{:});
 
 

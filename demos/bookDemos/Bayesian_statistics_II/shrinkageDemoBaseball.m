@@ -7,6 +7,9 @@
 % 1970 batting averages for 18 major league players. 
 % first column = batting average for first 45 at bats
 % 2nd column   = batting everage for remainder of season
+
+% This file is from pmtk3.googlecode.com
+
 data = [0.400 0.346;
      0.378 0.298
      0.356 0.276

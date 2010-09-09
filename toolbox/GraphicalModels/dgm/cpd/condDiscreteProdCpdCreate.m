@@ -9,6 +9,9 @@ function CPD = condDiscreteProdCpdCreate(T, varargin)
 % 'prior' - a struct with the the field 'alpha', which must be
 % either a scalar or a matrix the same size as T. 
 %%
+
+% This file is from pmtk3.googlecode.com
+
 prior = process_options(varargin, 'prior', []);
 if isempty(prior)
    prior.alpha = 2; % implicitly replicated 

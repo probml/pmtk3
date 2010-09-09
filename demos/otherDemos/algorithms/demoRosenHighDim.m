@@ -8,6 +8,9 @@
 % and near [-1,1,...,1].
 % Let us verify this for d=4 and d=5
 
+% This file is from pmtk3.googlecode.com
+
+
 %xstart = [-0.77565923 0.61309337 0.38206285 0.14597202]';
 xstart = [-0.96205109 0.93573953 0.88071386 0.77787813 0.60509438]';
 [f g H] = rosenbrock(xstart);

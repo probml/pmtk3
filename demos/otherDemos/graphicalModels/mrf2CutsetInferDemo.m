@@ -1,6 +1,9 @@
 %% Demonstrate cutset conditioning  in cyclic  undirected markov chain
 % Based on http://www.cs.ubc.ca/~schmidtm/Software/UGM/cutset.html
 
+% This file is from pmtk3.googlecode.com
+
+
 %% Setup model with a single loop
 nNodes = 13;
 nStates = 25;

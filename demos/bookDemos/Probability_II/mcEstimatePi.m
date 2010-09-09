@@ -1,6 +1,9 @@
 %% Demo of monte carlo integration for estimating pi
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 r=2;
 S=5000;
 xs = unifrndPMTK(-r,r,S,1);

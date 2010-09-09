@@ -5,6 +5,9 @@ function [yhat, py] = naiveBayesPredict(model, Xtest)
 % yhat(i) = argmax_c p(y=c|Xtest(i,:), theta(c,:)), in 1:C
 % py(i,c) = p(y=c|xi, params)
 
+% This file is from pmtk3.googlecode.com
+
+
 vectorized = true;
 if vectorized
     Ntest    = size(Xtest, 1);

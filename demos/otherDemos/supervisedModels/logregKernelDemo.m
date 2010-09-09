@@ -2,6 +2,9 @@
 % We follow the same train/test split as linearKernelDemo
 % so that results are comparable
 
+% This file is from pmtk3.googlecode.com
+
+
 %loadData('crabs');
 
 loadData('fglass'); % 6 classes, X is 214*9

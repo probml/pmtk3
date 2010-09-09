@@ -6,6 +6,9 @@ function fcs = gaussMkFullCondSamplers(model, visVars, visVals)
 % on all variables except the ith hidden), and with xh used as the values
 % for the remaining initially hidden vars.
 %
+
+% This file is from pmtk3.googlecode.com
+
 d = length(model.mu);
 if nargin < 2,
     % Sample from the unconditional distribution

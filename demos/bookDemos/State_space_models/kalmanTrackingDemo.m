@@ -4,6 +4,9 @@
 % X(t+1) = F X(t) + noise(Q)
 % Y(t) = H X(t) + noise(R)
 %%
+
+% This file is from pmtk3.googlecode.com
+
 ss = 4; % state size
 os = 2; % observation size
 F = [1 0 1 0; 0 1 0 1; 0 0 1 0; 0 0 0 1]; 

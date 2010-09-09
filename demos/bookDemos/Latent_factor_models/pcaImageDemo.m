@@ -1,6 +1,9 @@
 %% PCA Image Demo
 % Based on code by Mark Girolami, but uses eig instead of svd to save memory
 %%
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(0);
 
 if 0

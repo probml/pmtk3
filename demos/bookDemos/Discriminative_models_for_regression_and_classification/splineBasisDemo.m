@@ -2,6 +2,9 @@
 %PMTKauthor John D'Erico
 %PMTKurl http://www.mathworks.com/matlabcentral/fileexchange/loadFile.do?objectId=8553&objectType=fileY
 
+% This file is from pmtk3.googlecode.com
+
+
 setSeed(0);
 n = 50;
 x = sort(rand(n,1));

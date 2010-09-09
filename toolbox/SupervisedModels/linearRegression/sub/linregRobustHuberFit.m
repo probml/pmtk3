@@ -3,6 +3,9 @@ function model = linregRobustHuberFit(X, y, delta, includeOffset)
 % We assume X is an N*D matrix; we will add a column of 1s internally
 % w = [w0 w1 ... wD] is a column vector, where w0 is the bias
 
+% This file is from pmtk3.googlecode.com
+
+
 %PMTKauthor Mark Schmidt
 %PMTKurl http://people.cs.ubc.ca/~schmidtm/Software/minFunc/minFunc.html#2
 %%

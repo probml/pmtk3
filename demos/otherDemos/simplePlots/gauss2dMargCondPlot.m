@@ -1,6 +1,9 @@
 %% 2D Gaussian contour plot along with its 1D marginals and conditionals.
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function gauss2dMargCondPlot()
 fig = figure('Color','w');
 mu = [0.5 0.5];

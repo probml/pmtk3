@@ -1,6 +1,9 @@
 %% Plot CI and HPD for beta posterior
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 model.a = 3;
 model.b = 9;
 alpha   = 0.05;

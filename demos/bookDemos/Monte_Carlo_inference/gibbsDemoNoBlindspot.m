@@ -2,6 +2,9 @@
 % Here we use an Ising Prior and a Gaussian likelihood.
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(4);
 sigma = 1; % noise level
 A = loadData('letterA'); 

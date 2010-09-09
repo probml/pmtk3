@@ -3,6 +3,9 @@ function dgm = hmmToDgm(model, T, varargin)
 % All other args are passed directly to dgmCreate
 %%
 
+% This file is from pmtk3.googlecode.com
+
+
 
 G = mkChain(T); 
 CPD1 = tabularCpdCreate(model.pi); 

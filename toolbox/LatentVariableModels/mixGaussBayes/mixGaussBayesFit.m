@@ -4,6 +4,9 @@ function [model, loglikHist] = mixGaussBayesFit(X, K, varargin)
 % See Bishop sec 10.2 for details
 %
 %PMTKauthor Emtiyaz Khan, Cody Severinski, Kevin Murphy
+
+% This file is from pmtk3.googlecode.com
+
 [maxIter, thresh, plotFn, verbose, alpha0] = process_options(...
     varargin, 'maxIter', 200, 'thresh', 1e-5, 'plotFn', [], ...
     'verbose', false, 'alpha0', 0.001);

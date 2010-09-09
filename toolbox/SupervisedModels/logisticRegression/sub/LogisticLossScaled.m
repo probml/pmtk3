@@ -4,6 +4,9 @@ function [nll,g,H] = LogisticLossScaled(w,X,y)
 % X: n*d
 % y: n*1, should be -1 or 1
 
+% This file is from pmtk3.googlecode.com
+
+
 N = size(X,1);
 switch nargout
   case 1

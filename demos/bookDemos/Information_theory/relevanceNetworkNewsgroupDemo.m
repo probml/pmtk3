@@ -1,6 +1,9 @@
 %% Make a 'relevance network' from the small 20-newsgroup data
 % (See also chowliuTreeDemo)
 
+% This file is from pmtk3.googlecode.com
+
+
 loadData('20news_w100'); % documents, wordlist, newsgroups
 %X is 16,642 documents by 100 words  (sparse logical  matrix)
 X = documents';

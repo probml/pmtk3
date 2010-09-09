@@ -18,6 +18,9 @@ function F = pmlFigureInfo(includeEx, includeSol)
 % F = [F{:}]; 
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 if nargin == 0
     includeEx  = false; 
     includeSol = false; 

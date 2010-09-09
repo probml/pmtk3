@@ -25,6 +25,9 @@ function cg = cliqueGraphCreate(Tfac, nstates, G)
 % Note G may be either directed or undirected (in contrast to factor
 % graph). If G is automatically inferred, it is undirected.
 %%
+
+% This file is from pmtk3.googlecode.com
+
 if nargin < 3
     G  = constructGraphFromFactors(Tfac);
 end

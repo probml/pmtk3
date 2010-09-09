@@ -1,5 +1,8 @@
 function stop = optimplot2d(x, optimValues, state)
 % plots the current point of a 2-d optimization
+
+% This file is from pmtk3.googlecode.com
+
 stop = false;
 switch state
   case 'init'

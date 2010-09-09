@@ -3,6 +3,9 @@
 % model learned via EM using the best permutation of the labels. 
 %%
 %% Define the generating model
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(0);
 nHidStates = 4; 
 T =                  [1/6  1/6   1/6   1/6   1/6   1/6  ;  

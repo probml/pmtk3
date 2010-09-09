@@ -1,5 +1,8 @@
 %% Compare various optimizers on a binary logistic regression problem
 
+% This file is from pmtk3.googlecode.com
+
+
 setSeed(0);
 % Use  classes 2,3 for simplicity
 Ntrain = [];

@@ -5,6 +5,9 @@
 %PMTKrequireOptimToolbox linprog is called by UGM_Decode_LinProg
 %PMTKrequireOptimToolbox bintprog is called by UGM_Decode_IntProg
 
+% This file is from pmtk3.googlecode.com
+
+
 %% Get model and data
 % We use a small 16x16 subset of the 32x32 image because intprog is slow
 setSeed(0);

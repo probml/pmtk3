@@ -2,6 +2,9 @@
 % MC approx to figure 1a of Shi and Bai 2008
 % PMTKneedsStatsToolbox ksdensity
 %%
+
+% This file is from pmtk3.googlecode.com
+
 requireStatsToolbox
 setSeed(1);
 ns = [20 20 10 50 30];

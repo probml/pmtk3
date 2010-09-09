@@ -2,6 +2,9 @@
 %
 %
 %% Uninformative prior
+
+% This file is from pmtk3.googlecode.com
+
 m0 = 0;
 k0 = 0; 
 v0 = 0; % 0.01;

@@ -1,6 +1,9 @@
 %% Bayesian updating of a 2D Gaussian
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function gaussBayesUnequalCov()
 
 Sigmas = {0.01*eye(2), 0.01*eye(2)};

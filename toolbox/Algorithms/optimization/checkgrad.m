@@ -17,6 +17,9 @@ function d = check(f, X, e, P1, P2, P3, P4, P5);
 %
 % Carl Edward Rasmussen, 2001-08-01.
 
+% This file is from pmtk3.googlecode.com
+
+
 argstr = [f, '(X'];                            % assemble function call strings
 argstrd = [f, '(X+dx'];
 for i = 1:(nargin - 3)

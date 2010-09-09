@@ -2,6 +2,9 @@
 % We plot brain weight vs Body weight for different mammals
 % Data is from http://seattlecentral.edu/qelp/sets/017/017.html
 %%
+
+% This file is from pmtk3.googlecode.com
+
 loadData('bodyBrainWeight');
 % x = body weight in kg
 % y = brain weight in g

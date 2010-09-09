@@ -2,6 +2,9 @@
 % See also pagerankDemoMoler, pagerankDemoGui, surfer, pagerankpow
 %%
 %% 6 node web example
+
+% This file is from pmtk3.googlecode.com
+
 i = [ 2 6 3 4 4 5 6 1 1];
 j = [ 1 1 2 2 3 3 3 4 6];
 n = 6;

@@ -5,6 +5,9 @@
 %%
 % PMTKslow
 %%
+
+% This file is from pmtk3.googlecode.com
+
 loadData('mnistAll');
 if 0
   % test on all data- 255 seconds, 3.09% error

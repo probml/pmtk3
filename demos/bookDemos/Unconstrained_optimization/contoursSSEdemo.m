@@ -1,6 +1,9 @@
 %% Error surface for linear regression model
 % Based on code by John D'errico
 
+% This file is from pmtk3.googlecode.com
+
+
 function [X,y] = contoursSSEdemo(doPlot)
 
 if nargin < 1, doPlot = false; end

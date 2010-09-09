@@ -3,6 +3,9 @@ function map = dgmMap(dgm, varargin)
 % Optional named args are the same as for dgmInferNodes
 % This uses jtree.
 %
+
+% This file is from pmtk3.googlecode.com
+
 [clamped, softEv, localEv] = process_options(varargin, ...
     'clamped', [], ...
     'softev' , [], ...

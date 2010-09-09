@@ -1,6 +1,9 @@
 function S = poissonSample(arg1, arg2)
 %% Sample n integers from a poisson distribution with parameter lambda
 %S = poissonSample(model, n); OR S = poissonSample(lambda, n); 
+
+% This file is from pmtk3.googlecode.com
+
 if isstruct(arg1)
     model = arg1;
     lambda = model.lambda;

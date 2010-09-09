@@ -1,6 +1,9 @@
 %% Bicluster Demo
 % PMTKreallySlow
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function [] = biclusterDemo()
 setSeed(0);
 nRow = 100;

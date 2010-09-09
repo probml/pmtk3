@@ -1,6 +1,9 @@
 %% Vector Quantization Demo
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(0);
 loadData('clown'); % X is 200x320 image
 figure;

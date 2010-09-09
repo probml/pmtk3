@@ -3,6 +3,9 @@ function padded = insertClampedBels(nodeBels, visVars, hidVars, nstates, clamped
 % Similar to insertUnitBels, but we do not slice the observed node down to 
 % a unit factor, we just clamp it to its observed value. 
 
+% This file is from pmtk3.googlecode.com
+
+
 if isempty(visVars)
     padded = nodeBels;
     return;

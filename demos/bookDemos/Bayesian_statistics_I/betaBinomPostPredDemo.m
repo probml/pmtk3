@@ -1,6 +1,9 @@
 %%  Posterior Predictive Distribution for Beta-Binomial model
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 N  = 10;
 X  = [1 2]';
 N1 = sum(X);

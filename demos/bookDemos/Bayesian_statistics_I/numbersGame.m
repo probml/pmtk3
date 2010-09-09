@@ -1,6 +1,9 @@
 %% Josh Tenenbaum's Number Game
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function numbersGame
 %% 
 first = 1; last = 100; %Range for the hypothesis space

@@ -6,6 +6,9 @@ function localev = hmmObs2LocalEv(obs)
 %
 % See also localEv2HmmObs
 %%
+
+% This file is from pmtk3.googlecode.com
+
 obs = cellwrap(obs);
 nobs = numel(obs); 
 d    = size(obs{1}, 1); 

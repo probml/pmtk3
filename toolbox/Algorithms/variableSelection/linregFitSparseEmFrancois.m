@@ -37,6 +37,9 @@ function [w, sigma, logpostTrace]=linregFitSparseEmFrancois(X, y, param, varargi
 % Modified by Kevin Murphy, 12 Nov 2009
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% This file is from pmtk3.googlecode.com
+
+
 warning off MATLAB:log:logOfZero
 warning off MATLAB:divideByZero
 

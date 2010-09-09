@@ -2,6 +2,9 @@ function generateAuthorLocReport()
 %% Generate the html contributing author LOC report
 % Create a table of authors and the total lines of code contributed
 % PMTKneedsMatlab 
+
+% This file is from pmtk3.googlecode.com
+
 dest = fullfile(pmtk3Root(), 'docs', 'authors');
 pmtkRed = getConfigValue('PMTKred');
 R    = pmtkTagReport(); % everything you ever wanted to know about tags

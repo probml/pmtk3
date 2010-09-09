@@ -32,6 +32,9 @@ function [model, logev, postSummary] = linregFitBayes(X, y, varargin)
 % postSummary is a summary of the posterior;
 % see linregPostSummary for details
 
+% This file is from pmtk3.googlecode.com
+
+
 [prior, preproc,  beta, alpha, g, useARD, displaySummary] = ...
   process_options(varargin , ...
   'prior', 'uninf', ...

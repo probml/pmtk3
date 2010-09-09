@@ -1,6 +1,9 @@
 %% Simple test of mixGaussMissingFitEM
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(1);
 nmix = 5;
 d = 2;

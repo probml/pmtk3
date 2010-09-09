@@ -1,6 +1,9 @@
 %% PCA Face Demo
 % Based on code by Mark Girolami
 %%
+
+% This file is from pmtk3.googlecode.com
+
 requireImageToolbox
 loadData('facesOlivetti');
 h = 112; w = 92;

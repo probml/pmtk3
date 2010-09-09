@@ -1,6 +1,9 @@
 %% Demonstrate the effect of changing the hyper-parameters for an MLP
 % based on demprior from netlab, but without the GUI code
 %%
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(1);
 if 0
 % values from Bishop p260 - clearly not correct

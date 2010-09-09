@@ -51,6 +51,9 @@ function mrf = mrfCreate(G, varargin)
 %                        the jtree.
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 [nodePots, edgePots, localCPDs, ...
     nodePotPointers, edgePotPointers, localCPDpointers, ...
     infEngine, infEngArgs, precomputeJtree] =    ...

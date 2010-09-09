@@ -1,6 +1,9 @@
 %% Rosenbrock 2D demo
 %PMTKneedsOptimToolbox fminunc
 %%
+
+% This file is from pmtk3.googlecode.com
+
 requireOptimToolbox;
 xstart = [-1 2];
 

@@ -2,6 +2,9 @@
 %
 %% Paired test
 % Data from http://en.wikipedia.org/wiki/Student's_t-test
+
+% This file is from pmtk3.googlecode.com
+
 z = [ 30.02, 29.99, 30.11, 29.97, 30.01, 29.99];
 y = [ 29.89, 29.93, 29.72, 29.98, 30.02, 29.98];
 

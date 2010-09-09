@@ -1,6 +1,9 @@
 %% PCA digit visualization demo
 % Based on code by Nando de Freitas.
 %%
+
+% This file is from pmtk3.googlecode.com
+
 loadData('uspsAll'); % data(1:256, 1:1100, 1:10) 
 
 figure;

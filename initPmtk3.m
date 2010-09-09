@@ -1,5 +1,8 @@
 function initPmtk3(verbose)
 %% Run this script to initialize PMTK3
+
+% This file is from pmtk3.googlecode.com
+
 format compact
 more   off; % especially important in Octave - init may fail without it
 if nargin < 1

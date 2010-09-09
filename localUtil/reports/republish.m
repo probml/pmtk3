@@ -2,6 +2,9 @@ function republish(evalCode)
 %% Republish the currently open (and selected) PMTK mfile
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 if nargin < 1
     evalCode = true; 
 end

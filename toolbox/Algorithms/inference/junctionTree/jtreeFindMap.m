@@ -3,6 +3,9 @@ function map = jtreeFindMap(jtree)
 % jtree is a struct as returned by e.g. jtreeCreate
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 maximize         = true;
 cliques          = jtree.cliques;
 preOrder         = jtree.preOrder;

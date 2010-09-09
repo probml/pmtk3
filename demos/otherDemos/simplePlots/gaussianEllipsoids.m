@@ -1,6 +1,9 @@
 %% Visualize the Projection of 3D Gaussian Ellipsoids onto the 2D Plain
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 C = {[2 4 10] [12 0 10] [20 0 10]};
 R = {[6 3 3] [3 6 3] [3 3 6]};
 npoints = 25;

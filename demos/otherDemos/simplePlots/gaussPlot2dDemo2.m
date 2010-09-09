@@ -1,6 +1,9 @@
 %% Plot a 2D Gaussian and its decorrelated and whitened transformations
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function gaussPlot2dDemo2()
 
 setSeed(0);

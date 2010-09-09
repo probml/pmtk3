@@ -5,6 +5,9 @@ function [bestModel, postMean, condMean, postModelProb, supports, out, condCov] 
 %PMTKurl http://www.ece.osu.edu/~zinielj/fbmp/pubs.html
 %PMTKmodified Kevin Murphy
 
+% This file is from pmtk3.googlecode.com
+
+
 %
 % [bestModel, postMean, condMean, postModelProb, supports, out, condCov] = ...
 %   fbmpCore(A, y, varargin)

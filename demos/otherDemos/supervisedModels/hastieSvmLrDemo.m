@@ -4,6 +4,9 @@
 % Generate data as per Hastie 2ed, pg 16: two classes, blue and orange,
 % each with a mixture of 10, 2D Gaussians.
 %PMTKslow
+
+% This file is from pmtk3.googlecode.com
+
 requireOptimToolbox
 setSeed(42);
 ncenters = 10;

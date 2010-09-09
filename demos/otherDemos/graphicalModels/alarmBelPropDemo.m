@@ -1,6 +1,9 @@
 %% Compare speed and accuracy of belief propagation on the alarm network
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function alarmBelPropDemo
 
 dgm = mkAlarmDgm(); 

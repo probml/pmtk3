@@ -4,6 +4,9 @@ function [model, output] = mlpRegressFitSchmidt(X, y, nHidden, lambda, options)
 % We currenly assume the same L2 regularizer on all the parameters
 % output is the return value from minFunc
 
+% This file is from pmtk3.googlecode.com
+
+
 if nargin < 5, options.Display = 'none';  end
 [N,D] = size(X);
 X1 = [ones(N,1) X];

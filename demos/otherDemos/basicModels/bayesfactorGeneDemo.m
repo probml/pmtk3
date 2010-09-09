@@ -1,6 +1,9 @@
 %% Bayes Factor Gene Demo
 % PMTKneedsStatsToolbox ttest2
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function bayesfactorGeneDemo()
 
 requireStatsToolbox

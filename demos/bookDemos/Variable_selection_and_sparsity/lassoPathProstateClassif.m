@@ -1,6 +1,9 @@
 %% Compute the full L1 regularization path for a classification
 % version of the prostate data set
 
+% This file is from pmtk3.googlecode.com
+
+
 clear all
 load prostateStnd
 mu = mean(y);

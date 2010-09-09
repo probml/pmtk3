@@ -3,6 +3,9 @@ function Kc = kernelCentering(K, Ktest)
 % Kc = kernelCentering(K) returns size n*n
 % Kc = kernelCentering(Ktrain, Ktest) returns size ntest * ntrain
 
+% This file is from pmtk3.googlecode.com
+
+
 %PMTKurl http://www.kernel-methods.net/matlab/algorithms/centering.m
 %PMTKauthor John Shawe-Taylor 
 %PMTKmodified Kevin Murphy

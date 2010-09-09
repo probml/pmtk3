@@ -9,6 +9,9 @@
 %   v
 %   W
 %%
+
+% This file is from pmtk3.googlecode.com
+
 C = 1; S = 2; R = 3; W = 4;
 nvars = 4; 
 %% Create the dgm

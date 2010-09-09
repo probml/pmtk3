@@ -1,6 +1,9 @@
 %% 2D Rosenbrock Function
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 function [f g H] = rosen2d(x)
 
 if nargin == 0;

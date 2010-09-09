@@ -1,6 +1,9 @@
 %% Illustration of a piecewise linear surface
 %
 %%
+
+% This file is from pmtk3.googlecode.com
+
 setSeed(10);
 figure(); hold on;
 nsurfaces = 3; 

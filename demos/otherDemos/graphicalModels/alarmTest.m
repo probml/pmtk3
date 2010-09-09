@@ -1,4 +1,7 @@
 %% Simple inference test in the alarm network 
+
+% This file is from pmtk3.googlecode.com
+
 nnodes = 37;
 dgmJ = mkAlarmDgm('jtree');
 dgmV = mkAlarmDgm('varelim');

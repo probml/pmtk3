@@ -9,6 +9,9 @@ function [logZ, postQuery] = variableElimination(cliqueGraph, queryVars)
 % logZ is the log of the partition sum
 %% Handle multiple queries 
 % (note it is much more efficient to use jtree for multiple queries)
+
+% This file is from pmtk3.googlecode.com
+
 if iscell(queryVars)
    [logZ, postQuery] = cellfun(@(q)variableElimination(cliqueGraph, q), ...
                        queryVars, 'UniformOutput', false);
