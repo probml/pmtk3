@@ -209,19 +209,21 @@ src="http://pmtk3.googlecode.com/svn/trunk/docs/classSystem/modelsConcreteTree.p
   likelihood    ... ['gaussian'], 'student', 'huber'
   lambda        ... regularizer
   preproc       ... a struct, passed to preprocessorApplyToTtrain
-   Set preproc.addOnes = true if you want this model
-    to add a column of 1s to X for you (at train and test time)
+     Set preproc.addOnes = true if you want this model
+     to add a column of 1s to X for you (at train and test time)
   fitOptions    ... optional  args (a cell array) to fitFn
-  fitFnName         ... For L1, default is
-    'L1GeneralProjection'. Can be any other method available
-    from http://www.cs.ubc.ca/~schmidtm/Software/L1General/L1General.html
-    Can also specify 'l1ls', which uses
-      code from http://www.stanford.edu/~boyd/l1_ls/
+  fitFnName         ... Name of fitting method to use.
+     Currently the only method that you can modify is for
+     lasso (likelihood=gaussian, regType=lasso).
+     The default is 'L1GeneralProjection'.
+     However, this can be any other method available
+     from http://www.cs.ubc.ca/~schmidtm/Software/L1General/L1General.html
+     You can also specify 'l1ls', which uses
+     code from http://www.stanford.edu/~boyd/l1_ls/
   winit         ...  Initial value of w; can be used for warm starting
  
   OUTPUTS:
   model         ... a struct, which you can pass directly to linregPredict
- %
 
 </pre><p>The meaning of these arguments will be explained later.</p><p>There are two ways to specify the optional arguments: 1) a set of name, value pairs eg.</p><pre class="codeinput">clear <span class="string">all</span>
 N=10; D = 2; X = rand(N, D); y = rand(N,1);
@@ -246,7 +248,7 @@ m2 = linregFit(X, y, s)
 </pre><p>As a sanity check, let us check these are equal</p><pre class="codeinput">assert(approxeq(m1.w, m2.w))
 </pre><p>Internally, these optional arguments are processed using <a href="http://matlabtools.googlecode.com/svn/trunk/util/process_options.m">process_options.m</a> , written by Mark Paskin, and <a href="http://matlabtools.googlecode.com/svn/trunk/util/prepareArgs.m">prepareArgs.m</a> , written by Matt Dunham. For more detals, see <a href="http://yagtom.googlecode.com/svn/trunk/html/writingFunctions.html#40">this entry</a> in our Matlab tutorial.</p><h2>Generally useful Matlab functions<a name="55"></a></h2><p>PMTK uses a large number of  functions that are useful for many different purposes outside of machine learning. Many of these are stored in our <a href="http://code.google.com/p/matlabtools/">matlabTools</a> site. Others are built-in to Matlab, as explained in our <a href="http://code.google.com/p/yagtom/">Matlab tutorial</a>. We mention just a few of the most useful ones below</p><div><ul><li><a href="http://matlabtools.googlecode.com/svn/trunk/metaTools/whoCallsMe.m">whoCallsMe.m</a> : <tt>whoCallsMe('foo')</tt> will list all files that call foo.m</li><li><a href="http://matlabtools.googlecode.com/svn/trunk/metaTools/wwhich.m">wwhich.m</a> : which with wildcards. eg <tt>wwhich('foo*')</tt> prints full filenames of all files starting   with the string 'foo', and <tt>wwhich('*foo*')</tt> finds files with 'foo' anywhere in their name.</li><li><tt>edit('foo')</tt> will open foo.m in the matlab editor. This lets you look at (and modify) the source code.    This also works   for built-in Matlab functions.   Be careful not to change things accidently!.</li><li><tt>help('foo')</tt> prints any initial documentation for foo.m that     the implementer may have provided; all builtin Matlab functions     are properly documented. Unfortuntately that is not the case for     all the PMTK functions... but you can always read the source :)</li><li><tt>doc('foo')</tt> opens the html documentation for built-in function foo.m</li><li><a href="http://matlabtools.googlecode.com/svn/trunk/graphics/placeFigures.m">placeFigures.m</a> : this lays out all the currently open figures   so you can see them all at the same time</li><li><tt>dbstop if error</tt> : open the debugger if there is an error. See <a href="http://yagtom.googlecode.com/svn/trunk/html/debugging.html">here</a> for more info on debugging.</li><li><a href="http://matlabtools.googlecode.com/svn/trunk/graphics/printPmtkFigure.m">printPmtkFigure.m</a> : this is used to make figures for <a href="http://www.cs.ubc.ca/~murphyk/MLbook/index.html">my book</a>. It uses <a href="http://www.mathworks.com/matlabcentral/fileexchange/23629">export_fig.m</a> to make the figures 'camera ready'. If you want to include figures in your own document, you can modify printPmtkFigure appropriately.</li></ul></div><h2>Auto-generated documentation<a name="56"></a></h2><p>Below we give some links to auto-generated documentation, which list all the functions and demos in the toolbox. These automatically generated lists can help you find relevant functions/ demos that are not mentioned in the tutorial.</p><div><ul><li><a href="http://code.google.com/p/pmtk3/wiki/synopsisPages">Functions</a>, with brief (1 line) descriptions and links to their source</li><li><a href="http://code.google.com/p/pmtk3/wiki/Demos">Demos</a>, published as html pages including the results of running each demo.</li></ul></div><p>
 <hr>
-</p><p>This page was auto-generated by calling <i>pmtkPublish(tutFoundations)</i>  on 08-Sep-2010 13:37:26</p><p class="footer"><br>
+</p><p>This page was auto-generated by calling <i>pmtkPublish(C:\kmurphy\GoogleCode\pmtk3\docs\tutorial\tutFoundations.m)</i>  on 08-Sep-2010 17:19:51</p><p class="footer"><br>
       Published with MATLAB&reg; 7.9<br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Basics of  pmtk3
@@ -685,7 +687,7 @@ assert(approxeq(m1.w, m2.w))
 %%
 
 %%
-% This page was auto-generated by calling _pmtkPublish(tutFoundations)_  on 08-Sep-2010 13:37:26
+% This page was auto-generated by calling _pmtkPublish(C:\kmurphy\GoogleCode\pmtk3\docs\tutorial\tutFoundations.m)_  on 08-Sep-2010 17:19:51
 
 
 ##### SOURCE END #####

@@ -16,6 +16,7 @@ if recursive
 end
 
 for i=1:numel(tutFiles)
+  fprintf('publishing %s\n', tutFiles{i});
    pmtkPublish(tutFiles{i});  
 end
 
