@@ -66,12 +66,17 @@
 % (In fact, I  have shortened it somewhat by not including
 % all these dependencies, to make things clearer.)
 % Obviously all the (potentially) called functions must
-% be octave compatible. In particular, this means
-% they should have an 'end' statement at the end of the file,
-% a convention matlab does not require. Furthermore,
-% nested functions are not supported.
+% be octave compatible. For example,
+% locally nested functions are not supported by octave.
 % (See <http://code.google.com/p/yagtom/wiki/Octave this link>
 % for more information on octave/ matlab compatibility issues.)
+%
+% In addition, since mlcompCompiler puts all the functions
+% together in one huge file, each function should have an 'end'
+% statement at the end, even though this is not required of
+% individual functions.
+% mlcompCompiler calls isEndKeywordMissing.m to test for this,
+% and issue a warning if the files violate this rule.
 %
 % Having 'compiled' your fit/ predict functions in this way,
 % you need to convert your data to mlcomp format, which can be done
