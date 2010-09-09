@@ -11,6 +11,7 @@ function logp = gaussLogprob(arg1, arg2, arg3)
 % L  = gaussLogprob(zeros(3,1), randpd(3), rand(10,3))
 % L  = gaussLogprob(zeros(3,1), diag(randpd(3)), rand(10,3))
 % L = gaussLogprob(structure(mu, Sigma), X)
+
 switch nargin
     case 3,  mu = arg1; Sigma = arg2; X = arg3;
     case 2, model = arg1; mu = model.mu; Sigma = model.Sigma; X = arg2;
@@ -37,18 +38,16 @@ if isvector(Sigma) && (numel(Sigma) > 1) % diagonal case
     tmp  = -(X.^2)./(2*sig2) - 0.5*log(2*pi*sig2);
     logp = sum(tmp, 2);
 else
-    % Full covariance case
-    logp = -0.5*sum((X/Sigma).*X, 2);
-    logZ = (d/2)*log(2*pi) + 0.5*logdet(Sigma);
+% Full covariance case
+%     logp = -0.5*sum((X/Sigma).*X, 2);
+%     logZ = (d/2)*log(2*pi) + 0.5*logdet(Sigma);
+%     logp = logp - logZ;
+%   slightly faster version
+    R    = chol(Sigma); 
+    logp = -0.5*sum((X/R).^2, 2);
+    logZ = 0.5*d*log(2*pi) + sum(log(diag(R)));
     logp = logp - logZ;
     
-% We could do a Cholesky decomp and reuse R for the logdet computation,
-% but its not much faster.
-%
-%     R = chol(Sigma); 
-%     logp2 = -0.5*sum(X/R/R'.*X, 2) - (d/2)*log(2*pi) - sum(log(diag(R)));
-%     assert(approxeq(logp, logp2));
-%     
 end
 
 end
