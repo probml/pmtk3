@@ -4,17 +4,16 @@
 
 % This file is from pmtk3.googlecode.com
 
-
-seed = 0; randn('state', seed);
+setSeed(0);
 n = 5;
 X=[randn(n,2)+2.*ones(n,2);2.*randn(n,2)-2.*ones(n,2)];
 X = centerCols(X);
 [n d] = size(X);
-[W, mu, sigma2, evals, evecs] = ppcaFit(X, 1);
+model = ppcaFit(X, 1);
 %sigma2=eps;
-[Z, postCov] = ppcaInfer(X, W, mu, sigma2, evals, evecs);
-Xrecon = Z*W' + repmat(mu, n,1);
-figure(2);clf;
+Xrecon = ppcaReconstruct(model, X);
+mu = model.mu;
+figure;
 plot(mu(1), mu(2), '*', 'markersize', 15, 'color', 'r');
 hold on
 plot(X(:,1), X(:,2), 'ro');
@@ -26,7 +25,7 @@ end
 % plot the linear subspace
 Z2 = [-2;1.5];
 %Z2 = [-5;5]; % 2 ``extreme'' points in latent space
-Xrecon2 = Z2*W' + repmat(mu, 2,1);
+Xrecon2 = Z2*model.W' + repmat(mu, 2,1);
 line([Xrecon2(1,1) Xrecon2(2,1)], [Xrecon2(1,2) Xrecon2(2,2)], 'color', 'm')
 axis;
 

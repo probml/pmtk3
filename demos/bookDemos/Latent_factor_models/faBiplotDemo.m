@@ -32,9 +32,11 @@ switch dataset
 end
 
 Ks = [2 3];
+Ks = [2];
 for ki=1:length(Ks)
     K = Ks(ki);
     rotations = {'none', 'varimax'};
+    rotations = {'none'};
     for i=1:length(rotations)
         %X = zscore(X);
         [W, Psi, R, stats, Z] = factoran(X, K, 'rotate', rotations{i});
@@ -46,8 +48,11 @@ for ki=1:length(Ks)
         
         if 0
             % Click on some points and plot their names
-            figure(f1);
+            %figure(f1);
+            figure;
+            biplotPmtk(W,  'Scores',Z);
             hold on
+            ZZ=Z;
             while 1
                 Xsel = ginput(1);
                 dst = sqdist(Xsel', ZZ(:,1:2)');

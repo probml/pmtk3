@@ -1,12 +1,18 @@
-function [logp, ll] = ppcaLogprob(X, W, mu, sigma2, evals, evecs)
+function [logp] = ppcaLogprob(model, X)
 % logp(i) = log N(X(i,:) | mu, C) where C = W W' + sigma^2 I(d)
 % Based on code by Ian Nabney
 
 % This file is from pmtk3.googlecode.com
 
+% old interface
+%[logp, ll] = ppcaLogprob(X, W, mu, sigma2, evals, evecs)
+
+mu = model.mu; W = model.W; sigma2 = model.sigma2;
+evals = model.evals; evecs = model.evecs;
+
 mu = mu(:)';
 [N d] = size(X);
-[d K] = size(W);
+[d2 K] = size(W);
 
 U = evecs(:,1:K);
 L = evals(1:K);
@@ -24,11 +30,10 @@ mahal = sum(diffs .* diffs, 2) - ...
 mahal = mahal/sigma2;
 logp = -0.5*mahal - (d/2)*log(2*pi) -0.5*logdetC;
 
-if  nargout >= 2 % debugging - O(d^3) time
+if  0 % ll(i)=-inf, presumably because C is ill-conditioned
    C = W*W' + sigma2*eye(d);
-   p = gaussProb(X, mu, C);
-   ll = log(p);
-   %assert(approxeq(logp, ll))
+   ll = gaussLogprob(X, mu, C);
+   assert(approxeq(logp, ll))
 end
 
 end

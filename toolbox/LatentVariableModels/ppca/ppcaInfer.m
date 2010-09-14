@@ -5,6 +5,8 @@ function [postMean, postCov] = ppcaInfer(X, W, mu, sigma2, evals, evecs)
 
 % This file is from pmtk3.googlecode.com
 
+warning('ppcaInfer is deprecated; use ppcaInferLatent')
+
 [d K] = size(W);
 [N d] = size(X);
 Lam = evals(1:K)';

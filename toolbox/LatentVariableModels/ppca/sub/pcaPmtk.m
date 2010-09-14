@@ -28,15 +28,15 @@ mu = mean(X);
 X = X - repmat(mu, n, 1);
 switch method
  case 1,
-  %[evec, evals] = eig(cov(X));
-  [evec, evals] = eig(X'*X/n);
+  [evec, evals] = eig(cov(X,1));
+  %[evec, evals] = eig(X'*X/n);
   [evals, perm] = sort(diag(evals), 'descend');
   B = evec(:, perm(1:K));
  case 2,
   [evecs, evals] = eig(X*X');
   [evals, perm] = sort(diag(evals), 'descend');
-  V = evecs(:, perm);
-  B = (X'*V)*diag(1./sqrt(evals));
+  U = evecs(:, perm);
+  B = (X'*U)*diag(1./sqrt(evals));
   B = B(:, 1:K);
   evals = evals / n;
   r = rank(X);

@@ -18,8 +18,7 @@ mu = zeros(1,d);
 k = 4;
 W = zeros(d,d);
 for i=1:k
-   modeli = struct('mu', mu, 'Sigma', sigma(i)*eye(d));
-   W(:,i) = gaussSample(modeli, 1);
+   W(:,i) = gaussSample(mu, sigma(i)*eye(d), 1);
 end
 Z = randn(d,n);
 X = W*Z + randn(d,n);
@@ -32,7 +31,9 @@ kmax = d-1;
 figure; hintonDiagram(M.W); title('ARD');
 printPmtkFigure('ppcaVBhintonArd')
 
-[Wppca, mu, sigma2, evals, evecs, Xproj, Xrecon]  = ppcaFit(X, kmax);
+%[Wppca, mu, sigma2, evals, evecs, Xproj, Xrecon]  = ppcaFit(X, kmax);
+model = ppcaFit(X, kmax);
+Wppca = model.W;
 figure; hintonDiagram(Wppca); title('MLE'); 
 printPmtkFigure('ppcaVBhintonMle')
 

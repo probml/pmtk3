@@ -4,8 +4,8 @@ function logp = gaussLogprob(arg1, arg2, arg3)
 % L = gaussLogprob(mu, Sigma, X)
 % X(i,:) is i'th case, can contain NaNs for missing values.
 % Sigma can be a vector; this is interpreted as a diagonal matrix.
-% In the univariate case, Sigma is the variance, not the standard
-% deviation!
+% *** In the univariate case, Sigma is the variance, not the standard
+% deviation! ***
 %
 % Examples
 % L  = gaussLogprob(zeros(3,1), randpd(3), rand(10,3))
@@ -22,6 +22,7 @@ switch nargin
         error('bad num args')
 end
 
+mu = mu(:);
 if any(isnan(X(:)))
     logp = gaussLogprobMissingData(structure(mu, Sigma), X);
     return;
