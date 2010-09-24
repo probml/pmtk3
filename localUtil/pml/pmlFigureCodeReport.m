@@ -1,6 +1,5 @@
 function pmlFigureCodeReport(dest, includeEx, includeSol)
 %% Generate an html report of figures in PML and their source files
-% This replaces the old perltex code and is now 100% MATLAB
 %
 %% Inputs
 %

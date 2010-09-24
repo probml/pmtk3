@@ -49,6 +49,12 @@ pg = pg(~builtinMatlab);
 found = cellfun(@(c)exist(c, 'file'), missing); 
 missing = missing(~found); 
 pg = pg(~found); 
+
+if isempty(missing)
+  fprintf('no code is missing\n')
+  return;
+end
+
 colNames = {'File Name' 'Pages(s)'};
 pmtkRed = getConfigValue('PMTKred'); 
   header = [...

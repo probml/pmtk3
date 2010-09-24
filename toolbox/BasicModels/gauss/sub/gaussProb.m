@@ -1,6 +1,8 @@
 function p = gaussProb(X, mu, Sigma)
 % Multivariate Gaussian distribution, pdf
 % X(i,:) is i'th case
+% *** In the univariate case, Sigma is the variance, not the standard
+% deviation! ***
 
 % This file is from pmtk3.googlecode.com
 

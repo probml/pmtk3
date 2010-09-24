@@ -84,4 +84,5 @@ bar(xMale, nMale, 'b')
 hold on
 bar(xFemale, nFemale, 'r')
 title(ttl)
+%[im_hatch, colorlist] = applyhatch_pluscolor(gcf,'\-x.', 1);
 end
