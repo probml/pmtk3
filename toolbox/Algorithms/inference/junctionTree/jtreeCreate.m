@@ -64,9 +64,12 @@ for i=1:length(pred)
         cliqueTree(pred(i), i) = 1;
     end
 end
-postOrderParents = zeros(1, length(postOrder));
+%postOrderParents = zeros(1, length(postOrder));
+postOrderParents = cell(1, length(postOrder));
 for i = postOrder(1:end-1) % always a single parent since it's a tree
-    postOrderParents(i) = parents(cliqueTree, i); 
+    %postOrderParents(i) = parents(cliqueTree, i);
+    % KPM 27Sep10: use cell array in case graph is disconnected so ps=[]
+    postOrderParents{i} = parents(cliqueTree, i);
 end
 preOrderChildren = cell(1, length(preOrder));
 for i = preOrder

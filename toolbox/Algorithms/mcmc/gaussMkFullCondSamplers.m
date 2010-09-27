@@ -1,5 +1,7 @@
 function fcs = gaussMkFullCondSamplers(model, visVars, visVals)
-% Returns a cell array of function handles for use by e.g. gibbs sampling.
+% Returns a cell array of function handles 
+% containing the full conditionals for an MVN
+% for use by e.g. gibbs sampling.
 %
 % For instance, fcs{i}(xh), returns a single sample for ith hidden
 % variable, from the full conditional, (i.e. the distribution conditioned

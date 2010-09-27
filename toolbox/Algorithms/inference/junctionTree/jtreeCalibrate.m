@@ -31,21 +31,26 @@ postOrder(end) = []; % remove root as it has no one to send to in this phase
 Z = zeros(numel(postOrder), 1);
 i = 1;
 for c = postOrder
-    p                  = postOrderParents(c);
+    p                  = postOrderParents{c}; %postOrderParents(c);
+    if ~isempty(p)
     message            = tabularFactorMarginalize(cliques{c}, sepsets{c, p});
     cliques{p}         = tabularFactorMultiply(cliques{p}, message);
     [cliques{p}, Z(i)] = tabularFactorNormalize(cliques{p});
     i = i+1;
     messages{p, c} = message;
+    end
 end
 %% distribute messages
 for p = preOrder
     for c = preOrderChildren{p}
+      msg = messages{p,c};
+      if ~isempty(msg)
         childClq        = tabularFactorDivide(cliques{c}, messages{p, c});
         message         = tabularFactorMarginalize(cliques{p}, sepsets{p, c});
         cliques{c}      = tabularFactorMultiply(childClq, message);
         cliques{c}      = tabularFactorNormalize(cliques{c});
         messages{p, c}  = message;
+      end
     end
 end
 jtree.cliques = cliques;

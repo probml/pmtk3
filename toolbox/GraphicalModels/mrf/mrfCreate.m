@@ -7,6 +7,8 @@ function mrf = mrfCreate(G, varargin)
 % 'nodePots'           - a cell array of either tabularFactors or numeric
 %                        matrices representing the node potentials. Use
 %                        numeric matrices when parameter tying.
+%                        Use must specify at least one nodePots 
+%                        since this implicitly defines the nstates
 %
 % 'edgePots'            - a cell array of either tabularFactors or numeric
 %                        matrices representing the edge potentials. If numeric
@@ -72,6 +74,7 @@ nodePots  = cellwrap(nodePots);
 edgePots  = cellwrap(edgePots);
 localCPDs = cellwrap(localCPDs);
 nnodes    = size(G, 1);
+G = mkSymmetric(G);
 
 %% set default values
 if isempty(nodePotPointers)
@@ -128,6 +131,10 @@ for i=1:numel(edgeFactors)
    edgeLookup(dom, i) = true; 
 end
 %% combine node and edge factors into a cliqueGraph
+
+% KPM 27Sep10: modified to handle possibly disconnected nodes
+cliqueGraph = cliqueGraphCreate([rowvec(nodeFactors) rowvec(edgeFactors)], nstates);
+if 0
 if isempty(edgeFactors)
    cliqueGraph = cliqueGraphCreate(nodeFactors, nstates, G);  
 else
@@ -138,6 +145,8 @@ else
     end
     cliqueGraph = cliqueGraphCreate(factors, nstates);  
 end
+end
+
 %% package
 mrf = structure(G, cliqueGraph, localCPDs, localCPDpointers, ...
     localCPDpointers, infEngine, nnodes, edges, nstates, ...

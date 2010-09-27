@@ -27,7 +27,7 @@ else
     jtree     = jtreeCreate(cg);
 end
 jtree         = jtreeAddFactors(jtree, localFacs);
-map           = jtreeFindMap(jtree); 
+map           = jtreeFindMap(jtree);
 if ~isempty(clamped)
     map(find(clamped)) = nonzeros(clamped); %#ok 
 end

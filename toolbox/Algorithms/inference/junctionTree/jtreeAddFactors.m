@@ -27,7 +27,7 @@ for i=1:numel(facs)
     fdom = f.domain;
     candidateCliques = find(all(cliqueLookup(fdom, :), 1));
     if isempty(candidateCliques)
-        error('no accomidating clique could be found for facs{%d}: %d', i, fdom); 
+        error('no accomodating clique could be found for facs{%d}: %d', i, fdom); 
     end
     smallest = candidateCliques(minidx(clqSizes(candidateCliques)));
     assert(issubset(fdom, cliques{smallest}.domain)); 

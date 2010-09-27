@@ -29,11 +29,13 @@ end
 %% collect messages
 postOrder(end) = []; % remove root
 for c = postOrder
-    p              = postOrderParents(c);
-    message        = tabularFactorMarginalize(cliques{c}, sepsets{c, p}, maximize);
-    cliques{p}     = tabularFactorMultiply(cliques{p}, message);
-    cliques{p}     = tabularFactorNormalize(cliques{p});
-    messages{p, c} = message;
+    p              = postOrderParents{c}; %postOrderParents(c);
+    if ~isempty(p)
+      message        = tabularFactorMarginalize(cliques{c}, sepsets{c, p}, maximize);
+      cliques{p}     = tabularFactorMultiply(cliques{p}, message);
+      cliques{p}     = tabularFactorNormalize(cliques{p});
+      messages{p, c} = message;
+    end
 end
 map        = zeros(1, jtree.nvars);
 root       = jtree.rootClqNdx;
