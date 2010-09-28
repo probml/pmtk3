@@ -7,9 +7,9 @@
 
 function sportsTrackingDemo()
 
-setSeed(0);
+setSeed(2);
 Nplayers = 3;
-Nframes = 20;
+Nframes = 30;
 
 % Assign player locations 
 % centers(:,i) is [x y] center of i'th ellipse
@@ -35,6 +35,7 @@ colors(:,3) = [1 0 0]';
 % we use blue for player 1 so color matches bar's colors
 
 unidentColor = [1/3 1/3 1/3]';
+colorNoiseLevel = 0.3; % 0 to 0.5 (0 is easiest)
 
 % Make an hmm which controls visibility of players
 % states = identifiable (unique color - eg frontal view),
@@ -54,7 +55,7 @@ initStateDist = [1/3 1/3 1/3];
 markovModelForVisStatus = markovCreate(initStateDist, T);
 
 params = structure(centers, colors, unidentColor, ...
-  playerSize, courtSize,  markovModelForVisStatus);
+  colorNoiseLevel, playerSize, courtSize,  markovModelForVisStatus);
 
 
 %% Visualize data
@@ -63,11 +64,13 @@ data = generateData(params, Nframes);
 [codebook, data.Ovec, data.Ocell]  = vectorQuantize(data, params);
 drawPlayers(data, params);
 set(gcf, 'name', 'raw data + VQ')
+printPmtkFigure('sportsRaw')
+
 %celldisp(data.succ)
 X = rowvec(data.Ovec); % 1*N, N=sum_t N(t),  X(j) in 1..K
 
-%% Inference in an iid model
 
+%% Inference in an iid model
 
 mrfNoEdges = mkGmNoEdges(data, codebook, Nplayers);
 belNoEdges = tfMarg2Mat(mrfInferNodes(mrfNoEdges, 'localev', X)); 
@@ -75,6 +78,7 @@ belNoEdgesCell = timeSeriesToCell(belNoEdges, data.numPresent);
 drawBel(belNoEdgesCell);
 %suptitle('no edges')
 set(gcf, 'name', 'no edges')
+printPmtkFigure('sportsBelNoEdges')
 
 if 0 %debugging - don't even need GM code if graph is disconnected
 CPT = mkLocalCpt(codebook, Nplayers);
@@ -85,6 +89,7 @@ drawBel(postCell)
 assert(isequal(postCell, belCell))
 end
 
+
 %% Inference in a model with temporal connections
 
 mrfTime = mkGmTemporalEdges(data, codebook, Nplayers);
@@ -93,13 +98,16 @@ belTimeCell = timeSeriesToCell(belTime, data.numPresent);
 drawBel(belTimeCell); 
 %suptitle('temporal edges')
 set(gcf, 'name', 'temporal edges')
+printPmtkFigure('sportsBelTime')
 
 % There is a bug in map estimation for disconnected grapshs
-%mapTime = mrfMap(mrfTime, 'localEv', X); % Viterbi
+% so we use max marginals instead
+%mapTime = mrfMap(mrfTime, 'localEv', X) % Viterbi
 mapTime = maxidx(belTime, [], 1); % max marginals
 mapTimeCell = timeSeriesToCell(rowvec(mapTime), data.numPresent);
 drawPlayers(data, params, mapTimeCell);
 set(gcf, 'name', 'temporal edges')
+printPmtkFigure('sportsMapTime')
 end
 
 function model = mkGmNoEdges(data, codebook, Nplayers)
@@ -168,13 +176,21 @@ for t=1:Nframes
   statusFrame = status(:,t);
   for i=1:Nplayers
     % frameCount is the 'local' number for player i
-    if statusFrame(i)==absent, continue; end
+    if statusFrame(i)==absent, continue; end % skip absent players
     locns{t}(:,frameCount) = params.centers(:,i);
     if statusFrame(i)==unid
-      colors{t}(:,frameCount) = params.unidentColor;
+     mu = params.unidentColor;
     else
-      colors{t}(:,frameCount) = params.colors(:,i);
+      mu = params.colors(:,i);
     end
+    % perturb the color in each r,g,b dimension
+    for d=1:3
+      mu(d) = mu(d) + params.colorNoiseLevel*unifrnd(-1,1,1);
+      mu(d) = min(mu(d), 1);
+      mu(d) = max(mu(d), 0);
+    end
+    colors{t}(:,frameCount) = mu;
+    
     node2dTo1d(t,frameCount) = overallCount;
     node1dTo2d(overallCount,:) = [t frameCount];
     frameCount = frameCount + 1;
@@ -201,18 +217,22 @@ for t=1:Nframes-1
 end
 
 data = structure(locns, colors, present, succ, numPresent, ...
-  node2dTo1d, node1dTo2d);
+  node2dTo1d, node1dTo2d, status);
 end
 
 function CPD = mkLocalCpt(codebook, Nplayers)
 % CPD(i,k) = prob player i can generate codeword k
 K = size(codebook,2);
 % we cheat and assume that player i can generate
-% codebook i or codebook(end), which represents unid
-CPD = zeros(Nplayers, K);
-epsilon = 0.9;
-CPD = setdiag(CPD, 1-epsilon);
-CPD(:, end) = epsilon; % last column = unid color
+% codebook i's entry with high prob.
+% It can also generate the unidentified color (codebook(end))
+% For robustness, we let it generate all other entries too
+%CPD = zeros(Nplayers, K);
+epsilon = 0.1;
+%CPD = setdiag(CPD, 1-epsilon);
+%CPD(:, end) = epsilon; % last column = unid color
+CPD = epsilon*ones(Nplayers, K);
+CPD = mkStochastic(setdiag(CPD, 1-epsilon));
 assert(approxeq(CPD, mkStochastic(CPD)))
 end
 
@@ -223,8 +243,8 @@ function [codebook, symbols, Ocell] = vectorQuantize(data, params)
 colors = cell2mat(data.colors);
 %K = 5; 
 %[codebook, symbols] = kmeansFit(colors', K);
-% set the codebook columns to the true colors
-codebook = [params.colors params.unidentColor(:) ]; %  cheating
+% set the codebook columns to the true colors  - this is cheating
+codebook = [params.colors, params.unidentColor(:) ];
 symbols = kmeansEncode(colors', codebook);
 Ocell = timeSeriesToCell(rowvec(symbols), data.numPresent);
 end
@@ -245,24 +265,33 @@ end
 
 function drawPlayers(data, params, mapEstCell)
 if nargin < 3, mapEstCell = []; end
+id = 1; unid = 2; absent = 3;
+Nplayers = size(params.colors, 2);
 Nframes = numel(data.locns);
 [ynum, xnum] = nsubplots(Nframes);
-
 figure;
 for t=1:Nframes
   subplot(ynum, xnum, t);
-  NP = numel(data.present{t});
-  for i=1:NP
+  statusFrame = data.status(:,t);
+  i = 1; % indexes detections within a frame
+  for p=1:Nplayers
+    if statusFrame(p) == absent, continue; end % skip absent players
     mu = data.locns{t}(:,i);
     if ~isempty(mapEstCell)
       % use color associated with estimated person
       color = params.colors(:, mapEstCell{t}(i));
     else
+      % use observed color
       color = data.colors{t}(:,i);
     end
     plot(mu(1), mu(2), 'o','markerfacecolor', color, ...
-      'markersize', params.playerSize)
-    hold on;
+      'markersize', params.playerSize);
+    hold on
+    if statusFrame(p) == id
+      % if unique view, mark with an x
+      plot(mu(1), mu(2), 'kx', 'markersize', 12, 'linewidth', 3);
+    end
+    i = i + 1;
   end
   set(gca,'xlim',[-params.courtSize, params.courtSize]);
   set(gca,'ylim',[-params.courtSize, params.courtSize]);
