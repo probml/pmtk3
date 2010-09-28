@@ -7,6 +7,8 @@
 
 function sportsTrackingDemoMutex()
 
+% test for jo-anne
+
 setSeed(2);
 Nplayers = 3;
 Nframes = 30;
