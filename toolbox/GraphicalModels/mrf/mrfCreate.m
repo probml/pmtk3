@@ -30,7 +30,7 @@ function mrf = mrfCreate(G, varargin)
 % 'nodePotPointers'     - if specified, nodePots{nodePotPointers(j)} is used
 %                        as the potential for node j.
 %
-% 'edgePotPointers'     - if specified nodePots{edgePotPointers(e)} is used
+% 'edgePotPointers'     - if specified, edgePots{edgePotPointers(e)} is used
 %                        as the potential for edge e, (see edge ordering
 %                        note under edgePots above).
 %
