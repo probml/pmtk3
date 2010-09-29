@@ -129,6 +129,8 @@ drawPlayers(data, params, mapTimeMutexCell);
 set(gcf, 'name', 'temporal + mutex edges')
 printPmtkFigure('sportsMapTimeMutex')
 
+keyboard
+
 end
 
 function model = mkGm(data, codebook, Nplayers, useTemporal, useMutex)

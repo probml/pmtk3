@@ -18,9 +18,11 @@ G        = moralizeGraph(cg.G);
 nvars    = size(G, 1);
 %% add in clique constraints
 cc = cellwrap(cc); 
-for i=1:numel(cc)
-    c = cc{i};
-    G(c, c) = 1;
+if ~isempty(cc)
+    for i=1:numel(cc)
+        c = cc{i};
+        G(c, c) = 1;
+    end
 end
 G = setdiag(G, 0);
 %% build clique tree
