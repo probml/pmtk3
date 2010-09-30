@@ -39,7 +39,7 @@ if isempty(mu)
     % in the unlikely event of a tie,
     % we want to ensure the means are different.
     v = var(X);
-    noise = gaussSample(struct('mu', zeros(1, length(v)), 'Sigma', 0.01*diag(v)), K);
+    noise = gaussSample(zeros(1, length(v)), 0.01*diag(v), K);
     mu   = X(perm(1:K), :)' + noise';
 end
 %% Setup loop
