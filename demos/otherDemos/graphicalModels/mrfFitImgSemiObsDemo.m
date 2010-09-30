@@ -1,5 +1,5 @@
-%% Fit the local CPDs of an mrf given an image / noisy image pair
-%
+%% Fit the local CPDs of a lattice mrf given a noisy image and its underlying
+% discrete labels
 %%
 %  The model has the following form
 %  y1<-  h1 - h2  -> y2
@@ -19,16 +19,14 @@
 
 
 %PMTKslow
-%%
+%% Make data
 setSeed(2); 
-H = 4; % hide every H values (set to 0 for fully observed case)
-%                            (set to 1 for fully hidden case)
 
 cmap = 'bone';
 imgs = loadData('tinyImages'); 
 img = double(imgs.matlabIconGray);
 [M, N] = size(img); 
-ns = 32; 
+ns = 5; % 32; 
 img = reshape(quantizePMTK(img(:), 'levels', ns), M, N);
 img = canonizeLabels(img); 
 nstates = max(img(:)); 
@@ -36,7 +34,6 @@ figure;
 imagesc(img); 
 colormap(cmap); 
 title('original image');
-localCPD  = condGaussCpdCreate( nstates*ones(1, nstates), ones(1, 1, nstates)); 
 
 sigma = 0.1; 
 yTrain = img./nstates + sigma*randn(M, N);
@@ -44,35 +41,76 @@ yTest  = img./nstates + sigma*randn(M, N);
 figure; imagesc(yTrain);
 colormap(cmap); 
 title('noisy copy (yTrain)');
+%{
 figure; imagesc(yTest); 
 colormap(cmap); 
 title('noisy copy (yTest)');
+%}
 
-%localCPD = localCPD.fitFn(localCPD, img(:), yTrain(:));
-% Note, with fully observed data, we can always just fit the localCPD
-% directly, but we are testing mrfTrainEm
+%% Experiment
+% hide every H labels (0=fully obs, 1=fully hidden, 4=1/4 hidden)
+hideStep = [0, 2]; 
 
-edgePot = exp(bsxfun(@(a, b)-abs(a-b), 1:nstates, (1:nstates)')./2); % will be replicated
+% informativeEdgePot=1 encourages nearby labels to be similar
+% since thet represent discretizations of the underling signal
+% informativeEdgePot=0 is disconnected graph
 
-figure; imagesc(edgePot); colormap('default'); title('tied edge potential');
-nodePot = normalize(rand(1, nstates));
-G         = mkGrid(M, N);
-infEngine = 'libdai';
-opts = {'TRWBP', '[updates=SEQFIX,tol=1e-9,maxiter=10000,logdomain=0,nrtrees=0]'};
+% local CPD is p(y | q=k)= gauss(mu(k), sigma(k))
+% We initialize mu(k)=1, sigma(k)=1
+% We will learn the mean and variance of pixel itnensities
+% corresponding to each hidden state k.
+localCPD  = condGaussCpdCreate( nstates*ones(1, nstates), ones(1, 1, nstates));
 
-mrf     = mrfCreate(G, 'nodePots', nodePot, 'edgePots', edgePot,...
-    'localCPDs', localCPD, 'infEngine', infEngine, 'infEngArgs', opts);
-
-le = rowvec(yTest);
-
-data = rowvec(img); 
-data(1:H:end) = 0; 
-mrf = mrfTrainEm(mrf, data, 'localev', le, 'verbose', true);
-
-
-nodes = mrfInferNodes(mrf, 'localev', rowvec(yTest)); 
+    
+for hi=1:numel(hideStep)
+  H = hideStep(hi);
+  
+  labeledData = rowvec(img); % 1-by-npixels
+  labeledData(1:H:end) = 0;  % a certain fraction H are missing
+  
+  obsPattern = ones(size(img));
+  obsPattern(1:H:end) = 0;
+  figure; imagesc(obsPattern); colormap(gray); colorbar
+  title(sprintf('observed pixels, H=%d', H))
+  
+  for useInformativeEdgePot=[0 1]
+    
+   
+    %localCPD = localCPD.fitFn(localCPD, img(:), yTrain(:));
+    % Note, with fully observed data, we can always just fit the localCPD
+    % directly, but we are testing mrfTrainEm
+    
+    if useInformativeEdgePot
+      edgePot = exp(bsxfun(@(a, b)-abs(a-b), 1:nstates, (1:nstates)')./2);
+    else
+      edgePot = ones(nstates, nstates);
+    end
+    %figure; imagesc(edgePot); colormap('default'); title('tied edge potential');
+    
+    nodePot = ones(1, nstates); %not needed
+    G         = mkGrid(M, N);
+    infEngine = 'libdai';
+    opts = {'TRWBP', '[updates=SEQFIX,tol=1e-9,maxiter=10000,logdomain=0,nrtrees=0]'};
+    
+    mrf     = mrfCreate(G, 'nodePots', nodePot, 'edgePots', edgePot,...
+      'localCPDs', localCPD, 'infEngine', infEngine, 'infEngArgs', opts);
+    
+    %{
+nodes = mrfInferNodes(mrf, 'localev', rowvec(yTest));
 maxMarginals = maxidx(tfMarg2Mat(nodes), [], 1);
-figure; imagesc(reshape(maxMarginals, M, N)); colormap(cmap); 
-title('reconstructed image'); 
+figure; imagesc(reshape(maxMarginals, M, N)); colormap(cmap);
+title(sprintf('initial params, H=%d, informativeEdgePot = %d', H, useInformativeEdgePot));
+      %}
+      
+      mrf = mrfTrainEm(mrf, labeledData, 'localev', rowvec(yTrain), 'verbose', true);
+      
+      nodes = mrfInferNodes(mrf, 'localev', rowvec(yTest));
+      maxMarginals = maxidx(tfMarg2Mat(nodes), [], 1);
+      figure; imagesc(reshape(maxMarginals, M, N)); colormap(cmap);
+      title(sprintf('learned params, H=%d, informativeEdgePot = %d', H, useInformativeEdgePot));
+      
+  end
+end
+
 placeFigures;
 

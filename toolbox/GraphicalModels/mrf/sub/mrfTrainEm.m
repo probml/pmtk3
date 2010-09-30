@@ -1,8 +1,12 @@
 function [mrf, loglikHist] = mrfTrainEm(mrf, data, varargin)
 %% Train an mrf with partially observed data via EM
-% This does not currently update the undirected parameters, only the local
-% CPDs, but will be generalized at a later point. 
-% See mrfTrain
+% This does not currently update the undirected backbone parameters, only the local
+% CPDs.
+% data(n,i) = 0 if node i in case n is unobserved
+% data(n,i) = k if node i in case n is observed to be k
+%
+% 'localEv'  ncases-by-d-by-nnodes or d*nnodes if ncases=1
+
 %%
 
 % This file is from pmtk3.googlecode.com

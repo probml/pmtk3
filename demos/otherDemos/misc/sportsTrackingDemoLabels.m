@@ -4,8 +4,10 @@
 function sportsTrackingDemoLabels()
 
 setSeed(0);
+folder = 'C:\kmurphy\People\JoAnneTing\sports';
+
+%% Set parameters
 Nplayers = 3;
-Nframes = 30;
 
 % Assign player locations 
 % centers(:,i) is [x y] center of i'th ellipse
@@ -23,45 +25,194 @@ colors(:,2) = [0 1 0]';
 colors(:,3) = [1 0 0]';
 % we use blue for player 1 so color matches bar's colors
 
+% If a player is in the unidentified state,
+% we sample its color from a distribution
+% centered at this value
 unidentColor = [1/3 1/3 1/3]';
+
+% When we generate a color, we add noise
+% to it with this noise level
 colorNoiseLevel = 0; % 0 to 0.5 (0 is easiest)
 
 params = structure(centers, colors, unidentColor, ...
   colorNoiseLevel, playerSize, courtSize);
 
+%% Make data
 
-data = generateData(params, Nframes);
+dataTrain = generateData(params, 100);
+dataTest = generateData(params, 30);
+
+% vector quantize
+% codebook(:,k) is k'th color cluster
+% set the codebook columns to the true colors 
+% used to generate the data - this is cheating!
+codebook = [params.colors, params.unidentColor(:) ];
+Ncodewords = size(codebook,2);
+dataTrain.Ovec = kmeansEncode(cell2mat(dataTrain.colors)', codebook);
+dataTest.Ovec = kmeansEncode(cell2mat(dataTest.colors)', codebook);
+% data.Ovec(j) = k means j'th detection looks like codeword k
 
 %% Visualize data
-[codebook, data.Ovec, data.Ocell]  = vectorQuantize(data, params);
-% data.Ovec(j) = k means j'th detection looks like codeword k
-% data.Ocell{t}(i)=k means i'th detection in frame t is codeword k
-drawPlayers(data, params);
-set(gcf, 'name', 'raw data + VQ')
-printPmtkFigure('sportsRaw')
+drawPlayers(dataTrain, params);
+set(gcf, 'name', 'train data + VQ')
+print(gcf, '-dpng', fullfile(folder, 'sportsTrainData.png'))
+
+drawPlayers(dataTest, params);
+set(gcf, 'name', 'test data + VQ')
+print(gcf, '-dpng', fullfile(folder, 'sportsTestData.png'))
 
 
-%% Inference in a model with temporal and mutex connections
+
+%% Main body
 
 
-% incorporate observed appearance
-model.obsCpt = mkObsCpt(codebook, Nplayers);
-softEvObs = model.obsCpt(:, data.Ovec); % softEv(:,j) = likelihood for j'th node
-nodePots = softEvToFactors(softEvObs);
+% incorporate label info  during training.
+% If labelType = 'unique'
+%  then softEvLabels(:,j) = deltaFn on true id for j
+%  which amounts to clamping the hidden nodes to their true label
+% If labelType = 'soft',
+%   softEvLabels(:,j) = uniform over all players in j's frame.
+%   If all players are present, this gives us no info
+% If labelType = 'none',
+%   softEvLabels(:,j) = uniform over all players 
+%   which amounts to having no labels
 
-model.mrf = mkMrf(data,  Nplayers, 1, 1, nodePots);
 
-bel = tfMarg2Mat(mrfInferNodes(model.mrf)); 
-belCell = timeSeriesToCell(bel, data.numPresent);
-drawBel(belCell); 
-set(gcf, 'name', 'temporal + mutex edges')
+%{
+% Cheat by using the oracular observation CPD
+% but no label info. We use temporal and mutex arcs.
+% This is exactly the same as sportsTrackingDemoMutex.
+oracleCPD = tabularCpdCreate(mkObsCpt(codebook, Nplayers));
+bel= inferBel(dataTrain, 'none', oracleCPD);
+drawBel(bel, dataTrain); 
+set(gcf, 'name', 'oracle CPD, no labels,  training set')
+
+
+% Now use uniform CPD but unique labels
+% Posterior marginals should be exact.
+% This is what will be used to drive learning.
+uniformCPD = tabularCpdCreate(mkStochastic(ones(Nplayers, Ncodewords)));
+bel = inferBel(dataTrain, 'unique', uniformCPD);
+drawBel(bel, dataTrain); 
+set(gcf, 'name', 'uniform CPD,  unique labels,  training set')
+
+%}
+
+
+% train up a model from unique labels
+% We don't need GM structure in this case
+[trainedCPD] = learnCPD(dataTrain, 'unique', Ncodewords, ...
+  {'useMutex', false, 'useTemporal', false});
+bel = inferBel(dataTrain, 'none', trainedCPD);
+drawBel(bel, dataTrain); 
+set(gcf, 'name', 'CPD trained on unique labels, applied to unlabeled training set')
+print(gcf, '-dpng', fullfile(folder, 'sportsTrainedOnUniqueNoGM.png'))
+
+
+% train up a model from soft labels without using GM strucutre
+% This should fail, since the local beliefs will be too uninformed.
+[trainedCPD] = learnCPD(dataTrain, 'soft', Ncodewords, ...
+  {'useMutex', false, 'useTemporal', false});
+bel = inferBel(dataTrain, 'none', trainedCPD);
+drawBel(bel, dataTrain);
+set(gcf, 'name', 'CPD trained on soft labels without GM, applied to unlabeled training set')
+print(gcf, '-dpng', fullfile(folder, 'sportsTrainedOnSoftNoGM.png'))
+
+
+
+% train up a model from soft labels using GM
+[trainedCPD] = learnCPD(dataTrain, 'soft', Ncodewords);
+bel = inferBel(dataTrain, 'none', trainedCPD);
+drawBel(bel, dataTrain);
+set(gcf, 'name', 'CPD trained on soft labels, applied to unlabeled training set')
+print(gcf, '-dpng', fullfile(folder, 'sportsTrainedOnSoft.png'))
+
+% now apply to test set
+bel = inferBel(dataTest, 'none', trainedCPD);
+drawBel(bel, dataTest);
+set(gcf, 'name', 'CPD trained on soft labels, applied to unlabeled test set')
+print(gcf, '-dpng', fullfile(folder, 'sportsTrainedOnSoftTestSet.png'))
+
+
+%{
+% sanity check - train up a model from no labels
+% This should give uniform beliefs
+[trainedCPD] = learnCPD(dataTrain, 'none', Ncodewords);
+bel = inferBel(dataTrain, 'none', trainedCPD);
+drawBel(bel, dataTrain);
+set(gcf, 'name', 'CPD trained on no labels, applied to unlabeled training set')
+%}
 
 keyboard
 
+
 end
 
-function mrf = mkMrf(data, Nplayers, useTemporal, useMutex, nodePots)
+function [trainedCPD, mrf] = learnCPD(data, labelType, Ncodewords, mrfArgs)
+if nargin < 4, mrfArgs = {}; end
+uniformCPD = tabularCpdCreate(mkStochastic(ones(data.Nplayers, Ncodewords)));
+nodePots = mkNodePotsFromLabels(data, labelType);
+mrf = mkMrf(data, nodePots, 'localCPD', uniformCPD, mrfArgs{:});
+% We hold the label info fixed (burned into the nodePots)
+% while we re-evaluate the localEv as the localCPD params change.
+mrf = mrfTrainEm(mrf, [], 'localev', rowvec(data.Ovec), 'verbose', true);
+trainedCPD = mrf.localCPDs{1};
+end
 
+
+function bel = inferBel(data, labelType, localCPD)
+nodePots = mkNodePotsFromLabels(data, labelType);
+mrf = mkMrf(data, nodePots, 'localCPD', localCPD);
+bel = tfMarg2Mat(mrfInferNodes(mrf, 'localev', rowvec(data.Ovec)));
+%belCell = timeSeriesToCell(bel, data.numPresent);
+end
+ 
+ 
+function nodePots = mkNodePotsFromLabels(data, labelType)
+softEvLabels = mkSoftEvidenceFromLabels(data, labelType);
+Nnodes = size(softEvLabels,2);
+nodePots = cell(1,Nnodes);
+%model.obsCpt = mkObsCpt(codebook, Nplayers);
+%softEvObs = model.obsCpt(:, data.Ovec); % softEv(:,j) = likelihood for j'th node
+for j=1:Nnodes
+   dom = j;
+   %nodePots{j}  = tabularFactorCreate(softEvObs(:,j) .* softEvLabels(:,j), dom);
+   nodePots{j}  = tabularFactorCreate(softEvLabels(:,j), dom);
+   %nodePots{j}  = tabularFactorCreate(softEvObs(:,j), dom);
+end
+end
+
+function softEvLabels = mkSoftEvidenceFromLabels(data, labelType)
+% softEvLabels(k,j) = likelihood player k is  present at node j
+% Does not need to be normalized
+Nframes = numel(data.present);
+Nnodes = sum(data.numPresent);
+Nplayers = data.Nplayers;
+softEvLabels = zeros(Nplayers, Nnodes);
+for t=1:Nframes
+  for i=1:numel(data.present{t})
+    switch labelType
+      case 'soft',
+        ev = zeros(Nplayers,1);
+        ev(data.present{t}) = 1;
+      case 'unique',
+        ev = zeros(Nplayers,1);
+        ev(data.present{t}(i)) = 1; % delta fn
+      case 'none',
+        ev = ones(Nplayers,1);
+    end
+    j = data.node2dTo1d(t, i);
+    softEvLabels(:,j) = ev;
+  end
+end
+end
+
+function mrf = mkMrf(data, nodePots, varargin)
+
+[useTemporal, useMutex, localCPD] = process_options(varargin, ...
+  'useTemporal', true, 'useMutex', true, 'localCPD', []);
+
+Nplayers = data.Nplayers;
 Nframes = numel(data.present);
 Nnodes = sum(data.numPresent); % num detections
 G = zeros(Nnodes, Nnodes); 
@@ -118,13 +269,13 @@ if useTemporal  && useMutex
 end
 
 mrf     = mrfCreate(G, 'nodePots', nodePots, 'edgePots', edgePots,...
-     'edgePotPointers', edgePotPointers);
+    'edgePotPointers', edgePotPointers, 'localCPDs', localCPD);
 end
 
 
 
 function data = generateData(params, Nframes)
-% Output:
+% Output: data is a struct with these fields
 % status(i,t) = unident, ident or absent
 % locns{t}(:,i) = [x y] of i'th detection in frame t
 % colors{t}(:,i) = [r g b]
@@ -141,27 +292,35 @@ id = 1; unid = 2; absent = 3;
 T = zeros(3,3);
 T(id,id) = 0.2;
 T(id, unid) = 0.8;
-T(unid, unid) = 0.7;
+
+T(unid, unid) = 0.5;
 T(unid, id) = 0.2;
-T(unid, absent) = 0.1;
+T(unid, absent) = 0.3;
+
 T(absent, absent) = 0.2;
 T(absent, unid) = 0.8;
 assert(approxeq(T, mkStochastic(T)))
 initStateDist = [1/3 1/3 1/3];
 markovModelForVisStatus = markovCreate(initStateDist, T);
-
 % visibility status is just used internally to decide
 % color of player
+
+% we sample the status of each player independently
 status = markovSample(markovModelForVisStatus, Nframes, Nplayers);
 
 Nframes = size(status, 2);
 overallCount = 1;
+isPresent = true(Nframes, Nplayers);
 for t=1:Nframes
   frameCount = 1; % counts number of detections per frame
   statusFrame = status(:,t);
   for i=1:Nplayers
     % frameCount is the 'local' number for player i
-    if statusFrame(i)==absent, continue; end % skip absent players
+    % skip absent players
+    if statusFrame(i)==absent
+      isPresent(t,i) = false;
+      continue;
+    end 
     locns{t}(:,frameCount) = params.centers(:,i);
     if statusFrame(i)==unid
      mu = params.unidentColor;
@@ -202,7 +361,7 @@ for t=1:Nframes-1
 end
 
 data = structure(locns, colors, present, succ, numPresent, ...
-  node2dTo1d, node1dTo2d, status);
+  node2dTo1d, node1dTo2d,  Nplayers, Nframes, isPresent);
 end
 
 function CPT = mkObsCpt(codebook, Nplayers)
@@ -220,45 +379,20 @@ assert(approxeq(CPT, mkStochastic(CPT)))
 end
 
 
-function [codebook, symbols, Ocell] = vectorQuantize(data, params)
-% codebook(:,k) is k'th color cluster
-% O{t} is vector of discrete observation id's
-colors = cell2mat(data.colors);
-%K = 5; 
-%[codebook, symbols] = kmeansFit(colors', K);
-% set the codebook columns to the true colors  - this is cheating
-codebook = [params.colors, params.unidentColor(:) ];
-symbols = kmeansEncode(colors', codebook);
-Ocell = timeSeriesToCell(rowvec(symbols), data.numPresent);
-end
-
-function c = timeSeriesToCell(ts, numPresent)
-% ts(:,j) = vector for j'th detection
-% c{t}(:,i) = i'th detection in frame t, i=1:numPresent(t)
-Nframes = numel(numPresent);
-j = 1;
-for t=1:Nframes
-  for cnt=1:numPresent(t)
-    c{t}(:,cnt) = ts(:,j);
-    j = j + 1;
-  end
-end
-end
-
 
 function drawPlayers(data, params, mapEstCell)
 if nargin < 3, mapEstCell = []; end
 id = 1; unid = 2; absent = 3;
 Nplayers = size(params.colors, 2);
-Nframes = numel(data.locns);
+Nframes = min(30,numel(data.locns));
 [ynum, xnum] = nsubplots(Nframes);
 figure;
 for t=1:Nframes
   subplot(ynum, xnum, t);
-  statusFrame = data.status(:,t);
   i = 1; % indexes detections within a frame
   for p=1:Nplayers
-    if statusFrame(p) == absent, continue; end % skip absent players
+    % skip absent players 
+    if ~data.isPresent(t,p), continue; end
     mu = data.locns{t}(:,i);
     if ~isempty(mapEstCell)
       % use color associated with estimated person
@@ -270,16 +404,19 @@ for t=1:Nframes
     plot(mu(1), mu(2), 'o','markerfacecolor', color, ...
       'markersize', params.playerSize);
     hold on
-    if statusFrame(p) == id
-      % if unique view, mark with an x
-      plot(mu(1), mu(2), 'kx', 'markersize', 12, 'linewidth', 3);
-    end
     i = i + 1;
   end
   set(gca,'xlim',[-params.courtSize, params.courtSize]);
   set(gca,'ylim',[-params.courtSize, params.courtSize]);
-  %title(sprintf('%d: %s', t, sprintf('%d,', data.present{t})))
-  title(sprintf('%d: %s', t, sprintf('%d,', data.Ocell{t})))
+  if data.numPresent(t) > 0
+     firstDetection = data.node2dTo1d(t, 1);
+     lastDetection = data.node2dTo1d(t, data.numPresent(t));
+     title(sprintf('%d (%d:%d)\n %s', t, firstDetection, lastDetection, ...
+        sprintf('%d,', data.Ovec(firstDetection:lastDetection))))
+  else
+     title(sprintf('%d:', t))
+  end
+  
   %axis off
   set(gca, 'xtick', [])
   set(gca, 'ytick', [])
@@ -287,14 +424,29 @@ end
 end
 
 
-function drawBel(belCell)
-Nframes = numel(belCell);
+function drawBel(bel, data)
+Nframes = min(30, size(bel,2));
 [ynum, xnum] = nsubplots(Nframes);
 figure;
+emptyBel = 0.01*ones(data.Nplayers,1);
+j = 1;
 for t=1:Nframes
   subplot(ynum, xnum, t);
-  bar(belCell{t}');
-  title(sprintf('%d', t))
+  belFrame = zeros(data.Nplayers, data.Nplayers);
+  for i=1:data.Nplayers
+    if ~data.isPresent(t,i)
+      belFrame(:,i) = emptyBel;
+    else
+      belFrame(:,i) = bel(:,j);
+      j = j+1;
+    end
+  end
+  bar(belFrame')
+  title(sprintf('t=%d',t))
+  set(gca, 'xtick', [])
+  set(gca, 'ytick', [])
+  set(gca, 'ylim', [0 1])
 end
 end
+
 
