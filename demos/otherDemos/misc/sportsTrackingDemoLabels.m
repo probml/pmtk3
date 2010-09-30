@@ -3,8 +3,6 @@
 
 function sportsTrackingDemoLabels()
 
-
-
 setSeed(0);
 Nplayers = 3;
 Nframes = 30;
@@ -28,103 +26,42 @@ colors(:,3) = [1 0 0]';
 unidentColor = [1/3 1/3 1/3]';
 colorNoiseLevel = 0; % 0 to 0.5 (0 is easiest)
 
-% Make an hmm which controls visibility of players
-% states = identifiable (unique color - eg frontal view),
-%  unidentifiable (ambiguous color),
-%  absent (not in view)
-id = 1; unid = 2; absent = 3;
-T = zeros(3,3);
-T(id,id) = 0.2;
-T(id, unid) = 0.8;
-T(unid, unid) = 0.7;
-T(unid, id) = 0.2;
-T(unid, absent) = 0.1;
-T(absent, absent) = 0.2;
-T(absent, unid) = 0.8;
-assert(approxeq(T, mkStochastic(T)))
-initStateDist = [1/3 1/3 1/3];
-markovModelForVisStatus = markovCreate(initStateDist, T);
-
 params = structure(centers, colors, unidentColor, ...
-  colorNoiseLevel, playerSize, courtSize,  markovModelForVisStatus);
+  colorNoiseLevel, playerSize, courtSize);
 
-
-%% Visualize data
 
 data = generateData(params, Nframes);
+
+%% Visualize data
 [codebook, data.Ovec, data.Ocell]  = vectorQuantize(data, params);
+% data.Ovec(j) = k means j'th detection looks like codeword k
+% data.Ocell{t}(i)=k means i'th detection in frame t is codeword k
 drawPlayers(data, params);
 set(gcf, 'name', 'raw data + VQ')
 printPmtkFigure('sportsRaw')
 
-%celldisp(data.succ)
-X = rowvec(data.Ovec); % 1*N, N=sum_t N(t),  X(j) in 1..K
-
-
-%% Inference in an iid model
-
-mrfNoEdges = mkGm(data, codebook, Nplayers, 0, 0);
-belNoEdges = tfMarg2Mat(mrfInferNodes(mrfNoEdges, 'localev', X)); 
-belNoEdgesCell = timeSeriesToCell(belNoEdges, data.numPresent);
-drawBel(belNoEdgesCell);
-%suptitle('no edges')
-set(gcf, 'name', 'no edges')
-printPmtkFigure('sportsBelNoEdges')
-
-if 0 %debugging - don't even need GM code if graph is disconnected
-CPT = mkLocalCpt(codebook, Nplayers);
-softev = CPT(:, X); % softev(i,j), player i, detection j
-post = normalize(softev, 1);
-postCell = timeSeriesToCell(post, data.numPresent);
-drawBel(postCell)
-assert(isequal(postCell, belCell))
-end
-
-
-%% Inference in a model with temporal connections
-
-mrfTime = mkGm(data, codebook, Nplayers, 1, 0);
-belTime = tfMarg2Mat(mrfInferNodes(mrfTime, 'localev', X)); 
-belTimeCell = timeSeriesToCell(belTime, data.numPresent);
-drawBel(belTimeCell); 
-%suptitle('temporal edges')
-set(gcf, 'name', 'temporal edges')
-printPmtkFigure('sportsBelTime')
-
-
-
-% There is a bug in map estimation for disconnected grapshs
-% so we use max marginals instead
-%mapTime = mrfMap(mrfTime, 'localEv', X) % Viterbi
-mapTime = maxidx(belTime, [], 1); % max marginals
-mapTimeCell = timeSeriesToCell(rowvec(mapTime), data.numPresent);
-drawPlayers(data, params, mapTimeCell);
-set(gcf, 'name', 'temporal edges')
-printPmtkFigure('sportsMapTime')
-
 
 %% Inference in a model with temporal and mutex connections
 
-mrfTimeMutex = mkGm(data, codebook, Nplayers, 1, 1);
-belTimeMutex = tfMarg2Mat(mrfInferNodes(mrfTimeMutex, 'localev', X)); 
-belTimeMutexCell = timeSeriesToCell(belTimeMutex, data.numPresent);
-drawBel(belTimeMutexCell); 
-set(gcf, 'name', 'temporal + mutex edges')
-printPmtkFigure('sportsBelTimeMutex')
 
-mapTimeMutex = maxidx(belTimeMutex, [], 1); % max marginals
-mapTimeMutexCell = timeSeriesToCell(rowvec(mapTimeMutex), data.numPresent);
-drawPlayers(data, params, mapTimeMutexCell);
+% incorporate observed appearance
+model.obsCpt = mkObsCpt(codebook, Nplayers);
+softEvObs = model.obsCpt(:, data.Ovec); % softEv(:,j) = likelihood for j'th node
+nodePots = softEvToFactors(softEvObs);
+
+model.mrf = mkMrf(data,  Nplayers, 1, 1, nodePots);
+
+bel = tfMarg2Mat(mrfInferNodes(model.mrf)); 
+belCell = timeSeriesToCell(bel, data.numPresent);
+drawBel(belCell); 
 set(gcf, 'name', 'temporal + mutex edges')
-printPmtkFigure('sportsMapTimeMutex')
 
 keyboard
 
 end
 
-function model = mkGm(data, codebook, Nplayers, useTemporal, useMutex)
-localCPT = mkLocalCpt(codebook, Nplayers); % array 
-localCPD = tabularCpdCreate(localCPT); % structure
+function mrf = mkMrf(data, Nplayers, useTemporal, useMutex, nodePots)
+
 Nframes = numel(data.present);
 Nnodes = sum(data.numPresent); % num detections
 G = zeros(Nnodes, Nnodes); 
@@ -179,14 +116,10 @@ if useTemporal  && useMutex
     end
   end
 end
-nodePot = ones(Nplayers, 1); % not used, since we have localCPD
 
-model     = mrfCreate(G, 'nodePots', nodePot, 'edgePots', edgePots,...
-    'localCPDs', localCPD, 'edgePotPointers', edgePotPointers);
+mrf     = mrfCreate(G, 'nodePots', nodePots, 'edgePots', edgePots,...
+     'edgePotPointers', edgePotPointers);
 end
-
-
-
 
 
 
@@ -199,18 +132,27 @@ function data = generateData(params, Nframes)
 % succ{t}(i) = successor of detection i, or NaN if none
 % numPresent(t) = numel(present{t})
 
-id = 1; unid = 2; absent = 3;
 Nplayers = size(params.colors, 2);
+% Make an hmm which controls visibility of players
+% states = identifiable (unique color - eg frontal view),
+%  unidentifiable (ambiguous color),
+%  absent (not in view)
+id = 1; unid = 2; absent = 3;
+T = zeros(3,3);
+T(id,id) = 0.2;
+T(id, unid) = 0.8;
+T(unid, unid) = 0.7;
+T(unid, id) = 0.2;
+T(unid, absent) = 0.1;
+T(absent, absent) = 0.2;
+T(absent, unid) = 0.8;
+assert(approxeq(T, mkStochastic(T)))
+initStateDist = [1/3 1/3 1/3];
+markovModelForVisStatus = markovCreate(initStateDist, T);
 
 % visibility status is just used internally to decide
 % color of player
-status = markovSample(params.markovModelForVisStatus, Nframes, Nplayers);
-if 0
-% Simple test example: each row is a frame
-status = [unid,  id,  absent;
-          id, id, absent;
-          absent, unid, id]';
-end
+status = markovSample(markovModelForVisStatus, Nframes, Nplayers);
 
 Nframes = size(status, 2);
 overallCount = 1;
@@ -263,8 +205,8 @@ data = structure(locns, colors, present, succ, numPresent, ...
   node2dTo1d, node1dTo2d, status);
 end
 
-function CPD = mkLocalCpt(codebook, Nplayers)
-% CPD(i,k) = prob player i can generate codeword k
+function CPT = mkObsCpt(codebook, Nplayers)
+% CPT(i,k) = prob player i can generate observed codeword k
 K = size(codebook,2);
 % we cheat and assume that player i can generate
 % codebook i's entry with high prob.
@@ -272,11 +214,9 @@ K = size(codebook,2);
 % For robustness, we let it generate all other entries too
 %CPD = zeros(Nplayers, K);
 epsilon = 0.1;
-%CPD = setdiag(CPD, 1-epsilon);
-%CPD(:, end) = epsilon; % last column = unid color
-CPD = epsilon*ones(Nplayers, K);
-CPD = mkStochastic(setdiag(CPD, 1-epsilon));
-assert(approxeq(CPD, mkStochastic(CPD)))
+CPT = epsilon*ones(Nplayers, K);
+CPT = mkStochastic(setdiag(CPT, 1-epsilon));
+assert(approxeq(CPT, mkStochastic(CPT)))
 end
 
 

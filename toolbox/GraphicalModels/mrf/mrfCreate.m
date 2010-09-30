@@ -100,6 +100,10 @@ if isempty(localCPDpointers)
         localCPDpointers = 1:nnodes;
     end
 end
+
+% we convert potentials (fixed number of them)
+% to factors (one per node/ edge)
+
 %% convert any numeric matrices to tabular factors
 if ~isempty(nodePots);
     nodeFactors = nodePots(nodePotPointers);
