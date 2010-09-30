@@ -24,14 +24,16 @@ if ~(exist('dai', 'file') == 3)
 end
 
 psi = cellfuncell(@convertToLibFac, tfacs);
-[logZ, clqBels, md, nodeBels] = dai(psi, varargin{:});
-
+%[logZ, clqBels, maxDiff, nodeBels, facBels, map] = dai(psi, varargin{:}); %#ok
+[logZ, clqBels, maxDiff, nodeBels, facBels] = dai(psi, varargin{:}); %#ok
 
 if nargout > 1
     nodeBels = cellfuncell(@convertToPmtkFac, nodeBels);
 end
 if nargout > 2
     clqBels = cellfuncell(@convertToPmtkFac, clqBels);
+end
+if nargout > 3
     clqStruct = [clqBels{:}];
     nvars = max([clqStruct.domain]);
     nclqs = numel(clqBels); 

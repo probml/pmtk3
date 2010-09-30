@@ -2,6 +2,14 @@
 %
 %% sample data
 
+%
+%                Note, unlike hmmFit, dgmTrain does not use cell arrays,
+%                instead it takes an NaN-padded matrix of size
+%                nobs-by-d-max(seqLength). You can use the localEv2HmmObs
+%                and hmmObs2LocalEv functions to convert between these
+%                two formats.
+%
+
 % This file is from pmtk3.googlecode.com
 
 setSeed(0); 
@@ -17,7 +25,7 @@ Z         = cellwrap(Z);
 dgmModel  = hmmToDgm(mkRndGaussHmm(nstates, d), T);  
 %% convert data to dgm format
 localev  = hmmObs2LocalEv(Y); 
-data     = cell2mat(Z); 
+%data     = cell2mat(Z); 
 %% make sure we initialize both models in the same way
 pi0    = normalize(rand(1, nstates)); 
 trans0 = normalize(rand(nstates, nstates), 2); 

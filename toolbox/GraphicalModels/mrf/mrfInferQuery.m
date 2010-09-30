@@ -77,6 +77,7 @@ switch engine
         [logZ, bels] = variableElimination(cg, queries);
         
     case 'bp'
+    
         
         factors      = addEvidenceToFactors(cg.Tfac, clamped, doSlice);
         factors      = multiplyInLocalFactors(factors, localFacs);

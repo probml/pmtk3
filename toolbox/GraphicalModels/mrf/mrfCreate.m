@@ -1,7 +1,9 @@
 function mrf = mrfCreate(G, varargin)
 %% Create a markov random field
 % G is undirected graph, (an adjacency matrix) representing the node
-% topology. 
+% topology. Currently the interface only accepts potentials
+% on nodes and edges, however support for general
+% clique potentials may be added later.
 %% Named Inputs
 %
 % 'nodePots'           - a cell array of either tabularFactors or numeric
@@ -134,7 +136,7 @@ end
 
 % KPM 27Sep10: modified to handle possibly disconnected nodes
 cliqueGraph = cliqueGraphCreate([rowvec(nodeFactors) rowvec(edgeFactors)], nstates);
-if 0
+%{
 if isempty(edgeFactors)
    cliqueGraph = cliqueGraphCreate(nodeFactors, nstates, G);  
 else
@@ -145,7 +147,7 @@ else
     end
     cliqueGraph = cliqueGraphCreate(factors, nstates);  
 end
-end
+%}
 
 %% package
 mrf = structure(G, cliqueGraph, localCPDs, localCPDpointers, ...

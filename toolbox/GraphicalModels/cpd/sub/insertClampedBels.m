@@ -15,7 +15,9 @@ padded = cell(nvars, 1);
 if numel(nodeBels) == nvars
     padded(hidVars) = nodeBels(hidVars);
 elseif numel(nodeBels) == 1
-    padded{hidVars} = cellwrap(nodeBels); 
+   if ~isempty(hidVars) % KPM 29sep10 to handle no query case
+      padded{hidVars} = cellwrap(nodeBels);
+   end
 else
     padded(hidVars) = nodeBels;
 end

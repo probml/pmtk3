@@ -250,7 +250,11 @@ L = sum(gaussLogprob(m3, X))
 % <TH WIDTH=40%  BGCOLOR=#00CCFF><FONT COLOR=000000>Method</FONT></TH>
 % <TH WIDTH=60% BGCOLOR=#00CCFF><FONT COLOR=000000>Description</FONT></TH>
 % </TR>
-% <td> [bel] = inferNodes(m, evidence).
+% <tr> 
+% <td> model = fooTrain(model, ...)
+% <td> Fits a pre-created model. (fooFit is not supported for GMs.)
+% <tr> 
+% <td> [bel] = fooInferNodes(m, evidence).
 % <td> Here bel{i} is a tabular factor, 
 % where  bel{i}.T(k) is the probability node i is in state k, given the
 % evidence.
@@ -260,11 +264,9 @@ L = sum(gaussLogprob(m3, X))
 % "http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutGM.html">here</a>
 % for details.
 % <tr> 
-% <td> yhat = map(m, evidence)
+% <td> [bel, 
+% <td> yhat = fooMap(m, evidence)
 % <td> Computes argmax p(y|ev, m), which is a (joint) posterior mode.
-% <tr> 
-% <td> Ghat = fitStruct(m, evidence)
-% <td> Find a MAP estimate of the graph structure (not yet implemented).
 % </table>
 % </html>
 %%

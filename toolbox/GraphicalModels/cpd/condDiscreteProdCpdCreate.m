@@ -2,8 +2,10 @@ function CPD = condDiscreteProdCpdCreate(T, varargin)
 %% Create a conditional discrete product distribution
 % This differs from a tabularCPD in that it supports vector valued discrete
 % observations, (it also supports scalar value observations). 
+% These are assumed to be conditionally independent.
 %
-% T is of size nstates-by-nOBsStates-d
+% T is of size nstates-by-nObsStates-nChildren
+% so T(k,j,i) = p(i'th child = j | parent = k)
 %
 %% Optional inputs
 % 'prior' - a struct with the the field 'alpha', which must be
@@ -32,9 +34,10 @@ CPD.T = normalize(rand(size(CPT.T), 2));
 end
 
 function CPD = condDiscreteProdCpdFit(CPD, Z, Y)
-%% Fit given fully observed data
-% Z(i) is the state of the parent Z in observation i.
-% Y(i, :) is the ith 1-by-d observation of the child corresponding to Z(i)
+%% Fit  given fully observed data
+% (MAP estimate with Dirichlet prior)
+% Z(i) is the state of the parent Z in case i.
+% Y(i, :) is the ith 1-by-d observation of the children
 %%
 nstates = CPD.nstates;
 nObsStates = CPD.nObsStates; 

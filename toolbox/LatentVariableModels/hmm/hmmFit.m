@@ -2,18 +2,12 @@ function [model, loglikHist] = hmmFit(data, nstates, type, varargin)
 %% Fit a hidden markov model (by default, we use  EM)
 %
 %% Inputs
-% data         - a cell array of observations; each observation j is
-%                d-by-seqLength(j), (where d is always 1 if type = 'discrete')
-%
-%                Note, unlike hmmFit, dgmTrain does not use cell arrays,
-%                instead it takes an NaN-padded matrix of size
-%                nobs-by-d-max(seqLength). You can use the localEv2HmmObs
-%                and hmmObs2LocalEv functions to convert between these
-%                two formats.
+% data         - data{i} is a d*seqLength(i) matrix of observations,
+%                 where d = size of observation (d=1 if type = 'discrete')
 %
 % nstates      - the number of hidden states
 %
-% type         - as string, either 'gauss', 'mixGaussTied', 'discrete', or
+% type         - a string, either 'gauss', 'mixGaussTied', 'discrete', or
 %                'student', depending on the desired emission i.e observation
 %                (local) distribution.
 %
@@ -46,6 +40,8 @@ function [model, loglikHist] = hmmFit(data, nstates, type, varargin)
 %                 condGaussCpdCreate. 
 %
 % piPrior       - pseudo counts for the starting distribution
+%                 This is alpha(k)+1 in the Dirichlet
+%                 so piPrior = 0 corresponds to MLE
 %
 % transPrior    - pseudo counts for the transition matrix, (either
 %                 nstates-by-nstates or 1-by-nstates in which case it is

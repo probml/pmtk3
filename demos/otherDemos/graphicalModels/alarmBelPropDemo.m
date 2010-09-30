@@ -7,47 +7,45 @@
 function alarmBelPropDemo
 
 dgm = mkAlarmDgm(); 
+% exact unconditional marginals
 nodeBels = dgmInferNodes(dgm); 
-dgm.infEngine = 'bp';
-%% asynchronous updates
-dgm.infEngArgs = {'updateProtocol', 'async'};
-tic
-belsAsync = dgmInferNodes(dgm);
-t = toc;
-figure;
-stem(compareFactors(nodeBels, belsAsync)); 
-title(sprintf('async: %g seconds', t)); 
-xlabel('belief');
-ylabel('rmse'); 
-%% synchronous updates
-dgm.infEngArgs = {'updateProtocol', 'sync'};
-tic
-belsSync = dgmInferNodes(dgm);
-t = toc;
-figure; 
-stem(compareFactors(nodeBels, belsSync)); 
-title(sprintf('sync: %g seconds', t)); 
-xlabel('belief');
-ylabel('rmse'); 
-%% residual
-dgm.infEngArgs = {'updateProtocol', 'residual'};
-tic
-belsResid = dgmInferNodes(dgm);
-t = toc;
-figure; 
-stem(compareFactors(nodeBels, belsResid)); 
-title(sprintf('residual: %g seconds', t)); 
-xlabel('belief');
-ylabel('rmse'); 
-%% libdai
-dgm.infEngine = 'libdaibp';
-dgm.infEngArgs = {}; 
-tic
-belsLibdai = dgmInferNodes(dgm);
-t = toc;
-figure; 
-stem(compareFactors(nodeBels, belsLibdai)); 
-title(sprintf('libdai: %g seconds', t)); 
-xlabel('belief');
-ylabel('rmse'); 
+
+infEngNames = {'bp', 'bp', 'bp', 'libdaibp'};
+infEngArgs = { ...
+   {'updateProtocol', 'async'}, ...
+   {'updateProtocol', 'sync'}, ...
+   {'updateProtocol', 'residual'}, ...
+   {} };
+names = {'bp-asynch', 'bp-synch', 'bp-residual', 'bp-libdai'};
+
+for i=1:length(infEngNames)
+   dgm.infEngine = infEngNames{i};
+   dgm.infEngArgs = infEngArgs{i};
+   tic
+   bels = dgmInferNodes(dgm);
+   t = toc;
+   figure;
+   [errs, rmse] = compareFactors(nodeBels, bels);
+   stem(errs);
+   title(sprintf('%s: %5.3f seconds, rmse %5.3f', names{i}, t, rmse));
+   xlabel('belief');
+   ylabel('rmse');
+end
+
+end
+
+
+function [err, rmse] = compareFactors(facs1, facs2)
+%% compare two sets of factors
+% err(i) is the rmse between facs1{1} and facs2{2}
+%%
+
+nfacs = numel(facs1); 
+err = zeros(nfacs, 1); 
+for i=1:nfacs
+   T1 = facs1{i}.T;
+   T2 = facs2{i}.T;
+   err(i) = sqrt(mean((T1(:) - T2(:)).^2));
+end
+rmse = sum(err);
 end

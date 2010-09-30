@@ -2,9 +2,13 @@ function model = naiveBayesFit(Xtrain, ytrain, pseudoCount)
 % Fit a naive Bayes classifier  using MAP/ML estimation
 % We current assume binary features.
 % For Gaussian feautres, use discrimAnalysisFit(X, y, 'diag').
+%
 % Xtrain(i,j) = 0 or 1, for bit j in case i
 % ytrain in {1,...C}
-% pseudoCount is optional strength of symmetric beta prior for the features
+% pseudoCount is optional strength of symmetric beta prior
+%   for the features, for computing posterior mean.
+%   Default: pseudoCount=1 (use 0 for MLE)
+%
 % Model is a structure with these fields:
 % theta(c,j) = prob. bit j turns on in class c
 % model.classPrior(c) = p(y=c)

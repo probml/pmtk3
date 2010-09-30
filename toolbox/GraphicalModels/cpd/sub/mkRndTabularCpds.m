@@ -9,7 +9,6 @@ function CPDs = mkRndTabularCpds(G, nstates, varargin)
 
 % This file is from pmtk3.googlecode.com
 
-
 nnodes = size(G, 1);
 assert(nnodes == numel(nstates));
 nstates = rowvec(nstates);
@@ -20,11 +19,5 @@ for i=1:nnodes
     T = rand(sz);
     CPDs{i} = tabularCpdCreate(mkStochastic(T), varargin{:});
 end
-
-
-
-
-
-
 
 end

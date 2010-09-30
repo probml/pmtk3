@@ -14,6 +14,9 @@ nqueries = numel(queries);
 factors  = multiplyInLocalFactors(factors, localFactors);
 joint    = tabularFactorMultiply(factors);
 bels     = cell(nqueries, 1);
+if nqueries==0
+   [junk, logZ] = tabularFactorCondition(joint, [], clamped); %%ok
+end
 for i=1:nqueries
     [bels{i}, logZ] = tabularFactorCondition(joint, queries{i}, clamped);
 end

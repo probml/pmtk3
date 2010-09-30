@@ -25,8 +25,8 @@ model.type = type;
     'pi0'                       , []                        , ...
     'trans0'                    , []                        , ...
     'emission0'                 , []                        , ...
-    'piPrior'                   , 2*ones(1, nstates)        , ...
-    'transPrior'                , 2*ones(nstates, nstates)  , ...
+    'piPrior'                   , 1*ones(1, nstates)        , ...
+    'transPrior'                , 1*ones(nstates, nstates)  , ...
     'emissionPrior'             , []                        , ...
     'nmix'                      , []);
 
@@ -73,7 +73,8 @@ for i=1:nobs
     weights(ndx, :)            = weights(ndx, :) + gamma';
 end
 loglik   = loglik + sum(scale); 
-logprior = log(A(:)+eps)'*(model.transPrior(:)-1) + log(pi(:)+eps)'*(model.piPrior(:)-1);
+%logprior = log(A(:)+eps)'*(model.transPrior(:)-1) + log(pi(:)+eps)'*(model.piPrior(:)-1);
+logprior = log(A(:)+eps)'*(model.transPrior(:)) + log(pi(:)+eps)'*(model.piPrior(:));
 loglik   = loglik + logprior;
 %% emission component (generic)
 emission        = model.emission; 
@@ -85,8 +86,10 @@ end
 
 function model = mstep(model, ess)
 %% Generic mstep function
-model.pi       = normalize(ess.startCounts + model.piPrior -1);
-model.A        = normalize(ess.transCounts + model.transPrior -1, 2);
+%model.pi       = normalize(ess.startCounts + model.piPrior -1);
+%model.A        = normalize(ess.transCounts + model.transPrior -1, 2);
+model.pi       = normalize(ess.startCounts + model.piPrior);
+model.A        = normalize(ess.transCounts + model.transPrior, 2);
 emission       = model.emission;
 model.emission = emission.fitFnEss(emission, ess); 
 end

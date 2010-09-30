@@ -1,16 +1,23 @@
 function [logZ, postQuery] = variableElimination(cliqueGraph, queryVars)
 %% Sum-product variable elimination
 % cliqueGraph is a struct with the following fields:
-% Tfac       - a cell array of tabular factors
-% G          - the graph structure: an adjacency matrix
-% nstates(j) - the number of states for node j
+%   Tfac       - a cell array of tabular factors
+%   G          - the graph structure: an adjacency matrix
+%   nstates(j) - the number of states for node j
+% queryVars is either a vector of integer indices,
+%   or a cell array of such
 %%
 % postQuery is a tabular factor
 % logZ is the log of the partition sum
+
 %% Handle multiple queries 
 % (note it is much more efficient to use jtree for multiple queries)
 
 % This file is from pmtk3.googlecode.com
+
+% In the special case where we query nothing (so we just
+% want to compute logZ), make sure we use an array, not a cell array
+if isempty(queryVars), queryVars = []; end
 
 if iscell(queryVars)
    [logZ, postQuery] = cellfun(@(q)variableElimination(cliqueGraph, q), ...

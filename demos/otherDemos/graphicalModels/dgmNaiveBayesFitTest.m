@@ -22,8 +22,8 @@ for i=1:d
 end
 nstates(1) = C; 
 nstates(2:d+1) = K; 
-CPDs = mkRndTabularCpds(G, nstates, 'prior', 'laplace'); 
-CPDs{1}.prior = 1;
+CPDs = mkRndTabularCpds(G, nstates, 'prior', pseudoCounts); 
+CPDs{1}.prior = 0; % 1
 dgm = dgmCreate(G, CPDs); 
 %% fit the dgm
 dgm = dgmTrainFullyObs(dgm, [y, X]); 
