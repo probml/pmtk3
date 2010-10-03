@@ -59,16 +59,7 @@ switch engine
             jtree     = jtreeCreate(cg, 'cliqueConstraints', queries);
         end
         [logZ, bels] = jtreeRunInference(jtree, queries, localFacs);
-        
-    case 'libdaijtree'
-        
-        assert(isWeaklyConnected(cg.G)); % libdai segfaults on disconnected graphs
-        doSlice = false;     % libdai often segfaults when slicing
-        factors = addEvidenceToFactors(cg.Tfac, clamped, doSlice);
-        factors = [factors(:); localFacs(:)];
-        [logZ, nodeBels, cliques, cliqueLookup] = libdaiJtree(factors);
-        bels    = jtreeQuery(structure(cliques, cliqueLookup), queries);
-        
+            
     case 'varelim'
         
         factors      = addEvidenceToFactors(cg.Tfac, clamped, doSlice);
