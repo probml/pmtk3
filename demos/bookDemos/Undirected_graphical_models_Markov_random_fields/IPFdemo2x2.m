@@ -20,11 +20,11 @@ for iter=1:2
   joint = psi1(:) * psi2(:)';
   
   M1 = sum(joint,2);
-  psi1 = psi1 .* (C1 ./ M1)';
+  psi1 = psi1 .* (C1 ./ M1)'
   
   joint = psi1(:) * psi2(:)';
   M2 = sum(joint,1);
-  psi2 = psi2 .* (C2 ./ M2);
+  psi2 = psi2 .* (C2 ./ M2)
 end
 
 joint = psi1(:) * psi2(:)';
