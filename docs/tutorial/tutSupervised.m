@@ -54,6 +54,12 @@
 % <td> Discrim
 % <td> Param
 % <tr>
+% <td> mixexp
+% <td> Mixture of experts
+% <td> Both
+% <td> Discrim
+% <td> Param
+% <tr>
 % <td> mlp
 % <td> multi-layer perceptron (aka feedforward neural network)
 % <td> Both
