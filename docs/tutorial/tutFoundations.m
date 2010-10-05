@@ -152,7 +152,7 @@ setSeed(0); X = gaussSample(m, 5)
 % some widely used basic models (such as Gaussian)
 % let you write |fooSample(params,N)|
 % instead of |fooSample(fooCreate(params),N)|.
-% For example
+% For example, we can write |gaussSample(mu,Sigma,N)|
 %%
 setSeed(0); gaussSample(zeros(2,1), eye(2), 5)
 %%
@@ -194,8 +194,15 @@ cond(m3.Sigma)
 % Now let us consider another useful operation:
 % evaluating the log likelihood of a dataset:
 %%
-L = sum(gaussLogprob(m3, X))
+L = gaussLogprob(m3, X)
 %%
+% where L(i) is the logprob of X(i,:).
+% For Gaussians, we can also write
+% |gaussLogprob(mu, Sigma, X)|,
+% but note that this is a different order
+% of parameters to that used by the stats toolbox,
+% which uses |mvnpdf(X, mu, Sigma)|.
+%
 % These methods behave similarly on other models.
 % A list of all the basic models can be found
 % <http://pmtk3.googlecode.com/svn/trunk/docs/modelLists/basicList.html

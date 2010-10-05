@@ -38,20 +38,22 @@ else
     X = bsxfun(@minus, X, rowvec(mu));
 end
 if isvector(Sigma) && (numel(Sigma) > 1) % diagonal case
-    sig2 = repmat(Sigma', N, 1);
-    tmp  = -(X.^2)./(2*sig2) - 0.5*log(2*pi*sig2);
-    logp = sum(tmp, 2);
+  sig2 = repmat(Sigma', N, 1);
+  tmp  = -(X.^2)./(2*sig2) - 0.5*log(2*pi*sig2);
+  logp = sum(tmp, 2);
 else
-% Full covariance case
-%     logp = -0.5*sum((X/Sigma).*X, 2);
-%     logZ = (d/2)*log(2*pi) + 0.5*logdet(Sigma);
-%     logp = logp - logZ;
-%   slightly faster version
-    R    = chol(Sigma); 
-    logp = -0.5*sum((X/R).^2, 2);
-    logZ = 0.5*d*log(2*pi) + sum(log(diag(R)));
-    logp = logp - logZ;
-    
+  % Full covariance case
+  if 0
+       logp2 = -0.5*sum((X/Sigma).*X, 2);
+       logZ2 = (d/2)*log(2*pi) + 0.5*logdet(Sigma);
+       logp2 = logp2 - logZ2;
+  end
+  %   slightly faster version
+  R    = chol(Sigma);
+  logp = -0.5*sum((X/R).^2, 2);
+  logZ = 0.5*d*log(2*pi) + sum(log(diag(R)));
+  logp = logp - logZ;
+  %assert(approxeq(logp, logp2))
 end
 
 end

@@ -1,10 +1,12 @@
 function [yhat, p] = logregPredict(model, X)
 % Predict response for logistic regression
 % p(i, c) = p(y=c | X(i,:), model)
-% yhat(i) =  max_c p(i, c) - same space as model.ySupport
-% A column of 1s is added if this was done at training time
-% This works for both binary and multiclass and kernelized logistic
-% regression.
+% yhat(i) =  max_c p(i, c) 
+%   For binary, this is {0,1} or {-1,1} or {1,2}, same as training
+%   For multiclass, this is {1,..,C}, or same as training
+%
+% Any preprocessing done at training time (e.g., adding 1s,
+% standardizing, adding kenrels, etc) is repeated here.
 
 % This file is from pmtk3.googlecode.com
 
@@ -21,7 +23,7 @@ if size(model.w,2)==1 % numel(model.ySupport)==2 % model.binary
     yhat = setSupport(yhat, model.ySupport, [0 1]); % restore initial support 
 else
     p = softmaxPmtk(X*model.w);
-    yhat = maxidx(p, [], 2);
+    yhat = maxidx(p, [], 2); % yhat in 1:C
     C = size(p, 2); % now in 1:C
     yhat = setSupport(yhat, model.ySupport, 1:C); % restore initial support
 end

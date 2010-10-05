@@ -8,6 +8,11 @@ X = meas;  % 150x4
 [y, support] = canonizeLabels(species);
 pp = preprocessorCreate('standardizeX', false, 'addOnes', true);
 
+% MLE
+model = logregFit(X, y, 'lambda', 0, 'preproc', pp);
+[yhat, p] = logregPredict(model, X);
+errRateMLE = mean(yhat ~= y)
+  
 % Empirical Bayes
 modelEB = logregFitBayes(X, y, 'method', 'eb', 'preproc', pp);
 [yhatEB, pEB] = logregPredictBayes(modelEB, X);

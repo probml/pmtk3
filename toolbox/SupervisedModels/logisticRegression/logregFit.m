@@ -1,15 +1,21 @@
 function [model, X, lambdaVec, opt] = logregFit(X, y, varargin)
 % Fit a logistic regression model, (supports multiclass)
-%% INPUTS: (specified as name value pairs)
+% INPUTS:
+% X: N*D
+% y: N*1 where y(i) in {1,..,C} or {0,1} or {-1,+1}
+%   or  N*C where y(i,:) is a one-of-C encoding
+%   If  not all classes are present in y, use dummy encoding 
+%   Dummy encoding only supported for multi-class case
+%
+% OPTIONAL INPUTS: (specified as name value pairs)
 % regType       ... 'L1' or 'L2' or 'none'
-% nclasses      ... the number of output classes
 % lambda        ... regularizer 
 % fitOptions    ... optional fitMethod args (a struct)
 % preproc       ... a struct, passed to preprocessorApplyToTtrain
 % winit         ... initial value, used for warm starting
 %                    of size D*C (first row is offset vector)
 %                    or size D*1 for binary
-%% OUTPUTS:
+% OUTPUTS:
 % model         ... a struct, which you can pass directly to logregPredict
 %    model.w is a D*C matrix, where model.w(1,:) contains the offset vector
 %    if preproc.addOnes = true
@@ -30,19 +36,42 @@ function [model, X, lambdaVec, opt] = logregFit(X, y, varargin)
 % has always been D*C.
 % (LambdaVec has been made D*C as well)
 
-y = y(:);
-assert(size(y, 1) == size(X,1));
+% Another change on 4 Oct 2010 by KPM
+% In the multiclass case, we use ydummy as a 1-of-C encoding.
+% This allows us to use logregFit inside EM with soft targets.
+% The nclasses arg has been removed.
+% The SoftmaxLossDummy function is now faster.
+
+%y = y(:);
+%assert(size(y, 1) == size(X,1));
+if isvector(y)
+  y = y(:);
+  nclasses = nunique(y);
+  if nclasses==2
+    model.binary = true;
+  else
+    model.binary = false;
+    [y, model.ySupport] = setSupport(y, 1:nclasses);
+    ydummy = dummyEncoding(y, nclasses);
+  end
+else
+  model.binary = false;
+  ydummy = y;
+  nclasses = size(ydummy, 2);
+  model.ySupport = 1:nclasses;
+  clear y
+end
+
 pp = preprocessorCreate('addOnes', true, 'standardizeX', true);
 
 args = prepareArgs(varargin); % converts struct args to a cell array
-[   nclasses      ...
+[   
     regType       ...
     lambda        ...
     preproc       ...
     fitOptions    ...
     winit         ...
     ] = process_options(args    , ...
-    'nclasses'      , nunique(y), ...
     'regType'       , 'l2'    , ...
     'lambda'        ,  0       , ...
     'preproc'       ,  pp       , ...
@@ -56,20 +85,18 @@ end
 [preproc, X] = preprocessorApplyToTrain(preproc, X);
 D = size(X,2); % will be num features plus 1 if we added col of 1s
 
-isbinary = nclasses ==2 ;
-if isbinary
+if model.binary
     [y, model.ySupport] = setSupport(y, [-1 1]);
     loss = @(w) LogisticLossSimple(w, X, y);
-     model.binary = true;
 else
-    [y, model.ySupport] = setSupport(y, 1:nclasses);
+    %[y, model.ySupport] = setSupport(y, 1:nclasses);
     %loss = @(w) SoftmaxLoss2(w, X, y, nclasses);
-    loss = @(w) SoftmaxLoss(w, X, y, nclasses);
-    model.binary = false;
+    %loss = @(w) SoftmaxLoss(w, X, y, nclasses);
+    loss = @(w) SoftmaxLossDummy(w, X, ydummy);
 end
 model.lambda = lambda;
 
-if isbinary
+if model.binary
   lambdaVec = lambda*ones(D, 1);
 else
   lambdaVec = lambda*ones(D, nclasses);
@@ -80,7 +107,7 @@ end
 
 if isempty(winit)
   %winit  = zeros(D, nclasses-1);
-  if isbinary
+  if model.binary
     winit  = zeros(D, 1);
   else
     winit  = zeros(D, nclasses);
@@ -98,7 +125,7 @@ switch lower(regType)
       minFunc(penloss, winit(:), fitOptions);
 end
 
-if ~isbinary
+if ~model.binary
     %w = [reshape(w, [D nclasses-1]) zeros(D, 1)];
     w = reshape(w, [D nclasses]);
 end

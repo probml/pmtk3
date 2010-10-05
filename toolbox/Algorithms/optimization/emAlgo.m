@@ -15,7 +15,7 @@ function [model, loglikHist, llHists] = emAlgo(model, data, init, estep, mstep, 
 %
 % Optional arguments [default]
 % maxIter: [100]
-% convTol: converhence tolerance [1e-3]
+% convTol: convergence tolerance [1e-3]
 % verbose: [false]
 % plotFn: function of form plotfn(model, data, ess, ll, iter), default []
 % nRandomRestarts: [1]

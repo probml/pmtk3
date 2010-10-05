@@ -1,32 +1,51 @@
-function logp = gaussLogprobMissingData(model, X)
+function logp = gaussLogprobMissingData(arg1, arg2, arg3)
 % Same as gaussLogprob, but supports missing data, represented as NaN
-% values distributed through X. X(i, :) is still the ith case
-% and model has the fields mu and Sigma. 
+% X is N*D
+% L = gaussLogprobMissingData(mu, Sigma, X)
+% L = gaussLogprobMissingData(model, X)
+
+% Test example
+%{
+N = 5; D = 3;
+X = randn(N,D);
+M = rand(N,D)>0.5;
+X(M) = NaN;
+mu = zeros(D,1); Sigma = eye(D);
+model = gaussCreate(mu, Sigma);
+logp = gaussLogprobMissingData(model, X);
+logp2 = gaussLogprobMissingData(mu, Sigma, X);
+assert(approxeq(logp, logp2))
+%}
 
 % This file is from pmtk3.googlecode.com
 
-missRows = any(isnan(X),2);
-complRows = ~missRows;
-ndxMissRows = find(missRows);
-nMiss = sum(missRows);
-mu = model.mu; Sigma = model.Sigma; 
-mu = rowvec(mu); 
-d = size(Sigma, 2);
-X = reshape(X, [], d);
-n = size(X, 1);
-logpMiss = zeros(nMiss, 1); 
-for i=1:nMiss % for each data case, marginalize out the unknown variables
-    ndx = ndxMissRows(i);
-    vis = ~isnan(X(ndx, :));
-    if isempty(vis), continue; end % if no data, leave logp(i) at 0, since the probability of an empty event is 1 and log(1) = 0. 
-    XiVis = X(ndx, vis); 
-    XiVis = XiVis - mu(vis);
-    logZ = (d/2)*log(2*pi) + 0.5*logdet(Sigma(vis, vis));
-    logpMiss(i) = -0.5*sum((XiVis/(Sigma(vis, vis))).*XiVis, 2) - logZ; 
+switch nargin
+  case 3,  mu = arg1; Sigma = arg2; X = arg3;
+  case 2, model = arg1; mu = model.mu; Sigma = model.Sigma; X = arg2;
+  otherwise
+    error('bad num args')
 end
-logpCompl = gaussLogprob(model,X(complRows,:));
 
+missRows = any(isnan(X),2);
+nMiss = sum(missRows);
+mu = rowvec(mu); 
+[n,d] = size(X);
 logp = NaN(n,1);
-logp(complRows) = logpCompl;
-logp(missRows) = logpMiss;
+logp(~missRows) = gaussLogprob(mu, Sigma, X(~missRows,:));
+
+XmissCell = mat2Cell(X(missRows,:), ones(1,nMiss), d);
+% XmissCell{i} is a 1xd vector with some NaNs
+logp(missRows) = cellfun(@(y)lognormpdfNaN(mu, Sigma, y), XmissCell);
+ 
 end
+
+function l = lognormpdfNaN(mu, Sigma, x)
+% log pdf of a single data vector (row) with NaNs
+vis = find(~isnan(x));
+if isempty(vis)
+  l = 0;
+else
+  l = gaussLogprob(mu(vis), Sigma(vis,vis), x(vis));
+end
+end
+
