@@ -95,8 +95,8 @@ if exist('pmtkSupportRoot', 'file')
     folder = pmtkSupportRoot(); 
     dirs   = {'svmLightWindows'        , ...
              'liblinear-1.51\windows' , ...
-             'libsvm-mat-2.9.1', ...
-             'mplp-1.0'};
+             'libsvm-mat-2.9.1'};
+           %  'mplp-1.0'};
     for i=1:length(dirs)
         addtosystempath(fullfile(folder, dirs{i}))
     end
