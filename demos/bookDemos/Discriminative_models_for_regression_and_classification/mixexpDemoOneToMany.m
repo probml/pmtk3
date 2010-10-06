@@ -31,7 +31,7 @@ ndx = 1:1:N;
 X = data(ndx,1);
 y = data(ndx,2);
 %xtest = colvec(linspace(min(X), max(X), 200));
-xtest = colvec(x); ytest = ycolvec(y);
+xtest = colvec(x); ytest = colvec(y);
 
 fixmix = 0;
 model = mixexpFit(X, y, K, 'fixmix', fixmix, 'EMargs', ...
