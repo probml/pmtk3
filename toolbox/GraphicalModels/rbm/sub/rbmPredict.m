@@ -1,12 +1,11 @@
 function prediction = rbmPredict(m, testdata)
-%Use RBM to predict discrete label for testdata
+% Use RBM to predict discrete labels 
+% INPUTS:
+% testdata(n,d) in [0,1]
+% OUTPUTS
+% prediction(n) in {1..C}
 
-%INPUTS:
-%m          ... is the model from rbmFit() consisting of W,b,c,Wc,cc
-%testdata   ... binary, or in [0,1] interpreted as probabilities
 
-%OUTPUTS:
-%yhat(i) in {1..C} is best guess for label
 
 numclasses= size(m.Wc, 1);
 numcases= size(testdata, 1);
@@ -22,6 +21,6 @@ for i=1:numclasses
 end
 
 %take the max
-[q, prediction]= max(F, [], 2);
+[q, prediction]= max(F, [], 2);  %#ok
 end
 

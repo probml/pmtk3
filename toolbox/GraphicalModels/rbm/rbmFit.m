@@ -7,8 +7,8 @@ function [model, errors] = rbmFit(X, numhid, varargin)
 %numhid         ... number of hidden units
 %
 %
-%OPTIONAL INPUTS (specified as name value pairs or in struct)
-%y              ... N*1 class labels, in {1..C}
+%OPTIONAL INPUTS (specified as name value pairs *or in struct*)
+%y              ... N*1 class labels, in {1..C} or []
 %nclasses       ... number of classes
 %method         ... CD or SML 
 %eta            ... learning rate
@@ -35,8 +35,8 @@ function [model, errors] = rbmFit(X, numhid, varargin)
 %
 %errors         ... The errors in reconstruction at every epoch
 
-%PMTKauthor Andrej Karpathy, Kevin Swersky, Ruslan Salakhutdinov
-%PMTKdata Fall 2010
+%PMTKauthor Andrej Karpathy, Kevin Swersky, Ruslan Salakhutdinov, Geoff Hinton
+%PMTKdata April 2010
 %PMTKmodified Kevin Murphy
 
 
@@ -232,12 +232,16 @@ for epoch = 1:maxepoch
 end
 
 model.W= Wavg;
-model.b= b;
+model.b= bavg;
 model.c= cavg;
 if supervised
   model.Wc= Wcavg;
   model.cc= ccavg;
 end
 model.type= 'BB';
+
+% store top level activations for use in dbn learning
+ph = logistic(X*model.W + targets*model.Wc + repmat(model.b,N,1));
+model.top = ph;
 
 end
