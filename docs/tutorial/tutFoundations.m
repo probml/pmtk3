@@ -122,12 +122,20 @@ setSeed(0); X = gaussSample(m, 5)
 % X is an N*D design matrix.
 % For some models, X may contain NaN's, representing missing values.
 % <tr>
+% <td> m = fooTrain(model, X,  ...)
+% <td> Train a model that has already been constructed.
+%  Mostly used by graphical models.
+% <tr>
 % <td>  X = fooSample(m, N)
 % <td> X(i,:) = sample from model m, i=1:N
 % <tr>
 % <td>  L = fooLogprob(m, X)
 % <td> L(i) = log p(X(i,:)| m) 
 % For some models, X may contain NaN's, representing missing values.
+% <tr>
+% <td>  Xhat = fooReconstruct(m, X)
+% <td> Xhat(i,:) = reconstruction of X(i,:) after compressing
+% and decompressing through the model.
 % <tr>
 % </table>
 % </html>
@@ -223,14 +231,18 @@ L = gaussLogprob(m3, X)
 % <TH WIDTH=40%  BGCOLOR=#00CCFF><FONT COLOR=000000>Method</FONT></TH>
 % <TH WIDTH=60% BGCOLOR=#00CCFF><FONT COLOR=000000>Description</FONT></TH>
 % </TR>
-% <td> [z, pz] = infer(m, X).
+% <td> [pz, pz2] = fooInferLatent(m, X).
 % <td> This is an unsupervised version of predict.
 % If the LVM has discrete latent variables,
-% z(i) = argmax p(z|X(i,:), m)
-% and pz(i,k) = p(z=k|X(i,:), m).
+% pz(i,k) = p(z=k|X(i,:), m).
 % If the LVM has continuous latent variables,
-% z(i,:) = E(z|X(i,:), m)
-% and pz(i,:,:) = Cov(z|X(i,:), m).
+% pz(i,:) = E(z|X(i,:), m)
+% and pz2(i,:,:) = Cov(z|X(i,:), m).
+% <tr>
+% <td> [z] = fooMapLatent(m, X).
+% <td> If the LVM has discrete latent variables,
+% z(i,:) = argmax p(z|X(i,:), m).
+% Not supported for continuous latent variables.
 % <tr>
 % </table>
 % </html>
@@ -257,9 +269,6 @@ L = gaussLogprob(m3, X)
 % <TH WIDTH=40%  BGCOLOR=#00CCFF><FONT COLOR=000000>Method</FONT></TH>
 % <TH WIDTH=60% BGCOLOR=#00CCFF><FONT COLOR=000000>Description</FONT></TH>
 % </TR>
-% <tr> 
-% <td> model = fooTrain(model, ...)
-% <td> Fits a pre-created model. (fooFit is not supported for GMs.)
 % <tr> 
 % <td> [bel] = fooInferNodes(m, evidence).
 % <td> Here bel{i} is a tabular factor, 

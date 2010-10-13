@@ -7,7 +7,7 @@ function prediction = deepBelNetPredict(model, testdata)
 % prediction(n) in {1..C}
 
 
-models = model.layers.models;
+models = model.layers;
 nlayers = numel(models);
 
 %map input all the way to the top

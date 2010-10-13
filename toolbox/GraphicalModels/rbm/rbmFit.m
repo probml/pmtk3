@@ -9,7 +9,6 @@ function [model, errors] = rbmFit(X, numhid, varargin)
 %
 %OPTIONAL INPUTS (specified as name value pairs *or in struct*)
 %y              ... N*1 class labels, in {1..C} or []
-%nclasses       ... number of classes
 %method         ... CD or SML 
 %eta            ... learning rate
 %momentum       ... momentum for smoothness amd to prevent overfitting
@@ -18,7 +17,7 @@ function [model, errors] = rbmFit(X, numhid, varargin)
 %avglast        ... how many epochs before maxepoch to start averaging
 %               ... before. Procedure suggested for faster convergence by
 %               ... Kevin Swersky in his MSc thesis
-%penalty        ... weight decay factor
+%penalty        ... L2 weight decay strength
 %weightdecay    ... A boolean flag. When set to true, the weights are
 %               ... Decayed linearly from penalty->0.1*penalty in epochs
 %batchsize      ... The number of training instances per batch
@@ -43,7 +42,6 @@ function [model, errors] = rbmFit(X, numhid, varargin)
 %Process options
 args= prepareArgs(varargin);
 [   y             ...
-  nclasses      ...
   method        ...
   eta           ...
   momentum      ...
@@ -55,7 +53,6 @@ args= prepareArgs(varargin);
   anneal        ...
   ] = process_options(args    , ...
   'y'             , [], ...
-  'nclasses'      , 10, ...
   'method'        ,  'CD'     , ...
   'eta'           ,  0.1      , ...
   'momentum'      ,  0.5      , ...
@@ -79,11 +76,13 @@ if isempty(y)
 else
   supervised = true;
   %Create targets: 1-of-k encodings for each discrete label
-  u= unique(y);
-  targets= zeros(N, nclasses);
-  for i=1:length(u)
-    targets(y==u(i),i)=1;
-  end
+  u = unique(y);
+  nclasses = numel(u);
+  targets = dummyEncoding(y, nclasses);
+  %targets= zeros(N, nclasses);
+  %for i=1:length(u)
+  %  targets(y==u(i),i)=1;
+  %end
 end
 
 %% Create batches
@@ -149,7 +148,7 @@ for epoch = 1:maxepoch
     end
     
     %go up
-    ph = logistic(data*W + classes*Wc + repmat(b,numcases,1));
+    ph = sigmoid(data*W + classes*Wc + repmat(b,numcases,1));
     phstates = ph > rand(numcases,numhid);
     if (isequal(method,'SML'))
       if (epoch == 1 && batch == 1)
@@ -160,7 +159,7 @@ for epoch = 1:maxepoch
     end
     
     %go down
-    negdata = logistic(nhstates*W' + repmat(c,numcases,1));
+    negdata = sigmoid(nhstates*W' + repmat(c,numcases,1));
     negdatastates = negdata > rand(numcases,numdims);
     if supervised
       negclasses = softmaxPmtk(nhstates*Wc' + repmat(cc,numcases,1));
@@ -170,7 +169,7 @@ for epoch = 1:maxepoch
     end
     
     %go up one more time
-    nh = logistic(negdatastates*W + negclassesstates*Wc + ...
+    nh = sigmoid(negdatastates*W + negclassesstates*Wc + ...
       repmat(b,numcases,1));
     nhstates = nh > rand(numcases,numhid);
     
@@ -226,8 +225,8 @@ for epoch = 1:maxepoch
   
   errors(epoch)= errsum;
   if (verbose)
-    fprintf('Ended epoch %i/%i, Reconsruction error is %f\n', ...
-      epoch, maxepoch, errsum);
+    fprintf('Ended epoch %i/%i, mean reconsruction error is %f\n', ...
+      epoch, maxepoch, errsum/N);
   end
 end
 
@@ -239,9 +238,14 @@ if supervised
   model.cc= ccavg;
 end
 model.type= 'BB';
+model.modelType = 'rbm';
 
 % store top level activations for use in dbn learning
-ph = logistic(X*model.W + targets*model.Wc + repmat(model.b,N,1));
+if supervised
+  ph = sigmoid(X*model.W + targets*model.Wc + repmat(model.b,N,1));
+else
+   ph = sigmoid(X*model.W + repmat(model.b,N,1));
+end
 model.top = ph;
 
 end

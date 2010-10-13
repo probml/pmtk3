@@ -72,6 +72,12 @@
 % <td> Gen
 % <td> Param
 % <tr> 
+% <td> rbm
+% <td> Restricted Boltzmann machine
+% <td> Classif
+% <td> Gen
+% <td> Param
+% <tr> 
 % <td> rvm
 % <td> Relevance vector machine
 % <td> Both

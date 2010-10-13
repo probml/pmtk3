@@ -4,21 +4,23 @@
 
 setSeed(0);
 Ntrain = 1000; Ntest = 100; keepSparse = false;
-[Xtrain, ytrain, Xtest, ytest] = setupMnist('binary', true, 'ntrain',...
+binarize = false;
+[Xtrain, ytrain, Xtest, ytest] = setupMnist('binary', binarize, 'ntrain',...
     Ntrain,'ntest', Ntest,'keepSparse', keepSparse);
 ytest1to10 = ytest+1;
+ytrain1to10 = ytrain+1;
 
-  Nhidden = 100;
+Nhidden = 100;
 tic
-model = rbmFit(Xtrain, Nhidden, 'y', ytrain, ...
+model = rbmFit(Xtrain, Nhidden, 'y', ytrain1to10, ...
   'verbose', true, 'maxepoch', 20);
 toc
 
-yhat = rbmPredict(model, Xtest); % 1 to 10
+yhat1to10 = rbmPredict(model, Xtest); 
 
-errors = yhat~=ytest1to10;
+errors = (yhat1to10 ~= ytest1to10);
 fprintf('Error rate using RBM with %d hiddens is %5.3f\n', ...
-    Nhidden, sum(errors)/length(yhat));
+    Nhidden, sum(errors)/length(yhat1to10));
 
 %visualize weights
 figure
