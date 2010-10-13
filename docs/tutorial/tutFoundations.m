@@ -145,8 +145,8 @@ setSeed(0); X = gaussSample(m, 5)
 % into various subtypes, as follows:
 %
 % * basic (standard parametric distributions e.g., Gauss)
-% * latent (mixture models, latent factor models, HMMs etc)
-% * graphical (models which require specifying a graph structure)
+% * latent (mixture models, latent factor models, HMMs, RBMs, etc)
+% * graphical (models which require specifying an arbitrary graph structure)
 %
 % We discuss these  below.
 
