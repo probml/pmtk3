@@ -3,7 +3,7 @@
 % This file is from pmtk3.googlecode.com
 
 
-[sigTrue,mixedsig]=demosig(); % create signal
+[sigTrue,mixedsig]=demosig(); % create signal using fast ICA package
 [icasig, A, W] = fastica(mixedsig);
 X = mixedsig';
 [B, Z, evals, Xrecon, mu] = pcaPmtk(X, 4);

@@ -1,6 +1,7 @@
 function h= rbmVtoH(model, v)
 %go from visible to hidden based on type
 
+error('deprecated')
 if isequal(model.type, 'BB')
     h= sigmoid(v*model.W + repmat(model.b,size(v,1),1));
 elseif isequal(model.type, 'BG')

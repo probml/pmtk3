@@ -240,6 +240,7 @@ end
 model.type= 'BB';
 model.modelType = 'rbm';
 
+%{
 % store top level activations for use in dbn learning
 if supervised
   ph = sigmoid(X*model.W + targets*model.Wc + repmat(model.b,N,1));
@@ -247,5 +248,5 @@ else
    ph = sigmoid(X*model.W + repmat(model.b,N,1));
 end
 model.top = ph;
-
+%}
 end

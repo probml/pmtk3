@@ -12,19 +12,24 @@ ytest1to10 = ytest+1;
 ytrain1to10 = ytrain+1;
 
 Nhidden =  [500 500 2000];
-for nlayers=1:numel(Nhidden)
-  opts.verbose = true;
-  opts.maxepoch = 20;
-  opts.penalty = 0.01;
-  tic
-  H = Nhidden(1:nlayers);
-  model = deepBelNetFit(Xtrain, H, ytrain1to10, opts);
-  trainTime(nlayers) = toc;
-  yhat1to10 = deepBelNetPredict(model, Xtest);
+opts.verbose = true;
+opts.maxepoch = 20;
+opts.penalty = 0.001;
+model = deepBelNetFit(Xtrain, Nhidden, ytrain1to10, opts);
+ 
+% Now extract shallower models
+for i=1:3
+  models{i} = model;
+  models{i}.layers(i+1:end) = [];
+end
+
+for i=1:numel(models)
+  yhat1to10 = deepBelNetPredict(models{i}, Xtest);
   errors = (yhat1to10 ~= ytest1to10);
+  nlayers = numel(models{i}.layers);
   errRate(nlayers) = sum(errors)/length(yhat1to10);
-  fprintf('RBM with %s hiddens: errRate %5.3f, train time %5.3f\n', ...
-    num2str(H), errRate(nlayers), trainTime(nlayers))
+  fprintf('RBM with %d hidden layers: errRate %5.3f, train time %5.3f\n', ...
+    nlayers, errRate(nlayers), trainTime(nlayers))
 end
 
 figure; plot(errRate, 'ro-', 'linewidth', 2);

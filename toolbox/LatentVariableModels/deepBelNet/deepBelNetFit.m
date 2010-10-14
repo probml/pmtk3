@@ -38,12 +38,16 @@ else
   %train all other RBM's on top of each other
   for i=2:H-1
     if opts(i).verbose, fprintf('\n *** training layer %d\n', i); end
-    model{i} = rbmFit(model{i-1}.top, numhid(i), opts(i));
+    ph = rbmInferLatent(model{i-1}, X);
+    model{i} = rbmFit(ph, numhid(i), opts(i));
+    %model{i} = rbmFit(model{i-1}.top, numhid(i), opts(i));
   end
   
   %the last RBM has access to labels too
   if opts(H).verbose, fprintf('\n *** training last layer\n'); end
   tmp = opts(H); tmp.y = y;
-  model{H}= rbmFit(model{H-1}.top, numhid(end), tmp);
+  ph = rbmInferLatent(model{H-1}, X);
+  model{H}= rbmFit(ph, numhid(end), tmp);
+ % model{H}= rbmFit(model{H-1}.top, numhid(end), tmp);
 end
 end
