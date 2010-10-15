@@ -17,37 +17,26 @@ H = length(numhid);
 if numel(opts) == 1
   opts = repmat(opts, 1, H);
 end
-model.layers = dbnFit(X, numhid, y, opts);
+[model.layers, model.nparams] = dbnFit(X, numhid, y, opts);
 model.modelType = 'deepBelNet';
 end
 
 
-function model= dbnFit(X, numhid, y, opts)
+function [models, nparams] = dbnFit(X, numhid, y, opts)
 % returns cell array of rbms
 
 H=length(numhid);
-model=cell(H,1);
-if H==1
-  tmp = opts(1); tmp.y = y;
-  model{1}= rbmFit(X, numhid(1), tmp);
-else
-  %train the first RBM on data
-  if opts(1).verbose, fprintf('\n *** training layer 1\n'); end
-  model{1}= rbmFit(X, numhid(1), opts(1));
-  
-  %train all other RBM's on top of each other
-  for i=2:H-1
-    if opts(i).verbose, fprintf('\n *** training layer %d\n', i); end
-    ph = rbmInferLatent(model{i-1}, X);
-    model{i} = rbmFit(ph, numhid(i), opts(i));
-    %model{i} = rbmFit(model{i-1}.top, numhid(i), opts(i));
+models = cell(H,1);
+inputData = X;
+nparams = 0;
+for i=1:H
+  if opts(i).verbose, fprintf('\n *** training layer %d\n', i); end
+  if i==H
+    opts(i).y = y; % add labels to last layer only
   end
-  
-  %the last RBM has access to labels too
-  if opts(H).verbose, fprintf('\n *** training last layer\n'); end
-  tmp = opts(H); tmp.y = y;
-  ph = rbmInferLatent(model{H-1}, X);
-  model{H}= rbmFit(ph, numhid(end), tmp);
- % model{H}= rbmFit(model{H-1}.top, numhid(end), tmp);
+  models{i} = rbmFit(inputData, numhid(i), opts(i));
+  inputData = rbmInferLatent(models{i}, inputData);
+  nparams = nparams + models{i}.nparams;
 end
+
 end

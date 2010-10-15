@@ -230,23 +230,16 @@ for epoch = 1:maxepoch
   end
 end
 
-model.W= Wavg;
-model.b= bavg;
-model.c= cavg;
+model.W = Wavg;
+model.b = bavg;
+model.c = cavg;
+model.nparams = numel(model.W) + numel(model.b) + numel(model.c); 
 if supervised
-  model.Wc= Wcavg;
-  model.cc= ccavg;
+  model.Wc = Wcavg;
+  model.cc = ccavg;
+  model.nparams = model.nparams + numel(model.Wc) + numel(model.cc);
 end
 model.type= 'BB';
 model.modelType = 'rbm';
 
-%{
-% store top level activations for use in dbn learning
-if supervised
-  ph = sigmoid(X*model.W + targets*model.Wc + repmat(model.b,N,1));
-else
-   ph = sigmoid(X*model.W + repmat(model.b,N,1));
-end
-model.top = ph;
-%}
 end

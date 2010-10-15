@@ -50,4 +50,4 @@ for i=1:length(as)
     legendStr{i} = sprintf('a=%2.1f,b=%2.1f', a, b);
     axis tight; 
 end
-printPmtkFigure('gammaDist11'); 
+printPmtkFigure('gammaDist1'); 

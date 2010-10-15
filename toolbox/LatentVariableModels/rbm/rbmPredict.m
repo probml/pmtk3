@@ -13,11 +13,11 @@ F= zeros(numcases, numclasses);
 
 %set every class bit in turn and find -ve free energy of the configuration
 for i=1:numclasses
-    X= zeros(numcases, numclasses);
-    X(:, i)=1;
-    F(:,i) = repmat(m.cc(i),numcases,1).*X(:,i)+ ...
+    y= zeros(numcases, numclasses);
+    y(:, i)=1;
+    F(:,i) = repmat(m.cc(i),numcases,1).*y(:,i)+ ...
        sum(log(exp(testdata*m.W+ ...
-       X*m.Wc+repmat(m.b,numcases,1))+1),2);
+       y*m.Wc+repmat(m.b,numcases,1))+1),2);
 end
 
 %take the max
