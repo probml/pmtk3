@@ -1,5 +1,8 @@
 function generateSupportReport()
 %% Generate the html table describing packages in pmtkSupport
+% and write it to PMTKlocalSupportPath/docs/authors/packageAuthors.html
+% You need to commit this modified file in  svn.
+% Creating the report takes a few seconds.
 % PMTKneedsMatlab
 %% Setup
 
