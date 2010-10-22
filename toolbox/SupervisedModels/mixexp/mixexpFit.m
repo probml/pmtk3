@@ -22,8 +22,8 @@ function [model, loglikHist] = mixexpFit(X, y, nmix, varargin)
 
 % This file is from pmtk3.googlecode.com
 
-[EMargs, fixmix] = process_options(varargin, ...
-  'EMargs', {}, 'fixmix', false);
+[EMargs, fixmix, C] = process_options(varargin, ...
+  'EMargs', {}, 'fixmix', false, 'Nclasses', []);
 
 % We use k=1:nmix to index mixture components
 % and c=1:C to index output classes
@@ -34,7 +34,9 @@ X = [ones(N,1) X];
 D = D+1;
 if isequal(y, round(y))
   model.classifier = true;
-  C = numel(unique(y));
+  if isempty(C)
+    C = numel(unique(y));
+  end
 else
   model.classifier = false;
   C = 1;

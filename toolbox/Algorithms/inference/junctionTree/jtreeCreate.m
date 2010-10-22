@@ -58,9 +58,11 @@ root                        = nvars; % last one
 rootCliques                 = find(cliqueLookup(root, :));
 rootClqNdx                  = rootCliques(minidx(initClqSizes(rootCliques)));
 
-[preOrder, postOrder, pred] = dfsearchPMTK(cliqueTreeUndir, rootClqNdx, false);
-keyboard
+[cliqueTree, preOrder] = mkRootedTree(cliqueTreeUndir, rootClqNdx);
+postOrder = preOrder(end:-1:1); % not quite true, but still a valid order
 
+%{
+[preOrder, postOrder, pred] = dfsPMTK(cliqueTreeUndir, rootClqNdx, false);
 % Make a directed version of cliqueTreeUndir
 cliqueTree = zeros(ncliques, ncliques);
 for i=1:length(pred)
@@ -68,17 +70,27 @@ for i=1:length(pred)
         cliqueTree(pred(i), i) = 1;
     end
 end
+%}
+
+% To save time, we pre-compute parents and children
+% (Does this really save any time??)
+
+% always a single parent since it's a tree so don't need cell array 
 %postOrderParents = zeros(1, length(postOrder));
+% KPM 27Sep10: use cell array in case graph is disconnected so ps=[]
+% This also makes it more consistent with preOrderChildren
 postOrderParents = cell(1, length(postOrder));
-for i = postOrder(1:end-1) % always a single parent since it's a tree
+for ndx=1:(numel(postOrder)-1)
+  i = postOrder(ndx);
     %postOrderParents(i) = parents(cliqueTree, i);
-    % KPM 27Sep10: use cell array in case graph is disconnected so ps=[]
     postOrderParents{i} = parents(cliqueTree, i);
 end
 preOrderChildren = cell(1, length(preOrder));
-for i = preOrder
-    preOrderChildren{i} = children(cliqueTree, i);
+for ndx=1:numel(preOrder)
+  i = preOrder(ndx);
+  preOrderChildren{i} = children(cliqueTree, i);
 end
+
 %% package 
 jtree = structure(cliques, preOrder, postOrder, ...
     preOrderChildren, postOrderParents, cliqueLookup, cliqueTree, rootClqNdx, nvars);
