@@ -57,7 +57,9 @@ end
 root                        = nvars; % last one
 rootCliques                 = find(cliqueLookup(root, :));
 rootClqNdx                  = rootCliques(minidx(initClqSizes(rootCliques)));
-[preOrder, postOrder, pred] = dfsearch(cliqueTreeUndir, rootClqNdx, false);
+
+[preOrder, postOrder, pred] = dfsearchPMTK(cliqueTreeUndir, rootClqNdx, false);
+keyboard
 
 % Make a directed version of cliqueTreeUndir
 cliqueTree = zeros(ncliques, ncliques);
