@@ -32,6 +32,7 @@ switch datasource
     % eta = normrnd(0,0.05,n,1);
     eta = randn(n,1)*0.05;
     x = t + 0.3.*sin(2.*pi().*t) + eta;
+    data = [x(:) t(:)];
     e = 3;
 end
 

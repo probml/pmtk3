@@ -14,8 +14,11 @@ function varargout = mixexpPredict(model, X)
 %   prob(i,c) = p(y=c|X(i,:))
 
 [N,D] = size(X);
-X = standardize(X);
-X = [ones(N,1) X];
+%X = standardize(X);
+%X = [ones(N,1) X];
+if isfield(model, 'preproc')
+    [X] = preprocessorApplyToTest(model.preproc, X);
+end
 K = model.nmix;
 if model.fixmix
   weights = repmat(model.mixweights, N, 1);
@@ -23,7 +26,17 @@ else
   weights = softmaxPmtk(X*model.Wq); % weights(n,q)
 end
 if model.classifier
-  error('not yet implemented')
+  % implemented by JoAnne Ting
+  prob = zeros(N, size(model.Wy,2));
+  yhat_k = zeros(N, model.Nclasses, K);
+  for k = 1:K
+    yhat_k(:,:,k) = softmaxPmtk(X*model.Wy(:,:,k));
+    % Weighted vote
+    prob = prob + yhat_k(:,:,k) .* repmat(weights(:,k), 1, size(model.Wy,2));
+  end
+  yhat = maxidx(prob, [], 2);
+  varargout{1} = yhat;
+  varargout{2} = prob;
 else
   % mean of a mixture model is given by
   % E[x] = sum_k pik muk

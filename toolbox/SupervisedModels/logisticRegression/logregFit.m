@@ -4,14 +4,15 @@ function [model, X, lambdaVec, opt] = logregFit(X, y, varargin)
 % X: N*D
 % y: N*1 where y(i) in {1,..,C} or {0,1} or {-1,+1}
 %   or  N*C where y(i,:) is a one-of-C encoding
-%   If  not all classes are present in y, use dummy encoding 
 %   Dummy encoding only supported for multi-class case
 %
 % OPTIONAL INPUTS: (specified as name value pairs)
+% nclasses      ... Needed if y does not contain all class labels
 % regType       ... 'L1' or 'L2' or 'none'
 % lambda        ... regularizer 
 % fitOptions    ... optional fitMethod args (a struct)
 % preproc       ... a struct, passed to preprocessorApplyToTtrain
+%                      By default, this adds ones and standardizes 
 % winit         ... initial value, used for warm starting
 %                    of size D*C (first row is offset vector)
 %                    or size D*1 for binary
@@ -39,14 +40,31 @@ function [model, X, lambdaVec, opt] = logregFit(X, y, varargin)
 % Another change on 4 Oct 2010 by KPM
 % In the multiclass case, we use ydummy as a 1-of-C encoding.
 % This allows us to use logregFit inside EM with soft targets.
-% The nclasses arg has been removed.
 % The SoftmaxLossDummy function is now faster.
 
-%y = y(:);
+
+pp = preprocessorCreate('addOnes', true, 'standardizeX', true);
+
+args = prepareArgs(varargin); % converts struct args to a cell array
+[   nclasses      ...
+    regType       ...
+    lambda        ...
+    preproc       ...
+    fitOptions    ...
+    winit         ...
+    ] = process_options(args    , ...
+    'nclasses'      , [], ...
+    'regType'       , 'l2'    , ...
+    'lambda'        ,  0       , ...
+    'preproc'       ,  pp       , ...
+    'fitOptions'    , []      , ...
+    'winit'         , []);
+
+  %y = y(:);
 %assert(size(y, 1) == size(X,1));
 if isvector(y)
   y = y(:);
-  nclasses = nunique(y);
+  if isempty(nclasses), nclasses = nunique(y); end
   if nclasses==2
     model.binary = true;
   else
@@ -62,21 +80,6 @@ else
   clear y
 end
 
-pp = preprocessorCreate('addOnes', true, 'standardizeX', true);
-
-args = prepareArgs(varargin); % converts struct args to a cell array
-[   
-    regType       ...
-    lambda        ...
-    preproc       ...
-    fitOptions    ...
-    winit         ...
-    ] = process_options(args    , ...
-    'regType'       , 'l2'    , ...
-    'lambda'        ,  0       , ...
-    'preproc'       ,  pp       , ...
-    'fitOptions'    , []      , ...
-    'winit'         , []);
 
 if isempty(fitOptions)
   fitOptions = defaultFitOptions(regType, size(X,2));
@@ -129,6 +132,7 @@ if ~model.binary
     %w = [reshape(w, [D nclasses-1]) zeros(D, 1)];
     w = reshape(w, [D nclasses]);
 end
+model.nclasses  = nclasses;
 model.w = w;
 model.preproc = preproc;
 model.modelType = 'logreg';

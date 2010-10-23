@@ -11,8 +11,15 @@ function [model, loglikHist] = mixexpFit(X, y, nmix, varargin)
 %
 %
 % Optional inputs
-% EMargs - cell array. See emAlgo.
-% fixmix : if true, mixing weights are constants independent of x
+% EMargs - cell array. See emAlgo. (Default {})
+% fixmix - if true, mixing weights are constants independent of x
+%            (default false)
+% nclasses - needed if not all labels are present in y
+%             (default nunique(y))
+% preproc - a struct, passed to preprocessorApplyToTtrain
+%                      By default, this adds ones and standardizes
+% gatingFitArgs - cell array, default {'lambda', 0.001}
+% expertFitArgs - cell array, default {'lambda', 0.001}
 %
 % Outputs
 % 
@@ -22,34 +29,41 @@ function [model, loglikHist] = mixexpFit(X, y, nmix, varargin)
 
 % This file is from pmtk3.googlecode.com
 
-[EMargs, fixmix, C] = process_options(varargin, ...
-  'EMargs', {}, 'fixmix', false, 'Nclasses', []);
+pp = preprocessorCreate('addOnes', true, 'standardizeX', true);
+
+
+[EMargs, fixmix, nclasses, preproc, gatingFitArgs, expertFitArgs] = ...
+  process_options(varargin, ...
+  'EMargs', {}, 'fixmix', false, 'nclasses', [], 'preproc', pp, ...
+  'gatingFitArgs', {'lambda', 0.001}, ...
+  'expertFitArgs', {'lambda', 0.001});
+
+[preproc, X] = preprocessorApplyToTrain(preproc, X);
 
 % We use k=1:nmix to index mixture components
 % and c=1:C to index output classes
 
 [N,D] = size(X);
-X = standardize(X);
-X = [ones(N,1) X];
-D = D+1;
+%X = standardize(X);
+%X = [ones(N,1) X];
+%D = D+1;
 if isequal(y, round(y))
   model.classifier = true;
-  if isempty(C)
-    C = numel(unique(y));
+  if isempty(nclasses)
+    nclasses = numel(unique(y));
   end
 else
   model.classifier = false;
-  C = 1;
+  nclasses = 1;
 end
 data.X = X;
 data.y = y;
 model.nmix = nmix;
-model.C = C;
+model.nclasses = nclasses;
 model.D = D;
-
-% we perform light L2 regularization for numerical stability
-model.lambdaWq = 0.001;
-%model.lambdaWy = 0.001;
+model.preproc = preproc;
+model.expertFitArgs = expertFitArgs;
+model.gatingFitArgs = gatingFitArgs;
 model.fixmix = fixmix;
 
 [model, loglikHist] = emAlgo(model, data, @initFn, @estep, @mstep, ...
@@ -58,7 +72,7 @@ model.fixmix = fixmix;
 end
 
 function model = initFn(model, data, r) %#ok
-nmix = model.nmix; D = model.D; C = model.C;
+nmix = model.nmix; D = model.D; C = model.nclasses;
 if model.classifier 
   model.Wy = 0.1*randn(D,C,model.nmix);
 else
@@ -90,7 +104,8 @@ if ~model.classifier
 else
   for k=1:K
     logpred = softmaxLog(X, model.Wy(:,:,k)); % N*C
-    loglik(:,k) = logpred(:, y); % pluck out correct columns
+    %loglik(:,k) = logpred(:, y); % pluck out correct columns
+    loglik(y == k,k) = logpred(y == k,k); 
   end
 end
 logpost = loglik + logprior;
@@ -109,12 +124,15 @@ r = ess.post; % responsibilities
 if model.fixmix
   model.mixweights = sum(r,1)/N;
 else
-  [WqModel] = logregFit(X, r, 'preproc', [], 'lambda', model.lambdaWq);
+  [WqModel] = logregFit(X, r, 'preproc', [], ...
+    'nclasses', model.nclasses, model.gatingFitArgs{:});
   model.Wq = WqModel.w;
 end
 
+
 if ~model.classifier
   % weighted least squares
+  % should pass expertFitArgs to linregFit
   K = model.nmix;
   D = size(X,2);
   for k=1:K
@@ -132,7 +150,16 @@ if ~model.classifier
     assert(model.sigma2(k)>0)
   end
 else
-  % weighted logreg
-  error('not yet implemented')
+  % weighted logreg implemented by JoAnne Ting
+  K = model.nmix;
+  D = size(X,2);
+  for k = 1:K
+    Rk = diag(round(r(:,k)));
+    model_k = logregFit(Rk*X, y, 'preproc', [],   'nclasses', model.nclasses, ...
+                        model.expertFitArgs{:});
+    model.Wy(:,:,k) = model_k.w;
+    %yhat = logregPredict(model_k, Rk*X);
+  end
+  
 end
 end
