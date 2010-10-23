@@ -9,7 +9,7 @@ fprintf('Checking for matlabTools.........');
 if exist('onesPMTK.m', 'file') == 2 && exist('filelist.m', 'file') == 2;
     fprintf('PASSED\n');
 else
-    fprintf(2, 'FAILED\n\nPMTK3 depends on the matlabTools package,\nwhich is automatically downloaded by initPmtk3.\nPlease try running initPmtk3 again, or download\nthe package manually from <a href = "http://matlabtools.googlecode.com/svn/trunk/matlabTools.zip">here</a>.\n'); 
+    fprintf(2, 'FAILED\n\nPMTK3 depends on the matlabTools package,\nwhich could not be found...\n'); 
     return
 end
 %% Init

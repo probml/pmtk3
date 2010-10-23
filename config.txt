@@ -12,6 +12,5 @@
 % PMTKlocalWikiPath        C:\path\to\pmtk3Wiki
 % PMTKlocalDataPath        C:\path\to\pmtkData
 % PMTKlocalSupportPath     C:\path\to\pmtkSupport
-% PMTKlocalMatlabToolsPath C:\path\to\matlabTools
 % PMTKpmlBookSource        C:\path\to\PML\Text
 % PMTKlightSpeedDir        lightspeed2.3

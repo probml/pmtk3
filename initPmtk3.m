@@ -27,19 +27,20 @@ addpath(thisDir);
 %% include localUtil
 include(fullfile(thisDir, 'localUtil')); 
 %% include matlab tools
-mtSource = getConfigValue('PMTKlocalMatlabToolsPath');
-if exist(mtSource, 'dir') % if local svn repository exists, use it
-    include(mtSource); 
-else
-    include(fullfile(thisDir, 'matlabTools')); 
-end
-if ~exist('matlabToolsRoot', 'file')
-    url = 'http://matlabtools.googlecode.com/svn/trunk/matlabTools.zip';
-    fprintf('downloading matlabTools.............'); 
-    unzip(url, fullfile(thisDir, 'matlabTools')); % download from googleCode 
-    include(fullfile(thisDir, 'matlabTools')); 
-    fprintf('done\n'); 
-end
+include(fullfile(thisDir, 'matlabTools')); 
+%mtSource = getConfigValue('PMTKlocalMatlabToolsPath');
+%if exist(mtSource, 'dir') % if local svn repository exists, use it
+%    include(mtSource); 
+%else
+%    include(fullfile(thisDir, 'matlabTools')); 
+%end
+%if ~exist('matlabToolsRoot', 'file')
+%    url = 'http://matlabtools.googlecode.com/svn/trunk/matlabTools.zip';
+%    fprintf('downloading matlabTools.............'); 
+%    unzip(url, fullfile(thisDir, 'matlabTools')); % download from googleCode 
+%    include(fullfile(thisDir, 'matlabTools')); 
+%    fprintf('done\n'); 
+%end
 %% include core PMTK3 directories
 include(fullfile(thisDir, 'toolbox')); 
 include(fullfile(thisDir, 'demos')); 
