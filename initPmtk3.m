@@ -141,15 +141,15 @@ thisDir = fileparts(w);
 cd(thisDir);
 restoredefaultpath();
 addpath(genpath(pwd));
-if ~exist('matlabToolsRoot', 'file')
-    url = 'http://matlabtools.googlecode.com/svn/trunk/matlabTools.zip';
-    fprintf('downloading matlabTools.............');
-    dest = fullfile(thisDir, 'matlabTools', 'matlabTools.zip');
-    downloadFile(url, dest);       % more reliable than unzip(url, ...
-    unzip(dest, fileparts(dest)); 
-    addpath(genpath(fullfile(thisDir, 'matlabTools')));
-    fprintf('done\n');
-end
+% if ~exist('matlabToolsRoot', 'file')
+%     url = 'http://matlabtools.googlecode.com/svn/trunk/matlabTools.zip';
+%     fprintf('downloading matlabTools.............');
+%     dest = fullfile(thisDir, 'matlabTools', 'matlabTools.zip');
+%     downloadFile(url, dest);       % more reliable than unzip(url, ...
+%     unzip(dest, fileparts(dest)); 
+%     addpath(genpath(fullfile(thisDir, 'matlabTools')));
+%     fprintf('done\n');
+% end
 %%
 pmtkInfoDir = fullfile(thisDir, 'localUtil', 'systemInfo');
 %% write isOctave function
