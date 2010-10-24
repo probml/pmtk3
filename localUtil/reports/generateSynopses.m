@@ -49,6 +49,8 @@ wikiText =  [{
     'This page lists the folders within PMTK/Toolbox and PMTK/matlabTools. Click on the link to see the list of files in that folder, with a brief description. Click on the file to see its'
     'source code, including comments on how to use it.'
     ''
+    '== toolbox/ =='
+    ''
     }
     wikiText
     ];
@@ -57,7 +59,7 @@ wikiText =  [{
 wikiText = [wikiText; {
            ''
            ''
-           '== matlabTools =='
+           '== matlabTools/ =='
            ''
            }];
 d = {'graph', 'graphics', 'metaTools', 'oop', 'stats', 'util'}; 
@@ -65,14 +67,8 @@ for i=1:numel(d)
    directory = fullfile(matlabToolsRoot(), d{i});
    outputFile = fullfile(dest, sprintf('%s.html', d{i}));
    generateSynopsisTable(directory, outputFile, matlabToolsRoot());
-   Wsub = sprintf(' * [%s/%s/%s.html %s]', googleRoot, d{i}, d{i});
-   wikiText = [wikiText; {
-        ''
-        ''
-        sprintf('=== {{{%s/}}} ===', d{i});
-        ''
-        ''
-        }; Wsub];  %#ok
+   wikiText = [wikiText; ''; {sprintf(' * [%s/%s.html %s]', googleRoot, d{i}, d{i})}]; %#ok
+       
 end
 
 
