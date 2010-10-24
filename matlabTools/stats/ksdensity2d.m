@@ -11,6 +11,9 @@ function [f, gridx1, gridx2] = ksdensity2d(x,gridx1,gridx2,bw)
 % gridx1 and gridx2 based on 50 points spanning the range
 % (similar to ksdensity)
 
+% This file is from pmtk3.googlecode.com
+
+
 %PMTKauthor Peter Perkins
 %PMTKurl %http://www.mathworks.com/matlabcentral/newsreader/view_thread/125739
 

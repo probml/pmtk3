@@ -5,6 +5,9 @@ function [f,g,H] = squaredErrorObjective(w,X,y,weights)
 % y N*1
 % weights N*1 (defaults to ones)
 
+% This file is from pmtk3.googlecode.com
+
+
 [N,D]=size(X);
 if nargin < 4, weights = ones(N,1); end
 weights = colvec(weights);

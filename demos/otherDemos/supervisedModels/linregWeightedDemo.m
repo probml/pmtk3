@@ -1,5 +1,8 @@
 %% Several ways of implementing weighted least squares
 
+% This file is from pmtk3.googlecode.com
+
+
 setSeed(0);
 N = 100; D = 5;
 X = randn(N,D);

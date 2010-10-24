@@ -4,6 +4,9 @@ function plotPatches( A, cols)
 % A(:,i) is i'th patch, assumed to be square
 % cols      number of columns (x-dimension of grid)
 
+% This file is from pmtk3.googlecode.com
+
+
 if nargin < 2
   [nr nc] = nsubplots(size(A,2));
   cols = nc;
