@@ -7,7 +7,7 @@
 % PMTKmetaDirs             meta, docs, tmp
 % PMTKred                  #990000
 % PMTKauthors              Kevin Murphy, Matt Dunham
-% PMTKcodeDirs             toolbox, demos, localUtil
+% PMTKcodeDirs             toolbox, demos, localUtil, matlabTools
 % PMTKgvizPath             C:\Program Files\Graphviz2.26\bin
 % PMTKlocalWikiPath        C:\path\to\pmtk3Wiki
 % PMTKlocalDataPath        C:\path\to\pmtkData
