@@ -6,14 +6,14 @@ function [nll,g,H] = LogisticLossSimple(w,X,y,weights)
 
 % This file is from pmtk3.googlecode.com
 
-n = size(X,1);
+[n, d] = size(X);
 if nargin < 4, weights = ones(n,1); end
 y01 = (y+1)/2;
 mu = sigmoid(X*w);
 mu = max(mu, eps); % bound away from 0
 mu = min(1-eps, mu); % bound away from 1
 nll = -sum(weights .* (y01 .* log(mu) + (1-y01) .* log(1-mu)))
-Xw = X .* repmat(rowvec(weights), 1, p);
+Xw = X .* repmat(rowvec(weights), 1, d);
 if nargout > 1
   g = Xw'*(mu-y01);
 end

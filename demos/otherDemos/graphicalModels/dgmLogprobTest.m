@@ -6,6 +6,7 @@
 % Small network, so we can use brute force enumeration to test
 dgm = mkSprinklerDgm();
 N = dgm.nnodes;
+tol = 1e-5;
 for trial=1:2
    trial
    if trial==1
