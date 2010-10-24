@@ -5,6 +5,9 @@ function prediction = rbmPredict(m, testdata)
 % OUTPUTS
 % prediction(n) in {1..C}
 
+% This file is from pmtk3.googlecode.com
+
+
 
 
 numclasses= size(m.Wc, 1);

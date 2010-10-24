@@ -1,5 +1,8 @@
 %% demo of mixture of linear regression experts in 1d
 
+% This file is from pmtk3.googlecode.com
+
+
 clear all
 close all
 setSeed(0);

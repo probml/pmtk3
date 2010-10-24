@@ -5,6 +5,9 @@
 % Appearance of players is colored rectangles.
 % Motion is  random around fixed location, but we assume perfect tracking.
 
+% This file is from pmtk3.googlecode.com
+
+
 function sportsTrackingDemo()
 
 setSeed(2);

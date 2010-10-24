@@ -1,3 +1,6 @@
+
+% This file is from pmtk3.googlecode.com
+
 function[oneofn] = softmax_sample(probmat)
 oneofn = zeros(size(probmat));
 probmat = probmat./repmat(sum(probmat,2),1,size(probmat,2));

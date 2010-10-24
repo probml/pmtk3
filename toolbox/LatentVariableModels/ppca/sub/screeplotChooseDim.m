@@ -1,6 +1,9 @@
 function [best, ll] = screeplotChooseDim(evals)
 % Use the profile likelihood method of Zhu and Ghodsi (2006) to pick L
 
+% This file is from pmtk3.googlecode.com
+
+
 Lmax = numel(evals);
 ndx = 1:Lmax;
 for q=1:Lmax-1

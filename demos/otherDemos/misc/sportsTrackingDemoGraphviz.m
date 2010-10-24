@@ -9,6 +9,9 @@ Nplayers = 4;
 %noiseLevelLinkage = 0.1;
 %pcEmptyFrames = 0.2;
 
+% This file is from pmtk3.googlecode.com
+
+
 noiseLevelLinkage = 0;
 pcEmptyFrames = 0;
 

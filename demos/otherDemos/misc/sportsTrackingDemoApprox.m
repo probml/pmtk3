@@ -3,6 +3,9 @@
 % We stick to Nplayers=4 so we can compare
 % to exact inference.
 
+% This file is from pmtk3.googlecode.com
+
+
 function sportsTrackingDemoApprox()
 
 setSeed(0);

@@ -3,6 +3,9 @@
 %PMTKmodified Kevin Murphy
 % Needs SPAMS, available from http://www.di.ens.fr/willow/SPAMS/
 
+% This file is from pmtk3.googlecode.com
+
+
 %PMTKslow
 
 clear all;

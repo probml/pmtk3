@@ -6,6 +6,9 @@ function prediction = deepBelNetPredict(model, testdata)
 % OUTPUTS
 % prediction(n) in {1..C}
 
+% This file is from pmtk3.googlecode.com
+
+
 
 models = model.layers;
 nlayers = numel(models);

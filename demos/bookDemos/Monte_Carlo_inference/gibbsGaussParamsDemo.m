@@ -3,6 +3,9 @@ function gibbsGaussParamsDemo()
 % We use the reading comprehension dataset
 % from Peter Hoff's book p113
 
+% This file is from pmtk3.googlecode.com
+
+
 %PMTKauthor Emtiyaz Khan
 %PMTKneedsStatsToolbox iwishrnd
 

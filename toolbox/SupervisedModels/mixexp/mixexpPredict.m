@@ -13,6 +13,9 @@ function varargout = mixexpPredict(model, X)
 %   yhat(i) = argmax p(y|X(i,:))
 %   prob(i,c) = p(y=c|X(i,:))
 
+% This file is from pmtk3.googlecode.com
+
+
 [N,D] = size(X);
 %X = standardize(X);
 %X = [ones(N,1) X];

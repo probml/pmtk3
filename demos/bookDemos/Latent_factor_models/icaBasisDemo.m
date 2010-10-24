@@ -1,6 +1,9 @@
 function icaBasisDemo()
 % Apply ICA to natural image patches and visualize basis functions
 
+% This file is from pmtk3.googlecode.com
+
+
 % Extracted from figures.m which is the file that 
 % accompanies
 %"Natural Image Statistics" by Hyvarinen, Hurri, and Hoyer.

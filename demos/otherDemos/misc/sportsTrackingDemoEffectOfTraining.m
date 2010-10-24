@@ -1,6 +1,9 @@
 % evaluate performance as funciton of training set size
 % using hard labeling
 
+% This file is from pmtk3.googlecode.com
+
+
 function sportsTrackingDemoEffectOfTraining()
 
 

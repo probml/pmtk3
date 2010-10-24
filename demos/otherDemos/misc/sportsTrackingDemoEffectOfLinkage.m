@@ -10,6 +10,9 @@ noiseLevelLinkage = 0.1;
 pcEmptyFrames = 0.2;
 
 %Nmix = [1*ones(1,Nplayers) 1]; % easy 
+
+% This file is from pmtk3.googlecode.com
+
 Nmix = [1*ones(1,Nplayers) 2]; % medium
 %Nmix = [2*ones(1,Nplayers) 5]; % hard
 obsNoiseLevel = 0.1;

@@ -1,6 +1,9 @@
 % like sportsTrackingDemoApprox,
 % but easier to compare exact and approx
 
+% This file is from pmtk3.googlecode.com
+
+
 function sportsTrackingDemoLoopy()
 
 

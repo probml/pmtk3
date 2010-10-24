@@ -2,6 +2,9 @@ function [Xrecon, Zhat] = mixModelReconstruct(model, X)
 % Compress X then reconstruct it in Xhat
 % and return root mean squared error
 
+% This file is from pmtk3.googlecode.com
+
+
 Zhat = mixModelMapLatent(model, X);
 Xrecon = X;
 K = model.nmix;

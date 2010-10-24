@@ -34,6 +34,9 @@ function [model, errors] = rbmFit(X, numhid, varargin)
 %
 %errors         ... The errors in reconstruction at every epoch
 
+% This file is from pmtk3.googlecode.com
+
+
 %PMTKauthor Andrej Karpathy, Kevin Swersky, Ruslan Salakhutdinov, Geoff Hinton
 %PMTKdata April 2010
 %PMTKmodified Kevin Murphy

@@ -2,6 +2,9 @@
 %PMTKauthor Andrej Karpathy
 %PMTKmodified Kevin Murphy
 
+% This file is from pmtk3.googlecode.com
+
+
 setSeed(0);
 Ntrain = 1000; Ntest = 100; keepSparse = false;
 [Xtrain, ytrain, Xtest, ytest] = setupMnist('binary', true, 'ntrain',...

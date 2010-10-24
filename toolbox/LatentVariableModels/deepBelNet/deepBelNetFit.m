@@ -7,6 +7,9 @@ function model= deepBelNetFit(X, numhid, y, opts)
 % opts           ... can be a struct array, one per layer, or just one struct
 %                      which will be replicated. Fields are same as rbmFit.
 
+% This file is from pmtk3.googlecode.com
+
+
 %PMTKauthor Andrej Karpathy
 %PMTKdata April 2010
 %PMTKmodified Kevin Murphy

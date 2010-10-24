@@ -2,6 +2,9 @@ function gibbsGauss2dDemo()
 % Use Gibbs sampling to sample from a 2D Gaussian
 % see also mcmcMvn2d
 
+% This file is from pmtk3.googlecode.com
+
+
 S = 5000;
 mu = [1 1];
 C = [2 1; 1 1];

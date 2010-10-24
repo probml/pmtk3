@@ -2,6 +2,9 @@
 %PMTKauthorAapo Hyvarinen
 %PMTKdate Sep 2010
 
+% This file is from pmtk3.googlecode.com
+
+
 %You need to have access to the FastICA package
 
 setSeed(2);

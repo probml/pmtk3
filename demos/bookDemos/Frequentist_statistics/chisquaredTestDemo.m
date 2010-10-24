@@ -1,5 +1,8 @@
 % Demo of pearson's chi squared test
 
+% This file is from pmtk3.googlecode.com
+
+
 % Data from
 % http://homepage.mac.com/samchops/B733177502/C1517039664/E20060507073109/index.html
 %Y=[ 21 16 145 2 6 ; 14 4 175 13 4];

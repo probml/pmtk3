@@ -2,6 +2,9 @@
 %PMTKauthor Andrej Karpathy
 %PMTKmodified Kevin Murphy
 
+% This file is from pmtk3.googlecode.com
+
+
 %% Data
 setSeed(0);
 clear all

@@ -1,6 +1,9 @@
 % like sportsTrackingDemoLabels, but we make the appearance
 % model more challenging
 
+% This file is from pmtk3.googlecode.com
+
+
 function sportsTrackingDemoNoisy()
 
 setSeed(0);

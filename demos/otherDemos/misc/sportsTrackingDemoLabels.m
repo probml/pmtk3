@@ -1,6 +1,9 @@
 % We incorporate label information as well
 % as observed colors
 
+% This file is from pmtk3.googlecode.com
+
+
 function sportsTrackingDemoLabels()
 
 setSeed(0);

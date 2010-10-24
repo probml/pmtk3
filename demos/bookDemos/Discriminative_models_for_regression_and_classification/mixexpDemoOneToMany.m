@@ -1,6 +1,9 @@
 %% demo of mixture of linear regression experts on an inverse problem
 % Based on Bishop fig 5.21
 
+% This file is from pmtk3.googlecode.com
+
+
 clear all
 close all
 setSeed(0);

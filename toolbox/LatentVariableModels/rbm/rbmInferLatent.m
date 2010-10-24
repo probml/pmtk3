@@ -3,6 +3,9 @@ function ph = rbmInferLatent(model, X, y)
 % If supervised, then  pz(i,j) = p(hj=1|X(i,:), y(i))
 % where y(i) in 1..C
 
+% This file is from pmtk3.googlecode.com
+
+
 N = size(X,1);
 if nargin < 3
   ph = sigmoid(X*model.W + repmat(model.b,N,1));

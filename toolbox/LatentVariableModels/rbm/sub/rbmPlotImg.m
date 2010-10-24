@@ -5,6 +5,9 @@ function r=rbmPlotImg(X, doTranspose)
 % If no return argument is request, plot image,
 % otherwise return it.
 
+% This file is from pmtk3.googlecode.com
+
+
 if nargin < 2, doTranspose = false; end
 [D,N]= size(X);
 s=sqrt(D);

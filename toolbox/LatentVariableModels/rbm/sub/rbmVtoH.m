@@ -1,6 +1,9 @@
 function h= rbmVtoH(model, v)
 %go from visible to hidden based on type
 
+% This file is from pmtk3.googlecode.com
+
+
 error('deprecated')
 if isequal(model.type, 'BB')
     h= sigmoid(v*model.W + repmat(model.b,size(v,1),1));
