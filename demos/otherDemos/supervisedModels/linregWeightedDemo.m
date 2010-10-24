@@ -1,4 +1,4 @@
-%% Two ways of implementing weighted least squares
+%% Several ways of implementing weighted least squares
 
 setSeed(0);
 N = 100; D = 5;
