@@ -1,4 +1,4 @@
-<font align="left" style="color:#990000"><h2>Listing: \toolbox\BasicModels\discrete</h2></font><br>
+<font align="left" style="color:#990000"><h2>Listing: \toolbox\LatentVariableModels\rbm</h2></font><br>
 <br>
 Revision Date: 23-Oct-2010<br>
 <br>
@@ -84,21 +84,9 @@ Some files are tagged as follows:<br>
 <TR>
 
 
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/BasicModels/discrete/discreteCreate.m">discreteCreate</a></font></TD>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/LatentVariableModels/rbm/rbmFit.m">rbmFit</a></font></TD>
 
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Create a discrete distribution</font></TD>
-
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
-
-
-</TR>
-
-<TR>
-
-
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/BasicModels/discrete/discreteFit.m">discreteFit</a></font></TD>
-
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Fit a discrete distribution, or if X is a matrix, a product of discrete distributions</font></TD>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Fit a bernoulli-bernoulli RBM to binary data</font></TD>
 
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
 
@@ -108,21 +96,9 @@ Some files are tagged as follows:<br>
 <TR>
 
 
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/BasicModels/discrete/discreteLogprob.m">discreteLogprob</a></font></TD>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/LatentVariableModels/rbm/rbmInferLatent.m">rbmInferLatent</a></font></TD>
 
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Compute the log probability of the data. X must be in 1:K.</font></TD>
-
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
-
-
-</TR>
-
-<TR>
-
-
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/BasicModels/discrete/discreteSample.m">discreteSample</a></font></TD>
-
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Sample from a discrete distribution</font></TD>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>pz(i,j) = p(hj=1|X(i,:))</font></TD>
 
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
 
@@ -132,9 +108,9 @@ Some files are tagged as follows:<br>
 <TR>
 
 
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/BasicModels/discrete/sub/discreteLogprobMissingData.m">sub\discreteLogprobMissingData</a></font></TD>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/LatentVariableModels/rbm/rbmPredict.m">rbmPredict</a></font></TD>
 
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Same as discreteLogprob, except X may have NaNs</font></TD>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Use RBM to predict discrete labels</font></TD>
 
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
 
@@ -144,9 +120,57 @@ Some files are tagged as follows:<br>
 <TR>
 
 
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/BasicModels/discrete/sub/sampleDiscrete.m">sub\sampleDiscrete</a></font></TD>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/LatentVariableModels/rbm/rbmReconstruct.m">rbmReconstruct</a></font></TD>
 
-<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>Like the built in 'rand', except we draw from a non-uniform discrete distrib</font></TD>
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>up = rbmVtoH(model, X);</font></TD>
+
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
+
+
+</TR>
+
+<TR>
+
+
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/LatentVariableModels/rbm/sub/rbmHtoV.m">sub\rbmHtoV</a></font></TD>
+
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>go from hidden to visible based on type</font></TD>
+
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
+
+
+</TR>
+
+<TR>
+
+
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/LatentVariableModels/rbm/sub/rbmPlotImg.m">sub\rbmPlotImg</a></font></TD>
+
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>X(:,i) is i'th data case or weight vector.</font></TD>
+
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
+
+
+</TR>
+
+<TR>
+
+
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/LatentVariableModels/rbm/sub/rbmVtoH.m">sub\rbmVtoH</a></font></TD>
+
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>go from visible to hidden based on type</font></TD>
+
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
+
+
+</TR>
+
+<TR>
+
+
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3><a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/LatentVariableModels/rbm/sub/softmax_sample.m">sub\softmax_sample</a></font></TD>
+
+<TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
 
 <TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
 
