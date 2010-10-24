@@ -7,6 +7,7 @@ function [model, X, lambdaVec, opt] = logregFit(X, y, varargin)
 %   Dummy encoding only supported for multi-class case
 %
 % OPTIONAL INPUTS: (specified as name value pairs)
+% weights       ... N*1, default 1s
 % nclasses      ... Needed if y does not contain all class labels
 % regType       ... 'L1' or 'L2' or 'none'
 % lambda        ... regularizer 
@@ -37,22 +38,27 @@ function [model, X, lambdaVec, opt] = logregFit(X, y, varargin)
 % has always been D*C.
 % (LambdaVec has been made D*C as well)
 
-% Another change on 4 Oct 2010 by KPM
+% 4 Oct 2010 by KPM
 % In the multiclass case, we use ydummy as a 1-of-C encoding.
 % This allows us to use logregFit inside EM with soft targets.
 % The SoftmaxLossDummy function is now faster.
 
+% 24 Oct 2010 by KPM
+% added weights for weighted logistic regression
+% See logregWeightedDemo
 
 pp = preprocessorCreate('addOnes', true, 'standardizeX', true);
 
 args = prepareArgs(varargin); % converts struct args to a cell array
-[   nclasses      ...
+[   weights       ....
+  nclasses      ...
     regType       ...
     lambda        ...
     preproc       ...
     fitOptions    ...
     winit         ...
     ] = process_options(args    , ...
+    'weights'       , ones(size(X,1),1), ...
     'nclasses'      , [], ...
     'regType'       , 'l2'    , ...
     'lambda'        ,  0       , ...
@@ -62,6 +68,8 @@ args = prepareArgs(varargin); % converts struct args to a cell array
 
   %y = y(:);
 %assert(size(y, 1) == size(X,1));
+
+
 if isvector(y)
   y = y(:);
   if isempty(nclasses), nclasses = nunique(y); end
@@ -90,12 +98,12 @@ D = size(X,2); % will be num features plus 1 if we added col of 1s
 
 if model.binary
     [y, model.ySupport] = setSupport(y, [-1 1]);
-    loss = @(w) LogisticLossSimple(w, X, y);
+    loss = @(w) LogisticLossSimple(w, X, y, weights);
 else
     %[y, model.ySupport] = setSupport(y, 1:nclasses);
     %loss = @(w) SoftmaxLoss2(w, X, y, nclasses);
     %loss = @(w) SoftmaxLoss(w, X, y, nclasses);
-    loss = @(w) SoftmaxLossDummy(w, X, ydummy);
+    loss = @(w) SoftmaxLossDummy(w, X, ydummy, weights);
 end
 model.lambda = lambda;
 

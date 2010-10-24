@@ -132,10 +132,14 @@ end
 
 if ~model.classifier
   % weighted least squares
-  % should pass expertFitArgs to linregFit
   K = model.nmix;
   D = size(X,2);
   for k=1:K
+    expert = linregFit(X, y, 'preproc', [], 'weights', r(:,k), ...
+       model.expertFitArgs{:});
+    model.Wy(:,k) = expert.w;
+    model.sigma2(k) = expert.sigma2;
+    %{
     Rk = diag(r(:,k));
     RRk = sqrt(Rk);
     model.Wy(:,k) = (RRk*X) \ (RRk*y);
@@ -148,17 +152,19 @@ if ~model.classifier
     end
     assert(~isnan(model.sigma2(k)))
     assert(model.sigma2(k)>0)
+    %}
   end
 else
-  % weighted logreg implemented by JoAnne Ting
+  % weighted logreg 
   K = model.nmix;
   D = size(X,2);
   for k = 1:K
     Rk = diag(round(r(:,k)));
-    model_k = logregFit(Rk*X, y, 'preproc', [],   'nclasses', model.nclasses, ...
-                        model.expertFitArgs{:});
+    %model_k = logregFit(Rk*X, y, 'preproc', [],   'nclasses', model.nclasses, ...
+    %                    model.expertFitArgs{:});
+    model_k = logregFit(X, y, 'preproc', [],   'nclasses', model.nclasses, ...
+                        'weights', r(:,k), model.expertFitArgs{:});
     model.Wy(:,:,k) = model_k.w;
-    %yhat = logregPredict(model_k, Rk*X);
   end
   
 end
