@@ -4,7 +4,7 @@
 
 % This file is from pmtk3.googlecode.com
 
-loadData('data45'); 
+loadData('speechDataDigits4And5'); 
 nstates = 5;
 setSeed(0); 
 Xtrain = [train4'; train5'];

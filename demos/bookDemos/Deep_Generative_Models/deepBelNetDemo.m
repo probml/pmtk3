@@ -1,6 +1,7 @@
 %% Classify some MNIST digits using a binary RBM
 %PMTKauthor Andrej Karpathy
 %PMTKmodified Kevin Murphy
+%PMTKreallySlow
 
 % This file is from pmtk3.googlecode.com
 

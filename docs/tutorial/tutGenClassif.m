@@ -231,7 +231,7 @@ robustDiscrimAnalysisBankruptcyDemo
 % (from isolatedWordClassificationWithHmmsDemo.m ).
 % It fits two HMMs, one per class.
 %%
-loadData('data45'); 
+loadData('speechDataDigits4And5'); 
 % Xtrain{i} is a 13 x T(i) sequence of MFCC data, where T(i) is the length
 nstates = 5;
 setSeed(0); 

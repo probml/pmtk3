@@ -36,8 +36,8 @@ dbclear('if', 'error');
 dbclear('if', 'warning');
 if nargin < 1, subFolder = ''; end
 if nargin < 2
-    %exclusions = {'PMTKslow', 'PMTKinteractive', 'PMTKreallySlow', 'PMTKbroken'};
-    exclusions = {'PMTKinteractive', 'PMTKreallySlow', 'PMTKbroken'};
+    exclusions = {'PMTKslow', 'PMTKinteractive', 'PMTKreallySlow', 'PMTKbroken'};
+    %exclusions = {'PMTKinteractive', 'PMTKreallySlow', 'PMTKbroken'};
     %exclusions = {'PMTKinteractive', 'PMTKbroken'}; 
 end
 hideFigures();
