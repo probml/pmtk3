@@ -46,7 +46,7 @@ wikiText =  [{
     ''
     ''
     ''
-    'This page lists the folders within PMTK/Toolbox and PMTK/matlabTools. Click on the link to see the list of files in that folder, with a brief description. Click on the file to see its'
+    'This page lists the folders within PMTK/toolbox and PMTK/matlabTools. Click on the link to see the list of files in that folder, with a brief description. Click on the file to see its'
     'source code, including comments on how to use it.'
     ''
     '== toolbox/ =='
