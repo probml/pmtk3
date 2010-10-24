@@ -7,8 +7,8 @@ function generatePmtkStats()
 % This file is from pmtk3.googlecode.com
 
 excludeComments             = false;
-includeMatlabTools          = true; 
-directories                 = {'toolbox', 'demos\bookDemos', 'demos\otherDemos', 'localUtil'};
+%includeMatlabTools          = true; 
+directories                 = {'toolbox', 'demos\bookDemos', 'demos\otherDemos', 'localUtil', 'matlabTools'};
 excludedAuthors             = tokenize(getConfigValue('PMTKauthors'), ',');
 outputFile                  = fullfile(pmtk3Root, 'docs', 'pmtkStats.html');
 recursive                   = true;
@@ -22,11 +22,11 @@ pmtkRed  = getConfigValue('PMTKred');
 data = zeros(numel(directories)+1, numel(colNames)-1); % +1 for totals
 countd = @(d, mask)countLinesOfCodeDir(d, excludeComments, recursive, mask);
 fullDirs = cellfuncell(@(d)fullfile(pmtk3Root(), d),  directories); 
-if includeMatlabTools
-    fullDirs{end+1} = getConfigValue('PMTKlocalMatlabToolsPath');
-    data(end+1, :)  = 0; 
-    directories{end+1} = 'matlabTools'; 
-end
+% if includeMatlabTools
+%     fullDirs{end+1} = getConfigValue('PMTKlocalMatlabToolsPath');
+%     data(end+1, :)  = 0; 
+%     directories{end+1} = 'matlabTools'; 
+% end
 for i=1:numel(fullDirs)
     d             = fullDirs{i}; 
     totalMatlab   = countd(d, mmask);
