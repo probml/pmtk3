@@ -1,7 +1,7 @@
 function [X, y] =  createXORdata(doplot)
 %% Generate noisy XOR data
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 if nargin < 1, doplot = false; end
 setSeed(0);

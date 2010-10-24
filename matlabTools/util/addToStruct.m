@@ -7,7 +7,7 @@ function S = addToStruct(S, varargin)
 % 
 %%
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 for i=2:nargin
     S.(inputname(i)) = varargin{i-1};

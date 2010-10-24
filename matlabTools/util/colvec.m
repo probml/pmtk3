@@ -6,7 +6,7 @@ function x = colvec(x)
 % - you would have to first store the result. With this function you can
 % write colvec(f(a,b,c)) and be assured that the result is a column vector.
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 x = x(:);
 end

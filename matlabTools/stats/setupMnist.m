@@ -12,7 +12,7 @@ function [Xtrain,ytrain,Xtest,ytest] = setupMnist(varargin)%binary, Ntrain, Ntes
 % Xtest will be ntest*D, where D=784
 % ytest will be ntest*1
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 [binary,Ntrain,Ntest,keepSparse,classes] = process_options(varargin,...

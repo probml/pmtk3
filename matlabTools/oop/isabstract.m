@@ -2,7 +2,7 @@ function tf = isabstract(className)
 % Return true iff the class is abstract    
 % PMTKneedsMatlab 2008
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
     
     if hasTag(which(className),'%PMTKabstract')

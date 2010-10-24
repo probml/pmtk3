@@ -2,7 +2,7 @@ function [text, ismodified] = convertLinksToHtml(text, name)
 %% Convert any web links in the text to html by adding <a href> tags
 % If any <a href ... tags already exist, nothing is done
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 if iscell(text)

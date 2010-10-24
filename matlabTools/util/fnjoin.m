@@ -5,7 +5,7 @@ function varargout = fnjoin(input, varargin)
 % [f, g] = fnjoin(w, @obj, @grad) % useful for optimization
 %%
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 varargout = {};
 in = cellwrap(input); 

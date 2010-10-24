@@ -5,7 +5,7 @@ function y = logdet(A)
 %PMTKauthor Tom Minka
 % (c) Microsoft Corporation. All rights reserved.
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 try
     U = chol(A);

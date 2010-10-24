@@ -7,7 +7,7 @@ function [p, nerrs] = bestPermutation(source, target)
 %     2     2     2     1     1     1     3     3     3
 %%
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 nlabels = nunique([rowvec(source), rowvec(target)]); 
 allperms = perms(1:nlabels);

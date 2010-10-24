@@ -11,7 +11,7 @@ function varargout = deconstruct(S)
 %
 % *** warning this function is not efficient ***
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 stack = dbstack('-completenames');
 if numel(stack) < 2

@@ -9,7 +9,7 @@ function f = filenames(files)
 %    'bar1'    'bar2'
 %% 
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 if iscell(files)
     f = cellfuncell(@(f)argout(2, @fileparts, f), files); 

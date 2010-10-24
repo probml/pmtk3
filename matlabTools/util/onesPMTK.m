@@ -1,7 +1,7 @@
 function T = onesPMTK(sizes)
 % Like the built-in ones, except onesPMTK(k) produces a k*1 vector instead of a k*k matrix
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 if isempty(sizes)

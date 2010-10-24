@@ -1,7 +1,7 @@
 function xx = degexpand(x, deg, addOnes)
 % Expand input vectors to contain powers of the input features
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 [n,m] = size(x);

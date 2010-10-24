@@ -3,7 +3,7 @@ function  methodReport(varargin)
 % Does not inlcude class constructors. By default, it only shows
 % classes that are either abstract or contribute a new method. 
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 %

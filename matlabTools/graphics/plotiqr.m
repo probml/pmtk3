@@ -8,7 +8,7 @@ switch class(X)
     case 'double'
         % Data is simply numeric
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
         axes(distplot);
         ksdensity(X);

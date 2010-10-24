@@ -15,7 +15,7 @@ function  pairs(X,vnames,plotsymbol,diagonal)
 % NOTE: uses function histo() 
 %---------------------------------------------------
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 %PMTKauthor Anders Holtsberg

@@ -1,7 +1,7 @@
 function [X] = preprocessorApplyToTest(preproc, X)
 % Transform the test data in the same way as the training data
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 if isempty(preproc), return; end

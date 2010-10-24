@@ -5,7 +5,7 @@ function s = createStruct(names, values)
 % names and values as two cell arrays. If values is not specified, it just
 % assigns {}.
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 s = struct;
 if(nargin < 2)

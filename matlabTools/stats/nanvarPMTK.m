@@ -2,7 +2,7 @@ function v = nanvarPMTK(X, w, dim)
 % Replacement for the stats toolbox nanvar function
 % However, unlike nanvar, this does not support weighted variance.
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 if nargin < 2

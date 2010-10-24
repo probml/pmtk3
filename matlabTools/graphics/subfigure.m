@@ -33,7 +33,7 @@ function varargout = subfigure(varargin)
 % Existing figures that are overlapped by a new subfigure are not deleted. This
 % behavior is dissimilar to subplot.
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 %PMTKauthor Steve Hoelzer

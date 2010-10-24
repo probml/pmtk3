@@ -2,7 +2,7 @@ function maximizeFigure
     scrsz = get(0,'ScreenSize');
     %Borders
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
     left =  10;   right = 10;
     lower = 50;   upper = 125;

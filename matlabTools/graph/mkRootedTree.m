@@ -4,7 +4,7 @@ function [T, preorder] = mkRootedTree(adjMat, root)
 % T is a sparse matrix.
 % Also returns nodes in pre-order
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 if nargin < 2, root = 1; end
 n = length(adjMat);

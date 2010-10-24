@@ -2,7 +2,7 @@ function f = fnameOnly(fullPath, includeExt)
 %% Return the filename given its full path
 % e.g. fnameOnly('C:\foo\bar\test.m') yields 'test'
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 if nargin < 2

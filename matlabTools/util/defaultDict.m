@@ -87,7 +87,7 @@ function d = defaultDict(keys, values, default)
 % PMTKslow
 %%
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 ws = warning('query', 'MATLAB:printf:BadEscapeSequenceInFormat'); 
 warning('off', 'MATLAB:printf:BadEscapeSequenceInFormat'); 

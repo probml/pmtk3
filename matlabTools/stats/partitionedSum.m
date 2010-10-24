@@ -9,7 +9,7 @@ function S = partitionedSum(X, y, C)
 %
 % See also - partitionedMean
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 

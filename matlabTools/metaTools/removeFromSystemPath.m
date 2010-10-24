@@ -6,7 +6,7 @@ function removeFromSystemPath(keyword)
 % removeFromSystemPath('graphviz')
 %%
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 p = winpath(); 
 mask = cellfun(@(c)isSubstring(keyword, c, true), p); 

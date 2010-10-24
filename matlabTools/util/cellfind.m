@@ -7,7 +7,7 @@ function ndx = cellfind(cellarray, value, varargin)
 % cellfind(a, 1:3)
 % ans = 4
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 if iscell(value) && ~iscell(cellarray{1}), value = value{:}; end
 ndx = find(cellfun(@(x)isequal(x, value), cellarray), varargin{:});

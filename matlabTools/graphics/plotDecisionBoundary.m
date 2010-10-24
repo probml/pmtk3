@@ -16,7 +16,7 @@ function h = plotDecisionBoundary(X, Y, predictFcn, varargin)
 % plotDecisionBoundary(X, y, predictFcn);
 %%
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
     [stipple     , colors   , symbols,   markersize     , ...
      markerLineWidth, contourProps, newFigure, resolution ] = ...

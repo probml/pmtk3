@@ -8,7 +8,7 @@ function  pscatter(X,varargin)
 %      default {'.'} for n>100, {'o'} for  n<100
 % y: n*1 optional class labels, default ones(n,1)
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 %---------------------------------------------------

@@ -5,7 +5,7 @@ function C = gatherTagText(R, tag, fileNdx)
 % If fileNdx is not specified, all files are searched. 
 %%
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 if nargin < 3
     fileNdx = 1:numel(R.files); 

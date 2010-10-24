@@ -6,7 +6,7 @@ function C = setdiffPMTK(A,B)
 %
 % Original by Kevin Murphy, modified by Leon Peshkin
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 if isempty(A)

@@ -3,7 +3,7 @@ function [V,lambda] = deflation(C, K)
 % using power method combined with successive deflation
 % Based on code by Mark Girolami
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 d = length(C);

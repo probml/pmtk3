@@ -2,7 +2,7 @@ function [preproc, X] = preprocessorApplyToTrain(preproc, X)
 % Apply Preprocessor to training data and store updated
 % parameters inside pp object for use at test time
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 % For backwards compatibility, we replicate the

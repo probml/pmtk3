@@ -2,7 +2,7 @@ function [M, moral_edges] = moralizeGraph(G)
 % Ensure that for every child, all its parents are married (connected)
 % and then drop directionality of edges.
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 M = G;

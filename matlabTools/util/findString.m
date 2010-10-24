@@ -1,7 +1,7 @@
 function idx = findString(str, cellArray, ignoreCase)
 % Return a binary mask indicating where a string occurs in a cell array
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 if nargin < 3, ignoreCase = false; end

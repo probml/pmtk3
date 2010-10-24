@@ -6,7 +6,7 @@ function indices = argmin(v)
 % X = [2 8 4; 7 3 9];
 % argmin(X) = [1 1], i.e., row 1 column 1
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 [m i] = min(v(:)); %#ok

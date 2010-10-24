@@ -2,7 +2,7 @@ function [colors, colorMap] = pmtkColors()
     
 % http://www.mathworks.com/access/helpdesk/help/techdoc/ref/colorspec.html
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
     lightblue = [55 155 255] / 255;

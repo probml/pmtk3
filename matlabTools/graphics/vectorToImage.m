@@ -1,7 +1,7 @@
 function img = vectorToImage(I, map)
 %% Inverse transformation for imageToVector()
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 sz = [map.M, map.N, map.d]; 

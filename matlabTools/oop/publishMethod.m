@@ -16,7 +16,7 @@ function publishMethod(mfile,methodName,evalCode)
 % PMTKneedsMatlab 2008
 %%
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
     
     endTag = '%!';  % Must occur at the end of the function/method to be published

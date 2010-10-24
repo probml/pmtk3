@@ -3,7 +3,7 @@ function generateSynopsisTable(directory, outputFile, rootDir)
 % PMTKneedsMatlab 
 %%
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 if nargin < 2, outputFile = ''; end
 files        = filelist(directory, '*.m', true);

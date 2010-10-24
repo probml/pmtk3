@@ -3,7 +3,7 @@ function C = removeDuplicates(C)
 % Keeps only the first occurence of each unique element. 
 %%
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 C(setdiffPMTK(1:numel(C), argout(2, @unique, C, 'first'))) = [];
 end

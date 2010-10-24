@@ -1,7 +1,7 @@
 function yabs = rel2absY(ypos, ax)
 % See rel2absX
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 if nargin < 2
     ax = gca;

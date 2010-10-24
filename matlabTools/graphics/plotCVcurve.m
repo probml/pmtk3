@@ -8,7 +8,7 @@ function [h, he, vline, hline] = plotCVcurve(lambdas, cvMeanErrors, cvStdErrors,
 % lambdaBest   - value chosen by cv. 
 % useLogScale  - if true, use log scale for x-axis
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 warning('off', 'MATLAB:Axes:NegativeDataInLogAxis');

@@ -8,7 +8,7 @@ function answer = onMatlabPath(p, loose)
 %   onMatlabPath 'C:\pmtkData'
 %%
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 SetDefaultValue(2, 'loose', false);
 if loose

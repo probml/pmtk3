@@ -10,7 +10,7 @@ function [M, counts] = partitionedMean(X, y, C)
 %
 % See also partitionedSum
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 if nargin < 3

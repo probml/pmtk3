@@ -7,7 +7,7 @@ function [y, L] = normalizeLogspace(x)
 %    post = exp(logPost);
 %%
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 L = logsumexp(x, 2);
 %y = x - repmat(L, 1, size(x,2));

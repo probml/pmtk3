@@ -19,7 +19,7 @@ function m = methodInfo(className,methodName, full)
 % m.isUnfinished            - true iff calling the method throws a PMTK:notYetFinishedError
 % m.methodObject            - a Matlab method object for this method storing additional info
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 % only calculated if full=true

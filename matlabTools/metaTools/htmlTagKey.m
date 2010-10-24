@@ -1,7 +1,7 @@
 function h = htmlTagKey(tableAlign)
 %% Return the html text for the demo/synopsis tag legend table
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 if nargin == 0, tableAlign = 'right'; end
 tableData = ...

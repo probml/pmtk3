@@ -8,7 +8,7 @@ function hh = plotmarkers(h, marker, col, frac)
 %hh2 = plotmarkers(h2, 's', [1 0.5 0.25], 0.05)
 %legend([hh1, hh2], {'foo', 'bar'})
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 

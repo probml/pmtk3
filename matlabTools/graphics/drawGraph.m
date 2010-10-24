@@ -42,7 +42,7 @@ function drawGraph(adj, varargin)
 % Last updated 7 June 2006
 %
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 warning('deprecated: please use drawNetwork'); 
 if 0

@@ -4,7 +4,7 @@ function C = interweave(A, B)
 % * Empty elements are removed
 % * If length(A) ~= length(B), the remaining elements are added to the end.
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 A = A(:);

@@ -16,7 +16,7 @@ function out = wwhich(s1,s2)
 %PMTKauthor Lucio Andrade
 %PMTKurl http://www.mathworks.com/matlabcentral/files/1266/wwhich.m
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 pathseparator = pathsep;

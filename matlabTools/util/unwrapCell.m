@@ -58,7 +58,7 @@ function M = unwrapCell(C)
 % ans = 
 %    [5x7 double]    [4x9 double]
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 if isempty(C), M = []; return; end

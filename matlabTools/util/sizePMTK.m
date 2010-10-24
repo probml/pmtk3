@@ -8,7 +8,7 @@ function sz = sizePMTK(M)
 % - M = rand(2,2,1), sizePMTK(M) = [2 2],  size(M) = [2 2]
 % - M = rand(1,2,1), sizePMTK(M) = 2,      size(M) = [1 2]
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 

@@ -2,7 +2,7 @@ function C = reachability_graph(G)
 % REACHABILITY_GRAPH C(i,j) = 1 iff there is a path from i to j in graph G
 % C = reachability_graph(G)
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 if 1

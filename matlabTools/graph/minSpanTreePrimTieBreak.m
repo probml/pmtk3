@@ -7,7 +7,7 @@ function [A,cost] = minSpanTreePrim(C1, C2)
 % To find the maximum spanning tree, used -1*C.
 % See Aho, Hopcroft & Ullman 1983, "Data structures and algorithms", p 237.
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 % Prim's is O(V^2). Kruskal's algorithm is O(E log E) and hence is more efficient

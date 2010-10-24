@@ -4,7 +4,7 @@ function [T, cost] =  minSpanTreeKruskal (CostMatrix)
 % T is adjacency matrix
 % cost is overall cost of tree
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 %PMTKauthor Soshant Bali

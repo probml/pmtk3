@@ -1,7 +1,7 @@
 function requireOptimToolbox()
 % Throw an error as the calling function if the optim toolbox is not installed
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 if ~optimToolboxInstalled
     if isOctave

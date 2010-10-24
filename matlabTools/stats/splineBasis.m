@@ -1,7 +1,7 @@
 function [X, knots] = splineBasis(x, K, knots)
 %% Spline basis function expansion
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 if nargin < 2, K = 100; end

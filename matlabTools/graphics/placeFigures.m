@@ -99,7 +99,7 @@ function varargout = placeFigures(varargin)
 % 
 %%
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
                                                                                     
 [nrows,ncols,depth,total,square,monitor,newfigs,minwidth,minheight,intergapH,...

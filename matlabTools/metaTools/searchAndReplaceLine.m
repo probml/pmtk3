@@ -16,7 +16,7 @@ function searchAndReplaceLine(fname, oldText, newText)
 % searchAndReplaceLine('searchAndReplaceLine', '%% Example', '% Example');
 %%
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 f = which(fname); 

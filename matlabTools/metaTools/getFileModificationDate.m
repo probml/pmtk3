@@ -3,7 +3,7 @@ function [datestr, time] = getFileModificationDate(file)
 %
 %% Example 
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 d = dir(file); 

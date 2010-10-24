@@ -25,7 +25,7 @@ function local = islocal(varargin)
 % See also, localMethods
 % PMTKneedsMatlab 2008
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 [methodName,className,allowAbstract] = process_options(varargin,'methodName','','className','','allowAbstract',false);

@@ -1,7 +1,7 @@
 function nk = nchoosekln(n, k)
 % p(i) = ln nchoosek(n(i), k(i))
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 % n! = gamma(n+1)

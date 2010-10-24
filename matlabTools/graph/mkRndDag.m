@@ -12,7 +12,7 @@ function G = mkRndDag(nnodes, maxFanIn, maxFanOut, sparsityFactor)
 % sparsityFactor (poisson parameter) influences the sparsity, higher = denser
 %%
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 if nargin < 1, nnodes = 10; end
 if nargin < 2,  maxFanIn = 2; end

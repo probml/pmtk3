@@ -3,7 +3,7 @@ function G = mkTreeDag(K, depth)
 % A depth of 1 means only the root. 
 %%
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 nnodes = ((K.^depth)-1)/(K-1);
 G = zeros(nnodes, nnodes); 

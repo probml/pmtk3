@@ -21,7 +21,7 @@ function [list, m, g, map] = whoCallsMe(fname, varargin)
 % map       - map is a struct mapping mfile names to indicies into m and g
 %%
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 [recache, recursive, verbose] = process_options(varargin, ...
     'recache'  , false, ...

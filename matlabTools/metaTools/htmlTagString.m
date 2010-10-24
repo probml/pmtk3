@@ -1,7 +1,7 @@
 function tagstr = htmlTagString(tags)
 %% Generate the html tag string for the demo/ synopsis tables
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 tagstr = {};
 if ismember('PMTKbroken'           , tags), tagstr = [tagstr, {'X'} ]; end

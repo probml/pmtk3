@@ -2,7 +2,7 @@ function visdiffOpen()
 %% Open Matlab's file comparison tool comparing the first two open docs
 % PMTKneedsMatlab 
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 files = currentlyOpenFiles(); 

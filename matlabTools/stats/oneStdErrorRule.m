@@ -3,7 +3,7 @@ function idx_opt = oneStdErrorRule(res_mean, res_std, dof)
 % We assume models are ordered from least complex to most complex
 % If not, pass in the dof field to figure out the right order
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 n = length(res_mean);

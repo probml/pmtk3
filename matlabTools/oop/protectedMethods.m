@@ -2,7 +2,7 @@ function m = protectedMethods(className,localOnly)
 % Return a list of protected methods in a class
 % PMTKneedsMatlab 2008
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 if nargin < 2, localOnly = true; end
 meths = cellfuncell(@(c)c.Name, meta.class.fromName(className).Methods);

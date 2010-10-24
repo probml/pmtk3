@@ -4,7 +4,7 @@ function [Ga, remaining] = ancestralGraph(G, V)
 %
 %%
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 A = arrayfun(@(v)ancestors(G, v), V, 'UniformOutput', false);
 remaining = uniquePMTK([A{:}, V]);

@@ -1,7 +1,7 @@
 %% Demo of minimum spanning tree
 function minSpanTreeDemo()
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 %% Example from Cormen, Leisersen, Rivest p508
 

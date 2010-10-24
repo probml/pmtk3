@@ -1,7 +1,7 @@
 function subplot2(nrows, ncols, i, j)
 % function subplot2(nrows, ncols, i, j)
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 sz = [nrows ncols];

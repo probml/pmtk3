@@ -59,7 +59,7 @@
 % its unprocessed arguments can be passed to the inner function.
 %
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 %PMTKauthor Mark Paskin

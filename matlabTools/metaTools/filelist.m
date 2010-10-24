@@ -21,7 +21,7 @@ function l = filelist(directory, filemask, recursive)
 %
 %%
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 SetDefaultValue(1, 'directory', pwd());
 SetDefaultValue(2, 'filemask', '*.*');

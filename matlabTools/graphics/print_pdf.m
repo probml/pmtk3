@@ -28,7 +28,7 @@
 %
 % Copyright (C) Oliver Woodford 2008
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 % This function is inspired by Peder Axensten's SAVEFIG (fex id: 10889)

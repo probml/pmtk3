@@ -12,7 +12,7 @@ function [mu, se] = cvEstimate(fitFn, predictFn, lossFn, X, y,  Nfolds, varargin
 % mu is empirical estimate of expected loss
 % se is standard error of this estimate
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 [testFolds, randomizeOrder] = process_options(varargin, ...

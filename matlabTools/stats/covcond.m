@@ -5,7 +5,7 @@ function [Sig,Lam] = covcond(c,a)
 % [Sig,Lam] = covcond(C,A) generates covariance matrix and its
 % inverse with given cond number C and first direction A.
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 %PMTKauthor Marko Laine

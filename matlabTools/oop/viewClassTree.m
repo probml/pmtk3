@@ -5,7 +5,7 @@ function  h = viewClassTree(varargin)
 % Classes must use classdef syntax not old style
 % PMTKneedsMatlab 2008
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 args = process_options(varargin,'source',pwd(),'ignoreDirs',{'unitTests',fullfile('util','graphs','graphlayout')},'topOnly',false,'topClass',[]);

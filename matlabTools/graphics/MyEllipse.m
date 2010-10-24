@@ -27,7 +27,7 @@ function h=MyEllipse(varargin)
 %    NOTES: C must be positive definite for this function to work properly.
 % Written by somebody anonymous + Modified by Emtiyaz
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 default_properties = struct(...

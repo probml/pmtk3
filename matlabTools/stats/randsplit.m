@@ -3,7 +3,7 @@ function Xsplit = randsplit(X, k)
 % Xsplit is a k-by-1 cell array. The last cell will have 
 % n - (k-1)*floor(n/k) elements, all others will have floor(n/k).
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 n = size(X, 1);

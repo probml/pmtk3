@@ -11,7 +11,7 @@ function [s, b] = getFileSize(f)
 % 11.3 MB
 %%
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 f = which(f);
 if isempty(f)

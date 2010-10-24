@@ -19,7 +19,7 @@ function Arep = replicate(A, Adims, sz)
 % assert(isequal(sz(Adims), size(A)));
 %%
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 Arep = bsxTable(@times, onesPMTK(sz), A, 1:numel(sz), Adims); 
 

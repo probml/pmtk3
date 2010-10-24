@@ -10,7 +10,7 @@ function T = unSandwich(str, leftMarker, rightMarker)
 % meat = {'mywebsite.html', 'wikipedia.org'}
 %%
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 toks = tokenize(str, [leftMarker, rightMarker]); 
 if numel(toks) < 2

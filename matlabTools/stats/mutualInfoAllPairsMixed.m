@@ -20,7 +20,7 @@ function [mi,nbins] = mutualInfoAllPairsMixed(XD,XC,varargin)
 % Note: if data is all discrete, this is equivalent to
 % mutualInfoAllPairsDiscrete 
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 %PMTKauthor Emtiyaz Khan, Ben Marlin

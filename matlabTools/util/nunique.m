@@ -33,7 +33,7 @@ function N = nunique(X, dim)
 %      4
 %      4
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 if nargin == 1

@@ -6,7 +6,7 @@ function hintonDiagram(w,max_m,min_m)
 %
 %    W = randn(4,5); hintonDiagram(W)
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 % Based on hintonw function from Mathworks neural net toolbox

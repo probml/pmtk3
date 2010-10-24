@@ -1,7 +1,7 @@
 function a = ancestors(adj_mat,i)
 % Recursively find all ancestors of a a node, (parents, grandparents, ... etc)
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 a = [];

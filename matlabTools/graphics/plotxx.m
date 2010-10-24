@@ -27,7 +27,7 @@ function [ax,hl1,hl2] = plotxx(x1,y1,x2,y2,xlabels,ylabels);
 %ylabels{2} = 'Depth(m)';
 %[ax,hlT,hlS] = plotxx(T,D,S,D,xlabels,ylabels);
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 

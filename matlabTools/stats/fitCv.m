@@ -24,7 +24,7 @@ function [model, bestParam, mu, se] = ...
 % se(i) - standard error for mu(i,:)
 %%
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 wstate = warning('query', 'MATLAB:nearlySingularMatrix');
 warning('off', 'MATLAB:nearlySingularMatrix');

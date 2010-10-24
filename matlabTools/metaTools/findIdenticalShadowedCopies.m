@@ -1,7 +1,7 @@
 function f = findIdenticalShadowedCopies()
 % Searches through every m-file and finds exact duplicates
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 m = mfiles(pmtk3Root());
 f = {};

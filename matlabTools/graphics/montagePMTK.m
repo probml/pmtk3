@@ -4,7 +4,7 @@ function h = montageKPM(arg)
 % Converts patches (y,x,i) into patches(y,x,1,i)
 % Also, adds a black border aroudn them
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 if iscell(arg)

@@ -67,7 +67,7 @@ function [yy,map] = oneOfK(y, K)
 %     'yes'
 %%
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 if(ischar(y)), y = cellstr(y);end      % character arrays, where rows are labels
 

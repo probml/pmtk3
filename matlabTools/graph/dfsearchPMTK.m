@@ -21,7 +21,7 @@ function [pre, post, pred, cycle, d, f] = dfsearch(G, start, directed)
 % See Cormen, Leiserson and Rivest, "An intro. to algorithms" 1994, p478.
 %%
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 warning('dfsearchPMTK may be buggy')
 

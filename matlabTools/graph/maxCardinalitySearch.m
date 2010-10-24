@@ -7,7 +7,7 @@ function [order, chordal, cliques, numpa] = maxCardinalitySearch(G, initNode)
 %
 % See perfectElimDemo for an example
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 if nargin < 2, initNode = 1; end

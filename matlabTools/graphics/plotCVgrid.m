@@ -2,7 +2,7 @@
 function p = plotCVgrid(params, mu, bestParams, params1, params2)
 % Plot Cross validation results in 2D
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 if nargin < 4 || isempty(params1)

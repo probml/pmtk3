@@ -2,7 +2,7 @@ function tf = isfunction(fname)
 % Return true if the specified file is a matlab function, (not a script).
 %
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 if endswith(fname, '.m')

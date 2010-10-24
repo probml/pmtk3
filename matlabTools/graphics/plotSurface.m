@@ -6,7 +6,7 @@ function [h, p] = plotSurface(fn, xyRange, varargin)
 % except for 'npoints', which is by default 100.
 %%
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 [npoints, args] = process_options(varargin, 'npoints', 100);
 if nargin < 2

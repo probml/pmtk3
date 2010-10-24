@@ -2,7 +2,7 @@ function showFigures()
 % This function undoes the effect of hideFigures 
 %- see it for details.
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 

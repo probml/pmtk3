@@ -8,7 +8,7 @@ function index = mk_multi_index(n, dims, vals)
 % So if A(:,:,1)=[1 2;3 4; 5 6]; A(:,:,2)=[7 8; 9 10; 11 12]
 % then A(index{:}) = [11 12]:
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 if n==0

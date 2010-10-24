@@ -18,7 +18,7 @@ function varargout = seqlogoPmtk(p, ssCorr)
 % h        - bar series handle
 %
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 %% if no input, display a test matrix

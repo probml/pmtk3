@@ -4,7 +4,7 @@ function A = padOnes(data, ndx, sz)
 % except at linear indices ndx, where the corresponding entry from data
 % is put. 
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
     if isscalar(sz)
         sz = [sz, 1]; 

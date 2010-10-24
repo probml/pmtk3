@@ -6,7 +6,7 @@ function Sigma = partitionedCov(X, y, C)
 % See also partitionedMean, partitionedSum
 %%
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 if nargin < 3
     C = nunique(y);

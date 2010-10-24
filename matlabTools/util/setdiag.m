@@ -2,7 +2,7 @@ function M = setdiag(M, v)
 % Set the diagonal of a matrix to a specified replicated scalar or vector
 % M = setdiag(M, v)
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 n = size(M,1);

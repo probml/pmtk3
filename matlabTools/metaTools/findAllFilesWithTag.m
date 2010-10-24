@@ -3,7 +3,7 @@ function m = findAllFilesWithTag(tag, returnFullPath, root)
 % See also pmtkTagReport
 %%
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 if nargin < 2, returnFullPath = false; end
 if nargin < 3, root = pmtk3Root(); end

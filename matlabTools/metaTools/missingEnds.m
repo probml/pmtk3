@@ -5,7 +5,7 @@ function R = missingEnds()
 % are missing the syntactically optional end keyword at the end of the 
 % function. 
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 fileNames = allMfilesOnPath();
 ndx = cellfun(@isEndKeywordMissing, fileNames); 

@@ -2,7 +2,7 @@ function y = quantilePMTK(X, p)
 % Simple replacement for the stats quantile function
 % Covers most but possibly not all use cases
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 X = sort(X(:), 1);
 n = length(X);

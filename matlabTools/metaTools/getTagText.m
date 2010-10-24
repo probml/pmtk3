@@ -4,7 +4,7 @@ function str = getTagText(f, tag)
 % If f is a cell array of file names, repeat for each and return a cell
 % array of strings.
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 if iscell(f)

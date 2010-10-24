@@ -1,6 +1,6 @@
 % Test depth first search
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 %% A DAG
 % Do the example in fig 23.4 p479 of Cormen, Leiserson and Rivest (1994)

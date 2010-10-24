@@ -2,7 +2,7 @@ function window = dataWindow(X)
 % Find appropriate axis coordinates for the n-by-2 data matrix X
 % The output can be passed directly to the axis command.  
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
     
     assert(size(X, 2) == 2);

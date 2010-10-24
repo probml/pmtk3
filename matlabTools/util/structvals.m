@@ -11,7 +11,7 @@ function varargout = structvals(S, varargin)
 % model.dof = 5
 % [mu, Sigma, dof] = structvals(model, {'mu', 'Sigma', 'dof'})
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 if nargin < 2
    error('You must specify which fields you want to extract');  

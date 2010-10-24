@@ -1,7 +1,7 @@
 function M = mkSymmetric(M)
 % Fill in 0 entries of a matrix with their "mirror image"
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 %Mtest = M; 
 

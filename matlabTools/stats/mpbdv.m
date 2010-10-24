@@ -23,7 +23,7 @@ function [pdf,pdd] = mpbdv(v,x)
 %PMTKauthor Ben Barrowes, M. Mahieddine
 %PMTKurl https://sourceforge.net/projects/f2matlab/
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 dv  = [];

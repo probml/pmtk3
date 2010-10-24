@@ -18,7 +18,7 @@ function A = insertSingleton(A, d)
 % 
 %%
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 nd   = ndims(A); 
 perm = [1:d-1, nd+1, d:nd];

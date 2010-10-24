@@ -22,7 +22,7 @@ function [model, bestParam, mu, se] = ...
 % se(i) - standard error for mu(i,:)
 %%
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 %PMTKbroken % always seems to pick the most complex model...

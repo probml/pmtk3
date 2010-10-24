@@ -1,7 +1,7 @@
 function printPmtkFigure(filename)
 % print current figure to specified file in .eps and .pdf formats
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 if false

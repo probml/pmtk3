@@ -7,7 +7,7 @@ function M = classConfMat(ytrue, yhat)
 % classes 1:9 but are missing class 7 for example, it will do the right
 % thing
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 C = max(unique(ytrue));
 Cmin = min(unique(ytrue));

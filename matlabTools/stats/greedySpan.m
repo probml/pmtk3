@@ -6,7 +6,7 @@ function ndx = greedySpan(set, subsets)
 % If no solution can be found, [] is returned.
 %%
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 sizes = cellfun(@numel, subsets);
 

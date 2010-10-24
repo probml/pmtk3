@@ -17,7 +17,7 @@ function S = structure(varargin)
 %        pi: [1x10 double]
 %%
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 for i=1:nargin

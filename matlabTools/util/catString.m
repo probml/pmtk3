@@ -11,7 +11,7 @@ function s = catString(c,delim)
 % s =
 % touch /tmp/foo && touch /tmp foo2 && mkdir /tmp/test
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 if nargin == 0; s = ''; return; end

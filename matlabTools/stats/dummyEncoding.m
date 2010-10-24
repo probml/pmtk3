@@ -23,7 +23,7 @@ function X_ind = dummyEncoding(X, nStates)
 %     1     0     0     0     1
 %     0     1     0     0     1
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 [N, D] = size(X);

@@ -7,7 +7,7 @@ function S = formatHtmlText(txt, varargin)
 % 
 %%
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 S = sprintf(catString(txt, '<br>\n'), varargin{:}); 
 end

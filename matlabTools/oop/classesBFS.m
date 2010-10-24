@@ -3,7 +3,7 @@ function [classes,adjmat] = classesBFS(varargin)
 % Same inputs as getClasses    
 % PMTKneedsMatlab 2008
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
    
     

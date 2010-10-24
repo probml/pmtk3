@@ -1,7 +1,7 @@
 function d = dirs(p)
 % Return list of the directories in the specified directory.
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 if nargin == 0, p = pwd(); end

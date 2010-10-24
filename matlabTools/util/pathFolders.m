@@ -1,7 +1,7 @@
 function d = pathFolders(p)
 %% Return the folders in a file path
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 sep = ['\', filesep]; 

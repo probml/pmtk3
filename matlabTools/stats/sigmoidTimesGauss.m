@@ -2,7 +2,7 @@ function p = sigmoidTimesGauss(X, wMAP, C)
 % Compute p(i) = p(y=1|X(i,:)) \approx int sigma(y w^T X(i,:)) * gauss(w |% wMAP, C) dw
 % Bishop'06 p219
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 mu = X*wMAP;
 n = size(X,1);

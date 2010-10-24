@@ -3,7 +3,7 @@ function n = countLinesOfCodeDir(d, excludeComments, recursive, filemask)
 % If recursive is true, (default) include subdirectories as well. 
 % 
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 if nargin < 2, excludeComments = true; end

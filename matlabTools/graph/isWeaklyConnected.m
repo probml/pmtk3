@@ -5,7 +5,7 @@ function answer = isWeaklyConnected(G)
 % graph. From http://en.wikipedia.org/wiki/Connectivity_(graph_theory)
 %%
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 answer = all(colvec(reachability_graph(mkSymmetric(G)))); 
 end

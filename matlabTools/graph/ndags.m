@@ -1,7 +1,7 @@
 function ND = ndags(N)
 % Computes number of dags on N nodes using Robinson's 1973 recursion
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 %PMTKauthor Robert Tseng, Simon Suyadi

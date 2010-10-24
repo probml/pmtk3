@@ -1,7 +1,7 @@
 function B = pinvPMTK(A)
 % Same as built-in pinv, but shorter because omits error checking etc
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 [U, S, V] = svd(A, 0); % if m>n, only compute first n cols of U
 s = diag(S);

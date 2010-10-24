@@ -11,7 +11,7 @@ function [A, z] = normalize(A, dim)
 % This is valid, since s=0 iff all A(i)=0, so
 % we will get 0/1=0
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 if(nargin < 2)
     z = sum(A(:));

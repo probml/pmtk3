@@ -10,7 +10,7 @@ function [faRate, hitRate, AUC] = ROCcurve(score, trueLabel, doPlot)
 % hitRate(t) = detection rate at t'th threshold 
 % AUC = area under curve
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 if nargin < 3, doPlot = 0; end

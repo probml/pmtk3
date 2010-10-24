@@ -4,7 +4,7 @@ function classes = getClasses(varargin)
 % ignore. By default, the util and unitTests directories are ignored.
 % PMTKneedsMatlab 2008
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
     
 [source,ignoreDirs,topOnly] = process_options(varargin,'source',pwd(),'ignoreDirs',{},'topOnly',false);

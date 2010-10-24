@@ -8,7 +8,7 @@ function google(varargin)
 % PMTKneedsMatlab 
 %%
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 query = catString(varargin, ' ');
 web('-browser', sprintf('http://www.google.ca/search?hl=en&source=hp&q=%s&btnG=Google+Search&meta=&aq=f&oq=', query));

@@ -1,7 +1,7 @@
 function removePath(p)
 % Like builtin rmpath function, but does not issue a warning if p is not on the path.
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 if ischar(p)
     p = tokenize(p, ';');

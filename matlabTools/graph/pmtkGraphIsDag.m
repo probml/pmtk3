@@ -1,7 +1,7 @@
 function b = pmtkGraphIsDag(adj_mat)
 % Returns true iff the graph has no directed cycles.
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 if bioinfoToolboxInstalled()

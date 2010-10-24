@@ -17,7 +17,7 @@ function [tags, lines, codeLength, text] = tagfinder(filename, tagList)
 %   text  - the full text of the file
 %%
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 text = getText(filename);
 codeLength = numel(filterCell(cellfuncell(@(s)strtrim(s), text), @(s)~isempty(s)));

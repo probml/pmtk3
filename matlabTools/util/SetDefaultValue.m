@@ -18,7 +18,7 @@ function SetDefaultValue(position, argName, defaultValue)
 %PMTKurl http://www.mathworks.com/matlabcentral/fileexchange/27056-set-default-values
 %PMTKdate March 23, 2010
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 if evalin('caller', 'nargin') < position || ...
       isempty(evalin('caller', argName))

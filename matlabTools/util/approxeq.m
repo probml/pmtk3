@@ -7,7 +7,7 @@ function p = approxeq(a, b, tol, rel)
 % p = approxeq(a, b, thresh, 1)
 % p(i) = 1 iff abs(a(i)-b(i))/abs(a(i)) < thresh
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 if nargin < 3, tol = 1e-2; end

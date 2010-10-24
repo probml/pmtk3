@@ -12,7 +12,7 @@ function [h,p] = plotDistribution(logprobFn, varargin)
 % '-ndimensions' - number of dimensions, 1 or 2, (default 2)
 % eg. plot(@(X)logprob(X, mu, Sigma), '-useLog', true, '-plotArgs', {'ro-', 'linewidth',2})
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
     
     [xrange, useLog, plotArgs, useContour, npoints, scaleFactor, ndimensions] = ...

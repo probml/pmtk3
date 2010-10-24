@@ -3,7 +3,7 @@ function [A,cost] = minSpanTreePrimSimple(C)
 % See mstDemo for a test
 % See Aho, Hopcroft, Ullman "Data structures and algorithms" 1983, p235
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 n = length(C);
 A = zeros(n);

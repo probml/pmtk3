@@ -8,7 +8,7 @@ function d = containingDirectory(f)
 % 'bar'
 %%
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 d = argout(2, @fileparts, (fileparts(f)));
 

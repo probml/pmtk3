@@ -4,7 +4,7 @@ function [] = hintonScaleMulti(varargin)
 % Usage: hintonScaleMulti({X1,W1}, {args1}, {X2,W2}, {args2} ...)
 %PMTKauthor Cody Severinski
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 

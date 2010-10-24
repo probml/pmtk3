@@ -49,7 +49,7 @@ function t = timeit(f)
 %PMTKdate February 17, 2008
 %   $Revision: 1.4 $  $Date: 2008/02/17 22:06:01 $
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 t_rough = roughEstimate(f);

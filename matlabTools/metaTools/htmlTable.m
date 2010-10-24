@@ -63,7 +63,7 @@ function out = htmlTable(varargin)
 % htmlTable({{'one';{'two','three'}},1;2,3;4,'four'})
 % You can nest as many levels as you like.
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 if iscell(varargin{1})

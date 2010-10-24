@@ -3,7 +3,7 @@ function local = localMethods(classname,allowAbstract)
 % - see islocal() for a description of what 'local' means.
 % PMTKneedsMatlab 2008
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 if nargin < 2, allowAbstract = false; end
 m = methods(classname); if isempty(m), local = {}; return; end

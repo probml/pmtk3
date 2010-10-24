@@ -10,7 +10,7 @@ function T = textBetween(text, ld, rd)
 %  myTexFile
 %%
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 toks = tokenize(text, [ld, rd]); 

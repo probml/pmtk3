@@ -4,7 +4,7 @@ function val = numericalIntegral(f, range, tol)
 % and returns the function value at the specified points.
 % range is [x1min x1max x2min x2max x3min x3max]
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 if nargin < 3, tol = 1e-3; end

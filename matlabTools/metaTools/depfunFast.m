@@ -22,7 +22,7 @@ function filelist = depfunFast(fn,recursive)
 %PMTKauthor Malcolm Wood
 %PMTKurl http://www.mathworks.com/matlabcentral/fileexchange/10702
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 if ~ischar(fn)

@@ -12,7 +12,7 @@ function G = mkGrid(M, N, doPlot)
 % drawNetwork(G, '-undirected', true, '-layout', Matrixlayout(M, N)); 
 %%
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 if nargin < 1
     N = 5;

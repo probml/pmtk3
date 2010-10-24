@@ -6,7 +6,7 @@ function [h, p, c] = plotContour(fn, xyRange, varargin)
 % except for 'npoints', which is by default 100 and 'ncontours'.
 %%
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 [npoints, ncontours, args] = process_options(varargin, 'npoints', 100, 'ncontours', []);
 if nargin < 2

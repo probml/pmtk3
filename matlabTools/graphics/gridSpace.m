@@ -4,7 +4,7 @@ function g = gridSpace(varargin)
 % g = gridSpace(1:10,1:10,1:10), then g = [a(:),b(:),c(:)];
 %
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
     

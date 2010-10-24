@@ -4,7 +4,7 @@ function setSeed(seed)
 % older versions of Matlab. In the future it may be necessary to test the
 % Matlab version and call the appropriate code. 
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 global RNDN_STATE  RND_STATE
 if nargin == 0

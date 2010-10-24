@@ -7,7 +7,7 @@ function C = msxfun(fn, varargin)
 %% Example
 % msxfun(@times, rand(100, 1), rand(100, 100), rand(1, 100))
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 n = nargin - 1;
 C = bsxfun(fn, varargin{1}, varargin{2});

@@ -3,7 +3,7 @@ function [X, s] = mkUnitVariance(X, s)
 % ie., sum_i x(i,j)^2 = n (so var(X(:,j))=1)
 % If s is omitted, it computed from X and returned for use at test time
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 if nargin < 2, s = []; end

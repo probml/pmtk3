@@ -12,7 +12,7 @@ function [order, Gchordal] = minWeightElimOrder(G, nodeWeights)
 %PMTKmodified Matt Dunham (partially vectorized code)
 %%
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 Gchordal = G; 
 mkChordal = nargout > 1; 

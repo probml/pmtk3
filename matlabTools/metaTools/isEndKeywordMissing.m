@@ -2,7 +2,7 @@ function answer = isEndKeywordMissing(fname)
 % Return true if the syntactically optional end keyword is missing 
 % from the end of the function. 
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 if ~isfunction(fname)

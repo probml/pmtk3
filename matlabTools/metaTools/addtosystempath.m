@@ -5,7 +5,7 @@ function addtosystempath(p)
 % Example:
 % addtopath('C:\Users\matt\bin');
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
     
     if isempty(getenv('PATH')) || all(cellfun(@(c)isempty(c),strfind(tokenize(getenv('PATH'),pathsep()),p)));

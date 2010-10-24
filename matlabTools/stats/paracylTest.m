@@ -1,7 +1,7 @@
 function paracylTest()
 %% Compare the speed of different implementations of the paracyl function
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 z=-10:0.5:10;
 x=-10.5:.5:10;

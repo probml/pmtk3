@@ -14,7 +14,7 @@ function exportToGoogleCode(package, username, passwd, summary, exclusions, crea
 %PMTKneedsPython
 %%
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 uploadFn = which('googlecode_upload.py');
 SetDefaultValue(1, 'package'     , 'pmtk3'); 

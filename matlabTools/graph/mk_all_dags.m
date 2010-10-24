@@ -6,7 +6,7 @@ function Gs = mk_all_dags(N, use_file, method)
 %
 % Note: the number of DAGs is super-exponential in N, so don't call this with N > 4.
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 %PMTKauthor Kevin Murphy, Robert Tseng, Simon Suyadi

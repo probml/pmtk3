@@ -1,7 +1,7 @@
 function TF = isbuiltin(f)
 % Return true iff the specified function is built in.
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 if iscell(f)
     TF = cellfun(@isbuiltin, f);

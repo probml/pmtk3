@@ -6,7 +6,7 @@ function  indices = partitionData(data, pc)
 % indices =partitionData(1:105,[0.3,0.2,0.5])
 % a= 1:31, b=32:52, c=53:105 (last bin gets all the left over)
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 

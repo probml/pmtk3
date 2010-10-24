@@ -6,7 +6,7 @@ function xticklabelRot(xTickLabels, angle, fontsize, ydelta)
 % Example:
 % figure(1); clf; bar([1 2 3]); xticklabelRot({'foo','bar',22}, 90)
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 

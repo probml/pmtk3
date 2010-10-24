@@ -4,7 +4,7 @@ function out = cellfuncell(fun, C, varargin)
 % eg. a=cellfuncell(@(x) upper(x), {'foo','bananas','bar'})
 % returns a{1} = 'FOO', etc.
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 %varargin{end+1} = 'UniformOutput';

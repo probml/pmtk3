@@ -21,7 +21,7 @@ function sub_s=subsets1(s, k)
 %PMTKauthor Raanan Yehezkel
 %PMTKdate 2004
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 if k<0 % special case

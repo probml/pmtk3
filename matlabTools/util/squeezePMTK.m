@@ -4,7 +4,7 @@ function A = squeezePMTK(A)
 %
 %%
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 A = squeeze(A); 
 if isvector(A)

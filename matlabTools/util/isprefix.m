@@ -15,7 +15,7 @@ function p = isprefix(short, long)
 %ans =
 %     1     1     0
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
     error(nargchk(2,2,nargin));
     if ischar(long)

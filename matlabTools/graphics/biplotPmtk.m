@@ -1,7 +1,7 @@
 function biplotPmtk(C, varargin)
 %% Replacement for the stats toolbox biplot function
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 [S, labels, pos] = process_options(varargin, ...

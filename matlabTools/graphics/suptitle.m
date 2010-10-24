@@ -4,7 +4,7 @@ function hout=suptitle(str, fs)
 %	above all subplots (a "super title"). Use this function
 %	after all subplot commands.
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 %PMTKauthor Drea Thomas  

@@ -1,7 +1,7 @@
 function r = matlabToolsRoot()
 %% Return the root matlabTools directory
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 w = which(mfilename());
 if w(1) == '.'

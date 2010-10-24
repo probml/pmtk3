@@ -3,7 +3,7 @@ function [I, map] = imageToVector(img)
 % preserving information.
 % Use vectorToImage to convert back
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 [M, N, d] = size(img); 

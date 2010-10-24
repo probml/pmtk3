@@ -5,7 +5,7 @@ function a = sub(b, ndx)
 % this function, you can go sub(mean(rand(10),2),3). Use subc for {}
 % indexing.
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 if isempty(b)
     a = []; return;

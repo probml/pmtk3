@@ -20,7 +20,7 @@ function varargout = compileRunAndSave(fname,varargin)
 %
 % PMTKneedsMatlab 
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 if(~exist('emlmex','file'))

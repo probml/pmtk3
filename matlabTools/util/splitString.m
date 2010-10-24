@@ -9,7 +9,7 @@ function S = splitString(varargin)
 % '-center'     if true, [default], the string is center justified 
 % '-cellMode'   if true, a cell array of strings is returned, instead of a char array.
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
     [S,minSize,maxSize,cellMode,center] = process_options(varargin,'S','','minSize',8,'maxSize',10,'cellMode',false,'center',true);

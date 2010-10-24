@@ -2,7 +2,7 @@ function [h, remaining] = helpline(f)
 %% Return the first line of comments from a file.
 % remaining is the remaining comment text
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 text = filterCell(cellfuncell(@strtrim, getText(f)), @(c)startswith(c, '%'));
 text = removeEmpty(cellfuncell(@(c)strrep(c, '%', '') , text));

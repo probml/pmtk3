@@ -3,7 +3,7 @@ function statsToolboxDependencies(rootDir)
 % by files in rootDir, (and subdirectories), along with the files that use
 % them. 
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 cd(rootDir);
 R = deptoolbox('stats');

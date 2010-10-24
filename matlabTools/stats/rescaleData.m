@@ -1,7 +1,7 @@
 function [y, minx, rangex] = rescaleData(x, minVal, maxVal, minx, rangex)
 % Rescale columns to lie in the range minVal:maxVal (defaults to -1:1)
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 x = double(x);

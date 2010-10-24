@@ -1,6 +1,6 @@
 %% Clear and close everything
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 close all;
 close all hidden;

@@ -18,7 +18,7 @@ function m = mfiles(source, varargin)
 % filelist, cfilelist, dirs
 %%
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 if nargin == 0
     source = pwd();

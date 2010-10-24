@@ -6,7 +6,7 @@ function A = vertStackPages(A)
 % 
 %%
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 [N, D, K] = size(A); 
 

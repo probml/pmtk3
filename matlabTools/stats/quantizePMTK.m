@@ -36,7 +36,7 @@ function quantized = quantizePMTK(vars, varargin)
 %     0.8544    2.0000
 %
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 %PMTKauthor  Stefan Schroedl

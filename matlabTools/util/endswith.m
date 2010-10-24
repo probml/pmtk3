@@ -1,7 +1,7 @@
 function tf = endswith(str, suffix)
 % Return true if the string ends in the specified suffix
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 n = length(suffix);

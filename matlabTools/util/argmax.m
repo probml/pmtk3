@@ -6,7 +6,7 @@ function indices = argmax(v)
 % X = [2 8 4; 7 3 9];
 % argmax(X) = [2 3], i.e., row 2 column 3
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 [m i] = max(v(:));

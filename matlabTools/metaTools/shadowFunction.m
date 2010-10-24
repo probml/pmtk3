@@ -14,7 +14,7 @@ function shadowFunction(fname, output, quiet)
 % removeShadows()
 %
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 SetDefaultValue(2, 'output', []); 
 SetDefaultValue(3, 'quiet', false); 

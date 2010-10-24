@@ -25,7 +25,7 @@ function [d, pre, post, cycle, f, pred] = dfsPMTK(adj_mat, start, directed)
 % space on large graphs.
 % Use dfsGleich instead.
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 % dfsearchPMTK is a different implementation of this
 % that does not use global variables

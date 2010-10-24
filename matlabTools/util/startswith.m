@@ -1,7 +1,7 @@
 function tf = startswith(str, prefix)
 % Return true iff the string starts with the specified prefix
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 if iscell(str)

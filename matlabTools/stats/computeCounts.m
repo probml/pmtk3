@@ -7,7 +7,7 @@ function count = computeCounts(X, sz)
 % use C = computeCounts([X(:) Y(:)]+1, [2 2]);
 %%
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 assert(length(sz) == size(X, 2));
 P = prod(sz);

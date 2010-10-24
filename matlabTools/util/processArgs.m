@@ -66,7 +66,7 @@ function varargout = processArgs(args,varargin)
 % end
     %%
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
     PREFIX = '-';   % prefix that must precede the names of arguments. 
     REQ    = '*';   % require the argument

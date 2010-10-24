@@ -1,7 +1,7 @@
 function [S1, S2] = moveFields(fields, S1, S2)
 %% Move fields from struct S1 to struct S2
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 if nargin < 3

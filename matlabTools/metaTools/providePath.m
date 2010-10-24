@@ -2,7 +2,7 @@ function providePath(p)
 % Like builtin addpath function, but checks if p is already on the path
 % and does nothing if it is, (rather than issue a warning as addpath does).
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
     
     if ischar(p)

@@ -7,7 +7,7 @@ function sub = ind2subv(siz,index)
 %
 % See ind2subvBsxfunDemo for a timing comparison
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 

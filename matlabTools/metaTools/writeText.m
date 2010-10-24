@@ -14,7 +14,7 @@ function writeText(text, fname, append)
 %
 %%
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 if ischar(text)
     text = mat2cellRows(text);

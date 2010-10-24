@@ -3,7 +3,7 @@ function S = htmFormatText(varargin)
 % This is just like multiLineString except it adds html breaks <br> to the
 % end of each line. 
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 stack = dbstack('-completenames');
 if numel(stack) < 2

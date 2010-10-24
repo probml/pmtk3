@@ -3,7 +3,7 @@ function y = digamma(x)
 % DIGAMMA(X) returns digamma(x) = d log(gamma(x)) / dx
 % If X is a matrix, returns the digamma function evaluated at each element.
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 
 y = psi(x); % built-in mex function

@@ -2,7 +2,7 @@ function [X,y] = satDataLoad()
 
 %stat = load('stat2.dat'); % Johnson and Albert p77 table 3.1
 
-% This file is from matlabtools.googlecode.com
+% This file is from pmtk3.googlecode.com
 
 stat = loadData('sat'); % Johnson and Albert p77 table 3.1
 % stat=[pass(0/1), 1, 1, sat_score, grade in prereq]
