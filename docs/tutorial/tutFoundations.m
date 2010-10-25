@@ -213,11 +213,7 @@ size(L)
 % which uses |mvnpdf(X, mu, Sigma)|.
 %
 % These methods behave similarly on other models.
-% A list of all the basic models can be found
-% <http://pmtk3.googlecode.com/svn/trunk/docs/modelLists/basicList.html
-% here>.
-% A complete list of the methods
-% implemented by each basic class is shown
+% A list of all the basic models and their methods is shown
 % <http://pmtk3.googlecode.com/svn/trunk/docs/modelsByMethods/basicModels.html here>.
 
 
@@ -250,11 +246,7 @@ size(L)
 %%
 % We discuss LVMs in more detail 
 % in tutLVM.html .
-% A list of all the LVMs can be found
-% <http://pmtk3.googlecode.com/svn/trunk/docs/modelLists/latentList.html
-% here>.
-% A complete list of the methods
-% currently implemented by each latent model is shown
+% An auto-generated list of all the LVMs and their methods is shown
 % <http://pmtk3.googlecode.com/svn/trunk/docs/modelsByMethods/latentModels.html here>.
 
 
@@ -290,11 +282,7 @@ size(L)
 % We discuss graphical models in more detail
 % <http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutGM.html
 % here>.
-% A list of all the GMs can be found
-% <http://pmtk3.googlecode.com/svn/trunk/docs/modelLists/graphicalList.html
-% here>.
-% A complete list of the methods
-% currently implemented by each GM is shown
+% An auto-generated list of all the GMs and their  methods is shown
 % <http://pmtk3.googlecode.com/svn/trunk/docs/modelsByMethods/graphicalModels.html here>.
 
 

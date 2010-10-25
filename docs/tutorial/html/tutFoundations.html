@@ -165,7 +165,7 @@ cond(m3.Sigma)
 size(L)
 </pre><pre class="codeoutput">ans =
         1000           1
-</pre><p>where L(i) is the logprob of X(i,:). For Gaussians, we can also write <tt>gaussLogprob(mu, Sigma, X)</tt>, but note that this is a different order of parameters to that used by the stats toolbox, which uses <tt>mvnpdf(X, mu, Sigma)</tt>.</p><p>These methods behave similarly on other models. A list of all the basic models can be found <a href="http://pmtk3.googlecode.com/svn/trunk/docs/modelLists/basicList.html">here</a>. A complete list of the methods implemented by each basic class is shown <a href="http://pmtk3.googlecode.com/svn/trunk/docs/modelsByMethods/basicModels.html">here</a>.</p><h2>Latent variable models<a name="28"></a></h2><p>From a functional point of view, an LVM supports all the methods for a generic unconditional model, plus the following functions.</p><p>
+</pre><p>where L(i) is the logprob of X(i,:). For Gaussians, we can also write <tt>gaussLogprob(mu, Sigma, X)</tt>, but note that this is a different order of parameters to that used by the stats toolbox, which uses <tt>mvnpdf(X, mu, Sigma)</tt>.</p><p>These methods behave similarly on other models. A list of all the basic models and their methods is shown <a href="http://pmtk3.googlecode.com/svn/trunk/docs/modelsByMethods/basicModels.html">here</a>.</p><h2>Latent variable models<a name="28"></a></h2><p>From a functional point of view, an LVM supports all the methods for a generic unconditional model, plus the following functions.</p><p>
 <TABLE BORDER=3 CELLPADDING=5 WIDTH="100%" >
 <TR ALIGN=left>
 <TH WIDTH=40%  BGCOLOR=#00CCFF><FONT COLOR=000000>Method</FONT></TH>
@@ -185,7 +185,7 @@ z(i,:) = argmax p(z|X(i,:), m).
 Not supported for continuous latent variables.
 <tr>
 </table>
-</p><p>We discuss LVMs in more detail in <a href="http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutLVM.html">tutLVM.html</a> . A list of all the LVMs can be found <a href="http://pmtk3.googlecode.com/svn/trunk/docs/modelLists/latentList.html">here</a>. A complete list of the methods currently implemented by each latent model is shown <a href="http://pmtk3.googlecode.com/svn/trunk/docs/modelsByMethods/latentModels.html">here</a>.</p><h2>Graphical models<a name="31"></a></h2><p>From a functional point of view, a GM supports all the methods for a generic unconditional model, plus the following functions.</p><p>
+</p><p>We discuss LVMs in more detail in <a href="http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutLVM.html">tutLVM.html</a> . An auto-generated list of all the LVMs and their methods is shown <a href="http://pmtk3.googlecode.com/svn/trunk/docs/modelsByMethods/latentModels.html">here</a>.</p><h2>Graphical models<a name="31"></a></h2><p>From a functional point of view, a GM supports all the methods for a generic unconditional model, plus the following functions.</p><p>
 <TABLE BORDER=3 CELLPADDING=5 WIDTH="100%" >
 <TR ALIGN=left>
 <TH WIDTH=40%  BGCOLOR=#00CCFF><FONT COLOR=000000>Method</FONT></TH>
@@ -206,7 +206,7 @@ for details.
 <td> Computes argmax p(y|ev, m), which is a (joint) posterior mode.
 <tr>
 </table>
-</p><p>We discuss graphical models in more detail <a href="http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutGM.html">here</a>. A list of all the GMs can be found <a href="http://pmtk3.googlecode.com/svn/trunk/docs/modelLists/graphicalList.html">here</a>. A complete list of the methods currently implemented by each GM is shown <a href="http://pmtk3.googlecode.com/svn/trunk/docs/modelsByMethods/graphicalModels.html">here</a>.</p><h2>Summary of models and methods<a name="34"></a></h2><p>A summary of the abstract classes and their main methods is shown below</p><p>
+</p><p>We discuss graphical models in more detail <a href="http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutGM.html">here</a>. An auto-generated list of all the GMs and their  methods is shown <a href="http://pmtk3.googlecode.com/svn/trunk/docs/modelsByMethods/graphicalModels.html">here</a>.</p><h2>Summary of models and methods<a name="34"></a></h2><p>A summary of the abstract classes and their main methods is shown below</p><p>
 <img src="http://pmtk3.googlecode.com/svn/trunk/docs/classSystem/modelsMethodsTree.png">.
 </p><h2>Bayesian methods<a name="37"></a></h2><p>So far, we have been focusing on fitting models using ML or MAP parameter estimation. Furthermore, prediction and inference has used the plugin approximation, treating the parameters as known constants. PMTK3 has some limited support for Bayesian methods of model fitting/ prediction, as we now explain.</p><p>For model fitting, instead of <tt>fooFit</tt> use <tt>fooFitBayes</tt> which computes <img src="tutFoundations_eq87332.png" alt="$p(\theta|D)$">.</p><p>For supervised models, instead of <tt>fooPredict</tt>  use  <tt>fooPredictBayes</tt>, which computes</p><p><img src="tutFoundations_eq51280.png" alt="$$p(y|x,D) = \int p(y|x,\theta) p(\theta|D) d\theta$$"></p><p>For unsupervised models, instead of <tt>fooInfer</tt> use <tt>fooInferBayes</tt>, which computes</p><p><img src="tutFoundations_eq35284.png" alt="$$p(z|x,D) = \int p(z|x,\theta) p(\theta|D) d\theta$$"></p><p>where z are the latent variables and x are the observed variables. Also, instead of <tt>fooLogprob</tt> use <tt>fooLogprobBayes</tt>, which computes</p><p><img src="tutFoundations_eq58905.png" alt="$$L(i) = \int p(X(i,:) | \theta) p(\theta|D) d\theta$$"></p><p>We will give examples of these methods later.</p><p>'Under the hood', things are a bit more complicated in the Bayesian context compared to MAP estimation, since we don't store model parameters but a posterior distribution over model parameters. Furthermore, the form of this posterior may differ across inference algorithms, e.g., it might be a Gaussian approximation, or a bag of samples. However, from a user's point of view, these details should not matter.</p><h2>Passing in optional arguments<a name="44"></a></h2><p>Many functions take a large number of optional arguments. For example, <a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/SupervisedModels/linreg/linregFit.m">linregFit.m</a> (which fits a linear regression model) has the following interface</p><pre>[model] = linregFit(X, y, varargin)</pre><p>varargin represents a variable number of arguments. The optional arguments, and their default values, are printed when you type <tt>help('linregFit')</tt>.</p><pre class="codeinput">help <span class="string">linregFit</span>
 </pre><pre class="codeoutput">  Fit a linear regression model by MLE or MAP estimation
@@ -254,7 +254,7 @@ m2 = linregFit(X, y, s)
 </pre><p>As a sanity check, let us check these are equal</p><pre class="codeinput">assert(approxeq(m1.w, m2.w))
 </pre><p>Internally, these optional arguments are processed using <a href="http://pmtk3.googlecode.com/svn/trunk/matlabTools/util/process_options.m">process_options.m</a> , written by Mark Paskin, and <a href="http://pmtk3.googlecode.com/svn/trunk/matlabTools/util/prepareArgs.m">prepareArgs.m</a> , written by Matt Dunham. For more detals, see <a href="http://yagtom.googlecode.com/svn/trunk/html/writingFunctions.html#40">this entry</a> in our Matlab tutorial.</p><h2>Generally useful Matlab functions<a name="53"></a></h2><p>PMTK uses a large number of  functions that are useful for many different purposes outside of machine learning. Many of these are stored in our <a href="http://code.google.com/p/matlabtools/">matlabTools</a> site. Others are built-in to Matlab, as explained in our <a href="http://code.google.com/p/yagtom/">Matlab tutorial</a>. We mention just a few of the most useful ones below</p><div><ul><li><a href="http://pmtk3.googlecode.com/svn/trunk/matlabTools/metaTools/whoCallsMe.m">whoCallsMe.m</a> : <tt>whoCallsMe('foo')</tt> will list all files that call foo.m</li><li><a href="http://pmtk3.googlecode.com/svn/trunk/matlabTools/metaTools/wwhich.m">wwhich.m</a> : which with wildcards. eg <tt>wwhich('foo*')</tt> prints full filenames of all files starting   with the string 'foo', and <tt>wwhich('*foo*')</tt> finds files with 'foo' anywhere in their name.</li><li><tt>edit('foo')</tt> will open foo.m in the matlab editor. This lets you look at (and modify) the source code.    This also works   for built-in Matlab functions.   Be careful not to change things accidently!.</li><li><tt>help('foo')</tt> prints any initial documentation for foo.m that     the implementer may have provided; all builtin Matlab functions     are properly documented. Unfortuntately that is not the case for     all the PMTK functions... but you can always read the source :)</li><li><tt>doc('foo')</tt> opens the html documentation for built-in function foo.m</li><li><a href="http://pmtk3.googlecode.com/svn/trunk/matlabTools/graphics/placeFigures.m">placeFigures.m</a> : this lays out all the currently open figures   so you can see them all at the same time</li><li><tt>dbstop if error</tt> : open the debugger if there is an error. See <a href="http://yagtom.googlecode.com/svn/trunk/html/debugging.html">here</a> for more info on debugging.</li><li><a href="http://pmtk3.googlecode.com/svn/trunk/matlabTools/graphics/printPmtkFigure.m">printPmtkFigure.m</a> : this is used to make figures for <a href="http://www.cs.ubc.ca/~murphyk/MLbook/index.html">my book</a>. It uses <a href="http://www.mathworks.com/matlabcentral/fileexchange/23629">export_fig.m</a> to make the figures 'camera ready'. If you want to include figures in your own document, you can modify printPmtkFigure appropriately.</li></ul></div><h2>Auto-generated documentation<a name="54"></a></h2><p>Below we give some links to auto-generated documentation, which list all the functions and demos in the toolbox. These automatically generated lists can help you find relevant functions/ demos that are not mentioned in the tutorial.</p><div><ul><li><a href="http://code.google.com/p/pmtk3/wiki/synopsisPages">Functions</a>, with brief (1 line) descriptions and links to their source</li><li><a href="http://code.google.com/p/pmtk3/wiki/Demos">Demos</a>, published as html pages including the results of running each demo.</li></ul></div><p>
 <hr>
-</p><p>This page was auto-generated by calling <i>pmtkPublish(tutFoundations)</i>  on 25-Oct-2010 11:26:57</p><p class="footer"><br>
+</p><p>This page was auto-generated by calling <i>pmtkPublish(tutFoundations)</i>  on 25-Oct-2010 11:37:55</p><p class="footer"><br>
       Published with MATLAB&reg; 7.11<br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Basics of  pmtk3
@@ -472,11 +472,7 @@ size(L)
 % which uses |mvnpdf(X, mu, Sigma)|.
 %
 % These methods behave similarly on other models.
-% A list of all the basic models can be found
-% <http://pmtk3.googlecode.com/svn/trunk/docs/modelLists/basicList.html
-% here>.
-% A complete list of the methods
-% implemented by each basic class is shown
+% A list of all the basic models and their methods is shown
 % <http://pmtk3.googlecode.com/svn/trunk/docs/modelsByMethods/basicModels.html here>.
 
 
@@ -509,11 +505,7 @@ size(L)
 %%
 % We discuss LVMs in more detail 
 % in <http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutLVM.html tutLVM.html> .
-% A list of all the LVMs can be found
-% <http://pmtk3.googlecode.com/svn/trunk/docs/modelLists/latentList.html
-% here>.
-% A complete list of the methods
-% currently implemented by each latent model is shown
+% An auto-generated list of all the LVMs and their methods is shown
 % <http://pmtk3.googlecode.com/svn/trunk/docs/modelsByMethods/latentModels.html here>.
 
 
@@ -549,11 +541,7 @@ size(L)
 % We discuss graphical models in more detail
 % <http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutGM.html
 % here>.
-% A list of all the GMs can be found
-% <http://pmtk3.googlecode.com/svn/trunk/docs/modelLists/graphicalList.html
-% here>.
-% A complete list of the methods
-% currently implemented by each GM is shown
+% An auto-generated list of all the GMs and their  methods is shown
 % <http://pmtk3.googlecode.com/svn/trunk/docs/modelsByMethods/graphicalModels.html here>.
 
 
@@ -704,7 +692,7 @@ assert(approxeq(m1.w, m2.w))
 %%
 
 %%
-% This page was auto-generated by calling _pmtkPublish(tutFoundations)_  on 25-Oct-2010 11:26:57
+% This page was auto-generated by calling _pmtkPublish(tutFoundations)_  on 25-Oct-2010 11:37:55
 
 
 ##### SOURCE END #####

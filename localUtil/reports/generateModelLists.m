@@ -6,6 +6,14 @@ function generateModelLists()
 
 % This file is from pmtk3.googlecode.com
 
+error('deprecated')% KPM 25 Oct 2010
+% this function generates an html table listing
+% the name of every model within a given super-class,
+% plus its defn string (if any).
+% But since most defn strings are empty,
+% this table has no value, since the one generated
+% by generateModelVsMethodsTables also lists all the models,
+% as well as the methods they actually implement.
 
 outputDir = fullfile(pmtk3Root(), 'docs', 'modelLists');
 [basic, supervised, latent, graphical] = classNameMappings();

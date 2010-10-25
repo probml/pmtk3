@@ -2,8 +2,7 @@
 %
 % Not yet written. In the meantime,
 % In the meantime, an auto-generated
-% list of the methods
-% currently implemented by each kind of LVM is
+% list of all the GMs and their  methods is shown
 % <http://pmtk3.googlecode.com/svn/trunk/docs/modelsByMethods/graphicalModels.html here>.
 %
 % PMTK will eventually  replace
