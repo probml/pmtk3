@@ -4,9 +4,9 @@
 <html><head>
       <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
    <!--
-This HTML is auto-generated from an M-file.
-To make changes, update the M-file and republish this document.
-      --><title>Basics of  pmtk3</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-09-08"><meta name="m-file" content="tutFoundations"><style type="text/css">
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Basics of  pmtk3</title><meta name="generator" content="MATLAB 7.11"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2010-10-25"><meta name="DC.source" content="tutFoundations.m"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,7 +62,7 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h1>Basics of  pmtk3</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Overall design of PMTK3</a></li><li><a href="#6">Conditional (supervised) models</a></li><li><a href="#9">Unconditional (unsupervised) models</a></li><li><a href="#12">Basic models</a></li><li><a href="#28">Latent variable models</a></li><li><a href="#31">Graphical models</a></li><li><a href="#34">Summary of models and methods</a></li><li><a href="#39">Bayesian methods</a></li><li><a href="#46">Passing in optional arguments</a></li><li><a href="#55">Generally useful Matlab functions</a></li><li><a href="#56">Auto-generated documentation</a></li></ul></div><h2>Overall design of PMTK3<a name="1"></a></h2><p>PMTK3 has an object oriented design. That is, it can be thought of as defining a series of 'classes', representing different kinds of probabilistic models. Each class  supports various 'methods', which perform certain operations. These methods are often implemented in a functional way.</p><p>We don't actually use Matlab's object oriented system, because this does not work in Octave. In addition, some users find such code harder to understand, and it can be slower than non OO code. Instead, each model 'object' (an instance of a model 'class') is actually just a structure, containing various fields. And each method is just a regular function, whose name begins with the class name. The first argument to a method must be a model struct.</p><p>As an example, below we create a 2d Gaussian model and then draw 5 samples from it</p><pre class="codeinput">m = gaussCreate([0 0], eye(2))
+  </style></head><body><div class="content"><h1>Basics of  pmtk3</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Overall design of PMTK3</a></li><li><a href="#6">Conditional (supervised) models</a></li><li><a href="#9">Unconditional (unsupervised) models</a></li><li><a href="#12">Basic models</a></li><li><a href="#28">Latent variable models</a></li><li><a href="#31">Graphical models</a></li><li><a href="#34">Summary of models and methods</a></li><li><a href="#37">Bayesian methods</a></li><li><a href="#44">Passing in optional arguments</a></li><li><a href="#53">Generally useful Matlab functions</a></li><li><a href="#54">Auto-generated documentation</a></li></ul></div><h2>Overall design of PMTK3<a name="1"></a></h2><p>PMTK3 has an object oriented design. That is, it can be thought of as defining a series of 'classes', representing different kinds of probabilistic models. Each class  supports various 'methods', which perform certain operations. These methods are often implemented in a functional way.</p><p>We don't actually use Matlab's object oriented system, because this does not work in Octave. In addition, some users find such code harder to understand, and it can be slower than non OO code. Instead, each model 'object' (an instance of a model 'class') is actually just a structure, containing various fields. And each method is just a regular function, whose name begins with the class name. The first argument to a method must be a model struct.</p><p>As an example, below we create a 2d Gaussian model and then draw 5 samples from it</p><pre class="codeinput">m = gaussCreate([0 0], eye(2))
 setSeed(0); X = gaussSample(m, 5)
 </pre><pre class="codeoutput">m = 
            mu: [0 0]
@@ -122,6 +122,10 @@ or MAP parameter estimate, using various priors and  fitting algorithms.
 X is an N*D design matrix.
 For some models, X may contain NaN's, representing missing values.
 <tr>
+<td> m = fooTrain(model, X,  ...)
+<td> Train a model that has already been constructed.
+ Mostly used by graphical models.
+<tr>
 <td>  X = fooSample(m, N)
 <td> X(i,:) = sample from model m, i=1:N
 <tr>
@@ -129,8 +133,12 @@ For some models, X may contain NaN's, representing missing values.
 <td> L(i) = log p(X(i,:)| m)
 For some models, X may contain NaN's, representing missing values.
 <tr>
+<td>  Xhat = fooReconstruct(m, X)
+<td> Xhat(i,:) = reconstruction of X(i,:) after compressing
+and decompressing through the model.
+<tr>
 </table>
-</p><p>Unconditional models are subdivided into various subtypes, as follows:</p><div><ul><li>basic (standard parametric distributions e.g., Gauss)</li><li>latent (mixture models, latent factor models, HMMs etc)</li><li>graphical (models which require specifying a graph structure)</li></ul></div><p>We discuss these  below.</p><h2>Basic models<a name="12"></a></h2><p>Basic models support the functions listed above. We have already illustrated the <a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/BasicModels/gauss/gaussCreate.m">gaussCreate.m</a> constructor and <a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/BasicModels/gauss/gaussSample.m">gaussSample.m</a> method. We now discuss some other methods.</p><p>First, as a piece of useful shorthand, some widely used basic models (such as Gaussian) let you write <tt>fooSample(params,N)</tt> instead of <tt>fooSample(fooCreate(params),N)</tt>. For example</p><pre class="codeinput">setSeed(0); gaussSample(zeros(2,1), eye(2), 5)
+</p><p>Unconditional models are subdivided into various subtypes, as follows:</p><div><ul><li>basic (standard parametric distributions e.g., Gauss)</li><li>latent (mixture models, latent factor models, HMMs, RBMs, etc)</li><li>graphical (models which require specifying an arbitrary graph structure)</li></ul></div><p>We discuss these  below.</p><h2>Basic models<a name="12"></a></h2><p>Basic models support the functions listed above. We have already illustrated the <a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/BasicModels/gauss/gaussCreate.m">gaussCreate.m</a> constructor and <a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/BasicModels/gauss/gaussSample.m">gaussSample.m</a> method. We now discuss some other methods.</p><p>First, as a piece of useful shorthand, some widely used basic models (such as Gaussian) let you write <tt>fooSample(params,N)</tt> instead of <tt>fooSample(fooCreate(params),N)</tt>. For example, we can write <tt>gaussSample(mu,Sigma,N)</tt></p><pre class="codeinput">setSeed(0); gaussSample(zeros(2,1), eye(2), 5)
 </pre><pre class="codeoutput">ans =
    -0.4326   -1.6656
     0.1253    0.2877
@@ -148,28 +156,33 @@ assert(approxeq(m.Sigma, cov(X, 1)))
 </pre><p>Now consider what happens when N=50.</p><pre class="codeinput">m2 = gaussFit(X(1:50,:));
 cond(m2.Sigma)
 </pre><pre class="codeoutput">ans =
-  1.1240e+017
+  2.5258e+016
 </pre><p>We see that the resulting matrix is close to singular. MLE only works well when <img src="tutFoundations_eq93225.png" alt="$N \gg D$">. In all other cases, we should use MAP estimation. We can do this as follows, using a weak data-dependent prior:</p><pre class="codeinput">m3 = gaussFit(X(1:50,:), <span class="string">'map'</span>);
 cond(m3.Sigma)
 </pre><pre class="codeoutput">ans =
   177.0245
-</pre><p>See <a href="http://pmtk3.googlecode.com/svn/trunk/demos/bookDemos/The_multivariate_Gaussian_and_friends/shrinkcovDemo.m">shrinkCovDemo.m</a> for a more extensive demo of regularized estimation of covariance matrices.</p><p>Now let us consider another useful operation: evaluating the log likelihood of a dataset:</p><pre class="codeinput">L = sum(gaussLogprob(m3, X))
-</pre><pre class="codeoutput">L =
- -2.8987e+007
-</pre><p>These methods behave similarly on other models. A list of all the basic models can be found <a href="http://pmtk3.googlecode.com/svn/trunk/docs/modelLists/basicList.html">here</a>. A complete list of the methods implemented by each basic class is shown <a href="http://pmtk3.googlecode.com/svn/trunk/docs/modelsByMethods/basicModels.html">here</a>.</p><h2>Latent variable models<a name="28"></a></h2><p>From a functional point of view, an LVM supports all the methods for a generic unconditional model, plus the following functions.</p><p>
+</pre><p>See <a href="http://pmtk3.googlecode.com/svn/trunk/demos/bookDemos/The_multivariate_Gaussian_and_friends/shrinkcovDemo.m">shrinkCovDemo.m</a> for a more extensive demo of regularized estimation of covariance matrices.</p><p>Now let us consider another useful operation: evaluating the log likelihood of a dataset:</p><pre class="codeinput">L = gaussLogprob(m3, X);
+size(L)
+</pre><pre class="codeoutput">ans =
+        1000           1
+</pre><p>where L(i) is the logprob of X(i,:). For Gaussians, we can also write <tt>gaussLogprob(mu, Sigma, X)</tt>, but note that this is a different order of parameters to that used by the stats toolbox, which uses <tt>mvnpdf(X, mu, Sigma)</tt>.</p><p>These methods behave similarly on other models. A list of all the basic models can be found <a href="http://pmtk3.googlecode.com/svn/trunk/docs/modelLists/basicList.html">here</a>. A complete list of the methods implemented by each basic class is shown <a href="http://pmtk3.googlecode.com/svn/trunk/docs/modelsByMethods/basicModels.html">here</a>.</p><h2>Latent variable models<a name="28"></a></h2><p>From a functional point of view, an LVM supports all the methods for a generic unconditional model, plus the following functions.</p><p>
 <TABLE BORDER=3 CELLPADDING=5 WIDTH="100%" >
 <TR ALIGN=left>
 <TH WIDTH=40%  BGCOLOR=#00CCFF><FONT COLOR=000000>Method</FONT></TH>
 <TH WIDTH=60% BGCOLOR=#00CCFF><FONT COLOR=000000>Description</FONT></TH>
 </TR>
-<td> [z, pz] = infer(m, X).
+<td> [pz, pz2] = fooInferLatent(m, X).
 <td> This is an unsupervised version of predict.
 If the LVM has discrete latent variables,
-z(i) = argmax p(z|X(i,:), m)
-and pz(i,k) = p(z=k|X(i,:), m).
+pz(i,k) = p(z=k|X(i,:), m).
 If the LVM has continuous latent variables,
-z(i,:) = E(z|X(i,:), m)
-and pz(i,:,:) = Cov(z|X(i,:), m).
+pz(i,:) = E(z|X(i,:), m)
+and pz2(i,:,:) = Cov(z|X(i,:), m).
+<tr>
+<td> [z] = fooMapLatent(m, X).
+<td> If the LVM has discrete latent variables,
+z(i,:) = argmax p(z|X(i,:), m).
+Not supported for continuous latent variables.
 <tr>
 </table>
 </p><p>We discuss LVMs in more detail in <a href="http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutLVM.html">tutLVM.html</a> . A list of all the LVMs can be found <a href="http://pmtk3.googlecode.com/svn/trunk/docs/modelLists/latentList.html">here</a>. A complete list of the methods currently implemented by each latent model is shown <a href="http://pmtk3.googlecode.com/svn/trunk/docs/modelsByMethods/latentModels.html">here</a>.</p><h2>Graphical models<a name="31"></a></h2><p>From a functional point of view, a GM supports all the methods for a generic unconditional model, plus the following functions.</p><p>
@@ -178,7 +191,8 @@ and pz(i,:,:) = Cov(z|X(i,:), m).
 <TH WIDTH=40%  BGCOLOR=#00CCFF><FONT COLOR=000000>Method</FONT></TH>
 <TH WIDTH=60% BGCOLOR=#00CCFF><FONT COLOR=000000>Description</FONT></TH>
 </TR>
-<td> [bel] = inferNodes(m, evidence).
+<tr>
+<td> [bel] = fooInferNodes(m, evidence).
 <td> Here bel{i} is a tabular factor,
 where  bel{i}.T(k) is the probability node i is in state k, given the
 evidence.
@@ -188,38 +202,30 @@ in several different ways. See
 "http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutGM.html">here</a>
 for details.
 <tr>
-<td> yhat = map(m, evidence)
+<td> yhat = fooMap(m, evidence)
 <td> Computes argmax p(y|ev, m), which is a (joint) posterior mode.
 <tr>
-<td> Ghat = fitStruct(m, evidence)
-<td> Find a MAP estimate of the graph structure (not yet implemented).
 </table>
 </p><p>We discuss graphical models in more detail <a href="http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutGM.html">here</a>. A list of all the GMs can be found <a href="http://pmtk3.googlecode.com/svn/trunk/docs/modelLists/graphicalList.html">here</a>. A complete list of the methods currently implemented by each GM is shown <a href="http://pmtk3.googlecode.com/svn/trunk/docs/modelsByMethods/graphicalModels.html">here</a>.</p><h2>Summary of models and methods<a name="34"></a></h2><p>A summary of the abstract classes and their main methods is shown below</p><p>
 <img src="http://pmtk3.googlecode.com/svn/trunk/docs/classSystem/modelsMethodsTree.png">.
-</p><p>A summary of the concrete classes (which are leaves in the class hierarchy) is shown below.</p><p>
-<img
-src="http://pmtk3.googlecode.com/svn/trunk/docs/classSystem/modelsConcreteTree.png">
-</p><h2>Bayesian methods<a name="39"></a></h2><p>So far, we have been focusing on fitting models using ML or MAP parameter estimation. Furthermore, prediction and inference has used the plugin approximation, treating the parameters as known constants. PMTK3 has some limited support for Bayesian methods of model fitting/ prediction, as we now explain.</p><p>For model fitting, instead of <tt>fooFit</tt> use <tt>fooFitBayes</tt> which computes <img src="tutFoundations_eq87332.png" alt="$p(\theta|D)$">.</p><p>For supervised models, instead of <tt>fooPredict</tt>  use  <tt>fooPredictBayes</tt>, which computes</p><p><img src="tutFoundations_eq51280.png" alt="$$p(y|x,D) = \int p(y|x,\theta) p(\theta|D) d\theta$$"></p><p>For unsupervised models, instead of <tt>fooInfer</tt> use <tt>fooInferBayes</tt>, which computes</p><p><img src="tutFoundations_eq35284.png" alt="$$p(z|x,D) = \int p(z|x,\theta) p(\theta|D) d\theta$$"></p><p>where z are the latent variables and x are the observed variables. Also, instead of <tt>fooLogprob</tt> use <tt>fooLogprobBayes</tt>, which computes</p><p><img src="tutFoundations_eq58905.png" alt="$$L(i) = \int p(X(i,:) | \theta) p(\theta|D) d\theta$$"></p><p>We will give examples of these methods later.</p><p>'Under the hood', things are a bit more complicated in the Bayesian context compared to MAP estimation, since we don't store model parameters but a posterior distribution over model parameters. Furthermore, the form of this posterior may differ across inference algorithms, e.g., it might be a Gaussian approximation, or a bag of samples. However, from a user's point of view, these details should not matter.</p><h2>Passing in optional arguments<a name="46"></a></h2><p>Many functions take a large number of optional arguments. For example, <a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/SupervisedModels/linearRegression/linregFit.m">linregFit.m</a> (which fits a linear regression model) has the following interface</p><pre>[model] = linregFit(X, y, varargin)</pre><p>varargin represents a variable number of arguments. The optional arguments, and their default values, are printed when you type <tt>help('linregFit')</tt>.</p><pre class="codeinput">help <span class="string">linregFit</span>
+</p><h2>Bayesian methods<a name="37"></a></h2><p>So far, we have been focusing on fitting models using ML or MAP parameter estimation. Furthermore, prediction and inference has used the plugin approximation, treating the parameters as known constants. PMTK3 has some limited support for Bayesian methods of model fitting/ prediction, as we now explain.</p><p>For model fitting, instead of <tt>fooFit</tt> use <tt>fooFitBayes</tt> which computes <img src="tutFoundations_eq87332.png" alt="$p(\theta|D)$">.</p><p>For supervised models, instead of <tt>fooPredict</tt>  use  <tt>fooPredictBayes</tt>, which computes</p><p><img src="tutFoundations_eq51280.png" alt="$$p(y|x,D) = \int p(y|x,\theta) p(\theta|D) d\theta$$"></p><p>For unsupervised models, instead of <tt>fooInfer</tt> use <tt>fooInferBayes</tt>, which computes</p><p><img src="tutFoundations_eq35284.png" alt="$$p(z|x,D) = \int p(z|x,\theta) p(\theta|D) d\theta$$"></p><p>where z are the latent variables and x are the observed variables. Also, instead of <tt>fooLogprob</tt> use <tt>fooLogprobBayes</tt>, which computes</p><p><img src="tutFoundations_eq58905.png" alt="$$L(i) = \int p(X(i,:) | \theta) p(\theta|D) d\theta$$"></p><p>We will give examples of these methods later.</p><p>'Under the hood', things are a bit more complicated in the Bayesian context compared to MAP estimation, since we don't store model parameters but a posterior distribution over model parameters. Furthermore, the form of this posterior may differ across inference algorithms, e.g., it might be a Gaussian approximation, or a bag of samples. However, from a user's point of view, these details should not matter.</p><h2>Passing in optional arguments<a name="44"></a></h2><p>Many functions take a large number of optional arguments. For example, <a href="http://pmtk3.googlecode.com/svn/trunk/toolbox/SupervisedModels/linreg/linregFit.m">linregFit.m</a> (which fits a linear regression model) has the following interface</p><pre>[model] = linregFit(X, y, varargin)</pre><p>varargin represents a variable number of arguments. The optional arguments, and their default values, are printed when you type <tt>help('linregFit')</tt>.</p><pre class="codeinput">help <span class="string">linregFit</span>
 </pre><pre class="codeoutput">  Fit a linear regression model by MLE or MAP estimation
   INPUTS
   X             ... N*D design matrix
   y             ... N*1 response vector
   OPTIONAL INPUTS:
+  weights       ... N*1 weight vector for eg weighted least squares
   regType       ... L1, L2, none, scad (only used if likelihood is 'gaussian')
-  likelihood    ... ['gaussian'], 'student', 'huber'
+  likelihood    ... ['gaussian'], 'student', 'huber', 'scad'
   lambda        ... regularizer
   preproc       ... a struct, passed to preprocessorApplyToTtrain
      Set preproc.addOnes = true if you want this model
      to add a column of 1s to X for you (at train and test time)
   fitOptions    ... optional  args (a cell array) to fitFn
   fitFnName         ... Name of fitting method to use.
-     Currently the only method that you can modify is for
-     lasso (likelihood=gaussian, regType=lasso).
-     The default is 'L1GeneralProjection'.
-     However, this can be any other method available
-     from http://www.cs.ubc.ca/~schmidtm/Software/L1General/L1General.html
-     You can also specify 'l1ls', which uses
-     code from http://www.stanford.edu/~boyd/l1_ls/
+    Options:
+     regType = L1:  [L1GeneralProjection] or L1LS
+     regType = L2:  [QR] or minfunc
   winit         ...  Initial value of w; can be used for warm starting
  
   OUTPUTS:
@@ -231,7 +237,7 @@ m1 = linregFit(X, y, <span class="string">'regType'</span>, <span class="string"
 </pre><pre class="codeoutput">m1 = 
         lambda: 2
              w: [3x1 double]
-        sigma2: 0.0022
+        sigma2: 0.0627
        preproc: [1x1 struct]
      modelType: 'linreg'
     likelihood: 'gaussian'
@@ -241,15 +247,15 @@ m2 = linregFit(X, y, s)
 </pre><pre class="codeoutput">m2 = 
         lambda: 2
              w: [3x1 double]
-        sigma2: 0.0022
+        sigma2: 0.0627
        preproc: [1x1 struct]
      modelType: 'linreg'
     likelihood: 'gaussian'
 </pre><p>As a sanity check, let us check these are equal</p><pre class="codeinput">assert(approxeq(m1.w, m2.w))
-</pre><p>Internally, these optional arguments are processed using <a href="http://matlabtools.googlecode.com/svn/trunk/util/process_options.m">process_options.m</a> , written by Mark Paskin, and <a href="http://matlabtools.googlecode.com/svn/trunk/util/prepareArgs.m">prepareArgs.m</a> , written by Matt Dunham. For more detals, see <a href="http://yagtom.googlecode.com/svn/trunk/html/writingFunctions.html#40">this entry</a> in our Matlab tutorial.</p><h2>Generally useful Matlab functions<a name="55"></a></h2><p>PMTK uses a large number of  functions that are useful for many different purposes outside of machine learning. Many of these are stored in our <a href="http://code.google.com/p/matlabtools/">matlabTools</a> site. Others are built-in to Matlab, as explained in our <a href="http://code.google.com/p/yagtom/">Matlab tutorial</a>. We mention just a few of the most useful ones below</p><div><ul><li><a href="http://matlabtools.googlecode.com/svn/trunk/metaTools/whoCallsMe.m">whoCallsMe.m</a> : <tt>whoCallsMe('foo')</tt> will list all files that call foo.m</li><li><a href="http://matlabtools.googlecode.com/svn/trunk/metaTools/wwhich.m">wwhich.m</a> : which with wildcards. eg <tt>wwhich('foo*')</tt> prints full filenames of all files starting   with the string 'foo', and <tt>wwhich('*foo*')</tt> finds files with 'foo' anywhere in their name.</li><li><tt>edit('foo')</tt> will open foo.m in the matlab editor. This lets you look at (and modify) the source code.    This also works   for built-in Matlab functions.   Be careful not to change things accidently!.</li><li><tt>help('foo')</tt> prints any initial documentation for foo.m that     the implementer may have provided; all builtin Matlab functions     are properly documented. Unfortuntately that is not the case for     all the PMTK functions... but you can always read the source :)</li><li><tt>doc('foo')</tt> opens the html documentation for built-in function foo.m</li><li><a href="http://matlabtools.googlecode.com/svn/trunk/graphics/placeFigures.m">placeFigures.m</a> : this lays out all the currently open figures   so you can see them all at the same time</li><li><tt>dbstop if error</tt> : open the debugger if there is an error. See <a href="http://yagtom.googlecode.com/svn/trunk/html/debugging.html">here</a> for more info on debugging.</li><li><a href="http://matlabtools.googlecode.com/svn/trunk/graphics/printPmtkFigure.m">printPmtkFigure.m</a> : this is used to make figures for <a href="http://www.cs.ubc.ca/~murphyk/MLbook/index.html">my book</a>. It uses <a href="http://www.mathworks.com/matlabcentral/fileexchange/23629">export_fig.m</a> to make the figures 'camera ready'. If you want to include figures in your own document, you can modify printPmtkFigure appropriately.</li></ul></div><h2>Auto-generated documentation<a name="56"></a></h2><p>Below we give some links to auto-generated documentation, which list all the functions and demos in the toolbox. These automatically generated lists can help you find relevant functions/ demos that are not mentioned in the tutorial.</p><div><ul><li><a href="http://code.google.com/p/pmtk3/wiki/synopsisPages">Functions</a>, with brief (1 line) descriptions and links to their source</li><li><a href="http://code.google.com/p/pmtk3/wiki/Demos">Demos</a>, published as html pages including the results of running each demo.</li></ul></div><p>
+</pre><p>Internally, these optional arguments are processed using <a href="http://pmtk3.googlecode.com/svn/trunk/matlabTools/util/process_options.m">process_options.m</a> , written by Mark Paskin, and <a href="http://pmtk3.googlecode.com/svn/trunk/matlabTools/util/prepareArgs.m">prepareArgs.m</a> , written by Matt Dunham. For more detals, see <a href="http://yagtom.googlecode.com/svn/trunk/html/writingFunctions.html#40">this entry</a> in our Matlab tutorial.</p><h2>Generally useful Matlab functions<a name="53"></a></h2><p>PMTK uses a large number of  functions that are useful for many different purposes outside of machine learning. Many of these are stored in our <a href="http://code.google.com/p/matlabtools/">matlabTools</a> site. Others are built-in to Matlab, as explained in our <a href="http://code.google.com/p/yagtom/">Matlab tutorial</a>. We mention just a few of the most useful ones below</p><div><ul><li><a href="http://pmtk3.googlecode.com/svn/trunk/matlabTools/metaTools/whoCallsMe.m">whoCallsMe.m</a> : <tt>whoCallsMe('foo')</tt> will list all files that call foo.m</li><li><a href="http://pmtk3.googlecode.com/svn/trunk/matlabTools/metaTools/wwhich.m">wwhich.m</a> : which with wildcards. eg <tt>wwhich('foo*')</tt> prints full filenames of all files starting   with the string 'foo', and <tt>wwhich('*foo*')</tt> finds files with 'foo' anywhere in their name.</li><li><tt>edit('foo')</tt> will open foo.m in the matlab editor. This lets you look at (and modify) the source code.    This also works   for built-in Matlab functions.   Be careful not to change things accidently!.</li><li><tt>help('foo')</tt> prints any initial documentation for foo.m that     the implementer may have provided; all builtin Matlab functions     are properly documented. Unfortuntately that is not the case for     all the PMTK functions... but you can always read the source :)</li><li><tt>doc('foo')</tt> opens the html documentation for built-in function foo.m</li><li><a href="http://pmtk3.googlecode.com/svn/trunk/matlabTools/graphics/placeFigures.m">placeFigures.m</a> : this lays out all the currently open figures   so you can see them all at the same time</li><li><tt>dbstop if error</tt> : open the debugger if there is an error. See <a href="http://yagtom.googlecode.com/svn/trunk/html/debugging.html">here</a> for more info on debugging.</li><li><a href="http://pmtk3.googlecode.com/svn/trunk/matlabTools/graphics/printPmtkFigure.m">printPmtkFigure.m</a> : this is used to make figures for <a href="http://www.cs.ubc.ca/~murphyk/MLbook/index.html">my book</a>. It uses <a href="http://www.mathworks.com/matlabcentral/fileexchange/23629">export_fig.m</a> to make the figures 'camera ready'. If you want to include figures in your own document, you can modify printPmtkFigure appropriately.</li></ul></div><h2>Auto-generated documentation<a name="54"></a></h2><p>Below we give some links to auto-generated documentation, which list all the functions and demos in the toolbox. These automatically generated lists can help you find relevant functions/ demos that are not mentioned in the tutorial.</p><div><ul><li><a href="http://code.google.com/p/pmtk3/wiki/synopsisPages">Functions</a>, with brief (1 line) descriptions and links to their source</li><li><a href="http://code.google.com/p/pmtk3/wiki/Demos">Demos</a>, published as html pages including the results of running each demo.</li></ul></div><p>
 <hr>
-</p><p>This page was auto-generated by calling <i>pmtkPublish(C:\kmurphy\GoogleCode\pmtk3\docs\tutorial\tutFoundations.m)</i>  on 08-Sep-2010 17:19:51</p><p class="footer"><br>
-      Published with MATLAB&reg; 7.9<br></p></div><!--
+</p><p>This page was auto-generated by calling <i>pmtkPublish(tutFoundations)</i>  on 25-Oct-2010 11:26:57</p><p class="footer"><br>
+      Published with MATLAB&reg; 7.11<br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Basics of  pmtk3
 
@@ -375,12 +381,20 @@ setSeed(0); X = gaussSample(m, 5)
 % X is an N*D design matrix.
 % For some models, X may contain NaN's, representing missing values.
 % <tr>
+% <td> m = fooTrain(model, X,  ...)
+% <td> Train a model that has already been constructed.
+%  Mostly used by graphical models.
+% <tr>
 % <td>  X = fooSample(m, N)
 % <td> X(i,:) = sample from model m, i=1:N
 % <tr>
 % <td>  L = fooLogprob(m, X)
 % <td> L(i) = log p(X(i,:)| m) 
 % For some models, X may contain NaN's, representing missing values.
+% <tr>
+% <td>  Xhat = fooReconstruct(m, X)
+% <td> Xhat(i,:) = reconstruction of X(i,:) after compressing
+% and decompressing through the model.
 % <tr>
 % </table>
 % </html>
@@ -390,8 +404,8 @@ setSeed(0); X = gaussSample(m, 5)
 % into various subtypes, as follows:
 %
 % * basic (standard parametric distributions e.g., Gauss)
-% * latent (mixture models, latent factor models, HMMs etc)
-% * graphical (models which require specifying a graph structure)
+% * latent (mixture models, latent factor models, HMMs, RBMs, etc)
+% * graphical (models which require specifying an arbitrary graph structure)
 %
 % We discuss these  below.
 
@@ -405,7 +419,7 @@ setSeed(0); X = gaussSample(m, 5)
 % some widely used basic models (such as Gaussian)
 % let you write |fooSample(params,N)|
 % instead of |fooSample(fooCreate(params),N)|.
-% For example
+% For example, we can write |gaussSample(mu,Sigma,N)|
 %%
 setSeed(0); gaussSample(zeros(2,1), eye(2), 5)
 %%
@@ -447,8 +461,16 @@ cond(m3.Sigma)
 % Now let us consider another useful operation:
 % evaluating the log likelihood of a dataset:
 %%
-L = sum(gaussLogprob(m3, X))
+L = gaussLogprob(m3, X);
+size(L)
 %%
+% where L(i) is the logprob of X(i,:).
+% For Gaussians, we can also write
+% |gaussLogprob(mu, Sigma, X)|,
+% but note that this is a different order
+% of parameters to that used by the stats toolbox,
+% which uses |mvnpdf(X, mu, Sigma)|.
+%
 % These methods behave similarly on other models.
 % A list of all the basic models can be found
 % <http://pmtk3.googlecode.com/svn/trunk/docs/modelLists/basicList.html
@@ -469,14 +491,18 @@ L = sum(gaussLogprob(m3, X))
 % <TH WIDTH=40%  BGCOLOR=#00CCFF><FONT COLOR=000000>Method</FONT></TH>
 % <TH WIDTH=60% BGCOLOR=#00CCFF><FONT COLOR=000000>Description</FONT></TH>
 % </TR>
-% <td> [z, pz] = infer(m, X).
+% <td> [pz, pz2] = fooInferLatent(m, X).
 % <td> This is an unsupervised version of predict.
 % If the LVM has discrete latent variables,
-% z(i) = argmax p(z|X(i,:), m)
-% and pz(i,k) = p(z=k|X(i,:), m).
+% pz(i,k) = p(z=k|X(i,:), m).
 % If the LVM has continuous latent variables,
-% z(i,:) = E(z|X(i,:), m)
-% and pz(i,:,:) = Cov(z|X(i,:), m).
+% pz(i,:) = E(z|X(i,:), m)
+% and pz2(i,:,:) = Cov(z|X(i,:), m).
+% <tr>
+% <td> [z] = fooMapLatent(m, X).
+% <td> If the LVM has discrete latent variables,
+% z(i,:) = argmax p(z|X(i,:), m).
+% Not supported for continuous latent variables.
 % <tr>
 % </table>
 % </html>
@@ -503,7 +529,8 @@ L = sum(gaussLogprob(m3, X))
 % <TH WIDTH=40%  BGCOLOR=#00CCFF><FONT COLOR=000000>Method</FONT></TH>
 % <TH WIDTH=60% BGCOLOR=#00CCFF><FONT COLOR=000000>Description</FONT></TH>
 % </TR>
-% <td> [bel] = inferNodes(m, evidence).
+% <tr> 
+% <td> [bel] = fooInferNodes(m, evidence).
 % <td> Here bel{i} is a tabular factor, 
 % where  bel{i}.T(k) is the probability node i is in state k, given the
 % evidence.
@@ -513,11 +540,9 @@ L = sum(gaussLogprob(m3, X))
 % "http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutGM.html">here</a>
 % for details.
 % <tr> 
-% <td> yhat = map(m, evidence)
+% <td> yhat = fooMap(m, evidence)
 % <td> Computes argmax p(y|ev, m), which is a (joint) posterior mode.
-% <tr> 
-% <td> Ghat = fitStruct(m, evidence)
-% <td> Find a MAP estimate of the graph structure (not yet implemented).
+% <tr>
 % </table>
 % </html>
 %%
@@ -539,14 +564,6 @@ L = sum(gaussLogprob(m3, X))
 %%
 % <html>
 % <img src="http://pmtk3.googlecode.com/svn/trunk/docs/classSystem/modelsMethodsTree.png">.
-% </html>
-%%
-% A summary of the concrete classes (which are leaves in the class
-% hierarchy) is shown below.
-%%
-% <html>
-% <img
-% src="http://pmtk3.googlecode.com/svn/trunk/docs/classSystem/modelsConcreteTree.png">
 % </html>
 %%
 
@@ -594,7 +611,7 @@ L = sum(gaussLogprob(m3, X))
 
 %% Passing in optional arguments
 % Many functions take a large number of optional arguments.
-% For example, <http://pmtk3.googlecode.com/svn/trunk/toolbox/SupervisedModels/linearRegression/linregFit.m linregFit.m> (which fits a linear regression model)
+% For example, <http://pmtk3.googlecode.com/svn/trunk/toolbox/SupervisedModels/linreg/linregFit.m linregFit.m> (which fits a linear regression model)
 % has the following interface
 %
 %  [model] = linregFit(X, y, varargin)
@@ -627,8 +644,8 @@ m2 = linregFit(X, y, s)
 assert(approxeq(m1.w, m2.w))
 %%
 % Internally, these optional arguments are processed using
-% <http://matlabtools.googlecode.com/svn/trunk/util/process_options.m process_options.m> , written by Mark Paskin, and
-% <http://matlabtools.googlecode.com/svn/trunk/util/prepareArgs.m prepareArgs.m> , written by Matt Dunham.
+% <http://pmtk3.googlecode.com/svn/trunk/matlabTools/util/process_options.m process_options.m> , written by Mark Paskin, and
+% <http://pmtk3.googlecode.com/svn/trunk/matlabTools/util/prepareArgs.m prepareArgs.m> , written by Matt Dunham.
 % For more detals, see
 % <http://yagtom.googlecode.com/svn/trunk/html/writingFunctions.html#40
 % this entry> in our Matlab tutorial.
@@ -643,8 +660,8 @@ assert(approxeq(m1.w, m2.w))
 % in our <http://code.google.com/p/yagtom/ Matlab tutorial>.
 % We mention just a few of the most useful ones below
 %
-% * <http://matlabtools.googlecode.com/svn/trunk/metaTools/whoCallsMe.m whoCallsMe.m> : |whoCallsMe('foo')| will list all files that call foo.m
-% * <http://matlabtools.googlecode.com/svn/trunk/metaTools/wwhich.m wwhich.m> : which with wildcards. eg |wwhich('foo*')|
+% * <http://pmtk3.googlecode.com/svn/trunk/matlabTools/metaTools/whoCallsMe.m whoCallsMe.m> : |whoCallsMe('foo')| will list all files that call foo.m
+% * <http://pmtk3.googlecode.com/svn/trunk/matlabTools/metaTools/wwhich.m wwhich.m> : which with wildcards. eg |wwhich('foo*')|
 % prints full filenames of all files starting
 %   with the string 'foo', and |wwhich('*foo*')| finds
 % files with 'foo' anywhere in their name.
@@ -658,12 +675,12 @@ assert(approxeq(m1.w, m2.w))
 %     are properly documented. Unfortuntately that is not the case for
 %     all the PMTK functions... but you can always read the source :)
 % * |doc('foo')| opens the html documentation for built-in function foo.m
-% * <http://matlabtools.googlecode.com/svn/trunk/graphics/placeFigures.m placeFigures.m> : this lays out all the currently open figures
+% * <http://pmtk3.googlecode.com/svn/trunk/matlabTools/graphics/placeFigures.m placeFigures.m> : this lays out all the currently open figures
 %   so you can see them all at the same time
 % * |dbstop if error| : open the debugger if there is an error.
 % See <http://yagtom.googlecode.com/svn/trunk/html/debugging.html here>
 % for more info on debugging.
-% * <http://matlabtools.googlecode.com/svn/trunk/graphics/printPmtkFigure.m printPmtkFigure.m> : this is used to make figures for
+% * <http://pmtk3.googlecode.com/svn/trunk/matlabTools/graphics/printPmtkFigure.m printPmtkFigure.m> : this is used to make figures for
 % <http://www.cs.ubc.ca/~murphyk/MLbook/index.html my book>. It uses
 % <http://www.mathworks.com/matlabcentral/fileexchange/23629 export_fig.m>
 % to make the figures 'camera ready'. If you want to include figures
@@ -687,7 +704,7 @@ assert(approxeq(m1.w, m2.w))
 %%
 
 %%
-% This page was auto-generated by calling _pmtkPublish(C:\kmurphy\GoogleCode\pmtk3\docs\tutorial\tutFoundations.m)_  on 08-Sep-2010 17:19:51
+% This page was auto-generated by calling _pmtkPublish(tutFoundations)_  on 25-Oct-2010 11:26:57
 
 
 ##### SOURCE END #####

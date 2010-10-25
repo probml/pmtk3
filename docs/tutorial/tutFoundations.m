@@ -202,7 +202,8 @@ cond(m3.Sigma)
 % Now let us consider another useful operation:
 % evaluating the log likelihood of a dataset:
 %%
-L = gaussLogprob(m3, X)
+L = gaussLogprob(m3, X);
+size(L)
 %%
 % where L(i) is the logprob of X(i,:).
 % For Gaussians, we can also write
@@ -280,9 +281,9 @@ L = gaussLogprob(m3, X)
 % "http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutGM.html">here</a>
 % for details.
 % <tr> 
-% <td> [bel, 
 % <td> yhat = fooMap(m, evidence)
 % <td> Computes argmax p(y|ev, m), which is a (joint) posterior mode.
+% <tr>
 % </table>
 % </html>
 %%
