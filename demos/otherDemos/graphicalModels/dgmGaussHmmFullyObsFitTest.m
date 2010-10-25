@@ -22,9 +22,11 @@ hmmModel = hmmFitFullyObs(Z, Y, 'gauss');
 localev  = hmmObs2LocalEv(Y); 
 data     = cell2mat(Z); 
 % make sure they have the same priors
-dgmModel.CPDs{1}.prior = hmmModel.piPrior(:); 
-dgmModel.CPDs{2}.prior = hmmModel.transPrior ;
-dgmModel.localCPDs{1}.prior = hmmModel.emission.prior; 
+% KPM 25Oct10 added -1 to priors
+% because tabularCpd now interprets prior as pseudocounts (alpha-1) 
+dgmModel.CPDs{1}.prior = hmmModel.piPrior(:)-1; 
+dgmModel.CPDs{2}.prior = hmmModel.transPrior-1;
+dgmModel.localCPDs{1}.prior = hmmModel.emission.prior; % no -1 
 % fit dgm
 dgmModel = dgmTrain(dgmModel,'data', data, 'localev', localev); 
 %% compare results
