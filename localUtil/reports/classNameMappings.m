@@ -41,12 +41,15 @@ supervised = {
     'svm'    };
 
 latent =     {
+  'deepBelNet'
     'hmm'
     'lds'
-    'mixModel'
-    'mixGaussDiscrete'
     'mixGaussBayes'
-    'ppca'   };
+    'mixGaussDiscrete'
+    'mixtureModel'
+    'ppca'  
+    'rbm'
+    };
 
 graphical =  {
     'crf2'
