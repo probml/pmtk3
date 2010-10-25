@@ -90,11 +90,8 @@ setSeed(0); X = gaussSample(m, 5)
 %%
 % We discuss supervised models in more detail
 % <http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutSupervised.html here>.
-% A list of all the supervised models can be found
-% <http://pmtk3.googlecode.com/svn/trunk/docs/modelLists/supervisedList.html
-% here>.
-% A complete list of the methods
-% currently implemented by each supervised model is shown
+% An auto-generated list of all the supervised models and their methods
+% is shown
 % <http://pmtk3.googlecode.com/svn/trunk/docs/modelsByMethods/supervisedModels.html here>.
 
 
@@ -419,7 +416,7 @@ assert(approxeq(m1.w, m2.w))
 % Below we give some links to auto-generated documentation,
 % which list all the functions and demos in the toolbox.
 % These automatically generated lists can help you
-% find relevant functions/ demos that are not mentioned in the tutorial.
+% find relevant functions/ demos that may not be mentioned in the tutorial.
 %
 % * <http://code.google.com/p/pmtk3/wiki/synopsisPages Functions>,
 % with brief (1 line) descriptions and links to their source

@@ -65,6 +65,7 @@ model.preproc = preproc;
 model.expertFitArgs = expertFitArgs;
 model.gatingFitArgs = gatingFitArgs;
 model.fixmix = fixmix;
+model.modelType = 'mixexp';
 
 [model, loglikHist] = emAlgo(model, data, @initFn, @estep, @mstep, ...
   EMargs{:});
