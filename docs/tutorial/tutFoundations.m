@@ -306,14 +306,6 @@ L = gaussLogprob(m3, X)
 % <img src="http://pmtk3.googlecode.com/svn/trunk/docs/classSystem/modelsMethodsTree.png">.
 % </html>
 %%
-% A summary of the concrete classes (which are leaves in the class
-% hierarchy) is shown below.
-%%
-% <html>
-% <img
-% src="http://pmtk3.googlecode.com/svn/trunk/docs/classSystem/modelsConcreteTree.png">
-% </html>
-%%
 
 
 %% Bayesian methods

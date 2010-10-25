@@ -35,10 +35,15 @@ supervised = {
     'knn'
     'linreg'
     'logreg'
+    'mixexp'
     'mlp'
     'naiveBayes'
+    'oneVsRestClassifier'
     'probitReg'
-    'svm'    };
+    'rvm'
+    'smlr'
+    'svm'    
+    };
 
 latent =     {
   'deepBelNet'
