@@ -91,13 +91,13 @@ if  ~verLessThan('matlab', '7.6.0')
        addtosystempath(gvizDir);  
     end
 end
-%% add the svm executables to the system path.
+%% add various binary executables to the system path.
 if exist('pmtkSupportRoot', 'file')
     folder = pmtkSupportRoot(); 
     dirs   = {'svmLightWindows'        , ...
              'liblinear-1.51\windows' , ...
-             'libsvm-mat-2.9.1'};
-           %  'mplp-1.0'};
+             'libsvm-mat-2.9.1', ...
+             'mplp-1.0'};
     for i=1:length(dirs)
         addtosystempath(fullfile(folder, dirs{i}))
     end
