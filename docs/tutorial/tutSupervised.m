@@ -1,7 +1,12 @@
 %% Supervised learning in pmtk3
 %
 %% Models
-% The following is a list  (in alphabetical order)
+% An auto-generated list of all the supervised models and their methods
+% is shown
+% <http://pmtk3.googlecode.com/svn/trunk/docs/modelsByMethods/supervisedModels.html here>.
+%
+% Below we show a manually created list 
+%  (in alphabetical order)
 % of pmtk models that are designed for 
 % supervised learning.
 % We have classified the models based on whether they can be used for

@@ -243,8 +243,6 @@ size(L)
 %%
 % We discuss LVMs in more detail 
 % in tutLVM.html .
-% An auto-generated list of all the LVMs and their methods is shown
-% <http://pmtk3.googlecode.com/svn/trunk/docs/modelsByMethods/latentModels.html here>.
 
 
 
@@ -279,8 +277,6 @@ size(L)
 % We discuss graphical models in more detail
 % <http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/html/tutGM.html
 % here>.
-% An auto-generated list of all the GMs and their  methods is shown
-% <http://pmtk3.googlecode.com/svn/trunk/docs/modelsByMethods/graphicalModels.html here>.
 
 
 
