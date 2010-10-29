@@ -11,7 +11,7 @@ function X = gibbsSample(fullCondSampler, xinit, Nsamples, Nburnin, thin)
 % This file is from pmtk3.googlecode.com
 
 
-if nargin < 4, Nburnin = floor(0.1*Nsamples); end
+if nargin < 4, Nburnin = 0; end
 if nargin < 5, thin = 1; end
 
 keep = 1;

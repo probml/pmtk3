@@ -4,7 +4,7 @@
 
 % This file is from pmtk3.googlecode.com
 
-
+setSeed(0);
 D = loadData('rip');
 X = D.rip_dat_tr;
 Xt = D.rip_dat_te;

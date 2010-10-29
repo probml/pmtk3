@@ -13,7 +13,7 @@ mu = sigmoid(X*w);
 mu = max(mu, eps); % bound away from 0
 mu = min(1-eps, mu); % bound away from 1
 nll = -sum(weights .* (y01 .* log(mu) + (1-y01) .* log(1-mu)))
-Xw = X .* repmat(rowvec(weights), 1, d);
+Xw = X .* repmat(colvec(weights), 1, d);
 if nargout > 1
   g = Xw'*(mu-y01);
 end

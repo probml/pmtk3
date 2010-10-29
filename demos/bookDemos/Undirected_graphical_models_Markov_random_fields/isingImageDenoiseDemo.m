@@ -31,8 +31,10 @@ colormap gray;
 axis off;
 printPmtkFigure('isingImageDenoise');
 %%
+% H = rate of half, 1 = rate of 1 (no damping)
+% IP = in-place (sequential) updates, otherwise parallel updates
 methods = {'Gibbs', 'MeanfieldH', 'MeanfieldHIP', 'Meanfield1', 'Meanfield1IP'};
-%methods = {'Gibbs'};
+methods = {'Gibbs','meanfieldH'};
 
 for m=1:length(methods)
     method = methods{m};
