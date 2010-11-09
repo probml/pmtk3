@@ -4,10 +4,9 @@
 
 % This file is from pmtk3.googlecode.com
 
-thetas = [1/2 1/4 3/4 0.9];
-figure;
+thetas = [1/4 1/2 3/4 0.9];
 for i=1:4
-    subplot(2,2,i)
+    figure; %subplot(2,2,i)
     theta = thetas(i);
     N = 10;
     xs = 0:N;
@@ -16,6 +15,7 @@ for i=1:4
     ps = exp(binomialLogprob(model, xs));
     bar(ps)
     set(gca,'xticklabel',xs)
-    title(sprintf('theta=%5.3f',theta))
+    title(sprintf('%s=%5.3f','\theta',theta))
+    printPmtkFigure(sprintf('binomDistPlot%d',i));
 end
-printPmtkFigure('binomDistPlot');
+

@@ -4,8 +4,8 @@
 
 % This file is from pmtk3.googlecode.com
 
-Ls = 1:10:1000;
-ns = 1:5;
+Ls = 1:10:600;%1:10:1000;
+ns = [1, 2, 5]; %1:5;
 p = 0.99;
 figure; hold on;
 [styles, colors, symbols] =  plotColors;
