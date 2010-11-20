@@ -179,6 +179,8 @@ if doLatex
     latextable(data, 'Vert', rowNames, 'Horiz', colNames); 
 end
 
+disp(data) % make sure publishing the demo displays something to the screen!
+
 end
 
 

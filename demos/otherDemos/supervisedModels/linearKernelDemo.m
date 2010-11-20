@@ -68,9 +68,12 @@ htmlTableSimple('data', [nClasses(:) nFeatures(:) nCases(:)], ...
 
 
 %% Models
-methods = {'SVM', 'RVM', 'SMLR', 'RMLR', 'SMLRpath', 'RMLRpath', 'logregL2', 'logregL1'};
-%methods = {'SMLRpath', 'RMLRpath'};
-%methods = {'RVM'};
+% (For some reason, the path versions of SMLR and RMLR
+% give worse results than the versions that search over
+% a discrete grid of lambdas.)
+%methods = {'SVM', ' RVM', 'SMLR', 'RMLR', 'SMLRpath', 'RMLRpath', 'logregL2', 'logregL1'};
+methods = {'SVM', 'RVM', 'SKLR', 'RKLR', 'L1' };
+
 
 nMethods = numel(methods);
 
@@ -102,6 +105,7 @@ for d=1:nDataSets
         model = svmFit(Xtrain, ytrain, 'C', Crange,  'kernel', 'linear');
         predFn = @(m,X) svmPredict(m,X);
         chosenC(d,m,s) = model.C;
+        
       case 'rvm'
         model = rvmFit(Xtrain, ytrain, 'kernelFn', @kernelLinear);
         %model =  rvmFit(X,y, 'kernelFn', @(X1, X2)kernelRbfGamma(X1, X2, 1));
@@ -111,7 +115,8 @@ for d=1:nDataSets
         model = smlrFit(Xtrain, ytrain, 'kernelFn', @kernelLinear, ...
           'regType', 'L1', 'usePath', true);
         predFn = @(m,X) smlrPredict(m,X);
-      case {'smlrnopath', 'smlr'}
+        
+      case {'smlrnopath', 'smlr', 'sklr'}
         model = smlrFit(Xtrain, ytrain,  'kernelFn', @kernelLinear, ...
           'regType', 'L1', 'usePath', false);
         predFn = @(m,X) smlrPredict(m,X);
@@ -120,16 +125,18 @@ for d=1:nDataSets
         model = smlrFit(Xtrain, ytrain, 'kernelFn', @kernelLinear, ...
           'regtype', 'L2', 'usePath', true);
         predFn = @(m,X) smlrPredict(m,X);
-      case {'rmlrnopath', 'rmlr'}
+        
+      case {'rmlrnopath', 'rmlr', 'rklr'}
         model = smlrFit(Xtrain, ytrain, 'kernelFn', @kernelLinear, ...
           'regtype', 'L2', 'usePath', false);
         predFn = @(m,X) smlrPredict(m,X);
         
  
-      case 'logregl2'
+      case {'l2', 'logregl2'}
         model = logregFitPathCv(Xtrain, ytrain, 'regtype', 'L2');
         predFn = @(m,X) logregPredict(m,X);
-      case 'logregl1'
+        
+      case {'l1', 'logregl1'}
         model = logregFitPathCv(Xtrain, ytrain, 'regtype', 'L1');
         predFn = @(m,X) logregPredict(m,X);
     end
@@ -162,3 +169,28 @@ htmlTableSimple('data', median(trainingTime,3), 'rowNames', dataNames, 'colNames
   'format', 'float',  'fname', fullfile(folder, 'time.html'), ...
   'title', sprintf('training time in seconds (median over %d trials)', numel(seeds)));
 
+for d=1:nDataSets
+  for m=1:nMethods
+    fprintf('(%5.3f, %5.3f, %5.3f), ', testErrRate(d,m,:));
+  end
+  fprintf('\n');
+end
+
+%figure;
+for d=1:nDataSets
+  figure; % subplot(2,2,d);
+  M = squeeze(testErrRate(d,:,:));
+  boxplot(M', 'labels', methods)
+  title(sprintf('%s', dataNames{d}))
+  printPmtkFigure(sprintf('linearKernelBoxplot-%s', dataNames{d}));
+  ylabel('test misclassification rate')
+end
+
+for d=1:nDataSets
+  figure; % subplot(2,2,d);
+  M = squeeze(trainingTime(d,:,:));
+  boxplot(M', 'labels', methods)
+  title(sprintf('%s', dataNames{d}))
+  printPmtkFigure(sprintf('linearKernelBoxplotTime-%s', dataNames{d}));
+  ylabel('total training time (seconds)')
+end

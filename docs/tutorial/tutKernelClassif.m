@@ -264,8 +264,6 @@ errRate = nerrors/nTest
 
 %% Comparison of SVM, RVM, SMLR
 % Let us compare various kernelized classifiers.
-% (We also compare to non-kernelized logistic regression,
-% as a baseline, using either L2 or L1 regularization.)
 % Below we show the characteristics of some data sets
 % to which we will apply the various classifiers.
 % Colon and AML/ALL are gene microarray datasets,
@@ -282,41 +280,155 @@ errRate = nerrors/nTest
 % <TH BGCOLOR=#00CCFF><FONT COLOR=000000></FONT></TH>
 % <TH BGCOLOR=#00CCFF><FONT COLOR=000000>nClasses</FONT></TH>
 % <TH BGCOLOR=#00CCFF><FONT COLOR=000000>nFeatures</FONT></TH>
-% <TH BGCOLOR=#00CCFF><FONT COLOR=000000>nCases</FONT></TH>
+% <TH BGCOLOR=#00CCFF><FONT COLOR=000000>nTrain</FONT></TH>
+% <TH BGCOLOR=#00CCFF><FONT COLOR=000000>nTest</FONT></TH>
 % </TR>
+% <tr>
+% <td BGCOLOR=#00CCFF><FONT COLOR=000000>crabs</FONT>
+% <td> 2
+% <td> 5
+% <td> 140
+% <td> 60
+% <tr>
+% <td BGCOLOR=#00CCFF><FONT COLOR=000000>iris</FONT>
+% <td> 3
+% <td> 4
+% <td> 105
+% <td> 45
+% <tr>
+% <td BGCOLOR=#00CCFF><FONT COLOR=000000>bankruptcy</FONT>
+% <td> 2
+% <td> 2
+% <td> 46
+% <td> 20
+% <tr>
+% <td BGCOLOR=#00CCFF><FONT COLOR=000000>pima</FONT>
+% <td> 2
+% <td> 7
+% <td> 140
+% <td> 60
 % <tr>
 % <td BGCOLOR=#00CCFF><FONT COLOR=000000>soy</FONT>
 % <td> 3
 % <td> 35
-% <td> 307
+% <td> 214
+% <td> 93
 % <tr>
-% <td BGCOLOR=#00CCFF><FONT COLOR=000000>fglass</FONT>
+% <td BGCOLOR=#00CCFF><FONT COLOR=000000>Fglass</FONT>
 % <td> 6
 % <td> 9
-% <td> 214
+% <td> 149
+% <td> 65
 % <tr>
 % <td BGCOLOR=#00CCFF><FONT COLOR=000000>colon</FONT>
 % <td> 2
 % <td> 2000
-% <td> 62
+% <td> 43
+% <td> 19
 % <tr>
-% <td BGCOLOR=#00CCFF><FONT COLOR=000000>amlAll</FONT>
+% <td BGCOLOR=#00CCFF><FONT COLOR=000000>AML/ALL</FONT>
 % <td> 2
 % <td> 7129
-% <td> 72
+% <td> 50
+% <td> 22
+% <tr>
 % </table>
 % </html>
 %%
 %
-% In linearKernelDemo.m , we compare various kernelized
-% classifiers (using linear kernels) on the above data.
-% (We use linear kernels so we don't have to cross validate
-% over gamma in the RBF kernel.)
-% Below we show the median misclassification rates on the different data sets,
-% averaged over 3 random splits.
+% In classificationShootout.m
+% we compare SVM, RVM, SMLR and RMLR
+% on the lowdim datasets using RBF kernels.
 % For each split, we use 70% of the data for training and 30% for testing.
 % Cross validation on the training set is then used internally,
 % if necessary, to tune the regularization parameter.
+% (This table is based on  Table 2 of
+% "Learning sparse Bayesian classifiers: multi-class formulation, fast
+% algorithms, and generalization bounds", Krishnapuram et al, PAMI 2005.)
+% The results are shown below.
+% We show the total number of misclassifications, and in brackets, the
+% total number of retained kernel basis functions (- means not computed).
+% The bottom row shows the total number of test cases, and the total
+% number of possible basis functions, which is $Ntrain \times C$.
+%%
+% <html>
+% <TABLE BGCOLOR=grey ALIGN=left CELLPADDING=9 VALIGN=top <CAPTION ALIGN=bottom><font size=4></font></CAPTION><TR><TD></TD><TH BGCOLOR=white ALIGN=center VALIGN=top><font size=3>Crabs</font></TH><TH BGCOLOR=white ALIGN=center VALIGN=top><font size=3>Iris</font></TH><TH BGCOLOR=white ALIGN=center VALIGN=top><font size=3>Bankruptcy</font></TH><TH BGCOLOR=white ALIGN=center VALIGN=top><font size=3>Pima</font></TH><TH BGCOLOR=white ALIGN=center VALIGN=top><font size=3>Soy</font></TH><TH BGCOLOR=white ALIGN=center VALIGN=top><font size=3>Fglass</font></TH><TH BGCOLOR=white ALIGN=center VALIGN=top><font size=3>train(minutes)</font></TH><TH BGCOLOR=white ALIGN=center VALIGN=top><font size=3>test(seconds)</font></TH></TR>
+% <TR>
+% <TH BGCOLOR=white ALIGN=left VALIGN=center ><font
+% size=3>SVM</font></TH><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>4 (40)</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>4 (32)</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>2 (12)</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>15 (81)</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>7 (96)</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>25 (99)</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>     7.3</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3> 0.024</font></TD>
+% </TR><TR>
+% <TH BGCOLOR=white ALIGN=left VALIGN=center ><font size=3>RVM</font></TH><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>6 (8)</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>5 (12)</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>2 (2)</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>13 (3)</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>9 (31)</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>23 (67)</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>      38</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3> 0.013</font></TD>
+% </TR><TR>
+% <TH BGCOLOR=white ALIGN=left VALIGN=center ><font
+% size=3>SMLR</font></TH><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>2 (140)</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>5 (210)</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>1 (46)</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>14 (140)</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>9 (400)</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>22 (730)</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>2.5e+002</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>  0.01</font></TD>
+% </TR><TR>
+% <TH BGCOLOR=white ALIGN=left VALIGN=center ><font size=3>RMLR</font></TH><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>3 (280)</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>6 (315)</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>1 (92)</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>16 (280)</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>7 (642)</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>23 (894)</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>      48</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>0.0097</font></TD>
+% </TR><TR>
+% <TH BGCOLOR=white ALIGN=left VALIGN=center ><font size=3>Out
+% of</font></TH><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>60 (280)</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>45 (315)</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>20 (92)</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>60 (280)</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>93 (642)</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>65 (894)</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD><TD  BGCOLOR=white ALIGN=left VALIGN=top><font size=3>&nbsp;</font></TD>
+% </TR></TABLE><br>
+% </html>
+%%
+%
+% The training time above is total time in minutes, including cross
+% validation.
+% But beware, we are comparing apples with oranges here,
+% since the packages are in different langauges:
+%
+% * svm  is a wrapper to C code (libsvm)
+% * rvm is optimized Matlab (SparseBayes)
+% * SMLR and RMLR is unoptimized Matlab (very slow).
+%
+% The total time to make the above table is about 8 hours!
+% Since it is very slow to cross validate over the
+% kernel bandwidth $\gamma$ and the regularization penalty $\lambda$,
+% we made a faster version of this demo, called
+% classificationShootoutCvLambdaOnly.m
+% Here we first
+% picked $\gamma$ using CV for an SVM; we then used this same kernel
+% parameter for all methods. (For the high dimensional datasets,
+% we used a linear kernel.) The results are shown below.
+% We see that performance is worse than using CV to pick
+% the RBF param for each method separately.
+%
+%%
+% <html>
+% <table valign="top" align="left" bgcolor="grey" cellpadding="9">
+% <caption align="bottom"><font size="4"></font></caption>
+% <tbody><tr><td></td><th align="center" bgcolor="white" valign="top">
+% <font size="3">Crabs</font></th><th align="center" bgcolor="white" valign="top">
+% <font size="3">Iris</font></th><th align="center" bgcolor="white" valign="top">
+% <font size="3">Bankruptcy</font></th><th align="center" bgcolor="white" valign="top"><font size="3">Pima</font></th><th align="center" bgcolor="white" valign="top"><font size="3">Soy</font></th><th align="center" bgcolor="white" valign="top"><font size="3">Fglass</font></th><th align="center" bgcolor="white" valign="top"><font size="3">colon (linear)</font></th><th align="center" bgcolor="white" valign="top"><font size="3">amlAll (linear)</font></th><th align="center" bgcolor="white" valign="top"><font size="3">train(seconds)</font></th><th align="center" bgcolor="white" valign="top"><font size="3">test(seconds)</font></th></tr>
+% <tr>
+% <th align="left" bgcolor="white" valign="center"><font
+% size="3">SVM</font></th><td align="left" bgcolor="white" valign="top"><font size="3">6 (106)</font></td><td align="left" bgcolor="white" valign="top"><font size="3">5 (25)</font></td><td align="left" bgcolor="white" valign="top"><font size="3">2 (17)</font></td><td align="left" bgcolor="white" valign="top"><font size="3">16 (87)</font></td><td align="left" bgcolor="white" valign="top"><font size="3">5 (143)</font></td><td align="left" bgcolor="white" valign="top"><font size="3">24 (120)</font></td><td align="left" bgcolor="white" valign="top"><font size="3">5 (0)</font></td><td align="left" bgcolor="white" valign="top"><font size="3">8 (0)</font></td><td align="left" bgcolor="white" valign="top"><font size="3">      32</font></td><td align="left" bgcolor="white" valign="top"><font size="3">0.078</font></td>
+% </tr><tr>
+% <th align="left" bgcolor="white" valign="center"><font size="3">RVM</font></th><td align="left" bgcolor="white" valign="top"><font size="3">5 (6)</font></td><td align="left" bgcolor="white" valign="top"><font size="3">5 (8)</font></td><td align="left" bgcolor="white" valign="top"><font size="3">2 (2)</font></td><td align="left" bgcolor="white" valign="top"><font size="3">22 (1)</font></td><td align="left" bgcolor="white" valign="top"><font size="3">7 (32)</font></td><td align="left" bgcolor="white" valign="top"><font size="3">36 (28)</font></td><td align="left" bgcolor="white" valign="top"><font size="3">3 (3)</font></td><td align="left" bgcolor="white" valign="top"><font size="3">4 (1)</font></td><td align="left" bgcolor="white" valign="top"><font size="3">     4.2</font></td><td align="left" bgcolor="white" valign="top"><font size="3">0.047</font></td>
+% </tr><tr>
+% <th align="left" bgcolor="white" valign="center"><font
+% size="3">SMLR</font></th><td align="left" bgcolor="white" valign="top"><font size="3">3 (140)</font></td><td align="left" bgcolor="white" valign="top"><font size="3">5 (209)</font></td><td align="left" bgcolor="white" valign="top"><font size="3">2 (39)</font></td><td align="left" bgcolor="white" valign="top"><font size="3">13 (140)</font></td><td align="left" bgcolor="white" valign="top"><font size="3">7 (376)</font></td><td align="left" bgcolor="white" valign="top"><font size="3">25 (743)</font></td><td align="left" bgcolor="white" valign="top"><font size="3">3 (28)</font></td><td align="left" bgcolor="white" valign="top"><font size="3">5 (49)</font></td><td align="left" bgcolor="white" valign="top"><font size="3">4.8e+002</font></td><td align="left" bgcolor="white" valign="top"><font size="3">0.029</font></td>
+% </tr><tr>
+% <th align="left" bgcolor="white" valign="center"><font size="3">RMLR</font></th><td align="left" bgcolor="white" valign="top"><font size="3">3 (280)</font></td><td align="left" bgcolor="white" valign="top"><font size="3">5 (315)</font></td><td align="left" bgcolor="white" valign="top"><font size="3">2 (92)</font></td><td align="left" bgcolor="white" valign="top"><font size="3">15 (280)</font></td><td align="left" bgcolor="white" valign="top"><font size="3">7 (642)</font></td><td align="left" bgcolor="white" valign="top"><font size="3">22 (894)</font></td><td align="left" bgcolor="white" valign="top"><font size="3">8 (86)</font></td><td align="left" bgcolor="white" valign="top"><font size="3">4 (100)</font></td><td align="left" bgcolor="white" valign="top"><font size="3">1.1e+002</font></td><td align="left" bgcolor="white" valign="top"><font size="3">0.028</font></td>
+% </tr><tr>
+% <th align="left" bgcolor="white" valign="center"><font size="3">Out
+% of</font></th><td align="left" bgcolor="white" valign="top"><font
+% size="3">60 (280)</font></td><td align="left" bgcolor="white"
+% valign="top"><font size="3">45 (315)</font></td><td align="left" bgcolor="white" valign="top"><font size="3">20 (92)</font></td><td align="left" bgcolor="white" valign="top"><font size="3">60 (280)</font></td><td align="left" bgcolor="white" valign="top"><font size="3">93 (642)</font></td><td align="left" bgcolor="white" valign="top"><font size="3">65 (894)</font></td><td align="left" bgcolor="white" valign="top"><font size="3">19 (86)</font></td><td align="left" bgcolor="white" valign="top"><font size="3">22 (100)</font></td><td align="left" bgcolor="white" valign="top"><font size="3"> </font></td><td align="left" bgcolor="white" valign="top"><font size="3"> </font></td>
+% </tr></tbody></table><br>
+% </html>
+%%
+%
+% In the spirit of reproducible research,
+% we created a simpler demo, called
+% linearKernelDemo.m , 
+% which only uses linear kernels (so we don't have to cross validate
+% over gamma in the RBF kernel) and only runs on a few datasets.
+% This is much faster, allowing us to perform multiple trials.
+% Below we show the median misclassification rates on the different data sets,
+% averaged over 3 random splits.
+% We also added logregL1path and logregL2path to the mix;
+% these are written in Fortran (glmnet).
+% The results are shown below.
 %%
 % <html>
 % <TABLE BORDER=3 CELLPADDING=5 WIDTH="100%" >
@@ -371,13 +483,7 @@ errRate = nerrors/nTest
 %
 % The error rates for all methods on the forensic glass
 % data are quite high (chance would be 5/6=0.83).
-% This is because we used a linear kernel,
-% but we only have 9 features. Using a nonlinear kernel
-% (as we did above) can sometimes help performance.
-% However, on high-dim datasets, linear kernels
-% are usually sufficient. Indeed, we can just as well
-% work in the original feature space and not use kernels at all
-% for the other 3 datasets.
+% As we saw above, this is true even if we use RBF kernels.
 %
 % The error rate for SVM on AML/ALL is very high (chance is 0.5).
 % Other papers have reported much better results
@@ -386,18 +492,9 @@ errRate = nerrors/nTest
 % that other authors have chosen particularly favorable train/test splits.
 % We find that, across the 3 folds, the number of errors were 11, 10 and 4
 % (out of 22). You are welcome to read the source code to make
-% sure we are being fair.
+% sure we are being fair and do not have bugs.
 %
-% It is also interesting to look at the amount of time required
-% to train each model (prediction is very fast with all of these methods).
-% Below we show median time in seconds.
-% But beware, we are comparing apples with oranges here,
-% since the packages are in different langauges:
-%
-% * svm  is a wrapper to C code (libsvm)
-% * rvm is optimized Matlab (SparseBayes)
-% * SMLR and RMLR is unoptimized Matlab.
-% * logregL1path and logregL2path is a wrapper to Fortran code (glmnet)
+% Here are the training times.
 %
 %%
 % <html>
@@ -452,7 +549,7 @@ errRate = nerrors/nTest
 % takes about 10 minutes (on my laptop).
 % However, we can run a simplified version of the demo,
 % which only uses 1 random fold, and only uses the last
-% two datasets. This just takes 20 seconds.
+% two datasets (with smaller sample size). This just takes 20 seconds.
 %%
 clear all
 tic
@@ -536,6 +633,8 @@ fprintf('test err\n');
 disp(testErrRate)
 %%
 % It is easy to add other classifiers and data sets to this comparison.
+%
+%
 % For more extensive comparison of different classifiers
 % on different datasets, see
 % tutMLcomp.html .

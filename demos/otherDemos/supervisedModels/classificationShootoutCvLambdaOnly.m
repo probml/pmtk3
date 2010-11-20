@@ -218,6 +218,7 @@ end
 if doLatex
     latextable(data, 'Vert', rowNames, 'Horiz', colNames); 
 end
+disp(data)
 
 end
 

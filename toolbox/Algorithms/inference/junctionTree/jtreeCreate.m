@@ -27,9 +27,9 @@ end
 G = setdiag(G, 0);
 %% build clique tree
 % clqs{i} is the i'th maximal clique, ordered by RIP
-[elimOrder, G]                = minWeightElimOrder(G, nstates); 
-[pElimOrder, ischordal, clqs] = maxCardinalitySearch(G); 
-cliqueTreeUndir               = mcsCliques2Jtree(clqs);
+[elimOrder, GT]                = minWeightElimOrder(G, nstates);  % triangulate
+[pElimOrder, ischordal, clqs] = maxCardinalitySearch(GT); % find clqs
+cliqueTreeUndir               = mcsCliques2Jtree(clqs); % build jtree
 assert(ischordal); 
 %% create clique lookup table
 % cliqueLookup(i, c) = true if GM node i is in clqs{c}
