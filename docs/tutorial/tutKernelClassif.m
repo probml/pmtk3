@@ -342,14 +342,15 @@ errRate = nerrors/nTest
 % For each split, we use 70% of the data for training and 30% for testing.
 % Cross validation on the training set is then used internally,
 % if necessary, to tune the regularization parameter.
-% (This table is based on  Table 2 of
-% "Learning sparse Bayesian classifiers: multi-class formulation, fast
-% algorithms, and generalization bounds", Krishnapuram et al, PAMI 2005.)
 % The results are shown below.
+% (This table is modelled after   Table 2 of
+% <http://www.lx.it.pt/~mtf/Krishnapuram_Carin_Figueiredo_Hartemink_2005.pdf Learning
+% sparse Bayesian classifiers: multi-class formulation, fast
+% algorithms, and generalization bounds>, Krishnapuram et al, PAMI 2005.)
 % We show the total number of misclassifications, and in brackets, the
 % total number of retained kernel basis functions (- means not computed).
 % The bottom row shows the total number of test cases, and the total
-% number of possible basis functions, which is $Ntrain \times C$.
+% number of possible basis functions, which is $N \times C$.
 %%
 % <html>
 % <TABLE BGCOLOR=grey ALIGN=left CELLPADDING=9 VALIGN=top <CAPTION ALIGN=bottom><font size=4></font></CAPTION><TR><TD></TD><TH BGCOLOR=white ALIGN=center VALIGN=top><font size=3>Crabs</font></TH><TH BGCOLOR=white ALIGN=center VALIGN=top><font size=3>Iris</font></TH><TH BGCOLOR=white ALIGN=center VALIGN=top><font size=3>Bankruptcy</font></TH><TH BGCOLOR=white ALIGN=center VALIGN=top><font size=3>Pima</font></TH><TH BGCOLOR=white ALIGN=center VALIGN=top><font size=3>Soy</font></TH><TH BGCOLOR=white ALIGN=center VALIGN=top><font size=3>Fglass</font></TH><TH BGCOLOR=white ALIGN=center VALIGN=top><font size=3>train(minutes)</font></TH><TH BGCOLOR=white ALIGN=center VALIGN=top><font size=3>test(seconds)</font></TH></TR>
@@ -477,24 +478,17 @@ errRate = nerrors/nTest
 % </table>
 % </html>
 %%
-% In terms of median performance, all methods are similar,
-% with the exception of logregL2,
-% which is often much worse than the others.
-%
-% The error rates for all methods on the forensic glass
-% data are quite high (chance would be 5/6=0.83).
-% As we saw above, this is true even if we use RBF kernels.
-%
-% The error rate for SVM on AML/ALL is very high (chance is 0.5).
-% Other papers have reported much better results
-% for SVMs on this data (with linear kernels). This is possibly
-% due to the way we do cross validation. However, it may be
-% that other authors have chosen particularly favorable train/test splits.
-% We find that, across the 3 folds, the number of errors were 11, 10 and 4
-% (out of 22). You are welcome to read the source code to make
-% sure we are being fair and do not have bugs.
-%
-% Here are the training times.
+% Before reading too much into these results,
+% let's look at the boxplots, which show that
+% the differences are probably not signficant
+% (we don't plot L2 lest it distort the scale)
+%%
+% <html>
+% <img 
+% src="http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/extraFigures/linearKernelBoxplotErr.png">
+% </html>
+%%
+% Below are the training times in seconds (median over 3 trials)
 %
 %%
 % <html>
@@ -544,12 +538,25 @@ errRate = nerrors/nTest
 % </table>
 % </html>
 %%
+% And here are the boxplots
+%%
+% <html>
+% <img 
+% src="http://pmtk3.googlecode.com/svn/trunk/docs/tutorial/extraFigures/linearKernelBoxplotTime.png">
+% </html>
+%%
+% We see that the RVM is consistently the fastest.
+% which is somewhat surprising since the SVM code is in C.
+% However, the SVM needs to use cross validation, whereas RVM uses
+% empirical Bayes.
+%
 % Reproducing the above results using
 % linearKernelDemo.m 
 % takes about 10 minutes (on my laptop).
 % However, we can run a simplified version of the demo,
 % which only uses 1 random fold, and only uses the last
-% two datasets (with smaller sample size). This just takes 20 seconds.
+% two datasets (with smaller sample size). This just takes 20 seconds,
+% so makes a suitable demo for publishing.
 %%
 clear all
 tic

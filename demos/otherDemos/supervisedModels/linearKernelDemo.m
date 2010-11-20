@@ -176,21 +176,32 @@ for d=1:nDataSets
   fprintf('\n');
 end
 
+
+folder = 'C:\kmurphy\GoogleCode\pmtk3\docs\tutorial\extraFigures';
 %figure;
 for d=1:nDataSets
-  figure; % subplot(2,2,d);
+  figure; 
+  %subplot(2,2,d);
   M = squeeze(testErrRate(d,:,:));
   boxplot(M', 'labels', methods)
   title(sprintf('%s', dataNames{d}))
   printPmtkFigure(sprintf('linearKernelBoxplot-%s', dataNames{d}));
+  %print(gcf, '-dpng', fullfile(folder, sprintf('linearKernelBoxplot-%s.png', dataNames{d})))
   ylabel('test misclassification rate')
 end
+%print(gcf, '-dpng', fullfile(folder, 'linearKernelBoxplotErr.png'))
 
+
+%figure
 for d=1:nDataSets
-  figure; % subplot(2,2,d);
+  figure; 
+  %subplot(2,2,d);
   M = squeeze(trainingTime(d,:,:));
   boxplot(M', 'labels', methods)
   title(sprintf('%s', dataNames{d}))
   printPmtkFigure(sprintf('linearKernelBoxplotTime-%s', dataNames{d}));
+  %print(gcf, '-dpng', fullfile(folder, sprintf('linearKernelBoxplotTime-%s.png', dataNames{d})))
   ylabel('total training time (seconds)')
 end
+%print(gcf, '-dpng', fullfile(folder, 'linearKernelBoxplotTime.png'))
+
