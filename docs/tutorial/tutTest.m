@@ -130,6 +130,3 @@
 % However, the SVM needs to use cross validation, whereas RVM uses
 % empirical Bayes.
 %
-% (This table is modelled after   Table 2 of
-% <http://www.lx.it.pt/~mtf/Krishnapuram_Carin_Figueiredo_Hartemink_2005.pdf Learning sparse Bayesian classifiers: multi-class formulation, fast
-% algorithms, and generalization bounds>, Krishnapuram et al, PAMI 2005.)

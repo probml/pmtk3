@@ -114,9 +114,10 @@ return;
             figure;
             ttl = sprintf('p(X in h | D(1:%d), uninf prior)', points(i));
             %scale = [0 1 0 1 0 0.0002];
+            %scale = [0 0.5 0 0.5 0 0.1];
             scale = [];
             plotSurface(@(Y,X)genFn(Y,X),data(1:points(i),:),yes,yes,no,...
-                scale, ttl);
+                scale, ttl, false);
             fname = sprintf('healthyLevelsGen%d%s', points(i), priorType);
             printPmtkFigure(fname);
         end
@@ -246,9 +247,11 @@ return;
         %turnOffTickLabels;
     end
 %%
+
     function plotSurface(func, data, dependsOnData,...
-            solid, newFigure, scale, plotTitle)
+            solid, newFigure, scale, plotTitle, changeView)
         %% Plot the surface of the specified function
+        if nargin<8, changeView=true; end
         if(newFigure)
             figure;
         end

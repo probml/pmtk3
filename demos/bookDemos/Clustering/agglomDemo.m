@@ -25,16 +25,18 @@ N = size(X,1);
 for i=1:N
     hold on
     h=text(X(i,1)-0.1, X(i,2), sprintf('%d', i));
-    set(h,'fontsize',15,'color','r')
+    set(h,'fontsize',20,'color','r')
 end
 axis([0 8 0 5])
+printPmtkFigure('agglomDemoData')
 
 Y= pdist(X); % Euclidean distance
 Z = linkage(Y); % single link
-dendrogram(Z)
-c = cophenet(Z,Y)
+h=dendrogram(Z);
+set(gca,'fontsize',20)
+printPmtkFigure('agglomDemoDendrogram')
 
 
 Y = pdist(X,'cityblock');
 Z = linkage(Y,'average');
-c = cophenet(Z,Y)
+c = cophenet(Z,Y);

@@ -30,13 +30,13 @@ sp           = sqrt( ( (Nx-1)*sx^2 + (Ny-1)*sy^2 )/(Nx+Ny-2));
 Ndelta       = 1/(1/Nx + 1/Ny);
 t            = (xbar-ybar)/(sp / sqrt(Ndelta));
 dof          = Nx+Ny-2;
-sigmaD       = 1;
+sigmaD       = 1; %1/3; % sd of effect size
 
 model0.mu    = 0; 
 model0.Sigma = 1; 
 model0.dof   = dof; 
 
-model1      = model0; 
+model1      = model0;  % we assume lambda (mean of effect size) is 0
 model1.Sigma =  1+sigmaD^2*Ndelta; 
 BF01          = exp(studentLogprob(model0, t) - studentLogprob(model1, t));
 probH0       = 1/(1 + 1/BF01);
