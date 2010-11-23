@@ -1,6 +1,8 @@
 % evaluate performance as funciton of training set size
 % using hard labeling
 
+% PMTKinprogress
+
 % This file is from pmtk3.googlecode.com
 
 

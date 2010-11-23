@@ -5,6 +5,8 @@
 % Appearance of players is colored rectangles.
 % Motion is  random around fixed location, but we assume perfect tracking.
 
+% PMTKinprogress
+
 % This file is from pmtk3.googlecode.com
 
 

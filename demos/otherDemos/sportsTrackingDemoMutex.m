@@ -1,9 +1,12 @@
+
 %% Generate synthetic labeled data
 % of 'players' along with
 % perfect tracking info and weak lables saying who is in view
 % but without correspondence information.
 % Appearance of players is colored rectangles.
 % Motion is  random around fixed location, but we assume perfect tracking.
+
+% PMTKinprogress
 
 % This file is from pmtk3.googlecode.com
 
