@@ -40,7 +40,8 @@ function [missing, extra, copyProblems, missingExtra] = pmlOrganizeCode(bookSour
 
 SetDefaultValue(1, 'bookSource', getConfigValue('PMTKpmlBookSource'));
 %SetDefaultValue(1, 'bookSource', 'C:\Users\matt\Desktop\may1backup'); 
-SetDefaultValue(2, 'dest',  'C:\users\matt\Desktop\PMLcode');
+%SetDefaultValue(2, 'dest',  'C:\users\matt\Desktop\PMLcode');
+SetDefaultValue(2, 'dest',  'C:\kmurphy\GoogleCode\pmtk3\demos\organizedDemos');
 SetDefaultValue(3, 'demosOnly', true);
 SetDefaultValue(4, 'includeCodeSol', false);
 %% Optionally add CodeSol to path
@@ -112,6 +113,7 @@ end
 %%
 %% Organize the extra files (now turned off)
 %[missingExtra, extra] = pmlMoveExtraCode(bookSource, dest); 
+missingExtra = [];
 %% Check that we have accounted for all of the demos
 copiedFiles = cellfuncell(@(c)c(1:end-2), mfiles(dest));
 assert(isequal(sort(copiedFiles), sort(PMTKdemos)));
