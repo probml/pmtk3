@@ -15,13 +15,14 @@ function pmlFigureCodeReport(dest, includeEx, includeSol)
 
 % This file is from pmtk3.googlecode.com
 
-
+if nargin < 1, dest = 'C:\kmurphy\PML\figReport'; end
 if nargin < 2, includeEx  = false; end
 if nargin < 3, includeSol  = false; end
 
 linkOtherSource = true; % if true, we link to tex, ppt, source etc.
 oext = {'*.tex', '*.ppt'}; % look for files with these extensions if linkOtherSource true
 figThanksText = 'Figure courtesy of';
+figTakenText = 'Figure taken from';
 
 bookSource = getConfigValue('PMTKpmlBookSource');
 figSource  = fullfile(fileparts(bookSource), 'Figures', 'figuresSource');
@@ -86,6 +87,8 @@ for i=1:nfigs
         end
     elseif ~isempty(fig.macros.figthanks)
         sourceLink = sprintf('%s %s', figThanksText, fig.macros.figthanks{1}); 
+    elseif ~isempty(fig.macros.figtaken)
+      sourceLink = sprintf('%s %s', figTakenText, fig.macros.figtaken{1});
     elseif linkOtherSource
         found = false;
         
