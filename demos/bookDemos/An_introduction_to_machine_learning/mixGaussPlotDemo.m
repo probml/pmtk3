@@ -27,7 +27,7 @@ function mixGaussPlotDemo()
            '-scaleFactor'   , mixmat(k),...
            '-xrange'        , xrange(k, :));
        
-        set(h, 'color'      , colors{k});
+        set(h, 'color'      , colors{k}, 'linewidth', 3);
     end
     axis tight;
     printPmtkFigure('mixgauss3Components')
@@ -38,7 +38,9 @@ function mixGaussPlotDemo()
     printPmtkFigure('mixgauss3Contour');
 %%      
     figure;
-    h = plotDistribution(@(X)mixGaussLogprob(mu, Sigma, mixmat, X), 'useLog', false, 'useContour', false, 'npoints', 200, 'xrange', xrangeMix);
+    h = plotDistribution(@(X)mixGaussLogprob(mu, Sigma, mixmat, X), ...
+      'useLog', false, 'useContour', false, 'npoints', 200, ...
+      'xrange', xrangeMix, 'plotArgs', {'linewidth', 3});
     brown = [0.8 0.4 0.2];
     set(h,'FaceColor',brown,'EdgeColor','none');
     hold on;

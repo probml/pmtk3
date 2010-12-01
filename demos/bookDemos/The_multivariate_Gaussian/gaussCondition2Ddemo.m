@@ -25,19 +25,19 @@ marg.mu = mu(1); marg.Sigma = S(1, 1);
 xs = -5:0.2:5;
 ps = gaussProb(xs(:), marg.mu, marg.Sigma);
 ps = 50*normalize(ps);
-plot(xs, 0+ps, 'bx:', 'linewidth',2 );
+plot(xs, 0+ps, 'b:', 'linewidth',3 );
 %% conditional marginals
 model = struct('mu', mu, 'Sigma', S);
 modelHgivenV = gaussCondition(model, 2, x2);
 [muHgivenV, SigmaHgivenV] = structvals(modelHgivenV, 'mu', 'Sigma');
 ps = gaussProb(xs(:), muHgivenV, SigmaHgivenV);
 ps = 50*normalize(ps);
-plot(xs, 1+ps, 'ko-.', 'linewidth',2 );
+plot(xs, 1+ps, 'k-.', 'linewidth',3 );
 postMu = muHgivenV;
 %%
 grid off
 h=text(2.0, 3.1, 'p(x1|x2=1)'); set(h,'color','k','fontsize',15);
-h=text(2.5, 2.1, 'p(x1,x2)'); set(h,'color','r','fontsize',15);
+%h=text(2.5, 2.1, 'p(x1,x2)'); set(h,'color','r','fontsize',15);
 h=text(2.7, 0.4, 'p(x1)'); set(h,'color','b','fontsize',15);
 xlabel('x1'); ylabel('x2');
 printPmtkFigure('gaussCond'); 
