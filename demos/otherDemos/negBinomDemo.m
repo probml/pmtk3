@@ -8,31 +8,38 @@ N = 100;
 theta = 0.5;
 xs = 1:N;
 probs = [];
+c = 1;
+
+if trial==1
 for i=1:numel(xs)
   x = xs(i);
-  probs(i,1) = binopdf(x,N,theta);
+  probs(i,c) = binopdf(x,N,theta);
 end
-names{1} = sprintf('binom(%d,%3.1f)', N,theta);
-
+names{c} = sprintf('binom(%d,%3.1f)', N,theta);
+c = c+1;
+end
 
 mu = N*theta;
 if trial==1
   thetas = [0.1, 0.5, 0.9];
-  % make mode of negbinom match that of binom
-  fs = 1 + (1-thetas)./thetas * mu;
+  % make mean of negbinom match that of binom
+  % mean = f*theta/(1-theta) 
+  % mode = (f-1) * theta/(1-theta) so f = mode*(1-theta)/theta + 1
+  fs = 1+(1-thetas)./thetas * mu;
 else
   thetas = [0.5, 0.5, 0.5, 0.5];
-  fs = [1 10 50 90];
+  fs = [1 10 30 50];
 end
 
 for k=1:numel(thetas)
   theta=thetas(k);
   f=fs(k);
-  names{k+1} = sprintf('negbinom(%5.3f,%5.3f)',f,theta);
+  names{c} = sprintf('negbinom(%5.3f,%5.3f)',f,theta);
   for i=1:numel(xs)
     x = xs(i);
-    probs(i,k+1) = exp(negbinomlogpdf(x,f,theta));
+    probs(i,c) = exp(negbinomlogpdf(x,f,theta));
   end
+  c=c+1;
 end
 
 [styles, colors, symbols, str] =  plotColors; %#ok

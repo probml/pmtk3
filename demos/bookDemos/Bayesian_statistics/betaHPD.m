@@ -16,7 +16,10 @@ CI = [l,u]
 xs = linspace(0.001, 0.999, 40);
 ps = exp(betaLogprob(model, xs));
 %figure; hold on
-HPD = [0.04, 0.485];
+%HPD = [0.04, 0.48];
+icdf = @(p) betainv(p, model.a, model.b);
+HPD = hdiFromIcdf(icdf)
+
 ints  = {CI, HPD};
 %ints  = {HPD};
 names = {'CI','HPD'}; 
