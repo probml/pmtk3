@@ -19,7 +19,7 @@ xinit = w;
 Nsamples = 5000;
 lambda = 0;
 %targetArgs = {X,y,lambda};
-sigmaMH = 1.5;
+sigmaMH = 2.38^2/2;
 %proposalArgs = {sigmaMH*C};
 
 %% nested function
