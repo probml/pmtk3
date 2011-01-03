@@ -161,7 +161,7 @@ else
 end
 
 % 8 - APPLY PREFERENCES
-    applypref(a);
+    if ~isempty(a.name), applypref(a); end
 
 end 
 %--------------------------------------------------------------------------

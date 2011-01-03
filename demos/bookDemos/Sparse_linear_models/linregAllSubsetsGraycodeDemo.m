@@ -5,7 +5,9 @@
 % This file is from pmtk3.googlecode.com
 
 setSeed(0);
-N = 20; D = 10;
+%N = 20; 
+N = 10;
+D = 10;
 w = randn(D,1);
 ndx = randperm(D);
 w(ndx(1:5))=0;
@@ -52,7 +54,7 @@ printPmtkFigure('grayCodeModelsGray')
 
 figure
 plot(scoreSS);
-title('log p(s,y)')
+title('log p(model, data)')
 axis_pct
 printPmtkFigure('grayCodeLogpost')
 
@@ -61,28 +63,30 @@ figure;
 stem(post)
 %axis_pct
 axis([-5 numofmodel+5 0 0.1])
-title('p(s|y)')
+title('p(model|data)')
 printPmtkFigure('grayCodePost')
 
 marg = sum(Models .* repmat(post(:), 1, D), 1);
 figure; 
 bar(marg)
-title('p(s(j)|y')
+title('p(gamma(j)|data')
 printPmtkFigure('grayCodeMarg')
 
 fprintf('top models\n');
+[post, perm] = sort(post, 'descend');
+Models = Models(perm,:);
 ndx = find(post>=0.01);
 for i=1:length(ndx)
-   m = ndx(i);
-   fprintf('p(%d)=%5.3f: ', m, post(m));
-   fprintf('%d ', find(Models(m,:)))
+   m = perm(i);
+   fprintf('p(%d)=%5.3f: ', m, post(i));
+   fprintf('%d ', find(Models(i,:)))
    fprintf('\n')
    table{i,1} = m;
-   table{i,2} = post(m);
-   table{i,3} = sprintf('%d, ', find(Models(m,:)));
+   table{i,2} = post(i);
+   table{i,3} = sprintf('%d, ', find(Models(i,:)));
 end
 latextable(table, 'horiz', {'model', 'prob', 'members'}, ...
-  'hline', 1, 'name', 'graycode', 'format', '%5.3f')
+  'hline', 1, 'name', [], 'format', '%5.3f')
 
 fprintf('true weight vector\n');
 fprintf('%4.2f, ', w); fprintf('\n')
