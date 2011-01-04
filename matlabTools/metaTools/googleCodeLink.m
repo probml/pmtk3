@@ -29,7 +29,7 @@ end
 link  = [googleRoot, strrep(fname(length(root)+1:end), '\', '/')];
 switch type
     case 'html'
-        link = sprintf('<a href="%s">%s</a>',link, displayName);
+        link = sprintf('<a href="%s">%s.m</a>',link, displayName);
     case 'publish'
         link = sprintf('<%s %s>',link, displayName);
     case 'wiki'

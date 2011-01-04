@@ -34,13 +34,18 @@ chapterFiles = getChapterFileNames(fullfile(bookSource, 'pml.tex'));
 nchaps = numel(chapterFiles); 
 B = cell(nchaps, 1); 
 for i=1:nchaps
-   B{i} = getChapterText(chapterFiles{i}, includeEx, includeSol);  
+   %B{i} = getChapterText(chapterFiles{i}, includeEx, includeSol);  
+   B{i} = processText(getText(chapterFiles{i}));
 end
 end
 
 function T = getChapterText(chfile, includeEx, includeSol)
 %% Return a chapter's full body text given the parent chapter filename
 % Removes comments and blanks before returning
+% parses fooChap.tex which is assumed to contain
+%   \input{fooBody.tex}
+%   \input{fooEx.tex}
+%   \input{fooChap.tex}
 % if includeEx is true, it appends the exercises
 % if includSol is true, it appends the solutions
 %%
