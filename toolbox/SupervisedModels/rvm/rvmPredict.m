@@ -26,7 +26,7 @@ switch model.outputType
         
     case 'regression'
         
-        yhat = Ktest.*model.w;
+        yhat = Ktest*model.w;
         p = [];
 end
 end

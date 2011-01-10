@@ -104,14 +104,14 @@ switch lower(likelihood)
     if preproc.addOnes
       lambdaVec(1, :) = 0; % don't penalize bias term
     end
-    
+    winit = zeros(D,1);
     opts = fitOptions;
     switch lower(regType)
       
       case 'l1'  , % lasso
         switch lower(fitFnName)
           case 'l1generalprojection'
-            w = L1GeneralProjection(@(ww) SquaredError(ww,X,y,weights), ...
+            w = L1GeneralProjection(@(ww) SquaredErrorObjective(ww,X,y,weights), ...
               winit, lambdaVec(:), opts);
           case 'l1ls'
             % this cannot handle vector-valued lambda, so it regularizes

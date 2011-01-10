@@ -50,7 +50,9 @@ else
     outputType = 'regression'; 
     model = SB(likelihood, Xbasis, y, args{:}); 
     ySupport = []; 
-    
+    w = zeros(size(X, 1), 1);
+    w(model.Relevant) = model.Value;
+    model.w = w;
 end
 
 model.preproc = pp; 

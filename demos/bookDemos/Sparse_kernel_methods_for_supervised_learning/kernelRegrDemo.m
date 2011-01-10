@@ -27,8 +27,9 @@ Ktrain =  kernelFn(X, X);
 Xtest = (-10:.1:10)';
 Xtest = mkUnitVariance(centerCols(Xtest)); 
 Ktest = kernelFn(Xtest, X);
+preproc = preprocessorCreate;
 preproc.kernelFn = @(X1, X2)kernelRbfSigma(X1, X2, rbfScale);
-for method=1:3
+for method=1:4
     switch method
         case 1,
             
@@ -46,6 +47,7 @@ for method=1:3
             yhat = linregPredict(model, Xtest);
             lossStr = sprintf('linregL1');
             fname = 'linregL1';
+            %{
         case 3,
             epsilon = 0.1; % default
             gamma = 1/(2*rbfScale^2);
@@ -59,16 +61,28 @@ for method=1:3
             lossStr = sprintf('SVM(%s=%6.4f)', '\epsilon', epsilon);
             fname = 'SVMQP';
             yhat = svmPredict(model, Xtest);
-        case 4 % svmlight only works on windows
-            C = 1/lambda;
-            gamma = 1/(2*rbfScale^2);
-            model = svmFit(X, y, 'C', C, 'kernel', 'rbf', ...
+            %}
+        case 3 % svmlight only works on windows
+            %C = 1/lambda;
+            %gamma = 1/(2*rbfScale^2);
+           C = 2.^linspace(-5,5,10)
+           model = svmFit(X, y, 'C', C, 'kernel', 'rbf', ...
                 'kernelParam', gamma,'fitFn', @svmlightFit);
             w = model.alpha;
             SV = model.svi;
-            lossStr = 'SVMlight';
-            fname = 'SVMlight';
+            lossStr = 'SVM';
+            fname = 'SVM';
             yhat = svmPredict(model, Xtest);
+      case 4
+         model = rvmFit(X, y, 'kernelFn', ...
+           @(X1,X2) kernelRbfGamma(X1,X2,gamma));
+         SV = model.Relevant;
+        lossStr = 'RVM';
+        fname = 'RVM';
+        [N,D]  = size(X);
+        w = model.w;
+        %w(model.Relevant) = model.hyperParams.Alpha;
+        yhat = rvmPredict(model, Xtest);
     end
     
     
@@ -82,16 +96,18 @@ for method=1:3
         plot(X(SV),y(SV),'o','color','r', 'markersize', 12, 'linewidth', 2);
         %plot(Xtest(:,1),yhat+epsilon,'c--', 'linewidth', 2);
         %plot(Xtest(:,1),yhat-epsilon,'c--', 'linewidth', 2);
-        legend({'Data','prediction','Support Vectors'});
+        %legend({'Data','prediction','Support Vectors'});
         %legend({'Data','prediction','Support Vectors','Eps-Tube'});
     end
     title(sprintf('%s', lossStr))
-    printPmtkFigure(sprintf('svmRegrDemoData%s', fname))
+    printPmtkFigure(sprintf('kernelRegrDemoData%s', fname))
     
+    if ~isempty(w)
     figure; stem(w)
     title(sprintf('weights for %s', lossStr))
     axis_pct
-    printPmtkFigure(sprintf('svmRegrDemoStem%s', fname))
+    printPmtkFigure(sprintf('kernelRegrDemoStem%s', fname))
+    end
 end
 placeFigures;
 
