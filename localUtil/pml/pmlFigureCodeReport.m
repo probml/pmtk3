@@ -75,6 +75,7 @@ for i=1:nfigs
     htmlData{i, 2} = fnameLink;
     %% column 3
     codeNames = fig.codeNames;
+    sourceLink = '';
     if ~isempty(codeNames)
         for j=1:numel(codeNames)
             gcl = googleCodeLink(codeNames{j});

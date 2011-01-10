@@ -6,6 +6,8 @@ function model = rvmFit(X, y, varargin)
 %
 % model = rvmFit(X, y, 'kernelFn', kernelFn, 'args', args)
 % args are passed directly to SparseBayes. 
+%
+% y can be [0,1] (binary) or {1,2,..C} (categorical) or real
 %%
 
 % This file is from pmtk3.googlecode.com

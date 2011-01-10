@@ -29,10 +29,13 @@ y = labels';
 %% Try fitting simple  model in original feature space
 model = logregFit(X, y);
 plotDecisionBoundary(X, y, @(Xtest)logregPredict(model, Xtest));
+hold on
+plot(centres(:, 1), centres(:, 2), 'k+', 'MarkerSize', 12, 'LineWidth', 3);
 printPmtkFigure logregBasisFnOriginal
 
 %% Try fitting simple polynomial model
-pp =  preprocessorCreate('poly', 2, 'rescaleX', true, 'addOnes', true);
+%pp =  preprocessorCreate('poly', 2, 'rescaleX', true, 'addOnes', true);
+pp =  preprocessorCreate('poly', 2, 'rescaleX', false, 'addOnes', true);
 model = logregFit(X, y, 'lambda', 1e-3, 'preproc', pp);
 plotDecisionBoundary(X, y, @(Xtest)logregPredict(model, Xtest));
 printPmtkFigure logregBasisFnPoly
