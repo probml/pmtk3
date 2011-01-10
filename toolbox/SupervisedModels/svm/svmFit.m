@@ -19,6 +19,7 @@ function [model, varargout] = svmFit(X, y, varargin)
 % for C and gamma (log base 2)
 % c_begin, c_end, c_step = -5,  15, 2
 % g_begin, g_end, g_step =  3, -15, -2
+% See also svmModsel
 %
 %% OUTPUT:
 % model is a struct with fit function specific information - this can
