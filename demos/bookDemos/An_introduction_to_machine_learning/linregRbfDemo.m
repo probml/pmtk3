@@ -8,6 +8,7 @@
 lambda = 0.001; % just for numerical stability
 %sigmas = [0.05 0.5 50];
 sigmas = [0.5 1 50];
+%sigmas = [0.1 0.5 50];
 K = 10;
 centers = linspace(min(xtrain), max(xtrain), K)';
 
@@ -16,6 +17,7 @@ figure; hold on
 for i=1:length(sigmas)
     sigma = sigmas(i);
     preproc.kernelFn = @(X1, X2)kernelRbfSigma(X1, X2, sigma); 
+    preproc.addOnes = true;
     model = linregFit(xtrain, ytrain, 'preproc', preproc, 'lambda', lambda);
         
        
@@ -34,9 +36,12 @@ for i=1:length(sigmas)
     end
     title(sprintf('RBF, sigma %f', sigma))
     XtrainRBF = kernelRbfSigma(xtrain(:), centers, sigma);
+    %ld = log(det(XtrainRBF));
     subplot2(3,3,i,3)
     imagesc(XtrainRBF); colormap('gray')
     title(sprintf('RBF, sigma %f', sigma))
     
+    K = kernelRbfSigma(xtrain(:), xtrain, sigma);
+    logdet(K+eps)
 end
-printPmtkFigure('rbfDemo9')
+%printPmtkFigure('rbfDemo9')

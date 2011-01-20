@@ -21,10 +21,10 @@ for i=1:numel(packages)
             delete(dest);
             if ~quiet, fprintf('done\n'); end
         catch %#ok
-            if ~quiet, fprintf(2, 'failed\n');  end
+            if ~quiet, fprintf(2, 'failed to unzip\n');  end
         end
     else
-        if ~quiet, fprintf(2, 'failed\n');  end
+        if ~quiet, fprintf(2, 'failed to downalod\n');  end
     end
 end
 

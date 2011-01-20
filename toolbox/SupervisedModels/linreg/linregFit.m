@@ -52,7 +52,7 @@ if isempty(preproc), preproc = preprocessorCreate(); end
 % we don't call preprocApply here since some
 % methods (eg huber) treat the offset differently
 
-if preproc.addOnes,  D = D+1; end
+if isfield(preproc, 'addones') && preproc.addOnes,  D = D+1; end
 if isempty(winit), winit = zeros(D,1); end
 
 if strcmpi(regType, 'none')
