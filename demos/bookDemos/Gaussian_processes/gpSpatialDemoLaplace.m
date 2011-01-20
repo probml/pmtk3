@@ -155,6 +155,8 @@ colormap(mapcolor(G)),colorbar
 axis equal
 axis([0 35 0 60])
 title('Posterior mean of the relative risk, FIC')
+printPmtkFigure('gpSpatialDemoLaplaceMean')
+
 
 figure
 G=repmat(NaN,size(X1));
@@ -165,13 +167,16 @@ colormap(mapcolor(G)),colorbar
 axis equal
 axis([0 35 0 60])
 title('Posterior variance of the relative risk, FIC')
+printPmtkFigure('gpSpatialDemoLaplaceVar')
+
+
 
 % the MAP estimate of the hyperparameters in kilometers. Notice that the 
 % co-ordinates in the data are not in kilometers. x=1 corresponds to 20km 
 % in real life
 S2 = sprintf('lengt-scale: %.3f, magnSigma2: %.3f \n', gp.cf{1}.lengthScale, gp.cf{1}.magnSigma2)
 
-if 0
+%{
 % --- MCMC ---
 
 % Set the approximate inference method to MCMC
@@ -265,46 +270,5 @@ set(gca, 'Clim', [0.005    0.03])
 axis equal
 axis([0 35 0 60])
 title('Posterior variance of relative risk, FIC GP')
+%}
 
-
-
-
-% $$$ figure
-% $$$ set(gcf,'units','centimeters');
-% $$$ set(gcf,'DefaultAxesPosition',[0.0  0.02   0.85   0.96]);
-% $$$ set(gcf,'DefaultAxesFontSize',8)   %6 8
-% $$$ set(gcf,'DefaultTextFontSize',8)   %6 8
-% $$$ G=repmat(NaN,size(X1));
-% $$$ G(xxii)=exp(Ef);
-% $$$ pcolor(X1,X2,G),shading flat
-% $$$ colormap(mapcolor(G, [1 1])),colorbar
-% $$$ axis equal
-% $$$ axis([0 35 0 60])
-% $$$ set(gca,'YTick',[])
-% $$$ set(gca,'XTick',[])
-% $$$ set(gca,'XTicklabel',[])
-% $$$ set(gca,'YTickLabel',[])
-% $$$ set(gcf,'pos',[13.6    10   5.4  6])
-% $$$ set(gcf,'paperunits',get(gcf,'units'))
-% $$$ set(gcf,'paperpos',get(gcf,'pos'))
-% $$$ 
-% $$$ figure
-% $$$ set(gcf,'units','centimeters');
-% $$$ set(gcf,'DefaultAxesPosition',[0.0  0.02   0.85   0.96]);
-% $$$ set(gcf,'DefaultAxesFontSize',8)   %6 8
-% $$$ set(gcf,'DefaultTextFontSize',8)   %6 8
-% $$$ G=repmat(NaN,size(X1));
-% $$$ G(xxii)=(exp(Varf) - 1).*exp(2*Ef+Varf);
-% $$$ pcolor(X1,X2,G),shading flat
-% $$$ colormap(mapcolor(G)),colorbar
-% $$$ axis equal
-% $$$ axis([0 35 0 60])
-% $$$ set(gca,'YTick',[])
-% $$$ set(gca,'XTick',[])
-% $$$ set(gca,'XTicklabel',[])
-% $$$ set(gca,'YTickLabel',[])
-% $$$ set(gcf,'pos',[13.6    10   5.5  6])
-% $$$ set(gcf,'paperunits',get(gcf,'units'))
-% $$$ set(gcf,'paperpos',get(gcf,'pos'))
-
-end
