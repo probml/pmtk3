@@ -15,7 +15,7 @@ for i=1:numel(xs)
   x = xs(i);
   probs(i,c) = binopdf(x,N,theta);
 end
-names{c} = sprintf('binom(%d,%3.1f)', N,theta);
+names{c} = sprintf('binom(%d, %3.1f)', N,theta);
 c = c+1;
 end
 
@@ -34,7 +34,7 @@ end
 for k=1:numel(thetas)
   theta=thetas(k);
   f=fs(k);
-  names{c} = sprintf('negbinom(%5.3f,%5.3f)',f,theta);
+  names{c} = sprintf('NB(%3.1f, %3.1f)',f,theta);
   for i=1:numel(xs)
     x = xs(i);
     probs(i,c) = exp(negbinomlogpdf(x,f,theta));

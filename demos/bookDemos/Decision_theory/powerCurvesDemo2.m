@@ -18,7 +18,7 @@ for i=1:numel(widths)
   legend(legendStr ,'location', 'northwest');
   xlabel('N'); ylabel('power')
   title(sprintf('desired width = %5.3f', maxWidth))
-  set(gca,'ylim',[0 1]);grid on
+  set(gca,'ylim',[0 1]);grid off
   drawnow
   printPmtkFigure(sprintf('powerCurvesDemo2-width%d', i));
 end

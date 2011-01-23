@@ -4,16 +4,21 @@
 
 % This file is from pmtk3.googlecode.com
 
+
 function sensorFusion2d()
 
 Sigmas = {0.01*eye(2), 0.01*eye(2)};
 helper(Sigmas)
+printPmtkFigure('demoGaussBayes2dEqualSpherical')
 
 Sigmas = {0.05*eye(2), 0.01*eye(2)};
 helper(Sigmas)
+printPmtkFigure('demoGaussBayes2dUnequalSpherical')
 
 Sigmas = {0.01*[10 1; 1 1], 0.01*[1 1; 1 10]};
 helper(Sigmas)
+printPmtkFigure('demoGaussBayes2dUnequal')
+
 end
 
 function helper(Sigmas)
@@ -28,7 +33,7 @@ post = gaussSoftCondition(prior, py, A, y);
 figure;
 gaussPlot2d(y1, Sigmas{1}, 'color', 'r');
 hold on
-grid on;
+grid off;
 gaussPlot2d(y2, Sigmas{2}, 'color', 'g');
 gaussPlot2d(post.mu, post.Sigma, 'color', 'k');
 axis([-1.5 1.5 -1.5 1.5]);

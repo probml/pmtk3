@@ -14,8 +14,8 @@ ns          = [2 10];
 X = gaussSample(mtrue, ns(end));
 %% Plot Data and truth
 figure;
-plot(X(:, 1), X(:, 2), '.', 'markersize', 15);
-axis(xyrange); title('data'); grid on; axis square
+plot(X(:, 1), X(:, 2), 'o', 'markersize', 8,'markerfacecolor', 'b');
+axis(xyrange); title('data'); grid off; axis square
 hold on
 plot(muTrue(1), muTrue(2), 'x', 'linewidth', 3, 'markersize', 15, 'color', 'k')
 printPmtkFigure(sprintf('gauss2dUpdateData'))
@@ -24,7 +24,7 @@ figure
 prior.mu    = [0 0]';
 prior.Sigma = 0.1*eye(2); 
 plotContour(@(x)exp(gaussLogprob(prior, x)), xyrange);
-axis(xyrange); title('prior'); grid on; axis square
+axis(xyrange); title('prior'); grid off; axis square
 printPmtkFigure(sprintf('gauss2dUpdatePrior'))
 for i=1:length(ns)
     data  = X(1:ns(i), :); 
@@ -44,7 +44,7 @@ for i=1:length(ns)
     post.Sigma = Sn; 
     figure;
     plotContour(@(x)exp(gaussLogprob(post, x)), xyrange);
-    axis(xyrange); title(sprintf('post after %d obs', n)); grid on; axis square
+    axis(xyrange); title(sprintf('post after %d obs', n)); grid off; axis square
     printPmtkFigure(sprintf('gauss2dUpdatePost%d', n))
 end
 
