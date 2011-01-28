@@ -28,7 +28,7 @@ A = G; A((A==0))=inf;
 assert(cost==37)
 if 0
 h2=plotTree(G, T);
-freeze(h2)
+%freeze(h2)
 title('output of Kruskal (blue=tree)')
 printPmtkFigure('minSpanTreeKruskal')
 end
@@ -37,7 +37,7 @@ end
 assert(cost2==37)
 if 0
 h3=plotTree(G, T2);
-freeze(h3)
+%freeze(h3)
 title('output of Prim (blue=tree)')
 printPmtkFigure('minSpanTreePrim')
 end
@@ -45,6 +45,7 @@ end
 [T3] =  mst_prim(A); % Prim
 cost3 = sum(A(find(T3)))/2;
 assert(cost3==37)
+
 
 %% Example from Aho, Hopcroft Ullman p234
 G = zeros(6,6);
@@ -82,14 +83,18 @@ for i=1:Nnodes
     dest  = sprintf('%d', j);
     edgeColors{e,1} =  src;
     edgeColors{e,2} = dest;
+    edgeStyles{e,1} =  src;
+    edgeStyles{e,2} = dest;
     if T(i,j)==1 || T(j,i)==1
       edgeColors{e,3} = colors{1};
+      edgeStyles{e,3} = '-';
     else
       edgeColors{e,3} = colors{2};
+      edgeStyles{e,3} = ':';
     end
     e=e+1;
   end
 end
 h=drawNetwork('-adjMat', G, '-undirected', true, ...
- '-edgeColors', edgeColors);
+ '-edgeColors', edgeColors, '-edgeStyles', edgeStyles);
 end
