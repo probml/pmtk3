@@ -27,7 +27,8 @@ axis(range)
 printPmtkFigure('knnClassifyTestData'); 
 
 %% Classify and plot predictions on test data
-Ks = [1 5];
+Ks = [1 5 10];
+%{
 for ki=1:length(Ks)
   K = Ks(ki);
   model = knnFit(Xtrain, ytrain, K); 
@@ -44,24 +45,41 @@ for ki=1:length(Ks)
   h=plot(Xtest(err,1), Xtest(err,2), 'ko'); set(h,'markersize',15)
   printPmtkFigure(sprintf('knnClassifyTestK%d', K)); 
 end
-
+%}
 
 %% Plot  predicted class  across a 2d grid of points
 % cf HTF fig 2.2
 
-XtestGrid = makeGrid2d(Xtrain);
+[XtestGrid, xrange, yrange] = makeGrid2d(Xtrain);
 for K=Ks(:)'
   model = knnFit(Xtrain, ytrain, K); 
-  ypredGrid = knnPredict(model, XtestGrid);
+  [ypredGrid, yprobGrid] = knnPredict(model, XtestGrid);
   figure;
   plotLabeledData(XtestGrid, ypredGrid)
   %axis([min(x1range) max(x1range) min(x2range) max(x2range)])
   axis(range)
   %title(sprintf('mode of predictive density, K=%d', K))
   title(sprintf('predicted label,  K=%d', K))
-  C = 3;
-  printPmtkFigure(sprintf('knnClassifyGridC%dK%d.eps', 3, K))
+  %colorbar
+  legend('c1','c2','c3','location','southwest')
+  printPmtkFigure(sprintf('knnClassifyPredK%d', K))
 end
+
+
+%% Plot  predictive probability  across a 2d grid of points
+
+for K=[10]
+  model = knnFit(Xtrain, ytrain, K);
+  [ypredGrid, yprobGrid] = knnPredict(model, XtestGrid);
+  for c=1:3
+    HH = reshape(yprobGrid(:,c), [length(yrange) length(xrange)]);
+    figure;
+    imagesc(HH); axis xy; colorbar
+    title(sprintf('p(y=%d|data,K=%d)', c,K))
+    printPmtkFigure(sprintf('knnClassifyProbC%dK%d', c, K))
+  end
+end
+
 
 %% Plot error vs K
 Ks = [1 5 10 20 50 100 120];

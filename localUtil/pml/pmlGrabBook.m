@@ -72,7 +72,8 @@ function fnames = getChapterFileNames(pmlTexFile)
 %% Return the filenames of all of the included chapter.tex files
 % in the order in which they appear in pml.tex
 ignoreList = {'ttl', 'dummy', 'preface'}; 
-includeStr = '\include';
+%includeStr = '\include';
+includeStr = '\input';
 beginStr   = '\begin{document}'; 
 ext        = '.tex';
 T          = processText(getText(pmlTexFile)); 
