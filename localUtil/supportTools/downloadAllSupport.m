@@ -9,6 +9,8 @@ SetDefaultValue(2, 'quiet', false);
 googleRoot = ' http://pmtksupport.googlecode.com/svn/trunk';
 packages = scrapePmtkSupport();
 maxLen = max(cellfun(@numel, packages));
+fprintf('downloading %d packages from pmtksupport.googlecode.com - this may take a few minutes',...
+    numel(packages));
 for i=1:numel(packages)
     package = packages{i};
     if ~quiet, fprintf('downloading %s%s', package, dots(maxLen+3-length(package))); end
@@ -24,7 +26,7 @@ for i=1:numel(packages)
             if ~quiet, fprintf(2, 'failed to unzip\n');  end
         end
     else
-        if ~quiet, fprintf(2, 'failed to downalod\n');  end
+        if ~quiet, fprintf(2, 'failed to download\n');  end
     end
 end
 
