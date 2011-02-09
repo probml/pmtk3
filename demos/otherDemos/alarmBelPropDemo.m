@@ -2,9 +2,12 @@
 %
 %%
 
+%PMTKslow
+
 % This file is from pmtk3.googlecode.com
 
 function alarmBelPropDemo
+
 
 dgm = mkAlarmDgm(); 
 % exact unconditional marginals
@@ -12,11 +15,17 @@ nodeBels = dgmInferNodes(dgm);
 
 infEngNames = {'bp', 'bp', 'bp', 'libdaibp'};
 infEngArgs = { ...
-   {'updateProtocol', 'async'}, ...
-   {'updateProtocol', 'sync'}, ...
-   {'updateProtocol', 'residual'}, ...
-   {} };
+    {'updateProtocol', 'async'}, ...
+    {'updateProtocol', 'sync'}, ...
+    {'updateProtocol', 'residual'}, ...
+    {} };
 names = {'bp-asynch', 'bp-synch', 'bp-residual', 'bp-libdai'};
+if ~libdaiInstalled
+    disp('alarmBelPropDemo: libdai not installed');
+   infEngNames = infEngNames(1:end-1);
+   infEngArgs = infEngArgs(1:end-1);
+   names = names(1:end-1);
+end
 
 for i=1:length(infEngNames)
    dgm.infEngine = infEngNames{i};

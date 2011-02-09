@@ -28,7 +28,7 @@ len = 100;
 %% Learn the model using EM with random restarts
 nrestarts = 2;
 modelEM = hmmFit(observed, nHidStates, 'discrete', ...
-    'convTol', 1e-5, 'nRandomRestarts', nrestarts, 'verbose', true);
+    'convTol', 1e-5, 'nRandomRestarts', nrestarts, 'verbose', false);
 
 %% How different are the respective log probabilities?
 fprintf('trueModel LL: %g\n', hmmLogprob(trueModel, observed));

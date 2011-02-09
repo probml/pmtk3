@@ -42,7 +42,7 @@ catch %#ok
 end
 %% graphViz4Matlab
 gvizErr = false; 
-if ~isOctave && ~verLessThan('matlab', '7.6.0')
+if 0 %~isOctave && ~verLessThan('matlab', '7.6.0')
     fprintf('Checking for graphviz............');
     try
         graphViz4Matlab();

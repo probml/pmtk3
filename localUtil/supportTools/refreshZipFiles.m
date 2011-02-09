@@ -48,6 +48,7 @@ for i=1:numel(tozip)
 end
 %%
 tmproot = fullfile(localSource, 'tmp');
+%tmproot = tempdir;
 mkdir(tmproot);
 maxLen = max(cellfun(@length, tozip)); 
 for i=1:numel(tozip)
@@ -61,7 +62,20 @@ for i=1:numel(tozip)
         delete(destZip); % remove the old zip file
     end
     zip(destZip, tmp);
-    system(sprintf('rmdir /Q /S %s', tmp));
+    if ispc
+        system(sprintf('rmdir /Q /S %s', tmp));
+    else
+        system(sprintf('rm -rf %s', tmp));
+    end
+    %[success,message,messageid]  = rmdir(tmp);
 end
-system(sprintf('rmdir /Q /S %s', tmproot));
+if ispc
+    system(sprintf('rmdir /Q /S %s', tmproot));
+else
+    if exist(tmproot, 'dir')
+        %rmdir(tmproot);
+        system(sprintf('rm -rf %s', tmproot));
+    end
+end
+
 end

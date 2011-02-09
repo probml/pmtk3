@@ -15,6 +15,7 @@ lambda = 0;
 opts.maxIter = 1000;
 opts.TolX   = 1e-6;
 opts.TolFun = 1e-6;
+%opts.Display = 'none';
 pp = preprocessorCreate('standardizeX', false, 'addOnes', true);
 model1 = logregFit(X, y01, 'lambda', lambda, 'preproc', pp, 'fitOptions', opts);
 model2 = logregBinaryFitL2IRLS(X, y01,lambda);

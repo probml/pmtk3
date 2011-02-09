@@ -66,8 +66,10 @@ if not(doformat)
     return;
 end
 mfnames = mfnames(include);                                                % keep only included mfiles
-text = cellfuncell(@(c)sprintf('%s;%spclear(%d);',c(1:end-2),...           % format each example name by removing .m adding ';', spaces, and 'pclear('pauseTime');'
-    blanks(max(5,42 - length(c))),pauseTime),mfnames)';
+%text = cellfuncell(@(c)sprintf('%s;%spclear(%d);',c(1:end-2),...           % format each example name by removing .m adding ';', spaces, and 'pclear('pauseTime');'
+%    blanks(max(5,42 - length(c))),pauseTime),mfnames)';
+text = cellfuncell(@(c)sprintf('%s;%s disp(''running %s''); pclear(%d);',c(1:end-2),...           % format each example name by removing .m adding ';', spaces, and 'pclear('pauseTime');'
+    blanks(max(5,42 - length(c))),c, pauseTime),mfnames)';
 if ~isempty(excludeTags)                                                   % if there are exclude tags
     comments = cellfuncell(@(c)catString(cellfuncell(@(s)regexprep...      % construct comments for mfiles with excludeTags from the tags themselves
         (s,'#',''),intersect(c,excludeTags)),' & '),tags(include));

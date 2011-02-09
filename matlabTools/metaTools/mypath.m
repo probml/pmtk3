@@ -3,7 +3,11 @@ function p = mypath()
 
 % This file is from pmtk3.googlecode.com
 
-p = tokenize(path, ';'); 
+if ispc
+    p = tokenize(path, ';');
+else
+    p  = tokenize(path, ':');
+end
 p = p(~strncmp(matlabroot, p, length(matlabroot)));
 p = filterCell(p, @(s)~isSubstring('.svn', s));
 p = [p; pwd];

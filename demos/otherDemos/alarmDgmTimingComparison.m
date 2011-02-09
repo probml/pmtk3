@@ -13,7 +13,11 @@ CPT = alarmNetwork.CPT;
 nstates = alarmNetwork.nodeSizes;
 nnodes = 37;
 
-engines = {'jtree', 'libdaiJtree'};
+if libdaiInstalled
+    engines = {'jtree', 'libdaiJtree'};
+else
+    engines = {'jtree'};
+end
 time = zeros(ntrials, numel(engines));
 for i=1:ntrials + 1 % we throw away the first trial
     %% create random evidence 

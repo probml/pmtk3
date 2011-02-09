@@ -5,13 +5,15 @@
 nnodes = 37;
 dgmJ = mkAlarmDgm('jtree');
 dgmV = mkAlarmDgm('varelim');
-dgmL = mkAlarmDgm('libdaiJtree');
 J = dgmInferNodes(dgmJ);
 V = dgmInferNodes(dgmV);
-L = dgmInferNodes(dgmL);
-assert(tfequal(J, V, L));
+if libdaiInstalled
+    dgmL = mkAlarmDgm('libdaiJtree');
+    L = dgmInferNodes(dgmL);
+    assert(tfequal(J,  L));
+end
 
-if 1
+if libdaiInstalled
     E = sparsevec(5, 2, nnodes);
     L = dgmInferNodes(dgmL, 'clamped', E); % problematic case for libai if slicing is on
     J = dgmInferNodes(dgmV, 'clamped', E);
@@ -21,12 +23,19 @@ end
 E = sparsevec(13, 2, nnodes);
 J = dgmInferNodes(dgmJ, 'clamped', E);
 V = dgmInferNodes(dgmV, 'clamped', E);
-L = dgmInferNodes(dgmL, 'clamped', E);
-assert(tfequal(J, V, L));
+assert(tfequal(J, V));
+
+if libdaiInstalled
+    L = dgmInferNodes(dgmL, 'clamped', E);
+    assert(tfequal(J, L));
+end
 
 evidence = sparsevec([11 15], [2 4], nnodes);
 E = sparsevec(13, 2, nnodes);
 J = dgmInferNodes(dgmJ, 'clamped', E);
 V = dgmInferNodes(dgmV, 'clamped', E);
-L = dgmInferNodes(dgmL, 'clamped', E);
-assert(tfequal(J, V, L));
+assert(tfequal(J, V));
+if libdaiInstalled
+    L = dgmInferNodes(dgmL, 'clamped', E);
+    assert(tfequal(J, V));
+end

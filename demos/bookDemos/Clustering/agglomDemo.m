@@ -6,6 +6,8 @@
 % This file is from pmtk3.googlecode.com
 
 requireStatsToolbox
+clear all
+
 if 0 % Alpaydin data
     X = [1 3;
         1 4;

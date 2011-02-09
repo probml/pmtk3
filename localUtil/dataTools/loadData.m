@@ -1,4 +1,4 @@
-function varargout = loadData(dataset, destnRoot, quiet, isMatFile)
+function varargout = loadData(dataset, varargin) %destnRoot, quiet, isMatFile)
 %% Load the specified dataset, downloading it if necessary from pmtkdata.googlecode.com
 % 
 % If you specify an output, as in D = loadData('foo'), all of the variables
@@ -24,21 +24,27 @@ function varargout = loadData(dataset, destnRoot, quiet, isMatFile)
 
 
 %%
-if nargin < 2 || isempty(destnRoot), destnRoot = fullfile(pmtk3Root(), 'data'); end
-if nargin < 3, quiet = false; end
-if nargin < 4, isMatFile = true; end
+%if nargin < 2 || isempty(destnRoot), destnRoot = fullfile(pmtk3Root(), 'data'); end
+%if nargin < 3, quiet = false; end
+%if nargin < 4, isMatFile = true; end
 
+
+[destnRoot, quiet, isMatFile] = process_options(varargin, ...
+    'destnRoot', fullfile(pmtk3Root(), 'data'), ...
+    'quiet', false, ...
+    'isMatFile', true);
+ 
 if isOctave(),  warning('off', 'Octave:load-file-in-path'); end
 googleRoot = ' http://pmtkdata.googlecode.com/svn/trunk';
 %%
 dataset = filenames(dataset);
 if isMatFile && exist([dataset, '.mat'], 'file') == 2
   % if file on path then load it
-  %if ~quiet, fprintf('%s.mat is on path already; loading\n', dataset); end
-    D = load([dataset, '.mat']);
+  if ~quiet, fprintf('%s.mat is on path already; loading\n', dataset); end
+  D = load([dataset, '.mat']);
 elseif ~isMatFile && exist(dataset, 'dir') == 7
   % folder on path - nothing to do
-  %if ~quiet, fprintf('%s is on path already - nothing to do\n', dataset); end
+  if ~quiet, fprintf('directory %s is on path already\n', dataset); end
 else % try and fetch it
     source = sprintf('%s/%s/%s.zip', googleRoot, dataset, dataset);
     dest   = fullfile(destnRoot, [dataset, '.zip']);
