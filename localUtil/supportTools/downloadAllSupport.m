@@ -9,7 +9,7 @@ SetDefaultValue(2, 'quiet', false);
 googleRoot = ' http://pmtksupport.googlecode.com/svn/trunk';
 packages = scrapePmtkSupport();
 maxLen = max(cellfun(@numel, packages));
-fprintf('downloading %d packages from pmtksupport.googlecode.com - this may take a few minutes',...
+fprintf('downloading %d packages to pmtk3/external from pmtksupport.googlecode.com - this may take a few minutes\n',...
     numel(packages));
 for i=1:numel(packages)
     package = packages{i};

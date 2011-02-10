@@ -45,6 +45,7 @@ if isMatFile && exist([dataset, '.mat'], 'file') == 2
 elseif ~isMatFile && exist(dataset, 'dir') == 7
   % folder on path - nothing to do
   if ~quiet, fprintf('directory %s is on path already\n', dataset); end
+  return;
 else % try and fetch it
     source = sprintf('%s/%s/%s.zip', googleRoot, dataset, dataset);
     dest   = fullfile(destnRoot, [dataset, '.zip']);
@@ -75,7 +76,7 @@ else % try and fetch it
         end
     else
         fprintf('\n\n');
-        error('loadData:fileNotFound', 'The %s data set could not be located', dataset);
+        error('loadData:fileNotFound', 'Cannot find %s', source);
     end
 end
 if ~isMatFile

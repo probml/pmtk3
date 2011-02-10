@@ -4,14 +4,15 @@
 % If a config-local.txt file is found, its values will override these.
 %
 % Used by initPmtk3.m
-% PMTKgvizPath             C:\Program Files\Graphviz2.26\bin
-% PMTKlocalDataPath        C:\path\to\pmtkData
-% PMTKlocalSupportPath     C:\path\to\pmtkSupport
+% PMTKgvizPath             C:\Program Files\Graphviz2.26\bin  % UPDATE THIS IF YOU INSTALL GVIZ
+% PMTKlocalDataPath        /home/kpmurphy/pmtkdata
+% PMTKlocalSupportPath     /home/kpmurphy/pmtksupport
 %
-% Used by generateAuthorReport , etc
+% Used by generateAuthorReport ,  pmtkTagReport, etc
 % PMTKred                  #990000
 % PMTKauthors              Kevin Murphy, Matt Dunham
 % PMTKcodeDirs             toolbox, demos, localUtil, matlabTools
+% PMTKmetaDirs             meta, docs, tmp
 %
 % Used by pmlFigureCodeReport
 % PMTKpmlBookSource        C:\path\to\PML\Text
