@@ -5,8 +5,8 @@ function [yhat, p, pCI] = logregPredictBayes(model, X, method)
 % - 'moderated': uses the Mackay trick to approximate int_w Gauss(w)*sigmoid(y|w)
 % - 'vb': uses variational bayes to approximate int_w Gauss(w)*sigmoid(y|w)
 % - 'mc': draws Monte Carlo samples from p(w). In this case
-%   p(i) = median{p(y=1)}. We also return 
-%    pCI(i, :) = [Q5 Q95] = 5% and 95% quantiles 
+%   p(i) = mean{p(y=1)}. We also return 
+%    pCI(i, :) = [Q5 Q95 Q50] = 5%, 95% and 50% (median) quantiles 
 
 % This file is from pmtk3.googlecode.com
 
@@ -60,15 +60,16 @@ function [p, pCI] = logregPredictBayesMc(X, w, V)
 Nsamples = 100;
 ws = gaussSample(w, V, Nsamples);
 N = size(X,1);
-pCI = zeros(N, 2); p = zeros(N,1);
+pCI = zeros(N, 3);
+p = zeros(N,1);
 for i=1:N
   ps = 1 ./ (1+exp(-X(i,:)*ws')); % ps(s) = p(y=1|x(i,:), ws(s,:)) row vec
   tmp = sort(ps, 'ascend');
   Q5 = tmp(floor(0.05*Nsamples));
   Q50 = tmp(floor(0.50*Nsamples));
   Q95 = tmp(floor(0.95*Nsamples));
-  p(i) = Q50;
-  pCI(i,:) = [Q5 Q95];
+  p(i) = mean(ps); % Q50;
+  pCI(i,:) = [Q5 Q95 Q50];
 end
 end
 

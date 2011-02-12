@@ -39,7 +39,7 @@ lines3d(theta,x_bar,fn,...
         'ydraw', 0,...
         'border',50,...
         'axis',[-5  5 -5  5]);
-view(V)
+view(V);
 %view(V(:,1:3))
 
 subplot(2,2,2)
@@ -54,7 +54,7 @@ lines3d(theta, x_bar, fn,...
         'xsum', 1,...
         'border',50,...
         'axis',[-5  5 -5  5]);
-view(V)
+view(V);
 
 subplot(2,2,3)
 
@@ -66,7 +66,7 @@ lines3d(theta, x_bar, fn,...
         'xsum',1,...
         'border',50,...
         'axis',[-5  5 -5  5]);
-view(V)
+view(V);
     
 subplot(2,2,4)
 
@@ -78,7 +78,7 @@ lines3d(theta, x_bar ,fn,...
         'scale',1,...
         'border',50,...
         'axis',[-5  5 -5  5]);
-view(V)
+view(V);
     
 %% Bayesian Diagramz
 figure
@@ -94,7 +94,7 @@ lines3d(theta,x_bar,fn,...
         'border',50,...
         'axis',[-5  5 -5  5]);
 
-view(V)
+view(V);
 
 subplot(2,2,2)
 
@@ -109,7 +109,7 @@ lines3d(theta, x_bar, fn,...
         'border',50,...
         'axis',[-5  5 -5  5]);
 
-view(V)
+view(V);
 
 subplot(2,2,3)
 
@@ -123,7 +123,7 @@ lines3d(theta, x_bar, fn,...
         'border',50,...
         'axis',[-5  5 -5  5]);
 
-view(V)
+view(V);
 
 subplot(2,2,4)
 
@@ -136,7 +136,7 @@ lines3d(theta, x_bar, fn,...
         'border',50,...
         'axis',[-5  5 -5  5]);
 
-view(V)
+view(V);
 
 end
 
@@ -195,7 +195,7 @@ p.addOptional('ysum',0);
 p.addOptional('axis',[]);
 
 p.parse(varargin{:});
-p.Results
+p.Results;
 
 
 [n,m] = size(X);

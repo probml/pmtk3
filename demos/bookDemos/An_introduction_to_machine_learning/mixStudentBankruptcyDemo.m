@@ -22,13 +22,14 @@ K = 2;
 [zhat] = mixModelMapLatent(model, X);
 figure;
 process(model, zhat, X, Y, 'student');
-printPmtkFigure('robustMixGaussBankruptcy')
+printPmtkFigure('robustMixStudentBankruptcy')
+
 
 [model] = mixModelFit(X, K, 'gauss');
 [zhat] = mixModelMapLatent(model, X);
 figure;
 process(model, zhat, X, Y, 'gauss');
-printPmtkFigure('robustMixStudentBankruptcy')
+printPmtkFigure('robustMixGaussBankruptcy')
 
 end
 
