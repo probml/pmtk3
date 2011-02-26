@@ -21,11 +21,10 @@ else
     prior.dof = 15;
 end
 
-
 model = hmmFitEm(data, 2, 'gauss', 'verbose', true, 'piPrior', [3 2], ...
-    'emissionPrior', prior, 'nRandomRestarts', 3)
-
+    'emissionPrior', prior, 'nRandomRestarts', 2, 'maxIter', 10)
+break
 
 X = hmmSample(model, 200, 10);
-m2 = hmmFitEm(X, 5, 'gauss', 'verbose', true);
+%m2 = hmmFitEm(X, 5, 'gauss', 'verbose', true);
 

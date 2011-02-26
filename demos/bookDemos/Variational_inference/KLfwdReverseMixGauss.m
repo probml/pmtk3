@@ -1,4 +1,10 @@
-% bishop-5-4
+% Visualize difference between KL(p,q) and KL(q,p) where p is a mix of two
+% 2d Gaussians, and q is a single 2d Gaussian
+% This is Figure bishop-5-4
+
+%PMTKauthor Cody Severinski
+
+clear all
 
 mu = [-1,-1; 1,1];
 
@@ -29,23 +35,31 @@ end
 
 f = f1 + f2;
 % (a)
-contour(x1,x2,f,'b',4,'linewidth',3);
+figure
+contour(x1,x2,f); %,'b',4,'linewidth',3);
 hold on;
-contour(x1,x2,klf,'r',4,'linewidth',3);
+contour(x1,x2,klf); %'r',4,'linewidth',3);
 hold off;
-print('bishop-5-4a.pdf'); close all;
+axis square
+printPmtkFigure('KLfwd')
+%print('bishop-5-4a.pdf'); close all;
 
 % (b)
-contour(x1,x2,f,'b',4,'linewidth',3);
+figure
+contour(x1,x2,f); %,'b',4,'linewidth',3);
 hold on;
-contour(x1,x2,kll,'r',4,'linewidth',3);
+contour(x1,x2,kll); %'r',4,'linewidth',3);
 hold off;
-print('bishop-5-4b.pdf'); close all;
+printPmtkFigure('KLreverse1')
+%print('bishop-5-4b.pdf'); close all;
 
 %(c)
-contour(x1,x2,f,'b',4,'linewidth',3);
+figure
+contour(x1,x2,f); %,'b',4,'linewidth',3);
 hold on;
-contour(x1,x2,klr,'r',4,'linewidth',3);
+contour(x1,x2,klr); %,'r',4,'linewidth',3);
 hold off;
-print('bishop-5-4c.pdf'); close all;
+axis equal
+printPmtkFigure('KLreverse1')
+%print('bishop-5-4c.pdf'); close all;
 

@@ -19,5 +19,5 @@ colorbar
 xticklabelRot(data.varNames)
 set(gca,'yticklabel', data.varNames);
 title('pairwise mutual information in autompg data')
-printPmtkFigure('miMixedDemoColor')
+printPmtkFigure('miMixedDemoColor2', 'png')
 
