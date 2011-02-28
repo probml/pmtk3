@@ -1,5 +1,6 @@
 
 %% Run this script to initialize PMTK3
+% foofoo
 
 % This file is from pmtk3.googlecode.com
 
