@@ -22,7 +22,12 @@ Ktrain =  kernelFn(X, X, rbfScale);
 
 
 %% Train and test
-for method=1:4
+if svmInstalled
+    Nmethods = 4;
+else
+    Nmethods = 3;
+end
+for method=1:Nmethods
   switch method
     case 1,
       logregArgs.lambda = 5;
@@ -39,19 +44,20 @@ for method=1:4
       SV = (abs(model.w) > 1e-5);
       fname = 'logregL1';
       predictFn = @(Xtest) logregPredict(model, Xtest);
-    case 3
-      %C =  1/lambda;
-      C = 2.^linspace(-5,5,10)
-      model = svmFit(X, y, 'C', C, 'kernel', 'rbf', ...
-                'kernelParam', gamma,'fitFn', @svmlightFit);
-      fname = 'SVM';
-      predictFn = @(Xtest) svmPredict(model, Xtest);
-      SV = model.svi;
-    case 4,
+   
+    case 3,
       fname = 'RVM';
        model = rvmFit(X, y, 'kernelFn', @(X1,X2) kernelFn(X1,X2,rbfScale));
        predictFn = @(Xtest) rvmPredict(model, Xtest);
       SV = model.Relevant;
+     case 4
+       %C =  1/lambda;
+       C = 2.^linspace(-5,5,10)
+       model = svmFit(X, y, 'C', C, 'kernel', 'rbf', ...
+           'kernelParam', gamma,'fitFn', @svmlightFit);
+       fname = 'SVM';
+       predictFn = @(Xtest) svmPredict(model, Xtest);
+       SV = model.svi;
   end
   yhat = predictFn(X);
   nerr = sum(yhat ~= convertLabelsToPM1(y));

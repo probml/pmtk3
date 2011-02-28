@@ -1,3 +1,8 @@
+if ~glmnetInstalled
+    fprintf('cannot run %s without glmnet; skipping\n', mfilename());
+    return;
+end
+
 if 0
 x=randn(100,20);
 y=randn(100,1);

@@ -9,6 +9,11 @@
 % http://research.microsoft.com/~cmbishop/PRML/webdatasets/datasets.htm
 %
 
+
+if ~svmInstalled
+    fprintf('cannot run %s without svmFit; skipping\n', mfilename());
+    return;
+end
 loadData('bishop2class');
 y = Y(:);
 

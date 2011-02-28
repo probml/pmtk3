@@ -28,7 +28,7 @@ for i=1:length(SS)
   hold on;
   [counts, locs] = hist(samples(1:S));
   delta = locs(2)-locs(1);
-  bar(xo, normalize(counts)/delta);
+  bar(normalize(counts)/delta);
   title(sprintf('%d samples', S))
   printPmtkFigure(sprintf('mcAccuracyDemoHist%s%d', name, S));
 end

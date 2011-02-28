@@ -22,8 +22,7 @@ else
 end
 
 model = hmmFitEm(data, 2, 'gauss', 'verbose', true, 'piPrior', [3 2], ...
-    'emissionPrior', prior, 'nRandomRestarts', 2, 'maxIter', 10)
-break
+    'emissionPrior', prior, 'nRandomRestarts', 2, 'maxIter', 10);
 
 X = hmmSample(model, 200, 10);
 %m2 = hmmFitEm(X, 5, 'gauss', 'verbose', true);

@@ -33,14 +33,16 @@ for i = 1:length(dofs)
         log(sigma) + (dof+1)/2*log(1+theta.^2 / (sigma2*dof)));
     %assert(approxeq(nll, -loglikEM(i))) % FAILS!
     
-    modelConstr{i} = linregRobustStudentFitConstr(X, y, dof);
-    loglikConstr(i) = sum(linregLogprob(modelConstr{i}, X, y));
+    if optimToolboxInstalled
+      modelConstr{i} = linregRobustStudentFitConstr(X, y, dof);
+      loglikConstr(i) = sum(linregLogprob(modelConstr{i}, X, y));
+    end
 end
 
 %% format output
 
-fprintf('estimated dof, EM %5.3f, constr %5.3f\n', ...
-    modelEM{end}.dof, modelConstr{end}.dof);
+fprintf('estimated dof using EM %5.3f\n', ...
+    modelEM{end}.dof);
 ndof = length(dofs);
 table = NaN(ndof,6);
 table(:,1) = dofs';
@@ -60,15 +62,19 @@ end
 table
 
 
-table = NaN(ndof,6);
-table(:,1) = dofs';
-table(:,2) = loglikConstr';
-for i = 1:ndof
+if optimToolboxInstalled
+  fprintf('estimated dof, EM %5.3f, constr %5.3f\n', ...
+    modelEM{end}.dof, modelConstr{end}.dof);
+  table = NaN(ndof,6);
+  table(:,1) = dofs';
+  table(:,2) = loglikConstr';
+  for i = 1:ndof
     table(i,3:6) = [modelConstr{i}.w0, rowvec(modelConstr{i}.w)];
-end
-if saveLatex
+  end
+  if saveLatex
     latextable(table, 'Format', '%5.3f', 'horiz', labels, 'hline', 1, ...
-        'name', 'stacklossOutputConstr');
+      'name', 'stacklossOutputConstr');
+  end
+  table
 end
-table
 

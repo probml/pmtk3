@@ -135,11 +135,12 @@ assert(approxeq(mu, mu2))
 assert(approxeq(se, se2))
   
 % do it again using path algo
-[bestModel, path] = linregFitPathCv(Xtrain, ytrain, 'regtype', 'l2',  'preproc', pp,...
-   'nfolds', nfolds);
-figure;
-plot(path.errMean)
-
+if glmnetInstalled()
+  [bestModel, path] = linregFitPathCv(Xtrain, ytrain, 'regtype', 'l2',  'preproc', pp,...
+    'nfolds', nfolds);
+  figure;
+  plot(path.errMean)
+end
 
 
 %% Bayes

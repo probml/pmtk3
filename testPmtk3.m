@@ -74,7 +74,7 @@ bernoulliBetaSequentialUpdate;
 close all;
 fprintf('\n.......................\n');
 fprintf('\nAll Tests Passed\n');
-fprintf('Type runDemos() for a more extensive test of the system\n')
+fprintf('Type runDemos for a more extensive test of the system\n')
 
 
 end

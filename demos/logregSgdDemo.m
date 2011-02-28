@@ -2,6 +2,7 @@
 
 % This file is from pmtk3.googlecode.com
 
+%PMTKslow
 
 setSeed(0);
 % Use  classes 2,3 for simplicity

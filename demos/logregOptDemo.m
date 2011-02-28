@@ -2,11 +2,12 @@
 
 % This file is from pmtk3.googlecode.com
 
+%PMTKslow
 
 setSeed(0);
 % Use  classes 2,3 for simplicity
 Ntrain = [];
-%[Xtrain, ytrain, Xtest, ytest] = mnistLoad([2 3], Ntrain);
+[Xtrain, ytrain, Xtest, ytest] = mnistLoad([2 3], Ntrain);
 
 
 ytrain = setSupport(ytrain, [-1 +1]);

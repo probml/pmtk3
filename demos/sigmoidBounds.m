@@ -1,3 +1,6 @@
+
+function sigmoidBounds()
+
 x = [-6:(1/10):6];
 
 function sigupper = sigupper(eta,x)
@@ -37,9 +40,9 @@ plot(x,sigupper(eta2,x),'b','linewidth',3);
 text(1/2 + 1/2,sigupper(eta1,1/2),'eta = 0.2');
 text(0 + 1/2,sigupper(eta2,0),'eta = 0.7');
 hold off;
-print('bishop-10-12a.pdf'); close all;
 
-Figure (b);
+
+figure;
 axis([-6 6 0 1]);
 hold on;
 plot(x,sigmoid(x), 'r','linewidth',3);
@@ -48,6 +51,7 @@ line([-xi,-xi],[0,sigmoid(-xi)],'color','green','linewidth',3);
 line([xi,xi],[0,sigmoid(xi)],'color','green','linewidth',3);
 text(2.75,1/4,'xi = 2.5');
 hold off;
-print('bishop-10-12b.pdf'); close all;
 
+
+end
 

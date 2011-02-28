@@ -12,7 +12,7 @@ nstates = 2;
 nmix    = 3; % must specify nmix
 
 model = hmmFit(data, nstates, 'mixGaussTied', 'verbose', true, ...
-    'nRandomRestarts', 3, 'nmix', nmix); 
+    'nRandomRestarts', 2, 'maxiter', 5, 'nmix', nmix); 
 
 if 0
     
@@ -24,3 +24,6 @@ if 0
     dgm2 = dgmTrain(dgm, 'localev', localev, 'verbose', true);
     
 end
+
+% This doesn't actually test anything!
+

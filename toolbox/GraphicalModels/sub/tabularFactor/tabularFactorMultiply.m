@@ -17,6 +17,16 @@ if N == 1, TF = facs{1}; return; end
 facStruct = [facs{:}];
 dom = uniquePMTK([facStruct.domain]);
 
+% KPM 28 Feb 11
+% When using varelim to compute dgmLogprob, we eliminate
+% all the nodes and then multiply a bunch of empty factors
+if isempty(dom)
+    TF.T = prod([facStruct.T]);
+    TF.domain = [];
+    TF.sizes = 1;
+    return;
+end
+
 ns = zeros(1, max(dom));
 for i=1:N
     Ti = facs{i};

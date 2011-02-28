@@ -30,6 +30,9 @@ if ~isempty(clamped) && all(clamped)
     return; 
 end
 % otherwise run inference 
+
+
+
 % KPM 29Sep10: just call any inference method, not necessarily jtree
 [bel, logZ] = dgmInferQuery(dgm, {}, varargin{:}); %#ok
 

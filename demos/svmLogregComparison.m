@@ -4,6 +4,10 @@
 
 % This file is from pmtk3.googlecode.com
 
+if ~svmInstalled
+    fprintf('cannot run %s without svmFit; skipping\n', mfilename());
+    return;
+end
 loadData('crabs');
 %% SVM
 gammas = logspace(-2, 2, 30);

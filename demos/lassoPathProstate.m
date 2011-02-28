@@ -110,6 +110,7 @@ xlabel('L1norm of w')
 end
 
 %% Now use path algorithm + CV
+if ~glmnetInstalled, return; end
 pp = preprocessorCreate();
 options = glmnetSet();
 %options.lambda = lambdas;

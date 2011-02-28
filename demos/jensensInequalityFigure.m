@@ -72,6 +72,6 @@ set(gca,'XTick',[1,3,5],'YTick',[f(3),f(5),((f(1)+f(5))/2),f(1)]);
 set(gca,'XTickLabel',{'a','E[x]','b'});
 set(gca,'YTickLabel',{'f(E[x])','f(b)','E[f(x)]','f(a)'});
 set(gca,'FontSize',28,'LineWidth',2);
-placeFigures('square',false);
+%placeFigures('square',false);
 printPmtkFigure('jensens');
 

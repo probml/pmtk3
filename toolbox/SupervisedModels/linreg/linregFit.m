@@ -111,7 +111,7 @@ switch lower(likelihood)
       case 'l1'  , % lasso
         switch lower(fitFnName)
           case 'l1generalprojection'
-            w = L1GeneralProjection(@(ww) SquaredErrorObjective(ww,X,y,weights), ...
+            w = L1GeneralProjection(@(ww) squaredErrorObjective(ww,X,y,weights), ...
               winit, lambdaVec(:), opts);
           case 'l1ls'
             % this cannot handle vector-valued lambda, so it regularizes

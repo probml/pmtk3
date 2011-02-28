@@ -23,7 +23,7 @@ xlabel('x','FontSize',20);
 ylabel('p(x)','FontSize',20);
 set(gca,'FontSize',18,'LineWidth',2,'XTick',[],'YTick',[],'box','on');
 axis tight;
-placeFigures('square',false);
+%placeFigures('square',false);
 xlabel('x','FontSize',26);
 ylabel('p(x)','FontSize',26);
 set(gca,'FontSize',18,'LineWidth',2,'XTick',[],'YTick',[],'box','on');

@@ -3,10 +3,18 @@
 %%
 %PMTKneedsImageToolbox
 
+
 % This file is from pmtk3.googlecode.com
 
-requireImageToolbox
-assert(isLibdaiInstalled); 
+
+if ~libdaiInstalled
+    fprintf('cannot run %s without libdai; skipping\n', mfilename());
+    return;
+end
+if ~imagesToolboxInstalled
+    fprintf('cannot run %s without image processing toolbox; skipping\n', mfilename());
+    return;
+end
 setSeed(0); 
 infEngine = 'libdaibp';
 sz = 32;

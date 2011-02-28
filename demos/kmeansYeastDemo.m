@@ -4,7 +4,11 @@
 
 % This file is from pmtk3.googlecode.com
 
-requireBioinfoToolbox
+%requireBioinfoToolbox
+if ~bioinfoToolboxInstalled
+    fprintf('cannot run %s without bioinformatics toolbox; skipping\n', mfilename());
+    return;
+end
 loadData('yeastData310') % 'X', 'genes', 'times');
 
 

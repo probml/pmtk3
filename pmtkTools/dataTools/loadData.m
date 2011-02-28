@@ -17,7 +17,10 @@ function varargout = loadData(dataset, varargin) %destnRoot, quiet, isMatFile)
 %
 % s = loadData('sat', 'C:/mydir')
 %
-% loadData('pmtkImages') % downloads and adds directory to path
+% loadData('pmtkImages') % downloads apmtkImages.zip, unzips it and adds directory to path
+%
+% loadData('mathDataHoff.csv', 'isZipFile', false)
+%  adds file to pmtkDataCopy without unzipping it
 %%
 
 % This file is from pmtk3.googlecode.com
@@ -29,15 +32,16 @@ function varargout = loadData(dataset, varargin) %destnRoot, quiet, isMatFile)
 %if nargin < 4, isMatFile = true; end
 
 
-[destnRoot, quiet, isMatFile] = process_options(varargin, ...
+[destnRoot, quiet, isMatFile, isZipFile, dataset] = process_options(varargin, ...
     'destnRoot', fullfile(pmtk3Root(), 'pmtkdataCopy'), ...
     'quiet', false, ...
-    'isMatFile', true);
+    'isMatFile', true, ...
+    'isZipFile', true, ...
+    'dataset', filenames(dataset));
  
 if isOctave(),  warning('off', 'Octave:load-file-in-path'); end
 googleRoot = ' http://pmtkdata.googlecode.com/svn/trunk';
 %%
-dataset = filenames(dataset);
 isfolder = false;
 if isMatFile && exist([dataset, '.mat'], 'file') == 2
   % if file on path then load it
@@ -48,39 +52,41 @@ elseif ~isMatFile && exist(dataset, 'dir') == 7
   %if ~quiet, fprintf('directory %s is on path already\n', dataset); end
   isfolder = true;
   return;
-else % try and fetch it
+elseif ~isZipFile % KPM 28Feb11
+  % donwload raw file if necessary
+  if exist(dataset, 'file') == 2, return; end
+  source = sprintf('%s/%s', googleRoot, dataset);
+  dest   = fullfile(destnRoot, dataset);
+  if ~quiet
+    fprintf('downloading %s to %s\n', source, dest);
+  end
+  ok     = downloadFile(source, dest);
+  if ~ok
+    error('loadData:fileNotFound', 'Cannot find %s', source);
+  end
+else % download zip file and unzip
     source = sprintf('%s/%s/%s.zip', googleRoot, dataset, dataset);
     dest   = fullfile(destnRoot, [dataset, '.zip']);
     if ~quiet
         fprintf('downloading %s to %s\n', source, dest);
     end
     ok     = downloadFile(source, dest);
-    if ok
-        try
-            destFolder = fullfile(destnRoot, dataset);
-            unzip(dest, fileparts(dest));
-            addpath(destFolder)
-            fname = [dataset, '.mat'];
-            if isMatFile && exist(fname, 'file')
-              D = load(fname);
-               if ~quiet, fprintf('unzipped and loaded %s\n', fname); end
-            else
-              % it is a folder with no .mat file within it
-              if ~quiet, fprintf('unzipped and added folder %s to path\n', dataset); end
-              isfolder = true;
-            end
-        catch %#ok
-            fprintf('\n\n');
-            error('loadData:postDownloadError', 'The %s data set was found, but could not be loaded', dataset);
-        end
-        try
-            delete(dest);
-        catch %#ok if we can't delete the zip file
-        end
-    else
-        fprintf('\n\n');
+    if ~ok
         error('loadData:fileNotFound', 'Cannot find %s', source);
     end
+    destFolder = fullfile(destnRoot, dataset);
+    unzip(dest, fileparts(dest));
+    addpath(destFolder)
+    fname = [dataset, '.mat'];
+    if isMatFile && exist(fname, 'file')
+      D = load(fname);
+      if ~quiet, fprintf('unzipped and loaded %s\n', fname); end
+    else
+      % it is a folder with no .mat file within it
+      if ~quiet, fprintf('unzipped and added folder %s to path\n', dataset); end
+      isfolder = true;
+    end
+    delete(dest);
 end
 if ~isMatFile
   return;

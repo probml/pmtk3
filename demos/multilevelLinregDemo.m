@@ -6,6 +6,7 @@
 
 %% read math score data
 plotFig = 1;
+%loadData('mathDataHoff', 'iszipfile', false, 'ismatfile', false, 'dataset', 'mathDataHoff');
 Y = importData('mathDataHoff.csv');
 y = Y.data;
 names = Y.colheaders;

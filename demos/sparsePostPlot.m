@@ -53,7 +53,7 @@ cla
 p = p / sum(p(:));
 [v,levels] = plevels(p);
 caxis([0,1]);
-[C,h,CF] = contourf(x(ii,ii),y(ii,ii),p(ii,ii),v); % ii = only plot interior
+[C,h] = contourf(x(ii,ii),y(ii,ii),p(ii,ii),v); % ii = only plot interior
 % clabel(levels)
 labels = getlabels(C);
 for i = 1:length(h)

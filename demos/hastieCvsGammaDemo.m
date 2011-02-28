@@ -5,6 +5,11 @@
 
 % This file is from pmtk3.googlecode.com
 
+if ~svmInstalled
+    fprintf('cannot run %s without svmfit; skipping\n', mfilename());
+    return;
+end
+
 data   = loadData('hastieMixture');
 Xtrain = data.X;
 ytrain = convertLabelsToPM1(data.y);

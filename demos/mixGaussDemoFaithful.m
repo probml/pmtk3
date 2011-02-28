@@ -52,7 +52,7 @@ title(str)
 axis equal
 box on
 set(gca, 'YTick', -2:2);
-pause
+%pause
 end
 
 

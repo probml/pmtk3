@@ -38,13 +38,15 @@ if 1
 end
 %%
 %% infer single marginals using libdai's Jtree code
-tic;
-dgm        = hmmToDgm(model, T, 'infEngine', 'libdaiJtree');
-margLD     = dgmInferNodes(dgm, 'localev', X);
-gammaLD = tfMarg2Mat(margLD);
-t = toc;
-fprintf('libdai: %g seconds\n', t);
-assert(approxeq(gamma, gammaLD));
+if libdaiInstalled
+    tic;
+    dgm        = hmmToDgm(model, T, 'infEngine', 'libdaiJtree');
+    margLD     = dgmInferNodes(dgm, 'localev', X);
+    gammaLD = tfMarg2Mat(margLD);
+    t = toc;
+    fprintf('libdai: %g seconds\n', t);
+    assert(approxeq(gamma, gammaLD));
+end
 %% Compare map assignments
 mapDGM = dgmMap(dgm, 'localev', X); 
 mapHMM = hmmMap(model, X); 

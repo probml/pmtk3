@@ -25,7 +25,7 @@ end
 % plot the linear subspace
 Z2 = [-2;1.5];
 %Z2 = [-5;5]; % 2 ``extreme'' points in latent space
-Xrecon2 = Z2*model.W' + repmat(mu, 2,1);
+Xrecon2 = Z2*model.W' + repmat(rowvec(mu), 2,1);
 line([Xrecon2(1,1) Xrecon2(2,1)], [Xrecon2(1,2) Xrecon2(2,2)], 'color', 'm')
 axis;
 

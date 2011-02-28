@@ -19,8 +19,8 @@ function [logZ, nodeBels, clqBels, cliqueLookup] = libdaiInfer(tfacs, varargin)
 
 % This file is from pmtk3.googlecode.com
 
-if ~(exist('dai', 'file') == 3)
-    error('could not find dai.%s', mexext); 
+if ~libdaiInstalled
+    error('could not find dai.%s - need to install libdai', mexext); 
 end
 
 psi = cellfuncell(@convertToLibFac, tfacs);

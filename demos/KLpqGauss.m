@@ -26,15 +26,15 @@ end
 
 % (a)
 hold on;
-contour(x1,x2,f,'g',4,'linewidth',3);
-contour(x1,x2,klqp,'r',4,'linewidth',3);
+contour(x1,x2,f); %'g',4,'linewidth',3);
+contour(x1,x2,klqp); %'r',4,'linewidth',3);
 hold off;
 
 
 % (b)
 hold on;
-contour(x1,x2,f,'g',4,'linewidth',3);
-contour(x1,x2,klpq,'r',4,'linewidth',3);
+contour(x1,x2,f); %'g',4,'linewidth',3);
+contour(x1,x2,klpq); %'r',4,'linewidth',3);
 hold off;
 
 

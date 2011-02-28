@@ -6,6 +6,7 @@
 
 % This file is from pmtk3.googlecode.com
 
+%PMTKslow
 
 % Results: rows  = soy, colon
 % cols = 'smlrPath', 'smlrNoPath', 'rmlrPath', 'rmlrNoPath'
@@ -68,6 +69,11 @@ nDataSets = numel(dataSets);
 
 %% Models
 methods = {'smlrPath', 'smlrNoPath', 'rmlrPath', 'rmlrNoPath'};
+if ~glmnetInstalled
+  methods = setdiff(methods, 'smlrPath');
+  methods = setdiff(methods, 'rmlrPath');
+end
+
 nMethods = numel(methods);
 
 %% Main

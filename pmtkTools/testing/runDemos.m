@@ -41,7 +41,6 @@
 %disp('runningicaBasisDemo.m'); icaBasisDemo; pclear(2); % PMTKslow
 %disp('runningmnist1NNdemo.m'); mnist1NNdemo; pclear(2); % PMTKslow
 %disp('runningpagerankDemo.m'); pagerankDemo; pclear(2); % PMTKinteractive
-
 disp('running agglomDemo.m'); agglomDemo; pclear(2);
 disp('running alarmDgmTimingComparison.m'); alarmDgmTimingComparison; pclear(2);
 disp('running alarmNetworkFitTest.m'); alarmNetworkFitTest; pclear(2);
@@ -190,7 +189,6 @@ disp('running hoffNormalmsePlots.m'); hoffNormalmsePlots; pclear(2);
 disp('running huberLossDemo.m'); huberLossDemo; pclear(2);
 disp('running icaDemo.m'); icaDemo; pclear(2);
 disp('running icaDemoUniform.m'); icaDemoUniform; pclear(2);
-disp('running imageAt.m'); imageAt; pclear(2);
 disp('running invGammaPlotDemo.m'); invGammaPlotDemo; pclear(2);
 disp('running IPFdemo2x2.m'); IPFdemo2x2; pclear(2);
 disp('running IPFdemo4Cycle.m'); IPFdemo4Cycle; pclear(2);
@@ -231,7 +229,6 @@ disp('running linregFreqCaterpillar.m'); linregFreqCaterpillar; pclear(2);
 disp('running linregGroupLassoDemo.m'); linregGroupLassoDemo; pclear(2);
 disp('running linregGroupLassoEmDemo.m'); linregGroupLassoEmDemo; pclear(2);
 disp('running linregLogTransformDemo.m'); linregLogTransformDemo; pclear(2);
-disp('running linregMlcompDemo.m'); linregMlcompDemo; pclear(2);
 disp('running linregOnlineDemoKalman.m'); linregOnlineDemoKalman; pclear(2);
 disp('running linregPolyVsDegree.m'); linregPolyVsDegree; pclear(2);
 disp('running linregPolyVsN.m'); linregPolyVsN; pclear(2);
@@ -258,11 +255,9 @@ disp('running logregLaplaceGirolamiDemo.m'); logregLaplaceGirolamiDemo; pclear(2
 disp('running logregMultinomKernelDemo.m'); logregMultinomKernelDemo; pclear(2);
 disp('running logregMultinomKernelMinfuncDemo.m'); logregMultinomKernelMinfuncDemo; pclear(2);
 disp('running logregMultinomMinfuncDemo.m'); logregMultinomMinfuncDemo; pclear(2);
-disp('running logregOptDemo.m'); logregOptDemo; pclear(2);
 disp('running logregSATdemo.m'); logregSATdemo; pclear(2);
 disp('running logregSATdemoBayes.m'); logregSATdemoBayes; pclear(2);
 disp('running logregSatMhDemo.m'); logregSatMhDemo; pclear(2);
-disp('running logregSgdDemo.m'); logregSgdDemo; pclear(2);
 disp('running logregWeightedDemo.m'); logregWeightedDemo; pclear(2);
 disp('running logregXorDemo.m'); logregXorDemo; pclear(2);
 disp('running logregXorLinearDemo.m'); logregXorLinearDemo; pclear(2);
@@ -302,8 +297,6 @@ disp('running mixGaussSingularity.m'); mixGaussSingularity; pclear(2);
 disp('running mixGaussVbDemoFaithful.m'); mixGaussVbDemoFaithful; pclear(2);
 disp('running mixPpcaDemoNetlab.m'); mixPpcaDemoNetlab; pclear(2);
 disp('running mixStudentBankruptcyDemo.m'); mixStudentBankruptcyDemo; pclear(2);
-disp('running mk_grid_world.m'); mk_grid_world; pclear(2);
-disp('running mk_grid_world_simple.m'); mk_grid_world_simple; pclear(2);
 disp('running mkAlarmDgm.m'); mkAlarmDgm; pclear(2);
 disp('running mkLungCancerDgm.m'); mkLungCancerDgm; pclear(2);
 disp('running mkQmrNetwork.m'); mkQmrNetwork; pclear(2);
@@ -380,9 +373,7 @@ disp('running plotNoLocalMin.m'); plotNoLocalMin; pclear(2);
 disp('running plotPdfCdfDemo.m'); plotPdfCdfDemo; pclear(2);
 disp('running poissonPlotDemo.m'); poissonPlotDemo; pclear(2);
 disp('running postDensityIntervals.m'); postDensityIntervals; pclear(2);
-disp('running powerCurves.m'); powerCurves; pclear(2);
 disp('running powerCurvesDemo.m'); powerCurvesDemo; pclear(2);
-disp('running powerCurvesDemo2.m'); powerCurvesDemo2; pclear(2);
 disp('running powerMethodDemo.m'); powerMethodDemo; pclear(2);
 disp('running ppcaDemo2d.m'); ppcaDemo2d; pclear(2);
 disp('running ppcaDemoNetlab.m'); ppcaDemoNetlab; pclear(2);

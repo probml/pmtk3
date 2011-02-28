@@ -35,6 +35,9 @@ CPDs = dgm.CPDs;
 G    = dgm.G; 
 query = num2cell(1:ndiseases); 
 methods = {'libdaiJtree', 'varelim', 'jtree'};
+if ~libdaiInstalled
+  methods = setdiff(methods, 'libdaiJtree');
+end
 nmethods = numel(methods); 
 times = zeros(nmethods, 1); 
 bels = cell(nmethods, 1); 

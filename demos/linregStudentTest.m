@@ -4,6 +4,11 @@
 
 % This file is from pmtk3.googlecode.com
 
+if ~optimToolboxInstalled
+    fprintf('cannot run %s without optimization toolbox; skipping\n', mfilename());
+    return;
+end
+
 seed = 0; setSeed(seed);
 x = sort(rand(10,1));
 y = 1+2*x + rand(size(x))-.5;
@@ -21,6 +26,7 @@ for i = 1:length(NUs)
     tic;
     modelGradDesc = linregRobustStudentFitConstr(x, y, nu);
     tGradDesc = toc;
+   
     % Using EM
     tic;
     modelEM = linregRobustStudentFitEm(x, y, nu, 'verbose', true);

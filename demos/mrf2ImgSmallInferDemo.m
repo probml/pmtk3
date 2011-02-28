@@ -44,9 +44,10 @@ methods{end+1} = 'IntProg';
 methodArgs{end+1} = {};
 %}
 
-methods{end+1} = 'LinProg';
-methodArgs{end+1} = {};
-
+if optimToolboxInstalled
+  methods{end+1} = 'LinProg';
+  methodArgs{end+1} = {};
+end
 
 methods{end+1} = 'LBP';
 methodArgs{end+1} = {'maxIter', 100};

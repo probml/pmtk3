@@ -5,7 +5,11 @@
 % This file is from pmtk3.googlecode.com
 
 function linregRobustDemo()
-requireOptimToolbox
+%requireOptimToolbox
+if ~optimToolboxInstalled
+    fprintf('cannot run %s without optimization toolbox; skipping\n', mfilename());
+    return;
+end
 seed = 0; setSeed(seed);
 x = sort(rand(10,1));
 y = 1+2*x + rand(size(x))-.5;

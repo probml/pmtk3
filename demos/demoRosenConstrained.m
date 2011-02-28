@@ -9,6 +9,11 @@ function demoRosenConstrained()
 % minimize 2d rosenbrock st x1^2 + x^2 <= 1
 % Example from p1-8 of Mathworks Optimization Toolbox manual
 
+if ~optimToolboxInstalled
+    fprintf('%s requires optimization toolbox; skipping\n', mfilename())
+    return
+end
+
 xstart = [-1 2];
  % Hessian is ignored by quasi-Newton so we use interior point
 opts = optimset('DerivativeCheck', 'on', 'Display', 'off', 'GradObj', 'on', 'Algorithm', 'interior-point');

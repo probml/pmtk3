@@ -39,6 +39,7 @@ printPmtkFigure ridgePathDemoLambda
 end
 
 %% now use path algorithm
+if ~glmnetInstalled, return; end
 pp = preprocessorCreate();
 options = glmnetSet();
 %options.lambda = lambdas;

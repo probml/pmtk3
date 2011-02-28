@@ -5,6 +5,10 @@
 
 
 clear all
+if ~glmnetInstalled
+    fprintf('cannot run %s without glmnet; skipping\n', mfilename());
+    return;
+end
 load prostateStnd
 mu = mean(y);
 y = (y>mu); % dichotimize

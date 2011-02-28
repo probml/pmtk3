@@ -23,8 +23,8 @@ ytrain = y(1:nTrain);
 ytest  = y(nTrain+1:end);
   
 % 2D CV
-lambdaRange     = logspace(-6, 1, 5);  
-gammaRange      = logspace(-4, 4, 5);
+lambdaRange     = logspace(-6, 1, 3);  
+gammaRange      = logspace(-4, 4, 3);
 paramRange = crossProduct(lambdaRange, gammaRange); 
 regtypes = {'L2'}; %L1 is a bit better but a bit slower
 for r=1:length(regtypes)
@@ -34,7 +34,7 @@ for r=1:length(regtypes)
     preprocessorCreate('kernelFn', @(X1, X2)kernelRbfGamma(X1, X2, param(2))));
   predictFn = @logregPredict;
   lossFn = @(ytest, yhat)mean(yhat ~= ytest);
-  nfolds = 5;
+  nfolds = 2; % better to use 5;
   useSErule = true;
   plotCv = true;
   tic;
