@@ -2,7 +2,9 @@ function elasticDistortionsDemo()
 %% Illustrate elastic deformations
 %PMTKauthor Kevin Swersky
 
-load goodsix.mat
+%load goodsix.mat
+loadData('pmtkImages', 'isMatFile', false)
+I = imread('digit6.png');
 
 setSeed(2);
 %rand('seed',30);
@@ -94,4 +96,18 @@ Y = repmat([1:size(I,1)]',1,size(I,2));
 figure(1);
 subplot(1,3,1); imagesc(I); subplot(1,3,2); imagesc(I2); colormap(gray);
 subplot(1,3,3); quiver(X,Y,-Dx,Dy);
+end
+
+function[I2] = distort_image(I,Dx,Dy)
+[h,w] = size(I);
+I2 = zeros(w,h);
+for x=1:w
+    for y=1:h
+        dx = Dx(y,x);
+        dy = Dy(y,x);
+        i1 = imageAt(I,y+floor(dy),x+floor(dx)) + (dx-floor(dx))*(imageAt(I,y+floor(dy),x+ceil(dx))-imageAt(I,y+floor(dy),x+floor(dx)));
+        i2 = imageAt(I,y+ceil(dy),x+floor(dx)) + (dx-floor(dx))*(imageAt(I,y+ceil(dy),x+ceil(dx))-imageAt(I,y+ceil(dy),x+floor(dx)));
+        I2(y,x) = i1 + (dy-floor(dy))*(i2-i1);
+    end
+end
 end

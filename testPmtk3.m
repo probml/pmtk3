@@ -5,14 +5,8 @@ function testPmtk3()
 
 % This file is from pmtk3.googlecode.com
 
-fprintf('Checking for matlabTools.........');
-if exist('onesPMTK.m', 'file') == 2 && exist('filelist.m', 'file') == 2;
-    fprintf('PASSED\n');
-else
-    fprintf(2, 'FAILED\n\nPMTK3 depends on the matlabTools package,\nwhich could not be found...\n'); 
-    return
-end
-%% Init
+%% Check that initPmtk3 was run 
+% It generates a file called 'isOctave.m' that is not preinstalled
 fprintf('Checking initialization..........');
 initPassed = exist('isOctave.m', 'file') == 2;
 if initPassed
@@ -55,6 +49,7 @@ if 0 %~isOctave && ~verLessThan('matlab', '7.6.0')
     else
         fprintf(2, 'FAILED\n'); 
         gvizErr = true; 
+        fprintf(2, 'Graphviz, used by some of the demos, (via the <a href="http://graphviz4matlab.googlecode.com">graphViz4Matlab</a> interface)\ncannot be found. You can obtain the latest version from <a href="http://www.graphviz.org/">here</a>.\nAfter installing, please add the "bin" subdirectory to your system path.\n');
     end
 end
 %% Test code
@@ -78,14 +73,9 @@ kalmanTrackingDemo;
 bernoulliBetaSequentialUpdate;
 close all;
 fprintf('\n.......................\n');
-if ~gvizErr
-    fprintf('\nAll Tests Passed\n');
-else
-    fprintf('\nAll Tests Passed, except for the following:\n');
-    fprintf(2, 'Graphviz, used by some of the demos, (via the <a href="http://graphviz4matlab.googlecode.com">graphViz4Matlab</a> interface)\ncannot be found. You can obtain the latest version from <a href="http://www.graphviz.org/">here</a>.\nAfter installing, please add the "bin" subdirectory to your system path.\n');
-end
-fprintf('\n.......................\n');
-    
+fprintf('\nAll Tests Passed\n');
+fprintf('Type runDemos() for a more extensive test of the system\n')
+
 
 end
 

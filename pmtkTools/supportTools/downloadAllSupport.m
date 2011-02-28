@@ -4,12 +4,12 @@ function downloadAllSupport(destnRoot, quiet)
 % This file is from pmtk3.googlecode.com
 
 
-SetDefaultValue(1, 'destnRoot', fullfile(pmtk3Root(), 'external'));
+SetDefaultValue(1, 'destnRoot', fullfile(pmtk3Root(), 'pmtksupportCopy'));
 SetDefaultValue(2, 'quiet', false);
 googleRoot = ' http://pmtksupport.googlecode.com/svn/trunk';
 packages = scrapePmtkSupport();
 maxLen = max(cellfun(@numel, packages));
-fprintf('downloading %d packages to pmtk3/external from pmtksupport.googlecode.com - this may take a few minutes\n',...
+fprintf('downloading %d packages to pmtk3/pmtksupportCopy from pmtksupport.googlecode.com - this may take a few minutes\n',...
     numel(packages));
 for i=1:numel(packages)
     package = packages{i};

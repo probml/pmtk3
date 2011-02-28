@@ -1,7 +1,11 @@
 % Demonstrate classification/decision tree on 2d 3class iris data
 % From http://www.mathworks.com/products/statistics/demos.html?file=/products/demos/shipping/stats/classdemo.html
 
-requireStatsToolbox(); % dtree
+if  ~statsToolboxInstalled
+  fprintf('cannot run %s without stats toolbox; skipping\n', mfilename())
+  return
+end
+
 
 % "Resubstitution error" is the training set error
 
@@ -22,6 +26,9 @@ t = classregtree(meas(:,1:2), species,'names',{'SL' 'SW' });
 
 % plot decision boundary
 figure
+[x,y] = meshgrid(4:.1:8,2:.1:4.5);
+x = x(:);
+y = y(:);
 [grpname,node] = t.eval([x y]);
 gscatter(x,y,grpname,'grb','sod')
 title('unpruned decision tree')

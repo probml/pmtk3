@@ -13,7 +13,7 @@ end
 
 nstates = fg.nstates;
 %% construct megaNodes for each multiway factor
-initFactors = fg.factors;
+initFactors = colvec(fg.factors);
 nInitNodes  = numel(fg.round); 
 sz          = cellfun(@(f)numel(f.domain), initFactors); 
 multiway    = find(sz > 2); 

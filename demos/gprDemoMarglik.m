@@ -30,8 +30,8 @@ set(gca,'XScale','log','YScale','log')
 xlabel('characteristic lengthscale')
 ylabel('noise standard deviation')
 %axis square
-[a1 b1 c1]=minimize([log(1) 0 log(0.2)]','gpS00evidence',-100,xs,fs,[1 0 1]');
-[a2 b2 c2]=minimize([log(10) 0 log(0.8)]','gpS00evidence',-100,xs,fs,[1 0 1]');
+[a1 b1 c1]=minimize([log(1) 0 log(0.2)]',@gpS00evidence,-100,xs,fs,[1 0 1]');
+[a2 b2 c2]=minimize([log(10) 0 log(0.8)]',@gpS00evidence,-100,xs,fs,[1 0 1]');
 hold on
 plot(exp(a1(1)),exp(a1(3)),'+','MarkerSize',14,'LineWidth',2)
 plot(exp(a2(1)),exp(a2(3)),'+','MarkerSize',14,'LineWidth',2)
@@ -79,7 +79,7 @@ set(hhh3,'PaperPosition', [0.25 2.5 8 6])
 
 end
 
-function [out1, out2, out3] = gpS00(X, input, target, mask, test);
+function [out1, out2, out3] = gpS00evidence(X, input, target, mask, test);
 
 % gpS00: Gaussian process regression with "squared negative exponential"
 % covariance function and independent Gaussian noise model. Two modes are

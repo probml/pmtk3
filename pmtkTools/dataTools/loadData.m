@@ -30,7 +30,7 @@ function varargout = loadData(dataset, varargin) %destnRoot, quiet, isMatFile)
 
 
 [destnRoot, quiet, isMatFile] = process_options(varargin, ...
-    'destnRoot', fullfile(pmtk3Root(), 'data'), ...
+    'destnRoot', fullfile(pmtk3Root(), 'pmtkdataCopy'), ...
     'quiet', false, ...
     'isMatFile', true);
  
@@ -38,13 +38,15 @@ if isOctave(),  warning('off', 'Octave:load-file-in-path'); end
 googleRoot = ' http://pmtkdata.googlecode.com/svn/trunk';
 %%
 dataset = filenames(dataset);
+isfolder = false;
 if isMatFile && exist([dataset, '.mat'], 'file') == 2
   % if file on path then load it
-  if ~quiet, fprintf('%s.mat is on path already; loading\n', dataset); end
+  %if ~quiet, fprintf('%s.mat is on path already; loading\n', dataset); end
   D = load([dataset, '.mat']);
 elseif ~isMatFile && exist(dataset, 'dir') == 7
   % folder on path - nothing to do
-  if ~quiet, fprintf('directory %s is on path already\n', dataset); end
+  %if ~quiet, fprintf('directory %s is on path already\n', dataset); end
+  isfolder = true;
   return;
 else % try and fetch it
     source = sprintf('%s/%s/%s.zip', googleRoot, dataset, dataset);
@@ -65,6 +67,7 @@ else % try and fetch it
             else
               % it is a folder with no .mat file within it
               if ~quiet, fprintf('unzipped and added folder %s to path\n', dataset); end
+              isfolder = true;
             end
         catch %#ok
             fprintf('\n\n');
@@ -81,6 +84,9 @@ else % try and fetch it
 end
 if ~isMatFile
   return;
+end
+if isfolder
+  return
 end
 
 if nargout == 0
