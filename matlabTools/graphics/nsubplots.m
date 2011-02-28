@@ -1,4 +1,4 @@
-function [ynum, xnum] = nsubplots(n)
+[function [ynum, xnum] = nsubplots(n)
 % Figure out how many plots in the y and x directions to cover n in total
 % while keeping the aspect ratio close to rectangular
 % but not too stretched

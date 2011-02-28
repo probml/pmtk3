@@ -10,13 +10,11 @@ if verbose
     disp('initializing pmtk3'); 
 end
 
-%% check if this is matlab or octave
 isMatlab = ~isempty(ver('matlab')); 
 if ~isMatlab
-   initPmtk3Octave(); % we may have some duplication this way
-                      % but it is much easier to debug. 
-   return;
+    error('run initPmtk3Octave instead')
 end
+
 
 %% change to the directory storing this function, (should be PMTK3 root).
 w = which(mfilename()); 
