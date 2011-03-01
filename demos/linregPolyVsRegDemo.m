@@ -139,7 +139,8 @@ if glmnetInstalled()
   [bestModel, path] = linregFitPathCv(Xtrain, ytrain, 'regtype', 'l2',  'preproc', pp,...
     'nfolds', nfolds);
   figure;
-  plot(path.errMean)
+  %plot(path.errMean)
+  plot(path.cvErr)
 end
 
 

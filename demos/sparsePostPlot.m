@@ -2,6 +2,7 @@ function sparsePostPlot
 % Code for Plotting Gauss, Laplace and "Very Sparse" Prior and Posterior
 %PMTKauthor Florian Steinke 2005
 
+%PMTKslow
 
 % define fine grid to evalute distributions
 %(grid extends outside the targeted field of view for a better 
@@ -59,7 +60,11 @@ labels = getlabels(C);
 for i = 1:length(h)
     ind = find(abs(v-labels(i)) < 1e-6*max(v));
     if length(ind) ~= 1, error('Shit'), end;
-    set(h(i),'CData',1-levels(ind),'Edgecolor','none');
+    try
+        set(h(i),'CData',1-levels(ind),'Edgecolor','none');
+    catch
+        % ignore error
+    end
 end
 hold on
 line([[0 -ext];[0 ext]],[[-ext 0];[ext 0]],'Color','black');

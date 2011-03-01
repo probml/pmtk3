@@ -3,6 +3,7 @@ function makeTestDemos()
 
 % This file is from pmtk3.googlecode.com
 
+error('deprecated')
 
 exclusions = {'PMTKbroken','PMTKinprogress', 'PMTKinteractive', 'PMTKreallySlow'};    % commented out in runDemos.m
 demos = filenames(processExamples({}, exclusions, 0, false));

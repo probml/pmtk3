@@ -1,7 +1,7 @@
 %function multilevelLinregDemo()
 % Hierarchical Regression Model on Math Score data
 % Based on Peter Hoff's book, fig 11.1, 11.3
-%#PMTKauthor Emtiyaz Khan
+%PMTKauthor Emtiyaz Khan
 
 
 %% read math score data

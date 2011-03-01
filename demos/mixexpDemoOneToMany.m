@@ -69,7 +69,7 @@ printPmtkFigure(sprintf('mixexpOneManyGating'))
 
 
 % Plot points with responsibilities represented by shading
-%#PMTKauthor Catherine Gamroth
+%PMTKauthor Catherine Gamroth
 %
 figure;
 hold on;

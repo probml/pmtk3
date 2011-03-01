@@ -22,6 +22,7 @@
 %disp('running imputationGeneMcroarrayDemo.m'); imputationGeneMicroarrayDemo; pclear(2); % PMTKslow
 %disp('running imputationMxedAdultDemo.m'); imputationMixedAdultDemo; pclear(2); % PMTKslow
 %disp('running linarKernelDemo.m'); linearKernelDemo; pclear(2); % PMTKslow
+%disp('running linegMlcompDemo.m'); linregMlcompDemo; pclear(2); % PMTKinprogress
 %disp('running linregSpareEmSynthDemo.m'); linregSparseEmSynthDemo; pclear(2); % PMTKreallySlow
 %disp('running linregSparseEBiscuitsDemo.m'); linregSparseEmBiscuitsDemo; pclear(2); % PMTKreallySlow
 %disp('running linregSparseESynthDemoOld.m'); linregSparseEmSynthDemoOld; pclear(2); % PMTKreallySlow
@@ -30,6 +31,8 @@
 %disp('running mrfFitIgSemiObsDemo.m'); mrfFitImgSemiObsDemo; pclear(2); % PMTKslow
 %disp('running mulitaskRegDemo.m'); multitaskRegDemo; pclear(2); % PMTKslow
 %disp('running naiveByesMnistDemo.m'); naiveBayesMnistDemo; pclear(2); % PMTKslow
+%disp('running ogregOptDemo.m'); logregOptDemo; pclear(2); % PMTKslow
+%disp('running ogregSgdDemo.m'); logregSgdDemo; pclear(2); % PMTKslow
 %disp('running paOverfitDemo.m'); pcaOverfitDemo; pclear(2); % PMTKslow
 %disp('running randgmTimingTest.m'); randDgmTimingTest; pclear(2); % PMTKslow
 %disp('running rbfNetwrkSarcosDemo.m'); rbfNetworkSarcosDemo; pclear(2); % PMTKslow
@@ -41,6 +44,8 @@
 %disp('runningicaBasisDemo.m'); icaBasisDemo; pclear(2); % PMTKslow
 %disp('runningmnist1NNdemo.m'); mnist1NNdemo; pclear(2); % PMTKslow
 %disp('runningpagerankDemo.m'); pagerankDemo; pclear(2); % PMTKinteractive
+%disp('runningsmlrPathDemo.m'); smlrPathDemo; pclear(2); % PMTKslow
+if 0
 disp('running agglomDemo.m'); agglomDemo; pclear(2);
 disp('running alarmDgmTimingComparison.m'); alarmDgmTimingComparison; pclear(2);
 disp('running alarmNetworkFitTest.m'); alarmNetworkFitTest; pclear(2);
@@ -435,12 +440,12 @@ disp('running sigmoidPlot.m'); sigmoidPlot; pclear(2);
 disp('running sigmoidplot2D.m'); sigmoidplot2D; pclear(2);
 disp('running sliceSamplingDemo1d.m'); sliceSamplingDemo1d; pclear(2);
 disp('running sliceSamplingDemo2d.m'); sliceSamplingDemo2d; pclear(2);
-disp('running smlrPathDemo.m'); smlrPathDemo; pclear(2);
 disp('running smoothingKernelPlot.m'); smoothingKernelPlot; pclear(2);
 disp('running softmaxDemo2.m'); softmaxDemo2; pclear(2);
 disp('running sparseLinRegBabackDemo.m'); sparseLinRegBabackDemo; pclear(2);
 disp('running sparseLinRegMargDistDemo.m'); sparseLinRegMargDistDemo; pclear(2);
 disp('running sparseNnetDemo.m'); sparseNnetDemo; pclear(2);
+end
 disp('running sparsePostPlot.m'); sparsePostPlot; pclear(2);
 disp('running splineBasisDemo.m'); splineBasisDemo; pclear(2);
 disp('running splineDemoWiki.m'); splineDemoWiki; pclear(2);
