@@ -19,6 +19,17 @@ function [mi, nmi] = mutualInfoAllPairsDiscrete(X, values, weights)
 % for loops over the states K, which are often binary.
 % There is no loop over n or d.
 
+% If the data is binary and sparse, there is a trick
+% to save space
+% let N(t) = sum_n I(X(n,t)=1), N(s,t)=sum_n I(X(n,s)=1,X(n,t)=1)
+% Then we can compute the pairwise statistics thus:
+% N(s=1,t=1) = N(s,t)
+% N(s=1,t=0) = N(s) - N(s,t)
+% N(s=0,t=1) = N(t) - N(s,t)
+% N(s=0,t=0) = N - [-N(s,t) + N(s) + N(t)]
+% where the last line follows from the Venn diagram
+%  [a, b'] (a,b)  [a', b]
+
 
 data = full(double(X')); % now columns contain cases
 clear X

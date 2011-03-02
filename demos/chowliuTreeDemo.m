@@ -7,12 +7,11 @@ loadData('20news_w100'); % documents, wordlist, newsgroups
 %X is 16,642 documents by 100 words  (sparse logical  matrix)
 X = documents';
 disp('mlapa chowliu demo')
-model = treeFitStruct(X);
-model = treeFitParams(model, X);
+model = treeFit(X);
 ll = treeLogprob(model, X);
 
 if ~isOctave()
-    drawNetwork('-adjMat', model.G, '-nodeLabels', wordlist);
+    drawNetwork('-adjMat', model.adjmat, '-nodeLabels', wordlist);
 end
 % Plot loglikelihood of training cases
 figure;hist(ll,100); title('log-likelihood of training cases using ChowLiu tree')
