@@ -125,7 +125,7 @@ switch engine
     case 'enum'
         
         factors      = cpds2Factors(CPDs, G, CPDpointers);
-        [logZ, bels] = enumRunInference(factors, queries, clamped, localFacs);
+        [logZ, bels] = bruteForceInfer(factors, queries, clamped, localFacs);
              
     otherwise
         
@@ -135,7 +135,7 @@ switch engine
             factors = addEvidenceToFactors(factors, clamped, doSlice);
             factors = [factors(:); localFacs(:)];
             if isempty(dgm.infEngArgs)
-                args = getLibdaiDefault(engine(7:end));
+                args = libdaiDefaultsGet(engine(7:end));
             else
                 args = dgm.infEngArgs;
             end

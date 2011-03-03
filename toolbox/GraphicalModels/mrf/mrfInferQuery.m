@@ -79,7 +79,7 @@ switch engine
              
     case 'enum'
        
-        [logZ, bels] = enumRunInference(cg.Tfac, queries, clamped, localFacs); 
+        [logZ, bels] = bruteForceInfer(cg.Tfac, queries, clamped, localFacs); 
        
     otherwise
         
@@ -88,7 +88,7 @@ switch engine
             factors = addEvidenceToFactors(cg.Tfac, clamped, doSlice);
             factors = [factors(:); localFacs(:)];
             if isempty(mrf.infEngArgs)
-                args = getLibdaiDefault(engine(7:end));
+                args = libdaiDefaultsGet(engine(7:end));
             else
                 args = mrf.infEngArgs;
             end
