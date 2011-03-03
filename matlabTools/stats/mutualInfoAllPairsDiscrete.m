@@ -1,13 +1,22 @@
-function [mi, nmi] = mutualInfoAllPairsDiscrete(X, values, weights)
-% mi(i,j) = mutual information between X(i) and X(j)
-% nmi = normalize MI, 0 <=nmi <= 1
-% We set mi(i,i)=0
+function [mi, nmi, pij, pi] = mutualInfoAllPairsDiscrete(X, values, weights)
+% Compute mutual information between all pairs of discrete rv's
+%
+% INPUT
 % X(n,j) is value of case n=1:N, node j=1:d
 % values is set of valid values for each node (e.g., [0 1])
 % weights is an optional N*1 vector of weights per data case 
 %
+% OUTPUT
+% mi(i,j) = mutual information between X(i) and X(j), mi(i,i)=0
+% nmi = normalize MI, 0 <=nmi <= 1
+% pij(i,k,v1,v2) = joint
+% pi(i,v) = marginal
+%
+% COMPLEXITY
 % O(N d^2) time to compute p(i,j), N=#cases, d=#nodes.
 % O(d^2 K^2) time to compute MI, K=#states
+%
+
 
 % This file is from pmtk3.googlecode.com
 

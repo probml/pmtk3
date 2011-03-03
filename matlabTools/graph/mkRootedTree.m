@@ -2,7 +2,7 @@ function [T, preorder] = mkRootedTree(adjMat, root)
 % Adjmat should be the adjacency matrix of an undirected tree
 % All arrows point away from the root (root defaults to 1)
 % T is a sparse matrix.
-% Also returns nodes in pre-order
+% Also returns nodes in pre-order (parents before children)
 
 % This file is from pmtk3.googlecode.com
 
@@ -19,6 +19,7 @@ if hascycle
 end
 %}
 
+
 [d dt ft pred] = dfs(adjMat,root,1); %#ok (gaimc package)
 % dt is discovery time, pred is predecessor in search
 dt(root) = 0;
@@ -30,5 +31,7 @@ for i=1:length(pred)
       T(pred(i),i)=1; %#ok
    end
 end
+
+
 
 end

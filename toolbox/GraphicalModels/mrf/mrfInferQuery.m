@@ -79,7 +79,7 @@ switch engine
              
     case 'enum'
        
-        [logZ, bels] = bruteForceInfer(cg.Tfac, queries, clamped, localFacs); 
+        [logZ, bels] = bruteForceInferQuery(cg.Tfac, queries, clamped, localFacs); 
        
     otherwise
         

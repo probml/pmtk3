@@ -125,7 +125,7 @@ switch engine
     case 'enum'
         
         factors      = cpds2Factors(CPDs, G, CPDpointers);
-        [logZ, bels] = bruteForceInfer(factors, queries, clamped, localFacs);
+        [logZ, bels] = bruteForceInferQuery(factors, queries, clamped, localFacs);
              
     otherwise
         
