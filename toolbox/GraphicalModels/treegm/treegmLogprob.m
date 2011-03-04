@@ -1,4 +1,4 @@
-function ll = treeLogprob(model, X)
+function ll = treegmLogprob(model, X)
 % log probabiltiy of a fully observed discrete data vector under a tree model
 % LL(n) = log p(X(n,:) | params)
 
@@ -21,5 +21,6 @@ for i=1:d
       ll = ll + log(CPT(ndx)+eps);
    end
 end
+
 
 end

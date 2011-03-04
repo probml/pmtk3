@@ -35,6 +35,9 @@ edgeorder = treeMsgOrder(model.adjmat, model.root);
 model.edges = edgeorder(1:(size(edgeorder,1)/2),:);
 model.Nedges = size(model.edges, 1);
 
+
+
+% local evidence CPDs
 if nargin < 6, localCPDs = []; end
 if nargin < 7, localCPDpointers = 1:model.Nnodes; end
 model.localCPDs = localCPDs;

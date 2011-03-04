@@ -31,18 +31,6 @@ nodePotNdx = 1:4;
 model = treegmCreate(G, nodePots, edgePots, nodePotNdx, edgePotNdx);
 
 
-%{
-G = zeros(2,2); G(1,2) = 1;  G = mkSymmetric(G);
-Nnodes = size(G,1);
-edgePot12 = [1 2; 3 4];
-edgePots = zeros(2,2,1);
-edgePots(:,:,1) = edgePot12;
-edgePotNdx = zeros(Nnodes, Nnodes);
-edgePotNdx(1,2) = 1; 
-nodePots = ones(2,1);
-nodePotNdx = ones(1,Nnodes); % share the same nodePot everywhere
-model = treegmCreate(G, nodePots, edgePots, nodePotNdx, edgePotNdx);
-%}
 
 % convert 'naked' potentials into labeled factors
 factors = {};

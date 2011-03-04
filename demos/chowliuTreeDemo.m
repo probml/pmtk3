@@ -7,8 +7,14 @@ loadData('20news_w100'); % documents, wordlist, newsgroups
 %X is 16,642 documents by 100 words  (sparse logical  matrix)
 X = documents';
 disp('mlapa chowliu demo')
-model = treeFit(X);
-ll = treeLogprob(model, X);
+
+%setSeed(0);
+%X = randn(100,5)>0;
+model = treegmFit(X);
+%dgm = treeToDgm(model);
+
+ll = treegmLogprob(model, X);
+
 
 if ~isOctave()
     drawNetwork('-adjMat', model.adjmat, '-nodeLabels', wordlist);
@@ -24,3 +30,11 @@ for i=1:length(chosen)
   fprintf('words in sentence %d with loglik %5.3f\n', j, ll(j));
   wordlist(X(j,:))
 end
+
+% loglik decreases as number of density of bit vector increases
+doclen = sum(X, 2);
+figure;
+plot(doclen(ndx), 'r-');
+hold on
+plot(ll(ndx), 'b:')
+legend('doclen', 'loglik')

@@ -3,9 +3,10 @@ function model = treegmFit(X, domain, weights)
 % Input:
 % X(i,j) is value of case i=1:n, node j=1:d
 % domain is set of valid values for each variable (e.g., [0 1])
-% weights is an optional N*1 vector of weights per data case (needed for EM)
+% weights is an optional N*1 vector of weights per data case
+% (needed for fitting mixtures of trees with EM)
 %
-% Output: model is a struct with these fields
+% Output: model is a struct with these fields:
 %
 % adjmat is a sparse symmetric matrix (undirected graph)
 % pa(n) = parent of node n, or 0 if n is the root
@@ -16,41 +17,68 @@ function model = treegmFit(X, domain, weights)
 [Ncases Nnodes] = size(X);
 if nargin < 2, domain = unique(X(:)); end
 if nargin < 3, weights = ones(1,Ncases); end
-[model.undirTree, model.dirTree] = treeFitStruct(X, domain, weights);
-model.root = 1;
-[model.edgeorder] = treeMsgOrder(model.undirTree, model.root);
-for n=1:Nnodes
-  if n==model.root
-    model.pa(n) = 0;
-  else
-    model.pa(n) = parents(model.dirTree, n);
-  end
-end
-dirichlet = 0; % smoothing param
-[model.CPDs, model.support] = treeFitParams(model.pa,  X, dirichlet);
-model.Nstates = numel(model.support);
 
-end
-
-
-function [treeAdjMat, dirTree] = treeFitStruct(X, domain, weights)
-% 
-%
+% Chow-Liu
 % O(N d^2) time to compute p(i,j), N=#cases, d=#nodes.
 % O(d^2 K^2) tome to compute MI, K=#states
 % O(d^2) time to find MWST
+[mi, nmi, pij, pi] = mutualInfoAllPairsDiscrete(X, domain, weights); %#ok
+%[mi] = mutualInfoAllPairsDiscrete(X, domain, weights);
+[adjmat, cost] = minSpanTreePrim(-mi); % find max weight spanning tree
+root = 1;
+Nstates = size(pi,2);
 
-%[mi, nmi, pij, pi] = mutualInfoAllPairsDiscrete(X, domain, weights);
-[mi] = mutualInfoAllPairsDiscrete(X, domain, weights);
-[treeAdjMat, cost] = minSpanTreePrim(-mi); % find max weight spanning tree
-dirTree = mkRootedTree(treeAdjMat);
+
+%  Make a directed version of the tree
+% so we can compute logprob
+dirTree = mkRootedTree(adjmat, root);
+pa = zeros(1, Nnodes);
+CPDs = cell(1, Nnodes);
+for n=1:Nnodes
+  if n==root
+    pa(n) = 0;
+    CPDs{n} = pi(n,:)';
+  else
+    pa(n) = parents(dirTree, n);
+    p = pa(n);
+    CPDs{n} = squeeze(pij(p,n,:,:)) ./ repmat(pi(p,:)', 1, Nstates);
+  end
 end
+
+
+% Make an undirected model
+edgeorder = treeMsgOrder(adjmat, root);
+Nedges = Nnodes-1;
+edges = edgeorder(Nedges+1:end,:);
+% edges(e,:)=[s t] ordered from root to leaves
+
+nodePots = [CPDs{root} ones(Nstates,1)];
+nodePotNdx = [1 2*ones(1,Nnodes-1)];
+edgePots = zeros(Nstates, Nstates, Nedges);
+edgePotNdx = zeros(Nnodes, Nnodes);
+for e=1:Nedges
+  s = edges(e, 1); t = edges(e, 2); %s -> t
+  edgePotNdx(s,t) = e;
+  edgePots(:,:,e) = CPDs{t}; % row = s, col = t
+end
+
+model = treegmCreate(adjmat, nodePots, edgePots, nodePotNdx, edgePotNdx);
+
+% We store these directed quantities used by treegmLogprob
+model.CPDs = CPDs;
+model.pa = pa;
+model.dirTree = dirTree;
+
+end
+
+
 
 function [CPDs, support] = treeFitParams(par,  X, dirichlet)
 % Find the MAP estimate of the parameters of the CPTs.
 %  X(i,j) is value of node j in case i, i=1:n, j=1:d
 % par(n) = parent of node n, or [] if n is the root
 
+error('deprecated')
 if nargin < 3, dirichlet = 0; end
 d = size(X,2);
 [X, support] = canonizeLabels(X); % 1...K requried by compute_counts

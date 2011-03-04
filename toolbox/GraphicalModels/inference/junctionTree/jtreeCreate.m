@@ -59,7 +59,7 @@ rootCliques                 = find(cliqueLookup(root, :));
 rootClqNdx                  = rootCliques(minidx(initClqSizes(rootCliques)));
 
 [cliqueTree, preOrder] = mkRootedTree(cliqueTreeUndir, rootClqNdx);
-postOrder = preOrder(end:-1:1); % not quite true, but still a valid order
+postOrder = preOrder(end:-1:1); % this is not really a postorder, but is still a valid order
 
 %{
 [preOrder, postOrder, pred] = dfsPMTK(cliqueTreeUndir, rootClqNdx, false);
