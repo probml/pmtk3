@@ -1,4 +1,4 @@
-function [model] = mixTreeFit(X, K)
+function [model] = treegmMixFit(X, K)
 % Fit a mixture of K trees
 % X is N*D, rows are data cases, values in {1,..,R}
 %
@@ -9,6 +9,7 @@ function [model] = mixTreeFit(X, K)
 
 % This file is from pmtk3.googlecode.com
 
+error('unfinished')
 
 values = unique(unique(full(X)));
 N = size(X,1); Maxiter = 30; 

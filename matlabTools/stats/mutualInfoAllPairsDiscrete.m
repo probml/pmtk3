@@ -40,6 +40,8 @@ function [mi, nmi, pij, pi] = mutualInfoAllPairsDiscrete(X, values, weights)
 %  [a, b'] (a,b)  [a', b]
 
 
+
+
 data = full(double(X')); % now columns contain cases
 clear X
 if nargin < 2, values = unique(data(:)); end

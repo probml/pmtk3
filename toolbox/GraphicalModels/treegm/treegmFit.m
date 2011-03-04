@@ -1,12 +1,19 @@
-function model = treegmFit(X, domain, weights)
-% Fit tree-strucutred GM  using Chow-Liu algorithm.
-% Input:
+function model = treegmFit(X,  obs, obsType, weights)
+% Fit tree-structured GM  using Chow-Liu algorithm.
+% INPUT
 % X(i,j) is value of case i=1:n, node j=1:d
-% domain is set of valid values for each variable (e.g., [0 1])
+%  X(i,j) should be discrete values, eg {0,1} or {1,2,3}
+%  The current implementation assumes each node has the same set of values
+% 
+% Optionally we can have observed local evidence for each node:
+% obs(i,j,:) are the observations for node j in case i
+% obsType is {'gauss', 'discrete'}
+%
 % weights is an optional N*1 vector of weights per data case
 % (needed for fitting mixtures of trees with EM)
 %
-% Output: model is a struct with these fields:
+% OUTPUT:
+% model is a struct with these fields:
 %
 % adjmat is a sparse symmetric matrix (undirected graph)
 % pa(n) = parent of node n, or 0 if n is the root
@@ -15,14 +22,17 @@ function model = treegmFit(X, domain, weights)
 % model.CPDs{i} = [K * K] matrix, where
 
 [Ncases Nnodes] = size(X);
-if nargin < 2, domain = unique(X(:)); end
-if nargin < 3, weights = ones(1,Ncases); end
+if nargin < 2, obs = []; end
+if nargin < 3, obsType = []; end
+if nargin < 4, weights = ones(1,Ncases); end
+
+
 
 % Chow-Liu
 % O(N d^2) time to compute p(i,j), N=#cases, d=#nodes.
 % O(d^2 K^2) tome to compute MI, K=#states
 % O(d^2) time to find MWST
-[mi, nmi, pij, pi] = mutualInfoAllPairsDiscrete(X, domain, weights); %#ok
+[mi, nmi, pij, pi] = mutualInfoAllPairsDiscrete(X, unique(X(:)), weights); %#ok
 %[mi] = mutualInfoAllPairsDiscrete(X, domain, weights);
 [adjmat, cost] = minSpanTreePrim(-mi); % find max weight spanning tree
 root = 1;
@@ -68,6 +78,27 @@ model = treegmCreate(adjmat, nodePots, edgePots, nodePotNdx, edgePotNdx);
 model.CPDs = CPDs;
 model.pa = pa;
 model.dirTree = dirTree;
+
+% Fit observation model
+if isempty(obs), return; end
+switch obsType
+  case 'discrete'
+    error('not yet implemented')
+  case 'gauss'
+    Ndims = size(obs,3); %#ok
+    localCPDs = cell(1, Nnodes);
+    localCPDpointers = 1:Nnodes; % each node has its own CPD
+    for n=1:Nnodes
+      Y = squeeze(obs(:,n,:)); % Y(case,dim)
+      Z = X(:,n); % 
+      mu    = partitionedMean(Y, Z, Nstates)';
+      Sigma = partitionedCov(Y, Z,  Nstates);
+      % should regularize Sigma if Ndim >> 1 
+      localCPDs{n} = condGaussCpdCreate(mu,  Sigma);
+    end
+end
+model.localCPDs = localCPDs;
+model.localCPDpointers = localCPDpointers;
 
 end
 
