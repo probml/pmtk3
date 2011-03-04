@@ -43,5 +43,6 @@ if Nedges == 1, bels2 = {bels2}; end
 for e=1:Nedges
   edgeBel(:,:,e) = bels2{e}.T;
 end
+assert(approxeq(logZ, logZ2))
 
 end

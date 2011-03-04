@@ -33,6 +33,7 @@ model.root = 1;
 edgeorder = treeMsgOrder(model.adjmat, model.root);
 % edgeorder(e,:) = [s t] for up and down sweeps
 model.edges = edgeorder(1:(size(edgeorder,1)/2),:);
+model.Nedges = size(model.edges, 1);
 
 if nargin < 6, localCPDs = []; end
 if nargin < 7, localCPDpointers = 1:model.Nnodes; end

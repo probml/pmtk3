@@ -62,11 +62,6 @@ for i=1:Nnodes
 end
 
 
-[logZ, nodeBel] = bruteForceInferNodes(factors);
-[logZ2, nodeBel2] = treegmInferNodes(model);
-assert(approxeq(logZ, logZ2))
-assert(approxeq(nodeBel, nodeBel2))
-
 
 [logZB, nodeBelB, edgeBelB] = bruteForceInferNodes(factors, model.edges);
 [logZB2, nodeBelB2, edgeBelB2] = treegmInferNodes(model);
@@ -75,6 +70,5 @@ assert(approxeq(nodeBel, nodeBel2))
 assert(approxeq(logZB, logZB2))
 assert(approxeq(nodeBelB, nodeBelB2))
 assert(approxeq(edgeBelB, edgeBelB2))
-assert(approxeq(nodeBelB, nodeBel))
-assert(approxeq(logZ, logZB))
+
 

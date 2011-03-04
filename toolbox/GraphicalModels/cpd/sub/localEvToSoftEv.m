@@ -4,12 +4,11 @@ function softev = localEvToSoftEv(model, localev)
 % softev(k,t) is p(st=k| ev(:,t)) using  model.localCPDs{t}
 %
 % Model can be any model with these fields:
-% localCPDs, localCPDpointers, nstates
+% localCPDs, localCPDpointers
 
 % This file is from pmtk3.googlecode.com
 
-
-maxNstates = max(model.nstates);
+[Nstates Nnodes] = size(localev); %#ok
 localCPDs = cellwrap(model.localCPDs);
 localCPDpointers = model.localCPDpointers;
 if numel(localCPDs) == 1 % vectorize
@@ -17,7 +16,7 @@ if numel(localCPDs) == 1 % vectorize
     softev = exp(logB); 
 else
   % each node uses a different CPD
-    logB = nan(maxNstates, nnodes);
+    logB = nan(Nstates, nnodes);
     for t=1:nnodes
         lev = localev(:, t);
         lev = lev(~isnan(lev));

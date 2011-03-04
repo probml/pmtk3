@@ -14,16 +14,18 @@ function [logZ, nodeBel,  edgeBel] = treegmInferNodes(model, data)
 % edgeBel(:,:,e) where model.edges(e,:)=[s t]
 
 if nargin < 2, data = []; end
-nodeBel = ones(model.Nstates, model.Nnodes);
-Nedges = size(model.edges, 1);
+logZ = 0;
+
+
+nodePots = ones(model.Nstates, model.Nnodes);
 for n=1:model.Nnodes
-  nodeBel(:,n) = model.nodePot(:, model.nodePotNdx(n));
+  nodePots(:,n) = model.nodePot(:, model.nodePotNdx(n));
 end
 if ~isempty(data)
   softev = localEvToSoftEv(model, data);
-  nodeBel = nodeBel .* softev;
+  nodePots = nodePots .* softev;
 end
-
+nodeBel = nodePots;
 
 
 [Nstates Nnodes] = size(nodeBel);
@@ -31,9 +33,9 @@ Nedges = Nnodes-1;
 edgeMsgUp = ones(Nstates, Nedges);
 edgeMsgDown = ones(Nstates, Nedges);
 % The size of a message is the size of the recipient
-logZ = 0;
 
-% Collect to root
+
+%% Collect to root
 for e=1:Nedges
   s  = model.edges(e,1); % src
   t = model.edges(e,2); % destn
@@ -48,7 +50,7 @@ for e=1:Nedges
   logZ = logZ + log(Zt);
 end
 
-% Distribute from root
+%% Distribute from root
 for e=Nedges:-1:1 
   s  = model.edges(e,2); % src
   t = model.edges(e,1); % destn
@@ -64,10 +66,9 @@ for e=Nedges:-1:1
   [nodeBel(:,t)] = normalize(nodeBel(:,t) .* edgeMsgDown(:,e));
 end
 
-if nargout < 3, return; end
 
-% Compute edge marginals
-% only allocate this much space if the user requests it
+%% Compute edge marginals if requested
+if nargout < 3, return; end
 edgeBel = ones(model.Nstates, model.Nstates, Nedges);
 for e=1:Nedges
   s  = model.edges(e,1); % src
@@ -81,8 +82,23 @@ for e=1:Nedges
     edgePot = model.edgePot(:,:,model.edgePotNdx(t,s));
     edgeBel(:,:,e) = normalize(edgePot .* (belt * bels'));
   end
-   
 end
 
+%{
+%% Compute logZ
+edgePots = zeros(Nstates, Nstates, Nedges);
+for e=1:Nedges
+  s  = model.edges(e,1); % src
+  t = model.edges(e,2); % destn
+  if model.edgePotNdx(s,t) ~= 0
+    edgePots(:,:,e) = model.edgePot(:,:,model.edgePotNdx(s,t));
+  else
+    edgePots(:,:,e) = model.edgePot(:,:,model.edgePotNdx(t,s));
+  end
+end
+B = betheFreeEnergy(model.adjmat, nodePots, edgePots, nodeBel, edgeBel);
+logZ = -B;
+%}
 
 end
+

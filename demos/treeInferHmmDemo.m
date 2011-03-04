@@ -1,15 +1,19 @@
-% Performance inference in an HMM and compare to inference on a tree
+% Compare inference in an HMM and a tree - should be same!
 % We use a Gaussian emission model
 % This is similar to hmm2DgmTest
 
 setSeed(0);
-nstates = 250;
-d = 10;
-T = 100;
-model = mkRndGaussHmm(nstates, d); 
-X = hmmSample(model, T, 1);
+nstates = 3;
+d = 2; %2dim observations
+T = 5;
+hmm = mkRndGaussHmm(nstates, d); 
+X = hmmSample(hmm, T, 1);
 
-% Fwd-back
-[gamma, logpHmm] = hmmInferNodes(model, X);
+[gamma, logpHmm] = hmmInferNodes(hmm, X);
 
-% Now set up equivalent tree
+tree  = hmmToTree(hmm, T);
+
+[logZ, nodeBel] = treegmInferNodes(tree, X);
+
+assert(approxeq(logZ, logpHmm))
+assert(approxeq(nodeBel, gamma))
