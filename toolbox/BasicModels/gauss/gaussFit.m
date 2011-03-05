@@ -22,6 +22,7 @@ else
     prior.Sigma = diag(var(X,1))/N; % S0
     prior.dof = D+2; % this ensures E[Sigma]=S0 
   end
+  error('buggy')
   xbar   = mean(X)';
   XX     = cov(X,1);
   kappa0 = prior.k;
@@ -32,7 +33,7 @@ else
   a      = (kappa0*N)./(kappa0 + N);
   b      = nu0 + N + D + 2;
   Sprior = (xbar-m0)*(xbar-m0)';
-  Sigma  = (S0 + XX + a*Sprior)./b;
+  Sigma  = (S0 + XX + a*Sprior)./b; % ??
   model.prior = prior;
 end
 model.mu = mu;

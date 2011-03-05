@@ -8,21 +8,24 @@ function softev = localEvToSoftEv(model, localev)
 
 % This file is from pmtk3.googlecode.com
 
-[Nstates Nnodes] = size(localev); %#ok
+[Ndims, Nnodes] = size(localev); %#ok
 localCPDs = cellwrap(model.localCPDs);
 localCPDpointers = model.localCPDpointers;
-if numel(localCPDs) == 1 % vectorize
-    logB   = mkSoftEvidence(localCPDs{1}, localev);
-    softev = exp(logB); 
+if numel(localCPDs) == 1
+  % if all nodes use the same CPD, we can vectorize
+  logB   = mkSoftEvidence(localCPDs{1}, localev);
 else
   % each node uses a different CPD
-    logB = nan(Nstates, nnodes);
-    for t=1:nnodes
-        lev = localev(:, t);
-        lev = lev(~isnan(lev));
-        if isempty(lev); continue; end
-        logB(:, t) = colvec(mkSoftEvidence(localCPDs{localCPDpointers(t)}, lev));
-    end
-    softev = exp(logB); 
+  logB = nan(model.Nstates, Nnodes);
+  for t=1:Nnodes
+    lev = localev(:, t);
+    lev = lev(~isnan(lev));
+    if isempty(lev); continue; end
+    logB(:, t) = colvec(mkSoftEvidence(localCPDs{localCPDpointers(t)}, lev));
+  end
 end
+softev = exp(logB);
+
 end
+
+

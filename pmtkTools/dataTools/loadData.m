@@ -7,6 +7,11 @@ function varargout = loadData(dataset, varargin) %destnRoot, quiet, isMatFile)
 % Otherwise, these variables are loaded directly into the calling
 % workspace, just like the built in load() function, as in loadData('foo');
 %
+%
+% Options: [default]
+% isMatFile - [true] will try to load in to work space
+% isZipFile - [true] will download and unzip
+%
 %% Examples:
 %
 % D = loadData('prostate'); % store data in struct D
@@ -15,9 +20,8 @@ function varargout = loadData(dataset, varargin) %destnRoot, quiet, isMatFile)
 %
 % s = loadData('sat')       % s is a matrix since there is only one variable
 %
-% s = loadData('sat', 'C:/mydir')
 %
-% loadData('pmtkImages') % downloads apmtkImages.zip, unzips it and adds directory to path
+% loadData('pmtkImages') % downloads pmtkImages.zip, unzips it and adds directory to path
 %
 % loadData('mathDataHoff.csv', 'isZipFile', false)
 %  adds file to pmtkDataCopy without unzipping it
@@ -32,7 +36,7 @@ function varargout = loadData(dataset, varargin) %destnRoot, quiet, isMatFile)
 %if nargin < 4, isMatFile = true; end
 
 
-[destnRoot, quiet, isMatFile, isZipFile, dataset] = process_options(varargin, ...
+[destnRoot, quiet, isMatFile, isZipFile, dataset2] = process_options(varargin, ...
     'destnRoot', fullfile(pmtk3Root(), 'pmtkdataCopy'), ...
     'quiet', false, ...
     'isMatFile', true, ...
