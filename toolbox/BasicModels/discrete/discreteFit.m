@@ -27,6 +27,7 @@ function model = discreteFit(X, alpha, K)
 
 SetDefaultValue(3, 'K', max(X(:))); 
 d = size(X, 2);
+X = canonizeLabels(X); % convert to 1..K
 counts = histc(X, 1:K); % works even when X is a matrix - no need to loop
 if nargin < 2 || isempty(alpha), alpha = 1; end
 model.T = normalize(bsxfun(@plus, counts, colvec(alpha-1)), 1);

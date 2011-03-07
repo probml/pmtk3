@@ -1,5 +1,6 @@
 function [pZ, ll] = mixModelInferLatent(model, X)
-%% Compute pZ(i, k) = p( Z = k | X(i, :), model) 
+% Infer latent mixture node from a set of data
+% pZ(i, k) = p( Z = k | X(i, :), model) 
 % ll(i) = log p(X(i, :) | model)  
 %%
 
@@ -22,6 +23,7 @@ switch lower(model.type)
         
         logT = log(model.cpd.T + eps); 
         Lijk = zeros(n, d, nmix);
+        X = canonizeLabels(X);
         for j = 1:d
             Lijk(:, j, :) = logT(:, X(:, j), j)'; % T is of size [nstates, nObsStates, d]
         end

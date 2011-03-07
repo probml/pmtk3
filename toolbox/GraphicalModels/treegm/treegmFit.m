@@ -7,7 +7,7 @@ function model = treegmFit(X,  obs, obsType, weights)
 % 
 % Optionally we can have observed local evidence for each node:
 % obs(i,j,:) are the observations for node j in case i
-% So objs is Ncases * Nnodes * Ndims
+% So obs is Ncases * Nnodes * Ndims
 % obsType is {'gauss', 'discrete'}
 %
 % weights is an optional N*1 vector of weights per data case
@@ -86,51 +86,10 @@ switch obsType
   case 'discrete'
     error('not yet implemented')
   case 'gauss'
-    Ndims = size(obs,3); 
-    localCPDs = cell(1, Nnodes);
-    localCPDpointers = 1:Nnodes; % each node has its own CPD
-    if Ndims==1
-      % Scalar observations can be treated more efficiently
-      model.localCPDunigauss = true; 
-      localMu = zeros(Nnodes, Nstates);
-      localSigma = zeros(Nnodes, Nstates);
-    end
-    for n=1:Nnodes
-      Y = squeeze(obs(:,n,:)); % Y(case,dim)
-      Z = canonizeLabels(X(:,n)); % 
-      if nunique(Z) < Nstates
-        % not enough data, dude
-        sprintf('node %d only has %d states\n', nunique(Z));
-      end
-      % Estimate mean and variance of observations for this node
-      % for each possible state
-      %mu    = partitionedMean(Y, Z, Nstates)';
-      %Sigma = partitionedCov(Y, Z,  Nstates);
-      Sigma = zeros(Ndims, Ndims, Nstates);
-      mu = zeros(Ndims, Nstates);
-      for c=1:Nstates
-        ndx = (Z==c);
-        % We compute MAP estimate of Sigma instead of MLE using weak prior
-        % to avoid numerical problems
-        %gausscpd = gaussFit(Y(ndx,:), 'map');
-        %mu(:,c) = gausscpd.mu;
-        %Sigma(:,:,c) = gausscpd.Sigma;
-        mu(:,c) = mean(Y(ndx,:))';
-        Sigma(:,:,c) = shrinkcov(Y(ndx,:));
-      end
-      localCPDs{n} = condGaussCpdCreate(mu,  Sigma);
-      if Ndims==1
-        localMu(n,:) = mu;
-        localSigma(n,:) = squeeze(Sigma)';
-      end
-    end
+   [model.localCPDs, model.localCPDpointers] = ...
+     condGaussCpdMultiFit(X, obs, Nstates);
 end
-model.localCPDs = localCPDs;
-model.localCPDpointers = localCPDpointers;
-if isfield(model, 'localCPDunigauss')
-  model.localMu = localMu;
-  model.localSigma = localSigma;
-end
+
 end
 
 
