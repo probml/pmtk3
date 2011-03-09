@@ -30,9 +30,11 @@ hold on;
 xmin = min(train.maxscores(:,c));
 xmax = max(train.maxscores(:,c));
 xvals = linspace(xmin, xmax, 100);
-p = gaussProb(xvals, model.localMu(c,1), model.localSigma(c,1));
+mu = model.localCPDs{c}.mu;
+Sigma = squeeze(model.localCPDs{c}.Sigma);
+p = gaussProb(xvals, mu(1), Sigma(1));
 plot(xvals, p, 'b:');
-p = gaussProb(xvals, model.localMu(c,2), model.localSigma(c,2));
+p = gaussProb(xvals, mu(2), Sigma(2));
 plot(xvals, p, 'r-');
 title(sprintf('distribution of scores for %s', train.names{c}))
 end
