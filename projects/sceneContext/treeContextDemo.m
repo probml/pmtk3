@@ -9,6 +9,15 @@ load('SUN09testData')
 
 model = treegmFit(train.presence_truth, train.maxscores, 'gauss');
 
+%{
+folder =  fileparts(which(mfilename()) 
+folder = '/home/kpmurphy/Dropbox/figures';
+% for some reason, the directed graph is much more readable
+graphviz(model.edge_weights, 'labels', train.names, 'directed', 1, ...
+  'filename', fullfile(folder, 'SUN09treeNeg'));
+%}
+
+
 %% Check the reasonableness of the local observation model for class c
 for c=[1 110]
 ndx=(train.presence_truth(:,c)==1);

@@ -30,7 +30,7 @@ if nargin < 4, weights = ones(1,Ncases); end
 
 
 % Chow-Liu
-% O(N d^2) time to compute p(i,j), N=#cases, d=#nodes.
+% O(N d^2) time to compute p(i,j,vi,vj), N=#cases, d=#nodes.
 % O(d^2 K^2) tome to compute MI, K=#states
 % O(d^2) time to find MWST
 [mi, nmi, pij, pi] = mutualInfoAllPairsDiscrete(X, unique(X(:)), weights); %#ok
@@ -38,6 +38,8 @@ if nargin < 4, weights = ones(1,Ncases); end
 [adjmat, cost] = minSpanTreePrim(-mi); % find max weight spanning tree
 root = 1;
 Nstates = size(pi,2);
+
+
 
 
 %  Make a directed version of the tree
@@ -79,6 +81,26 @@ model = treegmCreate(adjmat, nodePots, edgePots, nodePotNdx, edgePotNdx);
 model.CPDs = CPDs;
 model.pa = pa;
 model.dirTree = dirTree;
+
+% It is useful to visualize
+% the strenght of each edge in terms of normalized MI
+model.edge_weights = model.adjmat  .* mi/max(mi(:));
+% For binary nodes, we make the edge -ve if p(bi=1,bj=1) < p(bi=1)*p(bj=1)
+% This trick is due to Myung Jin Choi
+if Nstates==2
+  for i=1:Nnodes
+    for j=i+1:Nnodes
+      prob = squeeze(pij(i,j,:,:));
+      p01 = prob(1, 2);
+      p10 = prob(2, 1);
+      p11 = prob(2, 2);
+      if(p11 < (p01+p11)*(p10+p11))
+        model.edge_weights(i,j) = -model.edge_weights(i,j);
+        model.edge_weights(j,i) = -model.edge_weights(j,i);
+      end
+    end
+  end
+end
 
 % Fit observation model if desired
 if isempty(obs), return; end
