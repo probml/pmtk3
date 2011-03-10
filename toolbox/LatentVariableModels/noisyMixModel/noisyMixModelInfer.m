@@ -1,4 +1,4 @@
-function [pZ, pX] = noisyBinaryMixInfer(model, Y)
+function [pZ, pX] = noisyMixModelInfer(model, Y)
 % Y is Ncases * Nnodes * Ndims
 % so Y(i,j,:) are the observations for node j in case i
 %

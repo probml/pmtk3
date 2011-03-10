@@ -85,7 +85,19 @@ mu2 =
 
 %}
 
+% "batch" inference
 [pZ, pX] = noisyMixModelInfer(model2, Y);
+
+%{
+% sequential inference
+pZ2 = zeros(size(pZ));
+pX2 = zeros(size(pX));
+for i=1:N
+  [pZ2(i,:), pX2(i,:,:)] = noisyMixModelInfer(model2, Y(i,:));
+end
+assert(approxeq(pZ, pZ2))
+assert(approxeq(pX, pX2))
+%}
 
 % Check that each row assigned to 'correct' cluster
 [pmax, Zhat] = max(pZ,[],2);
