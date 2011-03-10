@@ -7,8 +7,15 @@ loadData('sceneContextSUN09', 'ismatfile', false)
 load('SUN09trainData')
 load('SUN09testData')
 
-treeModel = treegmFit(train.presence_truth, train.maxscores, 'gauss');
-Ks = {1, 5, 10};
+useTree = false;
+
+if useTree
+  treeModel = treegmFit(train.presence_truth, train.maxscores, 'gauss');
+end
+
+
+Ks = {1};
+mixModel = cell(1, numel(Ks));
 for ki=1:numel(Ks)
   K = Ks{ki};
   mixModel{ki} = noisyMixModelFit(train.presence_truth, train.maxscores, K);
@@ -59,36 +66,61 @@ end
 [Ntest, Nobjects] = size(test.presence_truth);
 presence_tree = zeros(Ntest, Nobjects);
 presence_indep = zeros(Ntest, Nobjects);
+presence_mix = zeros(Ntest, Nobjects, numel(Ks));
 for n=1:Ntest
     if mod(n,10)==0, fprintf('testing image %d of %d\n', n, Ntest); end
     localev = test.maxscores(n,:); % 1*Nnodes
-    [logZ, nodeBel] = treegmInferNodes(treeModel, localev);
-    [presence_tree(n,:)] = nodeBel(2,:);
     [presence_indep(n,:)] = localev;
+    if useTree
+      [logZ, nodeBel] = treegmInferNodes(treeModel, localev);
+      [presence_tree(n,:)] = nodeBel(2,:);
+    end
     for ki=1:numel(Ks)
-      [pZ, pX] = noisyMixModelInfer(mixModel{ki}, reshape(localev, [1, Nnodes, 1]));
-      presence_mix(n, :, ki) = pX();
+      [pZ, pX] = noisyMixModelInferNodes(mixModel{ki}, localev);
+      presence_mix(n, :, ki) = pX(2,:);
     end
 end
     
 %% ROC
 ndx = 1:Ntest;
 for c=1:Nobjects
-   [aROCtree(c)] = figROC(presence_tree(ndx,c), test.presence_truth(ndx,c));
-   [aROCIndep(c)] = figROC(presence_indep(ndx,c), test.presence_truth(ndx,c));  
+  [aROCIndep(c)] = figROC(presence_indep(ndx,c), test.presence_truth(ndx,c));
+  if useTree
+    [aROCtree(c)] = figROC(presence_tree(ndx,c), test.presence_truth(ndx,c));
+  end
+  for ki=1:numel(Ks)
+    [aROCmix(c,ki)] = figROC(presence_mix(ndx,c,ki), test.presence_truth(ndx,c));
+  end
+  
+  %{
    [prRecall, prPrecision, foo, aucTree(c)]= precisionRecall(presence_tree(ndx,c)', ...
        test.presence_truth(ndx,c)');
    [prRecallc, prPrecisionc, foo, aucTreeIndep(c)] = precisionRecall(presence_indep(ndx,c)', ...
        test.presence_truth(ndx,c)');
+  %}
 end
 
+[styles, colors, symbols, str] =  plotColors();
+
 figure;
-plot(aROCtree, 'r-');
+m = 1;
+plot(aROCIndep, str{m}, 'linewidth', 2);
 hold on
-plot(aROCIndep, 'b:', 'linewidth', 2);
-legend('tree', 'indep')
+legendstr = {'indep'};
+if useTree
+  m = m+1;
+  plot(aROCtree, str{m}, 'linewidth', 2);
+  legendstr{m} = 'tree';
+end
+for ki=1:numel(Ks)
+  m = m+1;
+  plot(aROCIndep, str{m}, 'linewidth', 2);
+  legendStr{m} = sprintf('mix%d', Ks(ki));
+end
+legend(legendstr)
 ylabel('area under ROC')
 xlabel('category')
+
 
 figure;
 [delta, perm] = sort(aROCtree - aROCIndep, 'descend');
