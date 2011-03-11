@@ -1,4 +1,4 @@
-function [recall, precision, th, averagePrecision] = precisionRecall(confidence, testClass, col)
+function [recall, precision, th, averagePrecision] = precisionRecallPMTK(confidence, testClass, col)
 % Plot precision-recall curve
 %    [recall, precision, th, averagePrecision] = precisionRecall(confidence, testClass, col)
 %
@@ -24,10 +24,15 @@ function [recall, precision, th, averagePrecision] = precisionRecall(confidence,
 
 confidence = double(confidence);
 
+
+% perturbing the values introduces spurios variance
+% but without it we can get NaNs
 S = rand('state');
 rand('state',0);
-confidence = confidence + rand(size(confidence))*10^(-10);
+small = eps; % 10^(-10)
+confidence = confidence + rand(size(confidence))*small;
 rand('state',S)
+
 
 [th, j] = sort(confidence); th = th(:);
 th = th(fix(linspace(1, length(th), 150))); % here the number of points is hardcoded to be 150.

@@ -10,18 +10,16 @@ function [localCPDs, localCPDpointers, localMu, localSigma] = ...
 localCPDs = cell(1, Nnodes);
 localCPDpointers = 1:Nnodes; % each node has its own CPD
 %Nstates = nunique(X(:));
-if Ndims==1
-  % Scalar observations can be treated more efficiently 
-  % without using cell arrays
-  localMu = zeros(Nnodes, Nstates);
-  localSigma = zeros(Nnodes, Nstates);
-end
-for n=1:Nnodes
-  Y = squeeze(obs(:,n,:)); % Y(case,dim)
-  Z = canonizeLabels(X(:,n)); %
+
+localMu = zeros(Ndims,  Nstates, Nnodes);
+localSigma = zeros(Ndims, Ndims, Nstates, Nnodes);
+
+for t=1:Nnodes
+  Y = squeeze(obs(:,t,:)); % Y(case,dim)
+  Z = canonizeLabels(X(:,t)); %
   if nunique(Z) < Nstates
     % not enough data, dude
-    sprintf('node %d only has %d states\n', n, nunique(Z));
+    sprintf('node %d only has %d states\n', t, nunique(Z));
   end
   % Estimate mean and variance of observations for this node
   % for each possible state
@@ -39,11 +37,10 @@ for n=1:Nnodes
     mu(:,c) = mean(Y(ndx,:))';
     Sigma(:,:,c) = shrinkcov(Y(ndx,:));
   end
-  localCPDs{n} = condGaussCpdCreate(mu,  Sigma);
-  if Ndims==1
-    localMu(n,:) = mu;
-    localSigma(n,:) = squeeze(Sigma)';
-  end
+  localCPDs{t} = condGaussCpdCreate(mu,  Sigma);
+ 
+  localMu(:,:,t) = mu;
+  localSigma(:,:,:,t) = Sigma;
 end
 
 end

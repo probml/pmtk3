@@ -5,10 +5,24 @@ function softev = localEvToSoftEv(model, localev)
 %
 % Model can be any model with these fields:
 % localCPDs, localCPDpointers
+% If model.obsType = 'localev',
+%  we just set softev = localev if matrix
+%  otherwise we set softev = [1-localev; localev]
 
 % This file is from pmtk3.googlecode.com
 
-[Ndims, Nnodes] = size(localev); %#ok
+[Ndims, Nnodes] = size(localev);
+
+if isfield(model, 'obsType') && strcmpi(model.obsType, 'localev')
+  if Ndims==1 % we assume localev=prob(yt=on)
+    softev = [1-localev; localev];
+  else
+    softev = localev; % we assume softev(:,t)
+  end
+  return;
+end
+
+
 localCPDs = cellwrap(model.localCPDs);
 localCPDpointers = model.localCPDpointers;
 if numel(localCPDs) == 1

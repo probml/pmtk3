@@ -1,4 +1,4 @@
-function [model] = noisyBinaryMixFit(X, Y, K)
+function [model] = noisyMixModelFit(X, Y, K, obstype)
 % Mix model of form Q -> Xj -> Yj
 % similar to a tied mixture (semi-continuous) HMM
 % p(X,Y|Q=k) = prod_j p(Xj|Q=k)  p(Yj|Xj)
@@ -15,17 +15,27 @@ function [model] = noisyBinaryMixFit(X, Y, K)
 
 % This file is from pmtk3.googlecode.com
 
+if nargin < 4, obstype = 'gauss'; end
+
 [Ncases Nnodes Ndims] = size(Y); %#ok
+Nstates = nunique(X(:));
 
 % Fit p(y|x)
-Nstates = nunique(X(:));
-[model.obsmodel.localCPDs, model.obsmodel.localCPDpointers] = ...
-  condGaussCpdMultiFit(X, Y, Nstates);
+model.obsmodel.obsType = obstype;
 model.obsmodel.Nstates = Nstates;
-model.obsmodel.Ndims = Ndims;
+switch obstype
+  case 'localev'
+   % no-op
+  case 'gauss'
+  [model.obsmodel.localCPDs, model.obsmodel.localCPDpointers, ...
+    model.obsmodel.localMu, model.obsmodel.localSigma] = ...
+    condGaussCpdMultiFit(X, Y, Nstates);
+  model.obsmodel.Nstates = Nstates;
+  model.obsmodel.Ndims = Ndims;
+end
 
 % Fit p(x|Q) - see mixBerMnistEM
-options = {'maxIter', 10, 'verbose', true};
+options = {'maxIter', 20, 'verbose', true};
 X = canonizeLabels(X);
 model.mixmodel  = mixModelFit(X, K, 'discrete', options{:});
 model.Nstates = Nstates;

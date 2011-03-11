@@ -8,7 +8,8 @@ function model = treegmFit(X,  obs, obsType, weights)
 % Optionally we can have observed local evidence for each node:
 % obs(i,j,:) are the observations for node j in case i
 % So obs is Ncases * Nnodes * Ndims
-% obsType is {'gauss', 'discrete'}
+% obsType is {'gauss', 'local', 'discrete'}
+% If 'localev', we assume obs(i,j,:) = p(yj=:) in case i is local evidence
 %
 % weights is an optional N*1 vector of weights per data case
 % (needed for fitting mixtures of trees with EM)
@@ -24,7 +25,7 @@ function model = treegmFit(X,  obs, obsType, weights)
 
 [Ncases Nnodes] = size(X);
 if nargin < 2, obs = []; end
-if nargin < 3, obsType = []; end
+if nargin < 3, obsType = 'none'; end
 if nargin < 4, weights = ones(1,Ncases); end
 
 
@@ -103,13 +104,18 @@ if Nstates==2
 end
 
 % Fit observation model if desired
+model.obsmodel.obsType = obsType;
 if isempty(obs), return; end
 switch obsType
   case 'discrete'
     error('not yet implemented')
+  case 'localev'
+    % no need to fit anything
   case 'gauss'
-   [model.localCPDs, model.localCPDpointers] = ...
+   [model.obsmodel.localCPDs, model.obsmodel.localCPDpointers, ...
+     model.obsmodel.localMu, model.obsmodel.localSigma] = ...
      condGaussCpdMultiFit(X, obs, Nstates);
+   model.obsmodel.Nstates = Nstates;
 end
 
 end
