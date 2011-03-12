@@ -1,10 +1,10 @@
-function [logZ, nodeBel,  edgeBel] = treegmInferNodes(model, data, softev)
+function [logZ, nodeBel,  edgeBel] = treegmInferNodes(model, localFeatures, softev)
 % Compute marginals on a tree structured graphical model
 % using an up-down sweep of belief propagation
 %
 % INPUT
 % model is created by treegmCreate 
-% data is an optional D*Nnodes matrix containing local evidence 
+% localFeatures is an optional D*Nnodes matrix containing local evidence 
 % If present, we evaluate the local likelihood using model.localCPDs{t}
 % and add this in to the node beliefs.
 % Or we can pass in softev(k,t) directly (allows batch computation)
@@ -14,7 +14,7 @@ function [logZ, nodeBel,  edgeBel] = treegmInferNodes(model, data, softev)
 % nodeBel(:,t)
 % edgeBel(:,:,e) where model.edges(e,:)=[s t]
 
-if nargin < 2, data = []; end
+if nargin < 2, localFeatures = []; end
 if nargin < 3, softev = []; end
 logZ = 0;
 
@@ -23,8 +23,8 @@ nodePots = ones(model.Nstates, model.Nnodes);
 for n=1:model.Nnodes
   nodePots(:,n) = model.nodePot(:, model.nodePotNdx(n));
 end
-if ~isempty(data)
-  softev = localEvToSoftEv(model.obsmodel, data);
+if ~isempty(localFeatures)
+  softev = localEvToSoftEv(model.obsmodel, localFeatures);
 end
 if ~isempty(softev)
   nodePots = nodePots .* softev;

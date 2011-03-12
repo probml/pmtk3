@@ -1,20 +1,17 @@
 
-
-% Compare different joint models of tags on label predicion problem
-% Based on 
-% Exploiting Hierarchical Context on a Large Database of Object Categories
-% Choi et al, 2010
-
+% This is like tagContextDemo except we separate out the observation
+% model, p(features|labels), which is shared by different priors p(labels)
 
 %% Data
 loadData('sceneContextSUN09', 'ismatfile', false)
-load('SUN09trainData')
-load('SUN09testData')
+load('SUN09data')
+
 
 % For speed, we allow training and testing on a subset
 % of the objects and images
-[Ntrain, Nobjects] = size(train.presence_truth);
-[Ntest, Nobjects2] = size(test.presence_truth); %#ok
+[Ntrain, Nobjects] = size(data.train.presence);
+[Ntest, Nobjects2] = size(data.test.presence); %#ok
+
 
 objectNdx = 1:Nobjects;
 trainNdx = 1:Ntrain;
@@ -24,42 +21,71 @@ Nobjects = numel(objectNdx);
 Ntrain = numel(trainNdx);
 Ntest = numel(testNdx);
 
-%% Models/ methods
-methodNames  = { 'mix1lev', 'mix1G', 'mix5lev', 'mix10lev', 'treeG', 'treelev'};
-%methodNames  = { 'tree'};
-%methodNames  = { 'mix1', 'mix5'};
-%methodNames  = { 'condgauss'};
 
+
+
+%% Visualize data
+
+
+Npresent = sum(data.train.presence(trainNdx, objectNdx), 1);
+priorProb = Npresent/numel(trainNdx);
+
+folder = '/home/kpmurphy/Dropbox/figures';
+figure; bar(priorProb);
+title('prior probability')
+xticklabel_rotate(1:Nobjects, 90, data.names, 'fontsize', 8)
+
+% Presence
+figure; imagesc(data.train.presence); colormap(gray)
+xlabel('categories')
+ylabel('training case')
+title('presence or absence')
+% Label common objects
+common=find(mean(data.train.presence,1)>0.25);
+str = sprintf('%s,', data.names{common});
+title(sprintf('%s', str));
+xticklabel_rotate(common, 90, data.names(common), 'fontsize', 8);
+%print(gcf, '-dpng', fullfile(folder, 'SUN09presenceTrain.png'))
+
+% Scores
+figure; imagesc(data.train.detect_maxprob); colorbar
+xlabel('categories')
+ylabel('training case')
+title('max score of detector')
+% Label objects whose detectors fire a lot
+common=find(mean(data.train.detect_maxprob,1)>0.6);
+str = sprintf('%s,', data.names{common});
+title(sprintf('max detector prob\n%s', str));
+xticklabel_rotate(common, 90, data.names(common), 'fontsize', 8);
+%print(gcf, '-dpng', fullfile(folder, 'SUN09probTrain.png'))
+
+
+
+
+
+%% Models/ methods
+methodNames  = { 'mix1', 'mix5', 'mix10', 'tree' };
 
 % We requre that fitting methods have this form
 % model = fn(truth(N, D), features(N, D, :))
 % where truth(n,d) in {0,1}
 
 fitMethods = {
-  @(truth, scores) noisyMixModelFit(truth, scores, 1, 'localev'), ...
-  @(truth, scores) noisyMixModelFit(truth, scores, 1, 'gauss'), ...
-  @(truth, scores) noisyMixModelFit(truth, scores, 5, 'localev'), ...
-  @(truth, scores) noisyMixModelFit(truth, scores, 10, 'localev'), ...
-  @(truth, scores) treegmFit(truth, scores, 'gauss'), ...
-  @(truth, scores) treegmFit(truth, scores, 'localev')
+  @(labels) noisyMixModelFit(labels, [], 1), ...
+  @(labels) noisyMixModelFit(labels, [], 5), ...
+  @(labels) noisyMixModelFit(labels, [], 10), ...
+  @(labels) treegmFit(labels)
   };
   
 
-
-% We require that infMethod have this form
-% bel(1:2, 1:Nnodes) = fn(model, localev(1:Ndims, 1:Nnodes)
-% where Ndims=1 for scalar features (eg detector scores)
-%
-%[logZ, nodeBel] = treegmInferNodes(treeModel, localev, softev);
-%[pZ, pX] = noisyMixModelInferNodes(mixModel{ki}, localev, softev);
+%[logZ, nodeBel] = treegmInferNodes(treeModel, localFeatures, softev);
+%[pZ, pX] = noisyMixModelInferNodes(mixModel{ki}, localFeatures, softev);
 
 infMethods = {
-  @(model, localev, soft) argout(2, @noisyMixModelInferNodes, model, localev, soft), ...
-  @(model, localev, soft) argout(2, @noisyMixModelInferNodes, model, localev, soft), ...
-  @(model, localev, soft) argout(2, @noisyMixModelInferNodes, model, localev, soft), ...
-  @(model, localev, soft) argout(2, @noisyMixModelInferNodes, model, localev, soft), ...
-    @(model, localev, soft) argout(2, @treegmInferNodes, model, localev, soft), ...
-    @(model, localev, soft) argout(2, @treegmInferNodes, model, localev, soft)
+  @(model, softev) argout(2, @noisyMixModelInferNodes, model, [], softev), ...
+  @(model,  softev) argout(2, @noisyMixModelInferNodes, model, [], softev), ...
+  @(model, softev) argout(2, @noisyMixModelInferNodes, model, [], softev), ...
+    @(model, softev) argout(2, @treegmInferNodes, model, [], softev)
     };
 
 
@@ -68,24 +94,20 @@ logprobMethods = {
   @(model, X) mixModelLogprob(model.mixmodel, X), ...
   @(model, X) mixModelLogprob(model.mixmodel, X), ...
   @(model, X) mixModelLogprob(model.mixmodel, X), ...
-  @(model, X) mixModelLogprob(model.mixmodel, X), ...
-  @(model, X) treegmLogprob(model, X), ...
   @(model, X) treegmLogprob(model, X)
   };
 
 
-%% Training
+%% Training p(labels)
 
 Nmethods = numel(methodNames);
 models = cell(1, Nmethods);
+labels = data.train.presence(trainNdx, objectNdx);
 
-Npresent = sum(train.presence_truth(trainNdx, objectNdx), 1);
-priorProb = Npresent/numel(trainNdx);
-
+% Train up p(labels)
 for m=1:Nmethods
   fprintf('fitting %s\n', methodNames{m});
-  models{m} = fitMethods{m}(train.presence_truth(trainNdx, objectNdx), ...
-    train.maxscores(trainNdx, objectNdx));
+  models{m} = fitMethods{m}(labels);
 end
 
 
@@ -114,11 +136,50 @@ for k=1:K
 end
 %}
 
+%% Probability of labels
+% See if the models help with p(y(1:T))
+ll_indep = zeros(1, Ntest); %#ok
+ll_model = zeros(Ntest, Nmethods);
+labels = data.test.presence(testNdx, objectNdx)+1; % 1,2
+
+logPrior = [log(1-priorProb+eps); log(priorProb+eps)];
+ll = zeros(Ntest, Nobjects);
+for j=1:Nobjects
+  ll(:,j) = logPrior(labels(:, j), j);
+end
+ll_indep = sum(ll,2);
+
+for m=1:Nmethods
+  ll_model(:, m) = logprobMethods{m}(models{m}, labels);
+end
+
+ll = [sum(ll_indep) sum(ll_model,1)];
+figure;
+%bar(-ll)
+plot(-ll, 'x', 'markersize', 12, 'linewidth', 2)
+legendstr = {'indep', methodNames{:}};
+set(gca, 'xtick', 1:numel(legendstr))
+set(gca, 'xticklabel', legendstr)
+title('negloglik of test labels')
+axis_pct
+
+
+
+
+%% Train  p(scores | labels) 
+%obstype = 'localev';
+obstype = 'gauss';
+
+
+labels = data.train.presence(trainNdx, objectNdx);
+scores = data.train.detect_maxprob(trainNdx, objectNdx);
+[obsmodel] = obsModelFit(labels, scores, obstype);
+
 
 %% Check the reasonableness of the local observation model for class c
 % note that p(score|label) is same for all models
 %{
-model = models{1};
+model = obsmodel;
 for c=[1 110]
 
 % Empirical distributon
@@ -153,41 +214,16 @@ end
 %}
 
 
-%% Likelihood
-% See if the models help with p(y(1:T))
-ll_indep = zeros(1, Ntest); %#ok
-ll_model = zeros(Ntest, Nmethods);
-X = test.presence_truth(testNdx, objectNdx)+1; % 1,2
-
-logPrior = [log(1-priorProb+eps); log(priorProb)];
-ll = zeros(Ntest, Nobjects);
-for j=1:Nobjects
-  ll(:,j) = logPrior(X(:, j), j);
-end
-ll_indep = sum(ll,2);
-
-for m=1:Nmethods
-  ll_model(:, m) = logprobMethods{m}(models{m}, X);
-end
-
-ll = [sum(ll_indep) sum(ll_model,1)];
-figure;
-bar(-ll)
-legendstr = {'indep', methodNames{:}};
-set(gca, 'xticklabel', legendstr)
-title('negloglik of test labels')
-
-
 
 %% Inference
 presence_indep = zeros(Ntest, Nobjects);
 presence_model = zeros(Ntest, Nobjects, Nmethods);
 
+features = data.test.detect_maxprob(testNdx, objectNdx); %Ncases*Nnodes*Ndims
+softevBatch = localEvToSoftEvBatch(obsmodel, features);
+
 for m=1:Nmethods
-  fprintf('running method %s\n', methodNames{m});
-  softevBatch = localEvToSoftEvBatch(models{m}.obsmodel, test.maxscores(testNdx, objectNdx));
-  %softevBatch(k,t,n)
-  %prob_cluster = zeros(Ntest, models{m}.mixmodel.nmix);
+  fprintf('running method %s with %s\n', methodNames{m}, obstype);
   
   for n=1:Ntest
     frame = testNdx(n);
@@ -200,21 +236,12 @@ for m=1:Nmethods
     title(trueObjects)
     %}
     
-    localev = test.maxscores(frame, objectNdx); % 1*Nnodes
-    softev = softevBatch(:,:,n);
-    %softev2 = localEvToSoftEv(models{m}.obsmodel, localev);
-    %assert(approxeq(softev, softev2))
-    
-    [presence_indep(n,:)] = localev;
-    
-    %[belZ, bel] = noisyMixModelInferNodes(models{m}, [], softev);
-    %prob_cluster(n,:) = belZ;
-    bel = infMethods{m}(models{m}, [], softev);
-    %bel = infMethods{m}(models{m}, localev);
-    presence_model(n,:,m) = bel(2,:);
-    
+    softev = softevBatch(:,:,n); % Nstates * Nnodes * 1
+    [presence_indep(n,:)] = features(n, :);
+    %[presence_indep(n,:)] = softev(2, :);
+    bel = infMethods{m}(models{m}, softev);
+    presence_model(n,:,m) = bel(2,:);  
   end
-  
 end
 
 %% Performance evaluation
@@ -233,7 +260,7 @@ evalFns = {
   };
 %}
   
-evalNames = {'aROC'};
+evalNames = {sprintf('aROC+%s', obstype)};
 %evalNames = {'avgPrec', 'aROC'};
 
 for e=1:numel(evalFns)
@@ -244,9 +271,9 @@ for e=1:numel(evalFns)
   score_models = zeros(Nobjects, Nmethods);
   for cc=1:Nobjects
     c = objectNdx(cc);
-    [score_indep(cc)] = evalPerf(presence_indep(testNdx,c), test.presence_truth(testNdx,c));
+    [score_indep(cc)] = evalPerf(presence_indep(testNdx,c), data.test.presence(testNdx,c));
     for m=1:Nmethods
-      score_models(cc,m) = evalPerf(presence_model(testNdx,c,m), test.presence_truth(testNdx,c));
+      score_models(cc,m) = evalPerf(presence_model(testNdx,c,m), data.test.presence(testNdx,c));
     end
   end
   
@@ -257,10 +284,13 @@ for e=1:numel(evalFns)
     mean_perf_models(m) = mean(score_models(:,m));
   end
   figure
-  bar([mean_perf_indep mean_perf_models])
+  %bar([mean_perf_indep mean_perf_models])
+  plot([mean_perf_indep mean_perf_models], 'x', 'markersize', 12, 'linewidth', 2)
   legendstr = {'indep', methodNames{:}};
+  set(gca, 'xtick', 1:numel(legendstr))
   set(gca, 'xticklabel', legendstr)
   title(sprintf('mean %s', perfStr))
+  axis_pct
   
   % Plot performance for each method vs category on same graph
   figure;
@@ -278,7 +308,7 @@ for e=1:numel(evalFns)
   ylabel(perfStr)
   xlabel('category')
   
-  % plot improvement over baseline for each method as eparate figs
+  % plot improvement over baseline for each method as separate figs
   for m=1:Nmethods
     figure;
     [delta, perm] = sort(score_models(:,m) - score_indep(:), 'descend');

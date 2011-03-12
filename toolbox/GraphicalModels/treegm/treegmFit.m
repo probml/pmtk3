@@ -105,6 +105,7 @@ end
 
 % Fit observation model if desired
 model.obsmodel.obsType = obsType;
+model.obsmodel.Nstates = Nstates;
 if isempty(obs), return; end
 switch obsType
   case 'discrete'
@@ -115,7 +116,6 @@ switch obsType
    [model.obsmodel.localCPDs, model.obsmodel.localCPDpointers, ...
      model.obsmodel.localMu, model.obsmodel.localSigma] = ...
      condGaussCpdMultiFit(X, obs, Nstates);
-   model.obsmodel.Nstates = Nstates;
 end
 
 end

@@ -17,8 +17,18 @@ function [model] = noisyMixModelFit(X, Y, K, obstype)
 
 if nargin < 4, obstype = 'gauss'; end
 
-[Ncases Nnodes Ndims] = size(Y); %#ok
+[Ncases Nnodes] = size(X);
+[Ncases2 Nnodes2 Ndims] = size(Y); %#ok
 Nstates = nunique(X(:));
+
+% Fit p(x|Q) - see mixBerMnistEM
+options = {'maxIter', 20, 'verbose', true};
+X = canonizeLabels(X);
+model.mixmodel  = mixModelFit(X, K, 'discrete', options{:});
+model.Nstates = Nstates;
+model.Nnodes = Nnodes;
+
+if isempty(Y), return; end
 
 % Fit p(y|x)
 model.obsmodel.obsType = obstype;
@@ -30,15 +40,9 @@ switch obstype
   [model.obsmodel.localCPDs, model.obsmodel.localCPDpointers, ...
     model.obsmodel.localMu, model.obsmodel.localSigma] = ...
     condGaussCpdMultiFit(X, Y, Nstates);
-  model.obsmodel.Nstates = Nstates;
   model.obsmodel.Ndims = Ndims;
 end
 
-% Fit p(x|Q) - see mixBerMnistEM
-options = {'maxIter', 20, 'verbose', true};
-X = canonizeLabels(X);
-model.mixmodel  = mixModelFit(X, K, 'discrete', options{:});
-model.Nstates = Nstates;
-model.Nnodes = Nnodes;
+
 end
 
