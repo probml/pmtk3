@@ -5,8 +5,8 @@
 %
 % Used by initPmtk3.m
 % PMTKgvizPath             C:\Program Files\Graphviz2.26\bin  % UPDATE THIS IF YOU INSTALL GVIZ
-% PMTKlocalDataPath        /home/kpmurphy/pmtkdata
-% PMTKlocalSupportPath     /home/kpmurphy/pmtksupport
+% PMTKlocalDataPath        path/to/data
+% PMTKlocalSupportPath     path/to/support
 %
 % Used by generateAuthorReport ,  pmtkTagReport, etc
 % PMTKred                  #990000
