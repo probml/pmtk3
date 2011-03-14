@@ -1,6 +1,7 @@
 
 % This is like tagContextDemo except we separate out the observation
 % model, p(features|labels), which is shared by different priors p(labels)
+% We also do cross validation 
 
 %% Data
 loadData('sceneContextSUN09', 'ismatfile', false)
@@ -9,16 +10,17 @@ load('SUN09data')
 
 
 %% Visualize data
-
+%{
 % Presence
 figure; imagesc(data.train.presence); colormap(gray)
 xlabel('categories')
 ylabel('training case')
 title('presence or absence')
 % Label common objects
-common=find(mean(data.train.presence,1)>0.25);
+thresh = 0.2;
+common=find(mean(data.train.presence,1)>thresh);
 str = sprintf('%s,', data.names{common});
-title(sprintf('%s', str));
+title(sprintf('presence prob > %5.3f\n%s', thresh, str));
 xticklabel_rotate(common, 90, data.names(common), 'fontsize', 8);
 %print(gcf, '-dpng', fullfile(folder, 'SUN09presenceTrain.png'))
 
@@ -28,18 +30,19 @@ xlabel('categories')
 ylabel('training case')
 title('max score of detector')
 % Label objects whose detectors fire a lot
-common=find(mean(data.train.detect_maxprob,1)>0.6);
+thresh = 0.1;
+common=find(mean(data.train.detect_maxprob,1)>0.1);
 str = sprintf('%s,', data.names{common});
-title(sprintf('max detector prob\n%s', str));
+title(sprintf('max detector prob > %5.3f\n%s', thresh, str));
 xticklabel_rotate(common, 90, data.names(common), 'fontsize', 8);
 %print(gcf, '-dpng', fullfile(folder, 'SUN09probTrain.png'))
-
+%}
 
 
 
 
 %% Models/ methods
-methodNames  = { 'mix1' };
+methodNames  = { 'mix5' };
 %methodNames  = { 'mix1', 'mix5', 'mix10', 'tree' };
 
 
@@ -48,15 +51,15 @@ methodNames  = { 'mix1' };
 % where truth(n,d) in {0,1}
 
 fitMethods = {
-  @(labels) noisyMixModelFit(labels, [], 1)
+  @(labels, features) noisyMixModelFit(labels, [], 1)
   };
 
 %{
 fitMethods = {
-  @(labels) noisyMixModelFit(labels, [], 1), ...
-  @(labels) noisyMixModelFit(labels, [], 5), ...
-  @(labels) noisyMixModelFit(labels, [], 10), ...
-  @(labels) treegmFit(labels)
+  @(labels, features) noisyMixModelFit(labels, [], 1), ...
+  @(labels, features) noisyMixModelFit(labels, [], 5), ...
+  @(labels, features) noisyMixModelFit(labels, [], 10), ...
+  @(labels, features) treegmFit(labels)
   };
 %}
 
@@ -66,15 +69,15 @@ fitMethods = {
 %[pZ, pX] = noisyMixModelInferNodes(mixModel{ki}, localFeatures, softev);
 
 infMethods = {
-  @(model, softev) argout(2, @noisyMixModelInferNodes, model, [], softev)
+  @(model, features, softev) argout(2, @noisyMixModelInferNodes, model, [], softev)
   };
 
 %{
 infMethods = {
-  @(model, softev) argout(2, @noisyMixModelInferNodes, model, [], softev), ...
-  @(model,  softev) argout(2, @noisyMixModelInferNodes, model, [], softev), ...
-  @(model, softev) argout(2, @noisyMixModelInferNodes, model, [], softev), ...
-  @(model, softev) argout(2, @treegmInferNodes, model, [], softev)
+  @(model, features, softev) argout(2, @noisyMixModelInferNodes, model, [], softev), ...
+  @(model,  features, softev) argout(2, @noisyMixModelInferNodes, model, [], softev), ...
+  @(model, features, softev) argout(2, @noisyMixModelInferNodes, model, [], softev), ...
+  @(model, features, softev) argout(2, @treegmInferNodes, model, [], softev)
   };
 %}
   
@@ -95,14 +98,18 @@ logprobMethods = {
 %% CV
 
 setSeed(0);
-Ntrain = size(data.train.presence, 1);
-Ntest = size(data.test.presence, 1);
+% if you want to use a subset of the data,
+% select it here  
+[Ntrain Nobjects] = size(data.train.presence);
+objectnames = data.names;
+Ntest = size(data.test.presence,1);
 presence = [data.train.presence; data.test.presence];
 detect_maxprob = [data.train.detect_maxprob; data.test.detect_maxprob];
 N = size(presence, 1);
 assert(N==Ntrain+Ntest);
-Nfolds = 2;
+Nfolds = 3;
 if Nfolds == 1
+  % use original train/ test split
   trainfolds{1} = 1:Ntrain;
   testfolds{1} = (Ntrain+1):(Ntrain+Ntest);
 else
@@ -115,38 +122,75 @@ for fold=1:Nfolds
   test.presence = presence(testfolds{fold}, :);
   test.detect_maxprob = detect_maxprob(testfolds{fold}, :);
   
-  % For speed, we allow training and testing on a subset
-  % of the objects and images
+ 
   [Ntrain, Nobjects] = size(train.presence);
-  [Ntest, Nobjects2] = size(test.presence); %#ok
+  [Ntest, Nobjects2] = size(test.presence);
   
-  objectNdx = 1:Nobjects;
-  trainNdx = 1:Ntrain;
-  testNdx = 1:Ntest; % 1:100;
+    %% Train  p(scores | labels)
+  %obstype = 'localev';
+  %obstype = 'gauss';
+  obstype = 'quantize';
   
-  Nobjects = numel(objectNdx);
-  Ntrain = numel(trainNdx);
-  Ntest = numel(testNdx);
+  labels = train.presence;
+  scores = train.detect_maxprob;
+  [obsmodel] = obsModelFit(labels, scores, obstype);
+  
+  
+  %% Check the reasonableness of the local observation model for class c
+  % note that p(score|label) is same for all models
+  
+model = obsmodel;
+for c=[1 110]
+
+% Empirical distributon
+scores = train.detect_maxprob;
+ndx=(train.presence(:,c)==1);
+figure;
+subplot(2,2,1)
+hist(scores(ndx,c))
+title(sprintf('%s present, m %5.3f, v %5.3f', ...
+  objectnames{c}, mean(scores(ndx,c)),var(scores(ndx,c))));
+subplot(2,2,2)
+hist(scores(~ndx,c))
+title(sprintf('%s absent, m %5.3f, v %5.3f', ...
+  objectnames{c}, mean(scores(~ndx,c)), var(scores(~ndx,c))));
+
+% Model distribution
+subplot(2,2,3)
+xmin = min(scores(:,c));
+xmax = max(scores(:,c));
+xvals = linspace(xmin, xmax, 100);
+%mu = model.localCPDs{c}.mu;
+%Sigma = squeeze(model.localCPDs{c}.Sigma);
+mu = squeeze(model.localMu(1,:,c));
+Sigma = permute(model.localSigma(:,:,:,c), [3 4 1 2]);
+p = gaussProb(xvals, mu(2), Sigma(2));
+plot(xvals, p, 'b-');
+title(sprintf('model for %s presence', objectnames{c}))
+
+subplot(2,2,4)
+p = gaussProb(xvals, mu(1), Sigma(1));
+plot(xvals, p, 'r:');
+title(sprintf('model for %s absence', objectnames{c}))
+end
   
   
   
-  %% Training p(labels)
+  
+  
+  %% Training p(labels, scores)
   
   Nmethods = numel(methodNames);
   models = cell(1, Nmethods);
-  labels = train.presence(trainNdx, objectNdx);
 
-  
   % indep model
   Npresent = sum(train.presence, 1);
   priorProb = Npresent/Ntrain;
 
-
-
-  % Train up p(labels)
+  % Train up models
   for m=1:Nmethods
     fprintf('fitting %s\n', methodNames{m});
-    models{m} = fitMethods{m}(labels);
+    models{m} = fitMethods{m}(labels, scores);
   end
   
   
@@ -179,7 +223,7 @@ end
   % See if the models help with p(y(1:T))
   ll_indep = zeros(1, Ntest); %#ok
   ll_model = zeros(Ntest, Nmethods);
-  labels = test.presence(testNdx, objectNdx)+1; % 1,2
+  labels = test.presence+1; % 1,2
   
   logPrior = [log(1-priorProb+eps); log(priorProb+eps)];
   ll = zeros(Ntest, Nobjects);
@@ -205,83 +249,35 @@ end
   end
   loglik(fold, :) = ll;
   
-  
-  
-  
-  %% Train  p(scores | labels)
-  %obstype = 'localev';
-  obstype = 'gauss';
-  
-  
-  labels = train.presence(trainNdx, objectNdx);
-  scores = train.detect_maxprob(trainNdx, objectNdx);
-  [obsmodel] = obsModelFit(labels, scores, obstype);
-  
-  
-  %% Check the reasonableness of the local observation model for class c
-  % note that p(score|label) is same for all models
-  %{
-model = obsmodel;
-for c=[1 110]
+ 
 
-% Empirical distributon
-ndx=(train.presence_truth(:,c)==1);
-figure;
-%plot(train.maxscores(ndx,c));
-hist(train.maxscores(ndx,c))
-title(sprintf('scores when class %s present, mean %5.3f, var %5.3f', ...
-  train.names{c}, mean(train.maxscores(ndx,c)), var(train.maxscores(ndx,c))));
-figure;
-%plot(train.maxscores(~ndx,c));
-hist(train.maxscores(~ndx,c))
-title(sprintf('scores when class %s absent, mean %5.3f, var %5.3f', ...
-  train.names{c}, mean(train.maxscores(~ndx,c)), var(train.maxscores(~ndx,c))));
-
-% Model distribution
-figure;
-[h,bins]=hist(train.maxscores(:,c));
-bar(bins, normalize(h))
-hold on;
-xmin = min(train.maxscores(:,c));
-xmax = max(train.maxscores(:,c));
-xvals = linspace(xmin, xmax, 100);
-mu = model.localCPDs{c}.mu;
-Sigma = squeeze(model.localCPDs{c}.Sigma);
-p = gaussProb(xvals, mu(1), Sigma(1));
-plot(xvals, p, 'b:');
-p = gaussProb(xvals, mu(2), Sigma(2));
-plot(xvals, p, 'r-');
-title(sprintf('distribution of scores for %s', train.names{c}))
-end
-  %}
-  
-  
-  
   %% Inference
   presence_indep = zeros(Ntest, Nobjects);
   presence_model = zeros(Ntest, Nobjects, Nmethods);
   
-  features = test.detect_maxprob(testNdx, objectNdx); %Ncases*Nnodes*Ndims
+  features = test.detect_maxprob; %Ncases*Nnodes*Ndims
+  % as a speedup, we compute soft evidence from features in batch form
   softevBatch = localEvToSoftEvBatch(obsmodel, features);
   
   for m=1:Nmethods
     fprintf('running method %s with %s\n', methodNames{m}, obstype);
     
     for n=1:Ntest
-      frame = testNdx(n);
+      frame = n;
       if (n==1) || (mod(n,500)==0), fprintf('testing image %d of %d\n', n, Ntest); end
       
-      %{
+    %{
+      % needs database of images
     img = imread(fullfile(HOMEIMAGES, test.folder{frame}, test.filename{frame}));
     figure(1); clf; image(img)
-    trueObjects = sprintf('%s,', test.names{find(test.presence_truth(frame,:))});
+    trueObjects = sprintf('%s,', test.names{find(test.presence(frame,:))});
     title(trueObjects)
-      %}
+     %}
       
       softev = softevBatch(:,:,n); % Nstates * Nnodes * 1
       [presence_indep(n,:)] = features(n, :);
       %[presence_indep(n,:)] = softev(2, :);
-      bel = infMethods{m}(models{m}, softev);
+      bel = infMethods{m}(models{m}, features(n,:), softev);
       presence_model(n,:,m) = bel(2,:);
     end
   end
@@ -289,7 +285,7 @@ end
   %% Performance evaluation
   
   
-  [styles, colors, symbols, plotstr] =  plotColors(); %#ok
+  [styles, colors, symbols, plotstr] =  plotColors();
   
   evalFns = {
     @(confidence, truth) argout(1, @rocPMTK, confidence, truth)
@@ -308,67 +304,56 @@ evalFns = {
     evalPerf = evalFns{1};
     perfStr = evalNames{1};
     
-    score_indep = zeros(1, Nobjects);
-    score_models = zeros(Nobjects, Nmethods);
-    for cc=1:Nobjects
-      c = objectNdx(cc);
-      [score_indep(cc)] = evalPerf(presence_indep(testNdx,c), test.presence(testNdx,c));
+    % If the object is absent in a given fold, we may get NaN for
+    % the performance. We want to exclude these from the evaluation.
+    score_indep = nan(1, Nobjects);
+    score_models = nan(Nobjects, Nmethods);
+    absent = zeros(1, Nobjects);
+    for c=1:Nobjects
+      absent(c) = sum(test.presence(:,c)==0);
+      if absent(c), continue; end
+      [score_indep(c)] = evalPerf(presence_indep(:,c), test.presence(:,c));
       for m=1:Nmethods
-        score_models(cc,m) = evalPerf(presence_model(testNdx,c,m), test.presence(testNdx,c));
+        score_models(cc,m) = evalPerf(presence_model(:,c,m), test.presence(:,c));
       end
     end
+   fprintf('warning: in fold %d of %d, %s are absent from test\n', ...
+     fold, Nfolds, sprintf('%s,', objectnames(absent)));
+    %score_indep(isnan(score_indep)) = 0;
+    %score_models(isnan(score_models)) = 0;
     
-    % plot mean performance of each method
-    mean_perf_indep(fold) = mean(score_indep);
+    
+    mean_perf_indep(fold) = mean(score_indep(~absent));
     for m=1:Nmethods
-      mean_perf_models(fold,m) = mean(score_models(:,m));
+      mean_perf_models(fold,m) = mean(score_models(~absent,m));
     end
    
-    %{
-    figure
-    %bar([mean_perf_indep mean_perf_models])
-    plot([mean_perf_indep mean_perf_models], 'x', 'markersize', 12, 'linewidth', 2)
-    legendstr = {'indep', methodNames{:}};
-    set(gca, 'xtick', 1:numel(legendstr))
-    set(gca, 'xticklabel', legendstr)
-    title(sprintf('mean %s', perfStr))
-    axis_pct
-    
-    % Plot performance for each method vs category on same graph
-    figure;
-    % list objects in decreasing order of performance based on indep model
-    [~, perm] = sort(score_indep, 'descend');
-    plot(score_indep(perm), plotstr{1}, 'linewidth', 2);
-    hold on
-    legendstr{1} = sprintf('indep, mean=%5.3f', mean_perf_indep);
-    for m=1:Nmethods
-      mm = m+1;
-      plot(score_models(perm,m), plotstr{mm}, 'linewidth', 2);
-      legendstr{mm} = sprintf('%s, mean=%5.3f', methodNames{m}, mean_perf_models(m));
-    end
-    legend(legendstr)
-    ylabel(perfStr)
-    xlabel('category')
-    
+    if fold==1
     % plot improvement over baseline for each method as separate figs
     for m=1:Nmethods
       figure;
       [delta, perm] = sort(score_models(:,m) - score_indep(:), 'descend');
       bar(delta)
       str = sprintf('mean of %s using indep %5.3f, using %s  %5.3f', ...
-        perfStr, mean_perf_indep, methodNames{m},  mean_perf_models(m));
+        perfStr, mean_perf_indep(fold), methodNames{m},  mean_perf_models(fold,m));
       disp(str)
       title(str)
       xlabel('category')
       ylabel(sprintf('improvement in %s over baseline', perfStr))
     end
-    %}
+    end
   
 end % fold
 
-data = [mean_perf_indep(:)   mean_perf_models];
+perf = [mean_perf_indep(:)   mean_perf_models]; % folds * methods
 figure;
-boxplot(data)
+if Nfolds==1 
+  %bar([mean_perf_indep mean_perf_models])
+  plot([mean_perf_indep mean_perf_models], 'x', 'markersize', 12, 'linewidth', 2)
+  axis_pct
+else
+  boxplot(perf)
+end
 legendstr = {'indep', methodNames{:}};
 set(gca, 'xtick', 1:numel(legendstr))
 set(gca, 'xticklabel', legendstr)
