@@ -42,57 +42,63 @@ xticklabel_rotate(common, 90, data.names(common), 'fontsize', 8);
 
 
 %% Models/ methods
-methodNames  = { 'mix5' };
-%methodNames  = { 'mix1', 'mix5', 'mix10', 'tree' };
+%methodNames  = { 'mix1' };
+methodNames  = { 'mix1', 'mix5', 'mix10', 'tree' };
 
 
 % We requre that fitting methods have this form
 % model = fn(truth(N, D), features(N, D, :))
 % where truth(n,d) in {0,1}
 
+%{
 fitMethods = {
   @(labels, features) noisyMixModelFit(labels, [], 1)
   };
+%}
 
-%{
 fitMethods = {
   @(labels, features) noisyMixModelFit(labels, [], 1), ...
   @(labels, features) noisyMixModelFit(labels, [], 5), ...
   @(labels, features) noisyMixModelFit(labels, [], 10), ...
   @(labels, features) treegmFit(labels)
   };
-%}
+
 
 
 
 %[logZ, nodeBel] = treegmInferNodes(treeModel, localFeatures, softev);
 %[pZ, pX] = noisyMixModelInferNodes(mixModel{ki}, localFeatures, softev);
 
+
+%{
 infMethods = {
   @(model, features, softev) argout(2, @noisyMixModelInferNodes, model, [], softev)
   };
+%}
 
-%{
+
 infMethods = {
   @(model, features, softev) argout(2, @noisyMixModelInferNodes, model, [], softev), ...
   @(model,  features, softev) argout(2, @noisyMixModelInferNodes, model, [], softev), ...
   @(model, features, softev) argout(2, @noisyMixModelInferNodes, model, [], softev), ...
   @(model, features, softev) argout(2, @treegmInferNodes, model, [], softev)
   };
-%}
-  
+
+
+%{
 logprobMethods = {
   @(model, X) mixModelLogprob(model.mixmodel, X)
   };
+%}
+  
 
-%{
 logprobMethods = {
   @(model, X) mixModelLogprob(model.mixmodel, X), ...
   @(model, X) mixModelLogprob(model.mixmodel, X), ...
   @(model, X) mixModelLogprob(model.mixmodel, X), ...
   @(model, X) treegmLogprob(model, X)
   };
-%}
+
 
 
 %% CV
@@ -135,11 +141,11 @@ for fold=1:Nfolds
   scores = train.detect_maxprob;
   [obsmodel] = obsModelFit(labels, scores, obstype);
   
-  
+ 
   %% Check the reasonableness of the local observation model for class c
   % note that p(score|label) is same for all models
-  
-model = obsmodel;
+
+  %{
 for c=[1 110]
 
 % Empirical distributon
@@ -147,35 +153,53 @@ scores = train.detect_maxprob;
 ndx=(train.presence(:,c)==1);
 figure;
 subplot(2,2,1)
-hist(scores(ndx,c))
+[counts, bins]=hist(scores(ndx,c));
+binstr =cellfun(@(b) sprintf('%2.1f', b), num2cell(bins), 'uniformoutput', false);
+bar(counts); set(gca, 'xticklabel', binstr)
 title(sprintf('%s present, m %5.3f, v %5.3f', ...
   objectnames{c}, mean(scores(ndx,c)),var(scores(ndx,c))));
+
 subplot(2,2,2)
-hist(scores(~ndx,c))
+[counts, bins] = hist(scores(~ndx,c));
+binstr =cellfun(@(b) sprintf('%2.1f', b), num2cell(bins), 'uniformoutput', false);
+bar(counts); set(gca, 'xticklabel', binstr)
 title(sprintf('%s absent, m %5.3f, v %5.3f', ...
   objectnames{c}, mean(scores(~ndx,c)), var(scores(~ndx,c))));
 
 % Model distribution
-subplot(2,2,3)
-xmin = min(scores(:,c));
-xmax = max(scores(:,c));
-xvals = linspace(xmin, xmax, 100);
-%mu = model.localCPDs{c}.mu;
-%Sigma = squeeze(model.localCPDs{c}.Sigma);
-mu = squeeze(model.localMu(1,:,c));
-Sigma = permute(model.localSigma(:,:,:,c), [3 4 1 2]);
-p = gaussProb(xvals, mu(2), Sigma(2));
-plot(xvals, p, 'b-');
-title(sprintf('model for %s presence', objectnames{c}))
 
-subplot(2,2,4)
-p = gaussProb(xvals, mu(1), Sigma(1));
-plot(xvals, p, 'r:');
-title(sprintf('model for %s absence', objectnames{c}))
+switch obsmodel.obstype
+  case 'gauss'
+    xmin = min(scores(:,c));
+    xmax = max(scores(:,c));
+    xvals = linspace(xmin, xmax, 100);
+    mu = squeeze(obsmodel.mu(1,:,c));
+    Sigma = permute(obsmodel.Sigma(:,:,:,c), [3 4 1 2]);
+    p = gaussProb(xvals, mu(2), Sigma(2));
+    subplot(2,2,3)
+    plot(xvals, p, 'b-');
+    title(sprintf('model for %s presence', objectnames{c}))
+    subplot(2,2,4)
+    p = gaussProb(xvals, mu(1), Sigma(1));
+    plot(xvals, p, 'r:');
+    title(sprintf('model for %s absence', objectnames{c}))
+  case 'quantize'
+    % CPT(label, feature, node)
+    subplot(2,2,3)
+    bar(squeeze(obsmodel.CPT(2,:,c)))
+    title(sprintf('model for %s presence', objectnames{c}))
+    bins = obsmodel.discretizeParams.bins{c};
+    binstr =cellfun(@(b) sprintf('%2.1f', b), num2cell(bins), 'uniformoutput', false);
+    set(gca,'xticklabel', binstr)
+    subplot(2,2,4)
+    bar(squeeze(obsmodel.CPT(1,:,c)))
+    title(sprintf('model for %s absence', objectnames{c}))
+    set(gca,'xticklabel',binstr)
+end
 end
   
   
-  
+  %}
   
   
   %% Training p(labels, scores)
@@ -187,12 +211,20 @@ end
   Npresent = sum(train.presence, 1);
   priorProb = Npresent/Ntrain;
 
+  
   % Train up models
   for m=1:Nmethods
     fprintf('fitting %s\n', methodNames{m});
     models{m} = fitMethods{m}(labels, scores);
   end
   
+  %{
+  if isfield(models{1}, 'mixmodel') && models{1}.mixmodel.nmix==1
+    assert(approxeq(priorProb, models{1}.mixmodel.cpd.T(1,2,:)))
+    priorProb(1:5)
+    squeeze(models{1}.mixmodel.cpd.T(1,2,1:5))
+  end
+  %}
   
   %{
 % Visualize tree
@@ -225,7 +257,8 @@ end
   ll_model = zeros(Ntest, Nmethods);
   labels = test.presence+1; % 1,2
   
-  logPrior = [log(1-priorProb+eps); log(priorProb+eps)];
+  %logPrior = [log(1-priorProb+eps); log(priorProb+eps)];
+  logPrior = [log(1-priorProb); log(priorProb)];
   ll = zeros(Ntest, Nobjects);
   for j=1:Nobjects
     ll(:,j) = logPrior(labels(:, j), j);
@@ -237,19 +270,10 @@ end
   end
   
   ll = [sum(ll_indep) sum(ll_model,1)];
-  if fold==1
-    figure;
-    %bar(-ll)
-    plot(-ll, 'x', 'markersize', 12, 'linewidth', 2)
-    legendstr = {'indep', methodNames{:}};
-    set(gca, 'xtick', 1:numel(legendstr))
-    set(gca, 'xticklabel', legendstr)
-    title('negloglik of test labels')
-    axis_pct
-  end
   loglik(fold, :) = ll;
   
  
+
 
   %% Inference
   presence_indep = zeros(Ntest, Nobjects);
@@ -257,8 +281,9 @@ end
   
   features = test.detect_maxprob; %Ncases*Nnodes*Ndims
   % as a speedup, we compute soft evidence from features in batch form
-  softevBatch = localEvToSoftEvBatch(obsmodel, features);
-  
+  %softevBatch = localEvToSoftEvBatch(obsmodel, features);
+  softevBatch = obsModelEval(obsmodel, features);
+   
   for m=1:Nmethods
     fprintf('running method %s with %s\n', methodNames{m}, obstype);
     
@@ -310,15 +335,17 @@ evalFns = {
     score_models = nan(Nobjects, Nmethods);
     absent = zeros(1, Nobjects);
     for c=1:Nobjects
-      absent(c) = sum(test.presence(:,c)==0);
+      absent(c) = all(test.presence(:,c)==0);
       if absent(c), continue; end
       [score_indep(c)] = evalPerf(presence_indep(:,c), test.presence(:,c));
       for m=1:Nmethods
-        score_models(cc,m) = evalPerf(presence_model(:,c,m), test.presence(:,c));
+        score_models(c,m) = evalPerf(presence_model(:,c,m), test.presence(:,c));
       end
     end
-   fprintf('warning: in fold %d of %d, %s are absent from test\n', ...
-     fold, Nfolds, sprintf('%s,', objectnames(absent)));
+    if ~isempty(absent)
+      fprintf('warning: in fold %d of %d, %s are absent from test\n', ...
+        fold, Nfolds, sprintf('%s,', objectnames{find(absent)}));
+    end
     %score_indep(isnan(score_indep)) = 0;
     %score_models(isnan(score_models)) = 0;
     
@@ -345,13 +372,14 @@ evalFns = {
   
 end % fold
 
-perf = [mean_perf_indep(:)   mean_perf_models]; % folds * methods
+
 figure;
 if Nfolds==1 
   %bar([mean_perf_indep mean_perf_models])
   plot([mean_perf_indep mean_perf_models], 'x', 'markersize', 12, 'linewidth', 2)
   axis_pct
 else
+  perf = [mean_perf_indep(:)   mean_perf_models]; % folds * methods
   boxplot(perf)
 end
 legendstr = {'indep', methodNames{:}};
@@ -360,4 +388,19 @@ set(gca, 'xticklabel', legendstr)
 title(sprintf('mean %s', perfStr))
 
     
+figure;
+if Nfolds==1 
+    plot(-loglik, 'x', 'markersize', 12, 'linewidth', 2)
+    legendstr = {'indep', methodNames{:}};
+    set(gca, 'xtick', 1:numel(legendstr))
+    set(gca, 'xticklabel', legendstr)
+    axis_pct
+else
+  boxplot(-loglik)
+end
+legendstr = {'indep', methodNames{:}};
+set(gca, 'xtick', 1:numel(legendstr))
+set(gca, 'xticklabel', legendstr)
+title(sprintf('negloglik'))
+
     

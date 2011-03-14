@@ -21,7 +21,7 @@ function quantized = quantizePMTK(vars, varargin)
 %
 % Example:
 %
-%  X=rand(10,1);XQ=quantize(X,'levels',2);[X XQ]
+%  X=rand(10,1);XQ=quantizePMTK(X,'levels',2);[X XQ]
 % ans =
 % 
 %     0.8205    2.0000
@@ -35,13 +35,13 @@ function quantized = quantizePMTK(vars, varargin)
 %     0.9102    2.0000
 %     0.8544    2.0000
 %
-
-% This file is from pmtk3.googlecode.com
-
-
 %PMTKauthor  Stefan Schroedl
 %PMTKdate 3/16/2010
 %PMTKurl http://www.mathworks.com/matlabcentral/fileexchange/26981-feature-selection-based-on-interaction-information
+
+
+% This file is from pmtk3.googlecode.com
+
 
 optargin = size(varargin,2);
 stdargin = nargin - optargin;
