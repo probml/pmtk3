@@ -146,13 +146,13 @@ if ~isempty(filename)
     error(sprintf('error executing %s', cmd));
   end
   
-  %{
+ 
   cmd = sprintf('rm %s.dot', filename);
   status = system(cmd);
   if status ~= 0
     error(sprintf('error executing %s', cmd));
   end
-  %}
+ 
 end
 
 end

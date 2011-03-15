@@ -27,5 +27,13 @@ end
 
 model.wN  = w; model.VN = V; model.invVN = invV;
 model.expectAlpha = E_a;
+if isfield(model.preproc, 'addOnes') && model.preproc.addOnes
+  model.alpha = model.expectAlpha(2:end);
+  model.weights = model.wN(2:end);
+else
+  model.alpha  = model.expectAlpha(1:end);
+  model.weights = model.wN;
+end
+model.relevant = find(model.nbrAlpha < 10); % precision is low for relevant vars
 logev = L;
 end

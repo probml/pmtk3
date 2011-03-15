@@ -47,13 +47,13 @@ switch obstype
   case 'gauss'
     model.mu = zeros(Ndims,  Nstates, Nnodes);
     model.Sigma = zeros(Ndims, Ndims, Nstates, Nnodes);
-    for j=1:Nnnodes
+    for j=1:Nnodes
       Z = canonizeLabels(X(:,j)); %
       Yj = squeeze(Y(:,j,:)); % Y(case,dim)
       for k=1:Nstates
         ndx = (Z==k);
         model.mu(:, k, j) = mean(Yj(ndx,:));
-        model.Sigma(:,:,k,j) = covshrink(Yj(ndx,:));
+        model.Sigma(:,:,k,j) = shrinkcov(Yj(ndx,:));
       end
     end
   %[model.localCPDs, model.localCPDpointers, ...

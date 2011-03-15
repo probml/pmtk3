@@ -29,8 +29,9 @@ G = setdiag(G, 0);
 % clqs{i} is the i'th maximal clique, ordered by RIP
 [elimOrder, GT]                = minWeightElimOrder(G, nstates);  % triangulate
 [pElimOrder, ischordal, clqs] = maxCardinalitySearch(GT); % find clqs
-cliqueTreeUndir               = mcsCliques2Jtree(clqs); % build jtree
 assert(ischordal); 
+cliqueTreeUndir               = mcsCliques2Jtree(clqs); % build jtree
+
 %% create clique lookup table
 % cliqueLookup(i, c) = true if GM node i is in clqs{c}
 ncliques = numel(clqs);
@@ -40,6 +41,7 @@ for c=1:ncliques
 end
 %% add factors to cliques
 initClqSizes = cellfun('length', clqs);
+treewidth = max(initClqSizes)-1;
 factorLookup = false(nfactors, ncliques);
 for f=1:nfactors
     candidateCliques = find(all(cliqueLookup(factors{f}.domain, :), 1));
@@ -93,5 +95,6 @@ end
 
 %% package 
 jtree = structure(cliques, preOrder, postOrder, ...
-    preOrderChildren, postOrderParents, cliqueLookup, cliqueTree, rootClqNdx, nvars);
+    preOrderChildren, postOrderParents, cliqueLookup, cliqueTree, rootClqNdx, nvars, ...
+    treewidth, factorLookup, clqs);
 end

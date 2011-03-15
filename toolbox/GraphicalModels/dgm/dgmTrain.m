@@ -1,6 +1,9 @@
 function dgm = dgmTrain(dgm, varargin)
-%% Fit a dgm via mle/map
+%% Fit parameters of a DGM 
 % If data is missing, we fit using EM
+% otherwise we compute MLE/MAP of each CPD analytically
+%
+% If structure of graph is unknown, use dgmFit
 %
 %% Inputs
 %
@@ -36,9 +39,6 @@ function dgm = dgmTrain(dgm, varargin)
 %             localCPD, (if any) is not updated either. 
 %
 % 
-% 'buildJtree' - if true then an uncalibrated jtree is built and stored in
-%                the dgm after fitting for use during future inference. 
-%                This is true by default if the infEngine is set to jtree.
 %
 % If data is missing, see emAlgo for additional EM related optional args. 
 %%
@@ -46,17 +46,18 @@ function dgm = dgmTrain(dgm, varargin)
 % This file is from pmtk3.googlecode.com
 
 
-[data, clamped, buildJtree, args] = process_options(varargin, ...
-    'data', [], 'clamped', [], 'buildJtree', strcmpi(dgm.infEngine, 'jtree'));
+[data, clamped, args] = process_options(varargin, ...
+    'data', [], 'clamped', []);
 
 if isempty(data) || ~all(data(:))
     assert(isempty(clamped)); % clamping is not supported when data is missing
     dgm = dgmTrainEm(dgm, data, args{:}); 
 else
     dgm = dgmTrainFullyObs(dgm, data, 'clamped', clamped, args{:}); 
+    if isfield(dgm, 'infEngine') && strcmpi(dgm.infEngine, 'jtree')
+      dgm = dgmRebuildJtree(dgm); 
+    end
 end
 
-if buildJtree
-   dgm = dgmRebuildJtree(dgm); 
-end
+
 end

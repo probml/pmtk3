@@ -4,6 +4,7 @@ function [preproc, X] = preprocessorApplyToTrain(preproc, X)
 
 % This file is from pmtk3.googlecode.com
 
+if isempty(preproc), return; end
 
 % For backwards compatibility, we replicate the
 % behavior of preprocessorCreate

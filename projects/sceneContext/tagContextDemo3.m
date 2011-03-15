@@ -9,46 +9,19 @@ load('SUN09data')
 
 
 
-%% Visualize data
-%{
-% Presence
-figure; imagesc(data.train.presence); colormap(gray)
-xlabel('categories')
-ylabel('training case')
-title('presence or absence')
-% Label common objects
-thresh = 0.2;
-common=find(mean(data.train.presence,1)>thresh);
-str = sprintf('%s,', data.names{common});
-title(sprintf('presence prob > %5.3f\n%s', thresh, str));
-xticklabel_rotate(common, 90, data.names(common), 'fontsize', 8);
-%print(gcf, '-dpng', fullfile(folder, 'SUN09presenceTrain.png'))
-
-% Scores
-figure; imagesc(data.train.detect_maxprob); colorbar
-xlabel('categories')
-ylabel('training case')
-title('max score of detector')
-% Label objects whose detectors fire a lot
-thresh = 0.1;
-common=find(mean(data.train.detect_maxprob,1)>0.1);
-str = sprintf('%s,', data.names{common});
-title(sprintf('max detector prob > %5.3f\n%s', thresh, str));
-xticklabel_rotate(common, 90, data.names(common), 'fontsize', 8);
-%print(gcf, '-dpng', fullfile(folder, 'SUN09probTrain.png'))
-%}
-
-
-
 
 %% Models/ methods
-%methodNames  = { 'mix1' };
-methodNames  = { 'mix1', 'mix5', 'mix10', 'tree' };
+methodNames  = { 'dag' };
+%methodNames  = { 'dag', 'mix10', 'mix15', 'tree' };
 
 
 % We requre that fitting methods have this form
 % model = fn(truth(N, D), features(N, D, :))
 % where truth(n,d) in {0,1}
+
+fitMethods = {
+  @(labels, features) dgmFit(labels)
+  };
 
 %{
 fitMethods = {
@@ -56,6 +29,8 @@ fitMethods = {
   };
 %}
 
+
+%{
 fitMethods = {
   @(labels, features) noisyMixModelFit(labels, [], 1), ...
   @(labels, features) noisyMixModelFit(labels, [], 5), ...
@@ -63,7 +38,7 @@ fitMethods = {
   @(labels, features) treegmFit(labels)
   };
 
-
+%}
 
 
 %[logZ, nodeBel] = treegmInferNodes(treeModel, localFeatures, softev);
@@ -113,7 +88,7 @@ presence = [data.train.presence; data.test.presence];
 detect_maxprob = [data.train.detect_maxprob; data.test.detect_maxprob];
 N = size(presence, 1);
 assert(N==Ntrain+Ntest);
-Nfolds = 3;
+Nfolds = 1;
 if Nfolds == 1
   % use original train/ test split
   trainfolds{1} = 1:Ntrain;
@@ -134,11 +109,12 @@ for fold=1:Nfolds
   
     %% Train  p(scores | labels)
   %obstype = 'localev';
-  %obstype = 'gauss';
-  obstype = 'quantize';
+  obstype = 'gauss';
+  %obstype = 'quantize';
   
   labels = train.presence;
   scores = train.detect_maxprob;
+  %[quantizedScores, discretizeParams] = discretizePMTK(scores, 10);
   [obsmodel] = obsModelFit(labels, scores, obstype);
   
  
@@ -218,6 +194,8 @@ end
     models{m} = fitMethods{m}(labels, scores);
   end
   
+  keyboard
+  
   %{
   if isfield(models{1}, 'mixmodel') && models{1}.mixmodel.nmix==1
     assert(approxeq(priorProb, models{1}.mixmodel.cpd.T(1,2,:)))
@@ -226,6 +204,16 @@ end
   end
   %}
   
+  
+  % Fit a depnet to the labels
+model = depnetFit(data.train.presence, 'nodeNames', data.names)
+% folder =  fileparts(which(mfilename())
+folder = '/home/kpmurphy/Dropbox/figures';
+% for some reason, the directed graph is much more readable
+graphviz(model.G, 'labels', model.nodeNames, 'directed', 1, ...
+  'filename', fullfile(folder, 'SUN09depnet'));
+  
+
   %{
 % Visualize tree
 folder =  fileparts(which(mfilename())
@@ -283,6 +271,7 @@ end
   % as a speedup, we compute soft evidence from features in batch form
   %softevBatch = localEvToSoftEvBatch(obsmodel, features);
   softevBatch = obsModelEval(obsmodel, features);
+  %[quantizedScores, discretizeParams] = discretizePMTK(scores, 10);
    
   for m=1:Nmethods
     fprintf('running method %s with %s\n', methodNames{m}, obstype);
@@ -355,7 +344,7 @@ evalFns = {
       mean_perf_models(fold,m) = mean(score_models(~absent,m));
     end
    
-    if fold==1
+    if 0 %  fold==1
     % plot improvement over baseline for each method as separate figs
     for m=1:Nmethods
       figure;
