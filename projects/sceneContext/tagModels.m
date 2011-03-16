@@ -87,6 +87,15 @@ graphviz(model.edge_weights, 'labels', train.names, 'directed', 1, ...
   
   %{
 % Visualize mix model
+  
+  
+  if isfield(models{1}, 'mixmodel') && models{1}.mixmodel.nmix==1
+    assert(approxeq(priorProb, models{1}.mixmodel.cpd.T(1,2,:)))
+    priorProb(1:5)
+    squeeze(models{1}.mixmodel.cpd.T(1,2,1:5))
+  end
+ 
+  
 model = models{2};
 K = model.mixmodel.nmix;
 [nr,nc] = nsubplots(K);
