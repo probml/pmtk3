@@ -24,10 +24,9 @@ function model = discreteFit(X, alpha, K)
 
 % This file is from pmtk3.googlecode.com
 
-
-SetDefaultValue(3, 'K', max(X(:))); 
 d = size(X, 2);
 X = canonizeLabels(X); % convert to 1..K
+if nargin < 3, K  = nunique(X(:)); end
 counts = histc(X, 1:K); % works even when X is a matrix - no need to loop
 if nargin < 2 || isempty(alpha), alpha = 1; end
 model.T = normalize(bsxfun(@plus, counts, colvec(alpha-1)), 1);

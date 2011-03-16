@@ -18,16 +18,25 @@ m = 0;
 m = m + 1;
 methods(m).modelname = 'tree';
 methods(m).obstype = 'gauss';
-methods(m).fitFn = @(labels, features) dgmFit(labels);
+methods(m).fitFn = @(labels, features) treegmFit(labels);
 methods(m).infFn = @(model, features, softev) argout(2, @treegmInferNodes, model, [], softev);
 methods(m).logprobFn = @(model, labels) treegmLogprob(model, labels);
 
 m = m + 1;
-methods(m).modelname = 'mix1';
-methods(m).obstype = 'detector';
-methods(m).fitFn = @(labels, features) noisyMixModelFit(labels, [], 1);
+methods(m).modelname = 'mix5';
+methods(m).obstype = 'gauss';
+methods(m).fitFn = @(labels, features) noisyMixModelFit(labels, [], 5);
 methods(m).infFn = @(model, features, softev) argout(2, @noisyMixModelInferNodes, model, [], softev);
-methods(m).logprobFn = @(model, labels) mixModelLogprob(model, labels);
+methods(m).logprobFn = @(model, labels) mixModelLogprob(model.mixmodel, labels);
+
+%{
+m = m + 1;
+methods(m).modelname = 'dag';
+methods(m).obstype = 'gauss';
+methods(m).fitFn = @(labels, features) dgmFit(labels);
+methods(m).infFn = @(model, features, softev) argout(2, @dgmInferNodes, model, [], softev);
+methods(m).logprobFn = @(model, labels) dgmLogprob(model, labels);
+%}
 
 
 Nmethods = numel(methods);
@@ -47,7 +56,7 @@ presence = [data.train.presence; data.test.presence];
 detect_maxprob = [data.train.detect_maxprob; data.test.detect_maxprob];
 N = size(presence, 1);
 assert(N==Ntrain+Ntest);
-Nfolds = 3;
+Nfolds = 1;
 if Nfolds == 1
   % use original train/ test split
   trainfolds{1} = 1:Ntrain;
@@ -55,6 +64,15 @@ if Nfolds == 1
 else
   [trainfolds, testfolds] = Kfold(N, Nfolds);
 end
+
+% These are the performance measures which we store
+mean_auc_indep = zeros(1, Nfolds);
+mean_eer_indep = zeros(1, Nfolds);
+mean_auc_models = zeros(Nmethods, Nfolds);
+mean_eer_models = zeros(Nmethods, Nfolds);
+loglik = zeros(Nfolds, Nmethods+1);
+  
+  
 for fold=1:Nfolds
   fprintf('fold %d of %d\n', fold, Nfolds);
   train.presence = presence(trainfolds{fold}, :);
@@ -64,7 +82,7 @@ for fold=1:Nfolds
   [Ntrain, Nobjects] = size(train.presence);
   [Ntest, Nobjects2] = size(test.presence);
   
-    %% Train  p(scores | labels)
+  %% Train  p(scores | labels)
   
   labels = train.presence;
   scores = train.detect_maxprob;
@@ -74,21 +92,19 @@ for fold=1:Nfolds
   
   
   %% Training p(labels)
-
+  
   models = cell(1, Nmethods);
   % indep model
   Npresent = sum(train.presence, 1);
   priorProb = Npresent/Ntrain;
-
   
-  % Train up models
   for m=1:Nmethods
     methodNames{m} = sprintf('%s-%s', methods(m).modelname, methods(m).obstype);
     fprintf('fitting %s\n', methodNames{m});
     models{m} = methods(m).fitFn(labels, scores);
   end
   
-
+  
   
   %% Probability of labels
   % See if the models help with p(y(1:T))
@@ -105,15 +121,14 @@ for fold=1:Nfolds
   ll_indep = sum(ll,2);
   
   for m=1:Nmethods
-    ll_model(:, m) = methods{m}.logprobFn(models{m}, labels);
+    ll_model(:, m) = methods(m).logprobFn(models{m}, labels);
   end
   
   ll = [sum(ll_indep) sum(ll_model,1)];
   loglik(fold, :) = ll;
   
- 
-
-
+  
+  
   %% Inference
   presence_indep = zeros(Ntest, Nobjects);
   presence_model = zeros(Ntest, Nobjects, Nmethods);
@@ -122,7 +137,7 @@ for fold=1:Nfolds
   % as a speedup, we compute soft evidence from features in batch form
   softevBatchGauss = obsModelEval(obsmodelGauss, features);
   %[quantizedScores, discretizeParams] = discretizePMTK(scores, 10);
-   
+  
   for m=1:Nmethods
     fprintf('running method %s\n', methodNames{m});
     
@@ -131,64 +146,55 @@ for fold=1:Nfolds
       if (n==1) || (mod(n,500)==0), fprintf('testing image %d of %d\n', n, Ntest); end
       [presence_indep(n,:)] = test.detect_maxprob(n, :);
       
-      switch method(m).obstype
+      switch methods(m).obstype
         case 'detector'
-          bel = infMethods{m}(models{m}, [], test.detect_maxprob(n, :));
+          softev = zeros(2, Nobjects);
+          softev(1, :) = 1-test.detect_maxprob(n,:);
+          softev(2, :) = test.detect_maxprob(n,:);
+          bel = methods(m).infFn(models{m}, [], softev);
         case 'gauss'
-          bel = infMethods{m}(models{m}, [], softevBatchGauss(:, :, n));
+          bel = methods(m).infFn(models{m}, [], softevBatchGauss(:, :, n));
       end
       
       probPresent = bel(2,:);
       presence_model(n,:,m) = probPresent;
       
-         
-      % visualize some predictions -  needs database of images
-    if 0 % fold==1 && (n <= 3)
-      srcfolder = '';
-      destfolder = '';
-      img = imread(fullfile(HOMEIMAGES, srcfolder{frame}, test.filename{frame}));
-      figure(1); clf; image(img)
-      trueObjects = sprintf('%s,', objectnames{find(test.presence(frame,:))});
-      title(trueObjects)
-      fname = fullfile(destfolder, sprintf('testimg%d-truth.png', n));
-      print(gcf, '-dpng', fname);
-      
-      figure(2); clf; image(img)
-      predObjects = sprintf('%s,', objectsnames{find(probPresent > 0.5));
-      title(predObjects)
-      fname = fullfile(destfolder, sprintf('testimg%d-%s.png', n, methodNames{m}));
-      print(gcf, '-dpng', fname);
-    end
-      
     end % for n
   end % for m
   
   %% Performance evaluation
-  evalPerf =   @(confidence, truth) rocPMTK(confidence, truth);
-  perfStr = 'aROC';
+  
   
   % If the object is absent in a given fold, we may get NaN for
   % the performance. We want to exclude these from the evaluation.
-  score_indep = nan(1, Nobjects);
-  score_models = nan(Nobjects, Nmethods);
+  auc_indep = nan(1, Nobjects);
+  auc_models = nan(Nobjects, Nmethods);
+  % We store the eequal error rate and the cutoff/ threshold that achieves it
+  eer_indep = nan(1, Nobjects);
+  eer_models = nan(Nobjects, Nmethods);
+  cutoff_indep = nan(1, Nobjects);
+  cutoff_models = nan(Nobjects, Nmethods);
   absent = zeros(1, Nobjects);
   for c=1:Nobjects
     absent(c) = all(test.presence(:,c)==0);
     if absent(c), continue; end
-    [score_indep(c)] = evalPerf(presence_indep(:,c), test.presence(:,c));
+    %[AUC, cutoff, EER, falseAlarmRate, detectionRate] = rocPMTK(presence_indep(:,c), test.presence(:,c));
+    [auc_indep(c), cutoff_indep(c), eer_indep(c)] = rocPMTK(presence_indep(:,c), test.presence(:,c));
     for m=1:Nmethods
-      score_models(c,m) = evalPerf(presence_model(:,c,m), test.presence(:,c));
+      [auc_models(c,m), cutoff_models(c,m), eer_models(c,m)] = ...
+        evalPerf(presence_model(:,c,m), test.presence(:,c));
     end
   end
   if ~isempty(absent)
     fprintf('warning: in fold %d of %d, %s are absent from test\n', ...
       fold, Nfolds, sprintf('%s,', objectnames{find(absent)}));
-  
-  mean_perf_indep(fold) = mean(score_indep(~absent));
-  for m=1:Nmethods
-    mean_perf_models(fold,m) = mean(score_models(~absent,m));
   end
-  
+  mean_auc_indep(fold) = mean(auc_indep(~absent));
+  mean_eer_indep(fold) = mean(eer_indep(~absent));
+  for m=1:Nmethods
+    mean_auc_models(fold,m) = mean(auc_models(~absent,m));
+    mean_eer_models(fold,m) = mean(eer_models(~absent,m));
+  end
   
 end % fold
 
@@ -199,55 +205,34 @@ end % fold
 [styles, colors, symbols, plotstr] =  plotColors();
 
 
-%{
-    % plot improvement over baseline for each method as separate figs
-    for m=1:Nmethods
-      figure;
-      [delta, perm] = sort(score_models(:,m) - score_indep(:), 'descend');
-      bar(delta)
-      str = sprintf('mean of %s using indep %5.3f, using %s  %5.3f', ...
-        perfStr, mean_perf_indep(fold), methodNames{m},  mean_perf_models(fold,m));
-      disp(str)
-      title(str)
-      xlabel('category')
-      ylabel(sprintf('improvement in %s over baseline', perfStr))
-    end
-  end
-%}
-
-% Plot some ROC curves for some classes on a single fold
-if 1
-  for c=1:3
-    absent(c) = all(test.presence(:,c)==0);
-    if absent(c), 
-      error(sprintf('%s is absent in this test fold', objectnames{c}))
-    end
-    figure;
-    [aROC, falseAlarmRate, detectionRate] = figROC(presence_indep(:,c), test.presence(:,c), colors(1));
-    for m=1:Nmethods
-      [aROC, falseAlarmRate, detectionRate] = figROC(presence_model(:,c,m), test.presence(:,c), colors(m+1));
-    end
-    legendstr = {'indep', methodNames{:}};
-    legend(legendstr)
-    title(objectnames{c})
-  end
-end
-
-
 % Mean AUC
 figure;
 if Nfolds==1
-  %bar([mean_perf_indep mean_perf_models])
-  plot([mean_perf_indep mean_perf_models], 'x', 'markersize', 12, 'linewidth', 2)
+  plot([mean_auc_indep mean_auc_models], 'x', 'markersize', 12, 'linewidth', 2)
   axis_pct
 else
-  perf = [mean_perf_indep(:)   mean_perf_models]; % folds * methods
+  perf = [mean_auc_indep(:)   mean_auc_models]; % folds * methods
   boxplot(perf)
 end
 legendstr = {'indep', methodNames{:}};
 set(gca, 'xtick', 1:numel(legendstr))
 set(gca, 'xticklabel', legendstr)
-title(sprintf('mean %s', perfStr))
+title(sprintf('AUC averaged over classes'))
+
+% Mean EER
+figure;
+if Nfolds==1
+  plot([mean_eer_indep mean_eer_models], 'x', 'markersize', 12, 'linewidth', 2)
+  axis_pct
+else
+  perf = [mean_eer_indep(:)   mean_eer_models]; % folds * methods
+  boxplot(perf)
+end
+legendstr = {'indep', methodNames{:}};
+set(gca, 'xtick', 1:numel(legendstr))
+set(gca, 'xticklabel', legendstr)
+title(sprintf('EER averaged over classes'))
+
 
 
 % NLL on labels
@@ -265,4 +250,81 @@ legendstr = {'indep', methodNames{:}};
 set(gca, 'xtick', 1:numel(legendstr))
 set(gca, 'xticklabel', legendstr)
 title(sprintf('negloglik'))
+
+%% Visualize predictions plotted on top of some images
+Ntest = size(test.presence, 1);
+
+dataDir = '/home/kpmurphy/LocalDisk/SUN09/';
+HOMEIMAGES = fullfile(dataDir, 'Images');
+%HOMEANNOTATIONS = fullfile(dataDir, 'Annotations');
+sun_folder = 'static_sun09_database';
+figFolder = '/home/kpmurphy/Dropbox/figures/sceneContext';
+%{
+ Contents of groundTruth
+categories: [1x1 struct]
+               Dtest: [1x4317 struct]
+    DtrainingObjects: [1x28472 struct]
+       Doutofcontext: [1x42 struct]
+           Dtraining: [1x4367 struct]
+%}
+fname = fullfile(dataDir, 'dataset', 'sun09_groundTruth');
+load(fname, 'Dtest')
+
+
+% presence_model(n,c,m), presence_indep(n,c), test.presence(n,c)
+predPresence = cat(3, reshape(presence_indep, [Ntest Nobjects 1]), presence_model);
+visPredictions(test.presence,  predPresence, objectnames, {'indep', methodNames{:}}, ...
+  test.filenames, Dtest);
+ 
+%{
+truePresence = test.presence;
+probPresence = predPresence;
+methodNamesOrig = methodNames;
+methodNames  = {'indep', methodNames{:}};
+filenames = test.filenames;
+%}
+  
+
+%% Plot some ROC curves for some classes on a single fold
+if 1
+  for c=1:3
+    absent(c) = all(test.presence(:,c)==0);
+    if absent(c),
+      error(sprintf('%s is absent in this test fold', objectnames{c}))
+    end
+    figure; hold on; h = []; legendstr = {};
+    [AUC, cutoff, EER, falseAlarmRate, detectionRate] = rocPMTK(presence_indep(:,c), test.presence(:,c));
+    h(1) = plotROC(falseAlarmRate, detectionRate, colors(1));
+    legendstr{1} = sprintf('%s (AUC %5.3f, EER %5.3f)', 'indep', AUC, EER);
+    for m=1:Nmethods
+      [AUC, cutoff, EER, falseAlarmRate, detectionRate] = rocPMTK(presence_model(:,c,m), test.presence(:,c));
+      h(m+1) = plotROC(falseAlarmRate, detectionRate, colors(m+1));
+      legendstr{m+1} = sprintf('%s (AUC %5.3f, EER %5.3f)', methodNames{m}, AUC, EER);
+    end
+    legend(h, legendstr, 'location', 'southwest')
+    title(objectnames{c})
+    fname = fullfile(figFolder, sprintf('roc-%s.png', objectnames{c}));
+    print(gcf, '-dpng', fname);
+  end
+end
+
+
+
+
+%% plot improvement over baseline for each method as separate figs
+for m=1:Nmethods
+  figure;
+  [delta, perm] = sort(score_models(:,m) - score_indep(:), 'descend');
+  bar(delta)
+  str = sprintf('mean of %s using indep %5.3f, using %s  %5.3f', ...
+    perfStr, mean_perf_indep(fold), methodNames{m},  mean_perf_models(fold,m));
+  disp(str)
+  title(str)
+  xlabel('category')
+  ylabel(sprintf('improvement in %s over baseline', perfStr))
+  fname = fullfile(figFolder, sprintf('roc-delta-%s.png', methodNames{m}));
+  print(gcf, '-dpng', fname);
+end
+
+
 

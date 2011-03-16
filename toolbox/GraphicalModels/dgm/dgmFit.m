@@ -36,8 +36,6 @@ clamped = zeros(Ncases, Nnodes);
 [GorigOrder, search.scores, search.evals] = ...
   DAGsearch(Xpm, nEvals, probRndRestart, penalty, discrete, clamped, legalParents, verbose);
 
-[G, toporder, invtoporder, nodeNames] = toporderDag(GorigOrder);
-
 
 % Check fan-in of each node. If too large,
 % can cause problems when fitting tabular CPDs.
@@ -52,17 +50,13 @@ end
 %% Fit params
 stateSizes = Nstates*ones(1,Nnodes);
 CPDs = mkRndTabularCpds(G, stateSizes);
-dgm = dgmCreate(G, CPDs, 'precomputeJtree', true);
+dgm = dgmCreate(G, CPDs, 'precomputeJtree', true, 'nodenames', nodeNames);
 fprintf('treewidth is %d\n', dgm.jtree.treewidth);
 dgm = dgmTrain(dgm, 'data', Xcan);
 
 % store info about structure learning process
-dgm.nodeNames = nodeNames;
 dgm.npa = npa;
 dgm.search = search; 
 
-dgm.toporder = toporder;
-dgm.invtoporder = invtoporder;
-dgm.GorigOrder = GorigOrder;
 
 end

@@ -1,6 +1,7 @@
 function [L, Lij] = discreteLogprob(arg1, X)
 % Compute the log probability of the data. X must be in 1:K.
-% [L, Lij] = discreteLogprob(T, X); or [L, Lij] = discreteLogprob(model, X)
+% [L, Lij] = discreteLogprob(model, X) or
+% [L, Lij] = discreteLogprob(T, X)
 %
 % model is a structure with a field T, a K-by-d stochastic matrix,
 %(as returned by discreteFit).

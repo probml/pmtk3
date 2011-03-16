@@ -21,7 +21,7 @@ function [colors, colorMap] = pmtkColors()
      
     colors = { lightblue, orange, green, magenta, yellow, cyan, ...
       brown, blue, green2, red, gray, black};
-    colors = repmat(colors, 1, length(colors));
+    %colors = repmat(colors, 1, 5);
     
     colorMap.lightblue = lightblue;
     colorMap.orange    = orange;

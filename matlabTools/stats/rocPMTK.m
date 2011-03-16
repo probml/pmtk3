@@ -1,28 +1,23 @@
-function [aROC, falseAlarmRate, detectionRate] = figROC(confidence, testClass, col)
-% You pass the scores and the classes, and the function returns the false
-% alarm rate and the detection rate for different points across the ROC.
+function [AUC,  fpr, tpr,  EER, cutoff, tprAtThresh, fprAtThresh, thresh] = ...
+  rocPMTK(confidence, testClass, fprThresh)
+% Compute ROC curve
+% confidence(i) is a real value
+% label(i) is 0 or 1
 %
-% [faR, dR] = plotROC(score, class)
-%
-% it generates 150 points. 
-%  faR (false alarm rate) is uniformly sampled from 0 to 1
-%  dR (detection rate) is computed using the scores.
-%
-% class = 0 => target absent
-% class = 1 => target present
-%
-% score is the output of the detector, or any other measure of detection.
-% There is not plot unless you add a third parameter that is the color of
-% the graph. For instance:
-% [faR, dR] = plotROC(score, class, 'r')
+% AUC is area under curve
+% cutoff is the threshold that gives equal error rate (EER)
+% EER is the fpr=tpr at cutoff
+% fpr(t) is false positive rate for threshold t (x axis)
+% tpr(t) is true positive rate for threshold t (y axis)
 
-% Modified from the Labelme function areaROC
+if nargin < 3, fprThresh = 0.1; end
 
 ndxAbs = find(testClass<=0); % absent
 ndxPres = find(testClass==1); % present
 
-[th, j] = sort(confidence(ndxAbs));
-th = th(fix(linspace(1, length(th), 10))); % here the number of points is hardcoded to be 5
+%[th, j] = sort(confidence(ndxAbs));
+[th, j] = sort(confidence);
+th = th(fix(linspace(1, length(th), 50))); 
 
 cAbs = confidence(ndxAbs);
 cPres = confidence(ndxPres);
@@ -31,16 +26,32 @@ for t=1:length(th)
   falseAlarmRate(t) = sum(cAbs>=th(t)) / length(ndxAbs);
 end
 
-aROC = abs(sum((falseAlarmRate(2:end)-falseAlarmRate(1:end-1)).*(detectionRate(2:end) +detectionRate(1:end-1))/2));
+fpr = falseAlarmRate;
+tpr = detectionRate;
+ndx = find(isnan(fpr)); fpr(ndx) = []; tpr(ndx) = [];
+ndx = find(isnan(tpr)); fpr(ndx) = []; tpr(ndx) = [];
 
-if nargin == 3
-    %plot(falseAlarmRate, detectionRate, [col '--'],'LineWidth',1); axis([0 1 0 1])
-    %hold on
-    k = convhull([falseAlarmRate 1], [detectionRate 0]);
-    k = sort(k,'ascend');
-    if(k(end) > length(falseAlarmRate))
-        k(end) = [];
-    end
-    plot(falseAlarmRate(k), detectionRate(k), [col '-'],'LineWidth',2); axis([0 1 0 1])
-    axis('square')  
+% Find the threshold that is closest to fprThresh
+[~, ndx] = min(abs(fpr-fprThresh));
+thresh = th(ndx);
+fprAtThresh = fpr(ndx)
+tprAtThresh = tpr(ndx)
+
+AUC = -trapz(fpr, tpr); %estimate the area under the curve
+%AUC2 = abs(sum((fpr(2:end)-fpr(1:end-1)).*(tpr(2:end) +tpr(1:end-1))/2));
+
+%the best cut-off point is the closest point to (0,1)
+% This trick is due to Giuseppe Cardillo
+d=realsqrt(fpr.^2+(1-tpr).^2); %pythagoras's theorem
+[~,J]=min(d); %find the least distance
+cutoff =th(J); 
+               
+% performance at EER point
+TP = sum( (confidence >= cutoff) & (testClass == 1) );
+FP = sum( (confidence >= cutoff) & (testClass == 0) );
+TN = sum( (confidence < cutoff) & (testClass == 0) );
+FN = sum( (confidence < cutoff) & (testClass == 1) );
+FPR = FP/(FP+TN);
+EER = FPR;
+
 end
