@@ -15,13 +15,14 @@ if Nstates ~= 2
   error('can currently only handle binary nodes')
 end
 
+nodeNames = cellfun(@(d) sprintf('%d', d), num2cell(1:Nnodes), 'uniformoutput', false);
 [nodeNames, maxFanIn, verbose] = process_options(varargin, ...
-  'nodeNames', num2cell(1:Nnodes), 'maxFanIn', 4, 'verbose', true);
+  'nodeNames', nodeNames, 'maxFanIn', 4, 'verbose', true);
 
 %% Fit structure
 search.depnet = depnetFit(X, 'method', 'MI', 'verbose', false, 'nodeNames', nodeNames, ...
   'maxFanIn', maxFanIn); 
-legalParents = dgm.depnet.G;
+legalParents = search.depnet.G;
 
 probRndRestart = 0;
 verbose = 1;
@@ -32,28 +33,36 @@ Xpm = (2*(Xcan-1))-1; % force to {-1,+1}
 assert(isequal(unique(Xpm(:))', [-1 +1]))
 discrete = 1;
 clamped = zeros(Ncases, Nnodes);
-[G, search.scores, search.evals] = ...
+[GorigOrder, search.scores, search.evals] = ...
   DAGsearch(Xpm, nEvals, probRndRestart, penalty, discrete, clamped, legalParents, verbose);
+
+[G, toporder, invtoporder, nodeNames] = toporderDag(GorigOrder);
+
 
 % Check fan-in of each node. If too large,
 % can cause problems when fitting tabular CPDs.
 for j=1:Nnodes
   npa(j) = numel(parents(G, j));
+  if npa(j) > 5
+    fprintf('warning: node %d has %d parents\n', j, npa(j));
+  end
 end
-[ndx, mpa] = max(npa);
-if mpa>=5
-  fprintf('warning: nodes %d have more than 5 parents\n', ndx)
-end
+
 
 %% Fit params
 stateSizes = Nstates*ones(1,Nnodes);
 CPDs = mkRndTabularCpds(G, stateSizes);
 dgm = dgmCreate(G, CPDs, 'precomputeJtree', true);
+fprintf('treewidth is %d\n', dgm.jtree.treewidth);
 dgm = dgmTrain(dgm, 'data', Xcan);
 
 % store info about structure learning process
 dgm.nodeNames = nodeNames;
 dgm.npa = npa;
 dgm.search = search; 
+
+dgm.toporder = toporder;
+dgm.invtoporder = invtoporder;
+dgm.GorigOrder = GorigOrder;
 
 end

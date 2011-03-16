@@ -5,8 +5,10 @@
 loadData('sceneContextSUN09', 'ismatfile', false)
 load('SUN09data')
 
-
-
+train = data.train;
+test = data.test;
+[Ntrain, Nnodes] = size(train.presence);
+names = data.names;
 
 
 %% Visualize data
@@ -45,16 +47,13 @@ folder = '/home/kpmurphy/Dropbox/figures';
 
 
 
-Nmethods = numel(methodNames);
-models = cell(1, Nmethods);
-
 % indep model
 Npresent = sum(train.presence, 1);
 priorProb = Npresent/Ntrain;
 
 
 
-
+%{
 % Fit a depnet to the labels
 model = depnetFit(data.train.presence, 'nodeNames', data.names, ...
   'method', 'ARD')
@@ -66,11 +65,14 @@ graphviz(model.G, 'labels', model.nodeNames, 'directed', 1, ...
 model2 = depnetFit(data.train.presence, 'nodeNames', data.names, 'method', 'MI')
 graphviz(model2.G, 'labels', model.nodeNames, 'directed', 0, ...
   'filename', fullfile(folder, 'SUN09depnetMI'));
+%}
 
 % Fit a dgm
 model3 = dgmFit(data.train.presence, 'nodeNames', data.names);
 graphviz(model3.G, 'labels', model.nodeNames, 'directed', 1, ...
   'filename', fullfile(folder, 'SUN09dag'));
+
+keyboard
 
 
 

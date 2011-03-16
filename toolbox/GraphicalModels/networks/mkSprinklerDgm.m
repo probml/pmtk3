@@ -4,7 +4,7 @@
 
 % This file is from pmtk3.googlecode.com
 
-function dgm = mkSprinklerDgm(varargin)
+function [dgm, C, S, R, W] = mkSprinklerDgm(varargin)
 %    C
 %   / \
 %  v  v
@@ -13,7 +13,9 @@ function dgm = mkSprinklerDgm(varargin)
 %   v
 %   W
 %%
-C = 1; S = 2; R = 3; W = 4;
+
+C = 1; S = 2; R = 3; W = 4; % topological ordering 
+%C = 2; S = 1; R = 3; W = 4; % rnd ordering
 
 G = zeros(4,4);
 G(C,[S R]) = 1;

@@ -46,14 +46,23 @@ function dgm = dgmTrain(dgm, varargin)
 % This file is from pmtk3.googlecode.com
 
 
-[data, clamped, args] = process_options(varargin, ...
-    'data', [], 'clamped', []);
+[data, clamped, localev, args] = process_options(varargin, ...
+  'data', [], 'clamped', [], 'localev', []);
 
-if isempty(data) || ~all(data(:))
+ [Ncases, Nnodes] = size(data); %#ok
+ 
+if ~isempty(dgm.toporder) && ~isequal(dgm.toporder, 1:Nnodes)
+  fprintf('warning: dgmTrain is permuting data columns\n');
+  if ~isempty(data), data = data(:, dgm.toporder); end
+  if ~isempty(clamped), clamped = clamped(dgm.toporder); end
+  if ~isempty(localev), localev = localev(:, :, dgm.toporder); end
+end
+  
+if any(data(:)==0) % isempty(data) || ~all(data(:))
     assert(isempty(clamped)); % clamping is not supported when data is missing
-    dgm = dgmTrainEm(dgm, data, args{:}); 
+    dgm = dgmTrainEm(dgm, data, 'localev', localev, args{:}); 
 else
-    dgm = dgmTrainFullyObs(dgm, data, 'clamped', clamped, args{:}); 
+    dgm = dgmTrainFullyObs(dgm, data, 'clamped', clamped, 'localev', localev, args{:}); 
     if isfield(dgm, 'infEngine') && strcmpi(dgm.infEngine, 'jtree')
       dgm = dgmRebuildJtree(dgm); 
     end

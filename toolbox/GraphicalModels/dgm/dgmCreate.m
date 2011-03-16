@@ -81,8 +81,11 @@ function model = dgmCreate(G, CPDs, varargin)
 
 % This file is from pmtk3.googlecode.com
 
+Nnodes = size(G, 1);
+nodeNames = cellfun(@(d) sprintf('%d', d), num2cell(1:Nnodes), 'uniformoutput', false);
+
 [infEngine, infEngArgs localCPDs, CPDpointers, ...
-    localCPDpointers, precomputeJtree, initNstates] =...
+    localCPDpointers, precomputeJtree, initNstates, nodeNames] =...
     process_options(varargin   , ...
     'infEngine'       , 'jtree', ...
     'infEngArgs'      , {}     , ...
@@ -90,9 +93,14 @@ function model = dgmCreate(G, CPDs, varargin)
     'CPDpointers'     , []     , ...
     'localCPDpointers', []     , ...
     'precomputeJtree' , true   , ...
-    'nstates'         , []);
+    'nstates'         , [],  ...
+    'nodeNames', nodeNames);
 %% 
-assert(isTopoOrdered(G)); % if j < k, node j must not be a child of node k
+if ~pmtkGraphIsDag(G)
+  error('graph must be a DAG')
+end
+
+
 if isempty(CPDs) && ~isempty(initNstates)
    CPDs = mkRndTabularCpds(G, initNstates);  
 end
@@ -128,6 +136,30 @@ nstates = zeros(nnodes, 1);
 for i=1:nnodes
     nstates(i) = CPDs{CPDpointers(i)}.nstates;
 end
+
+%% Topological ordering
+% KPM 15 march 2011
+ % Structure learning often produces DAGs that violate topological ordering
+ % but the assumption that lower number nodes preceed higher ones
+ % is unfortunately baked into the code. So we re-order the nodes
+ % internally. Use toporder to map from user ordering to internal
+ % and invtoporder to do the reverse.
+ if ~isTopoOrdered(G)
+   %error('nodes must be toplogically ordered; try toporderDag')
+   fprintf('warning: dgmCreate is topologically ordering the nodes\n');
+   GorigOrder = G;
+   [G, toporder, invtoporder] = toporderDag(GorigOrder);
+   nodeNames = nodeNames(toporder);
+   nstates = nstates(toporder);
+   CPDpointers = CPDpointers(toporder);
+   if ~isempty(localCPDpointers), localCPDpointers = localCPDpointers(toporder); end
+ else
+   toporder = 1:Nnodes;
+   invtoporder = 1:Nnodes;
+ end
+ 
+
+ 
 %% create model 
 model = structure(  G                , ...
                     CPDs             , ...
@@ -137,7 +169,10 @@ model = structure(  G                , ...
                     nnodes           , ...
                     infEngArgs       , ...
                     infEngine        , ...
-                    nstates          );
+                    nstates          , ...
+                    nodeNames        , ...
+                    toporder         , ...
+                    invtoporder);
 
 model.isdirected = true;
 model.modelType = 'dgm';

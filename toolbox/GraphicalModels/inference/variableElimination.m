@@ -43,8 +43,10 @@ for i=1:numel(elim)
 end
 %% Multiply and normalize
 TF             = tabularFactorMultiply(factors);
+TF = tabularFactorMarginalize(TF, queryVars); % put nodes in requested order 
 [postQuery, Z] = tabularFactorNormalize(TF);
 logZ           = log(Z + eps);
+
 end
 
 function F = eliminate(F, v)

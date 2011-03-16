@@ -3,6 +3,7 @@ function C = setdiffPMTK(A,B)
 % (much faster than built-in setdiff)
 % C = setdiffPMTK(A,B)
 % C = A \ B = { things in A that are not in B }
+% Keeps original ordering of A
 %
 % Original by Kevin Murphy, modified by Leon Peshkin
 

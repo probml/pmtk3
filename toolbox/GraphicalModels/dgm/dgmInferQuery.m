@@ -1,4 +1,4 @@
-function [bels, logZ] = dgmInferQuery(dgm, queries, varargin)
+function [bels, logZ, origBels] = dgmInferQuery(dgm, queries, varargin)
 %% Compute sum_H p(Q, H | V) for each Q in queries
 %
 %% Inputs  
@@ -40,6 +40,20 @@ end
 %%
 queries              = cellwrap(queries); 
 nqueries             = numel(queries);
+Nnodes = size(dgm.G, 1);
+
+if ~isempty(dgm.toporder) && ~isequal(dgm.toporder, 1:Nnodes)
+  %fprintf('warning: dgmInferQueryis permuting data columns\n');
+  if ~isempty(softEv), softEv = softEv(:, dgm.toporder); end
+  if ~isempty(clamped), clamped = clamped(dgm.toporder); end
+  if ~isempty(localEv), localEv = localEv(:, dgm.toporder); end
+  origQueries = queries;
+  for c=1:nqueries
+    queries{c} = dgm.invtoporder(origQueries{c});
+  end
+end
+
+
 visVars              = find(clamped); 
 if ~all(cellfun(@(q)isempty(intersectPMTK(q, visVars)) , queries))
     doSlice = false; % querying observed nodes so don't slice them out of existence
@@ -149,6 +163,18 @@ end
 
 if doPrune % shift domain back
     bels.domain = rowvec(remaining(bels.domain));
+end
+
+if ~isempty(dgm.toporder) && ~isequal(dgm.toporder, 1:Nnodes)
+  % rename domain of computed queries
+  origBels = bels; % for debugging
+  if nqueries==1
+    bels.domain = origQueries{1};
+  else
+    for c=1:nqueries
+      bels{c}.domain = origQueries{c};
+    end
+  end
 end
 
 end

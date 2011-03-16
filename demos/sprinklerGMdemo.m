@@ -12,14 +12,21 @@
 
 % This file is from pmtk3.googlecode.com
 
-C = 1; S = 2; R = 3; W = 4;
 nvars = 4; 
 %% Create the dgm
-dgmJ = mkSprinklerDgm('infEngine', 'jtree'); 
-dgmV = mkSprinklerDgm('infEngine', 'varelim'); 
-dgmE = mkSprinklerDgm('infEngine', 'enum'); 
+ordered = true;
+if ordered
+  [dgmJ, C, S, R, W] = mkSprinklerDgm('infEngine', 'jtree');
+  dgmV = mkSprinklerDgm('infEngine', 'varelim');
+  dgmE = mkSprinklerDgm('infEngine', 'enum');
+else
+  [dgmJ, C, S, R, W] = mkSprinklerDgmOutOfOrder('infEngine', 'jtree');
+  dgmV = mkSprinklerDgmOutOfOrder('infEngine', 'varelim');
+  dgmE = mkSprinklerDgmOutOfOrder('infEngine', 'enum');
+end
+
 %% Dislay the graph
-if ~isOctave
+if 0% ~isOctave
     drawNetwork('-adjMatrix', dgmJ.G, '-nodeLabels', {'C', 'S', 'R', 'W'},...
         '-layout', Treelayout);
 end
@@ -37,7 +44,9 @@ fac{S} = tabularFactorCreate(reshape([0.5 0.9 0.5 0.1], 2, 2), [C S]);
 fac{R} = tabularFactorCreate(reshape([0.8 0.2 0.2 0.8], 2, 2), [C R]);
 fac{W} = tabularFactorCreate(reshape([1 0.1 0.1 0.01 0 0.9 0.9 0.99], 2, 2, 2), [S R W]);
 jointF = tabularFactorMultiply(fac);
-assert(tfequal(joint, jointF)); 
+if ordered
+  assert(tfequal(joint, jointF));
+end
 %% Inference
 FALSE = 1; TRUE  = 2;
 %%
@@ -45,7 +54,7 @@ pWj = dgmInferQuery(dgmJ, W);
 pWv = dgmInferQuery(dgmV, W);
 pWe = dgmInferQuery(dgmE, W);
 assert(tfequal(pWj, pWv, pWe))
-assert(approxeq(pWj.T(TRUE), 0.6471), 1e-4) 
+assert(approxeq(pWj.T(TRUE), 0.6471, 1e-4)) 
 %%
 pSWj = dgmInferQuery(dgmJ, [S, W]); 
 pSWv = dgmInferQuery(dgmV, [S, W]);

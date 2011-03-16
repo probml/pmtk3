@@ -1,11 +1,20 @@
 function B = uniquePMTK(A)
 %% Return the unique positive integers in A faster than the built in unique
-%  always returns a row vector
+%  Always returns a row vector in sorted order
 
 % This file is from pmtk3.googlecode.com
 
-bits = false(max(A), 1); 
+
+bits = false(1, max(A)); 
 bits(A) = true; 
-B = find(bits)'; 
+B = find(bits); % implicitly sorts elements
+
+%{
+% Try to restore original ordering
+ndx = lookupIndices(B, A);
+B = A(ndx);
+%}
+
+
 end
 

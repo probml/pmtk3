@@ -8,7 +8,6 @@ function Tbig = bsxTable(fn, Tbig, Tsmall, bigdom, smalldom)
 %
 %%
 
-
 % This file is from pmtk3.googlecode.com
 
 smallsz = sizePMTK(Tsmall);
@@ -17,23 +16,9 @@ if isequal(bigdom, smalldom)
 else
     nbig    = numel(bigdom);
     ndx     = lookupIndices(smalldom, bigdom);
-    
-     % If the domains are not in the same order, permute columns of small to match
-     % big's order
-     % KPM 15 march 2011
-     [sndx, perm] = sort(ndx); % same order as bigdom
-    if ~isequal(ndx, sndx) % not in order
-      Tsmall = permute(Tsmall, perm);
-      smalldom = smalldom(perm);
-      ndx     = lookupIndices(smalldom, bigdom);
-    end
-    
-     % ensure Tsmall has same num dimensionas as Tbig
     sz      = ones(1, nbig);
-    sz(ndx) = smallsz; % may have 1's in middle
+    sz(ndx) = smallsz;
     Tsmall  = reshape(Tsmall, [sz 1]);
-    
-    % Elementwise operate  
     Tbig    = bsxfun(fn, Tbig, Tsmall);
 end
 end
