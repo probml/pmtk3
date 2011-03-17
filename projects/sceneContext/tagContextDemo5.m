@@ -5,7 +5,12 @@ loadData('sceneContextSUN09', 'ismatfile', false)
 load('SUN09data')
 objectnames  = data.names;
 
-figFolder = '/home/kpmurphy/Dropbox/figures/sceneContext';
+if isunix
+  figFolder = '/home/kpmurphy/Dropbox/figures/sceneContext';
+end
+if ismac
+  figFolder = '/Users/kpmurphy/Dropbox/figures/sceneContext';
+end
 
 %% Models/ methods
 
@@ -237,7 +242,7 @@ for c=1:3
     h(m) = plotROC(falseAlarmRate, detectionRate, colors(m+1), EER, tprAtThresh, fprAtThresh);
     legendstr{m} = sprintf('%s (AUC %5.3f, EER %5.3f)', methodNames{m}, AUC, EER);
   end
-  legend(h, legendstr, 'location', 'southwest')
+  legend(h, legendstr, 'location', 'southeast')
   title(objectnames{c})
   fname = fullfile(figFolder, sprintf('roc-%s.png', objectnames{c}));
   print(gcf, '-dpng', fname);
@@ -245,6 +250,7 @@ end
 
 %% Visualize predictions plotted on top of some images
 
+%{
 dataDir = '/home/kpmurphy/LocalDisk/SUN09/';
 HOMEIMAGES = fullfile(dataDir, 'Images');
 %HOMEANNOTATIONS = fullfile(dataDir, 'Annotations');
@@ -260,18 +266,14 @@ categories: [1x1 struct]
 %}
 fname = fullfile(dataDir, 'dataset', 'sun09_groundTruth');
 load(fname, 'Dtest')
+%}
 
 
 % presence_model(n,c,m), test.presence(n,c), cutoff_models(c,m)
-visPredictions(test.presence,  presence_model, objectnames, methodNames, ...
-  test.filenames, cutoff_fpr, Dtest);
+%visPredictions(test.presence,  presence_model, objectnames, methodNames, ...
+%  test.filenames, cutoff_fpr, Dtest);
 
-
-
-
-
-
-
+printPredictions(test.presence,  presence_model, objectnames, methodNames, test.filenames, cutoff_fpr);
 
 
 %% plot improvement over baseline on a single fold for each method as separate figs 
