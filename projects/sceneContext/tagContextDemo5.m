@@ -34,6 +34,7 @@ methods(m).infFn = @(model, features, softev) argout(2, @treegmInferNodes, model
 methods(m).logprobFn = @(model, labels) treegmLogprob(model, labels);
 %}
 
+%{
 %[pZ, pX] = noisyMixModelInferNodes(mixModel{ki}, localFeatures, softev);
 m = m + 1;
 methods(m).modelname = 'mix5';
@@ -41,15 +42,17 @@ methods(m).obstype = 'gauss';
 methods(m).fitFn = @(labels, features) noisyMixModelFit(labels, [], 5);
 methods(m).infFn = @(model, features, softev) argout(2, @noisyMixModelInferNodes, model, [], softev);
 methods(m).logprobFn = @(model, labels) mixModelLogprob(model.mixmodel, labels);
+%}
 
-%{
+
+%[nodeBels, logZ] = dgmInferNodes(dgm, 'softev', softev)
+%logZ = dgmLogprob(dgm, 'clamped', Y)
 m = m + 1;
 methods(m).modelname = 'dag';
 methods(m).obstype = 'gauss';
-methods(m).fitFn = @(labels, features) dgmFit(labels);
-methods(m).infFn = @(model, features, softev) argout(2, @dgmInferNodes, model, [], softev);
-methods(m).logprobFn = @(model, labels) dgmLogprob(model, labels);
-%}
+methods(m).fitFn = @(labels, features) dgmFit(labels, 'nodeNames', objectnames);
+methods(m).infFn = @(model, features, softev) dgmInferNodes(model, 'softev', softev);
+methods(m).logprobFn = @(model, labels) dgmLogprob(model, 'obs', labels);
 
 
 Nmethods = numel(methods);
@@ -270,10 +273,12 @@ load(fname, 'Dtest')
 
 
 % presence_model(n,c,m), test.presence(n,c), cutoff_models(c,m)
-%visPredictions(test.presence,  presence_model, objectnames, methodNames, ...
-%  test.filenames, cutoff_fpr, Dtest);
 
 printPredictions(test.presence,  presence_model, objectnames, methodNames, test.filenames, cutoff_fpr);
+
+visPredictions(test.presence,  presence_model, objectnames, methodNames, ...
+  test.filenames, cutoff_fpr, Dtest);
+
 
 
 %% plot improvement over baseline on a single fold for each method as separate figs 

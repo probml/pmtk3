@@ -46,6 +46,7 @@ if nargin < 2, root = 1; end
 Nnodes = size(adjMat,1);
 T = sparse(Nnodes, Nnodes); % not the same as T = sparse(n) !
 
+%{
 edgeorder = treeMsgOrder(adjMat, root);
 Nedges = Nnodes-1;
 edges = edgeorder(Nedges+1:end,:);
@@ -57,7 +58,7 @@ for e=1:Nedges
   T(s,t) = 1;
   preorder = [preorder t];
 end
-
+%}
 
 %{
 directed = 0;
@@ -68,19 +69,19 @@ if hascycle
 end
 %}
 
-%{
+
 [d dt ft pred] = dfs(adjMat,root,1); %#ok (gaimc package)
 % dt is discovery time, pred is predecessor in search
 dt(root) = 0;
-[junk, preorder]= sort(dt);
+[~, preorder]= sort(dt);
 preorder = rowvec(preorder);
 
+T = sparse(Nnodes, Nnodes);
 for i=1:length(pred)
    if pred(i)>0
       T(pred(i),i)=1; %#ok
    end
 end
-%}
 
 
 end

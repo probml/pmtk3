@@ -44,7 +44,10 @@ end
 tozip = setdiff(tozip, excludedDirs); 
 %% Check that all of the directories exist
 for i=1:numel(tozip)
-    assert(exist(fullfile(localSource, tozip{i}), 'dir') == 7);
+  dname = fullfile(localSource, tozip{i});
+   if exist(dname, 'dir') ~= 7
+     error(sprintf('directory %s does not exist', dname))
+   end
 end
 %%
 tmproot = fullfile(localSource, 'tmp');

@@ -15,7 +15,7 @@ if Nstates ~= 2
   error('can currently only handle binary nodes')
 end
 
-nodeNames = cellfun(@(d) sprintf('%d', d), num2cell(1:Nnodes), 'uniformoutput', false);
+nodeNames = cellfun(@(d) sprintf('n%d', d), num2cell(1:Nnodes), 'uniformoutput', false);
 [nodeNames, maxFanIn, verbose] = process_options(varargin, ...
   'nodeNames', nodeNames, 'maxFanIn', 4, 'verbose', true);
 
@@ -26,14 +26,14 @@ legalParents = search.depnet.G;
 
 probRndRestart = 0;
 verbose = 1;
-nEvals = 1000;
+nEvals = 250;
 penalty = log(Ncases)/2; % BIC
 Xcan = canonizeLabels(X); % {1,2}
 Xpm = (2*(Xcan-1))-1; % force to {-1,+1}
 assert(isequal(unique(Xpm(:))', [-1 +1]))
 discrete = 1;
 clamped = zeros(Ncases, Nnodes);
-[GorigOrder, search.scores, search.evals] = ...
+[G, search.scores, search.evals] = ...
   DAGsearch(Xpm, nEvals, probRndRestart, penalty, discrete, clamped, legalParents, verbose);
 
 

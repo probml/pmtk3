@@ -32,6 +32,7 @@ for c=1:ncliques
     cliques{c} = tabularFactorMultiply(tf);
 end
 dgm.jtree.cliques = cliques;
-
+dgm.factors = factors;
+ 
 end
 

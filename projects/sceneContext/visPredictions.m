@@ -17,7 +17,8 @@ figFolder = '/home/kpmurphy/Dropbox/figures/sceneContext';
 %colors = hsv(15);
 colors = pmtkColors;
 
-frames = [1,100,500,1000,2000];
+%frames = [1,100,500,1000,2000];
+frames = [1,500,2000];
 basefig = 10;
 for frame=frames(:)'
   

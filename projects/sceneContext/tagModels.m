@@ -72,7 +72,7 @@ model3 = dgmFit(data.train.presence, 'nodeNames', data.names);
 graphviz(model3.G, 'labels', model.nodeNames, 'directed', 1, ...
   'filename', fullfile(folder, 'SUN09dag'));
 
-keyboard
+
 
 
 %{
