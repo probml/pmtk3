@@ -34,8 +34,8 @@ ndx = find(isnan(tpr)); fpr(ndx) = []; tpr(ndx) = [];
 % Find the threshold that is closest to fprThresh
 [~, ndx] = min(abs(fpr-fprThresh));
 thresh = th(ndx);
-fprAtThresh = fpr(ndx)
-tprAtThresh = tpr(ndx)
+fprAtThresh = fpr(ndx);
+tprAtThresh = tpr(ndx);
 
 AUC = -trapz(fpr, tpr); %estimate the area under the curve
 %AUC2 = abs(sum((fpr(2:end)-fpr(1:end-1)).*(tpr(2:end) +tpr(1:end-1))/2));

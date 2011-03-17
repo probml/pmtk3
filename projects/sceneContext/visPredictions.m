@@ -38,12 +38,35 @@ for frame=frames(:)'
 
   for m=1:numel(methodNames)
     figure(basefig + m+1); clf; image(img); hold on
+    
+    
     pp = colvec(squeeze(probPresence(frame,:,m)));
     %thresh = 0.1*cutoffs(:, m);
     thresh = cutoffs(:, m);
-    predPresent = find(pp > thresh);
-    predObjects = sprintf('%s,', objectnames{predPresent});
-    title(sprintf('predictions by %s\n%s', methodNames{m}, predObjects));
+    
+    % pick all objects above threshold
+    %predPresent = find(pp > thresh);
+    
+    % pick at most 10 objects above threshold
+    [~, perm] = sort(pp, 'descend');
+    hiconf = perm(find(pp(perm) > thresh(perm))); %#ok
+    Npredict =  min(numel(hiconf), 10);
+    predPresent = hiconf(1:Npredict);
+    
+    %predObjectsStr = sprintf('%s,', objectnames{predPresent});
+    predObjectsStr = '';
+    for i=1:numel(predPresent)
+     j = predPresent(i);
+     if truePresence(frame, j)
+       predObjectsStr = sprintf('%s,%s', predObjectsStr, objectnames{j});
+     else
+       predObjectsStr = sprintf('%s,%s*', predObjectsStr, objectnames{j});
+     end
+     precision = sum(truePresence(frame, predPresent)) / numel(predPresent);
+     recall = sum(truePresence(frame, predPresent)) / sum(truePresence(frame, :));
+    end
+    ttl = sprintf('%s (P=%3.2f, R=%3.2f)\n%s\n', methodNames{m}, precision, recall, predObjectsStr);
+    title(ttl)
     
     % extract location of max detection from text file of detector output
     % and plot bounding box

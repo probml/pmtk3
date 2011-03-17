@@ -71,6 +71,12 @@ function model = dgmCreate(G, CPDs, varargin)
 %                      equal to the number of nodes. 
 %
 %
+%% Names
+% 'nodeNames'        - cell array of strings, default {'n1','n2', ...}
+%                        Must begin with a letter
+%
+% 'nodeNum'          - dgm.nodeNum.foo = number assigned to node 'foo'
+%                           (nodeNum is a struct with named fields)
 %
 %% Output
 % 
@@ -82,7 +88,9 @@ function model = dgmCreate(G, CPDs, varargin)
 % This file is from pmtk3.googlecode.com
 
 Nnodes = size(G, 1);
-nodeNames = cellfun(@(d) sprintf('%d', d), num2cell(1:Nnodes), 'uniformoutput', false);
+nodeNames = cellfun(@(d) sprintf('n%d', d), num2cell(1:Nnodes), 'uniformoutput', false);
+
+
 
 [infEngine, infEngArgs localCPDs, CPDpointers, ...
     localCPDpointers, precomputeJtree, initNstates, nodeNames] =...
@@ -95,10 +103,19 @@ nodeNames = cellfun(@(d) sprintf('%d', d), num2cell(1:Nnodes), 'uniformoutput', 
     'precomputeJtree' , true   , ...
     'nstates'         , [],  ...
     'nodeNames', nodeNames);
-%% 
+ 
 if ~pmtkGraphIsDag(G)
   error('graph must be a DAG')
 end
+
+% Map from node names to numbers
+% We use a clever trick to simulate a hash table
+% http://smlv.cc.gatech.edu/2010/03/10/hash-tables-in-matlab/
+
+ids = num2cell(1:Nnodes);
+tmp = { nodeNames{:}; ids{:} };
+dict = struct( tmp{:} );
+nodeNum = dict;
 
 
 if isempty(CPDs) && ~isempty(initNstates)
@@ -171,6 +188,7 @@ model = structure(  G                , ...
                     infEngine        , ...
                     nstates          , ...
                     nodeNames        , ...
+                    nodeNum          , ...
                     toporder         , ...
                     invtoporder);
 

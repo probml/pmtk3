@@ -19,10 +19,10 @@ plot([0 1],[0 1],'k'); % 45deg up to upper right
 plot([0 1],[1 0],'k') % 45deg down to lower left
     
 if nargin >= 4
-  plot(EER, 1-EER, 'o', 'markersize', 12, 'color', col);
+  plot(EER, 1-EER, 'o', 'markersize', 12, 'linewidth', 2, 'color', col);
 end
 if nargin >= 5
-  plot(fprAtThresh, tprAtThresh, 'x', 'markersize', 12, 'color', col);
+  plot(fprAtThresh, tprAtThresh, 'x', 'markersize', 12, 'linewidth', 2, 'color', col);
 end
 
 

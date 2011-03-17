@@ -75,7 +75,7 @@ graphviz(model3.G, 'labels', model.nodeNames, 'directed', 1, ...
 keyboard
 
 
-
+%{
 % Fit tree to the labels
 model = treegmFit(data.train.presence);
 % The tree is undirected, but for some reason, gviz makes directed graphs
@@ -83,7 +83,7 @@ model = treegmFit(data.train.presence);
 graphviz(model.edge_weights, 'labels', train.names, 'directed', 1, ...
   'filename', fullfile(folder, 'SUN09treeNeg'));
  
-  
+  %}
   
   %{
 % Visualize mix model

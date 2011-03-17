@@ -15,11 +15,13 @@
 
 % This file is from pmtk3.googlecode.com
 
-S = 1; CB = 2; LC = 3; SOB = 4; X = 5;
 nvars = 5; 
-dgm = mkLungCancerDgm();
+toporder = false;
+[dgm] = mkLungCancerDgm(toporder);
+S = dgm.nodeNum.S; CB = dgm.nodeNum.CB; LC = dgm.nodeNum.LC;
+SOB = dgm.nodeNum.SOB; X = dgm.nodeNum.X;
 
-names = {'S','CB','LC','SOB','XR'};
+names = dgm.nodeNames;
 %drawNetwork(G, '-nodeLabels', names);
 
 joint = dgmInferQuery(dgm, [S CB LC SOB X]);
