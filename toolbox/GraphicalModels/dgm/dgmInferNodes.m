@@ -1,4 +1,4 @@
-function [nodeBels, logZ] = dgmInferNodes(dgm, varargin)
+function [nodeBels, logZ, nodeBelArray] = dgmInferNodes(dgm, varargin)
 %% Return all node beliefs (single marginals)
 %% Inputs
 %
@@ -28,10 +28,13 @@ function [nodeBels, logZ] = dgmInferNodes(dgm, varargin)
 %
 % nodeBels   - a cell array of tabularFactors representing the normalized
 %              node beliefs (single marginals).
+%             nodeBels{t} is belief for t'th internal node
 %
 % logZ       - log of the partition sum (if this is all you want, use
 %              dgmLogprob)
 %
+% nodeBelArray(:,v) is the belief state for v'th external node 
+%              This has size max(nstates) * Nnodes
 %%
 
 % This file is from pmtk3.googlecode.com
@@ -45,4 +48,14 @@ if doSlice
 else
     nodeBels = insertClampedBels(nodeBels, visVars, hidVars, dgm.nstates, clamped);
 end
+
+%nodeBelArray = tfMarg2Mat(nodeBels);
+% Internal and extneral node numbering may differ
+nodeBelArray = zeros(max(dgm.nstates), dgm.nnodes);
+for v=1:dgm.nnodes
+  t = dgm.invtoporder(v);
+  nodeBelArray(1:dgm.nstates(t), v) = nodeBels{t}.T;
+end
+
+
 end

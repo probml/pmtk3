@@ -42,9 +42,13 @@ AUC = -trapz(fpr, tpr); %estimate the area under the curve
 
 %the best cut-off point is the closest point to (0,1)
 % This trick is due to Giuseppe Cardillo
-d=realsqrt(fpr.^2+(1-tpr).^2); %pythagoras's theorem
-[~,J]=min(d); %find the least distance
-cutoff =th(J); 
+% Unfortunatelty it fails if the curve is not convex
+%d=realsqrt(fpr.^2+(1-tpr).^2); %pythagoras's theorem
+%[~,ndx]=min(d); %find the least distance
+% Instead we will find the threshold where fpr = 1-tpr
+delta = fpr - (1-tpr);
+[~,ndx] = min(delta.^2);
+cutoff =th(ndx); 
                
 % performance at EER point
 TP = sum( (confidence >= cutoff) & (testClass == 1) );
@@ -52,6 +56,8 @@ FP = sum( (confidence >= cutoff) & (testClass == 0) );
 TN = sum( (confidence < cutoff) & (testClass == 0) );
 FN = sum( (confidence < cutoff) & (testClass == 1) );
 FPR = FP/(FP+TN);
+assert(FP+TN==sum(testClass==0))
 EER = FPR;
+
 
 end

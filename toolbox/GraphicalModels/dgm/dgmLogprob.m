@@ -25,6 +25,14 @@ function logZ = dgmLogprob(dgm, varargin)
     'softev' , [], ...
     'localev', []);
 
+Nnodes = dgm.nnodes;
+if ~isempty(dgm.toporder) && ~isequal(dgm.toporder, 1:Nnodes)
+  %fprintf('warning: dgmInferQueryis permuting data columns\n');
+  if ~isempty(softEv), softEv = softEv(:, dgm.toporder); end
+  if ~isempty(clamped), clamped = clamped(dgm.toporder); end
+  if ~isempty(localEv), localEv = localEv(:, dgm.toporder); end
+  if ~isempty(obs), obs = obs(:, dgm.toporder); end
+end
 
 if isfield(dgm, 'factors')
   factors = dgm.factors;
@@ -55,7 +63,6 @@ if ~isempty(obs)
     ll(:,j) = log(CPT(ndx)+eps); 
   end
   logZ = sum(ll, 2);
-  keyboard
   return
 end
 

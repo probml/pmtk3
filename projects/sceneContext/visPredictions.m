@@ -48,10 +48,10 @@ for frame=frames(:)'
     % pick all objects above threshold
     %predPresent = find(pp > thresh);
     
-    % pick at most 10 objects above threshold
+    % pick at most N objects above threshold
     [~, perm] = sort(pp, 'descend');
     hiconf = perm(find(pp(perm) > thresh(perm))); %#ok
-    Npredict =  min(numel(hiconf), 10);
+    Npredict =  min(numel(hiconf), 5);
     predPresent = hiconf(1:Npredict);
     
     %predObjectsStr = sprintf('%s,', objectnames{predPresent});

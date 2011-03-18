@@ -16,25 +16,34 @@ if Nstates ~= 2
 end
 
 nodeNames = cellfun(@(d) sprintf('n%d', d), num2cell(1:Nnodes), 'uniformoutput', false);
-[nodeNames, maxFanIn, verbose] = process_options(varargin, ...
-  'nodeNames', nodeNames, 'maxFanIn', 4, 'verbose', true);
 
-%% Fit structure
-search.depnet = depnetFit(X, 'method', 'MI', 'verbose', false, 'nodeNames', nodeNames, ...
-  'maxFanIn', maxFanIn); 
-legalParents = search.depnet.G;
+[nodeNames, maxFanIn, verbose, emptyGraph] = process_options(varargin, ...
+  'nodeNames', nodeNames, 'maxFanIn', 4, 'verbose', true, 'emptyGraph', false);
 
-probRndRestart = 0;
-verbose = 1;
-nEvals = 250;
-penalty = log(Ncases)/2; % BIC
+
 Xcan = canonizeLabels(X); % {1,2}
 Xpm = (2*(Xcan-1))-1; % force to {-1,+1}
 assert(isequal(unique(Xpm(:))', [-1 +1]))
-discrete = 1;
-clamped = zeros(Ncases, Nnodes);
-[G, search.scores, search.evals] = ...
-  DAGsearch(Xpm, nEvals, probRndRestart, penalty, discrete, clamped, legalParents, verbose);
+
+%% Fit structure
+
+if emptyGraph
+  G = zeros(Nnodes, Nnodes); % indep model
+  search = [];
+else
+  search.depnet = depnetFit(X, 'method', 'MI', 'verbose', false, 'nodeNames', nodeNames, ...
+    'maxFanIn', maxFanIn);
+  legalParents = search.depnet.G;
+  
+  probRndRestart = 0;
+  verbose = 1;
+  nEvals = 250;
+  penalty = log(Ncases)/2; % BIC
+  discrete = 1;
+  clamped = zeros(Ncases, Nnodes);
+  [G, search.scores, search.evals] = ...
+    DAGsearch(Xpm, nEvals, probRndRestart, penalty, discrete, clamped, legalParents, verbose);
+end
 
 
 % Check fan-in of each node. If too large,
@@ -48,11 +57,19 @@ end
 
 
 %% Fit params
-stateSizes = Nstates*ones(1,Nnodes);
-CPDs = mkRndTabularCpds(G, stateSizes);
-dgm = dgmCreate(G, CPDs, 'precomputeJtree', true, 'nodenames', nodeNames);
+%stateSizes = Nstates*ones(1,Nnodes);
+%CPDs = mkRndTabularCpds(G, stateSizes);
+%dgm = dgmCreate(G, CPDs, 'precomputeJtree', true, 'nodenames', nodeNames);
+dgm = dgmCreateTopo(G, 'nodenames', nodeNames);
 fprintf('treewidth is %d\n', dgm.jtree.treewidth);
-dgm = dgmTrain(dgm, 'data', Xcan);
+%dgm = dgmTrainTopo(dgm, 'data', Xcan);
+
+
+for i=1:Nnodes
+  dom = [parents(dgm.G, i), i];
+  dom = dgm.toporder(dom);
+  dgm.CPDs{i}.T = mkStochastic(Xcan(:, dom));
+end
 
 % store info about structure learning process
 dgm.npa = npa;

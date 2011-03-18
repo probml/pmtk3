@@ -17,12 +17,38 @@ end
 methods = [];
 m = 0;
 
+%{
 m = m + 1;
-methods(m).modelname = 'indep';
+methods(m).modelname = 'det';
 methods(m).obstype = 'detector';
 methods(m).fitFn = @(labels, features) discreteFit(labels);
 methods(m).infFn = @(model, features, softev) softev; % just spit back detector
 methods(m).logprobFn = @(model, labels) discreteLogprob(model, labels);
+
+m = m + 1;
+methods(m).modelname = 'det';
+methods(m).obstype = 'gauss';
+methods(m).fitFn = @(labels, features) discreteFit(labels);
+methods(m).infFn = @(model, features, softev) softev; % just spit back detector
+methods(m).logprobFn = @(model, labels) discreteLogprob(model, labels);
+
+m = m + 1;
+methods(m).modelname = 'det';
+methods(m).obstype = 'gauss-hack';
+methods(m).fitFn = @(labels, features) discreteFit(labels);
+methods(m).infFn = @(model, features, softev) softev; % just spit back detector
+methods(m).logprobFn = @(model, labels) discreteLogprob(model, labels);
+%}
+
+
+%[nodeBel] = discreteInferNodes(model, softev);
+m = m + 1;
+methods(m).modelname = 'indep';
+methods(m).obstype = 'gauss';
+methods(m).fitFn = @(labels, features) discreteFit(labels);
+methods(m).infFn = @(model, features, softev) discreteInferNodes(model, softev);
+methods(m).logprobFn = @(model, labels) discreteLogprob(model, labels);
+
 
 %{
 %[logZ, nodeBel] = treegmInferNodes(treeModel, localFeatures, softev);
@@ -45,15 +71,26 @@ methods(m).logprobFn = @(model, labels) mixModelLogprob(model.mixmodel, labels);
 %}
 
 
-%[nodeBels, logZ] = dgmInferNodes(dgm, 'softev', softev)
+%[nodeBelCell, logZ, nodeBelArray] = dgmInferNodes(dgm, 'softev', softev)
+%logZ = dgmLogprob(dgm, 'clamped', Y)
+m = m + 1;
+methods(m).modelname = 'dag-empty';
+methods(m).obstype = 'gauss';
+methods(m).fitFn = @(labels, features) dgmFit(labels, 'nodeNames', objectnames, 'emptyGraph', true);
+methods(m).infFn = @(model, features, softev) argout(3, @dgmInferNodes, model, 'softev', softev);
+methods(m).logprobFn = @(model, labels) dgmLogprob(model, 'obs', labels);
+
+
+%{
+%[nodeBelCell, logZ, nodeBelArray] = dgmInferNodes(dgm, 'softev', softev)
 %logZ = dgmLogprob(dgm, 'clamped', Y)
 m = m + 1;
 methods(m).modelname = 'dag';
 methods(m).obstype = 'gauss';
 methods(m).fitFn = @(labels, features) dgmFit(labels, 'nodeNames', objectnames);
-methods(m).infFn = @(model, features, softev) dgmInferNodes(model, 'softev', softev);
+methods(m).infFn = @(model, features, softev) argout(3, @dgmInferNodes, model, 'softev', softev);
 methods(m).logprobFn = @(model, labels) dgmLogprob(model, 'obs', labels);
-
+%}
 
 Nmethods = numel(methods);
 
@@ -73,7 +110,12 @@ Nfolds = 1;
 if Nfolds == 1
   % use original train/ test split
   trainfolds{1} = 1:Ntrain;
-  testfolds{1} = (Ntrain+1):(Ntrain+Ntest);
+  %Ntest = 1000; % use subset of test data for speed
+  %testfolds{1} = (Ntrain+1):(Ntrain+Ntest);
+  
+  % use subset of training set - dgm should have
+  % higher likelihood since more complex model
+  testfolds{1} = 1:10;
 else
   [trainfolds, testfolds] = Kfold(N, Nfolds);
 end
@@ -97,7 +139,6 @@ for fold=1:Nfolds
   [Ntest, Nobjects2] = size(test.presence);
   
   %% Train  p(scores | labels)
-  
   labels = train.presence;
   scores = train.detect_maxprob;
   %[quantizedScores, discretizeParams] = discretizePMTK(scores, 10);
@@ -113,9 +154,7 @@ for fold=1:Nfolds
     models{m} = methods(m).fitFn(labels, scores);
   end
   
-  
-  
-  %% Probability of labels
+   %% Probability of labels
   ll = zeros(Ntest, Nmethods);
   labels = test.presence+1; % 1,2
   for m=1:Nmethods
@@ -123,6 +162,16 @@ for fold=1:Nfolds
   end
   loglik_models(fold, :) = sum(ll, 1)/Ntest;
   
+  % Plot performance for this fold to check quality of model
+  % before doing ifnerence (which can be expensive)
+  figure;
+  plot(-loglik_models(fold,:), 'x', 'markersize', 12, 'linewidth', 2)
+  axis_pct
+  set(gca, 'xtick', 1:Nmethods)
+  set(gca, 'xticklabel', methodNames)
+  title(sprintf('negloglik'))
+
+  keyboard
   
   %% Inference
   presence_model = zeros(Ntest, Nobjects, Nmethods);  
@@ -132,7 +181,7 @@ for fold=1:Nfolds
   %[quantizedScores, discretizeParams] = discretizePMTK(scores, 10);
   
   for m=1:Nmethods
-    fprintf('running method %s\n', methodNames{m});
+    fprintf('running inference for method %s\n', methodNames{m});
     
     for n=1:Ntest
       if (n==1) || (mod(n,500)==0), fprintf('testing image %d of %d\n', n, Ntest); end
@@ -143,6 +192,9 @@ for fold=1:Nfolds
           softev(2, :) = test.detect_maxprob(n,:);
           bel = methods(m).infFn(models{m}, [], softev);
         case 'gauss'
+          softev = softevBatchGauss(:, :, n);
+          bel = methods(m).infFn(models{m}, [], softev);
+        case 'gauss-hack'
           softev = softevBatchGauss(:, :, n);
           % hack to prevent too many false positives: 
           % if detector doesn't fire, don't hallucinate objects
@@ -233,7 +285,7 @@ set(gca, 'xticklabel', methodNames)
 title(sprintf('negloglik'))
 
 %% Plot some ROC curves for some classes on a single fold
-for c=1:3
+for c=1:4
   absent(c) = all(test.presence(:,c)==0);
   if absent(c),
     error(sprintf('%s is absent in this test fold', objectnames{c}))
@@ -250,6 +302,23 @@ for c=1:3
   fname = fullfile(figFolder, sprintf('roc-%s.png', objectnames{c}));
   print(gcf, '-dpng', fname);
 end
+
+
+%% plot improvement over baseline on a single fold for each method as separate figs 
+%  auc_models = nan(Nobjects, Nmethods);
+% We assume that method 1 is the independent model
+%{
+for m=2:Nmethods
+  figure;
+  [delta, perm] = sort(auc_models(:,m) - auc_models(:,1), 'descend');
+  bar(delta)
+  xlabel('category')
+  ylabel(sprintf('improvement in AUC over baseline'))
+  title(methodNames{m})
+  fname = fullfile(figFolder, sprintf('roc-delta-%s.png', methodNames{m}));
+  print(gcf, '-dpng', fname);
+end
+%}
 
 %% Visualize predictions plotted on top of some images
 
@@ -279,20 +348,6 @@ printPredictions(test.presence,  presence_model, objectnames, methodNames, test.
 visPredictions(test.presence,  presence_model, objectnames, methodNames, ...
   test.filenames, cutoff_fpr, Dtest);
 
-
-
-%% plot improvement over baseline on a single fold for each method as separate figs 
-%  auc_models = nan(Nobjects, Nmethods);
-% We assume that method 1 is the independent model
-for m=2:Nmethods
-  figure;
-  [delta, perm] = sort(auc_models(:,m) - auc_models(:,1), 'descend');
-  bar(delta)
-  xlabel('category')
-  ylabel(sprintf('improvement in AUC over baseline'))
-  fname = fullfile(figFolder, sprintf('roc-delta-%s.png', methodNames{m}));
-  print(gcf, '-dpng', fname);
-end
 
 
 

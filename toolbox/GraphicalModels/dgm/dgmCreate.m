@@ -164,18 +164,23 @@ end
  if ~isTopoOrdered(G)
    %error('nodes must be toplogically ordered; try toporderDag')
    fprintf('warning: dgmCreate is topologically ordering the nodes\n');
-   GorigOrder = G;
-   [G, toporder, invtoporder] = toporderDag(GorigOrder);
-   nodeNames = nodeNames(toporder);
-   nstates = nstates(toporder);
-   CPDpointers = CPDpointers(toporder);
-   if ~isempty(localCPDpointers), localCPDpointers = localCPDpointers(toporder); end
+   [G, toporder, invtoporder] = toporderDag(G);
  else
-   toporder = 1:Nnodes;
-   invtoporder = 1:Nnodes;
+   if sum(G(:))==0
+     %  if empty graph, shuffle nodes - this should not affect
+     % answer if the book-keeping is correct.
+     fprintf('warning: dgmCreate is randomly ordering the nodes\n');
+     toporder = randperm(Nnodes);
+     invtoporder = lookupIndices(1:Nnodes, toporder);
+   else
+     toporder = 1:Nnodes;
+     invtoporder = 1:Nnodes;
+   end
  end
- 
-
+ nodeNames = nodeNames(toporder);
+ nstates = nstates(toporder);
+ CPDpointers = CPDpointers(toporder);
+ if ~isempty(localCPDpointers), localCPDpointers = localCPDpointers(toporder); end
  
 %% create model 
 model = structure(  G                , ...
