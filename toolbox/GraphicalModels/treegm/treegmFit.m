@@ -121,7 +121,7 @@ end
 end
 
 
-
+%{
 function [CPDs, support] = treeFitParams(par,  X, dirichlet)
 % Find the MAP estimate of the parameters of the CPTs.
 %  X(i,j) is value of node j in case i, i=1:n, j=1:d
@@ -147,6 +147,8 @@ for i=1:d
       CPDs{i} = mkStochastic(cnt+prior);
    end  
 end
-
 end
+%}
+
+
 

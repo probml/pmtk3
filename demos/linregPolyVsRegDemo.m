@@ -97,8 +97,9 @@ for k=1:NL
   %nfolds = N; % LOOCV
   nfolds = 5;
   % since the data is sorted left to right, we must randomize the order
+  randomizeOrder = false;
   [mu(k), se(k)] = cvEstimate(fitFn, predFn, lossFn, Xtrain, ytrain, nfolds, ...
-    'randomizeOrder', false);
+    'randomizeOrder', randomizeOrder);
 end
 
 figure; hold on
@@ -130,9 +131,12 @@ printPmtkFigure(sprintf('linregPolyVsRegCvN%d', n))
 % do it again using fitCV
 fitFn2 = @(Xtr,ytr,lam) linregFit(Xtr, ytr, 'lambda', lam, 'preproc', pp);
 [model2, bestParam2, mu2, se2] = ...
-    fitCv(lambdas, fitFn2, predFn, lossFn, Xtrain, ytrain,  nfolds);
-assert(approxeq(mu, mu2))
-assert(approxeq(se, se2))
+    fitCv(lambdas, fitFn2, predFn, lossFn, Xtrain, ytrain,  nfolds,...
+    'randomizeOrder', randomizeOrder);
+  if ~randomizeOrder
+    assert(approxeq(mu, mu2))
+    assert(approxeq(se, se2))
+  end
   
 % do it again using path algo
 if glmnetInstalled()

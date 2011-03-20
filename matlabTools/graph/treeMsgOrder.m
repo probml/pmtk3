@@ -16,7 +16,7 @@ function [msg, prevNodes] = treeMsgOrder(adj, root)
 % Erik Sudderth
 %  May 16, 2003 - Initial version
 
-fprintf('treeMsgOrder goes into infinite loop if graph is not connected\n');
+%fprintf('treeMsgOrder goes into infinite loop if graph is not connected\n');
 
   % Check and process input arguments
   if (nargin < 1)

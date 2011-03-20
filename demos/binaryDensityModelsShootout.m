@@ -3,12 +3,12 @@
 
 
 %% Data
-setSeed(0);
+
 if 1
   loadData('20news_w100');
   % documents, wordlist, newsgroups, groupnames
-   tags = double(documents)'; % 16,642 documents by 100 words  (sparse logical  matrix)
-  nodeNames = wordist;
+   tags = double(full(documents))'; % 16,642 documents by 100 words  (sparse logical  matrix)
+  nodeNames = wordlist;
   dataName = 'newsgroups';
 else
   loadData('sceneContextSUN09', 'ismatfile', false)
@@ -40,11 +40,58 @@ methods(m).modelname = 'indep';
 methods(m).fitFn = @(labels) discreteFit(labels);
 methods(m).logprobFn = @(model, labels) discreteLogprob(model, labels);
 
-
 m = m + 1;
 methods(m).modelname = 'tree';
 methods(m).fitFn = @(labels) treegmFit(labels);
 methods(m).logprobFn = @(model, labels) treegmLogprob(model, labels);
+
+
+%{
+% For debugging - an empty dag should be the same as the independent model
+m = m + 1;
+methods(m).modelname = 'dgm-empty';
+methods(m).fitFn = @(labels) dgmFitStruct(labels, 'nodeNames', nodeNames, 'emptyGraph', true);
+methods(m).logprobFn = @(model, labels) dgmLogprob(model, 'obs', labels);
+%}
+
+
+
+%{
+% For debugging - if we initialize search at a tree and perform 0
+% iterations of DAG search, we should get the same resutls as treegmFit
+m = m + 1;
+methods(m).modelname = 'dgm-tree';
+methods(m).fitFn = @(labels) dgmFitStruct(labels, 'nodeNames', nodeNames, 'maxFamEvals', 500, ...
+  'figFolder', figFolder, 'nrestarts', 0, 'maxIter', 0, 'initMethod', 'tree');
+methods(m).logprobFn = @(model, labels) dgmLogprob(model, 'obs', labels);
+%}
+
+%{
+% Using no edge restrictions is very slow!
+m = m + 1;
+methods(m).modelname = 'dgm-init-tree-restrict-none';
+methods(m).fitFn = @(labels) dgmFitStruct(labels, 'nodeNames', nodeNames, 'maxFamEvals', 500, ...
+  'figFolder', figFolder, 'nrestarts', 2, 'initMethod', 'tree', 'edgeRestrict', 'none');
+methods(m).logprobFn = @(model, labels) dgmLogprob(model, 'obs', labels);
+%}
+
+m = m + 1;
+methods(m).modelname = 'dgm-init-empty-restrict-MI';
+methods(m).fitFn = @(labels) dgmFitStruct(labels, 'nodeNames', nodeNames, 'maxFamEvals', 1000, ...
+  'figFolder', figFolder, 'nrestarts', 2, 'initMethod', 'empty', 'edgeRestrict', 'MI');
+methods(m).logprobFn = @(model, labels) dgmLogprob(model, 'obs', labels);
+
+m = m + 1;
+methods(m).modelname = 'dgm-init-tree-restrict-MI';
+methods(m).fitFn = @(labels) dgmFitStruct(labels, 'nodeNames', nodeNames, 'maxFamEvals', 1000, ...
+  'figFolder', figFolder, 'nrestarts', 2, 'initMethod', 'tree', 'edgeRestrict', 'MI');
+methods(m).logprobFn = @(model, labels) dgmLogprob(model, 'obs', labels);
+
+m = m + 1;
+methods(m).modelname = 'dgm-init-tree-restrict-L1';
+methods(m).fitFn = @(labels) dgmFitStruct(labels, 'nodeNames', nodeNames, 'maxFamEvals', 1000, ...
+  'figFolder', figFolder, 'nrestarts', 2, 'initMethod', 'tree', 'edgeRestrict', 'L1');
+methods(m).logprobFn = @(model, labels) dgmLogprob(model, 'obs', labels);
 
 
 m = m + 1;
@@ -52,27 +99,27 @@ methods(m).modelname = 'mix5';
 methods(m).fitFn = @(labels) mixModelFit(labels, 5, 'discrete');
 methods(m).logprobFn = @(model, labels) mixModelLogprob(model, labels);
 
-%{
-m = m + 1;
-methods(m).modelname = 'dag-empty';
-methods(m).fitFn = @(labels) dgmFit(labels, 'nodeNames', nodeNames, 'emptyGraph', true);
-methods(m).logprobFn = @(model, labels) dgmLogprob(model, 'obs', labels);
-%}
+
 
 Nmethods = numel(methods);
 
 
 %% CV
-
 setSeed(0);
 N = size(tags,1);
-Nfolds = 1;
+Nfolds = 3;
 if Nfolds == 1
   N2 = floor(N/2);
-  trainfolds{1}  = 1:N2;
-  testfolds{1} = (N2+1):N;
+  % it is important to shuffle the rows to eliminate ordering effects
+  perm = randperm(N);
+  trainfolds{1}  = perm(1:N2);
+  testfolds{1} = setdiff(1:N, trainfolds{1});
+  
+  %trainfolds{1} = 1:N;
+  %testfolds{1} = 1:N;
 else
-  [trainfolds, testfolds] = Kfold(N, Nfolds);
+  randomize = true;
+  [trainfolds, testfolds] = Kfold(N, Nfolds, randomize);
 end
 
 loglik_models = zeros(Nfolds, Nmethods);
@@ -87,8 +134,9 @@ for fold=1:Nfolds
  
   
   models = cell(1, Nmethods);
+  methodNames = cell(1, Nmethods);
   for m=1:Nmethods
-    methodNames{m} = sprintf('%s', methods(m).modelname); %#ok
+    methodNames{m} = sprintf('%s', methods(m).modelname); 
     fprintf('fitting %s\n', methodNames{m});
     models{m} = methods(m).fitFn(train.labels);
   end
@@ -119,18 +167,57 @@ else
   boxplot(-loglik_models)
 end
 set(gca, 'xtick', 1:Nmethods)
-set(gca, 'xticklabel', methodNames)
-title(sprintf('negloglik'))
+%set(gca, 'xticklabel', methodNames)
+xticklabelRot(methodNames, 45);
+title(sprintf('negloglik on %s', dataName))
+fname = fullfile(figFolder, sprintf('negloglik-%s.png', dataName));
+print(gcf, '-dpng', fname);
+
 
 %% Visualize models themselves
 
 
-m = find(cellfun(@(s) strcmpi(s, 'tree'), methodNames));
+m = strfindCell('tree', methodNames);
 if ~isempty(m)
-  tree = models(m);
+  tree = models{m};
   % The tree is undirected, but for some reason, gviz makes directed graphs
   % more readable than undirected graphs
-  fname = fullfile(figFolder, sprintf('tree-%s', dataName));
-  graphviz(tree.edge_weights, 'labels', nodeNnames, 'directed', 1, 'filename', fname);
+  fname = fullfile(figFolder, sprintf('tree-%s', dataName))
+  graphviz(tree.edge_weights, 'labels', nodeNames, 'directed', 1, 'filename', fname);
 end
+
+m = strfindCell('dgm', methodNames);
+if ~isempty(m)
+  dgm = models{m};
+  % The node names get permuted so we must use dgm.nodeNames
+  fname = fullfile(figFolder, sprintf('dgm-%s', dataName))
+  graphviz(dgm.G, 'labels', dgm.nodeNames, 'directed', 1, 'filename', fname);
+end
+
+m = strfindCell('mix5', methodNames);
+if ~isempty(m)
+  mix = models{m};
+  K = mix.nmix;
+  [nr,nc] = nsubplots(K);
+  figure;
+  for k=1:K
+    T = squeeze(mix.cpd.T(k,2,:));
+    ndx = topAboveThresh(T, 5, 0.1);
+    memberNames = sprintf('%s,', nodeNames{ndx});
+    disp(memberNames)
+    subplot(nr, nc, k)
+    bar(T);
+    title(sprintf('%5.3f', mix.mixWeight(k)))
+  end
+end
+
+
+%{
+% Fit a depnet to the labels
+%model = depnetFit(tags, 'nodeNames', nodeNames, 'method', 'ARD');
+model = depnetFit(tags, 'nodeNames', nodeNames, 'method', 'MI');
+fname = fullfile(figFolder, sprintf('depnet-MI-%s', dataName))
+graphviz(model.G, 'labels', nodeNames, 'directed', 1, 'filename', fname);
+%}
+
 

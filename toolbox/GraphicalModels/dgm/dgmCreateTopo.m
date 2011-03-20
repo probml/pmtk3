@@ -13,22 +13,15 @@ Nnodes = size(G, 1);
 nodeNames = cellfun(@(d) sprintf('n%d', d), num2cell(1:Nnodes), 'uniformoutput', false);
 nstates = 2*ones(1, Nnodes);
 
-[ nstates, nodeNames] =...
+[ nstates, nodeNames, infEngine] =...
     process_options(varargin   , ...
     'nstates'         , nstates,  ...
-    'nodeNames', nodeNames);
+    'nodeNames', nodeNames, ...
+    'infEngine', []);
  
-% Map from node names to numbers
-% We use a clever trick to simulate a hash table
-% http://smlv.cc.gatech.edu/2010/03/10/hash-tables-in-matlab/
-ids = num2cell(1:Nnodes);
-tmp = { nodeNames{:}; ids{:} };
-dict = struct( tmp{:} );
-nodeNum = dict;
 
 
-CPDs = mkRndTabularCpds(G, nstates);
-CPDpointers = 1:Nnodes;
+
 
 %% Topological ordering
 % KPM 15 march 2011
@@ -56,12 +49,23 @@ end
 nodeNames = nodeNames(toporder);
 nstates = nstates(toporder);
 
+% Map from node names to numbers
+% nodeNum.foo = 42 if nodeNames{42} = 'foo'
+% We use a clever trick to simulate a hash table
+% http://smlv.cc.gatech.edu/2010/03/10/hash-tables-in-matlab/
+ids = num2cell(1:Nnodes);
+tmp = { nodeNames{:}; ids{:} };
+dict = struct( tmp{:} );
+nodeNum = dict;
+
 
 localCPDs = [];
 localCPDpointers = [];
-infEngine = 'jtree';
 infEngArgs = [];
 nnodes = Nnodes;
+
+CPDs = mkRndTabularCpds(G, nstates);
+CPDpointers = 1:Nnodes;
 
 model = structure(  G                , ...
                     CPDs             , ...
@@ -80,8 +84,12 @@ model = structure(  G                , ...
 model.isdirected = true;
 model.modelType = 'dgm';
 
-factors = cpds2Factors(CPDs, G, CPDpointers);
-model.jtree = jtreeCreate(cliqueGraphCreate(factors, nstates, G));
-model.factors = factors;
+if ~isempty(infEngine)
+  factors = cpds2Factors(CPDs, G, CPDpointers);
+  if Nnodes > 20, fprintf('creating jtree; this may take a while\n'); end
+  model.jtree = jtreeCreate(cliqueGraphCreate(factors, nstates, G));
+  fprintf('treewidth is %d\n', dgm.jtree.treewidth)
+  model.factors = factors;
+end
 
 end

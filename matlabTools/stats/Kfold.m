@@ -20,8 +20,11 @@ function  [trainfolds, testfolds] = Kfold(N, K, randomize)
 
 if nargin < 3, randomize = 0; end
 if randomize
-    setSeed(0);
-    perm = randperm(N);
+  S = rand('state');
+  rand('state',0);
+  rand('state',S)
+  %setSeed(0);
+  perm = randperm(N);
 else
     perm = 1:N;
 end

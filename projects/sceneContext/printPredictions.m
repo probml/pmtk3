@@ -18,16 +18,10 @@ for frame=frames(:)'
     pp = colvec(squeeze(probPresence(frame,:,m)));
     %thresh = 0.1*cutoffs(:, m);
     thresh = cutoffs(:, m);
-    
-    % pick all objects above threshold
+
     %predPresent = find(pp > thresh);
-    
-    % pick at most 10 objects above threshold
-    [~, perm] = sort(pp, 'descend');
-    hiconf = perm(find(pp(perm) > thresh(perm))); %#ok
-    Npredict =  min(numel(hiconf), 10);
-    predPresent = hiconf(1:Npredict);
-    
+    predPresent = topAboveThresh(pp, 10,  thresh);
+   
     %predObjectsStr = sprintf('%s,', objectnames{predPresent});
     predObjectsStr = '';
     for i=1:numel(predPresent)

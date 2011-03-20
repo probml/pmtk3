@@ -46,6 +46,7 @@ end
 
 engine  = lower(mrf.infEngine);
 cg      = mrf.cliqueGraph; 
+
 %% Run inference
 switch engine
     
