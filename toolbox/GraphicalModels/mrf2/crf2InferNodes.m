@@ -4,6 +4,7 @@ function [logZ, nodeBel, edgeBel, mrf] = crf2InferNodes(model, Xnode, Xedge, var
 % XNode: Ncases * NnodeFeatures * Nnodes
 % Xedge: Ncases * NedgeFeatures * Nedges
 %   where Nedges = Nnodes * (Nnodes-1) / 2
+% if Xedge = [], it is automatically created
 % We add a column of 1s to Xnode and Edge internally.
 
 
@@ -11,6 +12,14 @@ function [logZ, nodeBel, edgeBel, mrf] = crf2InferNodes(model, Xnode, Xedge, var
 
 mrf = [];
 [infMethod] = process_options(varargin, 'infMethod', 'bruteforce');
+
+
+edgeStruct = model.edgeStruct;
+
+if isempty(Xedge)
+  Xedge = UGM_makeEdgeFeatures(Xnode, edgeStruct.edgeEnds);
+  %Xedge = zeros(nCases, 0, nEdges);
+end
 
 [Ncases NnodeFeatures Nnodes] = size(Xnode); %#ok
 [Ncases2 NedgeFeatures Nedges] = size(Xedge); %#ok
@@ -20,7 +29,6 @@ Xnode = [ones(nInstances,1,nNodes) Xnode];
 Xedge = [ones(nInstances,1,nEdges) Xedge];
 
 
-edgeStruct = model.edgeStruct;
 infoStruct = UGM_makeCRFInfoStruct(Xnode, Xedge, edgeStruct, model.ising, model.tied);
 nodePot = UGM_makeCRFNodePotentials(Xnode, model.nodeWeights, edgeStruct, infoStruct);
 edgePot = UGM_makeCRFEdgePotentials(Xedge, model.edgeWeights, edgeStruct, infoStruct);
@@ -40,7 +48,22 @@ else
 end
 
 
-
+if strcmp(infMethod, 'jtree')
+  % create initial jtree structure using potentials from case 1
+  i = 1;
+  nodePots = cell(1, Nnodes);
+  edgePots = cell(1, Nedges);
+  for n=1:Nnodes
+    nodePots{n} = tabularFactorCreate(nodePot(n,:,i), n);
+  end
+  for e=1:Nedges
+    n1 = edgeStruct.edgeEnds(e,1);
+    n2 = edgeStruct.edgeEnds(e,2);
+    edgePots{e} = tabularFactorCreate(edgePot(:,:,e,i), [n1 n2]);
+  end
+  mrf = mrfCreate(model.G, 'nodePots', nodePots, 'edgePots', edgePots);
+  fprintf('crf treewidth = %d\n', mrf.jtree.treewidth);
+end
 
 for i = 1:Ncases
   switch infMethod
@@ -50,8 +73,7 @@ for i = 1:Ncases
       [nodeBel_i, edgeBel_i, logZ_i] = UGM_Infer_LBP(nodePot(:,:,i), edgePot(:,:,:,i), edgeStruct);
       
     case 'jtree'
-      nodePots = cell(1, Nnodes);
-      edgePots = cell(1, Nedges);
+      % create potentials for this case
       for n=1:Nnodes
         nodePots{n} = tabularFactorCreate(nodePot(n,:,i), n);
       end
@@ -60,8 +82,11 @@ for i = 1:Ncases
         n2 = edgeStruct.edgeEnds(e,2);
         edgePots{e} = tabularFactorCreate(edgePot(:,:,e,i), [n1 n2]);
       end
-      mrf = mrfCreate(model.G, 'nodePots', nodePots, 'edgePots', edgePots);
+      factors = [nodePots, edgePots];
+      mrf.jtree = updateJtreePots(mrf.jtree, factors);
+      %mrf = mrfCreate(model.G, 'nodePots', nodePots, 'edgePots', edgePots);
       [nodeBelCell, logZ_i, edgeBelCell] = mrfInferNodes(mrf);
+      % Convert from cell array
       nodeBel_i = zeros(Nnodes, Nstates);
       for n=1:Nnodes
         nodeBel_i(n, :) = nodeBelCell{n}.T(:)';

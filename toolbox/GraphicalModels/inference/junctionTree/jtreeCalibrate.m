@@ -27,19 +27,44 @@ for k = 1:numel(is)
     sepsets{j, i} = sepsets{i, j};
 end
 %% collect messages
-postOrder(end) = []; % remove root as it has no one to send to in this phase
-Z = zeros(numel(postOrder), 1);
+% KPM 21march 2011
+% We need to store Z(i) for each msg that is sent, even if the
+% graph is disconnected or only has one node
+% We also need to ensure we normalize as we go to prevent underflow.
+
+Z = nan(numel(postOrder), 1);
 i = 1;
 for c = postOrder
-    p                  = postOrderParents{c}; %postOrderParents(c);
-    if ~isempty(p)
+  p                  = postOrderParents{c}; 
+  if isempty(p) % I am an isolated node with no parents
+    [cliques{c}, Z(i)] = tabularFactorNormalize(cliques{c});
+    i=i+1;
+  else
     message            = tabularFactorMarginalize(cliques{c}, sepsets{c, p});
     cliques{p}         = tabularFactorMultiply(cliques{p}, message);
     [cliques{p}, Z(i)] = tabularFactorNormalize(cliques{p});
     i = i+1;
     messages{p, c} = message;
-    end
+  end
 end
+assert(~any(isnan(Z)))
+
+ %{
+  postOrder(end) = []; % remove root as it has no one to send to in this phase
+  Z = zeros(numel(postOrder), 1);
+  i = 1;
+  for c = postOrder
+    p                  = postOrderParents{c}; %postOrderParents(c);
+    if ~isempty(p)
+      message            = tabularFactorMarginalize(cliques{c}, sepsets{c, p});
+      cliques{p}         = tabularFactorMultiply(cliques{p}, message);
+      [cliques{p}, Z(i)] = tabularFactorNormalize(cliques{p});
+      i = i+1;
+      messages{p, c} = message;
+    end
+  end
+%}
+
 %% distribute messages
 for p = preOrder
     for c = preOrderChildren{p}

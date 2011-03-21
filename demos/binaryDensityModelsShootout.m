@@ -40,11 +40,12 @@ methods(m).modelname = 'indep';
 methods(m).fitFn = @(labels) discreteFit(labels);
 methods(m).logprobFn = @(model, labels) discreteLogprob(model, labels);
 
+%{
 m = m + 1;
 methods(m).modelname = 'tree';
 methods(m).fitFn = @(labels) treegmFit(labels);
 methods(m).logprobFn = @(model, labels) treegmLogprob(model, labels);
-
+%}
 
 %{
 % For debugging - an empty dag should be the same as the independent model
@@ -75,6 +76,16 @@ methods(m).fitFn = @(labels) dgmFitStruct(labels, 'nodeNames', nodeNames, 'maxFa
 methods(m).logprobFn = @(model, labels) dgmLogprob(model, 'obs', labels);
 %}
 
+
+m = m + 1;
+lambdaNode = 1; lambdaEdge = 100;
+methods(m).modelname = 'crf-L1';
+methods(m).fitFn = @(labels) mrf2FitStruct(labels, ...
+  'lambdaNode', lambdaNode, 'lambdaEdge', lambdaEdge);
+methods(m).logprobFn = @(model, labels) mrf2Logprob(model, labels);
+%[logZBF, nodeBelBF] = crf2InferNodes(model, X(testNdx,:,:), [], 'infMethod', 'bruteforce');
+
+%{
 m = m + 1;
 methods(m).modelname = 'dgm-init-empty-restrict-MI';
 methods(m).fitFn = @(labels) dgmFitStruct(labels, 'nodeNames', nodeNames, 'maxFamEvals', 1000, ...
@@ -99,6 +110,8 @@ methods(m).modelname = 'mix5';
 methods(m).fitFn = @(labels) mixModelFit(labels, 5, 'discrete');
 methods(m).logprobFn = @(model, labels) mixModelLogprob(model, labels);
 
+%}
+
 
 
 Nmethods = numel(methods);
@@ -107,7 +120,7 @@ Nmethods = numel(methods);
 %% CV
 setSeed(0);
 N = size(tags,1);
-Nfolds = 3;
+Nfolds = 1;
 if Nfolds == 1
   N2 = floor(N/2);
   % it is important to shuffle the rows to eliminate ordering effects

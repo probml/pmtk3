@@ -42,7 +42,7 @@ tied = 0;
 % y: Ncases * Nnodes (1,2)
 
 [Ncases Nfeatures Nnodes] = size(X);
-if 0
+if true
   % mrf mode
   X = zeros(Ncases, 0, Nnodes);
 end
@@ -65,37 +65,36 @@ adjInit = fullAdjMatrix(nNodes);
 example_UGMlearnSub % script computes adjFinal, nodeWeights, edgeWeights
 
 %% PMTK interface
+%{
 useMex = 1;
 edgeStruct = UGM_makeEdgeStruct(adjInit,nStates,useMex);
 nEdges = size(edgeStruct.edgeEnds,1);
 Xedge = UGM_makeEdgeFeatures(X, edgeStruct.edgeEnds);
+%}
 
 % If the edge prunign threshold is 0, we should get the same
 % results as example_UGMlearnSub
-model = crf2FitStruct(y(trainNdx,:), X(trainNdx,:,:), Xedge(trainNdx,:,:), ...
+model = crf2FitStruct(y(trainNdx,:), X(trainNdx,:,:), [], ...
   'lambdaNode', lambdaNode, 'lambdaEdge', lambdaEdge, 'thresh', 0);
 approxeq(model.edgeWeights, edgeWeights)
 
-[logZBF, nodeBelBF] = crf2InferNodes(model, X(testNdx,:,:), Xedge(testNdx,:,:), 'infMethod', 'bruteforce');
+[logZBF, nodeBelBF] = crf2InferNodes(model, X(testNdx,:,:), [], 'infMethod', 'bruteforce');
+% example_UGMlearnSub assigns some global variables for each test case
 approxeq(logZBF(end), logZ)
 approxeq(nodeBelBF(:,:,end), nodeBel)
 
 %% Now compare Mark's brute force inference with jtree
 % We first learn a sparse model
 
-model = crf2FitStruct(y(trainNdx,:), X(trainNdx,:,:), Xedge(trainNdx,:,:), ...
+lambdaEdge = 50;
+model = crf2FitStruct(y(trainNdx,:), X(trainNdx,:,:), [], ...
   'lambdaNode', lambdaNode, 'lambdaEdge', lambdaEdge, 'thresh', 1e-1);
 
-edgeStruct = UGM_makeEdgeStruct(model.G, nStates, useMex);
-nEdges = size(edgeStruct.edgeEnds,1);
-Xedge = UGM_makeEdgeFeatures(X, edgeStruct.edgeEnds);
+ndx = testNdx(1:10);
 
+[logZBF, nodeBelBF, edgeBelBF] = crf2InferNodes(model, X(ndx,:,:), [], 'infMethod', 'bruteforce');
 
-ndx = testNdx(1:3);
-
-[logZBF, nodeBelBF, edgeBelBF] = crf2InferNodes(model, X(ndx,:,:), Xedge(ndx,:,:), 'infMethod', 'bruteforce');
-
-[logZJ, nodeBelJ, edgeBelJ, mrf] = crf2InferNodes(model, X(ndx,:,:), Xedge(ndx,:,:), 'infMethod', 'jtree');
+[logZJ, nodeBelJ, edgeBelJ, mrf] = crf2InferNodes(model, X(ndx,:,:), [], 'infMethod', 'jtree');
 
 approxeq(nodeBelBF, nodeBelJ)
 approxeq(edgeBelBF, edgeBelJ)

@@ -4,11 +4,19 @@ function model = crf2FitStruct(y, Xnode, Xedge, varargin)
 % Input:
 % y: Ncases * Nnodes (1,2,.., Nstates)
 % XNode: Ncases * NnodeFeatures * Nnodes
+% We add a column of 1s to Xnode internally.
+% Set Xnode = NaN for MRF.
+%
 % Xedge: Ncases * NedgeFeatures * Nedges
 %   where Nedges = Nnodes * (Nnodes-1) / 2
-% We add a column of 1s to Xnode and Edge internally.
-%
-% For an MRF, set Xnode = Xedge = []
+% You need to supply Xedge for all edges
+% in adjInit, which initially is the full graph.
+% if you set Xedge = NaN, itnernally we will create
+% edge features by concatenating the node features for the
+% adjoining ends. If Xnode=[], then Xedge = 1 for each edge,
+% corresponding to a full potential.
+% This way, you don't need to worry
+% about specifying edge features.
 % 
 % Optional inputs:
 %
@@ -17,7 +25,7 @@ function model = crf2FitStruct(y, Xnode, Xedge, varargin)
 %
 % OUTPUT:
 % model contains
-% G: adjaceny matrix
+% G: adjacency matrix
 % nodeWeights: (NnodeFeatures) * (Nstates-1) * Nnodes
 % edgeWeights: NedgeFeatures * (Nstates^2 - 1) * Nedges
 % edgestruct: info about edges
@@ -45,13 +53,14 @@ adjInit = setdiag(ones(nNodes, nNodes), 0);
 
 edgeStruct = UGM_makeEdgeStruct(adjInit, nStates, useMex);
 nEdges = size(edgeStruct.edgeEnds,1);
-if isempty(Xnode)
+if isnan(Xnode)
   Xnode = zeros(nCases, 0, nNodes);
 end
-if isempty(Xedge)
-  Xedge = zeros(nCases, 0, nEdges);
+if isnan(Xedge)
+  Xedge = UGM_makeEdgeFeatures(Xnode, edgeStruct.edgeEnds);
+  %Xedge = zeros(nCases, 0, nEdges);
 end
-%Xedge = UGM_makeEdgeFeatures(X, edgeStruct.edgeEnds);
+
 
 % Add Bias
 nInstances = nCases;
@@ -69,6 +78,10 @@ funObj_sub = @(weights)UGM_CRFpseudoLoss(weights, Xnode, Xedge, y,edgeStruct,inf
 nodePenalty = lambdaNode*ones(size(nodeWeights));
 nodePenalty(1,:,:) = 0; % Don't penalize node bias
 edgePenalty = lambdaEdge*ones(size(edgeWeights));
+
+fprintf('learning structure using %s, Nnodes=%d, Nedges=%d, LamNode=%5.3f, LamEdge=%5.3f\n', ...
+  edgePenaltyType, nNodes, nEdges, lambdaNode, lambdaEdge);
+
 if strcmp(edgePenaltyType,'L2')
     % Train with L2-regularization on node and edge parameters
     funObj = @(weights)penalizedL2(weights,funObj_sub,[nodePenalty(:);edgePenalty(:)]);
@@ -102,7 +115,7 @@ else
     elseif strcmp(edgePenaltyType,'L1-Linf')
         funProj = @(w)auxGroupLinfProject(w,nVars,groupStart,groupPtr);
     else
-        fprintf('Unrecognized edgePenaltyType\n');
+        fprintf('Unrecognized edgePenaltyType %s\n', edgePenaltyType);
         pause;
     end
     options.verbose = 0;
@@ -123,10 +136,12 @@ for e = 1:nEdges
     adjFinal(n1,n2) = 1;
     adjFinal(n2,n1) = 1;
   else
-    fprintf('pruning edge %d-%d\n', n1, n2);
+    %$fprintf('pruning edge %d-%d\n', n1, n2);
   end
 end
 G = adjFinal;
+
+fprintf('final graph has %d edges\n', sum(G(:))/2);
 
 % Transfer weights for surviving edges
 edgeStructDense = edgeStruct; %#ok

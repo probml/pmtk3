@@ -96,5 +96,5 @@ end
 %% package 
 jtree = structure(cliques, preOrder, postOrder, ...
     preOrderChildren, postOrderParents, cliqueLookup, cliqueTree, rootClqNdx, nvars, ...
-    treewidth, factorLookup, clqs);
+    treewidth, factorLookup, clqs, nstates);
 end

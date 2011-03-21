@@ -18,6 +18,10 @@ if ~isfield(dgm, 'jtree')
   error('you must first build the jtree by calling dgmCreate')
 end
 factors = cpds2Factors(dgm.CPDs, dgm.G, dgm.CPDpointers);
+
+dgm.jtree = updateJtreePots(dgm.jtree, factors);
+
+%{
 ncliques = numel(dgm.jtree.cliques);
 factorLookup = dgm.jtree.factorLookup;
 nstates = dgm.nstates;
@@ -33,6 +37,7 @@ for c=1:ncliques
 end
 dgm.jtree.cliques = cliques;
 dgm.factors = factors;
- 
+ %}
+
 end
 

@@ -203,6 +203,6 @@ model.modelType = 'dgm';
 if strcmpi(infEngine, 'jtree') && precomputeJtree
     factors = cpds2Factors(CPDs, G, CPDpointers);   
     model.jtree = jtreeCreate(cliqueGraphCreate(factors, nstates, G));
-    model.factors = factors;
+    %model.factors = factors; % this can go stale - why store?
 end
 end

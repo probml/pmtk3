@@ -76,7 +76,7 @@ switch engine
         cg.Tfac      = factors; 
         bels         = beliefPropagation(cg, queries, mrf.infEngArgs{:}); 
         
-        logZ = 0; % not calculated
+        logZ = NaN; % not calculated
              
     case 'enum'
        
