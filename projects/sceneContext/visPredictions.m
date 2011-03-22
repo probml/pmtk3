@@ -1,5 +1,5 @@
 
-function visPredictions(truePresence, probPresence, objectnames, methodNames, filenames, cutoffs, Dtest)
+function visPredictions(truePresence, probPresence, objectnames, methodNames, filenames, cutoffs, Dtest, frames)
 
 % visualize some predictions -  needs original images
 % We plot labels using the EER cutoff
@@ -17,8 +17,6 @@ figFolder = '/home/kpmurphy/Dropbox/figures/sceneContext';
 %colors = hsv(15);
 colors = pmtkColors;
 
-%frames = [1,100,500,1000,2000];
-frames = [1,500,2000];
 basefig = 10;
 for frame=frames(:)'
   
@@ -33,9 +31,10 @@ for frame=frames(:)'
     LMplot(Dtest, frame, HOMEIMAGES);
   end
   title(titlestr)
-  fname = fullfile(figFolder, sprintf('testimg%d-truth.png', frame));
-  print(gcf, '-dpng', fname);
-  
+  if ~isempty(figFolder)
+    fname = fullfile(figFolder, sprintf('testimg%d-truth.png', frame));
+    print(gcf, '-dpng', fname);
+  end
 
   for m=1:numel(methodNames)
     figure(basefig + m+1); clf; image(img); hold on
@@ -77,7 +76,8 @@ for frame=frames(:)'
       fname = fullfile(dataDir, 'test', objectnames{c}, sprintf('%s.txt', basename));
       data = load(fname);
       Ncolors = numel(colors); %size(colors,1);
-      col = colors{wrap(c, Ncolors)};
+      %col = colors{wrap(c, Ncolors)};
+      col = colors{wrap(cc, Ncolors)};
       if ~isempty(data)
         [~, best] = max(data(:,5));
         bbox = data(best, 1:4); %[x1 y1 x2 y2 score], top left, bottom right
@@ -91,12 +91,15 @@ for frame=frames(:)'
     end
     legend(h, objectnames{predPresent})
     
-    fname = fullfile(figFolder, sprintf('testimg%d-%s.png', frame, methodNames{m}));
-    print(gcf, '-dpng', fname);
+    if ~isempty(figFolder)
+      fname = fullfile(figFolder, sprintf('testimg%d-%s.png', frame, methodNames{m}));
+      print(gcf, '-dpng', fname);
+    end
     
   end % for m
   
-  pause
+  
+    
 end % for frame
 
 

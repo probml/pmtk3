@@ -46,10 +46,16 @@ function model = crf2FitStruct(y, Xnode, Xedge, varargin)
 nStates = nunique(y);
 adjInit = setdiag(ones(nNodes, nNodes), 0);
 
-[lambdaNode, lambdaEdge, adjInit, useMex, ising, tied, edgePenaltyType, thresh] = ...
+Nnodes = nNodes;
+nodeNames = cellfun(@(d) sprintf('n%d', d), num2cell(1:Nnodes), 'uniformoutput', false);
+
+
+[lambdaNode, lambdaEdge, adjInit, useMex, ising, tied, edgePenaltyType, thresh, ...
+  nStates, nodeNames] = ...
   process_options(varargin, ...
   'lambdaNode', 1e-1, 'lambdaEdge', 1, 'adjInit', adjInit, 'useMex', 1, ...
-  'ising', 0, 'tied', 0, 'edgePenaltyType', 'L1-L2', 'thresh', 1e-3);
+  'ising', 0, 'tied', 0, 'edgePenaltyType', 'L1-L2', 'thresh', 1e-3, ...
+  'nstates', nStates, 'nodeNames', nodeNames);
 
 edgeStruct = UGM_makeEdgeStruct(adjInit, nStates, useMex);
 nEdges = size(edgeStruct.edgeEnds,1);
@@ -82,16 +88,25 @@ edgePenalty = lambdaEdge*ones(size(edgeWeights));
 fprintf('learning structure using %s, Nnodes=%d, Nedges=%d, LamNode=%5.3f, LamEdge=%5.3f\n', ...
   edgePenaltyType, nNodes, nEdges, lambdaNode, lambdaEdge);
 
+  
 if strcmp(edgePenaltyType,'L2')
     % Train with L2-regularization on node and edge parameters
     funObj = @(weights)penalizedL2(weights,funObj_sub,[nodePenalty(:);edgePenalty(:)]);
-    weights = minFunc(funObj,zeros(nVars,1));
+    %options.verbose = 1;
+    options.display = 'final';
+    options.maxIter = 100;
+    
+    weights = minFunc(funObj,zeros(nVars,1), options);
 elseif strcmp(edgePenaltyType,'L1')
     % Train with L2-regularization on node parameters and
     % L1-regularization on edge parameters
     funObjL2 = @(weights)penalizedL2(weights,funObj_sub,[nodePenalty(:);zeros(size(edgeWeights(:)))]); % L2 on Node Parameters
     funObj = @(weights)nonNegGrad(weights,[zeros(size(nodeWeights(:)));edgePenalty(:)],funObjL2);
-    weights = minConf_TMP(funObj,zeros(2*nVars,1),zeros(2*nVars,1),inf(2*nVars,1));
+   
+    options.verbose = 1; 
+    options.maxIter = 100;
+    
+    weights = minConf_TMP(funObj,zeros(2*nVars,1),zeros(2*nVars,1),inf(2*nVars,1), options);
     weights = weights(1:nVars)-weights(nVars+1:end);
 else
     % Train with L2-regularization on node parameters and
@@ -118,7 +133,9 @@ else
         fprintf('Unrecognized edgePenaltyType %s\n', edgePenaltyType);
         pause;
     end
-    options.verbose = 0;
+    options.verbose = 1; 
+    options.maxIter = 100;
+    
     weights = minConf_SPG(funObj,[zeros(nVars,1);zeros(nGroups,1)],funProj, options);
     weights = weights(1:nVars);
 end
@@ -161,6 +178,6 @@ end
 edgeWeights = edgeWeightsSparse; % rename
 edgeStruct = edgeStructSparse; % rename
 model = structure(G, nodeWeights, edgeWeights, edgeWeightsDense, nStates, ...
-  edgeStruct, ising, tied, nStates);
+  edgeStruct, ising, tied, nStates, nodeNames);
 
 end

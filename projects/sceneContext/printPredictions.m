@@ -1,12 +1,10 @@
 
-function printPredictions(truePresence, probPresence, objectnames, methodNames, filenames, cutoffs)
+function printPredictions(truePresence, probPresence, objectnames, methodNames, filenames, cutoffs, frames)
 % print predicted objects, along with truth
 % Same as visPredictions except we don't use images
 % We plot labels using the EER cutoff
 % truePresence(n,c), probPresence(n,c,m), objectNames{c}, methodNames{m}
 
-
-frames = [1,500,2000];
 for frame=frames(:)'
   
   truePresent = find(truePresence(frame,:));

@@ -23,10 +23,13 @@ nodePots = ones(model.Nstates, model.Nnodes);
 for n=1:model.Nnodes
   nodePots(:,n) = model.nodePot(:, model.nodePotNdx(n));
 end
+assert(~any(isnan(nodePots(:))))
 if ~isempty(localFeatures)
   softev = localEvToSoftEv(model.obsmodel, localFeatures);
 end
 if ~isempty(softev)
+  assert(~any(isnan(softev(:))))
+  softev = softev + eps; % ensure there are no zeros
   nodePots = nodePots .* softev;
 end
 
@@ -53,6 +56,10 @@ for e=1:Nedges
   end
   edgeMsgUp(:,e) = edgePot * nodeBel(:,s);
   [nodeBel(:,t), Zt] = normalize(nodeBel(:,t) .* edgeMsgUp(:,e));
+  assert(~any(isnan(nodeBel(:,s))))
+  assert(~any(isnan(nodeBel(:,t))))
+  assert(~all(nodeBel(:,s)==0))
+  assert(~all(nodeBel(:,t)==0))
   logZ = logZ + log(Zt);
 end
 
@@ -70,6 +77,7 @@ for e=Nedges:-1:1
   % to get the product of all-but-one messages
   edgeMsgDown(:,e) = edgePot * (nodeBel(:,s) ./ edgeMsgUp(:,e));
   [nodeBel(:,t)] = normalize(nodeBel(:,t) .* edgeMsgDown(:,e));
+  assert(~any(isnan(nodeBel(:,t))))
 end
 
 

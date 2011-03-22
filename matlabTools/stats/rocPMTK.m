@@ -52,11 +52,11 @@ cutoff =th(ndx);
                
 % performance at EER point
 TP = sum( (confidence >= cutoff) & (testClass == 1) );
+FN = sum( (confidence < cutoff) & (testClass == 1) );
 FP = sum( (confidence >= cutoff) & (testClass == 0) );
 TN = sum( (confidence < cutoff) & (testClass == 0) );
-FN = sum( (confidence < cutoff) & (testClass == 1) );
 FPR = FP/(FP+TN);
-assert(FP+TN==sum(testClass==0))
+%assert(FP+TN==sum(testClass==0)) % may fail if any(isnan(confidence))
 EER = FPR;
 
 

@@ -50,7 +50,7 @@ methods(m).infFn = @(model, features, softev) discreteInferNodes(model, softev);
 methods(m).logprobFn = @(model, labels) discreteLogprob(model, labels);
 
 
-%{
+
 %[logZ, nodeBel] = treegmInferNodes(treeModel, localFeatures, softev);
 m = m + 1;
 methods(m).modelname = 'tree';
@@ -58,19 +58,32 @@ methods(m).obstype = 'gauss';
 methods(m).fitFn = @(labels, features) treegmFit(labels);
 methods(m).infFn = @(model, features, softev) argout(2, @treegmInferNodes, model, [], softev);
 methods(m).logprobFn = @(model, labels) treegmLogprob(model, labels);
-%}
+
 
 %{
 %[pZ, pX] = noisyMixModelInferNodes(mixModel{ki}, localFeatures, softev);
 m = m + 1;
-methods(m).modelname = 'mix5';
+methods(m).modelname = 'mix20';
 methods(m).obstype = 'gauss';
-methods(m).fitFn = @(labels, features) noisyMixModelFit(labels, [], 5);
+methods(m).fitFn = @(labels, features) noisyMixModelFit(labels, [], 10);
 methods(m).infFn = @(model, features, softev) argout(2, @noisyMixModelInferNodes, model, [], softev);
 methods(m).logprobFn = @(model, labels) mixModelLogprob(model.mixmodel, labels);
 %}
 
 
+%[pZ, pX] = noisyMixModelInferNodes(mixModel{ki}, localFeatures, softev);
+m = m + 1;
+methods(m).modelname = 'mix40';
+methods(m).obstype = 'gauss';
+methods(m).fitFn = @(labels, features) noisyMixModelFit(labels, [], 40);
+methods(m).infFn = @(model, features, softev) argout(2, @noisyMixModelInferNodes, model, [], softev);
+methods(m).logprobFn = @(model, labels) mixModelLogprob(model.mixmodel, labels);
+
+
+
+
+
+%{
 %[nodeBelCell, logZ, nodeBelArray] = dgmInferNodes(dgm, 'softev', softev)
 %logZ = dgmLogprob(dgm, 'clamped', Y)
 m = m + 1;
@@ -81,7 +94,6 @@ methods(m).infFn = @(model, features, softev) argout(3, @dgmInferNodes, model, '
 methods(m).logprobFn = @(model, labels) dgmLogprob(model, 'obs', labels);
 
 
-%{
 %[nodeBelCell, logZ, nodeBelArray] = dgmInferNodes(dgm, 'softev', softev)
 %logZ = dgmLogprob(dgm, 'clamped', Y)
 m = m + 1;
@@ -105,19 +117,21 @@ presence = [data.train.presence; data.test.presence];
 detect_maxprob = [data.train.detect_maxprob; data.test.detect_maxprob];
 filenames = [data.train.filenames data.test.filenames];
 N = size(presence, 1);
+dataNdx = 1:N;
 assert(N==Ntrain+Ntest);
 Nfolds = 1;
 if Nfolds == 1
   % use original train/ test split
   trainfolds{1} = 1:Ntrain;
   %Ntest = 1000; % use subset of test data for speed
-  %testfolds{1} = (Ntrain+1):(Ntrain+Ntest);
+  testfolds{1} = (Ntrain+1):(Ntrain+Ntest);
   
   % use subset of training set - dgm should have
   % higher likelihood since more complex model
-  testfolds{1} = 1:10;
+  %testfolds{1} = 1:10;
 else
-  [trainfolds, testfolds] = Kfold(N, Nfolds);
+  randomizeOrder = true;
+  [trainfolds, testfolds] = Kfold(N, Nfolds, randomizeOrder);
 end
 
 % These are the performance measures which we store
@@ -149,7 +163,8 @@ for fold=1:Nfolds
   
   models = cell(1, Nmethods);
   for m=1:Nmethods
-    methodNames{m} = sprintf('%s-%s', methods(m).modelname, methods(m).obstype); %#ok
+    %methodNames{m} = sprintf('%s-%s', methods(m).modelname, methods(m).obstype); %#ok
+     methodNames{m} = sprintf('%s', methods(m).modelname); %#ok
     fprintf('fitting %s\n', methodNames{m});
     models{m} = methods(m).fitFn(labels, scores);
   end
@@ -160,18 +175,8 @@ for fold=1:Nfolds
   for m=1:Nmethods
     ll(:, m) = methods(m).logprobFn(models{m}, labels);
   end
-  loglik_models(fold, :) = sum(ll, 1)/Ntest;
-  
-  % Plot performance for this fold to check quality of model
-  % before doing ifnerence (which can be expensive)
-  figure;
-  plot(-loglik_models(fold,:), 'x', 'markersize', 12, 'linewidth', 2)
-  axis_pct
-  set(gca, 'xtick', 1:Nmethods)
-  set(gca, 'xticklabel', methodNames)
-  title(sprintf('negloglik'))
+  loglik_models(fold, :) = sum(ll, 1)/Ntest
 
-  keyboard
   
   %% Inference
   presence_model = zeros(Ntest, Nobjects, Nmethods);  
@@ -204,6 +209,7 @@ for fold=1:Nfolds
           bel = methods(m).infFn(models{m}, [], softev);
       end
       probPresent = bel(2,:);
+      assert(~any(isnan(probPresent)))
       presence_model(n,:,m) = probPresent;
     end % for n
   end % for m
@@ -247,55 +253,51 @@ end % fold
 
 
 % Mean AUC
+ndx = 1:Nmethods;
 figure;
 if Nfolds==1
   plot(mean_auc_models, 'x', 'markersize', 12, 'linewidth', 2)
   axis_pct
 else
-  boxplot(mean_auc_models);
+  boxplot(mean_auc_models(:, ndx));
 end
-set(gca, 'xtick', 1:Nmethods)
-set(gca, 'xticklabel',  methodNames)
+set(gca, 'xtick', 1:numel(ndx))
+set(gca, 'xticklabel',  methodNames(ndx))
 title(sprintf('AUC averaged over classes'))
-
+fname = fullfile(figFolder, sprintf('boxplot-auc.png'));
+print(gcf, '-dpng', fname);
+  
 % Mean EER
 figure;
 if Nfolds==1
   plot(mean_eer_models, 'x', 'markersize', 12, 'linewidth', 2)
   axis_pct
 else
-  boxplot(mean_eer_models)
+  boxplot(mean_eer_models(:,ndx))
 end
-set(gca, 'xtick', 1:Nmethods)
-set(gca, 'xticklabel', methodNames)
+set(gca, 'xtick', 1:numel(ndx))
+set(gca, 'xticklabel', methodNames(ndx))
 title(sprintf('EER averaged over classes'))
+fname = fullfile(figFolder, sprintf('boxplot-eer.png'));
+print(gcf, '-dpng', fname);
+  
 
-
-
-% NLL on labels
-figure;
-if Nfolds==1
-  plot(-loglik_models, 'x', 'markersize', 12, 'linewidth', 2)
-  axis_pct
-else
-  boxplot(-loglik_models)
-end
-set(gca, 'xtick', 1:Nmethods)
-set(gca, 'xticklabel', methodNames)
-title(sprintf('negloglik'))
-
+    
 %% Plot some ROC curves for some classes on a single fold
+ndx = 1:Nmethods;
 for c=1:4
   absent(c) = all(test.presence(:,c)==0);
   if absent(c),
     error(sprintf('%s is absent in this test fold', objectnames{c}))
   end
   figure; hold on; h = []; legendstr = {};
-  for m=1:Nmethods
+  for mm=1:numel(ndx)
+    m = ndx(mm);
     [AUC, falseAlarmRate, detectionRate, EER, cutoff, tprAtThresh, fprAtThresh, thresh] = ...
       rocPMTK(presence_model(:,c,m), test.presence(:,c), fprThresh);
-    h(m) = plotROC(falseAlarmRate, detectionRate, colors(m+1), EER, tprAtThresh, fprAtThresh);
-    legendstr{m} = sprintf('%s (AUC %5.3f, EER %5.3f)', methodNames{m}, AUC, EER);
+    %h(m) = plotROC(falseAlarmRate, detectionRate, colors(mm), EER, tprAtThresh, fprAtThresh);
+    h(mm) = plotROC(falseAlarmRate, detectionRate, colors(mm));
+    legendstr{mm} = sprintf('%s (AUC %5.3f, EER %5.3f)', methodNames{m}, AUC, EER);
   end
   legend(h, legendstr, 'location', 'southeast')
   title(objectnames{c})
@@ -307,7 +309,7 @@ end
 %% plot improvement over baseline on a single fold for each method as separate figs 
 %  auc_models = nan(Nobjects, Nmethods);
 % We assume that method 1 is the independent model
-%{
+
 for m=2:Nmethods
   figure;
   [delta, perm] = sort(auc_models(:,m) - auc_models(:,1), 'descend');
@@ -318,11 +320,19 @@ for m=2:Nmethods
   fname = fullfile(figFolder, sprintf('roc-delta-%s.png', methodNames{m}));
   print(gcf, '-dpng', fname);
 end
-%}
+
 
 %% Visualize predictions plotted on top of some images
 
-%{
+
+% presence_model(n,c,m), test.presence(n,c), cutoff_models(c,m)
+
+frames = [1,100,500,1000,2000];
+frames = [1:20]
+
+printPredictions(test.presence,  presence_model, objectnames, methodNames, test.filenames, cutoff_fpr, frames);
+
+
 dataDir = '/home/kpmurphy/LocalDisk/SUN09/';
 HOMEIMAGES = fullfile(dataDir, 'Images');
 %HOMEANNOTATIONS = fullfile(dataDir, 'Annotations');
@@ -336,17 +346,24 @@ categories: [1x1 struct]
        Doutofcontext: [1x42 struct]
            Dtraining: [1x4367 struct]
 %}
+
 fname = fullfile(dataDir, 'dataset', 'sun09_groundTruth');
 load(fname, 'Dtest')
-%}
+if Nfolds == 1
+  DB = Dtest;
+else
+  load(fname, 'Dtraining')
+  DB = [Dtraining Dtest];
+  DBtrain = DB(trainfolds{fold});
+  DBtest = DB(testfolds{fold});
+end
+
+frames = 1
+
+visPredictions(test.presence,  presence_model, objectnames, methodNames, test.filenames, cutoff_fpr, DB, frames);
 
 
-% presence_model(n,c,m), test.presence(n,c), cutoff_models(c,m)
 
-printPredictions(test.presence,  presence_model, objectnames, methodNames, test.filenames, cutoff_fpr);
-
-visPredictions(test.presence,  presence_model, objectnames, methodNames, ...
-  test.filenames, cutoff_fpr, Dtest);
 
 
 

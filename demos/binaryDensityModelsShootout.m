@@ -4,7 +4,7 @@
 
 %% Data
 
-if 1
+if 0
   loadData('20news_w100');
   % documents, wordlist, newsgroups, groupnames
    tags = double(full(documents))'; % 16,642 documents by 100 words  (sparse logical  matrix)
@@ -40,12 +40,12 @@ methods(m).modelname = 'indep';
 methods(m).fitFn = @(labels) discreteFit(labels);
 methods(m).logprobFn = @(model, labels) discreteLogprob(model, labels);
 
-%{
+
 m = m + 1;
 methods(m).modelname = 'tree';
 methods(m).fitFn = @(labels) treegmFit(labels);
 methods(m).logprobFn = @(model, labels) treegmLogprob(model, labels);
-%}
+
 
 %{
 % For debugging - an empty dag should be the same as the independent model
@@ -77,26 +77,24 @@ methods(m).logprobFn = @(model, labels) dgmLogprob(model, 'obs', labels);
 %}
 
 
+
 m = m + 1;
-lambdaNode = 1; lambdaEdge = 100;
-methods(m).modelname = 'crf-L1';
-methods(m).fitFn = @(labels) mrf2FitStruct(labels, ...
-  'lambdaNode', lambdaNode, 'lambdaEdge', lambdaEdge);
-methods(m).logprobFn = @(model, labels) mrf2Logprob(model, labels);
-%[logZBF, nodeBelBF] = crf2InferNodes(model, X(testNdx,:,:), [], 'infMethod', 'bruteforce');
+methods(m).modelname = 'dgm-init-tree';
+methods(m).fitFn = @(labels) dgmFitStruct(labels, 'nodeNames', nodeNames, 'maxFamEvals', 1000, ...
+  'figFolder', figFolder, 'nrestarts', 0, 'initMethod', 'tree', 'edgeRestrict', 'MI');
+methods(m).logprobFn = @(model, labels) dgmLogprob(model, 'obs', labels);
+
 
 %{
 m = m + 1;
-methods(m).modelname = 'dgm-init-empty-restrict-MI';
+methods(m).modelname = 'dgm-init-empty';
 methods(m).fitFn = @(labels) dgmFitStruct(labels, 'nodeNames', nodeNames, 'maxFamEvals', 1000, ...
   'figFolder', figFolder, 'nrestarts', 2, 'initMethod', 'empty', 'edgeRestrict', 'MI');
 methods(m).logprobFn = @(model, labels) dgmLogprob(model, 'obs', labels);
 
-m = m + 1;
-methods(m).modelname = 'dgm-init-tree-restrict-MI';
-methods(m).fitFn = @(labels) dgmFitStruct(labels, 'nodeNames', nodeNames, 'maxFamEvals', 1000, ...
-  'figFolder', figFolder, 'nrestarts', 2, 'initMethod', 'tree', 'edgeRestrict', 'MI');
-methods(m).logprobFn = @(model, labels) dgmLogprob(model, 'obs', labels);
+%}
+
+%{
 
 m = m + 1;
 methods(m).modelname = 'dgm-init-tree-restrict-L1';
@@ -104,13 +102,45 @@ methods(m).fitFn = @(labels) dgmFitStruct(labels, 'nodeNames', nodeNames, 'maxFa
   'figFolder', figFolder, 'nrestarts', 2, 'initMethod', 'tree', 'edgeRestrict', 'L1');
 methods(m).logprobFn = @(model, labels) dgmLogprob(model, 'obs', labels);
 
+%}
+
+
+%{
+m = m + 1;
+lambdaNode = 0.1; lambdaEdge = 50;
+methods(m).modelname = 'mrf-L1';
+methods(m).fitFn = @(labels) mrf2FitStruct(labels, ...
+  'lambdaNode', lambdaNode, 'lambdaEdge', lambdaEdge, 'nstates', 2*ones(1,numel(nodeNames)), ...
+  'nodeNames', nodeNames);
+methods(m).logprobFn = @(model, labels) mrf2Logprob(model, labels);
+%[logZBF, nodeBelBF] = crf2InferNodes(model, X(testNdx,:,:), [], 'infMethod', 'bruteforce');
+%}
+
+
 
 m = m + 1;
-methods(m).modelname = 'mix5';
-methods(m).fitFn = @(labels) mixModelFit(labels, 5, 'discrete');
+methods(m).modelname = 'mix10';
+methods(m).fitFn = @(labels) mixModelFit(labels, 10, 'discrete');
 methods(m).logprobFn = @(model, labels) mixModelLogprob(model, labels);
 
-%}
+
+m = m + 1;
+methods(m).modelname = 'mix20';
+methods(m).fitFn = @(labels) mixModelFit(labels, 20, 'discrete');
+methods(m).logprobFn = @(model, labels) mixModelLogprob(model, labels);
+
+
+m = m + 1;
+methods(m).modelname = 'mix30';
+methods(m).fitFn = @(labels) mixModelFit(labels, 30, 'discrete');
+methods(m).logprobFn = @(model, labels) mixModelLogprob(model, labels);
+
+
+m = m + 1;
+methods(m).modelname = 'mix40';
+methods(m).fitFn = @(labels) mixModelFit(labels, 40, 'discrete');
+methods(m).logprobFn = @(model, labels) mixModelLogprob(model, labels);
+
 
 
 
@@ -120,7 +150,7 @@ Nmethods = numel(methods);
 %% CV
 setSeed(0);
 N = size(tags,1);
-Nfolds = 1;
+Nfolds = 3;
 if Nfolds == 1
   N2 = floor(N/2);
   % it is important to shuffle the rows to eliminate ordering effects
@@ -130,6 +160,9 @@ if Nfolds == 1
   
   %trainfolds{1} = 1:N;
   %testfolds{1} = 1:N;
+  
+  %trainfolds{1} = perm(1:2000);
+  %testfolds{1} = perm(2000:2500); %trainfolds{1};
 else
   randomize = true;
   [trainfolds, testfolds] = Kfold(N, Nfolds, randomize);
@@ -173,15 +206,16 @@ end % fold
 
 % NLL on labels
 figure;
+ndx = 2:Nmethods
 if Nfolds==1
   plot(-loglik_models, 'x', 'markersize', 12, 'linewidth', 2)
   axis_pct
 else
-  boxplot(-loglik_models)
+  boxplot(-loglik_models(:, ndx))
 end
-set(gca, 'xtick', 1:Nmethods)
-%set(gca, 'xticklabel', methodNames)
-xticklabelRot(methodNames, 45);
+set(gca, 'xtick', 1:numel(ndx))
+set(gca, 'xticklabel', methodNames(ndx))
+%xticklabelRot(methodNames(ndx), -45);
 title(sprintf('negloglik on %s', dataName))
 fname = fullfile(figFolder, sprintf('negloglik-%s.png', dataName));
 print(gcf, '-dpng', fname);
@@ -189,6 +223,7 @@ print(gcf, '-dpng', fname);
 
 %% Visualize models themselves
 
+break
 
 m = strfindCell('tree', methodNames);
 if ~isempty(m)
@@ -207,20 +242,28 @@ if ~isempty(m)
   graphviz(dgm.G, 'labels', dgm.nodeNames, 'directed', 1, 'filename', fname);
 end
 
-m = strfindCell('mix5', methodNames);
+m = strfindCell('mrf-L1', methodNames);
+if ~isempty(m)
+  mrf = models{m};
+  fname = fullfile(figFolder, sprintf('mrf-L1-%s', dataName))
+  graphviz(mrf.G, 'labels', nodeNames, 'directed', 0, 'filename', fname);
+end
+
+
+m = strfindCell('mix10', methodNames);
 if ~isempty(m)
   mix = models{m};
   K = mix.nmix;
   [nr,nc] = nsubplots(K);
-  figure;
+  %figure;
   for k=1:K
     T = squeeze(mix.cpd.T(k,2,:));
     ndx = topAboveThresh(T, 5, 0.1);
     memberNames = sprintf('%s,', nodeNames{ndx});
     disp(memberNames)
-    subplot(nr, nc, k)
-    bar(T);
-    title(sprintf('%5.3f', mix.mixWeight(k)))
+    %subplot(nr, nc, k)
+    %bar(T);
+    %title(sprintf('%5.3f', mix.mixWeight(k)))
   end
 end
 

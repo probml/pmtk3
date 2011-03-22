@@ -125,8 +125,11 @@ if ~isempty(edgePots)
             edgeFactors{e} = tabularFactorCreate(fac, [j i]);
         end
     end
+    edgeFactors = removeEmpty(edgeFactors);
+else
+  edgeFactors = {};
 end
-edgeFactors = removeEmpty(edgeFactors);
+
 %% save edge information
 nEdgeFacs   = numel(edgeFactors); 
 edges       = cell(nEdgeFacs, 1); 

@@ -5,13 +5,13 @@ function h = plotROC(falseAlarmRate, detectionRate, col, EER, tprAtThresh, fprAt
 % This file is from pmtk3.googlecode.com
 
 
-%k = convhull([colvec(falseAlarmRate); 1], [colvec(detectionRate); 0]);
-k = 1:numel(falseAlarmRate);
+k = convhull([colvec(falseAlarmRate); 1], [colvec(detectionRate); 0]);
+%k = 1:numel(falseAlarmRate);
 k = sort(k,'ascend');
 if(k(end) > length(falseAlarmRate))
   k(end) = [];
 end
-h = plot(falseAlarmRate(k), detectionRate(k), '.', 'color', col, 'LineWidth',2);
+h = plot(falseAlarmRate(k), detectionRate(k),  'color', col, 'LineWidth',2);
 axis([0 1 0 1])
 axis('square')
 

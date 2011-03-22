@@ -7,8 +7,8 @@ function [logZ] = mrf2Logprob(model, y)
 
 edgeStruct = model.edgeStruct;
 [Ncases Nnodes] = size(y);
-
-nInstances = Ncases; nNodes = Nnodes; nEdges = Nedges;
+nEdges = size(edgeStruct.edgeEnds,1); Nedges = nEdges;
+nInstances = Ncases; nNodes = Nnodes; 
 Xnode = [ones(nInstances,1,nNodes)];
 Xedge = [ones(nInstances,1,nEdges)];
 
@@ -35,8 +35,10 @@ for e=1:Nedges
   edgePots{e} = tabularFactorCreate(edgePot(:,:,e,i), [n1 n2]);
 end
 mrf = mrfCreate(model.G, 'nodePots', nodePots, 'edgePots', edgePots);
-fprintf('mrf2logprob: treewidth = %d, Ncases=%d\n', ...
-  model.jtree.treewidth, Ncases);
+if mrf.jtree.treewidth > 5
+  warning(sprintf('mrf2logprob: treewidth = %d, Ncases=%d\n', ...
+    mrf.jtree.treewidth, Ncases));
+end
 
 for i = 1:Ncases
   [nodeBelCell, logZ(i)] = mrfInferNodes(mrf, 'clamped', y(i,:)); %#ok
