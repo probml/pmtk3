@@ -20,6 +20,8 @@
   [ss, logLik, postDist] = inferFA(data, params, []);
   factorsC = postDist.mean;
 
+  break
+  
   %MIXED-DATA FA 
   setSeed(3);
   % 1 of M encoding

@@ -38,16 +38,13 @@ if missing
   funcName = struct('inferFunc', @inferMixedDataFA_miss, 'maxParamsFunc', @maxParamsMixedDataFA);
 else
   % the non missing version is slightly faster
-  if (Dc+Dm)==0
+  if (Dm+Db)==0
     funcName = struct('inferFunc', @inferFA, 'maxParamsFunc', @maxParamsFA);
   else
     funcName = struct('inferFunc', @inferMixedDataFA, 'maxParamsFunc', @maxParamsMixedDataFA);
   end
   
 end
-
-disp('catFAfit')
-params0.beta
 
 [params, loglikTrace] = learnEm(data, funcName, params0, options);
 model.params = params;

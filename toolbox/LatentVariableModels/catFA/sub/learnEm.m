@@ -14,6 +14,15 @@ function [params, logLik] = learnEm(data, funcNames, params, options)
   options.computeSs = 1;
   options.computeLogLik = 1;
 
+  %{
+  disp('learnEm: before E step')
+  params.beta
+  data
+  data.continuous(:,1)
+  funcNames
+  options
+  %}
+  
   % iterate
   logLik = [];
   vals = [];
@@ -37,4 +46,7 @@ function [params, logLik] = learnEm(data, funcNames, params, options)
     params = maxParamsFunc(ss, data, params, options);
   end
 
+  disp('learnEm: after M step')
+  params.beta
+  
 end
