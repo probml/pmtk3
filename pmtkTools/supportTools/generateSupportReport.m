@@ -11,12 +11,48 @@ function generateSupportReport()
 root      = getConfigValue('PMTKlocalSupportPath');
 dest      = fullfile(root, 'docs', 'authors');
 pmtkRed   = getConfigValue('PMTKred');
-metadir   = fullfile(root, 'meta');
-metafiles = filelist(metadir, '*-meta.m', false);
+
+% Read all the meta information from the meta directory
+
+%metadir   = fullfile(root, 'meta');
+%metafiles = filelist(metadir, '*-meta.m', false);
+
+% Read all the meta information from each package directory
+% We could use scrapePmtkSupport to read package names from the
+% svn, but this may fail if things aren't checked in
+folders = dirPMTK(root);
+folders = setdiff(folders, {'docs', 'meta', 'pmtkSupportRoot.m', 'readme.txt'});
+N = numel(folders);
+metafiles = cell(1, N);
+for fi=1:N
+  metafiles{fi} = fullfile(root, folders{fi}, sprintf('%s-readme.txt', folders{fi}));
+end
+
+%{
+% move old meta files to new readme files
+for fi=1:N
+  src = fullfile(root, 'meta', sprintf('%s-meta.m', folders{fi}));
+  destn = fullfile(root, folders{fi}, sprintf('%s-readme.txt', folders{fi}))
+  cmd = sprintf('cp %s %s', src, destn)
+  system(cmd)
+end
+%}
+
+%{
+% add all readme files
+for fi=1:N
+  destn = fullfile(root, folders{fi}, sprintf('%s-readme.txt', folders{fi}))
+  cmd = sprintf('svn add %s', destn)
+  system(cmd)
+end
+%}
+
+
 fname     = fullfile(dest, 'packageAuthors.html');
 colNames  = {'PACKAGE NAME', 'AUTHOR(S)', 'SOURCE URL', 'DATE', 'DIRECTORY'};
 %% Gather data
-packageNames = cellfuncell(@(c)c(1:end-5), filenames(metafiles)); 
+%packageNames = cellfuncell(@(c)c(1:end-5), filenames(metafiles)); % removes -meta
+packageNames = cellfuncell(@(c)c(1:end-7), filenames(metafiles)); % removes -readme
 npackages = numel(metafiles);
 data      = repmat({'&nbsp;'}, npackages, length(colNames));
 for j=1:npackages

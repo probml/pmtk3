@@ -5,8 +5,11 @@ function [tags, lines, codeLength, text] = tagfinder(filename, tagList)
 % path, and the tag must be a valid variable name, i.e. cannot contain
 % characters like ':', etc. 
 %
+% e.g., 
+% %PMTKurl home/kpmurphy/pmtksupport/meta/foo
+%
 % INPUT
-%      filename   - the m-file to search
+%      filename   - the file to search
 %      tagList    - optional (limit the search to only these tags)
 %
 % OUTPUT
