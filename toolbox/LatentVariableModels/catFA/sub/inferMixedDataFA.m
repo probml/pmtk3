@@ -34,7 +34,8 @@ function [ss, logLik, postDist] = inferMixedDataFA(data, params, options)
 % Written by Emtiyaz, CS, UBC,
 % modified on June 09, 2010
 
-  [computeSs, computeLogLik, estimateBeta, maxItersInfer, fixDiag] = myProcessOptions(options, 'computeSs', 1, 'computeLogLik', 1, 'estimateBeta', 1, 'maxItersInfer', 5, 'fixDiag', 0);
+  [computeSs, computeLogLik, estimateBeta, maxItersInfer, fixDiag] = myProcessOptions(options, ...
+    'computeSs', 1, 'computeLogLik', 1, 'estimateBeta', 1, 'maxItersInfer', 3, 'fixDiag', 0);
 
   [Dc,Nc] = size(data.continuous);
   [Dm,Nm] = size(data.categorical);
@@ -86,6 +87,7 @@ function [ss, logLik, postDist] = inferMixedDataFA(data, params, options)
     % multinomial measurements
     % optimize variational params
     for iter = 1:maxItersInfer
+      %fprintf('inferMixedDataFA: iter %d of %d\n', iter, maxItersInfer);
       b = [];
       for d = 1:length(M)
         idx = sum(M(1:d-1))+1:sum(M(1:d));
@@ -100,6 +102,7 @@ function [ss, logLik, postDist] = inferMixedDataFA(data, params, options)
       psi = params.betaMult*meanPost;
       % convergence
       [converged, incr] = isConverged([psiOld(:)  psi(:)], 1e-5, 'parameter');
+      %fprintf('increment %5.3f\n', incr);
       if converged; break; end;
     end
     % update information vector

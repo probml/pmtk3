@@ -32,7 +32,8 @@ initFn = @(m, X, r)initFn(m, X, r, initParams, prior);
 [model, loglikHist] = emAlgo(model, data, initFn, @estep, @mstep , ...
                             'mstepOR'         , mstepOrFn        , ...
                             'overRelaxFactor' , overRelaxFactor  , ...
-                                                EMargs{:});
+                            'verbose', true, ...
+                            EMargs{:});
 end
 
 %% Initialization
@@ -58,7 +59,7 @@ end
 
 function model = initDiscrete(model, X, restartNum, initParams, prior)
 %% Initialize
-nObsStates = max(X(:)); 
+nObsStates = max(nunique(X(:)));
 if restartNum == 1 && ~isempty(initParams)
     T = initParams.T;
     model.mixWeight = initParams.mixWeight;

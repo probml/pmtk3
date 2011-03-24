@@ -25,7 +25,7 @@ Dz = 2;
 
 [mu, Sigma, loglik] = catFAinferLatent(model, testData)
 
-pred = catFAimpute(model, testData)
+[predD, predC] = catFApredictMissing(model, testData)
 
   
 end

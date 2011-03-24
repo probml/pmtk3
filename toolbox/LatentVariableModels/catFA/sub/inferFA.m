@@ -39,6 +39,7 @@ function [ss, logLik, postDist] = inferFA(data, params, options)
   covMatPost = inv(precMatPost);
   meanPost = covMatPost*(bsxfun(@plus, betaTimesNoisePrecMat*y, params.precMat*params.mean));
 
+  
   % postDist
   if nargout > 2
     postDist.mean = meanPost;
@@ -55,6 +56,8 @@ function [ss, logLik, postDist] = inferFA(data, params, options)
     else
       ss.sumPhi = sum((y - params.beta*meanPost).^2,2) + N*diag(params.beta*covMatPost*params.beta');
     end
+  else
+    ss = [];
   end
 
   % log Lik
@@ -71,10 +74,12 @@ function [ss, logLik, postDist] = inferFA(data, params, options)
     logPrior = - 0.5*params.lambda*trace(params.noisePrecMat*params.beta*params.beta')...
       - (params.a + 1)*sum(log(diag(params.noiseCovMat)))...
       - params.b*sum(diag(params.noisePrecMat));
-    logPriot = logPrior + 0.5*(params.nu0+Dz+1)*logdet(params.precMat) - 0.5*trace(params.S0*params.precMat);
+    logPrior = logPrior + 0.5*(params.nu0+Dz+1)*logdet(params.precMat) - 0.5*trace(params.S0*params.precMat);%KPM
 
     logLik = logLink + logLatent + entrpy + logPrior;
     logLik = logLik/N;
+  else
+    logLik = [];
   end
 
 

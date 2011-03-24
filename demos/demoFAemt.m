@@ -2,48 +2,29 @@
   setSeed(3);
   % number of latent variables
   Dz = 2;
+  
+ 
   % CONTINUOUS DATA FA 
   % initialize 
+   fprintf('\n\n*****demoFAemt cts\n\n')
   opt=struct('Dz', Dz);
   [params0, data] = initFA(data, [], opt);
+  dataC = data; dataC.discrete = [];
   params0.a = 1;
   params0.b = 1;
   % Learn theta with EM algorithm 
-  options = struct('maxNumOfItersLearn', 200,...
+  options = struct('maxNumOfItersLearn', 3,...
                     'lowerBoundTol', 1e-6,...
                     'estimateBeta',1,...% estimate loading factos
                     'estimateMean', 1,...% estimate prior mean (which is equivalent to estimating bias)
                     'estimateCovMat',0);
   funcName = struct('inferFunc', @inferFA, 'maxParamsFunc', @maxParamsFA);
-  [params, logLik] = learnEm(data, funcName, params0, options);
+  [params, logLik] = learnEm(dataC, funcName, params0, options);
   % Obtain p(z|y,\theta)
   [ss, logLik, postDist] = inferFA(data, params, []);
   factorsC = postDist.mean;
-
-  break
   
-  %MIXED-DATA FA 
-  setSeed(3);
-  % 1 of M encoding
-  data.categorical = encodeDataOneOfM(data.discrete, nClass);
-  % initialize
-  opt=struct('Dz', Dz, 'nClass', nClass);
-  [params0, data] = initMixedDataFA(data, [], opt);
-  params0.a = 1;
-  params0.b = 1;
-  % learn theta with EM algorithm
-  options = struct('maxNumOfItersLearn', 200,...
-                    'lowerBoundTol', 1e-6,...
-                    'estimateBeta',1,...% estimate loading factos
-                    'estimateMean', 1,...% estimate prior mean (which is equivalent to estimating bias)
-                    'estimateCovMat',0);
-  funcName = struct('inferFunc', @inferMixedDataFA, 'maxParamsFunc', @maxParamsMixedDataFA);
-  [params, logLik] = learnEm(data, funcName, params0, options);
-  % Obtain p(z|y,\theta)
-  params.psi = randn(size(data.categorical));% initialize variational parameters
-  [ss, logLik, postDist] = inferMixedDataFA(data, params, []);
-  factorsD = postDist.mean;
-
+  figure(2);clf
   % PLOT
   [D,N] = size(data.continuous);
   nr = 2; nc =2;
@@ -64,10 +45,10 @@
       h(j) = plot(factorsC(1,idx), factorsC(2,idx),'o','color', colors(j,:),'marker',markers{j});
     end
     if i == 1
-      %legend('1','2','3','4','5','location','northwest');
+      legend('1','2','3','4','5','location','northwest');
       ht = title('Continuous-Data FA: #Cylinders');
     elseif i == 3
-      %legend('US','Europe','Japan','location','northwest');
+      legend('US','Europe','Japan','location','northwest');
       ht = title('Continuous-Data FA: Country');
     end
     hx = xlabel('Factor 1');
@@ -84,6 +65,33 @@
     count = count + 1;
   end
 
+
+  
+  fprintf('\n\n*****demoFAemt mixed\n\n')
+  %MIXED-DATA FA 
+  setSeed(3);
+  % 1 of M encoding
+  data.categorical = encodeDataOneOfM(data.discrete, nClass);
+  % initialize
+  opt=struct('Dz', Dz, 'nClass', nClass);
+  [params0, data] = initMixedDataFA(data, [], opt);
+  params0.a = 1;
+  params0.b = 1;
+  % learn theta with EM algorithm
+  options = struct('maxNumOfItersLearn', 10,...
+                    'lowerBoundTol', 1e-6,...
+                    'estimateBeta',1,...% estimate loading factos
+                    'estimateMean', 1,...% estimate prior mean (which is equivalent to estimating bias)
+                    'estimateCovMat',0);
+  funcName = struct('inferFunc', @inferMixedDataFA, 'maxParamsFunc', @maxParamsMixedDataFA);
+  [params, logLik] = learnEm(data, funcName, params0, options);
+  % Obtain p(z|y,\theta)
+  params.psi = randn(size(data.categorical));% initialize variational parameters
+  [ss, logLik, postDist] = inferMixedDataFA(data, params, []);
+  factorsD = postDist.mean;
+
+  figure(2);
+  nr = 2; nc =2; count = 3;
   %colors = repmat([1:13]'/14, 1, 3).*repmat([1 1 1], 13, 1);
   for i = [1 3]
     if i == 1
@@ -100,10 +108,10 @@
       h(j) = plot(factorsD(1,idx), factorsD(2,idx),'o','color',colors(j,:),'marker',markers{j});
     end
     if i == 1
-      legend('1','2','3','4','5','location','southeast');
+      legend('1','2','3','4','5','location','northwest');
       ht = title('Mixed-Data FA: #Cylinders');
     elseif i == 3
-      legend('US','Europe','Japan','location','southeast');
+      legend('US','Europe','Japan','location','northwest');
       ht = title('Mixed-Data FA: Country');
     end
     %ylim([-5 0]);
@@ -118,5 +126,5 @@
     clear h;
     count = count + 1;
   end
-  print -djpeg demoAutoFA2.jpeg
+ % print -djpeg demoAutoFA2.jpeg
 

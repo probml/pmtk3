@@ -5,7 +5,9 @@ function [params, logLik] = learnEm(data, funcNames, params, options)
 
 %TODO modify convergence criteria to parameters in a better way
   
-  [lowerBoundTol, maxNumOfItersLearn, debug, display, checkConvergenceIters, checkConvergenceMethod] = myProcessOptions(options,'lowerBoundTol',0.01,'maxNumOfItersLearn',100,'debug', 0, 'display', 1, 'checkConvergenceIters',1, 'checkConvergenceMethod','objFun');
+  [lowerBoundTol, maxNumOfItersLearn, debug, display, checkConvergenceIters, checkConvergenceMethod] = ...
+    myProcessOptions(options,'lowerBoundTol',0.01,'maxNumOfItersLearn',20,'debug', 0, 'display', 1, ...
+    'checkConvergenceIters',1, 'checkConvergenceMethod','objFun');
 
   % get function names
   inferFunc = funcNames.inferFunc;
@@ -14,14 +16,8 @@ function [params, logLik] = learnEm(data, funcNames, params, options)
   options.computeSs = 1;
   options.computeLogLik = 1;
 
-  %{
-  disp('learnEm: before E step')
-  params.beta
-  data
-  data.continuous(:,1)
-  funcNames
-  options
-  %}
+ 
+
   
   % iterate
   logLik = [];
@@ -45,8 +41,5 @@ function [params, logLik] = learnEm(data, funcNames, params, options)
     % maximize 
     params = maxParamsFunc(ss, data, params, options);
   end
-
-  disp('learnEm: after M step')
-  params.beta
   
 end

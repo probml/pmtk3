@@ -10,7 +10,7 @@ function [pred, logLik] = imputeMissingMixedDataFA_ver1(func, data, params, opti
   Dz = length(params.mean);
 
   % set options for inference
-  options.maxItersInfer = 20;
+  options.maxItersInfer = 10; % 20;
   options.computeSs = 0;
   options.computeLogLik = computeLogLik;
 
@@ -27,8 +27,10 @@ function [pred, logLik] = imputeMissingMixedDataFA_ver1(func, data, params, opti
   end
 
   % inference
+  fprintf('imputeMissingMixedDataFA_ver1: inference\n');
   [ss, logLik, postDist] = func(data, params, options);
-
+  fprintf('imputeMissingMixedDataFA_ver1: prediction\n');
+   
   % impute continuous values
   if Dc >0
     pred.continuous = data.continuous;
@@ -80,7 +82,7 @@ function [pred, logLik] = imputeMissingMixedDataFA_ver1(func, data, params, opti
     M = params.nClass -1;
     ym = data.categorical;
     pred.categorical = data.categorical;
-    for d = 1:length(M)
+    for d = 1:numel(params.nClass)
       idx = sum(M(1:d-1))+1:sum(M(1:d));
       miss_d = find(sum(isnan(ym(idx,:)),1));
       beta_d = params.betaMult(idx,:);

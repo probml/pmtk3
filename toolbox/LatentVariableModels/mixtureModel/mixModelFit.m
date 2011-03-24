@@ -12,6 +12,8 @@ function [model, loglikHist] = mixModelFit(data, nmix, type, varargin)
 % type     - a string, either 'gauss', 'student', or 'discrete'
 %            note that 'discrete' means a product of discrete distributions,
 %            hence data can (optionally) be vector valued.
+% If discrete, we require the observed features to have the same
+% number of states/ levels.
 %
 %% Optional named Inputs
 %
