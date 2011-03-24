@@ -5,7 +5,15 @@
 %% Data
 % labels is N*D, where labels(n,d) in {1..Nstates(d)}
 
-dataName = 'temperature';
+
+Nfolds = 1;
+% pcTrain and pcTest do not need to sum to one
+% This way, you can use a fraction of the overall data
+pcTrain = 0.5; pcTest = 0.5;
+pcMissing =  0.5;
+
+%dataName = 'temperature';
+dataName = 'ases';
 switch dataName
   case 'newsgroups'
   loadData('20news_w100');
@@ -45,6 +53,41 @@ switch dataName
     D = size(labels,2);
     nodeNames = cellfun(@(d) sprintf('n%d', d), num2cell(1:D), 'uniformoutput', false);
     Nstates = nunique(labels(:))*ones(1,numel(nodeNames));
+    
+  case 'ases'
+     %a = importdata([dirName 'asesLarge.txt']);
+    %Y = a.data;
+    load('ases.mat'); % Y is 18243x43, names 1x53 cell
+    %  remove rows with any missing values
+    idx = find(~sum(isnan(Y),2));
+    X = Y(idx,:); % 8735 * 53
+    % take a specific country
+    name = 'ases';
+    switch name
+    case 'ases'
+      idx = find(X(:,2) == 2); 
+    case 'asesUK'
+      idx = find(X(:,1) == 10); 
+    case 'asesFrance'
+      idx = find(X(:,1) == 12); 
+    case 'asesGermany'
+      idx = find(X(:,1) == 13); 
+    case 'asesDeveloping'
+      idx = find(X(:,1) == 1); 
+    case 'asesDeveloped'
+      idx = find(X(:,2) == 2); 
+    end
+    X = X(idx,:);
+    labels = X(:,[3:44]);
+    names = names(3:44);
+    nClass = max(labels,[],1);
+    % currently the code assumes all nodes have the same #values
+    % So we extract features 
+    ndx = find(nClass==4);
+    labels = labels(:, ndx); % 5347 * 17
+    names = names(ndx);
+    nodeNames = names;
+    Nstates = 4*ones(1,numel(nodeNames));
 end 
 isbinary =  all(Nstates==2)
 
@@ -155,7 +198,7 @@ methods(m).logprobFn = @(model, labels) mrf2Logprob(model, labels);
 
 %%%%%%%%%%%%%% Mix
 
-%{
+
 m = m + 1;
 methods(m).modelname = 'mix40';
 methods(m).fitFn = @(labels) mixModelFit(labels, 40, 'discrete', 'maxIter', 20, 'verbose', false);
@@ -177,7 +220,7 @@ methods(m).modelname = 'mix80';
 methods(m).fitFn = @(labels) mixModelFit(labels, 80, 'discrete', 'maxIter', 20, 'verbose', true);
 methods(m).logprobFn = @(model, labels) mixModelLogprob(model, labels);
 methods(m).predictMissingFn = @(model, labels) mixModelPredictMissing(model, labels);
-%}
+
 
 
 %%%%%%%%%%%%%% Categorical FA
@@ -202,25 +245,17 @@ methods(m).predictMissingFn = @(model, labels) catFApredictMissing(model, labels
 
 
 m = m + 1;
-methods(m).modelname = 'catFA-80';
-methods(m).fitFn = @(labels) catFAfit(labels, [],  80,  'nlevels', Nstates, 'maxIter', 200, 'verbose', true);
+methods(m).modelname = 'catFA-50';
+methods(m).fitFn = @(labels) catFAfit(labels, [],  50,  'nlevels', Nstates, 'maxIter', 200, 'verbose', true);
 methods(m).logprobFn = @(model, labels) argout(3, @catFAinferLatent, model, labels, []);
 methods(m).predictMissingFn = @(model, labels) catFApredictMissing(model, labels, []);
 
 
 m = m + 1;
-methods(m).modelname = 'catFA-150';
-methods(m).fitFn = @(labels) catFAfit(labels, [],  150,  'nlevels', Nstates, 'maxIter', 200, 'verbose', true);
+methods(m).modelname = 'catFA-100';
+methods(m).fitFn = @(labels) catFAfit(labels, [],  100,  'nlevels', Nstates, 'maxIter', 200, 'verbose', true);
 methods(m).logprobFn = @(model, labels) argout(3, @catFAinferLatent, model, labels, []);
 methods(m).predictMissingFn = @(model, labels) catFApredictMissing(model, labels, []);
-
-
-m = m + 1;
-methods(m).modelname = 'catFA-300';
-methods(m).fitFn = @(labels) catFAfit(labels, [],  300,  'nlevels', Nstates, 'maxIter', 200, 'verbose', true);
-methods(m).logprobFn = @(model, labels) argout(3, @catFAinferLatent, model, labels, []);
-methods(m).predictMissingFn = @(model, labels) catFApredictMissing(model, labels, []);
-
 
 
 Nmethods = numel(methods);
@@ -229,10 +264,6 @@ Nmethods = numel(methods);
 %% CV
 setSeed(0);
 N = size(labels, 1)
-% pcTrain and pcTest do not need to sum to one
-% This way, you can use a fraction of the overall data
-pcTrain = 0.25; pcTest = 0.25;
-Nfolds = 1;
 if Nfolds == 1
   % it is important to shuffle the rows to eliminate ordering effects
   % (the newsgroup data is sorted by category)
@@ -255,7 +286,7 @@ end
 
 loglik_models = zeros(Nfolds, Nmethods);
 imputation_err_models = zeros(Nfolds, Nmethods);
-pcMissing =  0.25; 
+ 
 
 for fold=1:Nfolds
 
