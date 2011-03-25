@@ -13,7 +13,7 @@ pcTrain = 0.5; pcTest = 0.5;
 pcMissing =  0.5;
 
 %dataName = 'temperature';
-dataName = 'ases';
+dataName = 'SUN09';
 switch dataName
   case 'newsgroups'
   loadData('20news_w100');
@@ -199,6 +199,7 @@ methods(m).logprobFn = @(model, labels) mrf2Logprob(model, labels);
 %%%%%%%%%%%%%% Mix
 
 
+%{
 m = m + 1;
 methods(m).modelname = 'mix40';
 methods(m).fitFn = @(labels) mixModelFit(labels, 40, 'discrete', 'maxIter', 20, 'verbose', false);
@@ -213,13 +214,15 @@ methods(m).fitFn = @(labels) mixModelFit(labels, 60, 'discrete', 'maxIter', 20, 
 methods(m).logprobFn = @(model, labels) mixModelLogprob(model, labels);
 methods(m).predictMissingFn = @(model, labels) mixModelPredictMissing(model, labels);
 
+%}
 
 
 m = m + 1;
-methods(m).modelname = 'mix80';
-methods(m).fitFn = @(labels) mixModelFit(labels, 80, 'discrete', 'maxIter', 20, 'verbose', true);
+methods(m).modelname = 'mix120';
+methods(m).fitFn = @(labels) mixModelFit(labels, 120, 'discrete', 'maxIter', 20, 'verbose', false);
 methods(m).logprobFn = @(model, labels) mixModelLogprob(model, labels);
 methods(m).predictMissingFn = @(model, labels) mixModelPredictMissing(model, labels);
+
 
 
 
@@ -244,18 +247,20 @@ methods(m).predictMissingFn = @(model, labels) catFApredictMissing(model, labels
 
 
 
+
 m = m + 1;
-methods(m).modelname = 'catFA-50';
-methods(m).fitFn = @(labels) catFAfit(labels, [],  50,  'nlevels', Nstates, 'maxIter', 200, 'verbose', true);
+methods(m).modelname = 'catFA-100-iter1000';
+methods(m).fitFn = @(labels) catFAfit(labels, [],  100,  'nlevels', Nstates, 'maxIter', 1000, 'verbose', true);
 methods(m).logprobFn = @(model, labels) argout(3, @catFAinferLatent, model, labels, []);
 methods(m).predictMissingFn = @(model, labels) catFApredictMissing(model, labels, []);
 
 
 m = m + 1;
-methods(m).modelname = 'catFA-100';
-methods(m).fitFn = @(labels) catFAfit(labels, [],  100,  'nlevels', Nstates, 'maxIter', 200, 'verbose', true);
+methods(m).modelname = 'catFA-200-iter500';
+methods(m).fitFn = @(labels) catFAfit(labels, [],  200,  'nlevels', Nstates, 'maxIter', 500, 'verbose', true);
 methods(m).logprobFn = @(model, labels) argout(3, @catFAinferLatent, model, labels, []);
 methods(m).predictMissingFn = @(model, labels) catFApredictMissing(model, labels, []);
+
 
 
 Nmethods = numel(methods);
