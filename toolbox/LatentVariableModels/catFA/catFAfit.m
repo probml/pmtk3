@@ -10,7 +10,7 @@ function [model, loglikTrace] = catFAfit(discreteData, ctsData, Dz, varargin)
 % loglikTrace(t) is lower bound on loglik at iteration t
 
 
-[maxIter, nClass, verbose] = process_options(varargin, 'maxIter', 20, ...
+[maxIter, nClass, verbose] = process_options(varargin, 'maxIter', 100, ...
   'nlevels', [], 'verbose', true);
 
 % data.foo stores cases in columns, not rows
@@ -30,24 +30,28 @@ if isempty(nClass)
 end
 model.nClass = nClass;
 
+%{
 % cata.categorical: Dm*sum(nclass-1) * N
 if ~isempty(data.discrete)
   data.categorical = encodeDataOneOfM(data.discrete, nClass);
 end
-
+%}
   
 opt=struct('Dz', Dz, 'nClass', nClass, 'initMethod', 'random');
 if (Dm+Db)==0 % cts only
+  data.categorical = [];
   [params0, data] = initFA(data, [], opt);
 else
+  data.categorical = data.discrete;
+  data.discrete = [];
   [params0, data] = initMixedDataFA(data, [], opt);
 end
 % prior for noise variance
 params0.a = 1;
 params0.b = 1;
-params0.lambda = 0.001; % L2 regularization for regression weights
+%params0.lambda = 0.001; % L2 regularization for regression weights
 options = struct('maxNumOfItersLearn', maxIter,  'lowerBoundTol', 1e-6, ...
-  'estimateBeta', 1, 'estimateMean', 1, 'estimateCovMat',0, 'display', verbose);
+  'estimateBeta', 1, 'estimateCovMat',0, 'display', verbose);
 
 
 missing = any(isnan(data.discrete(:))) || any(isnan(data.binary(:))) || ...
@@ -63,6 +67,40 @@ else
   end
   
 end
+
+%{
+% From Em'ts learnExpt
+
+case 'gaussFA'
+          data.categorical = [];
+          [params0, data] = initMixedDataFA(data, [], opt);
+          options.estimateBeta = 1;
+          options.estimateCovMat = 0;
+
+ case 'disGaussFA'
+          data.categorical= data.discrete;
+          data.discrete = [];
+          [params0, data] = initMixedDataFA(data, [], opt);
+          options.estimateBeta = 1;
+          options.estimateCovMat = 0;
+
+        case 'disGaussFA_jaakkola'
+          data.binary = data.discrete;
+          data.discrete = [];
+          [params0, data] = initMixedDataFA(data, [], opt);
+          options.estimateBeta = 1;
+          options.estimateCovMat = 0;
+          inferFuncName = @inferMixedDataFA_jaakkola;
+
+ params0.a = 1;
+      params0.b = 1;
+      % learn params
+      funcName = struct('inferFunc', inferFuncName, 'maxParamsFunc', @maxParamsMixedDataFA);
+      [params, trainLogLik] = learnEm(data, funcName, params0, options);
+      params.psi = [];
+      params.xi = [];
+      tt = toc;
+  %}
 
 [params, loglikTrace] = learnEm(data, funcName, params0, options);
 params.psi = []; % save space - remove params of variational posterior

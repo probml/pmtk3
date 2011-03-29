@@ -277,7 +277,7 @@ if Nfolds == 1
   trainfolds{1}  = perm(1:stop);
   stop2 = floor(N*pcTest);
   testfolds{1} = perm(stop+1: stop+stop2);
-  
+  fprintf('train=1:%d, test = %d:%dn', stop, stop+1, stop+stop2);
   %trainfolds{1} = 1:N;
   %testfolds{1} = 1:N;
   
@@ -288,6 +288,35 @@ else
   randomize = true;
   [trainfolds, testfolds] = Kfold(N, Nfolds, randomize);
 end
+
+%{
+% From Emt's processData
+ % split test and train data
+  [Dc,Nc] = size(data.continuous);
+  [Dd,Nd] = size(data.discrete);
+  N = max(Nc,Nd);
+  nTrain = ceil(ratio*N);
+  idx = randperm(N);
+  if Dc>0
+    data.continuousTest = data.continuous(:,idx(nTrain+1:end));
+    data.continuousTestTruth = data.continuous(:,idx(nTrain+1:end));
+    data.continuous = data.continuous(:,idx(1:nTrain));
+  else
+    data.continuousTest = [];
+    data.continuousTestTruth = [];
+    data.continuous = [];
+  end
+  if Dd>0
+    data.discreteTest = data.discrete(:,idx(nTrain+1:end));
+    data.discreteTestTruth=data.discrete(:,idx(nTrain+1:end));
+    data.discrete = data.discrete(:,idx(1:nTrain));
+  else
+    data.discreteTest = [];
+    data.discreteTestTruth = [];
+    data.discrete = [];
+  end
+  data.idx = idx;
+%}
 
 loglik_models = zeros(Nfolds, Nmethods);
 imputation_err_models = zeros(Nfolds, Nmethods);
@@ -304,11 +333,53 @@ for fold=1:Nfolds
     fold, Nfolds, Ntrain, Ntest);
  
   
-  missingMask = rand(Ntest, Nnodes) >= (1-pcMissing);
+  missingMask = rand(Ntest, Nnodes) < pcMissing;
   test.labelsMasked = test.labels;
   test.labelsMasked(missingMask) = nan;
  
   
+  %{
+  % From imputeExpt_2
+  % create missing data in the test set
+  ycT = data.continuousTestTruth;
+  ydT = data.discreteTestTruth;
+  testData.continuous = ycT;
+  testData.discrete = ydT;
+  switch imputeName
+  case 'randomContinuous'
+    % random missing in continuous data
+    if ~isempty(ycT)
+      miss = (rand(size(ycT))<missProbC);
+      testData.continuous(miss) = NaN;
+    end
+  case 'randomDiscrete'
+    % random missing in discrete data
+    if ~isempty(ydT)
+      miss = rand(size(ydT))<missProbD;
+      testData.discrete(miss) = NaN;
+    end
+  case 'randomMixed'
+    % random missing in both
+    if ~isempty(ydT)
+      miss = rand(size(ydT))<missProbC;
+      testData.discrete(miss) = NaN;
+    end
+    if ~isempty(ycT)
+      miss = rand(size(ycT))<missProbD;
+      testData.continuous(miss) = NaN;
+    end
+  case 'artificial'
+    % artificial missingness
+    testData.continuous = data.continuousTest;
+    testData.discrete = data.discreteTest;
+  otherwise
+    error('no such name');
+  end
+
+  yd = testData.discrete;
+  yc = testData.continuous;
+  %}
+ 
   models = cell(1, Nmethods);
   methodNames = cell(1, Nmethods);
   for m=1:Nmethods
@@ -330,6 +401,7 @@ for fold=1:Nfolds
       %probOn = pred(:,:,2);  
       %imputationErr(m) = sum(sum((probOn-test.tags).^2))/Ntest; 
       
+      %{
       % for K-ary data - MSE not so meaningful
       % so we use cross entropy
       [~,truth3d] = dummyEncoding(test.labels, Nstates);
@@ -340,7 +412,36 @@ for fold=1:Nfolds
       % This does not affect the relative performance of methods
       logprob = log(sum(truth3d .* pred, 3)); % N*D
       logprobAvg = sum(sum(logprob(missingMask)))/sum(missingMask(:));
-       
+      %}
+        
+      % Emt's evaluation code
+      
+      nClass = Nstates;
+       yd = test.labelsMasked';
+       ydT = test.labels';
+        ydT_oneOfM = encodeDataOneOfM(ydT, nClass, 'M');
+        yd_oneOfM = encodeDataOneOfM(yd, nClass, 'M');
+        N = size(yd_oneOfM,2);
+      miss = isnan(yd_oneOfM);
+      yhatD = pred.discrete;
+      entrpyD = -sum(ydT_oneOfM(miss).*log2(yhatD(miss)))/(N*length(nClass));
+      logprobAvg = entrpyD;
+      
+      %{
+      % From imputeExpt_2
+      switch imputeName
+        case {'randomDiscrete','randomMixed','artificial'}
+          if ~isempty(testData.discrete)
+            ydT_oneOfM = encodeDataOneOfM(ydT, nClass, 'M');
+            yd_oneOfM = encodeDataOneOfM(yd, nClass, 'M');
+            N = size(yd_oneOfM,2);
+            miss = isnan(yd_oneOfM);
+            yhatD = pred.discrete;
+            mseD = mean((ydT_oneOfM(miss) - yhatD(miss)).^2);
+            entrpyD = -sum(ydT_oneOfM(miss).*log2(yhatD(miss)))/(N*length(nClass));
+          end
+       %}
+      
       imputationErr(m) = -logprobAvg;
     end
   end
