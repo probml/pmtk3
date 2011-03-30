@@ -122,6 +122,19 @@ function [params, data] = initMixedDataFA(data, params, options)
     params.beta = [params.beta; params.betaMult];
     % variational parameters
     params.psi = params.betaMult*repmat(params.mean, 1,N);
+    
+    %{
+    % KPM
+    assert(Dm == length(params.nClass))
+    if all(params.nClass == params.nClass(1))
+      Md = nClass(1)-1; MM = sum(nClass-1);
+      params.diagA = blkdiag(params.A{:}); 
+      assert(isequal(size(params.diagA), [MM MM]))
+    else
+      params.diagA = [];
+    end
+    % end KPM
+    %}
   end
 
   % precompute y.^2 and add it to the data

@@ -1,15 +1,16 @@
 % Compare various joint density models on categorical (mostly binary) datsets
-% We visualize the learned structuers and evaluated loglik on test set
+% We visualize the learned structuers and evaluate loglik and
+% imputation error on test sets
 
 
 %% Data
 % labels is N*D, where labels(n,d) in {1..Nstates(d)}
 
 
-Nfolds = 3;
+Nfolds = 1;
 % pcTrain and pcTest do not need to sum to one
 % This way, you can use a fraction of the overall data
-pcTrain = 0.25; pcTest = 0.25;
+pcTrain = 0.10; pcTest = 0.25;
 pcMissing =  0.3;
 
 %dataName = 'temperature';
@@ -89,7 +90,8 @@ switch dataName
     nodeNames = names;
     Nstates = 4*ones(1,numel(nodeNames));
 end 
-isbinary =  all(Nstates==2)
+isbinary =  all(Nstates==2);
+nClass = Nstates;
 
 % Where to store plots (set figFolder = [] to turn of printing)
 if isunix
@@ -199,45 +201,35 @@ methods(m).logprobFn = @(model, labels) mrf2Logprob(model, labels);
 %%%%%%%%%%%%%% Mix
 
 
-
-m = m + 1;
-methods(m).modelname = 'mix20';
-methods(m).fitFn = @(labels) mixModelFit(labels, 20, 'discrete', 'maxIter', 50, 'verbose', false);
-methods(m).logprobFn = @(model, labels) mixModelLogprob(model, labels);
-methods(m).predictMissingFn = @(model, labels) mixModelPredictMissing(model, labels);
-
-
-m = m + 1;
-methods(m).modelname = 'mix40';
-methods(m).fitFn = @(labels) mixModelFit(labels, 40, 'discrete', 'maxIter', 50, 'verbose', false);
-methods(m).logprobFn = @(model, labels) mixModelLogprob(model, labels);
-methods(m).predictMissingFn = @(model, labels) mixModelPredictMissing(model, labels);
-
-
-
+%{
+Ks = [20, 40];
+for kk=1:numel(Ks)
+  K = Ks(kk);
+  m = m + 1;
+  methods(m).modelname = sprintf('mix%d', K);
+  methods(m).fitFn = @(labels) mixModelFit(labels, K, 'discrete', 'maxIter', 30, 'verbose', false);
+  methods(m).logprobFn = @(model, labels) mixModelLogprob(model, labels);
+  methods(m).predictMissingFn = @(model, labels) mixModelPredictMissing(model, labels);
+end 
+%}
 
 
 %%%%%%%%%%%%%% Categorical FA
 %[mu, Sigma, loglikCases, loglikAvg] = catFAinferLatent(model,discreteData, ctsData)
 %[predD, predC] = catFApredictMissing(model, testData)
+%methods(m).logprobFn = @(model, labels) argout(3, @catFAinferLatent, model, labels, []);
 
 
-
-m = m + 1;
-methods(m).modelname = 'catFA-20';
-methods(m).fitFn = @(labels) catFAfit(labels, [],  20,  'nlevels', Nstates, ...
-  'maxIter', 50, 'verbose', true, 'nClass', Nstates);
-methods(m).logprobFn = @(model, labels) argout(3, @catFAinferLatent, model, labels, []);
-methods(m).predictMissingFn = @(model, labels) catFApredictMissing(model, labels, []);
-
-
-
-m = m + 1;
-methods(m).modelname = 'catFA-40';
-methods(m).fitFn = @(labels) catFAfit(labels, [],  40,  'nlevels', Nstates, ...
-  'maxIter', 50, 'verbose', true, 'nClass', Nstates);
-methods(m).logprobFn = @(model, labels) argout(3, @catFAinferLatent, model, labels, []);
-methods(m).predictMissingFn = @(model, labels) catFApredictMissing(model, labels, []);
+Ks = [20];
+for kk=1:numel(Ks)
+  K = Ks(kk);
+  m = m + 1;
+  methods(m).modelname = sprintf('catFA-%d', K);
+  methods(m).fitFn = @(labels) catFAfit(labels, [],  K,  'nClass', Nstates, ...
+    'maxIter', 3, 'verbose', true, 'nClass', Nstates);
+  methods(m).logprobFn = @(model, labels) nan(size(labels,1),1);
+  methods(m).predictMissingFn = @(model, labels) catFApredictMissing(model, labels, []);
+end
 
 
 
@@ -258,43 +250,11 @@ if Nfolds == 1
   fprintf('train=1:%d, test = %d:%d\n', stop, stop+1, stop+stop2);
   %trainfolds{1} = 1:N;
   %testfolds{1} = 1:N;
-  
-  % For speed, use a small set of data
-  %trainfolds{1} = perm(1:5000);
-  %testfolds{1} = perm(5000:8000); %trainfolds{1};
 else
   randomize = true;
   [trainfolds, testfolds] = Kfold(N, Nfolds, randomize);
 end
 
-%{
-% From Emt's processData
- % split test and train data
-  [Dc,Nc] = size(data.continuous);
-  [Dd,Nd] = size(data.discrete);
-  N = max(Nc,Nd);
-  nTrain = ceil(ratio*N);
-  idx = randperm(N);
-  if Dc>0
-    data.continuousTest = data.continuous(:,idx(nTrain+1:end));
-    data.continuousTestTruth = data.continuous(:,idx(nTrain+1:end));
-    data.continuous = data.continuous(:,idx(1:nTrain));
-  else
-    data.continuousTest = [];
-    data.continuousTestTruth = [];
-    data.continuous = [];
-  end
-  if Dd>0
-    data.discreteTest = data.discrete(:,idx(nTrain+1:end));
-    data.discreteTestTruth=data.discrete(:,idx(nTrain+1:end));
-    data.discrete = data.discrete(:,idx(1:nTrain));
-  else
-    data.discreteTest = [];
-    data.discreteTestTruth = [];
-    data.discrete = [];
-  end
-  data.idx = idx;
-%}
 
 loglik_models = zeros(Nfolds, Nmethods);
 imputation_err_models = zeros(Nfolds, Nmethods);
@@ -315,48 +275,6 @@ for fold=1:Nfolds
   test.labelsMasked = test.labels;
   test.labelsMasked(missingMask) = nan;
  
-  
-  %{
-  % From imputeExpt_2
-  % create missing data in the test set
-  ycT = data.continuousTestTruth;
-  ydT = data.discreteTestTruth;
-  testData.continuous = ycT;
-  testData.discrete = ydT;
-  switch imputeName
-  case 'randomContinuous'
-    % random missing in continuous data
-    if ~isempty(ycT)
-      miss = (rand(size(ycT))<missProbC);
-      testData.continuous(miss) = NaN;
-    end
-  case 'randomDiscrete'
-    % random missing in discrete data
-    if ~isempty(ydT)
-      miss = rand(size(ydT))<missProbD;
-      testData.discrete(miss) = NaN;
-    end
-  case 'randomMixed'
-    % random missing in both
-    if ~isempty(ydT)
-      miss = rand(size(ydT))<missProbC;
-      testData.discrete(miss) = NaN;
-    end
-    if ~isempty(ycT)
-      miss = rand(size(ycT))<missProbD;
-      testData.continuous(miss) = NaN;
-    end
-  case 'artificial'
-    % artificial missingness
-    testData.continuous = data.continuousTest;
-    testData.discrete = data.discreteTest;
-  otherwise
-    error('no such name');
-  end
-
-  yd = testData.discrete;
-  yc = testData.continuous;
-  %}
  
   models = cell(1, Nmethods);
   methodNames = cell(1, Nmethods);
@@ -379,6 +297,8 @@ for fold=1:Nfolds
       %probOn = pred(:,:,2);  
       %imputationErr(m) = sum(sum((probOn-test.tags).^2))/Ntest; 
       
+
+      %{
       % for K-ary data - MSE not so meaningful
       % so we use cross entropy
       [~,truth3d] = dummyEncoding(test.labels, Nstates);
@@ -390,23 +310,25 @@ for fold=1:Nfolds
       %logprob = log(sum(truth3d .* pred, 3)); % N*D
       %logprobAvg = sum(sum(logprob(missingMask)))/sum(missingMask(:));
       
-      logprob = sum(truth3d .* log(pred+eps), 3); % logprob(n,d)
-      logprobAvg = sum(sum(logprob(missingMask)))/sum(missingMask(:))
-      
+
+      missingMask3d = repmat(missingMask, [1 1 max(Nstates)]);
+      logprob = sum(truth3d(missingMask3d) .* log2(pred(missingMask3d)+eps), 3); % logprob(n,d)
+      logprobAvg = sum(sum(logprob))/(Ntest*length(nClass))
+      %}
       
       % Emt's evaluation code
-      
       nClass = Nstates;
-       yd = test.labelsMasked';
-       ydT = test.labels';
-        ydT_oneOfM = encodeDataOneOfM(ydT, nClass, 'M');
-        yd_oneOfM = encodeDataOneOfM(yd, nClass, 'M');
-        N = size(yd_oneOfM,2);
+      yd = test.labelsMasked';
+      ydT = test.labels';
+      ydT_oneOfM = encodeDataOneOfM(ydT, nClass, 'M');
+      yd_oneOfM = encodeDataOneOfM(yd, nClass, 'M');
+      N = size(yd_oneOfM,2);
       miss = isnan(yd_oneOfM);
+      % pred is N * D * K
       %yhatD = pred.discrete;
       yhatD = reshape(pred+eps, [Ntest sum(nClass)])';
-      entrpyD = -sum(ydT_oneOfM(miss).*log2(yhatD(miss)))/(N*length(nClass))
-        
+      entrpyD = -sum(ydT_oneOfM(miss).*log2(yhatD(miss)))/(Ntest*length(nClass))
+      
       
       imputationErr(m) =  entrpyD; % -logprobAvg;
     end
@@ -422,10 +344,11 @@ end % fold
 
 [styles, colors, symbols, plotstr] =  plotColors();
 
-%{
-% NLL - exclude catFA, which cannot compute valid loglik
+
+% NLL - for catFA, which cannot compute valid loglik,
+% we use NaNs
 figure;
-ndx = 1:2
+ndx = 1:Nmethods
 if Nfolds==1
   plot(-loglik_models(ndx), 'x', 'markersize', 12, 'linewidth', 2)
   axis_pct
@@ -438,7 +361,7 @@ set(gca, 'xticklabel', methodNames(ndx))
 title(sprintf('negloglik on %s', dataName))
 fname = fullfile(figFolder, sprintf('negloglik-%s.png', dataName));
 print(gcf, '-dpng', fname);
-%}
+
 
 % imputation error
 figure;

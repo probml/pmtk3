@@ -36,7 +36,7 @@ if ~isempty(data.discrete)
   data.categorical = encodeDataOneOfM(data.discrete, nClass);
 end
 
-setSeed(0);
+
   
 opt=struct('Dz', Dz, 's0', 0.01, 'nClass', nClass, 'initMethod', 'random');
 if (Dm+Db)==0 % cts only
@@ -52,54 +52,25 @@ params0.b = 1;
 options = struct('maxNumOfItersLearn', maxIter,  'lowerBoundTol', 1e-6, ...
   'estimateBeta', 1, 'estimateCovMat',0, 'display', verbose);
 
+useJaakkola = false;
 
 missing = any(isnan(data.discrete(:))) || any(isnan(data.binary(:))) || ...
   any(isnan(data.continuous(:)));
 if missing
   funcName = struct('inferFunc', @inferMixedDataFA_miss, 'maxParamsFunc', @maxParamsMixedDataFA)
 else
-  % the non missing version is slightly faster
+  % the non missing version is faster
   if (Dm+Db)==0 % cts only
     funcName = struct('inferFunc', @inferFA, 'maxParamsFunc', @maxParamsFA);
+  elseif useJaakkola % binary and possibly gaussian
+    data.binary = data.discrete;
+    data.discrete = [];
+    funcName = struct('inferFunc', @inferMixedDataFA_jaakkola, 'maxParamsFunc', @maxParamsMixedDataFA);
   else
     funcName = struct('inferFunc', @inferMixedDataFA, 'maxParamsFunc', @maxParamsMixedDataFA);
   end
   
 end
-
-%{
-% From Em'ts learnExpt
-
-case 'gaussFA'
-          data.categorical = [];
-          [params0, data] = initMixedDataFA(data, [], opt);
-          options.estimateBeta = 1;
-          options.estimateCovMat = 0;
-
- case 'disGaussFA'
-          data.categorical= data.discrete;
-          data.discrete = [];
-          [params0, data] = initMixedDataFA(data, [], opt);
-          options.estimateBeta = 1;
-          options.estimateCovMat = 0;
-
-        case 'disGaussFA_jaakkola'
-          data.binary = data.discrete;
-          data.discrete = [];
-          [params0, data] = initMixedDataFA(data, [], opt);
-          options.estimateBeta = 1;
-          options.estimateCovMat = 0;
-          inferFuncName = @inferMixedDataFA_jaakkola;
-
- params0.a = 1;
-      params0.b = 1;
-      % learn params
-      funcName = struct('inferFunc', inferFuncName, 'maxParamsFunc', @maxParamsMixedDataFA);
-      [params, trainLogLik] = learnEm(data, funcName, params0, options);
-      params.psi = [];
-      params.xi = [];
-      tt = toc;
-  %}
 
 
 [params, loglikTrace] = learnEm(data, funcName, params0, options);

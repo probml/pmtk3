@@ -88,14 +88,24 @@ function [ss, logLik, postDist] = inferMixedDataFA(data, params, options)
     % optimize variational params
     for iter = 1:maxItersInfer
       %fprintf('inferMixedDataFA: iter %d of %d\n', iter, maxItersInfer);
-      b = [];
+ 
+      %% KPM 
+      % Unfortunately we cannot vectorize over both d and n
+      % since we need to normalize each d separately
+      % This is rather slow
+      %b2 = [];
+      b = zeros(sum(params.nClass-1), N);
       for d = 1:length(M)
         idx = sum(M(1:d-1))+1:sum(M(1:d));
         psi_d = psi(idx,:);
         smPsi = exp(myLogSoftMax([psi_d; zeros(1,N)]));
         Apsi = params.A{d}*psi_d;
-        b = [b; Apsi - smPsi(1:end-1,:)];
+        %b2 = [b2; Apsi - smPsi(1:end-1,:)];
+        b(idx, :) = Apsi - smPsi(1:end-1,:);
       end
+      %assert(approxeq(b, b2))
+      %% end KPM
+      
       informLikMult = params.betaMult'*(data.categorical + b); 
       meanPost = covMatPost*(bsxfun(@plus, informLik + informLikMult, informLatent));
       psiOld = psi;
