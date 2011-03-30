@@ -6,14 +6,14 @@
 % labels is N*D, where labels(n,d) in {1..Nstates(d)}
 
 
-Nfolds = 1;
+Nfolds = 3;
 % pcTrain and pcTest do not need to sum to one
 % This way, you can use a fraction of the overall data
-pcTrain = 0.5; pcTest = 0.5;
-pcMissing =  0.5;
+pcTrain = 0.25; pcTest = 0.25;
+pcMissing =  0.3;
 
 %dataName = 'temperature';
-dataName = 'SUN09';
+dataName = 'newsgroups';
 switch dataName
   case 'newsgroups'
   loadData('20news_w100');
@@ -21,7 +21,7 @@ switch dataName
   labels = double(full(documents))'+1; % 16,642 documents by 100 words  (sparse logical  matrix)
   nodeNames = wordlist;
   Nstates = 2*ones(1,numel(nodeNames));
-
+  
   case 'SUN09'
   loadData('sceneContextSUN09', 'ismatfile', false)
   load('SUN09data')
@@ -199,65 +199,43 @@ methods(m).logprobFn = @(model, labels) mrf2Logprob(model, labels);
 %%%%%%%%%%%%%% Mix
 
 
-%{
-m = m + 1;
-methods(m).modelname = 'mix40';
-methods(m).fitFn = @(labels) mixModelFit(labels, 40, 'discrete', 'maxIter', 20, 'verbose', false);
-methods(m).logprobFn = @(model, labels) mixModelLogprob(model, labels);
-methods(m).predictMissingFn = @(model, labels) mixModelPredictMissing(model, labels);
-
-
 
 m = m + 1;
-methods(m).modelname = 'mix60';
-methods(m).fitFn = @(labels) mixModelFit(labels, 60, 'discrete', 'maxIter', 20, 'verbose', false);
+methods(m).modelname = 'mix20';
+methods(m).fitFn = @(labels) mixModelFit(labels, 20, 'discrete', 'maxIter', 50, 'verbose', false);
 methods(m).logprobFn = @(model, labels) mixModelLogprob(model, labels);
 methods(m).predictMissingFn = @(model, labels) mixModelPredictMissing(model, labels);
-
-%}
 
 
 m = m + 1;
-methods(m).modelname = 'mix120';
-methods(m).fitFn = @(labels) mixModelFit(labels, 120, 'discrete', 'maxIter', 20, 'verbose', false);
+methods(m).modelname = 'mix40';
+methods(m).fitFn = @(labels) mixModelFit(labels, 40, 'discrete', 'maxIter', 50, 'verbose', false);
 methods(m).logprobFn = @(model, labels) mixModelLogprob(model, labels);
 methods(m).predictMissingFn = @(model, labels) mixModelPredictMissing(model, labels);
+
 
 
 
 
 %%%%%%%%%%%%%% Categorical FA
-
-
-%{
 %[mu, Sigma, loglikCases, loglikAvg] = catFAinferLatent(model,discreteData, ctsData)
 %[predD, predC] = catFApredictMissing(model, testData)
-m = m + 1;
-methods(m).modelname = 'catFA-2';
-methods(m).fitFn = @(labels) catFAfit(labels, [],  2, 'maxIter', 50, 'verbose', false);
-methods(m).logprobFn = @(model, labels) argout(3, @catFAinferLatent, model, labels, []);
-methods(m).predictMissingFn = @(model, labels) catFApredictMissing(model, labels, []);
-
-m = m + 1;
-methods(m).modelname = 'catFA-5';
-methods(m).fitFn = @(labels) catFAfit(labels, [],  5, 'nlevels', Nstates, 'maxIter', 50, 'verbose', false);
-methods(m).logprobFn = @(model, labels) argout(3, @catFAinferLatent, model, labels, []);
-methods(m).predictMissingFn = @(model, labels) catFApredictMissing(model, labels, []);
-%}
-
 
 
 
 m = m + 1;
-methods(m).modelname = 'catFA-100-iter1000';
-methods(m).fitFn = @(labels) catFAfit(labels, [],  100,  'nlevels', Nstates, 'maxIter', 1000, 'verbose', true);
+methods(m).modelname = 'catFA-20';
+methods(m).fitFn = @(labels) catFAfit(labels, [],  20,  'nlevels', Nstates, ...
+  'maxIter', 50, 'verbose', true, 'nClass', Nstates);
 methods(m).logprobFn = @(model, labels) argout(3, @catFAinferLatent, model, labels, []);
 methods(m).predictMissingFn = @(model, labels) catFApredictMissing(model, labels, []);
 
 
+
 m = m + 1;
-methods(m).modelname = 'catFA-200-iter500';
-methods(m).fitFn = @(labels) catFAfit(labels, [],  200,  'nlevels', Nstates, 'maxIter', 500, 'verbose', true);
+methods(m).modelname = 'catFA-40';
+methods(m).fitFn = @(labels) catFAfit(labels, [],  40,  'nlevels', Nstates, ...
+  'maxIter', 50, 'verbose', true, 'nClass', Nstates);
 methods(m).logprobFn = @(model, labels) argout(3, @catFAinferLatent, model, labels, []);
 methods(m).predictMissingFn = @(model, labels) catFApredictMissing(model, labels, []);
 
@@ -277,7 +255,7 @@ if Nfolds == 1
   trainfolds{1}  = perm(1:stop);
   stop2 = floor(N*pcTest);
   testfolds{1} = perm(stop+1: stop+stop2);
-  fprintf('train=1:%d, test = %d:%dn', stop, stop+1, stop+stop2);
+  fprintf('train=1:%d, test = %d:%d\n', stop, stop+1, stop+stop2);
   %trainfolds{1} = 1:N;
   %testfolds{1} = 1:N;
   
@@ -401,7 +379,6 @@ for fold=1:Nfolds
       %probOn = pred(:,:,2);  
       %imputationErr(m) = sum(sum((probOn-test.tags).^2))/Ntest; 
       
-      %{
       % for K-ary data - MSE not so meaningful
       % so we use cross entropy
       [~,truth3d] = dummyEncoding(test.labels, Nstates);
@@ -410,10 +387,13 @@ for fold=1:Nfolds
       
       % Just assess performance on the missing entries
       % This does not affect the relative performance of methods
-      logprob = log(sum(truth3d .* pred, 3)); % N*D
-      logprobAvg = sum(sum(logprob(missingMask)))/sum(missingMask(:));
-      %}
-        
+      %logprob = log(sum(truth3d .* pred, 3)); % N*D
+      %logprobAvg = sum(sum(logprob(missingMask)))/sum(missingMask(:));
+      
+      logprob = sum(truth3d .* log(pred+eps), 3); % logprob(n,d)
+      logprobAvg = sum(sum(logprob(missingMask)))/sum(missingMask(:))
+      
+      
       % Emt's evaluation code
       
       nClass = Nstates;
@@ -423,26 +403,12 @@ for fold=1:Nfolds
         yd_oneOfM = encodeDataOneOfM(yd, nClass, 'M');
         N = size(yd_oneOfM,2);
       miss = isnan(yd_oneOfM);
-      yhatD = pred.discrete;
-      entrpyD = -sum(ydT_oneOfM(miss).*log2(yhatD(miss)))/(N*length(nClass));
-      logprobAvg = entrpyD;
+      %yhatD = pred.discrete;
+      yhatD = reshape(pred+eps, [Ntest sum(nClass)])';
+      entrpyD = -sum(ydT_oneOfM(miss).*log2(yhatD(miss)))/(N*length(nClass))
+        
       
-      %{
-      % From imputeExpt_2
-      switch imputeName
-        case {'randomDiscrete','randomMixed','artificial'}
-          if ~isempty(testData.discrete)
-            ydT_oneOfM = encodeDataOneOfM(ydT, nClass, 'M');
-            yd_oneOfM = encodeDataOneOfM(yd, nClass, 'M');
-            N = size(yd_oneOfM,2);
-            miss = isnan(yd_oneOfM);
-            yhatD = pred.discrete;
-            mseD = mean((ydT_oneOfM(miss) - yhatD(miss)).^2);
-            entrpyD = -sum(ydT_oneOfM(miss).*log2(yhatD(miss)))/(N*length(nClass));
-          end
-       %}
-      
-      imputationErr(m) = -logprobAvg;
+      imputationErr(m) =  entrpyD; % -logprobAvg;
     end
   end
   loglik_models(fold, :) = ll;
@@ -476,7 +442,7 @@ print(gcf, '-dpng', fname);
 
 % imputation error
 figure;
-ndx = 2:Nmethods % exclude indep
+ndx = 1:Nmethods % exclude indep
 if Nfolds==1
   plot(imputation_err_models(ndx), 'x', 'markersize', 12, 'linewidth', 2)
   axis_pct

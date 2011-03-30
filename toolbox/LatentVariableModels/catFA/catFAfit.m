@@ -5,13 +5,13 @@ function [model, loglikTrace] = catFAfit(discreteData, ctsData, Dz, varargin)
 % Any location can be NaN, meaning missing value
 %
 % Dz is the number of latent factors
-% nlevels(j) is the number of categories for discrete variable 
+% nClass(j) is the number of categories for discrete variable 
 %
 % loglikTrace(t) is lower bound on loglik at iteration t
 
 
 [maxIter, nClass, verbose] = process_options(varargin, 'maxIter', 100, ...
-  'nlevels', [], 'verbose', true);
+  'nClass', [], 'verbose', true);
 
 % data.foo stores cases in columns, not rows
 data.discrete = discreteData';
@@ -30,20 +30,19 @@ if isempty(nClass)
 end
 model.nClass = nClass;
 
-%{
+
 % cata.categorical: Dm*sum(nclass-1) * N
 if ~isempty(data.discrete)
   data.categorical = encodeDataOneOfM(data.discrete, nClass);
 end
-%}
+
+setSeed(0);
   
-opt=struct('Dz', Dz, 'nClass', nClass, 'initMethod', 'random');
+opt=struct('Dz', Dz, 's0', 0.01, 'nClass', nClass, 'initMethod', 'random');
 if (Dm+Db)==0 % cts only
   data.categorical = [];
   [params0, data] = initFA(data, [], opt);
 else
-  data.categorical = data.discrete;
-  data.discrete = [];
   [params0, data] = initMixedDataFA(data, [], opt);
 end
 % prior for noise variance
@@ -57,7 +56,7 @@ options = struct('maxNumOfItersLearn', maxIter,  'lowerBoundTol', 1e-6, ...
 missing = any(isnan(data.discrete(:))) || any(isnan(data.binary(:))) || ...
   any(isnan(data.continuous(:)));
 if missing
-  funcName = struct('inferFunc', @inferMixedDataFA_miss, 'maxParamsFunc', @maxParamsMixedDataFA);
+  funcName = struct('inferFunc', @inferMixedDataFA_miss, 'maxParamsFunc', @maxParamsMixedDataFA)
 else
   % the non missing version is slightly faster
   if (Dm+Db)==0 % cts only
@@ -102,10 +101,11 @@ case 'gaussFA'
       tt = toc;
   %}
 
+
 [params, loglikTrace] = learnEm(data, funcName, params0, options);
 params.psi = []; % save space - remove params of variational posterior
 model.params = params;
 
- 
+
   
 end

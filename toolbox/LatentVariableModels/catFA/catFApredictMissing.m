@@ -15,6 +15,7 @@ nClass = params.nClass;
 data.categorical = encodeDataOneOfM(data.discrete, nClass, 'M+1');
 data.binary = [];
 [pred] = imputeMissingMixedDataFA_ver1(@inferMixedDataFA_miss, data, params, []);
+
 predC = pred.continuous';
 
 if isempty(nClass)
@@ -24,7 +25,6 @@ end
 
 N = size(pred.categorical,2);
 D = numel(nClass);
-predD = zeros(N, D, max(nClass));
 Md = nClass - 1;
 pred.discrete = [];
 for d = 1:D
@@ -32,8 +32,8 @@ for d = 1:D
   prob_d = pred.categorical(idx,:); % nclass(d)-1 * N
   prob_d = [prob_d; 1-sum(prob_d,1)]; % add back last class
   pred.discrete = [pred.discrete; prob_d];
-  Kd = nClass(d);
-  predD(:, d, 1:Kd) = reshape(prob_d', [N 1 Kd]);
+  %Kd = nClass(d);
+  %predD(:, d, 1:Kd) = reshape(prob_d', [N 1 Kd]);
 end
 
 % if pred for some category is zero, entropy will be inf. We add eps to avoid
@@ -49,6 +49,13 @@ for d = 1:length(M)
   pred.discrete(idx,:) = p1;
 end
 
+% Now reshape prob.discrete
+predD = zeros(N, D, max(nClass));
+for d=1:D
+  idx = sum(nClass(1:d-1))+1:sum(nClass(1:d));
+  prob_d = pred.discrete(idx, :);
+  predD(:, d, 1:nClass(d)) = reshape(prob_d, [N 1 nClass(d)]);
+end
 
 %{
 % From Emt's imputeExpt_2
