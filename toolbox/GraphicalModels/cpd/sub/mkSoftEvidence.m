@@ -79,6 +79,8 @@ switch lower(localCPD.cpdType)
         
         T  = localCPD.T;
         [nstates, nObsStates, d]  = size(T); 
+        % Make sure data is 1..K ie no 0's
+        Xobs = canonizeLabels(Xobs, 1:nObsStates); % KPM 3/30/11
         logB           = nan(nstates, seqlen);
         logT           = log(T);   % T is of size nstates-nObsStates-d
         L = zeros(nstates, numel(observed), d);
