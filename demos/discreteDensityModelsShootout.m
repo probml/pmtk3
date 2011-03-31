@@ -10,11 +10,12 @@
 Nfolds = 1;
 % pcTrain and pcTest do not need to sum to one
 % This way, you can use a fraction of the overall data
-pcTrain = 0.10; pcTest = 0.25;
+pcTrain = 0.2; pcTest = 0.2;
 pcMissing =  0.3;
 
-%dataName = 'temperature';
-dataName = 'newsgroups';
+%dataName = 'SUN09';
+%dataName = 'newsgroups';
+dataName = 'newsgroups1';
 switch dataName
   case 'newsgroups'
   loadData('20news_w100');
@@ -23,6 +24,19 @@ switch dataName
   nodeNames = wordlist;
   Nstates = 2*ones(1,numel(nodeNames));
   
+  case 'newsgroups1'
+    load(['a3newsgroups.mat']);
+    % select class
+    classId = 1;%there are 4 classes
+    idx = find(newsgroups == classId);
+    data.discrete = documents(:,idx)' + 1;
+    data.discrete = data.discrete'; %KPM
+    data.continuous = [];
+    nClass = max(data.discrete,[],2);
+    labels = data.discrete'; % N*D
+    Nstates = nClass;
+    nodeNames = wordlist;
+    
   case 'SUN09'
   loadData('sceneContextSUN09', 'ismatfile', false)
   load('SUN09data')
@@ -122,6 +136,7 @@ m = m + 1;
 methods(m).modelname = 'tree';
 methods(m).fitFn = @(labels) treegmFit(labels);
 methods(m).logprobFn = @(model, labels) treegmLogprob(model, labels);
+methods(m).predictMissingFn = @(model, labels) treegmPredictMissing(model, labels);
 %}
 
 
@@ -201,8 +216,8 @@ methods(m).logprobFn = @(model, labels) mrf2Logprob(model, labels);
 %%%%%%%%%%%%%% Mix
 
 
-%{
-Ks = [20, 40];
+
+Ks = [1,20,40];
 for kk=1:numel(Ks)
   K = Ks(kk);
   m = m + 1;
@@ -211,7 +226,6 @@ for kk=1:numel(Ks)
   methods(m).logprobFn = @(model, labels) mixModelLogprob(model, labels);
   methods(m).predictMissingFn = @(model, labels) mixModelPredictMissing(model, labels);
 end 
-%}
 
 
 %%%%%%%%%%%%%% Categorical FA
@@ -220,17 +234,17 @@ end
 %methods(m).logprobFn = @(model, labels) argout(3, @catFAinferLatent, model, labels, []);
 
 
-Ks = [20];
+
+Ks = [20,40];
 for kk=1:numel(Ks)
   K = Ks(kk);
   m = m + 1;
   methods(m).modelname = sprintf('catFA-%d', K);
   methods(m).fitFn = @(labels) catFAfit(labels, [],  K,  'nClass', Nstates, ...
-    'maxIter', 3, 'verbose', true, 'nClass', Nstates);
+    'maxIter', 30, 'verbose', true, 'nClass', Nstates);
   methods(m).logprobFn = @(model, labels) nan(size(labels,1),1);
   methods(m).predictMissingFn = @(model, labels) catFApredictMissing(model, labels, []);
 end
-
 
 
 Nmethods = numel(methods);
@@ -247,7 +261,7 @@ if Nfolds == 1
   trainfolds{1}  = perm(1:stop);
   stop2 = floor(N*pcTest);
   testfolds{1} = perm(stop+1: stop+stop2);
-  fprintf('train=1:%d, test = %d:%d\n', stop, stop+1, stop+stop2);
+  %fprintf('train=1:%d, test = %d:%d\n', stop, stop+1, stop+stop2);
   %trainfolds{1} = 1:N;
   %testfolds{1} = 1:N;
 else
@@ -283,8 +297,8 @@ for fold=1:Nfolds
     fprintf('fitting %s\n', methodNames{m});
     models{m} = methods(m).fitFn(train.labels);
   end
+ 
   
-
   ll = zeros(1, Nmethods);
   imputationErr = zeros(1,Nmethods);
   for m=1:Nmethods
@@ -304,19 +318,23 @@ for fold=1:Nfolds
       [~,truth3d] = dummyEncoding(test.labels, Nstates);
       %imputationErr(m) = sum(sum(sum((truth3d-pred).^2)))/Ntest;
       %logprob = sum(sum(log(sum(truth3d .* pred, 3))))/Ntest;
+      logprob = reshape(log2(pred(find(truth3d)) + eps), [Ntest Nnodes]);
+      logprobAvg = mean(logprob(:));
+      logprobAvg2 = mean(logprob(missingMask(:)));
       
       % Just assess performance on the missing entries
       % This does not affect the relative performance of methods
       %logprob = log(sum(truth3d .* pred, 3)); % N*D
       %logprobAvg = sum(sum(logprob(missingMask)))/sum(missingMask(:));
       
-
-      missingMask3d = repmat(missingMask, [1 1 max(Nstates)]);
-      logprob = sum(truth3d(missingMask3d) .* log2(pred(missingMask3d)+eps), 3); % logprob(n,d)
-      logprobAvg = sum(sum(logprob))/(Ntest*length(nClass))
+      
+      %logprob = sum(truth3d(missingMask3d) .* log2(pred(missingMask3d)+eps), 3); % logprob(n,d)
+      %logprobAvg = sum(sum(logprob))/(Ntest*length(nClass))
       %}
       
       % Emt's evaluation code
+      % With this code, the independent model always has lowest
+      % cross entropy - must be a
       nClass = Nstates;
       yd = test.labelsMasked';
       ydT = test.labels';
@@ -325,12 +343,18 @@ for fold=1:Nfolds
       N = size(yd_oneOfM,2);
       miss = isnan(yd_oneOfM);
       % pred is N * D * K
-      %yhatD = pred.discrete;
-      yhatD = reshape(pred+eps, [Ntest sum(nClass)])';
-      entrpyD = -sum(ydT_oneOfM(miss).*log2(yhatD(miss)))/(Ntest*length(nClass))
+      pred2 = permute(pred, [3 2 1]); % K D N
+      pred3 = reshape(pred2, [sum(nClass) Ntest]); % KD * N 
+      %yhatD = reshape(pred+eps, [Ntest sum(nClass)])';
+      yhatD = pred + eps;
+      %entrpyD = -sum(ydT_oneOfM(miss).*log2(yhatD(miss)))/(Ntest*length(nClass))
+      entrpyD = -sum(ydT_oneOfM(miss).*log2(yhatD(miss)))/(sum(miss(:)));
+       
+      %save('imputationDataForEmt.mat', 'test', 'pred', 'truth3d')
       
-      
-      imputationErr(m) =  entrpyD; % -logprobAvg;
+      imputationErr(m) =  entrpyD;
+      %imputationErr(m) =  -logprobAvg;
+      %imputationErr2(m) =  -logprobAvg2;
     end
   end
   loglik_models(fold, :) = ll;
@@ -338,6 +362,31 @@ for fold=1:Nfolds
   
 end % fold
 
+    
+    
+%{
+% Debug - check that tree has correct marginals
+% Compute unconditional marginals from tree
+mTree = strfindCell('tree', methodNames);
+[logZ, nodeBelTree] = treegmInferNodes(models{mTree});
+
+
+% Compare to marginals from indep model
+mIndep = strfindCell('indep', methodNames);
+nodeBelIndep = models{mIndep}.T;
+assert(approxeq(nodeBelIndep, nodeBelTree))
+%}
+
+%{
+% Debug - check that independent model is same
+% as mixture with 1 component
+mMix = strfindCell('mix1', methodNames);
+mIndep = strfindCell('indep', methodNames);
+predIndep = methods(mIndep).predictMissingFn(models{mIndep}, test.labelsMasked); 
+predMix = methods(mMix).predictMissingFn(models{mMix}, test.labelsMasked);
+assert(approxeq(predIndep, predMix))
+%predTree = methods(mTree).predictMissingFn(models{mTree}, test.labelsMasked);
+%}
 
 
 %% Plot performance
@@ -348,7 +397,7 @@ end % fold
 % NLL - for catFA, which cannot compute valid loglik,
 % we use NaNs
 figure;
-ndx = 1:Nmethods
+ndx = 1:Nmethods;
 if Nfolds==1
   plot(-loglik_models(ndx), 'x', 'markersize', 12, 'linewidth', 2)
   axis_pct
@@ -365,7 +414,7 @@ print(gcf, '-dpng', fname);
 
 % imputation error
 figure;
-ndx = 1:Nmethods % exclude indep
+ndx = 1:Nmethods; % exclude indep
 if Nfolds==1
   plot(imputation_err_models(ndx), 'x', 'markersize', 12, 'linewidth', 2)
   axis_pct

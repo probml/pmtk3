@@ -13,6 +13,9 @@ if isscalar(nStates), nStates = model.K*ones(1, D); end
 % First make delta functions for observed entries
 [~, pred] = dummyEncoding(data, nStates);
 
+ndx = (pred==0);
+pred(ndx) = eps; % replace zeros with epsilon
+  
 % Now insert the prior prob into missing entries
 
 for d=1:D

@@ -30,9 +30,21 @@ model.Nstates = size(nodePot,1);
 model.Nnodes = numel(nodePotNdx);
 
 model.root = 1;
-edgeorder = treeMsgOrder(model.adjmat, model.root);
-% edgeorder(e,:) = [s t] for up and down sweeps
-model.edges = edgeorder(1:(size(edgeorder,1)/2),:);
+[model.edges] = treeMsgOrderPmtk(model.adjmat, model.root);
+
+roots = [];
+for i=1:model.Nnodes
+  nbrs = neighbors(G, i);
+  if isempty(nbrs)
+    roots = [roots i];
+  end
+end
+model.roots = roots;
+
+%edgeorder = treeMsgOrder(model.adjmat, model.root);
+% edgeorder(e,:) = [c p] for up  sweep
+%model.edges = edgeorder(1:(size(edgeorder,1)/2),:);
+
 model.Nedges = size(model.edges, 1);
 
 
@@ -40,6 +52,6 @@ model.Nedges = size(model.edges, 1);
 % local evidence CPDs
 if nargin < 6, localCPDs = []; end
 if nargin < 7, localCPDpointers = 1:model.Nnodes; end
-model.localCPDs = localCPDs;
-model.localCPDpointers = localCPDpointers;
+model.obsmodel.localCPDs = localCPDs;
+model.obsmodel.localCPDpointers = localCPDpointers;
 end

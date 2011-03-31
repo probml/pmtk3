@@ -63,7 +63,7 @@ for t=1:Nlocn
     end
     logprior = log(prior);
     numer = logprior + loglik;
-    postZ(:,t) = exp(numer - logsumexp(numer));
+    postZ(:,t) = exp(numer - logsumexp(numer,2));
 end
 prob = nvec./repmat(sum(nvec,1),4,1);
 figure;

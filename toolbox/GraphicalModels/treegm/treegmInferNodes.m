@@ -29,7 +29,8 @@ if ~isempty(localFeatures)
 end
 if ~isempty(softev)
   assert(~any(isnan(softev(:))))
-  softev = softev + eps; % ensure there are no zeros
+  ndx = (softev==0);
+  softev(ndx) = eps; % replace zeros with epsilon
   nodePots = nodePots .* softev;
 end
 
@@ -38,7 +39,7 @@ nodeBel = nodePots;
 
 
 [Nstates Nnodes] = size(nodeBel);
-Nedges = Nnodes-1;
+Nedges = size(model.edges, 1); % Nnodes-1;
 edgeMsgUp = ones(Nstates, Nedges);
 edgeMsgDown = ones(Nstates, Nedges);
 % The size of a message is the size of the recipient
@@ -61,6 +62,12 @@ for e=1:Nedges
   assert(~all(nodeBel(:,s)==0))
   assert(~all(nodeBel(:,t)==0))
   logZ = logZ + log(Zt);
+end
+
+% Normalize all isolated root nodes
+for n=model.roots(:)'
+  [nodeBel(:,n), Zn] = normalize(nodeBel(:,n));
+  logZ = logZ + log(Zn);
 end
 
 %% Distribute from root
@@ -89,12 +96,16 @@ for e=1:Nedges
   t = model.edges(e,2); % destn
   bels = nodeBel(:,s) ./ edgeMsgDown(:,e);
   belt = nodeBel(:,t) ./ edgeMsgUp(:,e);
+  % KPM 3/31/11 added transpose to edgeBel(:,:,e)=(...)'
+  % to make treeInferDemo work after changing
+  % from treeMsgOrder to treeMsgOrderPmtk.
+  % Not sure why this is needed.
   if model.edgePotNdx(s,t) ~= 0
     edgePot = model.edgePot(:,:,model.edgePotNdx(s,t));
-    edgeBel(:,:,e) = normalize(edgePot .* (bels * belt'));
+    edgeBel(:,:,e) = normalize(edgePot .* (bels * belt'))';
   else
     edgePot = model.edgePot(:,:,model.edgePotNdx(t,s));
-    edgeBel(:,:,e) = normalize(edgePot .* (belt * bels'));
+    edgeBel(:,:,e) = normalize(edgePot .* (belt * bels'))';
   end
 end
 

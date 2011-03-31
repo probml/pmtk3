@@ -24,8 +24,10 @@ end
 Nedges = Nnodes-1;
 edgePots = model.A;
 
+
 localCPDs = {model.emission};
 localCPDpointers = ones(1, Nnodes);
+
 tree = treegmCreate(G, nodePots, edgePots, nodePotPointers, edgePotPointers, ...
   localCPDs, localCPDpointers);
 

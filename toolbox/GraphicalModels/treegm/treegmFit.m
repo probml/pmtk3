@@ -37,8 +37,14 @@ if nargin < 4, weights = ones(1,Ncases); end
 [mi, nmi, pij, pi] = mutualInfoAllPairsDiscrete(X, unique(X(:)), weights); %#ok
 %[mi] = mutualInfoAllPairsDiscrete(X, domain, weights);
 [adjmat, cost] = minSpanTreePrim(-mi); % find max weight spanning tree
+
+%disp('treegmFit: setting to empty graph')
+%adjmat = zeros(Nnodes, Nnodes); % sanity check
+
 root = 1;
 Nstates = size(pi,2);
+model.Nstates = Nstates;
+model.Nnodes = Nnodes;
 
 
 
@@ -48,26 +54,36 @@ Nstates = size(pi,2);
 dirTree = mkRootedTree(adjmat, root);
 pa = zeros(1, Nnodes);
 CPDs = cell(1, Nnodes);
+roots = [];
 for n=1:Nnodes
-  if n==root
+  rents = parents(dirTree, n);
+  if isempty(rents)
     pa(n) = 0;
     CPDs{n} = pi(n,:)';
+    roots = [roots n];
   else
-    pa(n) = parents(dirTree, n);
-    p = pa(n);
+    p = rents;
+    pa(n) = p;
+    % can have at most one parent in a rooted tree
     CPDs{n} = squeeze(pij(p,n,:,:)) ./ repmat(pi(p,:)', 1, Nstates);
   end
 end
 
 
 % Make an undirected model
-edgeorder = treeMsgOrder(adjmat, root);
-Nedges = Nnodes-1;
-edges = edgeorder(Nedges+1:end,:);
-% edges(e,:)=[s t] ordered from root to leaves
+[~, edges] = treeMsgOrderPmtk(adjmat, root);
+Nedges  = size(edges,1);
+%[edgeorder] = treeMsgOrder(adjmat, root);
+%Nedges = Nnodes-1;
+%edges = edgeorder(Nedges+1:end,:);
+% edges(e,:)=[p c] ordered from root to leaves
 
-nodePots = [CPDs{root} ones(Nstates,1)];
-nodePotNdx = [1 2*ones(1,Nnodes-1)];
+%nodePots = [CPDs{root} ones(Nstates,1)];
+%nodePotNdx = [1 2*ones(1,Nnodes-1)];
+
+nodePots = [ones(Nstates,1) CPDs{roots}];
+nodePotNdx = ones(1, Nnodes);
+nodePotNdx(roots) = (1:numel(roots))+1;
 edgePots = zeros(Nstates, Nstates, Nedges);
 edgePotNdx = zeros(Nnodes, Nnodes);
 for e=1:Nedges

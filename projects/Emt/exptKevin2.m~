@@ -1,0 +1,35 @@
+
+%learnExpt(name, model, numOfMix, Dz, seed)
+%[mseC, mseD, entrpyD] = imputeExpt_2(imputeName, name, model, numOfMix, Dz, seed)
+
+clear all
+dataName = 'newsgroup'; %'newsgroups'; % 'ases';
+Nfolds = 1;
+methodNames = {};
+m = 0;
+for seed = 1:Nfolds
+  K = 1;
+  m=m+1;
+  dataTrain = learnExpt(dataName, 'indDisGmmDiag', K, 0, seed);
+  [~,~, eD(m,seed)] = imputeExpt_2('randomDiscrete', dataName, 'indDisGmmDiag', K, 0, seed);
+  methodNames{m} = 'mix1';
+  
+  m=m+1;
+  K = 40;
+  dataTrain = learnExpt(dataName, 'indDisGmmDiag', K, 0, i);
+  [,~ eD(2,i)] = imputeExpt_2('randomDiscrete', dataName, 'indDisGmmDiag', K, 0, i);
+  
+  Dz = 40;
+  dataTrain2 = learnExpt(dataName, 'disGaussFA', 0, Dz, i);
+  [mC, mD(3,i), eD(3,i)] = imputeExpt_2('randomDiscrete', dataName, 'disGaussFA', 0, Dz, i);
+end
+figure;
+if Nfolds==1
+  plot(eD, 'x', 'markersize', 12, 'linewidth', 2)
+  axis_pct
+else
+  boxplot(eD');
+end
+set(gca,'xtick',[1 2 3], 'xticklabel',{'Mix1','Mix40','FA'});
+ylabel('error');
+title(dataName)

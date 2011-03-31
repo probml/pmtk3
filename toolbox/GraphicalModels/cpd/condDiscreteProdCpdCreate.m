@@ -16,7 +16,7 @@ function CPD = condDiscreteProdCpdCreate(T, varargin)
 
 prior = process_options(varargin, 'prior', []);
 if isempty(prior)
-   prior.alpha = 2; % implicitly replicated 
+   prior.alpha = 1.1; % add 0.1 as pseudo counts (implicitly replicated) 
 end
 [nstates, nObsStates, d] = size(T); 
 CPD            = structure(T, nstates, nObsStates, d, prior);
