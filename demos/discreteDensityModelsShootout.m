@@ -32,7 +32,8 @@ switch dataName
     data.discrete = documents(:,idx)' + 1;
     data.discrete = data.discrete'; %KPM
     data.continuous = [];
-    nClass = max(data.discrete,[],2);
+    %nClass = max(data.discrete,[],2);
+    nClass = 2*ones(1, size(data.discrete,1));
     labels = data.discrete'; % N*D
     Nstates = nClass;
     nodeNames = wordlist;
@@ -217,7 +218,7 @@ methods(m).logprobFn = @(model, labels) mrf2Logprob(model, labels);
 
 
 
-Ks = [1,20,40];
+Ks = [1,5,10,20];
 for kk=1:numel(Ks)
   K = Ks(kk);
   m = m + 1;
@@ -235,7 +236,7 @@ end
 
 
 
-Ks = [20,40];
+Ks = [2,5,10,20];
 for kk=1:numel(Ks)
   K = Ks(kk);
   m = m + 1;
@@ -245,6 +246,7 @@ for kk=1:numel(Ks)
   methods(m).logprobFn = @(model, labels) nan(size(labels,1),1);
   methods(m).predictMissingFn = @(model, labels) catFApredictMissing(model, labels, []);
 end
+
 
 
 Nmethods = numel(methods);
@@ -346,11 +348,23 @@ for fold=1:Nfolds
       pred2 = permute(pred, [3 2 1]); % K D N
       pred3 = reshape(pred2, [sum(nClass) Ntest]); % KD * N 
       %yhatD = reshape(pred+eps, [Ntest sum(nClass)])';
-      yhatD = pred + eps;
+      
+      
+      % if predict [0 0], replace with eps
+      M = nClass;
+      for d = 1:length(M)
+        idx = sum(M(1:d-1))+1:sum(M(1:d));
+        p1 = pred3(idx,:);
+        if ~isempty(find(sum(p1,2) == 0))
+          p1 = p1 + eps;
+          p1 = bsxfun(@times, p1, 1./sum(p1));
+        end
+        pred3(idx,:) = p1;
+      end
+      yhatD = pred3;
       %entrpyD = -sum(ydT_oneOfM(miss).*log2(yhatD(miss)))/(Ntest*length(nClass))
       entrpyD = -sum(ydT_oneOfM(miss).*log2(yhatD(miss)))/(sum(miss(:)));
-       
-      %save('imputationDataForEmt.mat', 'test', 'pred', 'truth3d')
+ 
       
       imputationErr(m) =  entrpyD;
       %imputationErr(m) =  -logprobAvg;

@@ -6,16 +6,20 @@ name = 'newsgroup';
 % Train
  setSeed(seed);
  [data, nClass] = processData(name, struct('ratio',0.1));
- numOfMix = 1;
+ 
+ numOfMix = 10
+ 
  maxIters = 100;
  train.labels = data.discrete'; %KPM
  
 s0 = 0.1;
 options = struct('maxNumOfItersLearn', maxIters, 'lowerBoundTol', 1e-4, 'regCovMat', 1, 'covMat', 'diag','display',1)
 data.discrete = encodeDataOneOfM(data.discrete, nClass, 'M');
+
 opt=struct('initMethod','random','numOfMix',numOfMix,'scale',3, 'refine', 0, 'nClass', nClass, 's0',s0);
 [params0, data] = initImm(data, [], opt);
 funcName = struct('inferFunc', @inferImm, 'maxParamsFunc', @maxParamsImm);
+
 [params, trainLogLik] = learnEm(data, funcName, params0, options);
 
 
@@ -53,7 +57,7 @@ testData.discrete(miss) = 0;
 
 [pred, logLik] = imputeMissingImm(testData, params, struct('regCovMat',0));
 
-%{
+
 M = params.nClass;
 for d = 1:length(M)
   idx = sum(M(1:d-1))+1:sum(M(1:d));
@@ -64,7 +68,7 @@ for d = 1:length(M)
   end
   pred.discrete(idx,:) = p1;
 end
- %}
+ 
 
 ydT_oneOfM = encodeDataOneOfM(ydT, nClass, 'M');
 yd_oneOfM = encodeDataOneOfM(yd, nClass, 'M');
@@ -74,6 +78,7 @@ yhatD = pred.discrete;
 mseD = mean((ydT_oneOfM(miss) - yhatD(miss)).^2);
 entrpyD = -sum(ydT_oneOfM(miss).*log2(yhatD(miss)))/(N*length(nClass))
 
+%{
 % Sanity check
 n = 1;
 disp('true values')
@@ -84,18 +89,48 @@ disp('missingness')
 miss(1:20, n)'
 disp('prediction')
 yhatD(1:20,n)'
+%}
 
 
-
-%{
 %%%
 % KPM code
 
-model = discreteFit(train.labels);
-predKPM = discretePredictMissing(model, test.labelsMasked);
-pred2 = permute(predKPM, [3 2 1]); % K D N
-[Ntest  Nnodes] = size(test.labelsMasked);
-pred3 = reshape(pred2, [sum(nClass) Ntest]); % KD * N
-approxeq(pred3, yhatD)
+%model = discreteFit(train.labels);
+%predKPM = discretePredictMissing(model, test.labelsMasked);
 
- %}
+model = mixModelFit(train.labels, numOfMix, 'discrete', 'maxIter', 30, 'verbose', false);
+predKPM = mixModelPredictMissing(model, test.labelsMasked);
+
+predKPM = permute(predKPM , [3 2 1]); % K D N
+[Ntest  Nnodes] = size(test.labelsMasked);
+predKPM = reshape(predKPM, [sum(nClass) Ntest]); % KD * N
+pred2.discrete = predKPM;
+
+missingMask = isnan(test.labelsMasked);
+missingMask = repmat(missingMask, [1 1 2]);
+missingMask = permute(missingMask, [3 2 1]);
+missingMask = reshape(missingMask, [sum(nClass) Ntest]);
+assert(isequal(miss, missingMask))
+
+
+M = params.nClass;
+for d = 1:length(M)
+  idx = sum(M(1:d-1))+1:sum(M(1:d));
+  p1 = pred2.discrete(idx,:);
+  if ~isempty(find(sum(p1,2) == 0))
+    p1 = p1 + eps;
+    p1 = bsxfun(@times, p1, 1./sum(p1));
+  end
+  pred2.discrete(idx,:) = p1;
+end
+approxeq(pred2.discrete(missingMask), pred.discrete(miss))
+
+probEmt = pred.discrete(miss);
+probKPM = pred2.discrete(miss);
+probEmt(1:10)'
+probKPM(1:10)'
+
+
+
+yhatD = pred2.discrete;
+entrpyD = -sum(ydT_oneOfM(miss).*log2(yhatD(miss)))/(N*length(nClass))
