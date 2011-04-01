@@ -5,30 +5,14 @@ function [data, nClass] = processData(name, options)
   %dirName = '/global/scratch/emtiyaz/datasets/';
   %dirName = '/cs/SCRATCH/emtiyaz/datasets/';
   if isunix
-    dirName = '/home/kpmurphy/Dropbox/Students/Emt/datasets/';
+    dirName = '/home/kpmurphy/Dropbox/Students/datasets';
   end
   if ismac
-    dirName = '/Users/kpmurphy/Dropbox/Students/Emt/datasets/';
+    dirName = '/Users/kpmurphy/Dropbox/Students/datasets';
   end
   
   [plotHist, plotMI, ratio] = myProcessOptions(options, 'plotHist',0,'plotMI',0, 'ratio', 0.7);
   switch name
-     case 'newsgroups'
-       %loadData('20news_w100');
-      load(fullfile(dirName, 'binary', '20news_w100.mat'))
-       % documents, wordlist, newsgroups, groupnames
-       % documents is 100 x 16,642 sparse logical  matrix
-       data.discrete = double(full(documents))+1; %
-       [D N] = size(data.discrete);
-       % use subset for speed
-       S= rand('state');
-       rand('state', 0);
-       perm = randperm(N);
-       rand('state', S);
-       data.discrete = data.discrete(:, perm(1:1000));
-       data.continuous = [];
-       nClass = max(data.discrete,[],2);
-  
   case 'caltechSil'
     load([dirName 'caltech101_silhouettes_16']);
     %classIdx = [1 2 94];
@@ -46,14 +30,15 @@ function [data, nClass] = processData(name, options)
     nClass = max(data.discrete,[],2);
 
   case 'newsgroup'
-    load([dirName 'a3newsgroups.mat']);
+    load('a3newsgroups.mat');
     % select class
     classId = 1;%there are 4 classes
     idx = find(newsgroups == classId);
-    data.discrete = documents(:,idx)' + 1;
-    data.discrete = data.discrete'; %KPM
+    data.discrete = documents(:,idx) + 1; %D*N
     data.continuous = [];
-    nClass = max(data.discrete,[],2);
+    %nClass = max(data.discrete,[],2);
+    D = size(documents,1);
+    nClass  = 2*ones(1,D);
 
   case 'ases'
     a = importdata([dirName 'asesLarge.txt']);
@@ -67,8 +52,9 @@ function [data, nClass] = processData(name, options)
     idx = find(~sum(isnan(X),2));
     X = X(idx,:);
     % take a specific country
-    idx = find(X(:,1) == 11); 
-    X = X(idx,:);
+    %idx = find(X(:,1) == 11); 
+    %idx = find(X(:,2) == 1); 
+    %X = X(idx,:);
     data.continuous = [];%X(:,2)';
     data.discrete = X(:,[3:44])';
     data.names = a.colheaders(3:44);
@@ -274,11 +260,12 @@ function [data, nClass] = processData(name, options)
   for d = 1:size(data.discrete,1)
     if ~(length(unique(data.discrete(d,:)))==1)
       idx = [idx; d];
-    else
-      fprintf('discarding dim %d\n', d);
     end
   end
-  %data.discrete = data.discrete(idx,:);
+  D = size(data.discrete,1);
+  fprintf('omitting these columns\n')
+  disp(setdiff(1:D, idx))
+  data.discrete = data.discrete(idx,:);
   nClass = max(data.discrete,[],2);
 
   if plotMI
@@ -324,8 +311,6 @@ function [data, nClass] = processData(name, options)
     data.discrete = [];
   end
   data.idx = idx;
-  data.nTrain = nTrain;
-  fprintf('processData: N=%d, nTrain=%d\n', N, nTrain);
 
   %{
   switch name
