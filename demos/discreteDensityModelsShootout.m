@@ -10,12 +10,14 @@
 Nfolds = 1;
 % pcTrain and pcTest do not need to sum to one
 % This way, you can use a fraction of the overall data
-pcTrain = 0.2; pcTest = 0.2;
+pcTrain = 0.5; pcTest = 0.5;
 pcMissing =  0.3;
 
 %dataName = 'SUN09';
 %dataName = 'newsgroups';
-dataName = 'newsgroups1';
+%dataName = 'newsgroups1';
+dataName = 'ases4';
+
 switch dataName
   case 'newsgroups'
   loadData('20news_w100');
@@ -32,6 +34,8 @@ switch dataName
     data.discrete = documents(:,idx)' + 1;
     data.discrete = data.discrete'; %KPM
     data.continuous = [];
+    % it is possible that some words are always absent
+    % In this case, nClass(d)=1 but we want it to be 2
     %nClass = max(data.discrete,[],2);
     nClass = 2*ones(1, size(data.discrete,1));
     labels = data.discrete'; % N*D
@@ -70,43 +74,49 @@ switch dataName
     nodeNames = cellfun(@(d) sprintf('n%d', d), num2cell(1:D), 'uniformoutput', false);
     Nstates = nunique(labels(:))*ones(1,numel(nodeNames));
     
-  case 'ases'
-     %a = importdata([dirName 'asesLarge.txt']);
+  case 'ases4'
+    %a = importdata([dirName 'asesLarge.txt']);
     %Y = a.data;
-    load('ases.mat'); % Y is 18243x43, names 1x53 cell
+    %names = a.colheaders;
+    load('ases'); % Y is 18253x52 double, names is 1x53 cell
     %  remove rows with any missing values
     idx = find(~sum(isnan(Y),2));
     X = Y(idx,:); % 8735 * 53
-    % take a specific country
-    name = 'ases';
-    switch name
-    case 'ases'
-      idx = find(X(:,2) == 2); 
-    case 'asesUK'
-      idx = find(X(:,1) == 10); 
-    case 'asesFrance'
-      idx = find(X(:,1) == 12); 
-    case 'asesGermany'
-      idx = find(X(:,1) == 13); 
-    case 'asesDeveloping'
-      idx = find(X(:,1) == 1); 
-    case 'asesDeveloped'
-      idx = find(X(:,2) == 2); 
-    end
-    X = X(idx,:);
     labels = X(:,[3:44]);
     names = names(3:44);
     nClass = max(labels,[],1);
-    % currently the code assumes all nodes have the same #values
-    % So we extract features 
+    % currently KPM's code assumes all nodes have the same #values
+    % So we extract features with 4 states each
     ndx = find(nClass==4);
-    labels = labels(:, ndx); % 5347 * 17
+    labels = labels(:, ndx); % 8735 * 17
     names = names(ndx);
+    nClass = 4*ones(1,numel(names));
+    Nstates = nClass;
     nodeNames = names;
-    Nstates = 4*ones(1,numel(nodeNames));
+    
+    case 'ases'
+    %a = importdata([dirName 'asesLarge.txt']);
+    %Y = a.data;
+    %names = a.colheaders;
+    load('ases'); % Y is 18253x52 double, names is 1x53 cell
+    %  remove rows with any missing values
+    idx = find(~sum(isnan(Y),2));
+    X = Y(idx,:); % 8735 * 53
+    labels = X(:,[3:44]);
+    names = names(3:44);
+    nClass = max(labels,[],1);
+    Nstates = nClass;
+    nodeNames = names;
+    
 end 
 isbinary =  all(Nstates==2);
 nClass = Nstates;
+
+%{
+figure; imagesc(labels); colorbar
+title(sprintf('%s, N=%d, D=%d', dataName, size(labels,1), size(labels,2)))
+drawnow
+%}
 
 % Where to store plots (set figFolder = [] to turn of printing)
 if isunix
@@ -218,12 +228,15 @@ methods(m).logprobFn = @(model, labels) mrf2Logprob(model, labels);
 
 
 
-Ks = [1,5,10,20];
+Ks = [1,5,10,20,40];
 for kk=1:numel(Ks)
   K = Ks(kk);
   m = m + 1;
+  alpha = 1.1;
+  %methods(m).modelname = sprintf('mixK%d,a%2.1f', K, alpha);
   methods(m).modelname = sprintf('mix%d', K);
-  methods(m).fitFn = @(labels) mixModelFit(labels, K, 'discrete', 'maxIter', 30, 'verbose', false);
+  methods(m).fitFn = @(labels) mixModelFit(labels, K, 'discrete', 'maxIter', 30, ...
+    'verbose', false, 'prior', struct('alpha', 1.1));
   methods(m).logprobFn = @(model, labels) mixModelLogprob(model, labels);
   methods(m).predictMissingFn = @(model, labels) mixModelPredictMissing(model, labels);
 end 
@@ -236,11 +249,11 @@ end
 
 
 
-Ks = [2,5,10,20];
+Ks = [5,10,20,40];
 for kk=1:numel(Ks)
   K = Ks(kk);
   m = m + 1;
-  methods(m).modelname = sprintf('catFA-%d', K);
+  methods(m).modelname = sprintf('dFA-%d', K);
   methods(m).fitFn = @(labels) catFAfit(labels, [],  K,  'nClass', Nstates, ...
     'maxIter', 30, 'verbose', true, 'nClass', Nstates);
   methods(m).logprobFn = @(model, labels) nan(size(labels,1),1);
@@ -335,8 +348,6 @@ for fold=1:Nfolds
       %}
       
       % Emt's evaluation code
-      % With this code, the independent model always has lowest
-      % cross entropy - must be a
       nClass = Nstates;
       yd = test.labelsMasked';
       ydT = test.labels';
@@ -362,9 +373,10 @@ for fold=1:Nfolds
         pred3(idx,:) = p1;
       end
       yhatD = pred3;
-      %entrpyD = -sum(ydT_oneOfM(miss).*log2(yhatD(miss)))/(Ntest*length(nClass))
-      entrpyD = -sum(ydT_oneOfM(miss).*log2(yhatD(miss)))/(sum(miss(:)));
+      entrpyD = -sum(ydT_oneOfM(miss).*log2(yhatD(miss)))/(Ntest*length(nClass))
+      %entrpyD = -sum(ydT_oneOfM(miss).*log2(yhatD(miss)))/(sum(miss(:)));
  
+     
       
       imputationErr(m) =  entrpyD;
       %imputationErr(m) =  -logprobAvg;
@@ -408,6 +420,7 @@ assert(approxeq(predIndep, predMix))
 [styles, colors, symbols, plotstr] =  plotColors();
 
 
+%{
 % NLL - for catFA, which cannot compute valid loglik,
 % we use NaNs
 figure;
@@ -421,14 +434,15 @@ end
 set(gca, 'xtick', 1:numel(ndx))
 set(gca, 'xticklabel', methodNames(ndx))
 %xticklabelRot(methodNames(ndx), -45);
-title(sprintf('negloglik on %s', dataName))
+title(sprintf('NLL on %s, D=%d, Ntr=%d, Nte=%d', ...
+  dataName, Nnodes, Ntrain, Ntest))
 fname = fullfile(figFolder, sprintf('negloglik-%s.png', dataName));
 print(gcf, '-dpng', fname);
-
+%}
 
 % imputation error
 figure;
-ndx = 1:Nmethods; % exclude indep
+ndx = 1:Nmethods; 
 if Nfolds==1
   plot(imputation_err_models(ndx), 'x', 'markersize', 12, 'linewidth', 2)
   axis_pct
@@ -438,8 +452,8 @@ end
 set(gca, 'xtick', 1:numel(ndx))
 set(gca, 'xticklabel', methodNames(ndx))
 %xticklabelRot(methodNames(ndx), -45);
-title(sprintf('imputation error on %s with %5.3f percent missing', ...
-  dataName, pcMissing))
+title(sprintf('imputation error on %s, %5.3fpc missing, D=%d, Ntr=%d, Nte=%d', ...
+  dataName, pcMissing, Nnodes, Ntrain, Ntest))
 fname = fullfile(figFolder, sprintf('imputation-%s.png', dataName));
 print(gcf, '-dpng', fname);
 

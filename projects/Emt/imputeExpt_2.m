@@ -1,7 +1,10 @@
-function [mseC, mseD, entrpyD, data] = imputeExpt_2(imputeName, name, model, numOfMix, Dz, seed)
+function [mseC, mseD, entrpyD, data] = imputeExpt_2(imputeName, name, model, numOfMix, Dz, seed, ratio)
 % read the learn params file, create dataset with missing values, impute those
 % and save the file
 % This file is modified for the final version of paper
+
+if nargin < 7, ratio = 0.7; end
+ratio
 
   if isdeployed
     numOfMix = str2double(numOfMix);
@@ -10,20 +13,14 @@ function [mseC, mseD, entrpyD, data] = imputeExpt_2(imputeName, name, model, num
   end
 
   [saveOut, missProbC, missProbD] = myProcessOptions([], 'saveOut',1, 'missProbC', 0.3, 'missProbD', 0.3);
-
-  %fileName = sprintf('/global/scratch/emtiyaz/latentModelsOut/%s/%s_%d_%d_%d',name, model, numOfMix,Dz,seed);
-  %fileName = sprintf('/cs/SCRATCH/emtiyaz/categoricalLGMOut/%s/%s_%d_%d_%d',name, model, numOfMix,Dz,seed);
-  if isunix
-    fileName = sprintf('/home/kpmurphy/scratch/categoricalLGMOut/%s/%s_%d_%d_%d',name, model, numOfMix,Dz,seed);
-  end
-  if ismac
-    fileName = sprintf('/Users/kpmurphy/scratch/categoricalLGMOut/%s/%s_%d_%d_%d',name, model, numOfMix,Dz,seed);
-  end
-    fileName
+  dirName = getDirNameScratch();
+  fileName = sprintf('%s/%s/%s_%d_%d_%d', dirName, name, model, numOfMix,Dz,seed);
+  
 
   setSeed(seed);
-  [data, nClass] = processData(name, []);
-
+  %[data, nClass] = processData(name, []);
+ [data, nClass] = processData(name, struct('ratio',ratio));
+ 
   % create missing data in the test set
   ycT = data.continuousTestTruth;
   ydT = data.discreteTestTruth;

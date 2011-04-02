@@ -3,26 +3,50 @@
 %[mseC, mseD, entrpyD] = imputeExpt_2(imputeName, name, model, numOfMix, Dz, seed)
 
 clear all
-dataName = 'newsgroup'; %'newsgroups'; % 'ases';
+dataName = 'ases4';
+dataName = 'ases';
 Nfolds = 1;
 methodNames = {};
-m = 0;
+pcTrain = 0.5; pcTest = 0.5;
+pcTrain = 0.5; pcTest = 0.5;
 for seed = 1:Nfolds
-  K = 1;
+  m = 0;
+ 
   m=m+1;
-  dataTrain = learnExpt(dataName, 'indDisGmmDiag', K, 0, seed);
-  [~,~, eD(m,seed)] = imputeExpt_2('randomDiscrete', dataName, 'indDisGmmDiag', K, 0, seed);
+ K = 1;
+ [params, params0, data] = learnExpt(dataName, 'indDisGmmDiag', K, 0, seed, pcTrain);
+  [~,~, eD(m,seed)] = imputeExpt_2('randomDiscrete', dataName, 'indDisGmmDiag', K, 0, seed, pcTest);
   methodNames{m} = 'mix1';
+  [D, Ntrain] = size(data.discrete)
+  [D2, Ntest] = size(data.discreteTest)
+  
+  m=m+1;
+  K = 20;
+  learnExpt(dataName, 'indDisGmmDiag', K, 0, seed, pcTrain);
+  [~,~, eD(m,seed)] = imputeExpt_2('randomDiscrete', dataName, 'indDisGmmDiag', K, 0, seed, pcTest);
+  methodNames{m} = 'mix20';
   
   m=m+1;
   K = 40;
-  dataTrain = learnExpt(dataName, 'indDisGmmDiag', K, 0, i);
-  [,~ eD(2,i)] = imputeExpt_2('randomDiscrete', dataName, 'indDisGmmDiag', K, 0, i);
+  learnExpt(dataName, 'indDisGmmDiag', K, 0, seed, pcTrain);
+  [~,~, eD(m,seed)] = imputeExpt_2('randomDiscrete', dataName, 'indDisGmmDiag', K, 0, seed, pcTest);
+  methodNames{m} = 'mix40';
   
-  Dz = 40;
-  dataTrain2 = learnExpt(dataName, 'disGaussFA', 0, Dz, i);
-  [mC, mD(3,i), eD(3,i)] = imputeExpt_2('randomDiscrete', dataName, 'disGaussFA', 0, Dz, i);
+  
+  
+  m=m+1;
+  Dz = 20;
+  learnExpt(dataName, 'disGaussFA', 0, Dz, seed, pcTrain);
+  [~, ~, eD(m,seed)] = imputeExpt_2('randomDiscrete', dataName, 'disGaussFA', 0, Dz, seed, pcTest);
+  methodNames{m} = 'catFA20';
+  
+   m=m+1;
+   Dz = 40;
+ learnExpt(dataName, 'disGaussFA', 0, Dz, seed, pcTrain);
+  [~, ~, eD(m,seed)] = imputeExpt_2('randomDiscrete', dataName, 'disGaussFA', 0, Dz, seed, pcTest);
+  methodNames{m} = 'catFA40';
 end
+
 figure;
 if Nfolds==1
   plot(eD, 'x', 'markersize', 12, 'linewidth', 2)
@@ -30,6 +54,7 @@ if Nfolds==1
 else
   boxplot(eD');
 end
-set(gca,'xtick',[1 2 3], 'xticklabel',{'Mix1','Mix40','FA'});
+set(gca,'xtick', 1:numel(methodNames), 'xticklabel', methodNames);
 ylabel('error');
-title(dataName)
+title(sprintf('%s,D=%d,Ntrain=%d,Nte=%d', dataName, D, Ntrain, Ntest))
+

@@ -1,4 +1,4 @@
-function [params, params0, data] = learnExpt(name, model, numOfMix, Dz, seed, maxIters)
+function [params, params0, data] = learnExpt(name, model, numOfMix, Dz, seed, maxIters, ratio)
 % learn parameters for a give data'name', using the 'model'
 %#function efa_loglik_b
 %#function efa_loglik_m
@@ -10,27 +10,24 @@ function [params, params0, data] = learnExpt(name, model, numOfMix, Dz, seed, ma
 %#function efa_compute_error_m
 %#function efa_compute_error_b
 
+ if nargin < 6, maxIters = 100; end
+if nargin < 7, ratio = 0.1; end
+ratio
+
   if isdeployed
     numOfMix = str2double(numOfMix);
     Dz = str2double(Dz);
     seed = str2double(seed);
   end
 
-  if nargin < 6, maxIters = 100; end
+ 
   
   Dz_str = strrep(num2str(Dz),'.','dot'); % replace . by dot
-  %dirName = '/cs/SCRATCH/emtiyaz/categoricalLGMOut/';
-  if isunix
-    dirName = '/home/kpmurphy/scratch/categoricalLGMOut/';
-  end
-  if ismac
-    dirName = '/Users/kpmurphy/scratch/categoricalLGMOut/';
-  end
-  %dirName = '/global/scratch/emtiyaz/latentModelsOut/';
+  dirName = getDirNameScratch();
   fileName = sprintf([dirName '%s/%s_%d_%s_%d'],name, model, numOfMix, Dz_str, seed)
 
   setSeed(seed);
-  [data, nClass] = processData(name, struct('ratio',0.1));
+  [data, nClass] = processData(name, struct('ratio',ratio));
 
   saveOut = 1;
   

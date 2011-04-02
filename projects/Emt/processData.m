@@ -2,14 +2,8 @@ function [data, nClass] = processData(name, options)
 % processData specified by name, plotHist, plotMI (mutual information).
 % splits the data into test and train
 
-  %dirName = '/global/scratch/emtiyaz/datasets/';
-  %dirName = '/cs/SCRATCH/emtiyaz/datasets/';
-  if isunix
-    dirName = '/home/kpmurphy/Dropbox/Students/datasets';
-  end
-  if ismac
-    dirName = '/Users/kpmurphy/Dropbox/Students/datasets';
-  end
+dirName = getDirNameData;
+  
   
   [plotHist, plotMI, ratio] = myProcessOptions(options, 'plotHist',0,'plotMI',0, 'ratio', 0.7);
   switch name
@@ -59,7 +53,32 @@ function [data, nClass] = processData(name, options)
     data.discrete = X(:,[3:44])';
     data.names = a.colheaders(3:44);
     nClass = max(data.discrete,[],2);
+    
+    case 'ases4'
+      a = importdata([dirName 'asesLarge.txt']);
+    Y = a.data;
+    names = a.colheaders;
+   %   load('ases.mat'); % Y is 18243x43, names 1x53 cell
+    %  remove rows with any missing values
+    idx = find(~sum(isnan(Y),2));
+    X = Y(idx,:); % 8735 * 53
+    labels = X(:,[3:44]);
+    names = names(3:44);
+    nClass = max(labels,[],1);
+    % currently KPM's code assumes all nodes have the same #values
+    % So we extract features with 4 states each
+    ndx = find(nClass==4);
+    labels = labels(:, ndx); % 5347 * 17
+    names = names(ndx);
+    data.continuous = [];
+    data.names = names;
+    data.discrete = labels';
+    nClass = 4*ones(1,numel(names));
+    
+  
 
+ 
+    
   case {'sim1','sim2'}
     % make data
     N = 500;
@@ -263,8 +282,11 @@ function [data, nClass] = processData(name, options)
     end
   end
   D = size(data.discrete,1);
-  fprintf('omitting these columns\n')
-  disp(setdiff(1:D, idx))
+  omit = setdiff(1:D, idx);
+  if ~isempty(omit)
+    fprintf('processData: omitting these columns which only have 1 value\n')
+    disp(omit)
+  end
   data.discrete = data.discrete(idx,:);
   nClass = max(data.discrete,[],2);
 

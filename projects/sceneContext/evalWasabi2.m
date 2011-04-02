@@ -72,22 +72,25 @@ for t=1:Nnodes
     Sigma = model.SigmaPooled(t);
     softev(k,t,:)  = reshape(gaussLogprob(mu, Sigma, features(:,t)), [1 1 Ntest]);
   end
-  %softev(:,t,:) = exp(normalizeLogspace(softev(:,t,:)));
-  softev(:,t,:) = exp(softev(:,t,:));
+  softevt = permute(softev(:,t,:), [1 3 2])'; % N*K
+  %softevt = exp(normalizeLogspace(softevt));
+  softevt = exp(softevt);
+  softev(:,t,:) = softevt'; % N*1*K
 end
 softevBatchGauss = softev;
-softevBatchGaussNormalized = normalize(softevBatchGauss, 1);
+%softevBatchGauss = normalize(softevBatchGauss, 1);
 
 % Compare raw scores to process scores
-figure; ndx=1:20; c=1;
-plot(features(ndx,c), 'r-'); hold on;
-plot(squeeze(softevBatchGauss(2,c,ndx)), 'b:')
+figure; ndx=40:50; c=1;
+stem(features(ndx,c), 'r-'); title('raw scores');
+figure;
+stem(squeeze(softevBatchGauss(2,c,ndx)), 'b:')
+title('gauss scores')
 
 
 %% Baselines
 presence_model = zeros(Ntest, Nobjects, 2);  
 presence_model(:, :, 1) = test.detect_maxprob;
-%presence_model(:, :, 2) =  permute(softevBatchGaussNormalized(2, :, :), [3 2 1]);
 presence_model(:, :, 2) =  permute(softevBatchGauss(2, :, :), [3 2 1]);
 methodNames = {'det-raw', 'det-gauss'};
 
