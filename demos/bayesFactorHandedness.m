@@ -19,9 +19,11 @@ logmarglik1 = ...
 BF10vsN(i) = exp(logmarglik1 - logmarglik0);
 
 % shortcut formula if alpha=1
+warning off
 BF10(i) = (nchoosek(n1+n2,y1+y2)*(n1+n2+1)) / ...
   (nchoosek(n1,y1)*nchoosek(n2,y2)*(n1+1)*(n2+1));
-  
+warning on
+
 end
 BF10vsN
 BF10

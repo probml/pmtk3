@@ -163,13 +163,13 @@ end
  % and invtoporder to do the reverse.
  if ~isTopoOrdered(G)
    %error('nodes must be toplogically ordered; try toporderDag')
-   fprintf('warning: dgmCreate is topologically ordering the nodes\n');
+   %fprintf('warning: dgmCreate is topologically ordering the nodes\n');
    [G, toporder, invtoporder] = toporderDag(G);
  else
    if sum(G(:))==0
      %  if empty graph, shuffle nodes - this should not affect
      % answer if the book-keeping is correct.
-     fprintf('warning: dgmCreate is randomly ordering the nodes\n');
+     %fprintf('warning: dgmCreate is randomly ordering the nodes\n');
      toporder = randperm(Nnodes);
      invtoporder = lookupIndices(1:Nnodes, toporder);
    else

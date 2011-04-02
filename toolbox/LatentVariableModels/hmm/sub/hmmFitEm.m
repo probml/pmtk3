@@ -177,7 +177,8 @@ if isempty(model.emission) || isempty(model.pi) || isempty(model.A)
     if restartNum == 1
         stackedData = cell2mat(data')';
         nmix = model.nmix;
-        mixModel = mixModelFit(stackedData, nmix, 'gauss', 'verbose', false, 'maxIter', 10);
+        %mixModel = mixModelFit(stackedData, nmix, 'gauss', 'verbose', false, 'maxIter', 10);
+        mixModel = mixGaussFit(stackedData, nmix, 'verbose', false, 'maxIter', 10);
         if isempty(model.emission)
             mu = mixModel.cpd.mu;
             Sigma = bsxfun(@plus, eye(d), mixModel.cpd.Sigma); 
@@ -237,12 +238,36 @@ function [model, mixModel] = initWithMixModel(model, data)
 %% Initialze using a mixture model, ignoring temporal structure
 stackedData = cell2mat(data')';
 nstates     = model.nstates;
-mixModel    = mixModelFit(stackedData, nstates, model.type, 'verbose', false, 'maxIter', 10);
+%mixModel    = mixModelFit(stackedData, nstates, model.type, 'verbose', false, 'maxIter', 10);
+switch lower(model.type)
+  case 'gauss'
+    mixModel    = mixGaussFit(stackedData, nstates,  'verbose', false, 'maxIter', 10);
+  case 'discrete'
+    mixModel    = mixDiscreteFit(stackedData, nstates,  'verbose', false, 'maxIter', 10);
+  case 'student'
+    mixModel    = mixStudentFit(stackedData, nstates,  'verbose', false, 'maxIter', 10);
+  otherwise
+    error(['unrecognized observation distribution ' model.type])
+end
+
 if isempty(model.emission)
-    model.emission = mixModel.cpd; 
+   model.emission = mixModel.cpd; 
 end
 if isempty(model.A) || isempty(model.pi)
-    z = colvec(mixModelMapLatent(mixModel, stackedData));
+    %z = colvec(mixModelMapLatent(mixModel, stackedData));
+    %pz = mixModelInferLatent(mixModel, stackedData);
+    switch lower(model.type)
+      case 'gauss'
+        pz = mixGaussInferLatent(mixModel, stackedData);
+      case 'discrete'
+        pz = mixDiscreteInferLatent(mixModel, stackedData);
+      case 'student'
+        pz = mixStudentInferLatent(mixModel, stackedData);
+      otherwise
+        error(['unrecognized observation distribution ' model.type])
+    end
+    [~,z] = max(pz,[],2);
+    z = colvec(z);
     if isempty(model.A)
         A       = accumarray([z(1:end-1), z(2:end)], 1, [nstates, nstates]); % count transitions
         model.A = normalize(A + ones(size(A)), 2);       % regularize

@@ -8,6 +8,8 @@
 %PMTKurl http://www.mathworks.com/moler/ncm/pagerank.m
 %%
 
+%PMTKinteractive
+
 % This file is from pmtk3.googlecode.com
 
 function x = pagerankDemoMoler(U,G,p)

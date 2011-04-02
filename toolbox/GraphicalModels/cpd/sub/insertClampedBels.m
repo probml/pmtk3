@@ -11,7 +11,18 @@ if isempty(visVars)
     return;
 end
 nvars = numel(visVars) + numel(hidVars);
+
+nodeBels = cellwrap(nodeBels);
+%padded = nodeBels;
+  
+
 padded = cell(nvars, 1);
+for hi = 1:numel(hidVars)
+  h = hidVars(hi);
+  padded{h} = nodeBels{hi};
+end
+ 
+ %{
 if numel(nodeBels) == nvars
     padded(hidVars) = nodeBels(hidVars);
 elseif numel(nodeBels) == 1
@@ -21,6 +32,7 @@ elseif numel(nodeBels) == 1
 else
     padded(hidVars) = nodeBels;
 end
+%}
 
 for v = visVars
     T = zeros(nstates(v), 1); 

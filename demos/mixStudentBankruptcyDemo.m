@@ -18,15 +18,17 @@ X = standardizeCols(X);
 K = 2;
 
 
-[model] = mixModelFit(X, K, 'student');
-[zhat] = mixModelMapLatent(model, X);
+[model] = mixStudentFit(X, K);
+pz = mixStudentInferLatent(model, X);
+[~, zhat] = max(pz, [], 2);
 figure;
 process(model, zhat, X, Y, 'student');
 printPmtkFigure('robustMixStudentBankruptcy')
 
 
-[model] = mixModelFit(X, K, 'gauss');
-[zhat] = mixModelMapLatent(model, X);
+[model] = mixGaussFit(X, K);
+pz = mixGaussInferLatent(model, X);
+[~, zhat] = max(pz, [], 2);
 figure;
 process(model, zhat, X, Y, 'gauss');
 printPmtkFigure('robustMixGaussBankruptcy')

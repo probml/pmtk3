@@ -17,14 +17,13 @@ initParams.mu = [-1.5 1.5; 1.5 -1.5]' + 1*randn(2,2);
 initParams.Sigma = repmat(0.1*eye(2),[1 1 K]);
 initParams.mixWeight = normalize(ones(1,K));
 
-model = mixModelCreate(condGaussCpdCreate(initParams.mu, initParams.Sigma),...
-    'gauss', K, initParams.mixWeight);
+model = mixGaussCreate(initParams.mu, initParams.Sigma, initParams.mixWeight);
 plotfn(model, X, struct('weights', mkStochastic(ones(N,K))), -inf, 0); 
 
 
 % Fit
-[model, loglikHist] = mixModelFit(X, K,  'gauss', 'initParams', initParams, ...
-  'maxIter', 10, 'plotfn', @plotfn, 'overRelaxFactor', 2); 
+[model, loglikHist] = mixGaussFit(X, K,   'initParams', initParams, ...
+  'maxIter', 10, 'plotfn', @plotfn); 
 
 % Plot objective function
 figure;
@@ -56,24 +55,4 @@ set(gca, 'YTick', -2:2);
 end
 
 
-
-function plotfnOld(X, mu, Sigma, mixWeight, post, loglik, iter) %#ok
-str = sprintf('iteration %d, loglik %5.4f\n', iter, loglik);
-n = size(X, 1);
-colors = [post(:,1), zeros(n, 1), post(:,2)]; % fraction of red and blue
-figure; hold on;
-for i=1:n
-  plot(X(i, 1), X(i, 2), 'o', 'MarkerSize', 6, 'MarkerFaceColor', colors(i, :), 'MarkerEdgeColor', 'k');
-end
-classColors = 'rb';
-K  = size(mu,2);
-for k=1:K
-  gaussPlot2d(mu(:,k), Sigma(:,:,k), 'color', classColors(k));
-  plot(mu(1,k), mu(2,k),'o','linewidth',2, 'color', classColors(k));
-end
-title(str)
-axis square
-box on
-set(gca, 'YTick', -2:2);
-end
 

@@ -19,7 +19,6 @@ function [model, loglikHist, llHists] = emAlgo(model, data, init, estep, mstep, 
 % verbose: [false]
 % plotFn: function of form plotfn(model, data, ess, ll, iter), default []
 % nRandomRestarts: [1]
-% mstepOR: [] this function is required if you use over-relaxed EM
 
 % This file is from pmtk3.googlecode.com
 
@@ -43,14 +42,6 @@ if nRandomRestarts > 1
     model = models{bestndx};
     loglikHist = llhists{bestndx};
     return
-end
-%% Perform over relaxed EM
-[mstepOR, overRelaxFactor, args] = process_options(varargin, 'mstepOR', [], ...
-    'overRelaxFactor', []);
-if ~isempty(mstepOR)
-    [model, loglikHist] = emAlgoAdaptiveOverRelaxed...
-        (model, data, init, estep, mstep, mstepOR, args{:});
-    return;
 end
 %% Perform EM
 [maxIter, convTol, plotfn, verbose, restartNum] = process_options(args ,...

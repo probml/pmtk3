@@ -48,7 +48,7 @@ annotation(gcf,'textbox',[0.710 0 0.065 0.119],'String',{'b'},...
     'FontSize',16,...
     'LineStyle','none');
 
-maximizeFigure;
+%maximizeFigure;
 p = get(gcf,'Position');
 p(3) = 2*p(3)/3;
 set(gcf,'Position',p);

@@ -22,10 +22,9 @@ if nargin < 4, obstype = 'gauss'; end
 Nstates = nunique(X(:));
 
 % Fit p(x|Q) - see mixBerMnistEM
-prior.alpha = 1; 
-options = {'maxIter', 20, 'verbose', true, 'prior', prior};
+options = {'maxIter', 20, 'verbose', true, 'alpha', 1};
 X = canonizeLabels(X);
-model.mixmodel  = mixModelFit(X, K, 'discrete', options{:});
+model.mixmodel  = mixDiscreteFit(X, K,  options{:});
 model.Nstates = Nstates;
 model.Nnodes = Nnodes;
 

@@ -21,11 +21,11 @@ trainData.discrete(miss) = NaN;
 
 
 Dz = 2;
-[model, loglikTrace] = catFAfit(trainData, Dz);
+[model, loglikTrace] = catFAfit(trainData.discrete', trainData.continuous', Dz);
 
-[mu, Sigma, loglik] = catFAinferLatent(model, testData)
+[mu, Sigma, loglik] = catFAinferLatent(model, testData.discrete', testData.continuous')
 
-[predD, predC] = catFApredictMissing(model, testData)
+[predD, predC] = catFApredictMissing(model,  testData.discrete', testData.continuous')
 
   
 end

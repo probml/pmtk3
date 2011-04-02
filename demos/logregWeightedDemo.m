@@ -15,9 +15,10 @@ rk = rand(N,1); % positive weights
 % Jo-Anne's method
 %RRk = sqrt(diag(rk))
 RRk = diag(round(rk));
-model = logregFit(RRk*X, y, 'preproc', []);
+pp = preprocessorCreate();
+model = logregFit(RRk*X, y, 'preproc', pp);
 W1 = model.w'
 
 % Method 2
-model = logregFit(X, y, 'preproc', [], 'weights', rk);
+model = logregFit(X, y, 'preproc', pp, 'weights', rk);
 W2 = model.w'

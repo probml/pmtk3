@@ -5,15 +5,15 @@ function [Xc] = mixGaussImpute(model, X, varargin)
 
 % This file is from pmtk3.googlecode.com
 
-if ~isfield(model, 'mu') || isempty(model.mu)
+if ~isfield(model, 'cpd') || isempty(model.cpd.mu)
     if ~isfield(model, 'K') || isempty(model.K)
         model.K = 5;
     end
     model = mixGaussMissingFitEm(X, model.K, varargin{:});
 end
 
-mixweight = model.mixweight;
-K = length(model.mixweight);
+mixweight = model.mixWeight;
+K = length(model.mixWeight);
 n = size(X, 1);
 Xc = X;
 for i=1:n
@@ -26,7 +26,7 @@ for i=1:n
     modelHgivenV.Sigma = NaN(m,K);
     ri = zeros(1, K);
     for k=1:K
-        modelK.mu = model.mu(:,k); modelK.Sigma = model.Sigma(:,:,k);
+        modelK.mu = model.cpd.mu(:,k); modelK.Sigma = model.cpd.Sigma(:,:,k);
         modelTmp = gaussCondition(modelK, visNodes, visValues);
         modelHgivenV.mu(:,k) = modelTmp.mu';
         modelHgivenV.Sigma(:,k) = diag(modelTmp.Sigma);

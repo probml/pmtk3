@@ -66,6 +66,9 @@ args = prepareArgs(varargin); % converts struct args to a cell array
     'fitOptions'    , []      , ...
     'winit'         , []);
 
+  if isempty(preproc), preproc = preprocessorCreate(); end
+
+  
   %y = y(:);
 %assert(size(y, 1) == size(X,1));
 
@@ -92,6 +95,7 @@ end
 if isempty(fitOptions)
   fitOptions = defaultFitOptions(regType, size(X,2));
 end
+
 
 [preproc, X] = preprocessorApplyToTrain(preproc, X);
 D = size(X,2); % will be num features plus 1 if we added col of 1s

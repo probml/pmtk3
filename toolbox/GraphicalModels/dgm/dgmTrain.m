@@ -46,8 +46,8 @@ function dgm = dgmTrain(dgm, varargin)
 % This file is from pmtk3.googlecode.com
 
 
-[data, clamped, localev, args] = process_options(varargin, ...
-  'data', [], 'clamped', [], 'localev', []);
+[data, clamped, localev, verbose, args] = process_options(varargin, ...
+  'data', [], 'clamped', [], 'localev', [], 'verbose', false);
 
  [Ncases, Nnodes] = size(data); %#ok
  
@@ -58,7 +58,7 @@ if ~isempty(dgm.toporder) && ~isequal(dgm.toporder, 1:Nnodes)
   if ~isempty(localev), localev = localev(:, :, dgm.toporder); end
 end
   
-if any(data(:)==0) % isempty(data) || ~all(data(:))
+if any(data(:)==0) || isempty(data) || ~all(data(:))
     assert(isempty(clamped)); % clamping is not supported when data is missing
     dgm = dgmTrainEm(dgm, data, 'localev', localev, args{:}); 
 else

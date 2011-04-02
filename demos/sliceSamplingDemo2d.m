@@ -1,6 +1,8 @@
 % Slice sampling in 2d
 % From http://www.mathworks.com/products/statistics/demos.html?file=/products/demos/shipping/stats/bayesdemo.html
 
+%PMTKslow
+
 requireStatsToolbox();
 setSeed(0);
 

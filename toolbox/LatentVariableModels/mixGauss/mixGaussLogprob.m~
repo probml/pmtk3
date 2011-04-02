@@ -1,0 +1,16 @@
+function [logp] = mixGaussLogprob(varargin)
+%[logp] = mixGaussLogprob(model, X)
+% or 
+% logp = mixGaussLogprob(mu, Sigma, mixWeight, X)
+%
+% logp(i) = log p(X(i,:) | mu(:, i), Sigma(:, :, i), mixWeight(i)s)
+% This file is from pmtk3.googlecode.com
+
+if nargin == 2
+  model = varargin{1};
+  X = varargin{2};
+else
+  model = mixModelCreate(condGaussCpdCreate(mu, Sigma), 'gauss', numel(mixWeight), mixWeight);
+en
+  logp = mixModelLogprob(model, X); 
+end

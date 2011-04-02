@@ -38,7 +38,9 @@ figure;
 contour(x1,y1,z,'-r'); hold on;
 plot(mu(:,1),mu(:,2),'+k','MarkerSize',16);
 
-options = optimset('Display', 'off');
+%options = optimset('Display', 'off');
+options.display = 'off';
+options.verbose = 0;
 options.numDiff = 1;
 modes = zeros(3, 2);
 for i=1:3

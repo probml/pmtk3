@@ -37,6 +37,4 @@ end
         
 
 
-maximizeFigure();
-
 printPmtkFigure anscombe;

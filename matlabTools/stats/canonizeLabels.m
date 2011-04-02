@@ -62,5 +62,7 @@ if(nargin == 2)
 end
 support = s;
 canonized = reshape(canonized,nrows,ncols);
-canonized(isnan(labels))=nan;
+if ~iscell(labels)
+  canonized(isnan(labels))=nan;
+end
 end

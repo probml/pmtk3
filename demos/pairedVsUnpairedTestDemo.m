@@ -41,4 +41,4 @@ for t=1:Nthetas
     %%
 end
 
-placeFigures
+%placeFigures

@@ -10,6 +10,9 @@ function [pZ, pX] = noisyMixModelInfer(model, Y)
 % This interface is similar to mixInfer, and is batch-oriented.
 % Use noisyMixModelInferNodes for single cases.
  
+[Ncases, Nnodes, Ndims] = size(Y);
+Nmix = model.mixmodel.nmix;
+Nstates = model.obsmodel.Nstates;
 pZ = zeros(Ncases, Nmix);
 pX = zeros(Ncases, Nstates, Nnodes);
 for i=1:Ncases

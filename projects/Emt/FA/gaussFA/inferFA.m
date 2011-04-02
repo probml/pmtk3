@@ -55,6 +55,8 @@ function [ss, logLik, postDist] = inferFA(data, params, options)
     else
       ss.sumPhi = sum((y - params.beta*meanPost).^2,2) + N*diag(params.beta*covMatPost*params.beta');
     end
+  else
+    ss = [];
   end
 
   % log Lik
@@ -75,6 +77,8 @@ function [ss, logLik, postDist] = inferFA(data, params, options)
 
     logLik = logLink + logLatent + entrpy + logPrior;
     logLik = logLik/N;
+  else
+    logLik = [];
   end
 
 

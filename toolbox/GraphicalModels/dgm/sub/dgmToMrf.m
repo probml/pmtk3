@@ -5,7 +5,7 @@ function mrf = dgmToMrf(dgm)
 % This file is from pmtk3.googlecode.com
 
 G = moralizeGraph(dgm.G); 
-if isfield(dgm, dgm.factors)
+if isfield(dgm, 'factors')
     factors = dgm.factors; 
 else
     factors = cpds2Factors(dgm.CPDs, dgm.G, dgm.CPDpointers);

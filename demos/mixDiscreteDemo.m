@@ -1,5 +1,5 @@
 %% Simple test of a discrete mixture model
-%% Create Data
+
 
 % This file is from pmtk3.googlecode.com
 
@@ -13,10 +13,15 @@ truth.T = normalize(rand(truth.nmix, truth.nstates, truth.d), 2);
 nsamples = 1000;
 [X, y] = mixDiscreteSample(truth.T, truth.mixweight, nsamples); 
 
-%% Fit
-[model, llhist] = mixModelFit(X, nmix, 'discrete', 'verbose', true);
-%% Compare against the best permutation of the cluster labels.
-ypred = mixModelMapLatent(model, X);
+
+%[model, llhist] = mixModelFit(X, nmix, 'discrete', 'verbose', true);
+[model, llhist] = mixDiscreteFit(X, nmix, 'verbose', true);
+
+%Compare against the best permutation of the cluster labels.
+%ypred = mixModelMapLatent(model, X);
+pZ = mixDiscreteInferLatent(model, X);
+[~, ypred] = max(pZ, [], 2);
+
 allperms = perms(1:truth.nmix);
 nperms = size(allperms, 1); 
 errors = zeros(nperms, 1); 

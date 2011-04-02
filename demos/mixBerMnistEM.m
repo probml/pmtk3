@@ -30,8 +30,8 @@ model = cell(1, NK);
 for i=1:NK
     K = Kvalues(i);
     fprintf('Fitting K = %d \n', K)
-    model{i}  = mixModelFit(Xtrain, K, 'discrete', options{:});
-    logp(i)   = sum(mixModelLogprob(model{i}, Xtest));
+    model{i}  = mixDiscreteFit(Xtrain, K, options{:});
+    logp(i)   = sum(mixDiscreteLogprob(model{i}, Xtest));
     nParams   = K*d + K-1;
     bicVal(i) = -2*logp(i) + nParams*log(n);
 end

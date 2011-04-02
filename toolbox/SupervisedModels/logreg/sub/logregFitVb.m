@@ -34,6 +34,6 @@ else
   model.alpha  = model.expectAlpha(1:end);
   model.weights = model.wN;
 end
-model.relevant = find(model.nbrAlpha < 10); % precision is low for relevant vars
+model.relevant = find(model.alpha < 10); % precision is low for relevant vars
 logev = L;
 end

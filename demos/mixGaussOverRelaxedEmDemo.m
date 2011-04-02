@@ -16,8 +16,10 @@ for trial = 1:ntrials
     for k=1:Clusters
         Sigma(:,:,k) = randpd(D);
     end
-    trueModel = mixModelCreate(condGaussCpdCreate(mu, Sigma), 'gauss', Clusters, mixweight); 
-    [fullData] = mixModelSample(trueModel, N);
+    trueModel = mixGaussCreate(mu, Sigma,  mixweight); 
+    %trueModel = mixModelCreate(condGaussCpdCreate(mu, Sigma), 'gauss', Clusters, mixweight);
+    %[fullData] = mixModelSample(trueModel, N);
+    [fullData] = mixGaussSample(trueModel, N);
     Ks = [5 10];
     verbose = true;
     eta = {[], 1, 1.25, 2, 5}; % over-relaxation increase factor
@@ -30,8 +32,15 @@ for trial = 1:ntrials
         K = Ks(k);
         for m=1:nmethods
             tic
-            [models{m}, llHist{m}] = mixModelFit(fullData, K, 'gauss',...
-                'overRelaxFactor',eta{m}, 'verbose', verbose); 
+            %[models{m}, llHist{m}] = mixModelFit(fullData, K, 'gauss',...
+            %    'overRelaxFactor',eta{m}, 'verbose', verbose); 
+            if isempty(eta{m})
+              [models{m}, llHist{m}] = mixGaussFit(fullData, K, ...
+                'verbose', verbose);
+            else
+               [models{m}, llHist{m}] = mixGaussFitOverrelaxedEM(fullData, K, ...
+                 eta{m}, 'verbose', verbose);
+            end
             tim(m) = toc;
         end
         figure

@@ -19,7 +19,7 @@ N  = 2*N2;
 
 options = {'maxIter', 10, 'verbose', true};
 K = 2;
-[model, loglikHist] = mixModelFit(X, K, 'discrete', options{:});
+[model, loglikHist] = mixDiscreteFit(X, K, options{:});
 
 %{
 This works as expected: in cluster 1,

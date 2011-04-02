@@ -1,6 +1,4 @@
 %% Simple test of mixGaussMissingFitEM
-%
-%%
 
 % This file is from pmtk3.googlecode.com
 
@@ -24,9 +22,16 @@ model = mixGaussMissingFitEm(Xmissing, nmix, 'doMap', true, 'verbose', true);
 figure; hold on;
 plot(X(:, 1), X(:, 2), '.');
 for i=1:nmix
-   plot(model.mu(1, i), model.mu(2, i), '+', 'markersize', 10, 'color', 'r') 
+   plot(model.cpd.mu(1, i), model.cpd.mu(2, i), '+', 'markersize', 10, 'color', 'r') 
 end
 
 
-%modelMissing = mixGaussMissingFitEm(Xmissing, nmix);
-modelNotMissing = mixModelFit(X, nmix, 'gauss');
+% If data is fully observed should get same results
+% as standard EM, provided we initialise in the same way
+setSeed(0);
+modelMissing = mixGaussMissingFitEm(X, nmix);
+modelMissing.cpd.mu
+
+setSeed(0)
+modelNotMissing = mixGaussFit(X, nmix);
+modelNotMissing.cpd.mu

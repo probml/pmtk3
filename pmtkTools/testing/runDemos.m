@@ -37,6 +37,7 @@
 %disp('running randgmTimingTest.m'); randDgmTimingTest; pclear(2); % PMTKslow
 %disp('running rbfNetwrkSarcosDemo.m'); rbfNetworkSarcosDemo; pclear(2); % PMTKslow
 %disp('running sarseDictDemo.m'); sparseDictDemo; pclear(2); % PMTKslow
+%disp('running sarsePostPlot.m'); sparsePostPlot; pclear(2); % PMTKslow
 %disp('running spareSensingDemo.m'); sparseSensingDemo; pclear(2); % PMTKslow
 %disp('running svmneVsRestDemo.m'); svmOneVsRestDemo; pclear(2); % PMTKslow
 %disp('running vmCgammaDemo.m'); svmCgammaDemo; pclear(2); % PMTKslow
@@ -45,7 +46,7 @@
 %disp('runningmnist1NNdemo.m'); mnist1NNdemo; pclear(2); % PMTKslow
 %disp('runningpagerankDemo.m'); pagerankDemo; pclear(2); % PMTKinteractive
 %disp('runningsmlrPathDemo.m'); smlrPathDemo; pclear(2); % PMTKslow
-if 0
+
 disp('running agglomDemo.m'); agglomDemo; pclear(2);
 disp('running alarmDgmTimingComparison.m'); alarmDgmTimingComparison; pclear(2);
 disp('running alarmNetworkFitTest.m'); alarmNetworkFitTest; pclear(2);
@@ -71,6 +72,7 @@ disp('running biasVarianceFigure.m'); biasVarianceFigure; pclear(2);
 disp('running biasVarModelComplexity.m'); biasVarModelComplexity; pclear(2);
 disp('running bigO.m'); bigO; pclear(2);
 disp('running bimodalDemo.m'); bimodalDemo; pclear(2);
+disp('running binaryPcaDemoTipping.m'); binaryPcaDemoTipping; pclear(2);
 disp('running binomDistPlot.m'); binomDistPlot; pclear(2);
 disp('running binomialBetaPosteriorDemo.m'); binomialBetaPosteriorDemo; pclear(2);
 disp('running bolassoSimpleDemo.m'); bolassoSimpleDemo; pclear(2);
@@ -80,6 +82,8 @@ disp('running boxplotMorley.m'); boxplotMorley; pclear(2);
 disp('running cancerRatesEb.m'); cancerRatesEb; pclear(2);
 disp('running cancerRatesMh.m'); cancerRatesMh; pclear(2);
 disp('running casinoDemo.m'); casinoDemo; pclear(2);
+disp('running catFAdemoAuto.m'); catFAdemoAuto; pclear(2);
+disp('running catFAtest.m'); catFAtest; pclear(2);
 disp('running centralLimitDemo.m'); centralLimitDemo; pclear(2);
 disp('running changeOfVarsDemo1d.m'); changeOfVarsDemo1d; pclear(2);
 disp('running changeOfVarsDemoPolar.m'); changeOfVarsDemoPolar; pclear(2);
@@ -95,11 +99,13 @@ disp('running contoursSSEdemo.m'); contoursSSEdemo; pclear(2);
 disp('running convRateDemo.m'); convRateDemo; pclear(2);
 disp('running crf2ChainTrainDemo.m'); crf2ChainTrainDemo; pclear(2);
 disp('running crf2ImgTrainDemo.m'); crf2ImgTrainDemo; pclear(2);
+disp('running crfFitStructDemo.m'); crfFitStructDemo; pclear(2);
 disp('running curseDimensionality.m'); curseDimensionality; pclear(2);
 disp('running dagStructLearnDemoCollegeCompleteData.m'); dagStructLearnDemoCollegeCompleteData; pclear(2);
 disp('running dboundaries3bumps.m'); dboundaries3bumps; pclear(2);
 disp('running decisionBoundaryLinearVSwiggly.m'); decisionBoundaryLinearVSwiggly; pclear(2);
 disp('running deflationDemo.m'); deflationDemo; pclear(2);
+disp('running demoFAemt.m'); demoFAemt; pclear(2);
 disp('running demoLagrange.m'); demoLagrange; pclear(2);
 disp('running demoMinfunc.m'); demoMinfunc; pclear(2);
 disp('running demoPeaksTraj.m'); demoPeaksTraj; pclear(2);
@@ -114,10 +120,12 @@ disp('running dgmLogprobTest.m'); dgmLogprobTest; pclear(2);
 disp('running dgmMixGaussFitTest.m'); dgmMixGaussFitTest; pclear(2);
 disp('running dgmMrf2Demo.m'); dgmMrf2Demo; pclear(2);
 disp('running dgmNaiveBayesFitTest.m'); dgmNaiveBayesFitTest; pclear(2);
+disp('running dgmNodeOrderDemo.m'); dgmNodeOrderDemo; pclear(2);
 disp('running dirichlet3dPlot.m'); dirichlet3dPlot; pclear(2);
 disp('running dirichlet3dPlotWedge.m'); dirichlet3dPlotWedge; pclear(2);
 disp('running dirichletHistogramDemo.m'); dirichletHistogramDemo; pclear(2);
 disp('running discreteDagSmallStructureLearnDemo.m'); discreteDagSmallStructureLearnDemo; pclear(2);
+disp('running discreteDensityModelsShootout.m'); discreteDensityModelsShootout; pclear(2);
 disp('running discreteProbDistFig.m'); discreteProbDistFig; pclear(2);
 disp('running discrimAnalysisDboundariesDemo.m'); discrimAnalysisDboundariesDemo; pclear(2);
 disp('running discrimAnalysisFisherIrisDemo.m'); discrimAnalysisFisherIrisDemo; pclear(2);
@@ -128,6 +136,7 @@ disp('running dtreeDemoIris.m'); dtreeDemoIris; pclear(2);
 disp('running elasticDistortionsDemo.m'); elasticDistortionsDemo; pclear(2);
 disp('running elasticNetDemo.m'); elasticNetDemo; pclear(2);
 disp('running emLogLikelihoodMax.m'); emLogLikelihoodMax; pclear(2);
+%disp('running emtShootout.m'); emtShootout; pclear(2);
 disp('running epigraph.m'); epigraph; pclear(2);
 disp('running errorCorrectingCodeDemo.m'); errorCorrectingCodeDemo; pclear(2);
 disp('running faBiplotDemo.m'); faBiplotDemo; pclear(2);
@@ -302,10 +311,6 @@ disp('running mixGaussSingularity.m'); mixGaussSingularity; pclear(2);
 disp('running mixGaussVbDemoFaithful.m'); mixGaussVbDemoFaithful; pclear(2);
 disp('running mixPpcaDemoNetlab.m'); mixPpcaDemoNetlab; pclear(2);
 disp('running mixStudentBankruptcyDemo.m'); mixStudentBankruptcyDemo; pclear(2);
-%disp('running mkAlarmDgm.m'); mkAlarmDgm; pclear(2);
-%disp('running mkLungCancerDgm.m'); mkLungCancerDgm; pclear(2);
-%disp('running mkQmrNetwork.m'); mkQmrNetwork; pclear(2);
-%disp('running mkSprinklerDgm.m'); mkSprinklerDgm; pclear(2);
 disp('running mlpClassifDemo.m'); mlpClassifDemo; pclear(2);
 disp('running mlpClassifDemoSchmidt.m'); mlpClassifDemoSchmidt; pclear(2);
 disp('running mlpPriorsDemo.m'); mlpPriorsDemo; pclear(2);
@@ -344,6 +349,7 @@ disp('running neymanPearson.m'); neymanPearson; pclear(2);
 disp('running neymanPearson2.m'); neymanPearson2; pclear(2);
 disp('running ngramPlot.m'); ngramPlot; pclear(2);
 disp('running NIXdemo2.m'); NIXdemo2; pclear(2);
+disp('running noisyMixDemo.m'); noisyMixDemo; pclear(2);
 disp('running nonConvexFn.m'); nonConvexFn; pclear(2);
 disp('running normalGammaPenaltyPlotDemo.m'); normalGammaPenaltyPlotDemo; pclear(2);
 disp('running normalGammaPlotDemo.m'); normalGammaPlotDemo; pclear(2);
@@ -351,7 +357,7 @@ disp('running normalGammaThresholdPlotDemo.m'); normalGammaThresholdPlotDemo; pc
 disp('running numbersGame.m'); numbersGame; pclear(2);
 disp('running optLowerbound.m'); optLowerbound; pclear(2);
 disp('running optMaxLambdaVal.m'); optMaxLambdaVal; pclear(2);
-disp('running pagerankDemoMoler.m'); pagerankDemoMoler; pclear(2);
+%disp('running pagerankDemoMoler.m'); pagerankDemoMoler; pclear(2);
 disp('running pagerankDemoPmtk.m'); pagerankDemoPmtk; pclear(2);
 disp('running pagerankpow.m'); pagerankpow; pclear(2);
 disp('running pairedTestDemo.m'); pairedTestDemo; pclear(2);
@@ -445,8 +451,6 @@ disp('running softmaxDemo2.m'); softmaxDemo2; pclear(2);
 disp('running sparseLinRegBabackDemo.m'); sparseLinRegBabackDemo; pclear(2);
 disp('running sparseLinRegMargDistDemo.m'); sparseLinRegMargDistDemo; pclear(2);
 disp('running sparseNnetDemo.m'); sparseNnetDemo; pclear(2);
-end
-disp('running sparsePostPlot.m'); sparsePostPlot; pclear(2);
 disp('running splineBasisDemo.m'); splineBasisDemo; pclear(2);
 disp('running splineDemoWiki.m'); splineDemoWiki; pclear(2);
 disp('running sprinklerGMdemo.m'); sprinklerGMdemo; pclear(2);
@@ -464,9 +468,13 @@ disp('running svdImageDemo.m'); svdImageDemo; pclear(2);
 disp('running svmBinaryClassifDemo.m'); svmBinaryClassifDemo; pclear(2);
 disp('running svmLogregComparison.m'); svmLogregComparison; pclear(2);
 disp('running svmSmoothRegrDemo.m'); svmSmoothRegrDemo; pclear(2);
+disp('running tabularFactorTest.m'); tabularFactorTest; pclear(2);
 disp('running tanhPlot.m'); tanhPlot; pclear(2);
 disp('running testSprinklerDemo.m'); testSprinklerDemo; pclear(2);
 disp('running tikhonovDemo.m'); tikhonovDemo; pclear(2);
+disp('running toposortDemo.m'); toposortDemo; pclear(2);
+disp('running treeInferDemo.m'); treeInferDemo; pclear(2);
+disp('running treeInferHmmDemo.m'); treeInferHmmDemo; pclear(2);
 disp('running twoPowerCurves.m'); twoPowerCurves; pclear(2);
 disp('running unigaussVbDemo.m'); unigaussVbDemo; pclear(2);
 disp('running unpairedTestHandednessDemo.m'); unpairedTestHandednessDemo; pclear(2);

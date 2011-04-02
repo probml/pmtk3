@@ -43,6 +43,7 @@ function [nodeBels, logZ, nodeBelArray] = dgmInferNodes(dgm, varargin)
 visVars          = find(clamped);
 hidVars          = setdiffPMTK(1:dgm.nnodes, visVars);
 [nodeBels, logZ] = dgmInferQuery(dgm, num2cell(hidVars), 'doSlice', doSlice, varargin{:});
+
 if doSlice
     nodeBels  = insertUnitBels(nodeBels, visVars, hidVars);
 else

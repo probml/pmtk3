@@ -22,7 +22,8 @@ fprintf('Mix Gauss\n');
 initParams.mu = mu0;
 initParams.Sigma = Sigma0;
 initParams.mixWeight = mix0; 
-mixGauss = mixModelFit(localEv, nstates, 'gauss', 'initParams', initParams, 'verbose', true, 'mixPrior', 'none');
+%mixGauss = mixModelFit(localEv, nstates, 'gauss', 'initParams', initParams, 'verbose', true, 'mixPrior', 'none');
+mixGauss = mixGaussFit(localEv, nstates, 'initParams', initParams, 'verbose', true, 'mixPrior', 'none');
 %% create the initial dgm
 G           = 0; % graph of a single node with one localCPD
 CPD         = tabularCpdCreate(mix0');

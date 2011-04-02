@@ -39,7 +39,8 @@ end
 if isempty(model.mu) || isempty(model.Sigma) || isempty(model.mixweight)
     dataFilled = data;
     dataFilled(ismissing) = randn(nnz(ismissing), 1);
-    initModel = mixModelFit(dataFilled, K, 'gauss', 'verbose', false);
+    %initModel = mixModelFit(dataFilled, K, 'gauss', 'verbose', false);
+    initModel = mixGaussFit(dataFilled, K, 'verbose', false);
     if isempty(model.mu)
         model.mu = initModel.cpd.mu;
     end
@@ -61,7 +62,7 @@ K = model.K;
 
 mu     = model.mu;
 Sigma  = model.Sigma;
-[z, rik, ll] = mixGaussInfer(model, data);
+[rik, ll] = mixGaussInferLatent(model, data);
 loglik = sum(ll);
 if ~isempty(model.prior)
     % add log prior

@@ -55,7 +55,7 @@ for dimi = 1:length(dims)
         %% Fit
         try
             lastwarn('');
-            [modelGMM, loglikHistGMM] = mixModelFit(X, K, 'gauss',...
+            [modelGMM, loglikHistGMM] = mixGaussFit(X, K, ...
                 'initParams', initParams, 'prior', 'none', 'mixPrior', 'none');
             [msg, id] = lastwarn();
             if ~isempty(msg) && ismember(id, errorClass)
@@ -68,7 +68,7 @@ for dimi = 1:length(dims)
         try
             lastwarn('');
             prior = makeGaussInvWishartDataDependentPrior(X, K);
-            [modelGMMMAP, loglikHistGMMMAP] = mixModelFit(X, K, 'gauss',...
+            [modelGMMMAP, loglikHistGMMMAP] = mixGaussFit(X, K, ...
                 'initParams', initParams, 'prior', prior);
            [msg, id] = lastwarn();
             if ~isempty(msg) && ismember(id, errorClass)

@@ -228,6 +228,21 @@ methods(m).logprobFn = @(model, labels) mrf2Logprob(model, labels);
 
 
 
+Ks = [1,5];
+for kk=1:numel(Ks)
+  K = Ks(kk);
+  m = m + 1;
+  alpha = 1.1;
+  %methods(m).modelname = sprintf('mixK%d,a%2.1f', K, alpha);
+  methods(m).modelname = sprintf('mix%d', K);
+  methods(m).fitFn = @(labels) mixDiscreteFit(labels, K, 'maxIter', 30, ...
+    'verbose', false, 'alpha', 1.1);
+  methods(m).logprobFn = @(model, labels) mixDiscreteLogprob(model, labels);
+  methods(m).predictMissingFn = @(model, labels) mixDiscretePredictMissing(model, labels);
+end 
+
+
+%{
 Ks = [1,5,10,20,40];
 for kk=1:numel(Ks)
   K = Ks(kk);
@@ -240,6 +255,7 @@ for kk=1:numel(Ks)
   methods(m).logprobFn = @(model, labels) mixModelLogprob(model, labels);
   methods(m).predictMissingFn = @(model, labels) mixModelPredictMissing(model, labels);
 end 
+%}
 
 
 %%%%%%%%%%%%%% Categorical FA
@@ -248,7 +264,7 @@ end
 %methods(m).logprobFn = @(model, labels) argout(3, @catFAinferLatent, model, labels, []);
 
 
-
+%{
 Ks = [5,10,20,40];
 for kk=1:numel(Ks)
   K = Ks(kk);
@@ -259,7 +275,7 @@ for kk=1:numel(Ks)
   methods(m).logprobFn = @(model, labels) nan(size(labels,1),1);
   methods(m).predictMissingFn = @(model, labels) catFApredictMissing(model, labels, []);
 end
-
+%}
 
 
 Nmethods = numel(methods);
@@ -460,7 +476,7 @@ print(gcf, '-dpng', fname);
 
 %% Visualize models themselves
 
-break
+%{
 
 m = strfindCell('tree', methodNames);
 if ~isempty(m)
@@ -504,6 +520,8 @@ if ~isempty(m)
   end
 end
 
+
+%}
 
 %{
 % Fit a depnet to the labels

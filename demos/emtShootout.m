@@ -1,6 +1,9 @@
 % This is a simplified version of 'discreteDensityModelsShootout'
 % It should give the same results as 'exptKevin2'
 
+% Stop it from being included in list of automatic demos
+%PMTKinprogress
+
 %% Data
 % data.discrete is D*N where discrete(d,n) in {1..nClass(d)}
 
@@ -51,10 +54,10 @@ for kk=1:numel(Ks)
   alpha = 1.1;
   %methods(m).modelname = sprintf('mixK%d,a%2.1f', K, alpha);
   methods(m).modelname = sprintf('mix%d', K);
-  methods(m).fitFn = @(labels) mixModelFit(labels, K, 'discrete', 'maxIter', 30, ...
-    'verbose', false, 'prior', struct('alpha', 1.1));
-  methods(m).logprobFn = @(model, labels) mixModelLogprob(model, labels);
-  methods(m).predictMissingFn = @(model, labels) mixModelPredictMissing(model, labels);
+  methods(m).fitFn = @(labels) mixDiscreteFit(labels, K, 'maxIter', 30, ...
+    'verbose', false, 'alpha', 1.1);
+  methods(m).logprobFn = @(model, labels) mixDiscreteLogprob(model, labels);
+  methods(m).predictMissingFn = @(model, labels) mixDiscretePredictMissing(model, labels);
 end 
 
 
@@ -77,6 +80,7 @@ Nmethods = numel(methods);
 [Ntrain, Nnodes] = size(train.labels);
 [Ntest, Nnodes2] = size(test.labels);
 fold = 1;
+Nfolds = 1;
 
 models = cell(1, Nmethods);
 methodNames = cell(1, Nmethods);
