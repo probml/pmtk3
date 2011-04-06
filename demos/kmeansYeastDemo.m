@@ -1,19 +1,14 @@
 %% Cluster yeast data using Kmeans
-%PMTKneedBioToolbox redgreencmap
-%% 
+
 
 % This file is from pmtk3.googlecode.com
 
-%requireBioinfoToolbox
-if ~bioinfoToolboxInstalled
-    fprintf('cannot run %s without bioinformatics toolbox; skipping\n', mfilename());
-    return;
-end
+
 loadData('yeastData310') % 'X', 'genes', 'times');
 
-
-
-figure;imagesc(X);colormap(redgreencmap)
+figure;imagesc(X);
+%colormap(redgreencmap) % bioinfoToolbox
+colormap(redgreenColormap)
 xlabel('time')
 set(gca,'xticklabel',times)
 ylabel('genes')

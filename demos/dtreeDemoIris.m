@@ -1,10 +1,7 @@
 % Demonstrate classification/decision tree on 2d 3class iris data
 % From http://www.mathworks.com/products/statistics/demos.html?file=/products/demos/shipping/stats/classdemo.html
 
-if  ~statsToolboxInstalled
-  fprintf('cannot run %s without stats toolbox; skipping\n', mfilename())
-  return
-end
+requireStatsToolbox
 
 
 % "Resubstitution error" is the training set error

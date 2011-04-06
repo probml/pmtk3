@@ -7,7 +7,9 @@ function downloadAllSupport(destnRoot, quiet)
 SetDefaultValue(1, 'destnRoot', fullfile(pmtk3Root(), 'pmtksupportCopy'));
 SetDefaultValue(2, 'quiet', false);
 googleRoot = ' http://pmtksupport.googlecode.com/svn/trunk';
-packages = scrapePmtkSupport();
+%packages = scrapePmtkSupport();
+exclude = {'readme.txt', 'pmtkSupportRoot.m', 'meta', 'docs', 'tmp'};
+packages = scrapePmtkSupport([], exclude);
 maxLen = max(cellfun(@numel, packages));
 fprintf('downloading %d packages to pmtk3/pmtksupportCopy from pmtksupport.googlecode.com - this may take a few minutes\n',...
     numel(packages));

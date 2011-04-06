@@ -5,10 +5,7 @@
 
 % This file is from pmtk3.googlecode.com
 
-if ~bioinfoToolboxInstalled
-    disp('skipping demo, needs bioinfoToolbox');
-    return;
-end
+
 requireStatsToolbox
 requireBioinfoToolbox
 loadData('yeastData310') % 'X', 'genes', 'times');

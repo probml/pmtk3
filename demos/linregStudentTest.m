@@ -2,12 +2,11 @@
 %PMTKauthor Yi Huang
 %%
 
+
 % This file is from pmtk3.googlecode.com
 
-if ~optimToolboxInstalled
-    fprintf('cannot run %s without optimization toolbox; skipping\n', mfilename());
-    return;
-end
+requireOptimToolbox
+
 
 seed = 0; setSeed(seed);
 x = sort(rand(10,1));

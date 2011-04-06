@@ -133,7 +133,12 @@ dot_to_ps(tmpDOTfile, sprintf('%s.ps', filename), landscape);
   
 
 if ~isempty(filename)
-  cmd = sprintf('ps2pdf %s.ps %s.pdf', filename, filename);
+  if ismac
+    str = '/usr/local/bin/ps2pdf';
+  else
+    str = 'ps2pdf';
+  end
+  cmd = sprintf('%s %s.ps %s.pdf', str, filename, filename);
   status = system(cmd);
   if status ~= 0
     error(sprintf('error executing %s', cmd));
@@ -183,8 +188,14 @@ if landscape
     opts = strcat(opts,' -Glandscape ');
 end
 
+if ismac
+  dotstr = '/usr/local/bin/dot';
+else
+  dotstr = 'dot';
+end
 %cmd = strcat('C:\temp\graphviz-2.8\bin\dot ',opts,' -T ps -o graphVizIt.ps graphVizIt.txt ')
-cmd = sprintf('dot %s -Tps %s -o %s', opts, dotname, outname);
+cmd = sprintf('%s %s -Tps %s -o %s', dotstr, opts, dotname, outname);
+%cmd = sprintf('dot -Tps %s -o %s', dotname, outname);
 %cmd = sprintf('dot %s -Tpng %s -o %s', opts, dotname, outname);
 status = system(cmd);
 if status ~= 0

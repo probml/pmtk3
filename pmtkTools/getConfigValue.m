@@ -99,7 +99,14 @@ for i=1:numel(text)
         end
     end
 end
-remove = cellfun(@(c)~isvarname(c) || length(c) < 5, tags); 
+%remove = cellfun(@(c)~isvarname(c) || length(c) < 5, tags); 
+remove = [];
+for i=1:numel(tags)
+  c = tags{i};
+  if ~isvarname(c) || length(c) < 5
+    remove = [remove i];
+  end
+end
 tags(remove) = [];
 lines(remove) = []; 
 end

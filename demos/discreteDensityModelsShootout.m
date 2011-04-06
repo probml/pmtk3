@@ -13,10 +13,10 @@ Nfolds = 1;
 pcTrain = 0.5; pcTest = 0.5;
 pcMissing =  0.3;
 
-%dataName = 'SUN09';
+dataName = 'SUN09';
 %dataName = 'newsgroups';
 %dataName = 'newsgroups1';
-dataName = 'ases4';
+%dataName = 'ases4';
 
 switch dataName
   case 'newsgroups'
@@ -182,13 +182,12 @@ methods(m).logprobFn = @(model, labels) dgmLogprob(model, 'obs', labels);
 %}
 
 
-%{
+
 m = m + 1;
 methods(m).modelname = 'dgm-init-tree';
 methods(m).fitFn = @(labels) dgmFitStruct(labels, 'nodeNames', nodeNames, 'maxFamEvals', 1000, ...
   'figFolder', figFolder, 'nrestarts', 0, 'initMethod', 'tree', 'edgeRestrict', 'MI');
 methods(m).logprobFn = @(model, labels) dgmLogprob(model, 'obs', labels);
-%}
 
 %{
 m = m + 1;
@@ -226,20 +225,6 @@ methods(m).logprobFn = @(model, labels) mrf2Logprob(model, labels);
 
 %%%%%%%%%%%%%% Mix
 
-
-
-Ks = [1,5];
-for kk=1:numel(Ks)
-  K = Ks(kk);
-  m = m + 1;
-  alpha = 1.1;
-  %methods(m).modelname = sprintf('mixK%d,a%2.1f', K, alpha);
-  methods(m).modelname = sprintf('mix%d', K);
-  methods(m).fitFn = @(labels) mixDiscreteFit(labels, K, 'maxIter', 30, ...
-    'verbose', false, 'alpha', 1.1);
-  methods(m).logprobFn = @(model, labels) mixDiscreteLogprob(model, labels);
-  methods(m).predictMissingFn = @(model, labels) mixDiscretePredictMissing(model, labels);
-end 
 
 
 %{
@@ -436,7 +421,7 @@ assert(approxeq(predIndep, predMix))
 [styles, colors, symbols, plotstr] =  plotColors();
 
 
-%{
+
 % NLL - for catFA, which cannot compute valid loglik,
 % we use NaNs
 figure;
@@ -454,7 +439,7 @@ title(sprintf('NLL on %s, D=%d, Ntr=%d, Nte=%d', ...
   dataName, Nnodes, Ntrain, Ntest))
 fname = fullfile(figFolder, sprintf('negloglik-%s.png', dataName));
 print(gcf, '-dpng', fname);
-%}
+
 
 % imputation error
 figure;
@@ -486,6 +471,8 @@ if ~isempty(m)
   fname = fullfile(figFolder, sprintf('tree-%s', dataName))
   graphviz(tree.edge_weights, 'labels', nodeNames, 'directed', 1, 'filename', fname);
 end
+%}
+
 
 m = strfindCell('dgm', methodNames);
 if ~isempty(m)
@@ -495,6 +482,7 @@ if ~isempty(m)
   graphviz(dgm.G, 'labels', dgm.nodeNames, 'directed', 1, 'filename', fname);
 end
 
+%{
 m = strfindCell('mrf-L1', methodNames);
 if ~isempty(m)
   mrf = models{m};
@@ -519,8 +507,6 @@ if ~isempty(m)
     %title(sprintf('%5.3f', mix.mixWeight(k)))
   end
 end
-
-
 %}
 
 %{

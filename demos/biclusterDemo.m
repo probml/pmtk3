@@ -1,5 +1,5 @@
 %% Bicluster Demo
-% PMTKreallySlow
+%PMTKreallySlow
 %%
 
 % This file is from pmtk3.googlecode.com

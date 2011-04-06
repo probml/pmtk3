@@ -5,11 +5,8 @@
 
 % This file is from pmtk3.googlecode.com
 
-if ~optimToolboxInstalled
-    fprintf('%s requires optimization toolbox; skipping\n', mfilename())
-    return
-end
-%requireOptimToolbox;
+
+requireOptimToolbox;
 [X,Y] = meshgrid(linspace(-2.5,2.5,40),linspace(-3,3,50));
 Z = peaks(X,Y);
 

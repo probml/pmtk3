@@ -4,11 +4,7 @@
 
 % This file is from pmtk3.googlecode.com
 
-if ~optimToolboxInstalled
-    fprintf('%s requires optimization toolbox; skipping\n', mfilename())
-    return
-end
-%requireOptimToolbox;
+requireOptimToolbox;
 xstart = [-1 2];
 
 % basic usage with anonymous function and numerical derivatives

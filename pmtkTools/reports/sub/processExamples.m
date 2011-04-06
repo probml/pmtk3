@@ -55,8 +55,7 @@ else
     include = cellfun(@(c)~isempty(intersect(c,includeTags)),tags);        % determine which mfiles to include based on their tags
 end
 
-excluded = mfnames(cellfun(@(c)~isempty(intersect(c,excludeTags)),tags));
-excluded = cellfuncell(@(c)c(1:end-2), excluded);
+
 if not(doformat)
     % when asked not to format, the semantics of excludeTags are
     % different - we actually exclude demos with any of these tags from
@@ -65,11 +64,21 @@ if not(doformat)
     text = mfnames(include & not(exclude));
     return;
 end
-mfnames = mfnames(include);                                                % keep only included mfiles
-%text = cellfuncell(@(c)sprintf('%s;%spclear(%d);',c(1:end-2),...           % format each example name by removing .m adding ';', spaces, and 'pclear('pauseTime');'
-%    blanks(max(5,42 - length(c))),pauseTime),mfnames)';
-text = cellfuncell(@(c)sprintf('disp(''running %s''); %s; pclear(%d);',...
-    c, c(1:end-2), pauseTime),mfnames)';
+mfnames = mfnames(include);    
+
+excluded = mfnames(cellfun(@(c)~isempty(intersect(c,excludeTags)),tags));
+%excluded = cellfuncell(@(c)c(1:end-2), excluded);
+
+mfnames = setdiff(mfnames, excluded);
+% keep only included mfiles
+%text = cellfuncell(@(c)sprintf('disp(''running %s''); %s; pclear(%d);',...
+%    c, c(1:end-2), pauseTime),mfnames)';
+text = cellfuncell(@(c) processName(c, pauseTime), mfnames)';
+
+
+%{
+% This code adds a comment at the beginning of lines
+% corresponding to excluded files
 if ~isempty(excludeTags)                                                   % if there are exclude tags
     comments = cellfuncell(@(c)catString(cellfuncell(@(s)regexprep...      % construct comments for mfiles with excludeTags from the tags themselves
         (s,'#',''),intersect(c,excludeTags)),' & '),tags(include));
@@ -82,5 +91,13 @@ if ~isempty(excludeTags)                                                   % if 
             text{i}(length(mfnames{i})+2:end)];
     end
 end
-text = [{''};text;{''}];                                                   % Add an extra blank line at the top and bottom
+text = [{''};text;{''}];
+%}
+
 end
+
+function str = processName(c, pauseTime)
+str = sprintf('disp(''running %s'');\n try\n %s; \n catch ME \n disp(ME.message); \n end \n pclear(%d);\n',...
+    c, c(1:end-2), pauseTime);
+end
+

@@ -11,10 +11,7 @@ if ~libdaiInstalled
     fprintf('cannot run %s without libdai; skipping\n', mfilename());
     return;
 end
-if ~imagesToolboxInstalled
-    fprintf('cannot run %s without image processing toolbox; skipping\n', mfilename());
-    return;
-end
+requireImageToolbox
 setSeed(0); 
 infEngine = 'libdaibp';
 sz = 32;

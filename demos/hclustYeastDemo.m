@@ -5,12 +5,8 @@
 
 % This file is from pmtk3.googlecode.com
 
-%requireStatsToolbox
-%requireBioinfoToolbox
-if ~bioinfoToolboxInstalled
-    fprintf('cannot run %s without bioinformatics toolbox; skipping\n', mfilename());
-    return;
-end
+requireStatsToolbox
+requireBioinfoToolbox
 loadData('yeastData310') % 'X', 'genes', 'times');
 
 corrDist = pdist(X, 'corr');

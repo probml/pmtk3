@@ -23,10 +23,11 @@ function [list, m, g, map] = whoCallsMe(fname, varargin)
 
 % This file is from pmtk3.googlecode.com
 
-[recache, recursive, verbose] = process_options(varargin, ...
+[recache, recursive, verbose, skipBuiltin] = process_options(varargin, ...
     'recache'  , false, ...
     'recursive', false, ...
-    'verbose',   true);
+    'verbose',   true, ...
+    'skipBuiltin', true);
 %%
 w = which(fname);
 
@@ -37,8 +38,8 @@ if isempty(w)
     end
     return
 end
-if startswith(w, matlabroot) || startswith(w, 'built-in (')
-    list = []; g = []; map = struct();
+if skipBuiltin && (startswith(w, matlabroot) || startswith(w, 'built-in ('))
+    list = []; m =[]; g = []; map = struct();
     if verbose
         fprintf('%s is a built-in matlab function.\n', fname);
     end
@@ -89,7 +90,7 @@ catch ME
     else
         fprintf('The dependency graph is out of date\n\n'); 
         [list, m, g, map] = whoCallsMe(fname, 'recache', true, ...
-        'recursive', recursive, 'verbose', verbose);
+        'recursive', recursive, 'verbose', verbose, 'skipBuiltin', skipBuiltin);
     end
 end
 

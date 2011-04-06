@@ -76,8 +76,9 @@ else
   interv = [];
   scoreType = 0; % 0 for BIC, 1 for validation
   hashTable = java.util.Hashtable;
-  [dag{1}, hashTable, search.scores{1}, search.funEvals{1}] = DAGlearn2_DAGsearch(Xpm, scoreType, allowableEdges, ...
-    initG, interv, maxFamEvals, hashTable, verbosity, maxIter, maxFanInDag);
+  [dag{1}, hashTable, search.scores{1}, search.funEvals{1}] = DAGlearn2_DAGsearch_KPM(Xpm, ...
+    scoreType, allowableEdges, ...
+    initG, interv, maxFamEvals, hashTable,  verbosity, maxIter, maxFanInDag);
   cost(1) = min(search.scores{1});
   for i = 1:nrestarts
     fprintf('dgmFit structure learning: restart %d of %d\n', i, nrestarts);
