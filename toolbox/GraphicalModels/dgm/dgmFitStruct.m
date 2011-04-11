@@ -69,8 +69,9 @@ else
     case 'empty'
       initG = [];
     case 'tree'
-      tree = treegmFit(X12);
-      initG = tree.dirTree;
+      [tree] = treegmFit(X12);
+      %initG = tree.dirTree;
+      initG = tree.adjmat;
   end
   
   interv = [];
@@ -80,6 +81,7 @@ else
     scoreType, allowableEdges, ...
     initG, interv, maxFamEvals, hashTable,  verbosity, maxIter, maxFanInDag);
   cost(1) = min(search.scores{1});
+  
   for i = 1:nrestarts
     fprintf('dgmFit structure learning: restart %d of %d\n', i, nrestarts);
     % start from  random DAG
@@ -93,7 +95,7 @@ else
     
     % Run DAG-search, re-using hash table of family evals
     [dag{i+1}, hashTable, search.scores{i+1}, search.funEvals{i+1}] = ...
-      DAGlearn2_DAGsearch(Xpm, scoreType, allowableEdges, adjInit, interv, maxFamEvals, hashTable, ...
+      DAGlearn2_DAGsearch_KPM(Xpm, scoreType, allowableEdges, adjInit, interv, maxFamEvals, hashTable, ...
       verbosity, maxFanInDag);
     cost(i+1) = min(search.scores{i+1});
   end
