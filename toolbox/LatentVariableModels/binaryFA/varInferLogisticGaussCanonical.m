@@ -1,5 +1,5 @@
-function [muPost, SigmaPost, lambda, logZ] = varInferLogisticGaussCanonical(...
-  y, W, b, muPrior, SigmaPrior, varargin)
+function [muPost, SigmaPost, logZ, lambda] = varInferLogisticGaussCanonical(...
+  y, W, b, muPrior, SigmaPriorInv, varargin)
 % Use a variational approximation to infer a Gaussian posterior 
 % given a Gaussian prior and a logistic likelihood
 % 
@@ -49,7 +49,7 @@ xi = (2*y-1) .* (W'*muPrior + b);
 ndx = find(xi==0);
 xi(ndx) = 0.01*rand(size(ndx));
 
-Kprior = inv(SigmaPrior);
+Kprior = SigmaPriorInv; % inv(SigmaPrior);
 hprior = Kprior*muPrior;
 gprior = 0.5*logdet(Kprior) -(q/2)*log2pi -0.5*muPrior'*Kprior*muPrior;
 

@@ -33,7 +33,7 @@ mu = rowvec(mu);
 logp = NaN(n,1);
 logp(~missRows) = gaussLogprob(mu, Sigma, X(~missRows,:));
 
-XmissCell = mat2Cell(X(missRows,:), ones(1,nMiss), d);
+XmissCell = mat2cell(X(missRows,:), ones(1,nMiss), d);
 % XmissCell{i} is a 1xd vector with some NaNs
 logp(missRows) = cellfun(@(y)lognormpdfNaN(mu, Sigma, y), XmissCell);
  
