@@ -1,13 +1,23 @@
-function [muPost, SigmaPost, lambda] = varInferLogisticGauss(y, W, b, muPrior, SigmaPrior)
+function [muPost, SigmaPost, lambda] = varInferLogisticGauss(y, W, b, muPrior, SigmaPrior, varargin)
 % Use a variational approximation to infer a Gaussian posterior 
-% given a Gaussian prior and a logistic likelihood
+% given a Gaussian prior and a logistic likelihood for single case
+%
+% y(t) is {0,1}, t=1:T (num outputs)
+% W is K*T where K is num latent dims
+% b is T*1
+% muPrior is K*1
+% SigmaPrior is K*K
 % 
-% p(x(1:q) | y(1:p)) propto N(x(1:q)|muPrior, SigmaPrior) * p(y|x)
-% where p(y|x) = prod_{i=1}^p  sigma( ystar(i) W(:,i)' * x(:) + b(i) )
-% where ystar(i) = 2 y(i) - 1  (y(i) = 0,1  so ystar(i) = -1,+1)
+% Uses the Jaakkola-Jordan bound
+% For details, see "Probabilistic visualization of high-dimensional
+% binary data", Tipping NIPS 1998
 
+% This file is from pmtk3.googlecode.com
+
+
+[maxIter] = process_options(varargin, 'maxIter', 3);
 [q p] = size(W);
-debug = 0;
+debug = 1;
 
 % initialize variational param 
 xi = (2*y-1) .* (W'*muPrior + b);
@@ -15,7 +25,6 @@ ndx = find(xi==0);
 xi(ndx) = 0.01*rand(size(ndx));
 
 SigmaInv = inv(SigmaPrior);
-maxIter = 3;
 for iter=1:maxIter
   lambda = (0.5-sigmoid(xi)) ./ (2*xi);
 
