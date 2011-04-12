@@ -20,9 +20,8 @@ model.type  = 'mixGauss';
 model.nmix  = nmix;
 model.d     = d;
 model       = setMixPrior(model, mixPrior);
-initFn = @initGauss;
 
-initFn = @(m, X, r)initFn(m, X, r, initParams, prior); 
+initFn = @(m, X, r)initGauss(m, X, r, initParams, prior); 
 [model, loglikHist] = emAlgo(model, data, initFn, @estep, @mstep , ...
                             'verbose', true, EMargs{:});
 end

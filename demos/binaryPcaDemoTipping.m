@@ -23,7 +23,9 @@ figure; imagesc(data'); colormap(gray);printPmtkFigure('binaryPCAinput');
 figure; imagesc(dataClean'); colormap(gray)
 
 q = 2;
-[W, b, muPost] = binaryPcaFitVarEm(data, 2);
+%[W, b, muPost] = binaryPcaFitVarEm(data, 2);
+model = binaryFAfit(data, 2);
+muPost = binaryFAinferLatent(model, data);
 
 figure;
 symbols = {'ro', 'gs', 'k*'};

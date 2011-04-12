@@ -18,7 +18,11 @@ b = model.b;
 muPrior = zeros(K,1);
 SigmaPrior = eye(K,K);
 muPost = zeros(K,N);
-SigmaPost = zeros(K,K,N);
+if nargout >= 2
+  SigmaPost = zeros(K,K,N);
+else
+  SigmaPost = [];
+end
 for n=1:N
   [muPost(:,n), SigmaPost(:,:,n)] = ...
     varInferLogisticGauss(y(n,:), W, b, muPrior, SigmaPrior);
