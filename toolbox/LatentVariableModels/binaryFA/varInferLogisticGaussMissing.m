@@ -1,10 +1,11 @@
-function [muPost, SigmaPost, logZ, lambda] = varInferLogisticGaussMissing(y, W, b, muPrior, SigmaPriorInv, varargin)
+function [muPost, SigmaPost, logZ, lambda] = varInferLogisticGaussMissing(y, W, b, muPrior, SigmaPriorInv, computeLoglik)
 % Just like varInferLogisticGauss except y(t) may be NaN
 
 % This file is from pmtk3.googlecode.com
 
-
-[maxIter] = process_options(varargin, 'maxIter', 3);
+maxIter = 3;
+%[maxIter, computeLoglik] = process_options(varargin, ...
+%  'maxIter', 3, 'computeLoglik', (nargout >= 3));
 y = colvec(y);
 p = numel(y);
 visNdx = ~isnan(y);
@@ -34,33 +35,33 @@ for iter=1:maxIter
   xi(visNdx) = sqrt(tmp(visNdx) + tmp2(visNdx) + b(visNdx).^2);
   
   
-  % Normalization constant
-  lam = -lambda;
-   % -ve sign needed because Tipping
-  % uses different sign convention for lambda to Emt/Bishop/Murphy
-  A = diag(2*lam);
-  invA = diag(1./(2*lam));
-  hidNdx = find(~visNdx);
-  ndx = sub2ind(size(A), hidNdx, hidNdx);
-  invA(ndx) = 0; % set diagonals to 0 for missing entries
-  
-  bb = -0.5*ones(p,1);
-  c = -lam .* xi.^2 - 0.5*xi + log(1+exp(xi));
-  ytilde = zeros(p,1);
-  ytilde(visNdx) = invA(visNdx,visNdx)*(bb(visNdx) + y(visNdx)); % ytilde is 0 for missing entries
-  B = W'; % T*K
-  logconst1 = -0.5*sum(log(lam(visNdx)/pi)); 
-  %assert(approxeq(logconst1, 0.5*logdet(2*pi*invA)))
-  logconst2 = 0.5*ytilde'*A*ytilde - sum(c(visNdx));
-  predMu = B*muPrior + b;
-  predPost = invA + B*SigmaPost*B';
-  logconst3 = gaussLogprob(predMu(visNdx), predPost(visNdx,visNdx), rowvec(ytilde(visNdx)));
-  logZ = logconst1 + logconst2 + logconst3;
-  assert(~isnan(logZ))
+  if ~computeLoglik
+    logZ = 0;
+  else
+    % Normalization constant
+    lam = -lambda;
+    % -ve sign needed because Tipping
+    % uses different sign convention for lambda to Emt/Bishop/Murphy
+    A = diag(2*lam);
+    invA = diag(1./(2*lam));
+    hidNdx = find(~visNdx);
+    ndx = sub2ind(size(A), hidNdx, hidNdx);
+    invA(ndx) = 0; % set diagonals to 0 for missing entries
+    
+    bb = -0.5*ones(p,1);
+    c = -lam .* xi.^2 - 0.5*xi + log(1+exp(xi));
+    ytilde = zeros(p,1);
+    ytilde(visNdx) = invA(visNdx,visNdx)*(bb(visNdx) + y(visNdx)); % ytilde is 0 for missing entries
+    B = W'; % T*K
+    logconst1 = -0.5*sum(log(lam(visNdx)/pi));
+    %assert(approxeq(logconst1, 0.5*logdet(2*pi*invA)))
+    logconst2 = 0.5*ytilde'*A*ytilde - sum(c(visNdx));
+    predMu = B*muPrior + b;
+    predPost = invA + B*SigmaPost*B';
+    logconst3 = gaussLogprob(predMu(visNdx), predPost(visNdx,visNdx), rowvec(ytilde(visNdx)));
+    logZ = logconst1 + logconst2 + logconst3;
+    assert(~isnan(logZ))
+  end
 end
-  
-%%%%%%%
 
-function y=sigmoid(x)
-
-y = 1./(1+exp(-x));
+end

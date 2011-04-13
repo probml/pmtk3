@@ -6,6 +6,7 @@ function [model, loglikHist, llHists] = emAlgo(model, data, init, estep, mstep, 
 %   [ess, loglik] = estep(model, data) % compute expected suff. stats
 %   model = mstep(model, ess) % compute params
 %
+%
 % Outputs:
 % model is a struct returned by the mstep function.
 % loglikHist is the history of log-likelihood (plus log-prior) vs
@@ -24,8 +25,8 @@ function [model, loglikHist, llHists] = emAlgo(model, data, init, estep, mstep, 
 
 
 %% Random Restart
-[nRandomRestarts, verbose, restartNum, args] = process_options(varargin, ...
-    'nrandomRestarts', 1, 'verbose', false, 'restartNum', 1);
+[nRandomRestarts, verbose,  args] = process_options(varargin, ...
+    'nrandomRestarts', 1, 'verbose', false);
 if nRandomRestarts > 1
     models  = cell(1, nRandomRestarts);
     llhists = cell(1, nRandomRestarts);
@@ -44,12 +45,12 @@ if nRandomRestarts > 1
     return
 end
 %% Perform EM
-[maxIter, convTol, plotfn, verbose, restartNum] = process_options(args ,...
+[maxIter, convTol, plotfn, restartNum, computeLoglik] = process_options(args ,...
     'maxIter'    , 50   , ...
     'convTol'    , 1e-4  , ...
     'plotfn'     , []    , ...
-    'verbose'    , false , ...
-    'restartNum' , 1   );
+    'restartNum' , 1, ....
+    'computeLoglik', true);
 
   if verbose, fprintf('initializing model for EM\n'); end
 model = init(model, data, restartNum);
@@ -57,7 +58,12 @@ iter = 1;
 done = false;
 loglikHist = zeros(maxIter + 1, 1);
 while ~done
+  if computeLoglik
     [ess, ll] = estep(model, data);
+  else
+    [ess] = estep(model, data);
+    ll = 0;
+  end
     if verbose
         fprintf('%d\t loglik: %g\n', iter, ll );
     end
@@ -66,8 +72,17 @@ while ~done
     end
     loglikHist(iter) = ll;
     model = mstep(model, ess);
-    done  = (iter > maxIter) || ( (iter > 1) && ...
-        convergenceTest(loglikHist(iter), loglikHist(iter-1), convTol, true));
+    if iter > maxIter
+      done = true;
+    elseif iter > 1
+      if computeLoglik
+        showWarning = true;
+        done = convergenceTest(loglikHist(iter), loglikHist(iter-1), convTol, showWarning);
+      end
+      % could add convergence test based on params not changing
+    end
+    %done  = (iter > maxIter) || ( (iter > 1) && ...
+    %    convergenceTest(loglikHist(iter), loglikHist(iter-1), convTol, true));
     iter = iter + 1;
 end
 loglikHist = loglikHist(1:iter-1);

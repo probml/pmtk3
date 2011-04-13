@@ -1,4 +1,4 @@
-function [muPost, SigmaPost, logZ, lambda] = varInferLogisticGauss(y, W, b, muPrior, SigmaPriorInv, varargin)
+function [muPost, SigmaPost, logZ, lambda] = varInferLogisticGauss(y, W, b, muPrior, SigmaPriorInv, computeLoglik)
 % Use a variational approximation to infer a Gaussian posterior 
 % given a Gaussian prior and a logistic likelihood for single case
 %
@@ -14,13 +14,18 @@ function [muPost, SigmaPost, logZ, lambda] = varInferLogisticGauss(y, W, b, muPr
 
 % This file is from pmtk3.googlecode.com
 
+% Using process_options inside a tight inner loop is slow
+%[maxIter, computeLoglik] = process_options(varargin, ...
+%  'maxIter', 3, 'computeLoglik', (nargout >= 3));
+maxIter = 3;
+
 y = colvec(y);
 if any(isnan(y))
-  [muPost, SigmaPost, logZ, lambda] = varInferLogisticGaussMissing(y, W, b, muPrior, SigmaPriorInv, varargin{:});
+  [muPost, SigmaPost, logZ, lambda] = varInferLogisticGaussMissing(y, W, b, muPrior, SigmaPriorInv, computeLoglik, maxIter);
   return;
 end
 
-[maxIter] = process_options(varargin, 'maxIter', 3);
+
 [q p] = size(W);
 debug = 0;
 
@@ -78,25 +83,25 @@ for iter=1:maxIter
   end
   %}
   
-  % Normalization constant
-  lam = -lambda;
-   % -ve sign needed because Tipping
-  % uses different sign convention for lambda to Emt/Bishop/Murphy
-  A = diag(2*lam);
-  invA = diag(1./(2*lam));
-  bb = -0.5*ones(p,1);
-  c = -lam .* xi.^2 - 0.5*xi + log(1+exp(xi));
-  ytilde = invA*(bb + y);
-  B = W'; % T*K
-  logconst1 = -0.5*sum(log(lam/pi)); 
-  %assert(approxeq(logconst1, 0.5*logdet(2*pi*invA)))
-  logconst2 = 0.5*ytilde'*A*ytilde - sum(c);
-  logconst3 = gaussLogprob(B*muPrior + b, invA + B*SigmaPost*B', rowvec(ytilde));
-  logZ = logconst1 + logconst2 + logconst3;
+  if ~computeLoglik
+    logZ = 0;
+  else
+    % Computing normalization constant is slow
+    lam = -lambda;
+    % -ve sign needed because Tipping
+    % uses different sign convention for lambda to Emt/Bishop/Murphy
+    A = diag(2*lam);
+    invA = diag(1./(2*lam));
+    bb = -0.5*ones(p,1);
+    c = -lam .* xi.^2 - 0.5*xi + log(1+exp(xi));
+    ytilde = invA*(bb + y);
+    B = W'; % T*K
+    logconst1 = -0.5*sum(log(lam/pi));
+    %assert(approxeq(logconst1, 0.5*logdet(2*pi*invA)))
+    logconst2 = 0.5*ytilde'*A*ytilde - sum(c);
+    logconst3 = gaussLogprob(B*muPrior + b, invA + B*SigmaPost*B', rowvec(ytilde));
+    logZ = logconst1 + logconst2 + logconst3;
+  end
 end
-  
-%%%%%%%
 
-function y=sigmoid(x)
-
-y = 1./(1+exp(-x));
+end

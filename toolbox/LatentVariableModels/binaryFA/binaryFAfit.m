@@ -2,11 +2,13 @@ function [model, loglikHist] = binaryFAfit(Y, K,  varargin)
 %% Fit factor analysis for binary data (using EM)
 %
 %
-%% Inputs
+% Inputs
 %
 % Y     - Y(n,t) in {0,1} or {1,2}  
 % K - num latent dims
-
+%
+% If you don't request loglikHist, we don't compute
+% loglik, which is quite slow (35% of the time!)
 
 % This file is from pmtk3.googlecode.com
 
@@ -18,7 +20,8 @@ model.type  = 'binaryFA';
 model.K = K;
 model.T = T;
 
-[model, loglikHist] = emAlgo(model, Y, @initFn, @estep, @mstep , EMargs{:});
+[model, loglikHist] = emAlgo(model, Y, @initFn, @estep, @mstep , ...
+  'computeLoglik', (nargout >= 2), EMargs{:});
 end
 
 function model = initFn(model, Y, restartNum) %#ok ignores Y
@@ -33,6 +36,7 @@ end
 
 
 function [ess, loglik] = estep(model, data)
+computeLoglik = (nargout >= 2);
 q = model.K;
 Y  = data';
 [p,N] = size(Y);
@@ -44,9 +48,8 @@ loglik = 0;
 W = model.W; b = model.b;
 muPrior = model.muPrior; SigmaPriorInv = inv(model.SigmaPrior);
 for n=1:N
- 
-  [muPost, SigmaPost, logZ, lambda] = ...
-    varInferLogisticGauss(Y(:,n), W, b, muPrior, SigmaPriorInv);
+    [muPost, SigmaPost, logZ, lambda] = ...
+      varInferLogisticGauss(Y(:,n), W, b, muPrior, SigmaPriorInv,  computeLoglik);
   loglik = loglik + logZ;
   
   if debug
@@ -56,7 +59,7 @@ for n=1:N
     [muPost, SigmaPost, logZ] = ...
       varInferLogisticGaussCanonical(Y(:,n), W, b, muPrior, SigmaPriorInv, 'maxIter', 3);
     [muPost2, SigmaPost2, lambda2, logZ2] = ...
-      varInferLogisticGauss(Y(:,n), W, b, muPrior, SigmaPriorInv, 'maxIter', 3);
+      varInferLogisticGauss(Y(:,n), W, b, muPrior, SigmaPriorInv);
     assert(approxeq(muPost(:,n), muPost2(:,n)))
     assert(approxeq(SigmaPost, SigmaPost2))
     assert(approxeq(lambda, lambda2))
