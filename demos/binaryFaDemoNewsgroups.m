@@ -11,14 +11,14 @@ loadData('20news_w100');
 labels = double(full(documents))'; % 16,642 documents by 100 words  (sparse logical  matrix)
 [N,D] = size(labels);
 perm = randperm(N);
-data = labels(1:perm(500), :);
+data = labels(perm(1:5000), :);
 [N,D] = size(data);
-maxIter = 6; % EM convergers really fast
+
 
 %{
 % Latent 2d embedding - very poor
 % We don't request loglik hist for speed
-[model2d] = binaryFAfit(data, 2, 'maxIter',maxIter, 'verbose', true);
+[model2d] = binaryFAfit(data, 2, 'maxIter', 6, 'verbose', true);
 
 % See where each word maps to
 dummy = eye(D);
@@ -38,24 +38,54 @@ title(sprintf('latent 2d embedding of %d newsgroups words', D))
 
 % Latent higher dim embedding
 nlatent = 10;
-[modelBig, loglikHist] = binaryFAfit(data, nlatent, 'maxIter', maxIter, ...
+
+methods = [];
+m = 0;
+
+
+m = m + 1;
+methods(m).modelname = 'JJ';
+methods(m).fitFn = @(data) binaryFAfit(data, nlatent, 'maxIter', 6, ...
   'verbose', true, 'computeLoglik', false);
+methods(m).infFn = @(model, labels) binaryFAinferLatent(model, labels);
 
-% See where each word maps to
-dummy = eye(D);
-muPostBig = binaryFAinferLatent(modelBig, dummy);
-% muPost is L*N, reduce to N*2 for vis purposes using MDS
-dst = pdist(muPostBig','Euclidean');
-[mdsCoords,eigvals] = cmdscale(dst);
-eigVals(1:5)
 
-figure; hold on
-% We need to plot points before text
-for d=1:D
-  plot(mdsCoords(d,1), mdsCoords(d,2), '.');
+m = m + 1;
+methods(m).modelname = 'Bohning';
+methods(m).fitFn = @(data) catFAfit(data, [], nlatent, 'maxIter', 10, ...
+  'verbose', true, 'nClass', 2*ones(1,D));
+methods(m).infFn = @(model, labels) catFAinferLatent(model, labels, []);
+
+
+Nmethods = numel(methods);
+for m=1:Nmethods
+  fitFn = methods(m).fitFn;
+  infFn = methods(m).infFn;
+  methodname = methods(m).modelname;
+  
+  tic
+  model = fitFn(data);
+  timMethod(m) = toc
+  
+  % Compute latent embedding of each possible delta function
+  dummy = eye(D);
+  muPost = infFn(model, dummy);
+  
+  % muPost is L*N, reduce to N*2 for vis purposes using MDS
+  dst = pdist(muPost','Euclidean');
+  [mdsCoords,eigvals] = cmdscale(dst);
+  eigvals(1:5)
+  
+  figure; hold on
+  % We need to plot points before text
+  for d=1:D
+    plot(mdsCoords(d,1), mdsCoords(d,2), '.');
+  end
+  ndx = 1:1:D;
+  for d=ndx(:)'
+    text(mdsCoords(d,1), mdsCoords(d,2), wordlist{d}, 'fontsize', 10);
+  end
+  title(sprintf('L=%d, N=%d, method = %s', nlatent, N, methodname))
+  fname = sprintf('binaryFAnewsgroups-%s-L%d-N%d', methodname, nlatent, N);
+  printPmtkFigure(fname);
 end
-ndx = 1:1:D;
-for d=ndx(:)'
-  text(mdsCoords(d,1), mdsCoords(d,2), wordlist{d});
-end
-title(sprintf('latent %d-d embedding of %d newsgroups words', nlatent, D))
