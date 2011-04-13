@@ -7,14 +7,15 @@
 % labels is N*D, where labels(n,d) in {1..Nstates(d)}
 
 
+
 Nfolds = 1;
 % pcTrain and pcTest do not need to sum to one
 % This way, you can use a fraction of the overall data
-pcTrain = 0.5; pcTest = 0.5;
+pcTrain = 0.1; pcTest = 0.1;
 pcMissing =  0.3;
 
-dataName = 'SUN09';
-%dataName = 'newsgroups';
+%dataName = 'SUN09';
+dataName = 'newsgroups';
 %dataName = 'newsgroups1';
 %dataName = 'ases4';
 
@@ -182,12 +183,13 @@ methods(m).logprobFn = @(model, labels) dgmLogprob(model, 'obs', labels);
 %}
 
 
-
+%{
 m = m + 1;
 methods(m).modelname = 'dgm-init-tree';
 methods(m).fitFn = @(labels) dgmFitStruct(labels, 'nodeNames', nodeNames, 'maxFamEvals', 1000, ...
   'figFolder', figFolder, 'nrestarts', 0, 'initMethod', 'tree', 'edgeRestrict', 'MI');
 methods(m).logprobFn = @(model, labels) dgmLogprob(model, 'obs', labels);
+%}
 
 %{
 m = m + 1;
@@ -228,39 +230,49 @@ methods(m).logprobFn = @(model, labels) mrf2Logprob(model, labels);
 
 
 %{
-Ks = [1,5,10,20,40];
+Ks = [1,5,20,40];
 for kk=1:numel(Ks)
   K = Ks(kk);
   m = m + 1;
   alpha = 1.1;
   %methods(m).modelname = sprintf('mixK%d,a%2.1f', K, alpha);
   methods(m).modelname = sprintf('mix%d', K);
-  methods(m).fitFn = @(labels) mixModelFit(labels, K, 'discrete', 'maxIter', 30, ...
-    'verbose', false, 'prior', struct('alpha', 1.1));
-  methods(m).logprobFn = @(model, labels) mixModelLogprob(model, labels);
-  methods(m).predictMissingFn = @(model, labels) mixModelPredictMissing(model, labels);
+  methods(m).fitFn = @(labels) mixDiscreteFit(labels, K, 'maxIter', 30, ...
+    'verbose', false, 'alpha', 1.1);
+  methods(m).logprobFn = @(model, labels) mixDiscreteLogprob(model, labels);
+  methods(m).predictMissingFn = @(model, labels) mixDiscretePredictMissing(model, labels);
 end 
 %}
 
-
 %%%%%%%%%%%%%% Categorical FA
-%[mu, Sigma, loglikCases, loglikAvg] = catFAinferLatent(model,discreteData, ctsData)
-%[predD, predC] = catFApredictMissing(model, testData)
-%methods(m).logprobFn = @(model, labels) argout(3, @catFAinferLatent, model, labels, []);
 
 
 %{
-Ks = [5,10,20,40];
+Ks = [1,5,20,40];
 for kk=1:numel(Ks)
   K = Ks(kk);
   m = m + 1;
   methods(m).modelname = sprintf('dFA-%d', K);
   methods(m).fitFn = @(labels) catFAfit(labels, [],  K,  'nClass', Nstates, ...
-    'maxIter', 30, 'verbose', true, 'nClass', Nstates);
+    'maxIter', 15, 'verbose', true);
   methods(m).logprobFn = @(model, labels) nan(size(labels,1),1);
   methods(m).predictMissingFn = @(model, labels) catFApredictMissing(model, labels, []);
 end
 %}
+
+%%%%%%%%%%%%%% binary FA
+
+%Ks = [150,200,250,300];
+Ks = [1,20,50,100,150];
+for kk=1:numel(Ks)
+  K = Ks(kk);
+  m = m + 1;
+  methods(m).modelname = sprintf('bFA-%d', K);
+  methods(m).fitFn = @(labels) binaryFAfit(labels,  K,   ...
+    'maxIter', 15, 'verbose', true, 'computeLoglik', false);
+  methods(m).logprobFn = @(model, labels) nan(size(labels,1),1);
+  methods(m).predictMissingFn = @(model, labels) argout(2, @binaryFApredictMissing, model, labels);
+end
 
 
 Nmethods = numel(methods);
@@ -287,8 +299,9 @@ end
 
 
 loglik_models = zeros(Nfolds, Nmethods);
-imputation_err_models = zeros(Nfolds, Nmethods);
- 
+imputation_err_entropy = zeros(Nfolds, Nmethods);
+imputation_err_binary = zeros(Nfolds, Nmethods);
+
 
 for fold=1:Nfolds
 
@@ -317,6 +330,7 @@ for fold=1:Nfolds
   
   ll = zeros(1, Nmethods);
   imputationErr = zeros(1,Nmethods);
+  imputationErrBinary = zeros(1,Nmethods);
   for m=1:Nmethods
     fprintf('evaluating %s\n', methodNames{m});
     ll(m) = sum(methods(m).logprobFn(models{m}, test.labels))/Ntest;
@@ -324,8 +338,9 @@ for fold=1:Nfolds
     if isfield(methods(m), 'predictMissingFn')
       pred = methods(m).predictMissingFn(models{m}, test.labelsMasked);
       % for binary data - MSE is fine
-      %probOn = pred(:,:,2);  
-      %imputationErr(m) = sum(sum((probOn-test.tags).^2))/Ntest; 
+      probOn = pred(:,:,2);  
+      testBinary = (test.labels==2);
+      imputationErrBinary(m) = sum(sum((probOn-testBinary).^2))/Ntest; 
       
 
       %{
@@ -374,19 +389,15 @@ for fold=1:Nfolds
         pred3(idx,:) = p1;
       end
       yhatD = pred3;
-      entrpyD = -sum(ydT_oneOfM(miss).*log2(yhatD(miss)))/(Ntest*length(nClass))
-      %entrpyD = -sum(ydT_oneOfM(miss).*log2(yhatD(miss)))/(sum(miss(:)));
- 
-     
+      entrpyD = -sum(ydT_oneOfM(miss).*log2(yhatD(miss)))/(Ntest*length(nClass));
+      %entrpyD = -sum(ydT_oneOfM(miss).*log2(yhatD(miss)))/(sum(miss(:)));    
       
       imputationErr(m) =  entrpyD;
-      %imputationErr(m) =  -logprobAvg;
-      %imputationErr2(m) =  -logprobAvg2;
     end
   end
   loglik_models(fold, :) = ll;
-  imputation_err_models(fold, :) = imputationErr;
-  
+  imputation_err_entropy(fold, :) = imputationErr;
+  imputation_err_binary(fold, :) = imputationErrBinary;
 end % fold
 
     
@@ -429,6 +440,7 @@ ndx = 1:Nmethods;
 if Nfolds==1
   plot(-loglik_models(ndx), 'x', 'markersize', 12, 'linewidth', 2)
   axis_pct
+  -loglik_models
 else
   boxplot(-loglik_models(:, ndx))
 end
@@ -445,17 +457,35 @@ print(gcf, '-dpng', fname);
 figure;
 ndx = 1:Nmethods; 
 if Nfolds==1
-  plot(imputation_err_models(ndx), 'x', 'markersize', 12, 'linewidth', 2)
+  plot(imputation_err_entropy(ndx), 'x', 'markersize', 12, 'linewidth', 2)
   axis_pct
+ imputation_err_entropy
 else
-  boxplot(imputation_err_models(:, ndx))
+  boxplot(imputation_err_entropy(:, ndx))
 end
 set(gca, 'xtick', 1:numel(ndx))
 set(gca, 'xticklabel', methodNames(ndx))
 %xticklabelRot(methodNames(ndx), -45);
-title(sprintf('imputation error on %s, %5.3fpc missing, D=%d, Ntr=%d, Nte=%d', ...
+title(sprintf('imputation error (cross entropy) on %s, %5.3fpc missing, D=%d, Ntr=%d, Nte=%d', ...
   dataName, pcMissing, Nnodes, Ntrain, Ntest))
 fname = fullfile(figFolder, sprintf('imputation-%s.png', dataName));
+print(gcf, '-dpng', fname);
+
+% mse error
+figure;
+ndx = 1:Nmethods; 
+if Nfolds==1
+  plot(imputation_err_binary(ndx), 'x', 'markersize', 12, 'linewidth', 2)
+  axis_pct
+else
+  boxplot(imputation_err_binary(:, ndx))
+end
+set(gca, 'xtick', 1:numel(ndx))
+set(gca, 'xticklabel', methodNames(ndx))
+%xticklabelRot(methodNames(ndx), -45);
+title(sprintf('imputation error (mse) on %s, %5.3fpc missing, D=%d, Ntr=%d, Nte=%d', ...
+  dataName, pcMissing, Nnodes, Ntrain, Ntest))
+fname = fullfile(figFolder, sprintf('imputation-mse-%s.png', dataName));
 print(gcf, '-dpng', fname);
 
 
@@ -474,6 +504,7 @@ end
 %}
 
 
+%{
 m = strfindCell('dgm', methodNames);
 if ~isempty(m)
   dgm = models{m};
@@ -481,6 +512,7 @@ if ~isempty(m)
   fname = fullfile(figFolder, sprintf('dgm-%s', dataName))
   graphviz(dgm.G, 'labels', dgm.nodeNames, 'directed', 1, 'filename', fname);
 end
+%}
 
 %{
 m = strfindCell('mrf-L1', methodNames);

@@ -21,7 +21,7 @@ maxIter = 3;
 
 y = colvec(y);
 if any(isnan(y))
-  [muPost, SigmaPost, logZ, lambda] = varInferLogisticGaussMissing(y, W, b, muPrior, SigmaPriorInv, computeLoglik, maxIter);
+  [muPost, SigmaPost, logZ, lambda] = varInferLogisticGaussMissing(y, W, b, muPrior, SigmaPriorInv, computeLoglik);
   return;
 end
 

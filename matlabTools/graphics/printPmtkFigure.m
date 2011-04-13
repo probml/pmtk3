@@ -6,8 +6,10 @@ function printPmtkFigure(filename, format)
 if nargin <2, format = 'pdf'; end
 
 if false % set to false to turn off printing
-   %printFolder = 'C:\kmurphy\dropbox\PML\Figures\pdfFigures';
-   printFolder = '/Users/kpmurphy/MLbook/Figures/pdfFigures';
+  printFolder = [];
+   if ismac
+     printFolder = '/Users/kpmurphy/Dropbox/MLbook/Figures/pdfFigures';
+   end
    if strcmpi(format, 'pdf')
        pdfcrop;
    end

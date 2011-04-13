@@ -36,7 +36,7 @@ title(sprintf('latent 2d embedding of %d newsgroups words', D))
 %}
 
 
-% Latent higher dim embedding
+%  higher dim embedding
 nlatent = 10;
 
 methods = [];
