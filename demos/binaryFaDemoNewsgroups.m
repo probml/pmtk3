@@ -8,12 +8,13 @@ requireStatsToolbox; % cmdscale
 setSeed(0);
 loadData('20news_w100');
 % documents, wordlist, newsgroups, groupnames
-labels = double(full(documents))'; % 16,642 documents by 100 words  (sparse logical  matrix)
-[N,D] = size(labels);
+wordocc = double(full(documents))'; % 16,642 documents by 100 words  (sparse logical  matrix)
+[N,D] = size(wordocc);
 perm = randperm(N);
-data = labels(perm(1:5000), :);
+ndx = perm(1:5000);
+data = wordocc(ndx, :);
 [N,D] = size(data);
-
+classLabels = newsgroups(ndx);
 
 %{
 % Latent 2d embedding - very poor
@@ -35,27 +36,30 @@ end
 title(sprintf('latent 2d embedding of %d newsgroups words', D))
 %}
 
-
-%  higher dim embedding
-nlatent = 10;
-
 methods = [];
 m = 0;
 
+Ks = [10, 50];
+for kk=1:numel(Ks)
+  K = Ks(kk);
+  m = m + 1;
+  methods(m).modelname = 'JJ';
+  methods(m).fitFn = @(data) binaryFAfit(data, K, 'maxIter', 6, ...
+    'verbose', truesize, 'computeLoglik', false);
+  methods(m).infFn = @(model, labels) binaryFAinferLatent(model, labels);
+  methods(m).nlatent = K;
+end
 
-m = m + 1;
-methods(m).modelname = 'JJ';
-methods(m).fitFn = @(data) binaryFAfit(data, nlatent, 'maxIter', 6, ...
-  'verbose', true, 'computeLoglik', false);
-methods(m).infFn = @(model, labels) binaryFAinferLatent(model, labels);
-
-
-m = m + 1;
-methods(m).modelname = 'Bohning';
-methods(m).fitFn = @(data) catFAfit(data, [], nlatent, 'maxIter', 10, ...
-  'verbose', true, 'nClass', 2*ones(1,D));
-methods(m).infFn = @(model, labels) catFAinferLatent(model, labels, []);
-
+Ks = [];
+for kk=1:numel(Ks)
+  K = Ks(kk);
+  m = m + 1;
+  methods(m).modelname = 'Bohning';
+  methods(m).fitFn = @(data) catFAfit(data, [], K, 'maxIter', 10, ...
+    'verbose', true, 'nClass', 2*ones(1,D));
+  methods(m).infFn = @(model, labels) catFAinferLatent(model, labels, []);
+  methods(m).nlatent = K;
+end
 
 Nmethods = numel(methods);
 for m=1:Nmethods
@@ -85,6 +89,7 @@ for m=1:Nmethods
   for d=ndx(:)'
     text(mdsCoords(d,1), mdsCoords(d,2), wordlist{d}, 'fontsize', 10);
   end
+  nlatent = methods(m).nlatent;
   title(sprintf('L=%d, N=%d, method = %s', nlatent, N, methodname))
   fname = sprintf('binaryFAnewsgroups-%s-L%d-N%d', methodname, nlatent, N);
   printPmtkFigure(fname);

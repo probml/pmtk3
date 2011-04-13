@@ -1,8 +1,9 @@
-function [muPost, SigmaPost, loglik] = binaryFAinferLatent(model, data, varargin)
+function [muPost, SigmaPost, loglik] = binaryFAinferLatent(model, y, varargin)
 % Infer distribution over latent factors given observed data
 %
-% data(n,j) in {0,1} or {1,2}
-% NaN's not supproted
+% y(n,t) in {0,1} or {1,2} or NaN
+% Optional:
+% 'x'  x(n,d) in real
 %
 %
 % Output:
@@ -10,11 +11,11 @@ function [muPost, SigmaPost, loglik] = binaryFAinferLatent(model, data, varargin
 % Sigma(:,:,n)
 % loglikCases(n)
 
-[computeLoglik, computeSigma] = process_options(varargin, ...
-  'computeLoglik', (nargout >= 3), 'computeSigma', (nargout >= 2));
+[computeLoglik, computeSigma, x] = process_options(varargin, ...
+  'computeLoglik', (nargout >= 3), 'computeSigma', (nargout >= 2), 'x', []);
 
-[N,T] = size(data);
-y = canonizeLabels(data)-1; % {0,1}
+[N,T] = size(y);
+y = canonizeLabels(y)-1; % {0,1}
 W = model.W;
 b = model.b;
 [K, T2] = size(W);
@@ -29,6 +30,14 @@ else
   SigmaPost = [];
 end
 for n=1:N
+  if ~isempty(x)
+    switch model.inputType
+      case 'linear'
+        muPrior  = model.Win * x(n,:)';
+      case 'logistic'
+        muPrior = sigmoid(model.Win * x(n,:)');
+    end
+  end
   [muPost(:,n), Sigma, logZ] = ...
     varInferLogisticGauss(y(n,:)', W, b, muPrior, SigmaPriorInv, computeLoglik);
   if computeSigma, SigmaPost(:,:,n) = Sigma; end
