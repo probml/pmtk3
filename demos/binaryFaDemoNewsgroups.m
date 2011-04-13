@@ -3,6 +3,7 @@
 
 % This file is from pmtk3.googlecode.com
 
+requireStatsToolbox; % cmdscale
 
 setSeed(0);
 loadData('20news_w100');
@@ -10,11 +11,12 @@ loadData('20news_w100');
 labels = double(full(documents))'; % 16,642 documents by 100 words  (sparse logical  matrix)
 [N,D] = size(labels);
 perm = randperm(N);
-data = labels(1:perm(100), 1:50);
+data = labels(1:perm(500), :);
 [N,D] = size(data);
 maxIter = 6; % EM convergers really fast
 
-% Latent 2d embedding
+%{
+% Latent 2d embedding - very poor
 % We don't request loglik hist for speed
 [model2d] = binaryFAfit(data, 2, 'maxIter',maxIter, 'verbose', true);
 
@@ -31,6 +33,7 @@ for d=ndx(:)'
   text(muPost2d(1,d), muPost2d(2,d), wordlist{d});
 end
 title(sprintf('latent 2d embedding of %d newsgroups words', D))
+%}
 
 
 % Latent higher dim embedding
@@ -44,7 +47,7 @@ muPostBig = binaryFAinferLatent(modelBig, dummy);
 % muPost is L*N, reduce to N*2 for vis purposes using MDS
 dst = pdist(muPostBig','Euclidean');
 [mdsCoords,eigvals] = cmdscale(dst);
-
+eigVals(1:5)
 
 figure; hold on
 % We need to plot points before text
