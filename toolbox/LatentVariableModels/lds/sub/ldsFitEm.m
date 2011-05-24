@@ -50,8 +50,7 @@ else
     a = 0; b = 0;
 end
 model.hparams = structure(alpha, gamma, a, b);
-[model, loglikHist] = emAlgo(data, initFn, estepFn,  mstepFn, EMargs{:});
-
+[model, loglikHist] = emAlgo(model, data, initFn, estepFn,  mstepFn, EMargs{:});
 end
 
 function model = initFn(model, data, restartNum)

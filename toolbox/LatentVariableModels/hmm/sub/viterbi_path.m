@@ -10,6 +10,7 @@ function path = viterbi_path(prior, transmat, obslik)
 % Outputs:
 % path(t) = q(t), where q1 ... qT is the argmax of the above expression.
 
+%PMTKauthor Kevin Murphy, Dan Ellis
 
 % delta(j,t) = prob. of the best sequence of length t-1 and then going to state j, and O(1:t)
 % psi(j,t) = the best predecessor state, given that we ended up in state j at t
