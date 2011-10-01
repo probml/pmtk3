@@ -4,7 +4,7 @@
 % If a config-local.txt file is found, its values will override these.
 %
 % Used by initPmtk3.m
-% PMTKgvizPath             C:\Program Files\Graphviz2.26\bin  % UPDATE THIS IF YOU INSTALL GVIZ
+% PMTKgvizPath             C:\Program Files\Graphviz2.26\bin  
 % PMTKlocalDataPath        path/to/data
 % PMTKlocalSupportPath     path/to/support
 %
