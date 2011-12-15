@@ -7,13 +7,22 @@
 function mixGaussPlotDemo()
 
 
-%%
+%{
     mu = [0.22 0.45; 0.5 0.5; 0.77 0.55]';
     Sigma1 = [0.018  0.01 ;  0.01 0.011];
     Sigma2 = [0.011 -0.01 ; -0.01 0.018];
     Sigma3 = Sigma1;
     Sigma = cat(3, Sigma1, Sigma2, Sigma3);
     mixmat = [0.5 0.3 0.2]';
+  %}
+
+    mu = [0.22 0.45; 0.5 0.5; 0.77 0.55]';
+    Sigma2 = [0.018  0.01 ;  0.01 0.011];
+    Sigma1 = [0.011 -0.01 ; -0.01 0.018];
+    Sigma3 = Sigma1;
+    Sigma = cat(3, Sigma1, Sigma2, Sigma3);
+    mixmat = [0.5 0.3 0.2]';
+    
 %%    
     figure; hold on;
     colors = {'r', 'g', 'b'};

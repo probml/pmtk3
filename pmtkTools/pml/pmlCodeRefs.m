@@ -28,16 +28,42 @@ if ~exist(codeIndFile, 'file')
 end
 
 text = getText(codeIndFile);
+
+% In some cases, we have lines like
+%  \item probitRegDemo, \hyperpage{205}, \hyperpage{213}, 
+%  		\hyperpage{275}
+% where some of the pages spill onto the next line.
+% These will get cut by the following:
+
 text = filterCell(text, @(s)startswith(strtrim(s), '\item'));
-text = cellfuncell(@(c)c(9:end), text);
+text = cellfuncell(@(c)c(9:end), text); % remove '    \item'
 nrefs = numel(text);
 codename = cell(nrefs, 1);
 pg = cell(nrefs, 1);
 for i=1:nrefs
+  % text{i}  = shrunkenCentroidsSRBCTdemo, \hyperpage{139, 140}
+    %a = regexp(text{i}, '\w+', 'match')
+    %a =    'shrunkenCentroidsSRBCTdemo'    'hyperpage'    '139'    '140'
+    % Might also have
+    % text{i} = probitRegDemo, \hyperpage{205}, \hyperpage{213}, 
+    tmp = regexp(text{i}, '\w+', 'match');
+    codename{i} = tmp{1};
+    nums = [];
+    for j=2:numel(tmp)
+      if ~strcmp(tmp{j}, 'hyperref')
+        nums = [nums str2num(tmp{j})];
+      end
+    end
+    pg{i} = nums; % cellfun(@str2num, tmp(3:end))';
+    
+    %{
+    % Each line has form 
+   % Without hyperref: 'functioname, pagnnum, pgnum, ...'
     toks = tokenize(text{i}, ' ,');
     toks = filterCell(toks, @(c)~isempty(c)); 
     codename{i} = toks{1};
     pg{i} = cellfun(@str2num, toks(2:end))';
+   %}
 end
 
 

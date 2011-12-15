@@ -6,7 +6,7 @@
 % This file is from pmtk3.googlecode.com
 
 function bayesLinRegDemo2d()
-setSeed(0);
+setSeed(1); % seed 0 reproduces Bishop's figure
 a0 = -0.3; %Parameters of the actual underlying model that we wish to recover
 a1 = 0.5;  %We will estimate these values with w0 and w1 respectively. 
 
@@ -75,7 +75,7 @@ subplot2(2+iter,3,1,3);
 title('data space');
 
 
-printPmtkFigure bayesLinRegPlot2d
+printPmtkFigure bayesLinRegPlot2dB
 end
 
 function plotSampleLines(mu, sigma, numberOfLines,dataPoints)

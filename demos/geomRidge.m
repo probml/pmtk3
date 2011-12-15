@@ -24,6 +24,8 @@ axis equal
 gaussPlot2d(xbar,S,'color','r');
 %gaussPlot2d(xbar,mleCov,'color','r');
 gaussPlot2d(Mu0,Sigma0,'color','g');
+fs = 14;
+text(Mu0(1) + 1/4, Mu0(2), 'prior mean', 'fontsize', fs);
 
 wml = xbar;
 
@@ -34,16 +36,16 @@ wmap = [1, 2.5]; % artist's rendition
 
 plot(wmap(1), wmap(2), 'b*','linewidth',3);
 % text('Interpreter', 'latex', 'String', '$$w_{MAP}$$', 'Position', [wmap(1) + 1/2, wmap(2)]);
+text(wmap(1) + 1/4, wmap(2), 'MAP Estimate', 'fontsize', fs);
 
-text(wmap(1) + 1/4, wmap(2), 'MAP Estimate', 'color', 'blue');
 plot(wml(1), wml(2), 'r*','linewidth',3);
-text(wml(1) + 1/4, wml(2) + 1/4, 'ML Estimate', 'color', 'red');
+text(wml(1) + 1/4, wml(2) + 1/4, 'ML Estimate', 'fontsize', fs);
 
 line([wml(1),wml(1)+3],[wml(2),wml(2)],'linewidth',3)
-text(wml(1)+3,wml(2)+1/2,'u_1');
+text(wml(1)+3,wml(2)+1/2,'u_1', 'fontsize', fs);
 
-line([wml(1),wml(1)],[wml(2),wml(2)+3],'linewidth',3)
-text(wml(1)+1/2,wml(2)+3,'u_2');
+line([wml(1),wml(1)],[wml(2),wml(2)+3],'linewidth',3);
+text(wml(1)+1/2,wml(2)+3,'u_2', 'fontsize', fs);
 
 axis off
 printPmtkFigure('geomRidge')

@@ -59,12 +59,14 @@ printPmtkFigure shrinkageDemoBaseballParams;
 %% Histograms
 figure;
 ndx = 1:5;
-h = bar([ytest(ndx)';  thetaMLE(ndx)'; thetaShrunk(ndx)']');
-legend({'true', 'MLE', 'shrunk'})
+h = bar([ytest(ndx)';   thetaShrunk(ndx)'; thetaMLE(ndx)']');
+legend({'true',  'shrunk', 'MLE'})
 [im_hatch, colorlist] = applyhatch_pluscolor(gcf,'\-x.', 1);
 mseMLE = mean((ytest-thetaMLE).^2);
 mseShrink = mean((ytest-thetaShrunk).^2);
 ttl = sprintf('MSE MLE = %6.4f, MSE shrunk = %6.4f', mseMLE, mseShrink)
 title(ttl)
+xlabel('player number')
+ylabel('MSE')
 printPmtkFigure shrinkageDemoBaseballPred; 
 mseMLE/mseShrink

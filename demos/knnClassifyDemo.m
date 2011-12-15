@@ -105,6 +105,49 @@ xlabel('K'); ylabel('misclassification rate')
 printPmtkFigure('knnClassifyErrVsK')
 
 
+%% Cross validation
+for k=1:numel(Ks)
+  K = Ks(k);
+  fitFn = @(Xtr,ytr) knnFit(Xtr, ytr, K);
+  predFn = @(mod, Xte) knnPredict(mod, Xte);
+  lossFn = @(yhat, yte)  mean((yhat ~= yte));
+  N = size(Xtrain, 1);
+  %nfolds = N; % LOOCV
+  nfolds = 5;
+  % since the data is sorted left to right, we must randomize the order
+  randomizeOrder = false;
+  [mu(k), se(k)] = cvEstimate(fitFn, predFn, lossFn, Xtrain, ytrain, nfolds, ...
+    'randomizeOrder', randomizeOrder);
+end
+
+%{
+hold on
+plot(Ks, mu, 'k-.*', 'linewidth', 2, 'markersize', 10)
+legend('train', 'test', '5-CV')
+set(gca, 'ylim', [0 0.6])
+printPmtkFigure('knnClassifyErrVsKwithCV')
+%}
+
+% Plot CV in separate figure
+fs = 12;
+figure; hold on
+ndx = Ks;
+xlabel('K', 'fontsize', fs)
+ylabel('misclassification rate', 'fontsize', fs)
+errorbar(ndx, mu, se, 'ko-','linewidth', 2, 'markersize', 12 );
+title(sprintf('%d-fold cross validation, ntrain = %d', nfolds, N), 'fontsize', fs)
+set(gca, 'xlim', [0 130])
+% draw vertical line at best value
+dof = 1./(Ks);
+if 0 
+  idx_opt  = argmin(mu);
+else
+  idx_opt = oneStdErrorRule(mu, se, dof);
+end
+verticalLine(ndx(idx_opt), 'color','b', 'linewidth',2);
+printPmtkFigure(sprintf('knnCV'))
+
+
 end
 
 %%%%%%%%%%%%%

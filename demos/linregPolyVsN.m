@@ -5,7 +5,7 @@
 % This file is from pmtk3.googlecode.com
 
 setSeed(0);
-degrees = [1, 2, 25];
+degrees = [1, 2, 10, 25];
 for d=1:numel(degrees)
     deg = degrees(d);
     lambda = 0; %1e-3;
@@ -35,12 +35,13 @@ for d=1:numel(degrees)
     figure();
     hold on
     ndx = ns;
+    fs = 12;
     plot(ndx, trainMse, 'bs:', 'linewidth', 2, 'markersize', 12);
     plot(ndx, testMse, 'rx-', 'linewidth', 2, 'markersize', 12);
     legend('train', 'test')
-    ylabel('mse')
-    xlabel('size of training set')
-    title(sprintf('truth=degree 2, model = degree %d', deg));
+    ylabel('mse', 'fontsize', fs)
+    xlabel('size of training set', 'fontsize', fs)
+    title(sprintf('truth=degree 2, model = degree %d', deg), 'fontsize', fs);
     set(gca,'ylim',[0 22]);
     box on;
     horizontalLine(sigma2, 'color', 'k', 'linewidth', 3);

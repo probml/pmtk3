@@ -48,12 +48,24 @@ end
 state_noise_samples = cell(1,M);
 obs_noise_samples = cell(1,M);
 for i=1:M
+  nQ = size(Q{i},1);
+  if all(Q{i}==0)
+    state_noise_samples{i} = zeros(nQ,T);
+  else
+    state_noise_samples{i} = gaussSample(zeros(nQ,1), Q{i}, T)';
+  end
+  nR = size(R{i},1);
+  if all(R{i}==0)
+    obs_noise_samples{i} = zeros(nR,T);
+  else
+    obs_noise_samples{i} = gaussSample(zeros(nR,1), R{i}, T)';
+  end
   %state_noise_samples{i} = sample_gaussian(zeros(length(Q{i}),1), Q{i}, T)';
   %obs_noise_samples{i} = sample_gaussian(zeros(length(R{i}),1), R{i}, T)';
-  stateModel = struct('mu', zeros(length(Q{i}),1), 'Sigma', Q{i});
-  state_noise_samples{i} = gaussSample(stateModel, T)';
-  obsModel = struct('mu', zeros(length(R{i}),1), 'Sigma',  R{i});
-  obs_noise_samples{i} = gaussSample(obsModel, T)';
+  %stateModel = struct('mu', zeros(length(Q{i}),1), 'Sigma', Q{i});
+  %state_noise_samples{i} = gaussSample(stateModel, T)';
+  %obsModel = struct('mu', zeros(length(R{i}),1), 'Sigma',  R{i});
+  %obs_noise_samples{i} = gaussSample(obsModel, T)';
 end
 
 x = zeros(ss, T);

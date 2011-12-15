@@ -4,12 +4,14 @@
 
 % This file is from pmtk3.googlecode.com
 
+fs = 12;
+setSeed(1);
 theta = 0.7;
 Ns = [10 100];
 for Ni=1:length(Ns)
     N = Ns(Ni);
     B = 10000;
-    setSeed(0);
+    
     X = rand(1,N) < theta;
     estimator = @(X) mean(X);
     bmle = estimator(X);
@@ -26,7 +28,7 @@ for Ni=1:length(Ns)
     set(gca,'xlim',[0 1])
     ttl = sprintf('Boot: true = %3.2f, n=%d, mle = %3.2f, se = %5.3f\n', ...
         theta, N, bmle, std(mleBoot)/sqrt(B));
-    title(ttl)
+    title(ttl,  'fontsize', fs)
     printPmtkFigure(sprintf('bootstrapDemoBer%d', N));
     
     %{
@@ -51,7 +53,7 @@ printPmtkFigure(sprintf('bootstrapDemoBerNP%d', N));
     set(gca,'xlim',[0 1])
     ttl = sprintf('Bayes: true = %3.2f, n=%d, post mean = %3.2f, se = %5.3f\n', ...
         theta, N, mean(Xpost), std(Xpost)/sqrt(B));
-    title(ttl)
+    title(ttl,  'fontsize', fs)
     printPmtkFigure(sprintf('bootstrapDemoBerBayes%d', N));
     
 end

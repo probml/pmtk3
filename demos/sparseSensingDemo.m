@@ -45,7 +45,6 @@ w = x_l1_ls;
 aw = abs(w);
 zz = find(abs(w) <= 0.01*max(aw));
 ndx = setdiff(1:n, zz);
-length(ndx)
 wdebiased = zeros(n,1);
 X = R;
 %wdebiased(ndx) = pinv(X(:,ndx))*y;
@@ -68,7 +67,8 @@ v = [0 n+1 bottom-0.05*(top-bottom)  top+0.05*((top-bottom))];
 set(gca,'FontName','Times')
 set(gca,'FontSize',14)
 title(sprintf('Original (D = %g, number of nonzeros = %g)',n,n_spikes))
-axis(v)
+%axis(v)
+set(gca,'ylim',[-1 1])
 
 subplot(4,1,2)
 plot(wsparse,'LineWidth',1.1)
@@ -85,7 +85,8 @@ set(gca,'FontSize',14)
 top = max(f(:));
 bottom = min(f(:));
 v = [0 n+1 bottom-0.15*(top-bottom)  top+0.15*((top-bottom))];
-axis(v)
+%axis(v)
+set(gca,'ylim',[-1 1])
 title(sprintf(...
     'Debiased (MSE = %0.4g)',(1/n)*norm(wdeb-f)^2))
 
@@ -97,6 +98,8 @@ title(sprintf('Minimum norm solution (MSE = %0.4g)',(1/n)*norm(wls-f)^2))
 top = max(wls(:));
 bottom = min(wls(:));
 v = [0 n+1 bottom-0.15*(top-bottom)  top+0.15*((top-bottom))];
-axis(v)
+%axis(v)
+set(gca,'ylim',[-1 1])
+
 
 printPmtkFigure('sparseSensingDemo')

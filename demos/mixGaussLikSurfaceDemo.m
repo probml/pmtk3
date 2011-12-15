@@ -5,6 +5,7 @@
 
 % This file is from pmtk3.googlecode.com
 
+fs = 12;
 setSeed(0);
 true_mu1 = -10;
 true_mu2 = 10;
@@ -43,8 +44,9 @@ figure;
 contour(lik_bins);
 set(gca, 'XTickLabel', mu1_bins(get(gca, 'XTick')))
 set(gca, 'YTickLabel', mu2_bins(get(gca, 'YTick')))
-xlabel('mu_1')
-ylabel('mu_2')
+xlabel('\mu_1', 'fontsize', fs)
+ylabel('\mu_2', 'fontsize', fs)
+axis square
 printPmtkFigure(sprintf('gmmLikSurfaceSurSigma%d', true_sigma))
 
 end

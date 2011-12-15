@@ -7,6 +7,7 @@ function H = hdiFromIcdf(icdf, mass)
 % a = 3; b= 9; icdf = @(p) betainv(p, a, b); H = hdiFromIcdf(icdf)
 
 % Based on p630 "Doing Bayesian Data Analysis" Kruschke 2010
+% See also hdiFromSamples
 
 if nargin < 2, mass = 0.95; end
 widthFn = @(lower) icdf(lower+mass)-icdf(lower);

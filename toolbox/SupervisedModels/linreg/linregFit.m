@@ -109,18 +109,24 @@ switch lower(likelihood)
     switch lower(regType)
       
       case 'l1'  , % lasso
-        switch lower(fitFnName)
-          case 'l1generalprojection'
-            w = L1GeneralProjection(@(ww) squaredErrorObjective(ww,X,y,weights), ...
-              winit, lambdaVec(:), opts);
-          case 'l1ls'
-            % this cannot handle vector-valued lambda, so it regularizes
-            % the offset term... So set addOnes to false before calling
-            tol = 1e-3; quiet = true;
-            w = l1_ls(X, y, lambda, tol, quiet);
-          otherwise
-            error(['unrecognized fitFnName ' fitFnName])
-        end
+          if lambda==0
+              R = diag(sqrt(weights));
+              %w = X\y;
+              w = (R*X) \ (R*y);
+          else
+              switch lower(fitFnName)
+                  case 'l1generalprojection'
+                      w = L1GeneralProjection(@(ww) squaredErrorObjective(ww,X,y,weights), ...
+                          winit, lambdaVec(:), opts);
+                  case 'l1ls'
+                      % this cannot handle vector-valued lambda, so it regularizes
+                      % the off5et term... So set addOnes to false before calling
+                      tol = 1e-3; quiet = true;
+                      w = l1_ls(X, y, lambda, tol, quiet);
+                  otherwise
+                      error(['unrecognized fitFnName ' fitFnName])
+              end
+          end
         
       case 'l2'  , % ridge
         switch lower(fitFnName)

@@ -1,0 +1,327 @@
+On my way to New York, I impleemented
+a quick toy demo of the generative entity model,
+using my pmtk package in Matlab.
+It seems to behave as expected (see demo below).
+
+Of course, exact inference is exponential in the number of entities,
+but I implemented a simple heuristic enumeration scheme on the plane
+on the way back, which is much more scalable.
+Unfortunately the real repo data  (the ss tables
+that Rahul sent me) is not easily accessible (it is on my corp desktop),
+but when I get back to the office on Wed, I'll try porting it to Matlab
+and testing things out. If all is well, I'll probably work on re-coding it in C++
+to enable larger experiments.
+
+Kevin
+
+
+The demo:
+----------
+
+
+We have 2 entities: 1=Michael Jordan the basketball player,
+and 2 = Michael Jordan the UC Berkeley professor.
+We currently assume a factored uniform prior over entities.
+
+Each entity has the following aliases
+aliases{1} = {'michael jordan', 'air jordan'};
+aliases{2} = {'michael jordan', 'michael i jordan'};
+
+In addition, each entity has the following context words
+
+context_words{1} = {'famous', 'basketball', 'star', 'big'};
+context_words{2} = {'famous', 'professor', 'statistics', 'math'};
+
+Finally, there is the background distributio wich is uniform over
+
+dictionary = {'michael jordan', 'air jordan', 'michael i jordan', ...
+  'famous', 'basketball', 'star', 'professor', ...
+  'statistics', 'the', 'my', 'friend', 'big', 'and', 'his', 'math'};
+
+
+Assuming we have possible 2 entities in
+the universe and 3 phrases,
+the Bayes net is as follows:
+
+  e1   e2
+    \ /
+      v
+     ES
+ /  |   \
+v   v    v
+z1 z2 z3
+|    |    |
+v   v    v
+y1 y2 y3
+^   ^    ^
+|    |    |
+a1 a2 a3
+
+
+ei in {0,1} for i=1:num entities, 1 means obj. present
+ES = {i : ei = 1} = set of entities
+yj is observed mention, for j=1:num mentions
+zj = entity (from ES) that caused yj
+aj in {0,1}, 1 means phrase is an alias/mention, otherwise context word
+
+The CPDs are as follows
+
+p(Ei=1) = prior prob entity i
+
+p(ES|E1:En) = delta function
+
+p(zj = e | ES)
+   =  p0 if e=0
+   = (1-p0) 1/|ES| if e in ES
+   = 0 ow
+where p0 = prob of background entity
+
+p(aj = 1) = prob use alias 
+
+p(yj | zj=e, aj)
+ = background prob(yj) if e = 0
+ = alias prob(yj | e) if aj=1
+ = context prob(yj | e) if  aj=0
+
+Below is a snippet of the model in action.
+
+>> entityDgm
+text: michael jordan, 
+
+marginal prob entities (BB or prof)
+0.418, 0.418, 
+Posterior is symmetric (precise numeric values depend
+on param settings)
+
+prob sets of entities
+ 0.20573   // non e
+ 0.37623 1  // BB 
+ 0.37623 2  // Prof
+ 0.04180 1 2  //BB and Prof
+
+prob z
+0.373, 0.373, 0.254,  // e1, e2, e0
+
+
+text: michael jordan, and, his, friend, 
+marginal prob entities
+0.420, 0.420, 
+prob sets of entities
+ 0.20167  
+ 0.37816 1 
+ 0.37816 2 
+ 0.04202 1 2 
+prob z
+0.375, 0.375, 0.250, 
+0.003, 0.003, 0.993, 
+0.003, 0.003, 0.993, 
+0.003, 0.003, 0.993, 
+
+
+text: michael jordan, statistics, professor, 
+marginal prob entities
+0.119, 0.878, 
+prob sets of entities
+ 0.04254  
+ 0.07910 1 
+ 0.83856 2 
+ 0.03980 1 2 
+prob z
+0.093, 0.806, 0.101, 
+0.001, 0.604, 0.395, 
+0.001, 0.604, 0.395, 
+
+
+
+-----------
+
+Bala (and John and Amar),
+
+The CRF code that I implemented, and that you are playing with, corresponds to 
+the following model:
+
+ --------
+ |            |
+z1- z2-z3
+^    ^   ^
+|    |    |
+y1 y2 y3
+
+
+Here the zi's are fully connected,
+so inference takes 
+ prod_{i=1}^n |E(y(i)| ~ |E(y)|^n
+where E(yi) ~10:1000 is the number of entities matching phrase yi,
+and n ~5:200 is the number of phrases.
+
+While we could certainly apply loopy BP to this model,
+but since it is fully connected, this might not work well.
+Nando de Freitas has an algorithm called "hot coupling" that is a
+sequential Monte carlo algorithm that adds links one at a time;
+he tried it on fully connected Ising models.
+Tommi Jaakkola and Daphne Koller have deterministic approximate inference methods for 
+fully connected models with a similar add-one-link-at-a-time flavor
+(we can start with a spanning tree).
+
+-----------
+
+
+However, the generative model I presented has some advantages:
+
+- it allows for one or more phrases to be explained by the background model (since zi=0 is possible)
+
+- it distinguishes 3 conceptually distinct generative mechanisms for each word (alias, context, bg)
+
+- parameter estimation is easy (just normalize the counts).
+We can initialize the params as follows:
+     p(word| alias) from SAFT, p (word|context) from wiki pages, p(w|background) by counting
+
+- it can be fit with EM without requiring any labeled data 
+
+- in principle it can discover new kinds of entities by allowing the number of latent
+states to grow on demand (although this is beyond the scope of our current project,
+where we asssume that freebase is the entire universe)
+
+- it can handle audio visual features  when available and ignore them when not
+by definign p(AV|ES) to be some kind of model eg GMM
+
+- it can easily handle any joint prior on entities, eg
+ p(ES) propto prod_{i=1}^m prod_{j=i+1}^m psi(Ei, Ej)
+ although learning this MRF prior is tricky (as with the CRF).
+BTW, To handle undirected links in a directed model, we can create a dummy observed child d,
+clamp it to some state (eg 1), and define p(d=1|ES) = psi(ES),
+as in the figure below. (The observed child correlates the parents via explainaing away.)
+This can be handy for code that does not support MRFs.
+
+  d=1
+    ^
+    |
+    ES ------> AV
+ /  |   \
+v   v    v
+z1 z2 z3
+|    |    |
+v   v    v
+y1 y2 y3
+^   ^    ^
+|    |    |
+a1 a2 a3
+
+--------------
+
+Currently my heuristic algorithm enumerates sets ES by combining
+candidate entities from each p(zi|yi) list, and then scores them using
+  p(ES,y(1:n)) = p(ES) prod_{i=1}^n  sum_{zi in 0, ES} p(zi|ES) sum_{ai in 0,1} p(ai) p(yi|zi,ai)
+which is easy to compute.
+This heuristic covers most of the probable
+combinations, but in a suboptimal order. My next plan is to generate a sorted
+list of candidates by imposing an arbitrary chain structure on the zi's,
+using psi(zi, zj) as the edge potential and p(zi|yi) as the node potential,
+and then sequentially computing the N best list using the algorithm of Nilsson01.
+This is an anytime algorithm and we can stop computation when we run out
+of time or when we have covered enough posterior mass.
+We can then quickly rescore this N best list usign the equation above.
+(Amar and I discussed this idea several months ago, but other things 
+kept getting in the way of trying it. I will start with a matlab prototype,
+since the algorithm is a bit tricky.)
+
+
+@inproceedings{Nilsson01,
+  author = "D. Nilsson and J. Goldberger",
+  title = {{Sequentially finding the N-Best List in Hidden Markov Models}},
+  booktitle = ijcai,
+  year = 2001,
+  pages = "1280--1285",
+  url = "http://www.math.auc.dk/~nilsson/papers/publications.html"
+}
+
+Since the tags are not inherently ordered, it might be better
+to construct a spanning tree from them (the best tree approxiation to the entity prior p(ES)),
+ and to enumerate the N best on this tree,  
+which can also be done efficiently
+
+@article{Nilsson98,
+  author = "D. Nilsson",
+  title = {{An efficient algorithm for finding the M most probable configurations in a probabilistic expert system}},
+  journal = "Statistics and Computing",
+  volume = 8,
+  pages = "159--173",
+  year = 1998
+}
+
+
+However, this is probably overkill.
+
+
+------------
+
+
+At the New York workshop, I learned about a project at Google Zurich by Yasemin Altun and colleagues,
+that is concerned with entity resolution in text. (This is similar to webref, but only uses
+text signals, not web link structure. Amar, please correct me if I am wrong.)
+
+They are  using a model that is in some senses a hybrid of the 2 models above
+If there are 2 entities and 3 phrases, the model is  as follows:
+
+    h
+ /     \
+v       v
+E1    E2
+   \ /
+     v
+     ES
+ /  |    \
+v  v     v
+z1 z2 z3
+^    ^   ^
+|    |    |
+y1 y2 y3
+
+Here Ei = 1 iff entity i is present
+and p(ES|E(1:m)) is a delta function that records which entities are present
+ie. which bits of E1:m are on.
+(We can either use the Ei or the ES notation; we don't need both in the model,
+but I think it is conceptually helpful to include them both.)
+
+Here h is a bank of latent variables, which induces dependence between the entities,
+rather than having explicit edges between all pairs of z's.
+I think this is a very good idea (and one we've discussed before...)
+They assume that the z's are labeled (by webref),
+so they can use off-the-shelf code to fit the joint entity prior p(z(1:n)|h) (they use rephil for this),
+To fit the discriminative models p(zi|yi),
+they use a stacked classifier for p(zi|yi), as a way to take context into account.
+That is, define p1i(e) = p(zi=e|yi) as the first layer classifier scores (using logreg).
+Then they fit a model of the form p(zi=e|yi) = p(e | yi, p1i(:)).
+They just use 2 layers right now.
+To handle data sparsity, they use type information about the e's.
+That is, each entity in freebase has a hierarchical type,
+such as person/actor. They then use hierarchical shrinkage when fitting the
+logreg models. (I had similar ideas for smoothing the generative model fitting procedure;
+alternatively we could use wsabie.)
+
+At test time, they first compute p(zi|yi) to get the local evidence, they then create a set
+of joint entity hypotheses by combining the top N lists somehow.
+They then compute the prior of each joint hypothesis p(z) using approximate inference in rephil,
+and finally they compute the score p(z,y) propto p(z) prod_i p(zi|yi) and use this
+to rerank. 
+
+It seems to me that their model could be applied to our problem as is.
+Their code is integrated into the SAFT framework.
+Apparently Amar already knows all about this...
+Maybe we can all meet on Wed to discuss?
+
+K.
+
+PS. Amar, I'd like to get your opinion on using Andrew McCallum's factorie library  for this kind of work.
+It is implemented in Scala. This seems like an excellent language since it is fully compatible
+with Java, yet has nice functional programming aspects (like type inference), and - most importantly
+to me - has an interpreter/ REPL for rapid prototyping.
+(Unlike python, scala is strongly typed and reasonably fast since compiles to the JVM.)
+I understand that your intern used some scala/ factorie code on borg.
+Also, Tom Stapleton told me there is now a scala interface to flume.
+So it is feasible to make it work in the google3 setting.
+
+PPS. Bala, when you're setting up ewok experiments, maybe you can also run webref on 
+our data (apparently webref is callable from within the saft server), so we have something else to compare to.
+If this works well, we can use this as a way to label data, and train up 
+our models, and also a discriminative p(ES|video) classifier.

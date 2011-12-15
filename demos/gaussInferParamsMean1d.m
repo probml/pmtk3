@@ -8,7 +8,8 @@ priorVar = [1 5];
 Sigma = 1; % Assumed to be known
 figstr = {'gaussStrongPrior', 'gaussWeakPrior'};
 X = 3; % data
-[styles, colors, symbols] =  plotColors();
+[styles, colors, symbols, plotstyle] =  plotColors();
+figure; 
 for i=1:numel(priorVar)
     %%
     prior.Sigma = priorVar(i);
@@ -30,24 +31,27 @@ for i=1:numel(priorVar)
     post.mu    = Sn*(n*Sinv*xbar + S0inv*mu0);
     post.Sigma = Sn;
     %% Now plot
-    figure; hold on;
+    %figure;  
+    subplot(1,2,i)
+    hold on
     xrange = -5:0.25:5;
     ms = 10; lw = 3;
     style = [styles{1}, symbols(1), colors(1)];
-    plot(xrange, exp(gaussLogprob(prior, xrange)), style, ...
+    plot(xrange, exp(gaussLogprob(prior, xrange)), plotstyle{1}, ...
         'displayname', 'prior', ...
         'linewidth'  , lw, 'markersize', ms);
     style = [styles{2}, symbols(2), colors(2)];
-    plot(xrange, exp(gaussLogprob(lik  , xrange)), style, ...
+    plot(xrange, exp(gaussLogprob(lik  , xrange)), plotstyle{2}, ...
         'displayname', 'lik', ...
         'linewidth'  , lw, 'markersize', ms);
     style = [styles{3}, symbols(3), colors(3)];
-    plot(xrange, exp(gaussLogprob(post , xrange)), style, ...
+    plot(xrange, exp(gaussLogprob(post , xrange)), plotstyle{3}, ...
         'displayname', 'post', ...
         'linewidth'  , lw, 'markersize', ms);
     set(gca, 'ylim', [0, 0.7]);
     legend('Location','NorthWest');
     title(sprintf('prior variance = %3.2f', priorVar(i)));
     box on;
-    printPmtkFigure(figstr{i});
+    %printPmtkFigure(figstr{i});
 end
+printPmtkFigure('gaussInferParamsMean1d');

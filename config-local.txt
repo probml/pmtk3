@@ -1,0 +1,17 @@
+% This file stores hard coded paths and configuration variables
+% Use getConfigValue(varname) to access a value, e.g. 
+% getConfigValue('PMTKsupportLink')
+%
+% If a config-local.txt file is found, its values will override these.
+%
+% PMTKmetaDirs             meta, docs, tmp
+% PMTKred                  #990000
+% PMTKauthors              Kevin Murphy, Matt Dunham
+% PMTKcodeDirs             toolbox, demos, localUtil, matlabTools
+% PMTKgvizPath             C:\Program Files\Graphviz2.26\bin
+% PMTKlocalWikiPath        C:\path\to\pmtk3Wiki
+% PMTKlocalDataPath        /Users/kpmurphy/GoogleCode/pmtkdata
+% PMTKlocalSupportPath    /Users/kpmurphy/GoogleCode/pmtksupport
+% PMTKpmlBookSource        /Users/kpmurphy/Dropbox/MLbook/Text
+% PMTKpmlFigures         /Users/kpmurphy/Dropbox/MLbook/Figures
+% PMTKlightSpeedDir        lightspeed2.3

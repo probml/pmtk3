@@ -12,6 +12,7 @@ deg = 2;
 addOnes = false;
 Xtrain = degexpand(xtrain, deg, addOnes);
 Xtest  = degexpand(xtest, deg, addOnes);
+fs = 14;
 
 %% MLE
 modelMLE = linregFit(Xtrain, ytrain); 
@@ -26,9 +27,10 @@ plot(xtrain,ytrain,'ro','markersize', 14, 'linewidth', 3, ...
 NN = length(xtest);
 ndx = 1:5:NN; % plot subset of errorbars to reduce clutter
 sigma = sqrt(v);
-legend('location', 'northwest'); 
+h=legend('location', 'northwest');
+set(h, 'fontsize', fs); 
 errorbar(xtest(ndx), mu(ndx), sigma(ndx));
-title('plugin approximation (MLE)');
+title('plugin approximation (MLE)', 'fontsize', fs);
 printPmtkFigure('linregPostPredPlugin')
 
 
@@ -45,9 +47,10 @@ plot(xtrain,ytrain, 'ro', 'markersize', 14, 'linewidth', 3, ...
 NN = length(xtest);
 ndx = 1:5:NN; % plot subset of errorbars to reduce clutter
 sigma = sqrt(v);
-legend('location', 'northwest'); 
+h=legend('location', 'northwest');
+set(h,'fontsize', fs); 
 errorbar(xtest(ndx), mu(ndx), sigma(ndx));
-title('Posterior predictive (known variance)');
+title('Posterior predictive (known variance)', 'fontsize', fs);
 printPmtkFigure('linregPostPredBayes')
 
 %% Plot samples from posterior predictive
@@ -60,8 +63,21 @@ plot(xtrain,ytrain, 'ro', 'markersize', 14, 'linewidth', 3, ...
 for s=1:S
   tmp = modelMLE;  tmp.w = ws(s,:)';
   [mu] = linregPredict(tmp, Xtest);
-  plot(xtest, mu, 'k-', 'linewidth', 1);
+  plot(xtest, mu, 'k-', 'linewidth', 2);
 end
-title('functions samples from posterior')
+title('functions sampled from posterior', 'fontsize', fs)
 printPmtkFigure('linregPostPredSamples')
+
+%% Plot samples from  plug posterior predictive
+S = 10;
+figure;
+hold on;
+plot(xtrain,ytrain, 'ro', 'markersize', 14, 'linewidth', 3, ...
+    'displayname', 'training data');
+for s=1:S
+  [mu] = linregPredict(modelMLE, Xtest);
+  plot(xtest, mu, 'k-', 'linewidth', 2);
+end
+title('functions sampled from plugin approximation to posterior', 'fontsize', fs)
+printPmtkFigure('linregPostPredSamplesPlugin')
 

@@ -9,7 +9,8 @@ setSeed(0);
 trialsPerDeg = 10; 
 N = 100;
 K = 3;
-dims = [3:2:13, 15:5:50];
+%dims = [3:2:13, 15:5:50];
+dims = [10:10:100];
 %%
 % Don't display these warnings, we are expecting them.
 wstate = warning('query', 'all');
@@ -85,11 +86,13 @@ for dimi = 1:length(dims)
 end
 
 %% Plot
+fs = 12;
 figure; hold on
 plot(dims, NmleFail/ntrials, 'r-o', 'linewidth', 2);
 plot(dims, NmapFail/ntrials, 'k:s', 'linewidth', 2);
 legend('MLE', 'MAP', 'location', 'east')
-title('fraction of times EM for GMM fails vs dimensionality')
+xlabel('dimensionality', 'fontsize', fs)
+ylabel('fraction of times EM for GMM fails', 'fontsize', fs)
 axis_pct
 printPmtkFigure('mixGaussMLvsMAP')
 warning(wstate); % Restore warning state

@@ -11,7 +11,7 @@ x = mkUnitVariance(centerCols(x));
 
 
 r=kernelSmoothingRegression(x,y);
-plot(x,ytrue,'b-', x,y, 'co', r.x,r.f,'r--','linewidth',2)
+plot(x,ytrue,'b-', x,y, 'kx', r.x,r.f,'r--','linewidth',2)
 legend('true','data','estimate','location','northwest');
 title('Gaussian kernel regression')
 printPmtkFigure('kernelRegressionDemo')

@@ -4,8 +4,9 @@
 
 % This file is from pmtk3.googlecode.com
 
-ns = [21 50];
-for n=ns(:)'
+%ns = [21 50];
+%for n=ns(:)'
+  n = 21;
 setSeed(0);
 [xtrain, ytrain, xtest, ytestNoisefree, ytest, sigma2] =...
   polyDataMake('sampling','thibaux','n',n);
@@ -66,7 +67,7 @@ legend('train mse', 'test mse', 'location', 'northwest')
 xlabel('log lambda')
 title('mean squared error')
 % Indicate which lambda values were chosen for plotting
-for i=printNdx(:)',  plot(ndx(i), 0, '*', 'markersize', 12, 'linewidth', 2); end
+%for i=printNdx(:)',  plot(ndx(i), 0, '*', 'markersize', 12, 'linewidth', 2); end
 printPmtkFigure(sprintf('linregPolyVsRegTestErrN%d', n))
 
 %% print fitted function for certain chosen lambdas
@@ -206,4 +207,17 @@ figure(figLogev);
 verticalLine(log(alphaVB), 'linewidth', 3, 'color', 'b');
 
 
-end
+% Make figure containing both EB and CV
+% We need to rescale the vertical axes
+figLogevCv = figure;
+logevErr = -logev; logevErr = logevErr/max(logevErr);
+plot(log(alphas), logevErr, 'ko-', 'linewidth', 2, 'markersize', 12);
+hold on
+cvErr = log(mu); cvErr = cvErr/max(cvErr); 
+plot(log(alphas), cvErr, 'bx:','linewidth', 2, 'markersize', 12 );
+xlabel('log lambda')
+legend('negative log marg. likelihood', 'CV estimate of MSE')
+set(gca, 'xlim', [-20 5])
+printPmtkFigure(sprintf('linregPolyVsRegCvEvidence'))
+
+%end % for n

@@ -26,6 +26,7 @@ xs = -5:0.2:5;
 ps = gaussProb(xs(:), marg.mu, marg.Sigma);
 ps = 50*normalize(ps);
 plot(xs, 0+ps, 'b:', 'linewidth',3 );
+
 %% conditional marginals
 model = struct('mu', mu, 'Sigma', S);
 modelHgivenV = gaussCondition(model, 2, x2);

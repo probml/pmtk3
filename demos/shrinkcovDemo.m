@@ -13,6 +13,7 @@ evalsTrue = sort(eig(Sigma),'descend');
 mu = zeros(1,d);
 f = [2 1 1/2]; % fraction of d
 condNumMLE = zeros(1,3); condNumShrink = zeros(1,3);
+figure;
 for i=1:length(f)
     n = f(i)*d;
     X = gaussSample(mu, Sigma, n);
@@ -21,7 +22,9 @@ for i=1:length(f)
     lambda = 0.9;
     Sshrink = lambda*diag(diag(Smle)) + (1-lambda)*Smle;
     evalsShrink = sort(eig(Sshrink),'descend');
-    figure; hold on
+    %figure;
+    subplot(1,3,i)
+    hold on
     ndx = 1:2:d;
     if 1
         %plot(evalsTrue(ndx), 'k-o', 'linewidth', 2, 'markersize', 8);
@@ -51,7 +54,9 @@ for i=1:length(f)
     title(sprintf('N=%d, D=%d', n, d))
     
     %axis_pct
-    printPmtkFigure(fname);
+    set(gca, 'ylim', [0 1.5])
+    %printPmtkFigure(fname);
 end
+printPmtkFigure('covshrinkDemo');
 
 

@@ -8,7 +8,7 @@ function gaussImputationDemo()
 requireStatsToolbox
 %% Make data
 setSeed(1);
-d = 10; n = 100; pcMissing = 0.5;
+d = 20; n = 5; pcMissing = 0.5;
 mu = randn(d,1); Sigma = randpd(d);
 trueModel = struct('mu', mu, 'Sigma', Sigma);
 Xfull = gaussSample(trueModel, n); 
@@ -17,37 +17,37 @@ Xmiss = Xfull;
 Xmiss(missing) = NaN;
 
 %% Impute
-[model, LLtrace] = gaussMissingFitEm(Xmiss, 'verbose', false);
 
-if 1
-S = [Sigma zeros(d,2) model.Sigma];
-figure;imagesc(S); colorbar
-title('Sigma: truth on left, estimate on right')
-printPmtkFigure('mvnImputeSigma');
 
-M = [mu(:)'; zeros(1,d); model.mu(:)'];
-figure;imagesc(M); colorbar
-title('mu: truth on top, estimate on bottom')
-end
-
-figure; plot(LLtrace(1:3:end), 'o-', 'linewidth', 3); title('log likelihood vs iteration')
-printPmtkFigure('mvnImputeEMtrace');
-
-[XimputeEM] = gaussImpute(model, Xmiss);
 
 [XimputeOracle] = gaussImpute(trueModel, Xmiss);
 
 
 %% Plotting
 Xmiss0 = Xmiss; Xmiss0(isnan(Xmiss0))=0;
+
+figure;
+ nr = 3; nc = 3;
+for i=1:nr
+  subplot2(nr,nc,i,1);
+  vis = find(~isnan(Xmiss(i,:)));
+  stem(vis, Xmiss(i,vis)); title('observed'); set(gca, 'ylim', [-5 5]);
+  subplot2(nr,nc,i,2);
+  stem(XimputeOracle(i,:)); title('imputed');
+  subplot2(nr,nc,i,3);
+  stem(Xfull(i, :)); title('truth')
+end
+
+
+
+if 0
+  
 ndx = 1:8; % just plot first 20 rows
 figure;
 hintonDiagram(Xmiss0(ndx,:)); title('observed data');
 printPmtkFigure('mvnImputeObs');
 
 
-
-if 1
 figure; hintonDiagram(XimputeEM(ndx,:)); title('imputation with em');
 printPmtkFigure('mvnImputeEM');
 
@@ -59,9 +59,11 @@ figure; hintonDiagram(Xfull(ndx,:)); title('truth');
 printPmtkFigure('mvnImputeTruth');
 end
 
+if 0
 % Scatter plots
 doPlot(Xmiss, Xfull, XimputeOracle, 'imputation with true params', 'mvnImputeScatterOracle')
 doPlot(Xmiss, Xfull, XimputeEM, 'imputation with em', 'mvnImputeScatterEm')
+end
 
 end
 

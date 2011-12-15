@@ -24,12 +24,13 @@ for i=1:R
   printPmtkFigure(sprintf('svdImageDemoClown%d', k));
 end
 %%
+fs = 14;
 sigma = diag(S);
 K = 100;
 figure(); 
-plot(log(sigma(1:K)), 'r-', 'linewidth', 3)
-ylabel(sprintf('log(%s_i)','\sigma'));
-xlabel('i')
+plot(log(sigma(1:K)), 'r-', 'linewidth', 4)
+ylabel(sprintf('log(%s_i)','\sigma'), 'fontsize', fs);
+xlabel('i', 'fontsize', fs)
 %printPmtkFigure svdImageDemoClownSigma;
 %% Scramble the data and replot (Hastie01 p491)
 N = numel(X);
@@ -38,7 +39,8 @@ X2 = reshape(X(perm), size(X));
 [U, S2, V] = svd(X2, 0);
 sigma2 = diag(S2);
 hold on
-plot(log(sigma2(1:K)), 'g:', 'linewidth', 3)
-title('randomized');
+plot(log(sigma2(1:K)), 'g:', 'linewidth', 4)
+h=legend('original', 'randomized');
+set(h, 'fontsize', fs);
 printPmtkFigure svdImageDemoClownSigmaScrambled;
 %%

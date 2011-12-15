@@ -3,8 +3,7 @@ function printPmtkFigure(filename, format)
 
 % This file is from pmtk3.googlecode.com
 
-if nargin <2, format = 'pdf'; end
-
+if nargin <2, format = 'pdf';
 if false % set to false to turn off printing
   printFolder = [];
    if ismac

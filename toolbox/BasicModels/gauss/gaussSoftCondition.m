@@ -1,5 +1,7 @@
 function [post, logevidence] = gaussSoftCondition(pmu, py, A, y)
 % Bayes rule for MVNs
+% pmu is a struct containing mu and Sigma (prior on mu)
+% py is a structu containing Sigma (obs noise cov)
 
 % This file is from pmtk3.googlecode.com
 

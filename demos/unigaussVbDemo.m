@@ -109,6 +109,8 @@ plotFnPredict = @(input) vbPost(input(:,1), input(:,2), aN, bN, muN, kappaN);
 [p, h] = plotContour(plotFnPredict, [-1 1 0 2], level, 'r:', 'linewidth', 2, 'npoints', 50);
 axis equal
 
+xlabel('\mu');
+ylabel('\lambda');
 legend('exact', 'vb')
 end
 

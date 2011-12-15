@@ -49,7 +49,9 @@ hold on
 plot(y(1,:), y(2,:), 'go',  'linewidth', 3, 'markersize', 12);
 plot(x(1,:), x(2,:), 'ks-', 'linewidth', 3, 'markersize', 12);
 legend('observed', 'truth')
+
 axis equal
+%set(gca,'ylim',[5 14])
 printPmtkFigure('kalmanTrackingTruth')
 
 figure;
@@ -60,6 +62,7 @@ for t=1:T, gaussPlot2d(xfilt(1:2,t), 0.1*Vfilt(1:2, 1:2, t), 'color', 'b', 'plot
 hold off
 legend('observed', 'filtered')
 axis equal
+%set(gca,'ylim',[5 14])
 printPmtkFigure('kalmanTrackingFiltered')
 
 figure;
@@ -71,4 +74,5 @@ for t=1:T, gaussPlot2d(xsmooth(1:2,t), 0.1*Vsmooth(1:2, 1:2, t), 'color', 'b', '
 hold off
 legend('observed', 'smoothed')
 axis equal
+%set(gca,'ylim',[5 14])
 printPmtkFigure('kalmanTrackingSmoothed')

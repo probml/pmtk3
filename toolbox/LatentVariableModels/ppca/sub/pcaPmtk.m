@@ -24,8 +24,8 @@ end
 methodNames = {'eig(Xt X)', 'eig(X Xt)', 'SVD(X)'};
 %fprintf('using method %s\n', methodNames{method});
 
-mu = mean(X);
-X = X - repmat(mu, n, 1);
+
+[X, mu] = centerCols(X);
 switch method
  case 1,
   [evec, evals] = eig(cov(X,1));

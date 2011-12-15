@@ -17,5 +17,10 @@ end
 nr = size(X1, 1);  nc = size(X2, 1);
 p = reshape(fn([X1(:) X2(:)]), nr, nc);
 p(~isfinite(p)) = NaN;
-h = surf(X1, X2, p, args{:});
+%h = surf(X1, X2, p, args{:});
+h = surfl(X1, X2, p, args{:});
+%colormap(gray)
+colormap(bone)
+shading interp
+%camproj perspective
 end

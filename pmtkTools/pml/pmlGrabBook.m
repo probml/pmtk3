@@ -34,8 +34,8 @@ chapterFiles = getChapterFileNames(fullfile(bookSource, 'pml.tex'));
 nchaps = numel(chapterFiles); 
 B = cell(nchaps, 1); 
 for i=1:nchaps
-   %B{i} = getChapterText(chapterFiles{i}, includeEx, includeSol);  
-   B{i} = processText(getText(chapterFiles{i}));
+   B{i} = getChapterText(chapterFiles{i}, includeEx, includeSol);  
+   %B{i} = processText(getText(chapterFiles{i}));
 end
 end
 
@@ -71,9 +71,9 @@ end
 function fnames = getChapterFileNames(pmlTexFile)
 %% Return the filenames of all of the included chapter.tex files
 % in the order in which they appear in pml.tex
-ignoreList = {'ttl', 'dummy', 'preface'}; 
-%includeStr = '\include';
-includeStr = '\input';
+ignoreList = {'ttl', 'dummy', 'preface', 'prefaceChap'}; 
+includeStr = '\include';
+%includeStr = '\input';
 beginStr   = '\begin{document}'; 
 ext        = '.tex';
 T          = processText(getText(pmlTexFile)); 

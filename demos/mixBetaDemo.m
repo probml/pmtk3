@@ -23,7 +23,7 @@ grid = 0.0001:0.01:0.9999;
 post = evalpdf(grid, mixpost, alphaPost);
 prior = evalpdf(grid, mixprior, alphaPrior);
 figure; hold on
-plot(grid, prior, 'r:', 'linewidth', 3)
+plot(grid, prior, 'r--', 'linewidth', 3)
 plot(grid, post, 'b-', 'linewidth', 3)
 legend({'prior', 'posterior'}, 'Location', 'NorthWest')
 title('mixture of Beta distributions')

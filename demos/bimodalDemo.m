@@ -14,5 +14,5 @@ plot(xs, p,'k-','linewidth',3)
 mu = mean(xs .* p);
 hold on
 h=line([mu mu], [0 max(p)]);
-set(h, 'linewidth', 3)
+set(h, 'linewidth', 3, 'color', 'r')
 printPmtkFigure bimodalSpike

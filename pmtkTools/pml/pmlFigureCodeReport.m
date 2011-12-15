@@ -15,18 +15,22 @@ function pmlFigureCodeReport(dest, includeEx, includeSol)
 
 % This file is from pmtk3.googlecode.com
 
-if nargin < 1, dest = 'C:\kmurphy\PML\figReport'; end
-if nargin < 2, includeEx  = false; end
+if nargin < 1, dest = '/Users/kpmurphy/BookFigures/figReport'; end
+if nargin < 2, includeEx  = true; end
 if nargin < 3, includeSol  = false; end
 
 linkOtherSource = true; % if true, we link to tex, ppt, source etc.
 oext = {'*.tex', '*.ppt'}; % look for files with these extensions if linkOtherSource true
 figThanksText = 'Figure courtesy of';
 figTakenText = 'Figure taken from';
+figHandText = 'Figure drawn by hand';
 
 bookSource = getConfigValue('PMTKpmlBookSource');
-figSource  = fullfile(fileparts(bookSource), 'Figures', 'figuresSource');
-pdfSource  = fullfile(fileparts(bookSource), 'Figures', 'pdfFigures');
+figs = getConfigValue('PMTKpmlFigures');
+figSource  = fullfile(figs, 'figuresSource');
+pdfSource  = fullfile(figs, 'pdfFigures');
+%figSource  = fullfile(fileparts(bookSource), 'Figures', 'figuresSource');
+%pdfSource  = fullfile(fileparts(bookSource), 'Figures', 'pdfFigures');
 
 if linkOtherSource
     otherSrcFiles = filelist(figSource, oext, true);
@@ -68,7 +72,11 @@ for i=1:nfigs
         fpdf      = [fnames{j}, '.pdf'];
         src       = fullfile(pdfSource, fpdf);
         dst       = fullfile(pdfDest, fpdf);
-        system(sprintf('copy %s %s', src, dst));
+        if isunix
+          system(sprintf('cp %s %s', src, dst));
+        else
+          system(sprintf('copy %s %s', src, dst));
+        end
         plink     = sprintf('<a href = %s/%s>%s</a>', fnameOnly(pdfDest), fpdf, fnames{j});
         fnameLink = sprintf('%s%s<br>', fnameLink, plink);
     end
@@ -101,15 +109,22 @@ for i=1:nfigs
         if ~isempty(src)
             found = true;
             for j=1:numel(src)
+              if isunix
+                system(sprintf('cp %s %s', src{j}, figDest));
+              else
                 system(sprintf('copy %s %s', src{j}, figDest));
+              end
                 sourceLink = sprintf('%s<a href = %s/%s>%s</a><br>', ...
                     sourceLink, 'figuresSource', fnameOnly(src{j}, true), ...
                     fnameOnly(src{j}, true));
             end
+        else
+          sourceLink = figHandText;
         end
         missingSource(i) = ~found;
-    else
+    else  % unreachable!
         missingSource(i) = true;
+        sourceLink = figHandText;
     end
     htmlData{i, 3} = sourceLink;
 end

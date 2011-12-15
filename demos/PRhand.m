@@ -14,6 +14,7 @@ plot(domain, fA(domain),'-r', linewidth{:});
 plot(domain, fB(domain),'-b', linewidth{:});
 
 axis([0,1,0,1.01]);
+axis equal
 set(gca, 'XTick', [0,1], 'YTick', [0,1], 'FontSize', 12);
 xlabel('recall');
 ylabel('precision');

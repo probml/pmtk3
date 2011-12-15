@@ -1,12 +1,12 @@
 %% From Schmee and Hahn, "A simple method for regression analysis
+% with censored data", technometrics 1979 table 1
 % PMTKauthor Hannes Bretschneider
 %% Load
 
 % This file is from pmtk3.googlecode.com
 
+setSeed(0);
 loadData('schmeeHahn');
-
-% with censored data", technometrics 1979 table 1
 y = log10(time);
 x = 1000./(temp+273.2);
 n = length(y);
@@ -26,6 +26,9 @@ wOLS = X\y;
 %% Compute predictions
 yhatEM = X*model.w;
 yhatOLS = X*wOLS;
+
+mseEM = mean((yhatEM - y).^2)
+mseOLS = mean((yhatOLS - y).^2)
 
 %% Plot
 figure; hold on;

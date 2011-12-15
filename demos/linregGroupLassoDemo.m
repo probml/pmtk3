@@ -13,7 +13,7 @@ setSeed(1);
 
 %% Make data
 % Generate categorical features
-nInstances = 50;
+nInstances = 200;
 %nStates = [10 5 10 5 20 5 10 5 20 5 10 20 10];
 nStates = [10 5 10 20 10 20 10];
 % Number of discrete states for each categorical feature
@@ -45,8 +45,8 @@ y = X_ind*wTrue + 1*randn(nInstances,1);
 Xtrain = X_ind;
 ytrain = y;
 
-[Xtrain, mu, s] = standardizeCols(Xtrain);
-ytrain = centerCols(ytrain);
+%[Xtrain, mu, s] = standardizeCols(Xtrain);
+%ytrain = centerCols(ytrain);
 
 if 0
 Xtrain = X_ind(1:floor(nInstances/2),:);
@@ -67,8 +67,8 @@ nGroups = max(groups);
 %% setup CV
 predictFn = @(w, X) X*w;
 lossFn = @(yhat, y)  sum((yhat-y).^2);
-useSErule = false;
-Nfolds = 5;
+useSErule = true;
+Nfolds = 10;
 
 maxLambda = lassoMaxLambda(Xtrain, ytrain);
 lambdasL1 = linspace(maxLambda, eps, 30);
@@ -89,23 +89,47 @@ fitFn = @(X,y,lambda) linregFitGroupLasso(X,y, groups, lambda);
 
 %% Plot
 figure;
-%subplot(1,3,1);
 stem(wTrue); title('truth');  drawGroups(nStates, wTrue);
 printPmtkFigure('groupLassoTruth')
 
 figure;
-%subplot(1,3,2);
 stem(wHatGroup); title('group lasso'); drawGroups(nStates, wTrue);
 printPmtkFigure('groupLassoGroup')
 
 figure;
-%subplot(1,3,3);
 stem(wHatLasso); title('lasso'); drawGroups(nStates, wTrue);
 printPmtkFigure('groupLassoVanilla')
 
-%printPmtkFigure('groupLasso')
+% Add debiasing
+% Note that if we standardize the data, we would need to scale
+% up the coefficients in order to recover the true (generating) values
+wHatGroup = debias(wHatGroup, Xtrain, ytrain);
+wHatLasso = debias(wHatLasso, Xtrain, ytrain);
+figure;
+stem(wTrue); title('truth');  drawGroups(nStates, wTrue);
+%printPmtkFigure('groupLassoTruth')
+
+figure;
+stem(wHatGroup); title('group lasso'); drawGroups(nStates, wTrue);
+printPmtkFigure('groupLassoGroupDeb')
+
+figure;
+stem(wHatLasso); title('lasso'); drawGroups(nStates, wTrue);
+printPmtkFigure('groupLassoVanillaDeb')
+
 
 end
+
+function wdebiased = debias(w, X, y)
+aw = abs(w);
+zz = find(abs(w) <= 0.01*max(aw));
+n = numel(w);
+ndx = setdiff(1:n, zz);
+wdebiased = zeros(n,1);
+wdebiased(ndx) = pinv(X(:,ndx))*y;
+end
+
+
 
 
 function drawGroups(nStates, wTrue)

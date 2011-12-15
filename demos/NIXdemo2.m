@@ -28,20 +28,24 @@ modelC.Sigma = v(3)*S(3);
 model = {modelA, modelB, modelC};
 %% Plot
 rangexy = [-0.9 1 0.1 2];
+figure;
+fs = 12;
 for m = 1:numel(model);
    fn = @(x)exp(gaussInvWishartLogprob(model{m}, x(:, 1), x(:, 2)));
-   figure;
+   %figure;
+   subplot(1,3,m)
    plotSurface(fn, rangexy);
    hold on;
    plotContour(fn, rangexy);
    set(gca, 'zlim', [0 0.5]); 
-   title(sprintf('%s(%s=%g, %s=%g, %s=%g, %s=%g)', 'N\chi^{-2}' , ...
+   title(sprintf('%s(%s=%g, %s=%g, %s=%g, %s=%g)', 'NIX' , ...
        '\mu_0'      , mu(m) , ...
-       '\kappa_0'   , k(m)  , ...
+       'k_0'   , k(m)  , ...
        '\nu_0'      , v(m)  , ...
-       '\sigma^2_0' , S(m)  ) ); 
+       '\sigma^2_0' , S(m)  ) , 'fontsize', fs); 
    
-   xlabel('\mu');
-   ylabel('\sigma^2');
-   printPmtkFigure(sprintf('NIX%d', m));
+   xlabel('\mu', 'fontsize', fs);
+   ylabel(sprintf('%s', '\sigma^2'), 'fontsize', fs);
+   %printPmtkFigure(sprintf('NIX%d', m));
 end
+printPmtkFigure(sprintf('NIXdemo'));

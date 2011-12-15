@@ -36,5 +36,6 @@ hold on
 grid off;
 gaussPlot2d(y2, Sigmas{2}, 'color', 'g');
 gaussPlot2d(post.mu, post.Sigma, 'color', 'k');
-axis([-1.5 1.5 -1.5 1.5]);
+axis square
+%axis([-1.5 1.5 -1.5 1.5]);
 end
