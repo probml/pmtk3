@@ -5,7 +5,7 @@ disp('running agglomDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running alarmDgmTimingComparison.m');
  try
@@ -13,7 +13,7 @@ disp('running alarmDgmTimingComparison.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running alarmNetworkFitTest.m');
  try
@@ -21,7 +21,7 @@ disp('running alarmNetworkFitTest.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running alarmTest.m');
  try
@@ -29,7 +29,7 @@ disp('running alarmTest.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running anscombe.m');
  try
@@ -37,7 +37,7 @@ disp('running anscombe.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running arsDemo.m');
  try
@@ -45,7 +45,23 @@ disp('running arsDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
+
+disp('running arsEnvelope.m');
+ try
+ arsEnvelope; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
+
+disp('running bayesChangeOfVar.m');
+ try
+ bayesChangeOfVar; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
 
 disp('running bayesfactorGeneDemo.m');
  try
@@ -53,7 +69,7 @@ disp('running bayesfactorGeneDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running bayesFactorHandedness.m');
  try
@@ -61,7 +77,7 @@ disp('running bayesFactorHandedness.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running bayesLinRegDemo2d.m');
  try
@@ -69,7 +85,7 @@ disp('running bayesLinRegDemo2d.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running bayesRiskDemo.m');
  try
@@ -77,7 +93,7 @@ disp('running bayesRiskDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running bayesTtestDemo.m');
  try
@@ -85,7 +101,7 @@ disp('running bayesTtestDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running bayesVsErmDemo.m');
  try
@@ -93,7 +109,7 @@ disp('running bayesVsErmDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running belPropTest.m');
  try
@@ -101,7 +117,7 @@ disp('running belPropTest.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running bernoulliBetaSequentialUpdate.m');
  try
@@ -109,7 +125,7 @@ disp('running bernoulliBetaSequentialUpdate.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running bernoulliEntropyFig.m');
  try
@@ -117,7 +133,7 @@ disp('running bernoulliEntropyFig.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running betaBinomPostPredDemo.m');
  try
@@ -125,7 +141,7 @@ disp('running betaBinomPostPredDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running betaCredibleInt.m');
  try
@@ -133,7 +149,7 @@ disp('running betaCredibleInt.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running betaHPD.m');
  try
@@ -141,7 +157,7 @@ disp('running betaHPD.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running betaMCdemo.m');
  try
@@ -149,7 +165,7 @@ disp('running betaMCdemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running betaPlotDemo.m');
  try
@@ -157,7 +173,7 @@ disp('running betaPlotDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running betaSampleDemo.m');
  try
@@ -165,7 +181,7 @@ disp('running betaSampleDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running biasVarianceFigure.m');
  try
@@ -173,7 +189,7 @@ disp('running biasVarianceFigure.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running biasVarModelComplexity.m');
  try
@@ -181,7 +197,23 @@ disp('running biasVarModelComplexity.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
+
+disp('running biasVarModelComplexity2.m');
+ try
+ biasVarModelComplexity2; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
+
+disp('running biasVarModelComplexity3.m');
+ try
+ biasVarModelComplexity3; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
 
 disp('running bigO.m');
  try
@@ -189,7 +221,7 @@ disp('running bigO.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running bimodalDemo.m');
  try
@@ -197,15 +229,23 @@ disp('running bimodalDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
-disp('running binaryPcaDemoTipping.m');
+disp('running binaryFaDemoNewsgroups.m');
  try
- binaryPcaDemoTipping; 
+ binaryFaDemoNewsgroups; 
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
+
+disp('running binaryFaDemoTipping.m');
+ try
+ binaryFaDemoTipping; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
 
 disp('running binomDistPlot.m');
  try
@@ -213,7 +253,7 @@ disp('running binomDistPlot.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running binomialBetaPosteriorDemo.m');
  try
@@ -221,7 +261,15 @@ disp('running binomialBetaPosteriorDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
+
+disp('running bleiLDAperplexityPlot.m');
+ try
+ bleiLDAperplexityPlot; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
 
 disp('running bolassoSimpleDemo.m');
  try
@@ -229,7 +277,7 @@ disp('running bolassoSimpleDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running bootstrapDemoBer.m');
  try
@@ -237,7 +285,7 @@ disp('running bootstrapDemoBer.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running boundOptPicture.m');
  try
@@ -245,7 +293,7 @@ disp('running boundOptPicture.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running boxplotMorley.m');
  try
@@ -253,7 +301,7 @@ disp('running boxplotMorley.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running cancerRatesEb.m');
  try
@@ -261,7 +309,7 @@ disp('running cancerRatesEb.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running cancerRatesMh.m');
  try
@@ -269,7 +317,7 @@ disp('running cancerRatesMh.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running casinoDemo.m');
  try
@@ -277,7 +325,7 @@ disp('running casinoDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running catFAdemoAuto.m');
  try
@@ -285,7 +333,7 @@ disp('running catFAdemoAuto.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running catFAtest.m');
  try
@@ -293,7 +341,7 @@ disp('running catFAtest.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running centralLimitDemo.m');
  try
@@ -301,7 +349,7 @@ disp('running centralLimitDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running changeOfVarsDemo1d.m');
  try
@@ -309,7 +357,7 @@ disp('running changeOfVarsDemo1d.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running changeOfVarsDemoPolar.m');
  try
@@ -317,7 +365,7 @@ disp('running changeOfVarsDemoPolar.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running chisquaredTestDemo.m');
  try
@@ -325,7 +373,7 @@ disp('running chisquaredTestDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running chowliuTreeDemo.m');
  try
@@ -333,7 +381,7 @@ disp('running chowliuTreeDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running clusterYeast.m');
  try
@@ -341,7 +389,15 @@ disp('running clusterYeast.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
+
+disp('running coinBayesFactorDemo.m');
+ try
+ coinBayesFactorDemo; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
 
 disp('running coinsModelSelDemo.m');
  try
@@ -349,7 +405,7 @@ disp('running coinsModelSelDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running confintDemo.m');
  try
@@ -357,7 +413,7 @@ disp('running confintDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running conjugateFnExp.m');
  try
@@ -365,7 +421,7 @@ disp('running conjugateFnExp.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running conjugateFnExpLowerBound.m');
  try
@@ -373,7 +429,7 @@ disp('running conjugateFnExpLowerBound.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running conjugateFunction.m');
  try
@@ -381,7 +437,7 @@ disp('running conjugateFunction.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running contoursSSEdemo.m');
  try
@@ -389,7 +445,15 @@ disp('running contoursSSEdemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
+
+disp('running convexFnHand.m');
+ try
+ convexFnHand; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
 
 disp('running convRateDemo.m');
  try
@@ -397,7 +461,7 @@ disp('running convRateDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running crf2ChainTrainDemo.m');
  try
@@ -405,7 +469,7 @@ disp('running crf2ChainTrainDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running crf2ImgTrainDemo.m');
  try
@@ -413,7 +477,7 @@ disp('running crf2ImgTrainDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running crfFitStructDemo.m');
  try
@@ -421,7 +485,15 @@ disp('running crfFitStructDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
+
+disp('running cubicPlot.m');
+ try
+ cubicPlot; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
 
 disp('running curseDimensionality.m');
  try
@@ -429,7 +501,7 @@ disp('running curseDimensionality.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running dagStructLearnDemoCollegeCompleteData.m');
  try
@@ -437,7 +509,7 @@ disp('running dagStructLearnDemoCollegeCompleteData.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running dboundaries3bumps.m');
  try
@@ -445,7 +517,7 @@ disp('running dboundaries3bumps.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running decisionBoundaryLinearVSwiggly.m');
  try
@@ -453,7 +525,7 @@ disp('running decisionBoundaryLinearVSwiggly.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running deflationDemo.m');
  try
@@ -461,7 +533,7 @@ disp('running deflationDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running demoFAemt.m');
  try
@@ -469,7 +541,7 @@ disp('running demoFAemt.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running demoLagrange.m');
  try
@@ -477,7 +549,7 @@ disp('running demoLagrange.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running demoMinfunc.m');
  try
@@ -485,7 +557,7 @@ disp('running demoMinfunc.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running demoPeaksTraj.m');
  try
@@ -493,7 +565,7 @@ disp('running demoPeaksTraj.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running demoRosen2d.m');
  try
@@ -501,7 +573,7 @@ disp('running demoRosen2d.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running demoRosenConstrained.m');
  try
@@ -509,7 +581,7 @@ disp('running demoRosenConstrained.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running demoRosenPlot2d.m');
  try
@@ -517,7 +589,7 @@ disp('running demoRosenPlot2d.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running derivComplexTrick.m');
  try
@@ -525,7 +597,7 @@ disp('running derivComplexTrick.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running dgmDiscreteHmmFitTest.m');
  try
@@ -533,7 +605,7 @@ disp('running dgmDiscreteHmmFitTest.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running dgmGaussHmmFitTest.m');
  try
@@ -541,7 +613,7 @@ disp('running dgmGaussHmmFitTest.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running dgmGaussHmmFullyObsFitTest.m');
  try
@@ -549,7 +621,7 @@ disp('running dgmGaussHmmFullyObsFitTest.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running dgmLogprobTest.m');
  try
@@ -557,7 +629,7 @@ disp('running dgmLogprobTest.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running dgmMixGaussFitTest.m');
  try
@@ -565,7 +637,7 @@ disp('running dgmMixGaussFitTest.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running dgmMrf2Demo.m');
  try
@@ -573,7 +645,7 @@ disp('running dgmMrf2Demo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running dgmNaiveBayesFitTest.m');
  try
@@ -581,7 +653,7 @@ disp('running dgmNaiveBayesFitTest.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running dgmNodeOrderDemo.m');
  try
@@ -589,7 +661,7 @@ disp('running dgmNodeOrderDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running dirichlet3dPlot.m');
  try
@@ -597,7 +669,7 @@ disp('running dirichlet3dPlot.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running dirichlet3dPlotWedge.m');
  try
@@ -605,7 +677,7 @@ disp('running dirichlet3dPlotWedge.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running dirichletHistogramDemo.m');
  try
@@ -613,7 +685,7 @@ disp('running dirichletHistogramDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running discreteDagSmallStructureLearnDemo.m');
  try
@@ -621,15 +693,7 @@ disp('running discreteDagSmallStructureLearnDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
-
-disp('running discreteDensityModelsShootout.m');
- try
- discreteDensityModelsShootout; 
- catch ME 
- disp(ME.message); 
- end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running discreteProbDistFig.m');
  try
@@ -637,7 +701,7 @@ disp('running discreteProbDistFig.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running discrimAnalysisDboundariesDemo.m');
  try
@@ -645,7 +709,7 @@ disp('running discrimAnalysisDboundariesDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running discrimAnalysisFisherIrisDemo.m');
  try
@@ -653,7 +717,7 @@ disp('running discrimAnalysisFisherIrisDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running discrimAnalysisHeightWeightDemo.m');
  try
@@ -661,7 +725,7 @@ disp('running discrimAnalysisHeightWeightDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running dpmGauss2dDemo.m');
  try
@@ -669,7 +733,7 @@ disp('running dpmGauss2dDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running dpmSampleDemo.m');
  try
@@ -677,7 +741,7 @@ disp('running dpmSampleDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running dtreeDemoIris.m');
  try
@@ -685,7 +749,7 @@ disp('running dtreeDemoIris.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running elasticDistortionsDemo.m');
  try
@@ -693,7 +757,7 @@ disp('running elasticDistortionsDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running elasticNetDemo.m');
  try
@@ -701,7 +765,7 @@ disp('running elasticNetDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running emLogLikelihoodMax.m');
  try
@@ -709,7 +773,7 @@ disp('running emLogLikelihoodMax.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running epigraph.m');
  try
@@ -717,7 +781,7 @@ disp('running epigraph.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running errorCorrectingCodeDemo.m');
  try
@@ -725,7 +789,7 @@ disp('running errorCorrectingCodeDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running faBiplotDemo.m');
  try
@@ -733,7 +797,7 @@ disp('running faBiplotDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running factorGraph2PairwiseTest.m');
  try
@@ -741,7 +805,7 @@ disp('running factorGraph2PairwiseTest.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running fisherDiscrimVowelDemo.m');
  try
@@ -749,7 +813,7 @@ disp('running fisherDiscrimVowelDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running fisheririsDemo.m');
  try
@@ -757,7 +821,7 @@ disp('running fisheririsDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running fisherLDAdemo.m');
  try
@@ -765,7 +829,7 @@ disp('running fisherLDAdemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running fwdBackDemo.m');
  try
@@ -773,7 +837,7 @@ disp('running fwdBackDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running gammaPlotDemo.m');
  try
@@ -781,7 +845,7 @@ disp('running gammaPlotDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running gammaRainfallDemo.m');
  try
@@ -789,7 +853,7 @@ disp('running gammaRainfallDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running gauss2dMargCondPlot.m');
  try
@@ -797,7 +861,7 @@ disp('running gauss2dMargCondPlot.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running gaussBayesMultiPoints.m');
  try
@@ -805,7 +869,7 @@ disp('running gaussBayesMultiPoints.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running gaussBayesUnequalCov.m');
  try
@@ -813,7 +877,7 @@ disp('running gaussBayesUnequalCov.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running gaussCondition2Ddemo.m');
  try
@@ -821,7 +885,23 @@ disp('running gaussCondition2Ddemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
+
+disp('running gaussCondition2Ddemo2.m');
+ try
+ gaussCondition2Ddemo2; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
+
+disp('running gaussEvec.m');
+ try
+ gaussEvec; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
 
 disp('running gaussHeightWeight.m');
  try
@@ -829,7 +909,7 @@ disp('running gaussHeightWeight.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running gaussianEllipsoids.m');
  try
@@ -837,7 +917,7 @@ disp('running gaussianEllipsoids.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running gaussImputationCompare.m');
  try
@@ -845,7 +925,7 @@ disp('running gaussImputationCompare.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running gaussImputationDemo.m');
  try
@@ -853,7 +933,7 @@ disp('running gaussImputationDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running gaussImputationDemoColorHintonDiag.m');
  try
@@ -861,7 +941,15 @@ disp('running gaussImputationDemoColorHintonDiag.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
+
+disp('running gaussImputationDemoEM.m');
+ try
+ gaussImputationDemoEM; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
 
 disp('running gaussImputationDemoOld.m');
  try
@@ -869,7 +957,7 @@ disp('running gaussImputationDemoOld.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running gaussImputationGibbsDemo.m');
  try
@@ -877,7 +965,7 @@ disp('running gaussImputationGibbsDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running gaussImputationICMDemo.m');
  try
@@ -885,7 +973,7 @@ disp('running gaussImputationICMDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running gaussImputationPima.m');
  try
@@ -893,7 +981,7 @@ disp('running gaussImputationPima.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running gaussInferMuSigmaDemo.m');
  try
@@ -901,7 +989,7 @@ disp('running gaussInferMuSigmaDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running gaussInferParamsMean1d.m');
  try
@@ -909,7 +997,7 @@ disp('running gaussInferParamsMean1d.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running gaussInferParamsMean2d.m');
  try
@@ -917,7 +1005,39 @@ disp('running gaussInferParamsMean2d.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
+
+disp('running gaussInterpDemo.m');
+ try
+ gaussInterpDemo; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
+
+disp('running gaussInterpDemo2.m');
+ try
+ gaussInterpDemo2; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
+
+disp('running gaussInterpNoisyDemo.m');
+ try
+ gaussInterpNoisyDemo; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
+
+disp('running gaussInterpNoisyDemoOld.m');
+ try
+ gaussInterpNoisyDemoOld; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
 
 disp('running gaussPlot2Ddemo.m');
  try
@@ -925,7 +1045,7 @@ disp('running gaussPlot2Ddemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running gaussPlot2dDemo2.m');
  try
@@ -933,7 +1053,7 @@ disp('running gaussPlot2dDemo2.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running gaussPlotDemo.m');
  try
@@ -941,7 +1061,7 @@ disp('running gaussPlotDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running gaussSeqlUpdateMuSigma1D.m');
  try
@@ -949,7 +1069,7 @@ disp('running gaussSeqlUpdateMuSigma1D.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running gaussSeqUpdateSigma1D.m');
  try
@@ -957,7 +1077,7 @@ disp('running gaussSeqUpdateSigma1D.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running gaussVsStudentOutlierDemo.m');
  try
@@ -965,7 +1085,7 @@ disp('running gaussVsStudentOutlierDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running generativeVsDiscrim.m');
  try
@@ -973,7 +1093,7 @@ disp('running generativeVsDiscrim.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running geomRidge.m');
  try
@@ -981,7 +1101,15 @@ disp('running geomRidge.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
+
+disp('running getCountsMarkovLanguageEx.m');
+ try
+ getCountsMarkovLanguageEx; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
 
 disp('running ggmFitDemo.m');
  try
@@ -989,7 +1117,7 @@ disp('running ggmFitDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running ggmLassoDemo.m');
  try
@@ -997,7 +1125,7 @@ disp('running ggmLassoDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running gibbsDemoNoBlindspot.m');
  try
@@ -1005,7 +1133,7 @@ disp('running gibbsDemoNoBlindspot.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running gibbsGauss2dDemo.m');
  try
@@ -1013,7 +1141,7 @@ disp('running gibbsGauss2dDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running gibbsGaussDemo.m');
  try
@@ -1021,7 +1149,7 @@ disp('running gibbsGaussDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running gibbsGaussParamsDemo.m');
  try
@@ -1029,7 +1157,7 @@ disp('running gibbsGaussParamsDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running giniDemo.m');
  try
@@ -1037,7 +1165,7 @@ disp('running giniDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running glmnetDemo.m');
  try
@@ -1045,7 +1173,7 @@ disp('running glmnetDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running gmmSingularity.m');
  try
@@ -1053,7 +1181,31 @@ disp('running gmmSingularity.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
+
+disp('running gpcDemo2d.m');
+ try
+ gpcDemo2d; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
+
+disp('running gpnnCov.m');
+ try
+ gpnnCov; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
+
+disp('running gpnnDemo.m');
+ try
+ gpnnDemo; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
 
 disp('running gprDemoArd.m');
  try
@@ -1061,7 +1213,7 @@ disp('running gprDemoArd.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running gprDemoChangeHparams.m');
  try
@@ -1069,7 +1221,7 @@ disp('running gprDemoChangeHparams.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running gprDemoMarglik.m');
  try
@@ -1077,7 +1229,7 @@ disp('running gprDemoMarglik.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running gprDemoNoiseFree.m');
  try
@@ -1085,7 +1237,7 @@ disp('running gprDemoNoiseFree.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running gpSpatialDemoLaplace.m');
  try
@@ -1093,7 +1245,7 @@ disp('running gpSpatialDemoLaplace.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running graphicalIndepTest.m');
  try
@@ -1101,7 +1253,15 @@ disp('running graphicalIndepTest.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
+
+disp('running groupLassoDemo.m');
+ try
+ groupLassoDemo; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
 
 disp('running hastieCvsGammaDemo.m');
  try
@@ -1109,7 +1269,7 @@ disp('running hastieCvsGammaDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running hclustYeastDemo.m');
  try
@@ -1117,7 +1277,7 @@ disp('running hclustYeastDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running healthyLevels.m');
  try
@@ -1125,7 +1285,7 @@ disp('running healthyLevels.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running heteroscedasticDataPlot.m');
  try
@@ -1133,7 +1293,7 @@ disp('running heteroscedasticDataPlot.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running hingeLossPlot.m');
  try
@@ -1141,7 +1301,7 @@ disp('running hingeLossPlot.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running hingePlot.m');
  try
@@ -1149,7 +1309,7 @@ disp('running hingePlot.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running hmm2DgmTest.m');
  try
@@ -1157,7 +1317,7 @@ disp('running hmm2DgmTest.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running hmmDiscreteTest.m');
  try
@@ -1165,7 +1325,7 @@ disp('running hmmDiscreteTest.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running hmmGaussTest.m');
  try
@@ -1173,7 +1333,7 @@ disp('running hmmGaussTest.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running hmmLillypadDemo.m');
  try
@@ -1181,7 +1341,7 @@ disp('running hmmLillypadDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running hmmMixGaussTiedTest.m');
  try
@@ -1189,7 +1349,15 @@ disp('running hmmMixGaussTiedTest.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
+
+disp('running hmmNbestDemo.m');
+ try
+ hmmNbestDemo; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
 
 disp('running hmmSelfLoopDist.m');
  try
@@ -1197,7 +1365,7 @@ disp('running hmmSelfLoopDist.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running hmmStudentTest.m');
  try
@@ -1205,7 +1373,7 @@ disp('running hmmStudentTest.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running hoffNormalmsePlots.m');
  try
@@ -1213,7 +1381,7 @@ disp('running hoffNormalmsePlots.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running huberLossDemo.m');
  try
@@ -1221,7 +1389,7 @@ disp('running huberLossDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running icaDemo.m');
  try
@@ -1229,7 +1397,7 @@ disp('running icaDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running icaDemoUniform.m');
  try
@@ -1237,7 +1405,7 @@ disp('running icaDemoUniform.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running invGammaPlotDemo.m');
  try
@@ -1245,7 +1413,7 @@ disp('running invGammaPlotDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running IPFdemo2x2.m');
  try
@@ -1253,7 +1421,7 @@ disp('running IPFdemo2x2.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running IPFdemo4Cycle.m');
  try
@@ -1261,7 +1429,7 @@ disp('running IPFdemo4Cycle.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running IPFdemoIndep2d.m');
  try
@@ -1269,7 +1437,15 @@ disp('running IPFdemoIndep2d.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
+
+disp('running irmGraph.m');
+ try
+ irmGraph; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
 
 disp('running isingImageDenoiseDemo.m');
  try
@@ -1277,7 +1453,7 @@ disp('running isingImageDenoiseDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running isolatedWordClassificationWithHmmsDemo.m');
  try
@@ -1285,7 +1461,7 @@ disp('running isolatedWordClassificationWithHmmsDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running jensensInequalityFigure.m');
  try
@@ -1293,7 +1469,7 @@ disp('running jensensInequalityFigure.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running kalmanTrackingDemo.m');
  try
@@ -1301,7 +1477,7 @@ disp('running kalmanTrackingDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running kernelBinaryClassifDemo.m');
  try
@@ -1309,7 +1485,7 @@ disp('running kernelBinaryClassifDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running kernelRegrDemo.m');
  try
@@ -1317,7 +1493,7 @@ disp('running kernelRegrDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running kernelRegressionDemo.m');
  try
@@ -1325,7 +1501,7 @@ disp('running kernelRegressionDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running KLfwdReverseMixGauss.m');
  try
@@ -1333,7 +1509,7 @@ disp('running KLfwdReverseMixGauss.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running KLpqGauss.m');
  try
@@ -1341,7 +1517,7 @@ disp('running KLpqGauss.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running kmeansDemoFaithful.m');
  try
@@ -1349,7 +1525,7 @@ disp('running kmeansDemoFaithful.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running kmeansHeightWeight.m');
  try
@@ -1357,7 +1533,7 @@ disp('running kmeansHeightWeight.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running kmeansModelSel1d.m');
  try
@@ -1365,7 +1541,7 @@ disp('running kmeansModelSel1d.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running kmeansModelSel2d.m');
  try
@@ -1373,7 +1549,7 @@ disp('running kmeansModelSel2d.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running kmeansYeastDemo.m');
  try
@@ -1381,7 +1557,7 @@ disp('running kmeansYeastDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running kmedoidsDemoFaithful.m');
  try
@@ -1389,7 +1565,7 @@ disp('running kmedoidsDemoFaithful.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running knnClassifyDemo.m');
  try
@@ -1397,7 +1573,7 @@ disp('running knnClassifyDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running knnDensityEstimationDemo.m');
  try
@@ -1405,7 +1581,7 @@ disp('running knnDensityEstimationDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running knnVoronoi.m');
  try
@@ -1413,7 +1589,31 @@ disp('running knnVoronoi.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
+
+disp('running kpcaDemo.m');
+ try
+ kpcaDemo; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
+
+disp('running kpcaDemo2.m');
+ try
+ kpcaDemo2; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
+
+disp('running kpcaScholkopf.m');
+ try
+ kpcaScholkopf; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
 
 disp('running laplacePdfPlot.m');
  try
@@ -1421,7 +1621,7 @@ disp('running laplacePdfPlot.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running laplacePlotDemo.m');
  try
@@ -1429,7 +1629,7 @@ disp('running laplacePlotDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running lassoPathProstate.m');
  try
@@ -1437,7 +1637,7 @@ disp('running lassoPathProstate.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running lassoPathProstateClassif.m');
  try
@@ -1445,7 +1645,7 @@ disp('running lassoPathProstateClassif.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running lassoPostPlot.m');
  try
@@ -1453,7 +1653,7 @@ disp('running lassoPostPlot.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running ldaQdaDemoIris.m');
  try
@@ -1461,7 +1661,7 @@ disp('running ldaQdaDemoIris.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running leastSquaresProjection.m');
  try
@@ -1469,7 +1669,15 @@ disp('running leastSquaresProjection.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
+
+disp('running linesearchPerp.m');
+ try
+ linesearchPerp; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
 
 disp('running linregAllSubsetsGraycodeDemo.m');
  try
@@ -1477,7 +1685,7 @@ disp('running linregAllSubsetsGraycodeDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running linregBayesCaterpillar.m');
  try
@@ -1485,7 +1693,7 @@ disp('running linregBayesCaterpillar.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running linregBFCaterpillar.m');
  try
@@ -1493,7 +1701,7 @@ disp('running linregBFCaterpillar.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running linregCensoredSchmeeHahnDemo.m');
  try
@@ -1501,7 +1709,7 @@ disp('running linregCensoredSchmeeHahnDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running linregDemo1.m');
  try
@@ -1509,7 +1717,7 @@ disp('running linregDemo1.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running linregEbModelSelVsN.m');
  try
@@ -1517,7 +1725,7 @@ disp('running linregEbModelSelVsN.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running linregFitL1Test.m');
  try
@@ -1525,7 +1733,7 @@ disp('running linregFitL1Test.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running linregFreqCaterpillar.m');
  try
@@ -1533,7 +1741,7 @@ disp('running linregFreqCaterpillar.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running linregGroupLassoDemo.m');
  try
@@ -1541,7 +1749,7 @@ disp('running linregGroupLassoDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running linregGroupLassoEmDemo.m');
  try
@@ -1549,7 +1757,7 @@ disp('running linregGroupLassoEmDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running linregLogTransformDemo.m');
  try
@@ -1557,7 +1765,7 @@ disp('running linregLogTransformDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running linregOnlineDemoKalman.m');
  try
@@ -1565,7 +1773,15 @@ disp('running linregOnlineDemoKalman.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
+
+disp('running linregPolyLassoDemo.m');
+ try
+ linregPolyLassoDemo; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
 
 disp('running linregPolyVsDegree.m');
  try
@@ -1573,7 +1789,7 @@ disp('running linregPolyVsDegree.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running linregPolyVsN.m');
  try
@@ -1581,7 +1797,7 @@ disp('running linregPolyVsN.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running linregPolyVsRegDemo.m');
  try
@@ -1589,7 +1805,7 @@ disp('running linregPolyVsRegDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running linregPostPredDemo.m');
  try
@@ -1597,7 +1813,7 @@ disp('running linregPostPredDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running linregPostPredLinearDemo.m');
  try
@@ -1605,7 +1821,7 @@ disp('running linregPostPredLinearDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running linregRbfDemo.m');
  try
@@ -1613,7 +1829,7 @@ disp('running linregRbfDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running linregRobustDemo.m');
  try
@@ -1621,7 +1837,15 @@ disp('running linregRobustDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
+
+disp('running linregRobustDemoCombined.m');
+ try
+ linregRobustDemoCombined; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
 
 disp('running linregStudentStacklossDemo.m');
  try
@@ -1629,7 +1853,7 @@ disp('running linregStudentStacklossDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running linregStudentTest.m');
  try
@@ -1637,7 +1861,7 @@ disp('running linregStudentTest.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running linregWedgeDemo2.m');
  try
@@ -1645,7 +1869,7 @@ disp('running linregWedgeDemo2.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running linregWeightedDemo.m');
  try
@@ -1653,7 +1877,7 @@ disp('running linregWeightedDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running LMSdemo.m');
  try
@@ -1661,7 +1885,7 @@ disp('running LMSdemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running LMSdemoSimple.m');
  try
@@ -1669,7 +1893,7 @@ disp('running LMSdemoSimple.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running localMinima1d.m');
  try
@@ -1677,7 +1901,7 @@ disp('running localMinima1d.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running logcon.m');
  try
@@ -1685,7 +1909,7 @@ disp('running logcon.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running logregBasisFnDemo.m');
  try
@@ -1693,7 +1917,7 @@ disp('running logregBasisFnDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running logregDemoGirolami.m');
  try
@@ -1701,7 +1925,7 @@ disp('running logregDemoGirolami.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running logregFitL2DualTest.m');
  try
@@ -1709,7 +1933,7 @@ disp('running logregFitL2DualTest.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running logregIrisDemo.m');
  try
@@ -1717,7 +1941,7 @@ disp('running logregIrisDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running logregKernelDemo.m');
  try
@@ -1725,7 +1949,7 @@ disp('running logregKernelDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running logregL2FitTest.m');
  try
@@ -1733,7 +1957,7 @@ disp('running logregL2FitTest.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running logregLaplaceGirolamiDemo.m');
  try
@@ -1741,7 +1965,7 @@ disp('running logregLaplaceGirolamiDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running logregMultinomKernelDemo.m');
  try
@@ -1749,7 +1973,7 @@ disp('running logregMultinomKernelDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running logregMultinomKernelMinfuncDemo.m');
  try
@@ -1757,7 +1981,7 @@ disp('running logregMultinomKernelMinfuncDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running logregMultinomMinfuncDemo.m');
  try
@@ -1765,7 +1989,7 @@ disp('running logregMultinomMinfuncDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running logregSATdemo.m');
  try
@@ -1773,7 +1997,7 @@ disp('running logregSATdemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running logregSATdemoBayes.m');
  try
@@ -1781,7 +2005,7 @@ disp('running logregSATdemoBayes.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running logregSatMhDemo.m');
  try
@@ -1789,7 +2013,7 @@ disp('running logregSatMhDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running logregWeightedDemo.m');
  try
@@ -1797,7 +2021,7 @@ disp('running logregWeightedDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running logregXorDemo.m');
  try
@@ -1805,7 +2029,7 @@ disp('running logregXorDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running logregXorLinearDemo.m');
  try
@@ -1813,7 +2037,7 @@ disp('running logregXorLinearDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running lossFunctionFig.m');
  try
@@ -1821,7 +2045,7 @@ disp('running lossFunctionFig.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running lungcancerGMdemo.m');
  try
@@ -1829,7 +2053,7 @@ disp('running lungcancerGMdemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running makeData3cousins.m');
  try
@@ -1837,7 +2061,7 @@ disp('running makeData3cousins.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running marsDemo.m');
  try
@@ -1845,7 +2069,7 @@ disp('running marsDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running mcAccuracyDemo.m');
  try
@@ -1853,7 +2077,7 @@ disp('running mcAccuracyDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running mcEstimatePi.m');
  try
@@ -1861,7 +2085,7 @@ disp('running mcEstimatePi.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running mcmcGmmDemo.m');
  try
@@ -1869,7 +2093,7 @@ disp('running mcmcGmmDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running mcmcMvn2d.m');
  try
@@ -1877,7 +2101,7 @@ disp('running mcmcMvn2d.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running mcQuantileDemo.m');
  try
@@ -1885,7 +2109,7 @@ disp('running mcQuantileDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running mdgGridDemoSutton.m');
  try
@@ -1893,7 +2117,7 @@ disp('running mdgGridDemoSutton.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running mdpGridDemoRussell.m');
  try
@@ -1901,7 +2125,7 @@ disp('running mdpGridDemoRussell.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running memoryMapDemo.m');
  try
@@ -1909,7 +2133,7 @@ disp('running memoryMapDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running miMixedDemo.m');
  try
@@ -1917,7 +2141,7 @@ disp('running miMixedDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running minfuncRosen2dDemo.m');
  try
@@ -1925,7 +2149,7 @@ disp('running minfuncRosen2dDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running misconceptionRank.m');
  try
@@ -1933,7 +2157,7 @@ disp('running misconceptionRank.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running mixBerMnistEM.m');
  try
@@ -1941,7 +2165,7 @@ disp('running mixBerMnistEM.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running mixBetaDemo.m');
  try
@@ -1949,7 +2173,7 @@ disp('running mixBetaDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running mixdirDemo3.m');
  try
@@ -1957,7 +2181,7 @@ disp('running mixdirDemo3.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running mixDirDnaDemo.m');
  try
@@ -1965,7 +2189,7 @@ disp('running mixDirDnaDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running mixDiscreteDemo.m');
  try
@@ -1973,7 +2197,7 @@ disp('running mixDiscreteDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running mixexpDemo.m');
  try
@@ -1981,7 +2205,7 @@ disp('running mixexpDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running mixexpDemoOneToMany.m');
  try
@@ -1989,7 +2213,7 @@ disp('running mixexpDemoOneToMany.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running mixGaussDemoFaithful.m');
  try
@@ -1997,7 +2221,7 @@ disp('running mixGaussDemoFaithful.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running mixGaussImputationDemo.m');
  try
@@ -2005,7 +2229,7 @@ disp('running mixGaussImputationDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running mixGaussImputationDemoOld.m');
  try
@@ -2013,7 +2237,7 @@ disp('running mixGaussImputationDemoOld.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running mixGaussImputationTest.m');
  try
@@ -2021,7 +2245,7 @@ disp('running mixGaussImputationTest.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running mixGaussLikelihoodConvexHull.m');
  try
@@ -2029,7 +2253,7 @@ disp('running mixGaussLikelihoodConvexHull.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running mixGaussLikSurfaceDemo.m');
  try
@@ -2037,7 +2261,7 @@ disp('running mixGaussLikSurfaceDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running mixGaussMLvsMAP.m');
  try
@@ -2045,7 +2269,7 @@ disp('running mixGaussMLvsMAP.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running mixGaussMultiModesPlot.m');
  try
@@ -2053,7 +2277,7 @@ disp('running mixGaussMultiModesPlot.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running mixGaussOverRelaxedEmDemo.m');
  try
@@ -2061,7 +2285,7 @@ disp('running mixGaussOverRelaxedEmDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running mixGaussPlotDemo.m');
  try
@@ -2069,7 +2293,7 @@ disp('running mixGaussPlotDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running mixGaussSingularity.m');
  try
@@ -2077,7 +2301,7 @@ disp('running mixGaussSingularity.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running mixGaussVbDemoFaithful.m');
  try
@@ -2085,7 +2309,7 @@ disp('running mixGaussVbDemoFaithful.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running mixPpcaDemoNetlab.m');
  try
@@ -2093,7 +2317,7 @@ disp('running mixPpcaDemoNetlab.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running mixStudentBankruptcyDemo.m');
  try
@@ -2101,7 +2325,7 @@ disp('running mixStudentBankruptcyDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running mlpClassifDemo.m');
  try
@@ -2109,7 +2333,7 @@ disp('running mlpClassifDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running mlpClassifDemoSchmidt.m');
  try
@@ -2117,7 +2341,7 @@ disp('running mlpClassifDemoSchmidt.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running mlpPriorsDemo.m');
  try
@@ -2125,7 +2349,7 @@ disp('running mlpPriorsDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running mlpRegEvidenceDemo.m');
  try
@@ -2133,7 +2357,7 @@ disp('running mlpRegEvidenceDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running mlpRegHmcDemo.m');
  try
@@ -2141,7 +2365,7 @@ disp('running mlpRegHmcDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running mlpRegressDemo.m');
  try
@@ -2149,7 +2373,7 @@ disp('running mlpRegressDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running mlpRegressDemoBishop.m');
  try
@@ -2157,7 +2381,7 @@ disp('running mlpRegressDemoBishop.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running mlpRegressDemoSchmidt.m');
  try
@@ -2165,7 +2389,7 @@ disp('running mlpRegressDemoSchmidt.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running mnistKNNdemo.m');
  try
@@ -2173,7 +2397,7 @@ disp('running mnistKNNdemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running mrf2ChainInferDemo.m');
  try
@@ -2181,7 +2405,7 @@ disp('running mrf2ChainInferDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running mrf2ChainTrainDemo.m');
  try
@@ -2189,7 +2413,7 @@ disp('running mrf2ChainTrainDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running mrf2CutsetInferDemo.m');
  try
@@ -2197,7 +2421,7 @@ disp('running mrf2CutsetInferDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running mrf2ImgInferDemo.m');
  try
@@ -2205,7 +2429,7 @@ disp('running mrf2ImgInferDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running mrf2ImgRgbInferDemo.m');
  try
@@ -2213,7 +2437,7 @@ disp('running mrf2ImgRgbInferDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running mrf2ImgSmallInferDemo.m');
  try
@@ -2221,7 +2445,7 @@ disp('running mrf2ImgSmallInferDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running mrf2NaiveInferDemo.m');
  try
@@ -2229,7 +2453,7 @@ disp('running mrf2NaiveInferDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running mrfImageDenoisingApprox.m');
  try
@@ -2237,7 +2461,7 @@ disp('running mrfImageDenoisingApprox.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running mrfImageDenoisingExact.m');
  try
@@ -2245,7 +2469,7 @@ disp('running mrfImageDenoisingExact.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running mrfTest.m');
  try
@@ -2253,7 +2477,7 @@ disp('running mrfTest.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running multilevelLinregDemo.m');
  try
@@ -2261,7 +2485,7 @@ disp('running multilevelLinregDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running multinomIndepLogBF.m');
  try
@@ -2269,7 +2493,7 @@ disp('running multinomIndepLogBF.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running multinomSamplePlotDemo.m');
  try
@@ -2277,7 +2501,7 @@ disp('running multinomSamplePlotDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running naiveBayesBayesianDemo.m');
  try
@@ -2285,7 +2509,7 @@ disp('running naiveBayesBayesianDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running naiveBayesBowDemo.m');
  try
@@ -2293,7 +2517,7 @@ disp('running naiveBayesBowDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running naiveBayesMnistSample.m');
  try
@@ -2301,7 +2525,7 @@ disp('running naiveBayesMnistSample.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running negBinomDemo.m');
  try
@@ -2309,7 +2533,15 @@ disp('running negBinomDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
+
+disp('running netflixResultsPlot.m');
+ try
+ netflixResultsPlot; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
 
 disp('running newcombDemo.m');
  try
@@ -2317,7 +2549,7 @@ disp('running newcombDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running newcombPlugin.m');
  try
@@ -2325,7 +2557,7 @@ disp('running newcombPlugin.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running newcombPostPred.m');
  try
@@ -2333,7 +2565,7 @@ disp('running newcombPostPred.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running newsgroupsVisualize.m');
  try
@@ -2341,7 +2573,7 @@ disp('running newsgroupsVisualize.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running newtonIteration1d.m');
  try
@@ -2349,7 +2581,7 @@ disp('running newtonIteration1d.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running newtonsMethodMin1d.m');
  try
@@ -2357,7 +2589,7 @@ disp('running newtonsMethodMin1d.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running newtonsMethodMinQuad.m');
  try
@@ -2365,7 +2597,7 @@ disp('running newtonsMethodMinQuad.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running newtonsMethodNonConvex.m');
  try
@@ -2373,7 +2605,7 @@ disp('running newtonsMethodNonConvex.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running neymanPearson.m');
  try
@@ -2381,7 +2613,7 @@ disp('running neymanPearson.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running neymanPearson2.m');
  try
@@ -2389,7 +2621,7 @@ disp('running neymanPearson2.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running ngramPlot.m');
  try
@@ -2397,7 +2629,7 @@ disp('running ngramPlot.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running NIXdemo2.m');
  try
@@ -2405,7 +2637,7 @@ disp('running NIXdemo2.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running noisyMixDemo.m');
  try
@@ -2413,7 +2645,7 @@ disp('running noisyMixDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running nonConvexFn.m');
  try
@@ -2421,7 +2653,7 @@ disp('running nonConvexFn.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running normalGammaPenaltyPlotDemo.m');
  try
@@ -2429,7 +2661,7 @@ disp('running normalGammaPenaltyPlotDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running normalGammaPlotDemo.m');
  try
@@ -2437,7 +2669,7 @@ disp('running normalGammaPlotDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running normalGammaThresholdPlotDemo.m');
  try
@@ -2445,7 +2677,7 @@ disp('running normalGammaThresholdPlotDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running numbersGame.m');
  try
@@ -2453,7 +2685,7 @@ disp('running numbersGame.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running optLowerbound.m');
  try
@@ -2461,7 +2693,7 @@ disp('running optLowerbound.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running optMaxLambdaVal.m');
  try
@@ -2469,7 +2701,7 @@ disp('running optMaxLambdaVal.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running pagerankDemoPmtk.m');
  try
@@ -2477,7 +2709,7 @@ disp('running pagerankDemoPmtk.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running pagerankpow.m');
  try
@@ -2485,7 +2717,7 @@ disp('running pagerankpow.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running pairedTestDemo.m');
  try
@@ -2493,7 +2725,7 @@ disp('running pairedTestDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running pairedVsUnpairedTestDemo.m');
  try
@@ -2501,7 +2733,7 @@ disp('running pairedVsUnpairedTestDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running paretoDemoTaxicab.m');
  try
@@ -2509,7 +2741,7 @@ disp('running paretoDemoTaxicab.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running paretoPlot.m');
  try
@@ -2517,7 +2749,7 @@ disp('running paretoPlot.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running parzenWindowDemo.m');
  try
@@ -2525,7 +2757,15 @@ disp('running parzenWindowDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
+
+disp('running parzenWindowDemo2.m');
+ try
+ parzenWindowDemo2; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
 
 disp('running pcaDemo2d.m');
  try
@@ -2533,7 +2773,7 @@ disp('running pcaDemo2d.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running pcaDemo2dto10d.m');
  try
@@ -2541,7 +2781,7 @@ disp('running pcaDemo2dto10d.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running pcaDemo3d.m');
  try
@@ -2549,7 +2789,7 @@ disp('running pcaDemo3d.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running pcaDemoHeightWeight.m');
  try
@@ -2557,7 +2797,7 @@ disp('running pcaDemoHeightWeight.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running pcaDigitsVis10classes.m');
  try
@@ -2565,7 +2805,7 @@ disp('running pcaDigitsVis10classes.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running pcaDigitsVisGrid.m');
  try
@@ -2573,7 +2813,7 @@ disp('running pcaDigitsVisGrid.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running pcaEmStepByStep.m');
  try
@@ -2581,7 +2821,7 @@ disp('running pcaEmStepByStep.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running pcaEmTest.m');
  try
@@ -2589,7 +2829,7 @@ disp('running pcaEmTest.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running pcaFaceDemo.m');
  try
@@ -2597,7 +2837,7 @@ disp('running pcaFaceDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running pcaImageDemo.m');
  try
@@ -2605,7 +2845,7 @@ disp('running pcaImageDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running pcaTimingTest.m');
  try
@@ -2613,7 +2853,7 @@ disp('running pcaTimingTest.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running peaksPlotDemo.m');
  try
@@ -2621,7 +2861,7 @@ disp('running peaksPlotDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running perfectElimDemo.m');
  try
@@ -2629,7 +2869,7 @@ disp('running perfectElimDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running piecewiseLinearSurface.m');
  try
@@ -2637,7 +2877,7 @@ disp('running piecewiseLinearSurface.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running plotMFCC.m');
  try
@@ -2645,7 +2885,7 @@ disp('running plotMFCC.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running plotNoLocalMin.m');
  try
@@ -2653,7 +2893,7 @@ disp('running plotNoLocalMin.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running plotPdfCdfDemo.m');
  try
@@ -2661,7 +2901,7 @@ disp('running plotPdfCdfDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running poissonPlotDemo.m');
  try
@@ -2669,7 +2909,7 @@ disp('running poissonPlotDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running postDensityIntervals.m');
  try
@@ -2677,7 +2917,7 @@ disp('running postDensityIntervals.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running powerCurvesDemo.m');
  try
@@ -2685,7 +2925,7 @@ disp('running powerCurvesDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running powerMethodDemo.m');
  try
@@ -2693,7 +2933,7 @@ disp('running powerMethodDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running ppcaDemo2d.m');
  try
@@ -2701,7 +2941,7 @@ disp('running ppcaDemo2d.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running ppcaDemoNetlab.m');
  try
@@ -2709,7 +2949,7 @@ disp('running ppcaDemoNetlab.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running ppcaDemoOilflowMissing.m');
  try
@@ -2717,7 +2957,7 @@ disp('running ppcaDemoOilflowMissing.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running ppcaEmTest.m');
  try
@@ -2725,7 +2965,7 @@ disp('running ppcaEmTest.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running ppcaEvidenceDemo.m');
  try
@@ -2733,7 +2973,7 @@ disp('running ppcaEvidenceDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running ppcaVBdemo.m');
  try
@@ -2741,7 +2981,7 @@ disp('running ppcaVBdemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running PRhand.m');
  try
@@ -2749,7 +2989,7 @@ disp('running PRhand.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running probitPlot.m');
  try
@@ -2757,7 +2997,7 @@ disp('running probitPlot.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running probitRegDemo.m');
  try
@@ -2765,7 +3005,7 @@ disp('running probitRegDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running probitVsLogregCrabsDemo.m');
  try
@@ -2773,7 +3013,7 @@ disp('running probitVsLogregCrabsDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running prostateComparison.m');
  try
@@ -2781,7 +3021,7 @@ disp('running prostateComparison.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running prostateOLS.m');
  try
@@ -2789,7 +3029,7 @@ disp('running prostateOLS.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running prostateScatterDemo.m');
  try
@@ -2797,7 +3037,7 @@ disp('running prostateScatterDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running prostateSubsets.m');
  try
@@ -2805,7 +3045,7 @@ disp('running prostateSubsets.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running qmrDemo.m');
  try
@@ -2813,7 +3053,7 @@ disp('running qmrDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running qpDemo.m');
  try
@@ -2821,7 +3061,7 @@ disp('running qpDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running quantileDemo.m');
  try
@@ -2829,7 +3069,7 @@ disp('running quantileDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running randomWalk0to20Demo.m');
  try
@@ -2837,7 +3077,7 @@ disp('running randomWalk0to20Demo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running rankDefDemo.m');
  try
@@ -2845,7 +3085,7 @@ disp('running rankDefDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running rbfGramDemo.m');
  try
@@ -2853,7 +3093,7 @@ disp('running rbfGramDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running rbmClassifyDemo.m');
  try
@@ -2861,7 +3101,7 @@ disp('running rbmClassifyDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running rbmDenoiseDemo.m');
  try
@@ -2869,7 +3109,7 @@ disp('running rbmDenoiseDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running rbpfManeuverDemo.m');
  try
@@ -2877,7 +3117,15 @@ disp('running rbpfManeuverDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
+
+disp('running readlines.m');
+ try
+ readlines; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
 
 disp('running regtreeSurfaceDemo.m');
  try
@@ -2885,7 +3133,7 @@ disp('running regtreeSurfaceDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running rejectionSamplingDemo.m');
  try
@@ -2893,7 +3141,7 @@ disp('running rejectionSamplingDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running relevanceNetworkNewsgroupDemo.m');
  try
@@ -2901,7 +3149,7 @@ disp('running relevanceNetworkNewsgroupDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running residualsDemo.m');
  try
@@ -2909,7 +3157,7 @@ disp('running residualsDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running ridgePathProstate.m');
  try
@@ -2917,7 +3165,7 @@ disp('running ridgePathProstate.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running ridgeSplineDemoCV.m');
  try
@@ -2925,7 +3173,7 @@ disp('running ridgeSplineDemoCV.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running ridgeTest.m');
  try
@@ -2933,7 +3181,7 @@ disp('running ridgeTest.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running riskFnBernoulli.m');
  try
@@ -2941,7 +3189,7 @@ disp('running riskFnBernoulli.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running riskFnGauss.m');
  try
@@ -2949,7 +3197,7 @@ disp('running riskFnGauss.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running robustDemo.m');
  try
@@ -2957,7 +3205,7 @@ disp('running robustDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running robustDiscrimAnalysisBankruptcyDemo.m');
  try
@@ -2965,7 +3213,7 @@ disp('running robustDiscrimAnalysisBankruptcyDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running robustPdfPlot.m');
  try
@@ -2973,7 +3221,7 @@ disp('running robustPdfPlot.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running robustPriorDemo.m');
  try
@@ -2981,7 +3229,7 @@ disp('running robustPriorDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running ROChand.m');
  try
@@ -2989,7 +3237,7 @@ disp('running ROChand.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running rosen2d.m');
  try
@@ -2997,7 +3245,7 @@ disp('running rosen2d.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running rotationDemo.m');
  try
@@ -3005,7 +3253,7 @@ disp('running rotationDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running saCoolingSchedule.m');
  try
@@ -3013,7 +3261,7 @@ disp('running saCoolingSchedule.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running saddle.m');
  try
@@ -3021,7 +3269,7 @@ disp('running saddle.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running saDemoCamel.m');
  try
@@ -3029,7 +3277,7 @@ disp('running saDemoCamel.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running saDemoHisto.m');
  try
@@ -3037,7 +3285,7 @@ disp('running saDemoHisto.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running saDemoMOG.m');
  try
@@ -3045,7 +3293,7 @@ disp('running saDemoMOG.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running saDemoPeaks.m');
  try
@@ -3053,7 +3301,15 @@ disp('running saDemoPeaks.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
+
+disp('running sampleCdf.m');
+ try
+ sampleCdf; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
 
 disp('running samplingDistGaussShrinkage.m');
  try
@@ -3061,7 +3317,7 @@ disp('running samplingDistGaussShrinkage.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running scadPlot.m');
  try
@@ -3069,7 +3325,7 @@ disp('running scadPlot.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running sensorFusion2d.m');
  try
@@ -3077,7 +3333,7 @@ disp('running sensorFusion2d.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running sensorFusionUnknownPrec.m');
  try
@@ -3085,7 +3341,7 @@ disp('running sensorFusionUnknownPrec.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running seqlogoDemo.m');
  try
@@ -3093,7 +3349,7 @@ disp('running seqlogoDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running shatteredSin.m');
  try
@@ -3101,7 +3357,7 @@ disp('running shatteredSin.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running shrinkageDemoBaseball.m');
  try
@@ -3109,7 +3365,7 @@ disp('running shrinkageDemoBaseball.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running shrinkcovDemo.m');
  try
@@ -3117,7 +3373,7 @@ disp('running shrinkcovDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running shrunkenCentroidsSRBCTdemo.m');
  try
@@ -3125,7 +3381,7 @@ disp('running shrunkenCentroidsSRBCTdemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running shuffledDigitsDemo.m');
  try
@@ -3133,7 +3389,7 @@ disp('running shuffledDigitsDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running sigmoidBounds.m');
  try
@@ -3141,7 +3397,15 @@ disp('running sigmoidBounds.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
+
+disp('running sigmoidLowerBounds.m');
+ try
+ sigmoidLowerBounds; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
 
 disp('running sigmoidPlot.m');
  try
@@ -3149,7 +3413,7 @@ disp('running sigmoidPlot.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running sigmoidplot2D.m');
  try
@@ -3157,7 +3421,23 @@ disp('running sigmoidplot2D.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
+
+disp('running sigmoidplot2D_new.m');
+ try
+ sigmoidplot2D_new; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
+
+disp('running simpsonsParadoxGraph.m');
+ try
+ simpsonsParadoxGraph; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
 
 disp('running sliceSamplingDemo1d.m');
  try
@@ -3165,7 +3445,7 @@ disp('running sliceSamplingDemo1d.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running smoothingKernelPlot.m');
  try
@@ -3173,7 +3453,7 @@ disp('running smoothingKernelPlot.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running softmaxDemo2.m');
  try
@@ -3181,7 +3461,7 @@ disp('running softmaxDemo2.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running sparseLinRegBabackDemo.m');
  try
@@ -3189,7 +3469,7 @@ disp('running sparseLinRegBabackDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running sparseLinRegMargDistDemo.m');
  try
@@ -3197,7 +3477,7 @@ disp('running sparseLinRegMargDistDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running sparseNnetDemo.m');
  try
@@ -3205,7 +3485,15 @@ disp('running sparseNnetDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
+
+disp('running spectralClusteringDemo.m');
+ try
+ spectralClusteringDemo; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
 
 disp('running splineBasisDemo.m');
  try
@@ -3213,7 +3501,7 @@ disp('running splineBasisDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running splineDemoWiki.m');
  try
@@ -3221,7 +3509,7 @@ disp('running splineDemoWiki.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running sprinklerGMdemo.m');
  try
@@ -3229,7 +3517,15 @@ disp('running sprinklerGMdemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
+
+disp('running ssmTimeSeriesSimple.m');
+ try
+ ssmTimeSeriesSimple; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
 
 disp('running steepestDescentDemo.m');
  try
@@ -3237,7 +3533,7 @@ disp('running steepestDescentDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running stickBreakingDemo.m');
  try
@@ -3245,7 +3541,15 @@ disp('running stickBreakingDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
+
+disp('running stream2text.m');
+ try
+ stream2text; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
 
 disp('running studentFitDemo.m');
  try
@@ -3253,7 +3557,7 @@ disp('running studentFitDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running studentFitMultiDemo.m');
  try
@@ -3261,7 +3565,15 @@ disp('running studentFitMultiDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
+
+disp('running studentLaplacePdfPlot.m');
+ try
+ studentLaplacePdfPlot; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
 
 disp('running studentPdfPlot.m');
  try
@@ -3269,7 +3581,7 @@ disp('running studentPdfPlot.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running studentPlotDemo.m');
  try
@@ -3277,7 +3589,7 @@ disp('running studentPlotDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running studentVsGauss.m');
  try
@@ -3285,7 +3597,7 @@ disp('running studentVsGauss.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running subgradientPlot.m');
  try
@@ -3293,7 +3605,7 @@ disp('running subgradientPlot.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running subSuperGaussPlot.m');
  try
@@ -3301,7 +3613,7 @@ disp('running subSuperGaussPlot.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running surfaceFitDemo.m');
  try
@@ -3309,7 +3621,7 @@ disp('running surfaceFitDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running svdImageDemo.m');
  try
@@ -3317,7 +3629,7 @@ disp('running svdImageDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running svmBinaryClassifDemo.m');
  try
@@ -3325,7 +3637,7 @@ disp('running svmBinaryClassifDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running svmLogregComparison.m');
  try
@@ -3333,7 +3645,7 @@ disp('running svmLogregComparison.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running svmSmoothRegrDemo.m');
  try
@@ -3341,7 +3653,7 @@ disp('running svmSmoothRegrDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running tabularFactorTest.m');
  try
@@ -3349,7 +3661,7 @@ disp('running tabularFactorTest.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running tanhPlot.m');
  try
@@ -3357,7 +3669,15 @@ disp('running tanhPlot.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
+
+disp('running testLanguageClassifier.m');
+ try
+ testLanguageClassifier; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
 
 disp('running testSprinklerDemo.m');
  try
@@ -3365,7 +3685,15 @@ disp('running testSprinklerDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
+
+disp('running text2stream.m');
+ try
+ text2stream; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
 
 disp('running tikhonovDemo.m');
  try
@@ -3373,7 +3701,7 @@ disp('running tikhonovDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running toposortDemo.m');
  try
@@ -3381,7 +3709,7 @@ disp('running toposortDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running treeInferDemo.m');
  try
@@ -3389,7 +3717,7 @@ disp('running treeInferDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running treeInferHmmDemo.m');
  try
@@ -3397,7 +3725,7 @@ disp('running treeInferHmmDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running twoPowerCurves.m');
  try
@@ -3405,7 +3733,7 @@ disp('running twoPowerCurves.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running unigaussVbDemo.m');
  try
@@ -3413,7 +3741,7 @@ disp('running unigaussVbDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running unpairedTestHandednessDemo.m');
  try
@@ -3421,7 +3749,15 @@ disp('running unpairedTestHandednessDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
+
+disp('running varEMbound.m');
+ try
+ varEMbound; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
 
 disp('running visDirichletGui.m');
  try
@@ -3429,7 +3765,7 @@ disp('running visDirichletGui.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running vqDemo.m');
  try
@@ -3437,7 +3773,7 @@ disp('running vqDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running wiPlotDemo.m');
  try
@@ -3445,7 +3781,7 @@ disp('running wiPlotDemo.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 disp('running xwindowsDocVisualize.m');
  try
@@ -3453,6 +3789,6 @@ disp('running xwindowsDocVisualize.m');
  catch ME 
  disp(ME.message); 
  end 
- pclear(2);
+ pclear(5.000000e-01);
 
 

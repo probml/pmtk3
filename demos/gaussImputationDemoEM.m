@@ -53,7 +53,7 @@ for i=1:nr
   stem(Xfull(i, :)); title('truth')
 end
 
-keyboard
+
 
 if 0
   

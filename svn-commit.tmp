@@ -1,0 +1,10 @@
+modified files so they don't hard-code kpmurphy filenames
+
+--This line, and those below, will be ignored--
+
+_M   .
+M    matlabTools/graphics/printPmtkFigure.m
+M    toolbox/GraphicalModels/dgm/dgmFitStruct.m
+A    svn_ignore.txt
+M    demos/linearKernelDemo.m
+M    demos/discreteDensityModelsShootout.m

@@ -11,7 +11,7 @@ fname = 'runDemos.m';                    % name of the file to create
 includeTags = {};                        % include everything
 excludeTags = {'PMTKbroken','PMTKinprogress', ...
     'PMTKslow', 'PMTKreallySlow', 'PMTKinteractive'}; % commented out in runDemos.m
-pauseTime = 2;                           % time in seconds to pause between consecutive demos
+pauseTime = 0.5;                           % time in seconds to pause between consecutive demos
 
 demos = processExamples(includeTags,excludeTags,pauseTime);
 demos = demos(sortidx(lower(demos)));

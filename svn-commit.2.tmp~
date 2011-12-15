@@ -1,0 +1,13 @@
+
+--This line, and those below, will be ignored--
+
+A    svn-commit.tmp~
+A    svn-commit.2.tmp~
+A    svn-commit.tmp
+M    pmtkTools/testing/makeRunDemos.m
+M    pmtkTools/testing/runDemos.m
+M    demos/gaussImputationDemoEM.m
+A    demos/bishop-gibbs-gauss.pdf
+A    demos/linregStudentTest
+M    demos/discreteDensityModelsShootout.m
+M    readme.txt

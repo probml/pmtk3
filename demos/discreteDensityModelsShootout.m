@@ -1,3 +1,5 @@
+%PMTKslow
+
 % Compare various joint density models on categorical (mostly binary) datsets
 % We visualize the learned structuers and evaluate loglik and
 % imputation error on test sets
