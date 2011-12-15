@@ -61,10 +61,11 @@ for d=1:nDataSets
 end
 attrNames = {'nClasses', 'nFeatures', 'nCases'};
 
-folder = fullfile(pmtk3Root(), 'data');
+%folder = fullfile(pmtk3Root(), 'data');
+folder = pmtk3Root();
 htmlTableSimple('data', [nClasses(:) nFeatures(:) nCases(:)], ...
   'colNames', attrNames, 'rowNames', dataNames, ...
-  'format', 'int', 'fname', fullfile(folder, 'data.html') );
+  'format', 'int', 'fname', fullfile(folder, 'infoOnDataSets.html') );
 
 
 %% Models

@@ -126,6 +126,7 @@ end
 if ismac
   figFolder = '/Users/kpmurphy/Dropbox/figures/googleJointModelsTalk';
 end
+figFolder = []; % for public use, turn off figure saving
 
 %% Models/ methods
 
@@ -449,8 +450,7 @@ set(gca, 'xticklabel', methodNames(ndx))
 %xticklabelRot(methodNames(ndx), -45);
 title(sprintf('NLL on %s, D=%d, Ntr=%d, Nte=%d', ...
   dataName, Nnodes, Ntrain, Ntest))
-fname = fullfile(figFolder, sprintf('negloglik-%s.png', dataName));
-print(gcf, '-dpng', fname);
+printPmtkFigure(sprintf('negloglik-%s.png', dataName), 'png', figFolder);
 
 
 % imputation error
@@ -468,8 +468,7 @@ set(gca, 'xticklabel', methodNames(ndx))
 %xticklabelRot(methodNames(ndx), -45);
 title(sprintf('imputation error (cross entropy) on %s, %5.3fpc missing, D=%d, Ntr=%d, Nte=%d', ...
   dataName, pcMissing, Nnodes, Ntrain, Ntest))
-fname = fullfile(figFolder, sprintf('imputation-%s.png', dataName));
-print(gcf, '-dpng', fname);
+printPmtkFigure(sprintf('imputation-%s.png', dataName), 'png', figFolder);
 
 % mse error
 figure;
@@ -485,8 +484,7 @@ set(gca, 'xticklabel', methodNames(ndx))
 %xticklabelRot(methodNames(ndx), -45);
 title(sprintf('imputation error (mse) on %s, %5.3fpc missing, D=%d, Ntr=%d, Nte=%d', ...
   dataName, pcMissing, Nnodes, Ntrain, Ntest))
-fname = fullfile(figFolder, sprintf('imputation-mse-%s.png', dataName));
-print(gcf, '-dpng', fname);
+printPmtkFigure(sprintf('imputation-mse-%s.png', dataName), 'png', figFolder);
 
 
 %% Visualize models themselves

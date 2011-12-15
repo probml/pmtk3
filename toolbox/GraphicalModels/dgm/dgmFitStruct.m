@@ -1,4 +1,4 @@
-function dgm = dgmFit(X, varargin)
+function dgm = dgmFitStruct(X, varargin)
 %% Fit structure and parameters of a DGM
 %
 % X is an N*D matrix of binary (0/1) values
@@ -7,7 +7,8 @@ function dgm = dgmFit(X, varargin)
 % This uses L1-penalized logistic regression to fit the model.
 % See http://www.cs.ubc.ca/~murphyk/Software/DAGlearn/index.html
 %
-% We then refit the CPDs usign tables, to simplify subsequent inference
+% We then refit the CPDs usign tables, to simplify subsequent inference.
+% If figFolder is non-empty, we store a graphviz figure of the structure.
 
 [Ncases,Nnodes] = size(X); %#ok
 Nstates = nunique(X(:));
