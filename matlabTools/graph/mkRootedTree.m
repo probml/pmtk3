@@ -73,7 +73,7 @@ end
 [d dt ft pred] = dfs(adjMat,root,1); %#ok (gaimc package)
 % dt is discovery time, pred is predecessor in search
 dt(root) = 0;
-[~, preorder]= sort(dt);
+[junk, preorder]= sort(dt);
 preorder = rowvec(preorder);
 
 T = sparse(Nnodes, Nnodes);

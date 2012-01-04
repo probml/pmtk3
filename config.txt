@@ -4,10 +4,11 @@
 % If a config-local.txt file is found, its values will override these.
 %
 %
-% Used by initPmtk3.m (UPDATE THESE DIRECTORIES TO MATCH YOUR INSTALLATION)
+% Used by initPmtk3.m 
 % PMTKgvizPath             C:\Program Files\Graphviz2.26\bin  
 % PMTKlocalDataPath        path/to/data
 % PMTKlocalSupportPath     path/to/support
+% PMTKlightSpeedDir        lightspeed2.3
 %
 % Used by generateAuthorReport ,  pmtkTagReport, etc
 % PMTKred                  #990000
@@ -16,7 +17,8 @@
 % PMTKmetaDirs             meta, docs, tmp
 %
 % Used by pmlFigureCodeReport
-% PMTKpmlBookSource        C:\path\to\PML\Text
+% PMTKpmlBookSource        /Users/kpmurphy/Dropbox/MLbook/Text
+% PMTKpmlFigures         /Users/kpmurphy/Dropbox/MLbook/Figures
 %
 % used by publishDemos.m, generateSynopses.m
 % PMTKlocalWikiPath        C:\path\to\pmtk3Wiki

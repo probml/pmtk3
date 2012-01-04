@@ -13,6 +13,7 @@ x2 = chol(S2)'*randn(2,n2)+repmat(m2,1,n2);
 x = [x1 x2]';
 y = [repmat(-1,1,n1) repmat(1,1,n2)]';
 [t1 t2] = meshgrid(-4:0.1:4,-4:0.1:4);
+t = [t1(:) t2(:)]; % test
 
 % training
 loghyper = [0; 0]; % initial guess

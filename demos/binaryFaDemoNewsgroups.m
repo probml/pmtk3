@@ -1,6 +1,8 @@
 % Demo of factor analysis applied to binary newsgroups bag of words
 % We compute 2d embedding
 
+%PMTKreallySlow
+
 % This file is from pmtk3.googlecode.com
 
 requireStatsToolbox; % cmdscale
@@ -45,12 +47,13 @@ for kk=1:numel(Ks)
   m = m + 1;
   methods(m).modelname = 'JJ';
   methods(m).fitFn = @(data) binaryFAfit(data, K, 'maxIter', 6, ...
-    'verbose', truesize, 'computeLoglik', false);
+    'verbose', true, 'computeLoglik', false);
   methods(m).infFn = @(model, labels) binaryFAinferLatent(model, labels);
   methods(m).nlatent = K;
 end
 
-Ks = [];
+
+%Ks = [];
 for kk=1:numel(Ks)
   K = Ks(kk);
   m = m + 1;
@@ -60,6 +63,7 @@ for kk=1:numel(Ks)
   methods(m).infFn = @(model, labels) catFAinferLatent(model, labels, []);
   methods(m).nlatent = K;
 end
+
 
 Nmethods = numel(methods);
 for m=1:Nmethods
@@ -87,7 +91,7 @@ for m=1:Nmethods
   end
   ndx = 1:1:D;
   for d=ndx(:)'
-    text(mdsCoords(d,1), mdsCoords(d,2), wordlist{d}, 'fontsize', 10);
+    %text(mdsCoords(d,1), mdsCoords(d,2), wordlist{d}, 'fontsize', 10);
   end
   nlatent = methods(m).nlatent;
   title(sprintf('L=%d, N=%d, method = %s', nlatent, N, methodname))

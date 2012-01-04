@@ -4,6 +4,7 @@
 
 % This file is from pmtk3.googlecode.com
 
+clear all
 rawdata = loadData('heightWeight');
 data.Y = rawdata(:,1); % 1=male, 2=female
 data.X = [rawdata(:,2) rawdata(:,3)]; % height, weight

@@ -231,14 +231,6 @@ disp('running bimodalDemo.m');
  end 
  pclear(5.000000e-01);
 
-disp('running binaryFaDemoNewsgroups.m');
- try
- binaryFaDemoNewsgroups; 
- catch ME 
- disp(ME.message); 
- end 
- pclear(5.000000e-01);
-
 disp('running binaryFaDemoTipping.m');
  try
  binaryFaDemoTipping; 
@@ -327,17 +319,17 @@ disp('running casinoDemo.m');
  end 
  pclear(5.000000e-01);
 
-disp('running catFAdemoAuto.m');
+disp('running catFAdemo.m');
  try
- catFAdemoAuto; 
+ catFAdemo; 
  catch ME 
  disp(ME.message); 
  end 
  pclear(5.000000e-01);
 
-disp('running catFAtest.m');
+disp('running catFAdemoAuto.m');
  try
- catFAtest; 
+ catFAdemoAuto; 
  catch ME 
  disp(ME.message); 
  end 
@@ -378,14 +370,6 @@ disp('running chisquaredTestDemo.m');
 disp('running chowliuTreeDemo.m');
  try
  chowliuTreeDemo; 
- catch ME 
- disp(ME.message); 
- end 
- pclear(5.000000e-01);
-
-disp('running clusterYeast.m');
- try
- clusterYeast; 
  catch ME 
  disp(ME.message); 
  end 
@@ -1103,14 +1087,6 @@ disp('running geomRidge.m');
  end 
  pclear(5.000000e-01);
 
-disp('running getCountsMarkovLanguageEx.m');
- try
- getCountsMarkovLanguageEx; 
- catch ME 
- disp(ME.message); 
- end 
- pclear(5.000000e-01);
-
 disp('running ggmFitDemo.m');
  try
  ggmFitDemo; 
@@ -1186,14 +1162,6 @@ disp('running gmmSingularity.m');
 disp('running gpcDemo2d.m');
  try
  gpcDemo2d; 
- catch ME 
- disp(ME.message); 
- end 
- pclear(5.000000e-01);
-
-disp('running gpnnCov.m');
- try
- gpnnCov; 
  catch ME 
  disp(ME.message); 
  end 
@@ -1346,14 +1314,6 @@ disp('running hmmLillypadDemo.m');
 disp('running hmmMixGaussTiedTest.m');
  try
  hmmMixGaussTiedTest; 
- catch ME 
- disp(ME.message); 
- end 
- pclear(5.000000e-01);
-
-disp('running hmmNbestDemo.m');
- try
- hmmNbestDemo; 
  catch ME 
  disp(ME.message); 
  end 
@@ -3119,14 +3079,6 @@ disp('running rbpfManeuverDemo.m');
  end 
  pclear(5.000000e-01);
 
-disp('running readlines.m');
- try
- readlines; 
- catch ME 
- disp(ME.message); 
- end 
- pclear(5.000000e-01);
-
 disp('running regtreeSurfaceDemo.m');
  try
  regtreeSurfaceDemo; 
@@ -3543,14 +3495,6 @@ disp('running stickBreakingDemo.m');
  end 
  pclear(5.000000e-01);
 
-disp('running stream2text.m');
- try
- stream2text; 
- catch ME 
- disp(ME.message); 
- end 
- pclear(5.000000e-01);
-
 disp('running studentFitDemo.m');
  try
  studentFitDemo; 
@@ -3631,14 +3575,6 @@ disp('running svdImageDemo.m');
  end 
  pclear(5.000000e-01);
 
-disp('running svmBinaryClassifDemo.m');
- try
- svmBinaryClassifDemo; 
- catch ME 
- disp(ME.message); 
- end 
- pclear(5.000000e-01);
-
 disp('running svmLogregComparison.m');
  try
  svmLogregComparison; 
@@ -3671,25 +3607,9 @@ disp('running tanhPlot.m');
  end 
  pclear(5.000000e-01);
 
-disp('running testLanguageClassifier.m');
- try
- testLanguageClassifier; 
- catch ME 
- disp(ME.message); 
- end 
- pclear(5.000000e-01);
-
 disp('running testSprinklerDemo.m');
  try
  testSprinklerDemo; 
- catch ME 
- disp(ME.message); 
- end 
- pclear(5.000000e-01);
-
-disp('running text2stream.m');
- try
- text2stream; 
  catch ME 
  disp(ME.message); 
  end 

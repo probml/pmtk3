@@ -2,7 +2,7 @@
 
 % This file is from pmtk3.googlecode.com
 
-
+%PMTKbroken
 
 %% Load  Data
 % Load synthetic data generated from a mixture of 2 Gaussians. Source:

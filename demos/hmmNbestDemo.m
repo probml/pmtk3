@@ -3,6 +3,8 @@
 % Nilsson and Goldberger, IJCAI 2001
 % We do the example in sec 3.2
 
+%PMTKinprogress
+
 initDist = [0.6; 0.4];
 transmat = [0.6 0.4; 0.2 0.8];
 obsmat = [0.9 0.1; 0.3 0.7];

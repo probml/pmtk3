@@ -1,6 +1,12 @@
 Probabilistic modeling toolkit version 3
 See pmtk3.googlecode.com for details.
 
+Steps:
+1. run initPmtk3.m (takes a few minutes)
+2. run testPmtk3.m (takes under a minute)
+3. run runDemos.m (takes about 1  hour)
+
+
 The code relies on various external toolboxes (in addition to those in
 pmtksupport), listed below:
 

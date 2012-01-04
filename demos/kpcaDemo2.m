@@ -31,16 +31,16 @@ end
 X = patterns;
 
 % KPCA
-[Zkpca, mappingKPCA] = kernel_pca(X, 2, 'gauss', rbf_var);
-%Zkpca = kpcaSimple(X',2)'; % RBF kernel, sigma=1
+%[Zkpca, mappingKPCA] = kernel_pca(X, 2, 'gauss', rbf_var);
+Zkpca = kpcaSimple(X',2)'; % RBF kernel, sigma=1
 figure;
 plot(Zkpca(:,1), Zkpca(:,2), 'x', 'markersize', 10, 'linewidth', 3)
 title('kpca', 'fontsize', 16);
 printPmtkFigure('kpcaDemo2Kernel')
 
 % PCA
-%[B, Zpca, evals, Xrecon, mu] = pcaPmtk(X, 2);
-[Zpca, mappingPCA] = pca(X, 2);
+[B, Zpca, evals, Xrecon, mu] = pcaPmtk(X, 2);
+%[Zpca, mappingPCA] = pca(X, 2);
 figure;
 plot(Zpca(:,1), Zpca(:,2), 'x', 'markersize', 10, 'linewidth', 3)
 title('pca', 'fontsize', 16);

@@ -22,6 +22,10 @@ dataSets = setupData(split);
 nDataSets = numel(dataSets);
 
 methods = {'SVM', 'RVM', 'SMLR', 'RMLR'};
+if ~svmInstalled
+  methods = {'SVM', 'RVM', 'SMLR', 'RMLR'};
+end
+
 nMethods = numel(methods);
 results = cell(nDataSets, nMethods);
 for i=1:nDataSets

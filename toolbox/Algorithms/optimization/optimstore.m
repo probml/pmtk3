@@ -1,6 +1,7 @@
 function stop = optimstore(x, optimValues, state)
 % store history of optimization vlaues
 
+ 
 % This file is from pmtk3.googlecode.com
 
 global xhist fhist funcounthist

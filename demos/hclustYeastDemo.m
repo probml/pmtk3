@@ -1,12 +1,11 @@
 %% Hierarchical Clustering Demo
 %PMTKneedsStatsToobox cluster, pdist, linkage
-%PMTKneedsBioToolbox clustergram
 %%
 
 % This file is from pmtk3.googlecode.com
 
 requireStatsToolbox
-requireBioinfoToolbox
+%requireBioinfoToolbox
 loadData('yeastData310') % 'X', 'genes', 'times');
 
 corrDist = pdist(X, 'corr');
@@ -22,11 +21,12 @@ suptitle('Hierarchical Clustering of Profiles')
 printPmtkFigure('clusterYeastHier16')
 
 
+if bioinfoToolboxInstalled
 figure(5);clf
 clustergram(X(:,2:end),'RowLabels',genes, 'ColumnLabels',times(2:end))
 title('hierarchical clustering')
 printPmtkFigure('clusterYeastRowPerm')
-
+end
 
 figure(6); clf
 dendrogram(linkage(corrDist, 'average'));

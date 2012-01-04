@@ -9,23 +9,22 @@ function demoMinfuncHighdim()
 %methods = {'sd', 'cg',  'bb'};
 methods = {'sd', 'cg',  'bb', 'newton', 'newtoncg', 'bfgs', 'lbfgs'};
 %methods = {'sd', 'cg',  'bb', 'newton', 'newtoncg', 'bfgs', 'lbfgs', 'newton0', 'newton0lbfgs'};
-[styles] =  plotColors();
+[styles, colors, symbols, plotstyles]  = plotColors();
 
-for i=1:length(methods)
- names{i} = methods{i}(1:min(5,length(methods{i})))
-end
 names = {'sd', 'cg',  'bb', 'n', 'ncg', 'bfgs', 'lbfgs'};
 
 
 seed = 1; setSeed(seed);
 dims = [10 100 500];
+dims = [10 100];
+clear str
 for j=1:length(dims)
   d = dims(j);
   x0 = randn(d,1);
   figure;
   for i=1:length(methods)
     hold on
-    [fx(i,j), fcount(i,j),tim(i,j)] = helper(x0, methods{i}, styles{i});
+    [fx(i,j), fcount(i,j),tim(i,j)] = helper(x0, methods{i}, plotstyles{i});
    
     str{i} = sprintf('%s (f* = %5.2f, %d feval, %3.2f sec)', ...
       names{i}, fx(i,j), fcount(i,j), tim(i,j));
@@ -55,6 +54,7 @@ for j=1:length(dims)
   bar(tim(:,j))
   set(gca,'xticklabel',names)
   title(sprintf('time d=%d', d))
+  drawnow
 end
 printPmtkFigure minfuncRosenBar
 
@@ -75,7 +75,7 @@ end
 options.display = 'none';
 options.maxFunEvals = 500;
 options.tolFun = 1e-2;
-options.outputFn = @optimstore;
+options.outputFcn = @optimstore;
 options.Method = method;
 options.HessianModify = 1;
 if strcmp(method, 'newtoncg')

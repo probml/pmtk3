@@ -33,11 +33,13 @@ end
 
 %gamma = normalize(alpha .* beta, 1);% make each column sum to 1
 
+%{
 for t=T-1:-1:1
  b = beta(:,t+1) .* softev(:,t+1);
  tmpXi = transmat .* (alpha(:,t) * b');
  xi_summed = xi_summed + tmpXi./sum(tmpXi(:)); % inlined call to normalize
 end
+%}
 
 end
 
