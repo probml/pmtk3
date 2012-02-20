@@ -1,4 +1,4 @@
-% PMTKlocalDataPath        /Users/kpmurphy/GoogleCode/pmtkdata
-% PMTKlocalSupportPath    /Users/kpmurphy/GoogleCode/pmtksupport
+% PMTKlocalDataPath        /Users/kpmurphy/GoogleCodeOpenSource/pmtkdata
+% PMTKlocalSupportPath    /Users/kpmurphy/GoogleCodeOpenSource/pmtksupport
 % PMTKgvizPath             C:\Program Files\Graphviz2.26\bin
 

@@ -31,11 +31,16 @@ figure;
 for i=1:nr
   subplot2(nr,nc,i,1);
   vis = find(~isnan(Xmiss(i,:)));
-  stem(vis, Xmiss(i,vis)); title('observed'); set(gca, 'ylim', [-5 5]);
+  stem(vis, Xmiss(i,vis)); title('observed'); 
+  set(gca, 'ylim', [-10 10]);
+  
   subplot2(nr,nc,i,2);
   stem(XimputeOracle(i,:)); title('imputed');
+  set(gca, 'ylim', [-10 10]);
+  
   subplot2(nr,nc,i,3);
   stem(Xfull(i, :)); title('truth')
+  set(gca, 'ylim', [-10 10]);
 end
 
 
