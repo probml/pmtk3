@@ -23,7 +23,7 @@ linkOtherSource = true; % if true, we link to tex, ppt, source etc.
 oext = {'*.tex', '*.ppt'}; % look for files with these extensions if linkOtherSource true
 figThanksText = 'Figure courtesy of';
 figTakenText = 'Figure taken from';
-figHandText = 'Figure drawn by hand';
+figHandText = ''; %'Figure drawn by hand';
 
 bookSource = getConfigValue('PMTKpmlBookSource');
 figs = getConfigValue('PMTKpmlFigures');
