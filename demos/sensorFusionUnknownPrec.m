@@ -27,11 +27,12 @@ theta
 postVar = 1/(nx*lamx + ny*lamy)
 figure;
 gridTheta = -2:0.1:6;
-plot(gridTheta, gaussProb(gridTheta, theta, sqrt(postVar)));
-
+plot(gridTheta, gaussProb(gridTheta, theta, sqrt(postVar)), 'linewidth', 3);
+printPmtkFigure sensorFusion2Gauss
 
 % Bayesian analysis
 fx = (gridTheta-xbar).^2 + sx;
 fy = (gridTheta-ybar).^2 + sy;
 post = (1./fx) .* (1./fy);
-figure; plot(gridTheta, post);
+figure; plot(gridTheta, post, 'linewidth', 3);
+printPmtkFigure sensorFusion2Nongauss

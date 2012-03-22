@@ -31,7 +31,7 @@ if(1) % Plot unigram and bigram frequencies
     main = figure;
     hintonDiagram(ugrams);
     %hintonDiagram(normalize(ugrams));
-    title('Unigrams');
+    title('Unigrams', 'fontsize', 20);
     uniAx = gca;
     set(uniAx,'XTick',[],'YTick',1:27,'Color','k','Position',[0.25,0.1,0.04,0.8],'FontName','Courier');
     set(findobj(uniAx,'Type','Patch'),'FaceColor','w')
@@ -45,7 +45,7 @@ if(1) % Plot unigram and bigram frequencies
     tmp = figure;
     hintonDiagram(bigrams);
     %hintonDiagram(normalize(bigrams)); % joint probability
-    title('Bigrams');
+    title('Bigrams', 'fontsize', 20);
     xlabel(''); ylabel('');
     biAx = gca;
     set(biAx,'Parent',main,'Position',[0.4,0.1,0.55,0.8]);
@@ -74,4 +74,4 @@ if(0) % Print a histogram of unigram frequencies
     title('Unigrams');
 end
 
-printPmtkFigure uniBigram;
+%printPmtkFigure uniBigram;

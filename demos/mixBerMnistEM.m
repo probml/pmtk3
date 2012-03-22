@@ -49,7 +49,7 @@ for i=1:NK
         subplot(ynum, xnum, j);
         imagesc(reshape(TK(j, 2, :), 28, 28)); 
         colormap('gray');
-        title(sprintf('%1.2f', mixweightK(j)));
+        title(sprintf('%1.2f', mixweightK(j)), 'fontsize', 30);
         axis off
     end
     

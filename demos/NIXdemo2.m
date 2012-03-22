@@ -29,7 +29,7 @@ model = {modelA, modelB, modelC};
 %% Plot
 rangexy = [-0.9 1 0.1 2];
 figure;
-fs = 12;
+fs = 24;
 for m = 1:numel(model);
    fn = @(x)exp(gaussInvWishartLogprob(model{m}, x(:, 1), x(:, 2)));
    %figure;
@@ -42,10 +42,14 @@ for m = 1:numel(model);
        '\mu_0'      , mu(m) , ...
        'k_0'   , k(m)  , ...
        '\nu_0'      , v(m)  , ...
-       '\sigma^2_0' , S(m)  ) , 'fontsize', fs); 
+       '\sigma^2_0' , S(m)  ) , 'fontsize', 20); 
    
-   xlabel('\mu', 'fontsize', fs);
-   ylabel(sprintf('%s', '\sigma^2'), 'fontsize', fs);
+   xlabel('\mu', 'fontsize', 30);
+   ylabel(sprintf('%s', '\sigma^2'), 'fontsize', 30);
+   set(gca, 'fontsize', 24);
    %printPmtkFigure(sprintf('NIX%d', m));
 end
-printPmtkFigure(sprintf('NIXdemo'));
+set(gca, 'fontsize', 24);
+set(gca,'Color','w'); % turn off gray background
+set(gcf,'Color','w');
+printPmtkFigure(sprintf('NIXdemoBone'));

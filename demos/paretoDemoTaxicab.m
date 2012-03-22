@@ -1,7 +1,8 @@
 %% Pareto Taxicab Example
 %
 %%
-
+%pareto-pdf-1-2
+%pareto-evidence
 % This file is from pmtk3.googlecode.com
 
 function paretoDemoTaxicab()
@@ -18,6 +19,7 @@ ps = exp(paretoLogprob(model, as));
 plot(as, ps, 'linewidth', 3)
 set(gca, 'ylim', [-0.1 2])
 title(sprintf('b=%5.3f, K=%5.3f', b, K))
+printPmtkFigure pareto-pdf-1-2
 %%
 figure();
 ms   = as;
@@ -31,6 +33,8 @@ end
 plot(ms, ev, 'linewidth', 3)
 plot(ms, ev, 'linewidth', 3)
 set(gca, 'ylim', [-0.1 0.6])
+printPmtkFigure pareto-evidence
+return;
 %%
 for i=1:4
     subplot(2,2,i)

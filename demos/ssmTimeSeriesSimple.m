@@ -33,9 +33,10 @@ for i=1:3
   plot(y, 'color', colors{i}, 'linestyle', linestyles{i}, 'linewidth', 2);
   legendstr{i}  = sprintf('Q=%3.1f, R=%3.1f', Q, R);
 end
-title(sprintf('local level, a=%5.3f', a), 'fontsize', 16)
-legend(legendstr, 'fontsize', 16)
-
+title(sprintf('local level, a=%5.3f', a), 'fontsize', 30);
+legend(legendstr, 'fontsize', 30)
+set(gca, 'fontsize', 24); 
+printPmtkFigure timeSeriesLocalLevel
 
 
 %% Local trend model
@@ -57,9 +58,10 @@ for i=1:3
   plot(y, 'color', colors{i}, 'linestyle', linestyles{i}, 'linewidth', 2);
   legendstr{i}  = sprintf('Q=%3.1f, R=%3.1f', Q, R);
 end
-title(sprintf('local trend, a=%5.3f, b=%5.3f', a, b), 'fontsize', 16)
-legend(legendstr, 'fontsize', 16)
-
+title(sprintf('local trend, a=%5.3f, b=%5.3f', a, b), 'fontsize', 30)
+legend(legendstr, 'fontsize', 30, 'location', 'southwest')
+set(gca, 'fontsize', 24); 
+printPmtkFigure timeSeriesLocalTrend
 
 %% seasonal model
 setSeed(0);
@@ -87,7 +89,8 @@ for i=1:numel(Qs)
   plot(y, 'color', colors{i}, 'linestyle', linestyles{i}, 'linewidth', 2);
   legendstr{i}  = sprintf('Q=%3.1f, R=%3.1f', Q, R);
 end
-title(sprintf('seasonal model, s=4, a=%5.3f, b=%5.3f', a, b), 'fontsize', 16)
-legend(legendstr, 'fontsize', 16, 'location', 'northwest')
-
+title(sprintf('seasonal model, s=4, a=%5.3f, b=%5.3f', a, b), 'fontsize', 30)
+legend(legendstr, 'fontsize', 30, 'location', 'northwest')
+set(gca, 'fontsize', 24); 
+printPmtkFigure timeSeriesSeasonal
 

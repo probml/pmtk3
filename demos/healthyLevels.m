@@ -14,11 +14,11 @@ priorFn = @uninfPrior;
 genFn = @generalizationUninfPrior;
 priorType = 'uninfPrior';
 
-plotPriorPost();
+%plotPriorPost();
 %%
 plotGeneralizations();
 %%
-plotPostSamples();
+%plotPostSamples();
 %%
 plotBayes();
 %%
@@ -28,7 +28,7 @@ if 0
     priorType = 'expPrior';
 end
 
-placeFigures();
+%placeFigures();
 return;
 %%
 %% Distributions
@@ -92,7 +92,7 @@ return;
         plotSurface(@(h)priorFn(h), [], no, no, no, ...
             [0 1 0 1 0 0.03], priorType);
         shading interp;
-        printPmtkFigure(sprintf('%s/healthyLevels%s', priorType));
+        printPmtkFigure(sprintf('%healthyLevels%s', priorType));
         points = [3 12];
         %zscale = [0.05 0.1 0.15];
         for i=1:length(points)
@@ -170,6 +170,7 @@ return;
         L(:,2) = iMin - ((sampleScale2 - iScale)./2);
         
         colors = colorScheme(sortrows(pNorm(ndx),-1));
+        colors = colors - 0.5
         for i=1:N
             rectangle('Position',[L(i,1), L(i,2), sampleScale1(i),...
                 sampleScale2(i)],'LineWidth',3,...
@@ -213,7 +214,7 @@ return;
         end
         [cMin cMax iMin iMax cScale iScale] = calcDataRange...
             (data, size(data, 1));
-        rectangle('Position',[cMin, iMin, cScale, iScale]);
+        rectangle('Position',[cMin, iMin, cScale, iScale], 'linewidth', 3);
         hold on;
         plot(data(:,1),data(:,2),'+r','MarkerSize',12,'linewidth',3);
         f = 0.1;
@@ -232,7 +233,7 @@ return;
             figure;
         end
         [x y p] = formatForPlot(func,data,dependsOnData);
-        contour(x, y, p)
+        contour(x, y, p, 'linewidth', 3)
         colormap(gray);
         hold on;
         if(plotDataToo)
@@ -260,14 +261,14 @@ return;
         grid('on');
         hold on;
         if(solid)
-            surf(C,I,p,'FaceColor','blue','EdgeColor','none');
+            surf(C,I,p,'FaceColor','blue','EdgeColor','none', 'linewidth', 3);
         else
-            surf(C,I,p);
+            surf(C,I,p, 'linewidth', 3);
         end
         camlight right;
         lighting phong;
-        xlabel( 's1' );
-        ylabel( 's2');
+        %xlabel( 's1' );
+        %ylabel( 's2');
         zlabel( 'p');
         title(plotTitle);
         if ~isempty(scale), axis(scale); end

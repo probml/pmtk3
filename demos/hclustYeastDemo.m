@@ -15,33 +15,38 @@ figure(1);clf
 for c = 1:16
     subplot(4,4,c);
     plot(times,X((clusters == c),:)');
+    set(gca, 'fontsize', 12); 
     axis tight
 end
-suptitle('Hierarchical Clustering of Profiles')
+suptitle('Hierarchical Clustering of Profiles', 30);
 printPmtkFigure('clusterYeastHier16')
 
 
-if bioinfoToolboxInstalled
+if 0 %bioinfoToolboxInstalled
 figure(5);clf
 clustergram(X(:,2:end),'RowLabels',genes, 'ColumnLabels',times(2:end))
-title('hierarchical clustering')
+title('hierarchical clustering', 'fontsize', 30)
+set(gca, 'fontsize', 20); 
 printPmtkFigure('clusterYeastRowPerm')
 end
 
 figure(6); clf
 dendrogram(linkage(corrDist, 'average'));
-title('average link')
+title('average link', 'fontsize', 30)
 set(gca,'xticklabel','')
+set(gca, 'fontsize', 20); 
 printPmtkFigure('clusterYeastAvgLink')
 
 figure(7); clf
 dendrogram(linkage(corrDist, 'complete'))
-title('complete link')
+title('complete link', 'fontsize', 30)
 set(gca,'xticklabel','')
+set(gca, 'fontsize', 20); 
 printPmtkFigure('clusterYeastCompleteLink')
 
 figure(8); clf
 dendrogram(linkage(corrDist, 'single'))
-title('single link')
+title('single link', 'fontsize', 30)
 set(gca,'xticklabel','')
+set(gca, 'fontsize', 20); 
 printPmtkFigure('clusterYeastSingleLink')

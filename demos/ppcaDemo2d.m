@@ -14,11 +14,11 @@ model = ppcaFit(X, 1);
 Xrecon = ppcaReconstruct(model, X);
 mu = model.mu;
 figure;
-plot(mu(1), mu(2), '*', 'markersize', 15, 'color', 'r');
+plot(mu(1), mu(2), '*', 'markersize', 20, 'color', 'r');
 hold on
-plot(X(:,1), X(:,2), 'ro');
+plot(X(:,1), X(:,2), 'ro', 'markersize', 20);
 hold on
-plot(Xrecon(:,1), Xrecon(:,2), 'g+', 'markersize', 12, 'linewidth',2);
+plot(Xrecon(:,1), Xrecon(:,2), 'g+', 'markersize', 20, 'linewidth',2);
 for i=1:n
   line([Xrecon(i,1) X(i,1)], [Xrecon(i,2) X(i,2)])
 end

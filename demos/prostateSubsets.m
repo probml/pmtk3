@@ -22,14 +22,14 @@ mse0 = mean((y - mean(y)).^2);
 mse = [mse0; mse];
 sz = [0; cellfun(@numel, ss)]; % sizes of each subset. 
 figure; hold on;
-plot(sz, mse, '.');
+plot(sz, mse, '.', 'markersize', 40);
 bestScores = zeros(1, d + 1);
 for i=0:d
     bestScores(i+1) = min(mse(sz==i));
 end
-plot(0:d, bestScores, 'ro-', 'MarkerSize', 8, 'LineWidth', 2);
+plot(0:d, bestScores, 'ro-', 'MarkerSize', 12, 'LineWidth', 2);
 xlabel('subset size')
 ylabel('training set error');
 title('all subsets on prostate cancer')
 box on;    
-
+printPmtkFigure prostateSubsets

@@ -26,21 +26,21 @@ end
 
 
 % test unpermuting
-figure(1);clf;figure(2);clf; 
+figure(1);figure(2); 
 for i=1:9
   img =  mnist.test_images(:,:,i);
   y = mnist.test_labels(i);
   figure(1);
   subplot(3,3,i)
   imagesc(img);colormap(gray); axis off
-  title(sprintf('true class = %d', y))
+  title(sprintf('true class = %d', y), 'fontsize', 55)
   
   img2(perm) = img(:);
   img2 = reshape(img2, [28 28]);
   figure(2);
   subplot(3,3,i)
   imagesc(img2); colormap(gray); axis off
-  title(sprintf('true class = %d', y))
+  title(sprintf('true class = %d', y), 'fontsize', 55)
 
 end
 

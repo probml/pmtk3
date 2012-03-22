@@ -41,7 +41,7 @@ xlabel('Slope')
 ylabel('Intercept')
 zlabel('Posterior density')
 view(-110,30)
-printPmtkFigure('sliceSamplingDemo2dGrid')
+%printPmtkFigure('sliceSamplingDemo2dGrid')
 
 %% MCMC
 initial = [1 1];
@@ -55,5 +55,6 @@ xlabel('Intercept')
 ylabel('Slope')
 zlabel('Posterior density')
 view(-110,30)
-printPmtkFigure('sliceSamplingDemo2dHist')
+%printPmtkFigure('sliceSampling2dHist')
+
 

@@ -7,7 +7,7 @@
 data = loadData('heightWeight'); % data(:,1) = class, 2 = height, 3 = weight
 X = data(:,2:3);
 
-X = standardize(X);
+%X = standardize(X);
 Y = data(:,1);
 [n d] = size(X);
 [W, Z, evals, Xrecon, mu] = pcaPmtk(X, 1);
@@ -16,9 +16,9 @@ maleNdx = find(Y == 1);
 femaleNdx = find(Y == 2);
 
 figure(1);clf;
-plot(X(maleNdx,1), X(maleNdx,2), 'bx');
+plot(X(maleNdx,1), X(maleNdx,2), 'bx', 'markersize', 14);
 hold on
-plot(X(femaleNdx,1), X(femaleNdx,2), 'ro');
+plot(X(femaleNdx,1), X(femaleNdx,2), 'ro', 'markersize', 14);
 xlabel('height'); ylabel('weight');
 
 Z2 = [min(Z); max(Z)]; % span the range
@@ -30,7 +30,7 @@ set(h,'linewidth',2, 'color', 'k');
 wPCA=W;
 s  = 5;
 h=line([mu(1)-s*wPCA(1) mu(1)+s*wPCA(1)], [mu(2)-s*wPCA(2) mu(2)+s*wPCA(2)]);
-set(h, 'color', 'g', 'linewidth', 3, 'linestyle', '--')
+set(h, 'color', 'k', 'linewidth', 3, 'linestyle', '--')
 
-%printPmtkFigure heightWeightPCA
-printPmtkFigure heightWeightPCAstnd
+printPmtkFigure heightWeightPCA
+%printPmtkFigure heightWeightPCAstnd

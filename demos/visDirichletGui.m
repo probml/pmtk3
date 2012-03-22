@@ -16,7 +16,7 @@ global MYFIG SIMPLEXHANDLE alpha0 alpha1 alpha2 res map tris D pts;
 
 if nargin == 0
 
-alpha=[ 20 20 20];
+alpha=[ 2 2 2];
 
 % compute a fine triangulation of 2-simplex
 disp('Triangulating...');
@@ -54,11 +54,12 @@ campos([2 2 2]);
 camtarget([0 0 0]);
 axis off
 minA = 0.1; maxA = 50; % modified by KPM
-title('2d Dirichlet Distribution Visualization Tool');
+%title('2d Dirichlet Distribution Visualization Tool');
 set(MYFIG, 'Visible', 'on', 'NumberTitle', 'off', 'Name', 'visDirichletGui - Jonathan Huang');
 set(MYFIG, 'DoubleBuffer', 'on');	
 SIMPLEXHANDLE =trisurf(D,tris(:,1),tris(:,2),tris(:,3),'LineStyle','none', ...
         'Cdata',map,'FaceColor','interp');
+%{
 alpha0=uicontrol('Style', 'text', 'String', 'alpha0', 'Unit', 'normalized', ...
 'Position', [0.54 .05*(3) 0.06 0.04], 'Tag', 'contrastlabel');
 alpha0=uicontrol('Style', 'slider', 'String', 'alpha0', 'Unit', 'normalized', ...
@@ -82,5 +83,6 @@ else
     map=255*(map/max(map));
     SIMPLEXHANDLE =trisurf(D,tris(:,1),tris(:,2),tris(:,3),'LineStyle','none', ...
         'Cdata',map,'FaceColor','interp');
-    
+   %} 
+        printPmtkFigure dirichlet2-2-2
 end

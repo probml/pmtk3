@@ -61,7 +61,7 @@ figure;
 ndx = 1:5;
 h = bar([ytest(ndx)';   thetaShrunk(ndx)'; thetaMLE(ndx)']');
 legend({'true',  'shrunk', 'MLE'})
-[im_hatch, colorlist] = applyhatch_pluscolor(gcf,'\-x.', 1);
+%[im_hatch, colorlist] = applyhatch_pluscolor(gcf,'\-x.', 1);
 mseMLE = mean((ytest-thetaMLE).^2);
 mseShrink = mean((ytest-thetaShrunk).^2);
 ttl = sprintf('MSE MLE = %6.4f, MSE shrunk = %6.4f', mseMLE, mseShrink)

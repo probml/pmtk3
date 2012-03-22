@@ -21,4 +21,5 @@ plot(xs(inside), ys(inside), 'bo');
 hold on
 plot(xs(outside), ys(outside), 'rx');
 axis square
+axis([-2.03 2.03 -2.03 2.03])
 printPmtkFigure('mc-pi'); 

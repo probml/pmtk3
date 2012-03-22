@@ -15,7 +15,7 @@ for useQuad = 0:1
     end
     w = Phi \ y;
     figure;
-    scatter3(X(:,1),X(:,2),y,'r','filled');axis vis3d;
+    plot3(X(:,1),X(:,2),y,'.r', 'markersize', 50);axis vis3d;
     hold on
     x1 = linspace(min(X(:,1)),max(X(:,1)),10)';
     y1 = linspace(min(X(:,2)),max(X(:,2)),10)';
@@ -26,6 +26,7 @@ for useQuad = 0:1
         Z = w(1) + w(2)*X1 + w(3)*Y1;
     end
     surf(x1, y1, Z);
+    grid on
     %title('Temperature at midnight')
     %zlabel('Temperature');
     if useQuad
@@ -33,6 +34,7 @@ for useQuad = 0:1
     else
         printPmtkFigure surfaceLinear
     end
+    
 end
 
 

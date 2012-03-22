@@ -12,7 +12,7 @@ w_1 = [-2 ; -2 ; 0 ; 1 ; 1 ; 2 ;  2 ; 3 ; 5 ; 5];
 w_2 = [-1 ;  3 ; 2 ; 4 ; 0 ; 2 ; -2 ; 0 ; 4 ; 1];
 
 lowRes = 0;     % Set to 1 for black and white printing
-fullscreen = 1; % Set to 1 to enlarge figure window
+fullscreen = 0; % Set to 1 to enlarge figure window
 
 left   = min(w_1)-2;   right = max(w_1)+2;
 bottom = min(w_2)-2;   top   = max(w_2)+2;
@@ -26,22 +26,31 @@ annotate;
 for i=1:length(w_1)
     plotSig(w_1(i),w_2(i),mainFig);    
 end
-if lowRes
+set(main_axes, 'fontsize', 30); 
+set(gcf, 'dockcontrols', 'off'); 
+set(gca,'Color','w'); % turn off gray background
+set(gcf,'Color','w');
+%set(gcf, 'Position', [0 0 1601, 1200]);
+
+
+%{
+if ~lowRes
   printPmtkFigure('sigmoidPlot2dColor');
 else
    printPmtkFigure('sigmoidPlot2dBW');
 end
-
+%}
+%printPmtkFigure sigmoidPlot2Dbone
 %%
 % Plot a single 2d sigmoid with specified values for w1, w2 to the
 % specified figure, 'fig' at relative position, (w1,w2)
 function plotSig(w1,w2,fig)
     imageSize = 0.1;
-    ax = axes('Parent',fig,'Position',[px(w1), py(w2), imageSize, imageSize],'FontSize',8);
+    ax = axes('Parent',fig,'Position',[px(w1), py(w2), imageSize, imageSize],'FontSize',14);
     sig = @(x1,x2)sigmoid(x1.*w1 + x2.*w2);
-    stepSize = 0.1; % Decrease to increase image resolution, ( < 0.05 takes up a lot of memory )
+    stepSize = 0.05; % Decrease to increase image resolution, ( < 0.05 takes up a lot of memory )
     if(lowRes)
-        stepSize = 1.2;
+        stepSize = 0.8;
     end
     [x1, x2] = meshgrid(-10:stepSize:10,-10:stepSize:10); 
     [rows cols] = size(x1);
@@ -53,10 +62,11 @@ function plotSig(w1,w2,fig)
         surf(x1,x2,z,'FaceColor','interp','EdgeColor','interp');
     end
     view([45 35]);
-    xlabel('x_1','FontSize',8,'HorizontalAlignment','right');
-    ylabel('x_2','FontSize',8,'HorizontalAlignment','left');
+    xlabel('x_1','FontSize',16,'HorizontalAlignment','right');
+    ylabel('x_2','FontSize',16,'HorizontalAlignment','left');
     axis([-10,10,-10,10,0,1]);
-    title(['W = ( ', num2str(w1),' , ',num2str(w2),' )'],'FontWeight','bold','FontSize',10);
+    set(gca, 'fontsize', 10); 
+    title(['W = ( ', num2str(w1),' , ',num2str(w2),' )'],'FontWeight','bold','FontSize',16);
 end
 %%
 %Convert from a relative x position within the axes to an absolute position
@@ -95,8 +105,8 @@ end
 function annotate
     annotation(mainFig,'arrow',[px(left+1),px(right-1)],[py(0),py(0)],'LineWidth',1.5);
     annotation(mainFig,'arrow',[px(0), px(0)],[py(bottom+1),py(top-1)],'LineWidth',1.5);
-    annotation(mainFig,'textbox','String',{'w_1'},'FontWeight','bold','FontSize',12,'FontName','Arial','FitHeightToText','off','LineStyle','none','Position',[px(right-1.5) py(-0.5) 0.04 0.04]);
-    annotation(mainFig,'textbox','String',{'w_2'},'FontWeight','bold','FontSize',12,'FontName','Arial','FitHeightToText','off','LineStyle','none','Position',[px(-0.4) py(top-1.5) 0.04 0.04]);
+    annotation(mainFig,'textbox','String',{'w_1'},'FontWeight','bold','FontSize',20,'FontName','Arial','FitHeightToText','off','LineStyle','none','Position',[px(right-1.5) py(-0.5) 0.04 0.04]);
+    annotation(mainFig,'textbox','String',{'w_2'},'FontWeight','bold','FontSize',20,'FontName','Arial','FitHeightToText','off','LineStyle','none','Position',[px(-0.4) py(top-1.5) 0.04 0.04]);
 end
 
 end

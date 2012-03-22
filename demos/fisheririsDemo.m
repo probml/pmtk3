@@ -8,10 +8,12 @@ requireStatsToolbox
 [X,y,classnames,varnames] = fisheririsLoad;
 
 figure();
-pscatter(X,'y', y);
-suptitle(sprintf('iris data, red=setosa, green=versicolor, blue=virginica'));
+%pscatter(X,'y', y);
+%suptitle(sprintf('iris data, red=setosa, green=versicolor, blue=virginica'));
+pscatter(X, 'y', y, 'vnames', {'sepal length', 'sepal width', 'petal length', 'petal width'});
 printPmtkFigure fisherIrisPairs
 
+%{
 figure();
 for dim=1:4
 subplot(2,2,dim)
@@ -26,3 +28,4 @@ title(sprintf('%s', varnames{dim}))
 end
 printPmtkFigure irisBoxNotch
 
+%}

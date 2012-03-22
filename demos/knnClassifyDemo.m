@@ -99,7 +99,7 @@ for ki=1:length(Ks)
 end
 
 figure; 
-plot(Ks, errRateTrain, 'bs:', Ks, errRateTest, 'rx-', 'linewidth', 2, 'markersize', 10);
+plot(Ks, errRateTrain, 'bs:', Ks, errRateTest, 'rx-', 'linewidth', 2, 'markersize', 20);
 legend('train', 'test')
 xlabel('K'); ylabel('misclassification rate')
 printPmtkFigure('knnClassifyErrVsK')
@@ -132,9 +132,10 @@ printPmtkFigure('knnClassifyErrVsKwithCV')
 fs = 12;
 figure; hold on
 ndx = Ks;
+
 xlabel('K', 'fontsize', fs)
 ylabel('misclassification rate', 'fontsize', fs)
-errorbar(ndx, mu, se, 'ko-','linewidth', 2, 'markersize', 12 );
+errorbar(ndx, mu, se, 'ko-','linewidth', 2, 'MarkerSize', 12);
 title(sprintf('%d-fold cross validation, ntrain = %d', nfolds, N), 'fontsize', fs)
 set(gca, 'xlim', [0 130])
 % draw vertical line at best value
