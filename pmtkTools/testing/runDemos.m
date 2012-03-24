@@ -31,6 +31,14 @@ disp('running alarmTest.m');
  end 
  pclear(5.000000e-01);
 
+disp('running amazonSellerDemo.m');
+ try
+ amazonSellerDemo; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
+
 disp('running anscombe.m');
  try
  anscombe; 
@@ -335,6 +343,14 @@ disp('running catFAdemoAuto.m');
  end 
  pclear(5.000000e-01);
 
+disp('running catFAtest.m');
+ try
+ catFAtest; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
+
 disp('running centralLimitDemo.m');
  try
  centralLimitDemo; 
@@ -370,6 +386,14 @@ disp('running chisquaredTestDemo.m');
 disp('running chowliuTreeDemo.m');
  try
  chowliuTreeDemo; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
+
+disp('running clusterYeast.m');
+ try
+ clusterYeast; 
  catch ME 
  disp(ME.message); 
  end 
@@ -1087,6 +1111,14 @@ disp('running geomRidge.m');
  end 
  pclear(5.000000e-01);
 
+disp('running getCountsMarkovLanguageEx.m');
+ try
+ getCountsMarkovLanguageEx; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
+
 disp('running ggmFitDemo.m');
  try
  ggmFitDemo; 
@@ -1098,6 +1130,14 @@ disp('running ggmFitDemo.m');
 disp('running ggmLassoDemo.m');
  try
  ggmLassoDemo; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
+
+disp('running gibbsDemoIsing.m');
+ try
+ gibbsDemoIsing; 
  catch ME 
  disp(ME.message); 
  end 
@@ -1162,6 +1202,14 @@ disp('running gmmSingularity.m');
 disp('running gpcDemo2d.m');
  try
  gpcDemo2d; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
+
+disp('running gpnnCov.m');
+ try
+ gpnnCov; 
  catch ME 
  disp(ME.message); 
  end 
@@ -3079,6 +3127,14 @@ disp('running rbpfManeuverDemo.m');
  end 
  pclear(5.000000e-01);
 
+disp('running readlines.m');
+ try
+ readlines; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
+
 disp('running regtreeSurfaceDemo.m');
  try
  regtreeSurfaceDemo; 
@@ -3106,6 +3162,14 @@ disp('running relevanceNetworkNewsgroupDemo.m');
 disp('running residualsDemo.m');
  try
  residualsDemo; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
+
+disp('running ridgeLassoOLS.m');
+ try
+ ridgeLassoOLS; 
  catch ME 
  disp(ME.message); 
  end 
@@ -3495,6 +3559,14 @@ disp('running stickBreakingDemo.m');
  end 
  pclear(5.000000e-01);
 
+disp('running stream2text.m');
+ try
+ stream2text; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
+
 disp('running studentFitDemo.m');
  try
  studentFitDemo; 
@@ -3607,9 +3679,25 @@ disp('running tanhPlot.m');
  end 
  pclear(5.000000e-01);
 
+disp('running testLanguageClassifier.m');
+ try
+ testLanguageClassifier; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
+
 disp('running testSprinklerDemo.m');
  try
  testSprinklerDemo; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
+
+disp('running text2stream.m');
+ try
+ text2stream; 
  catch ME 
  disp(ME.message); 
  end 
@@ -3682,6 +3770,14 @@ disp('running varEMbound.m');
 disp('running visDirichletGui.m');
  try
  visDirichletGui; 
+ catch ME 
+ disp(ME.message); 
+ end 
+ pclear(5.000000e-01);
+
+disp('running visualizeAlarmNetwork.m');
+ try
+ visualizeAlarmNetwork; 
  catch ME 
  disp(ME.message); 
  end 
