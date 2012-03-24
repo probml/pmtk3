@@ -15,7 +15,7 @@ function pmlFigureCodeReport(dest, includeEx, includeSol)
 
 % This file is from pmtk3.googlecode.com
 
-if nargin < 1, dest = '/Users/kpmurphy/BookFigures/figReport'; end
+if nargin < 1, dest = '/Users/Matt/Documents/MATLAB/figureReport'; end
 if nargin < 2, includeEx  = true; end
 if nargin < 3, includeSol  = false; end
 
@@ -56,6 +56,9 @@ end
 if ~exist(figDest, 'dir')
     mkdir(figDest);
 end
+%% gather google docs info
+[googleSourceImages, googleSourceURLs] = googleDocsSource(); 
+
 %% gather html report data and copy files
 nfigs = numel(Finfo);
 missingSource = false(nfigs, 1);
@@ -97,6 +100,9 @@ for i=1:nfigs
         sourceLink = sprintf('%s %s', figThanksText, fig.macros.figthanks{1}); 
     elseif ~isempty(fig.macros.figtaken)
       sourceLink = sprintf('%s %s', figTakenText, fig.macros.figtaken{1});
+     elseif ismember(fig.fnames{1}, googleSourceImages)
+        [~, loc] = ismember(fig.fnames{1}, googleSourceImages);
+        sourceLink = sprintf('<a href = %s>%s</a><br>', googleSourceURLs{loc}, fig.fnames{1}); 
     elseif linkOtherSource
         found = false;
         
