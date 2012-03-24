@@ -1,4 +1,4 @@
-function ridgeLassoOLSimageDemo
+function ridgeLassoOLS
 
 X1 = [-2 2]; 
 Y1 = [-1 1]; 
