@@ -23,7 +23,9 @@ linkOtherSource = true; % if true, we link to tex, ppt, source etc.
 oext = {'*.tex', '*.ppt'}; % look for files with these extensions if linkOtherSource true
 figThanksText = 'Figure courtesy of';
 figTakenText = 'Figure taken from';
-figHandText = ''; %'Figure drawn by hand';
+figsThanksText = 'Figures courtesy of';
+figsTakenText = 'Figures taken from';
+
 
 bookSource = getConfigValue('PMTKpmlBookSource');
 figs = getConfigValue('PMTKpmlFigures');
@@ -85,27 +87,39 @@ for i=1:nfigs
     end
     htmlData{i, 2} = fnameLink;
     %% column 3
+    
+    sourceLink = '';  
+    for j=1:numel(fnames)  %% add in google code links if any
+        src = fnames{j};
+        [~, loc] = ismember(src, googleSourceImages);
+        if (loc)
+            sourceLink = sprintf('%s<a href = %s>%s</a><br>',sourceLink, googleSourceURLs{loc}, src); 
+        end
+    end
     codeNames = fig.codeNames;
-    sourceLink = '';
     if ~isempty(codeNames)
         for j=1:numel(codeNames)
             gcl = googleCodeLink(codeNames{j});
             if isempty(gcl)
-                sourceLink = sprintf('%s.m<br>', codeNames{j});
+                sourceLink = sprintf('%s%s.m<br>', sourceLink, codeNames{j});
             else
-                sourceLink = sprintf('%s<br>', gcl);
+                sourceLink = sprintf('%s%s<br>', sourceLink, gcl);
             end
         end
-    elseif ~isempty(fig.macros.figthanks)
-        sourceLink = sprintf('%s %s', figThanksText, fig.macros.figthanks{1}); 
-    elseif ~isempty(fig.macros.figtaken)
-      sourceLink = sprintf('%s %s', figTakenText, fig.macros.figtaken{1});
-     elseif ismember(fig.fnames{1}, googleSourceImages)
-        [~, loc] = ismember(fig.fnames{1}, googleSourceImages);
-        sourceLink = sprintf('<a href = %s>%s</a><br>', googleSourceURLs{loc}, fig.fnames{1}); 
+    elseif ~isempty(fig.macros.figthanks) && isempty(sourceLink)
+        text = figThanksText;
+        if (numel(fnames) > 1)
+            text = figsThanksText; 
+        end
+        sourceLink = sprintf('%s %s', text, fig.macros.figthanks{1}); 
+    elseif ~isempty(fig.macros.figtaken) && isempty(sourceLink)
+        text = figTakenText; 
+        if (numel(fnames) > 1)
+            text = figsTakenText;
+        end
+        sourceLink = sprintf('%s %s', text, fig.macros.figtaken{1});
     elseif linkOtherSource
         found = false;
-        
         src = [];
         fnames = [fig.label; fig.fnames(:)];
         for j=1:numel(fnames)
@@ -124,13 +138,10 @@ for i=1:nfigs
                     sourceLink, 'figuresSource', fnameOnly(src{j}, true), ...
                     fnameOnly(src{j}, true));
             end
-        else
-          sourceLink = figHandText;
         end
         missingSource(i) = ~found;
     else  % unreachable!
         missingSource(i) = true;
-        sourceLink = figHandText;
     end
     htmlData{i, 3} = sourceLink;
 end

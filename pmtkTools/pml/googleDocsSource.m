@@ -14,9 +14,10 @@ sourceURLS = ...
 'https://docs.google.com/drawings/d/1g-iRPhyxFbG01Q7xzXdg2KUhSoU4gsCXywXFyY96568/edit';
 'https://docs.google.com/drawings/d/1_FUeN9btR8elgOY_5CwvV7H0bFDOz32Vyv7zBnVXgIw/edit';
 'https://docs.google.com/drawings/d/1QXlMvsGhiuPB-7B5GL3nQgVj9V8an1N7eGyKFgxwE_w/edit';
-'https://docs.google.com/drawings/d/1GcMqdZJ1asFmw0fqvWPXb0Tzk7z0bBmK03Yk8NSMNic/edit';
+'https://docs.google.com/drawings/d/1TayRBEkMrBYBYJwSymtQPsCUUZs5mh6poj3fJtDJXU8/edit';
 'https://docs.google.com/drawings/d/19r4sq5gveESZ6WB13UL492EyM9YjhuH1lPUVLQp8vGQ/edit';
 'https://docs.google.com/drawings/d/14gESir7LBAtYBVTWJtVATexdxqT6zLu909GyqvO98cE/edit';
+'https://docs.google.com/drawings/d/1GcMqdZJ1asFmw0fqvWPXb0Tzk7z0bBmK03Yk8NSMNic/edit';
 };
 
 imageNames = ...
@@ -34,6 +35,7 @@ imageNames = ...
     'viterbi'
     'pentagonTriangulated'
     'GMvenn'
+    'viterbi2'
     };
 
 end
