@@ -1,0 +1,172 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Project 3D data onto a 2D basis using PCA</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="pcaDemo3d.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Project 3D data onto a 2D basis using PCA</h1><!--introduction--><p>Based on an example by Hamid Bolouri</p><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+setSeed(0)
+
+n = 100; d = 3;
+<span class="comment">%Sigma = diag(sqrt([10,2,0.5]));</span>
+Sigma = diag([10,2,0.1]);
+model = struct(<span class="string">'mu'</span>, zeros(1, d), <span class="string">'Sigma'</span>, Sigma);
+X = gaussSample(model, n);
+
+<span class="comment">% rotate the data</span>
+alpha = 30*pi/180;
+R = [cos(alpha) -sin(alpha) 0;<span class="keyword">...</span>
+     sin(alpha)  cos(alpha) 0;<span class="keyword">...</span>
+     0           0          1];
+X  = X*R';
+X = centerCols(X);
+
+[W, Z, evals, Xrecon2, mu] = pcaPmtk(X, 2);
+Xrecon1 = Z(:,1)*W(:,1)' +  repmat(mu, n, 1);
+
+figure;
+plot3(X(:,1), X(:,2), X(:,3), <span class="string">'*'</span>); grid <span class="string">on</span>; hold <span class="string">on</span>
+w=W(:,1);sf=10;h=line([-sf*w(1) sf*w(1)], [-sf*w(2) sf*w(2)],[-sf*w(3) sf*w(3)]);
+set(h,<span class="string">'color'</span>,<span class="string">'r'</span>,<span class="string">'linewidth'</span>,3);
+w=W(:,2);sf=5;h=line([-sf*w(1) sf*w(1)], [-sf*w(2) sf*w(2)],[-sf*w(3) sf*w(3)]);
+set(h,<span class="string">'color'</span>,<span class="string">'k'</span>,<span class="string">'linewidth'</span>,3,<span class="string">'linestyle'</span>,<span class="string">':'</span>);
+axis <span class="string">equal</span>
+printPmtkFigure <span class="string">pca3dData</span>
+
+figure;
+plot3(X(:,1), X(:,2), X(:,3), <span class="string">'o'</span>); grid <span class="string">on</span>; hold <span class="string">on</span>
+n = size(X,1);
+<span class="keyword">for</span> i=1:n
+  line([Xrecon2(i,1) X(i,1)], [Xrecon2(i,2) X(i,2)], [Xrecon2(i,3) X(i,3)]);
+<span class="keyword">end</span>
+grid <span class="string">on</span>
+axis <span class="string">equal</span>
+
+
+figure;
+plot3(Xrecon1(:,1), Xrecon1(:,2), Xrecon1(:,3), <span class="string">'*'</span>); grid <span class="string">on</span>
+axis <span class="string">equal</span>
+printPmtkFigure <span class="string">pca3dProj1d</span>
+
+figure;
+plot3(Xrecon2(:,1), Xrecon2(:,2), Xrecon2(:,3), <span class="string">'*'</span>); grid <span class="string">on</span>
+axis <span class="string">equal</span>
+printPmtkFigure <span class="string">pca3dProj2d</span>
+</pre><img vspace="5" hspace="5" src="pcaDemo3d_01.png" alt=""> <img vspace="5" hspace="5" src="pcaDemo3d_02.png" alt=""> <img vspace="5" hspace="5" src="pcaDemo3d_03.png" alt=""> <img vspace="5" hspace="5" src="pcaDemo3d_04.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Project 3D data onto a 2D basis using PCA
+% Based on an example by Hamid Bolouri
+%%
+
+% This file is from pmtk3.googlecode.com
+
+setSeed(0)
+
+n = 100; d = 3;
+%Sigma = diag(sqrt([10,2,0.5]));
+Sigma = diag([10,2,0.1]);
+model = struct('mu', zeros(1, d), 'Sigma', Sigma);
+X = gaussSample(model, n);
+
+% rotate the data 
+alpha = 30*pi/180;
+R = [cos(alpha) -sin(alpha) 0;...
+     sin(alpha)  cos(alpha) 0;...
+     0           0          1];
+X  = X*R';
+X = centerCols(X);
+
+[W, Z, evals, Xrecon2, mu] = pcaPmtk(X, 2);
+Xrecon1 = Z(:,1)*W(:,1)' +  repmat(mu, n, 1);
+    
+figure;
+plot3(X(:,1), X(:,2), X(:,3), '*'); grid on; hold on
+w=W(:,1);sf=10;h=line([-sf*w(1) sf*w(1)], [-sf*w(2) sf*w(2)],[-sf*w(3) sf*w(3)]);
+set(h,'color','r','linewidth',3);
+w=W(:,2);sf=5;h=line([-sf*w(1) sf*w(1)], [-sf*w(2) sf*w(2)],[-sf*w(3) sf*w(3)]);
+set(h,'color','k','linewidth',3,'linestyle',':');
+axis equal
+printPmtkFigure pca3dData
+
+figure;
+plot3(X(:,1), X(:,2), X(:,3), 'o'); grid on; hold on
+n = size(X,1);
+for i=1:n
+  line([Xrecon2(i,1) X(i,1)], [Xrecon2(i,2) X(i,2)], [Xrecon2(i,3) X(i,3)]);
+end
+grid on
+axis equal
+
+
+figure;
+plot3(Xrecon1(:,1), Xrecon1(:,2), Xrecon1(:,3), '*'); grid on
+axis equal
+printPmtkFigure pca3dProj1d
+
+figure;
+plot3(Xrecon2(:,1), Xrecon2(:,2), Xrecon2(:,3), '*'); grid on
+axis equal
+printPmtkFigure pca3dProj2d
+
+##### SOURCE END #####
+--></body></html>

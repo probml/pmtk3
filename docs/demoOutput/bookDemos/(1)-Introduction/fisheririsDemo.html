@@ -1,0 +1,130 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Fisher Iris Data Visualization Demo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="fisheririsDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Fisher Iris Data Visualization Demo</h1><pre class="codeinput"><span class="comment">%PMTKneedsStatsToolbox boxplot</span>
+</pre><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+requireStatsToolbox
+[X,y,classnames,varnames] = fisheririsLoad;
+
+figure();
+<span class="comment">%pscatter(X,'y', y);</span>
+<span class="comment">%suptitle(sprintf('iris data, red=setosa, green=versicolor, blue=virginica'));</span>
+pscatter(X, <span class="string">'y'</span>, y, <span class="string">'vnames'</span>, {<span class="string">'sepal length'</span>, <span class="string">'sepal width'</span>, <span class="string">'petal length'</span>, <span class="string">'petal width'</span>});
+printPmtkFigure <span class="string">fisherIrisPairs</span>
+
+<span class="comment">%{
+</span><span class="comment">figure();
+</span><span class="comment">for dim=1:4
+</span><span class="comment">subplot(2,2,dim)
+</span><span class="comment">if dim&lt;=2
+</span><span class="comment">  boxplot(X(:,dim), y, 'notch', 'off');
+</span><span class="comment">else
+</span><span class="comment">  boxplot(X(:,dim), y, 'notch', 'on');
+</span><span class="comment">end
+</span><span class="comment">set(gca,'xticklabel',classnames);
+</span><span class="comment">xlabel(''); ylabel('');
+</span><span class="comment">title(sprintf('%s', varnames{dim}))
+</span><span class="comment">end
+</span><span class="comment">printPmtkFigure irisBoxNotch
+</span><span class="comment">
+</span><span class="comment">%}</span>
+</pre><pre class="codeoutput">plotsymbol = 
+    'ro'    'gd'    'b*'    'k+'
+</pre><img vspace="5" hspace="5" src="fisheririsDemo_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Fisher Iris Data Visualization Demo
+%PMTKneedsStatsToolbox boxplot
+%%
+
+% This file is from pmtk3.googlecode.com
+
+requireStatsToolbox
+[X,y,classnames,varnames] = fisheririsLoad;
+
+figure();
+%pscatter(X,'y', y);
+%suptitle(sprintf('iris data, red=setosa, green=versicolor, blue=virginica'));
+pscatter(X, 'y', y, 'vnames', {'sepal length', 'sepal width', 'petal length', 'petal width'});
+printPmtkFigure fisherIrisPairs
+
+%{
+figure();
+for dim=1:4
+subplot(2,2,dim)
+if dim<=2
+  boxplot(X(:,dim), y, 'notch', 'off');
+else
+  boxplot(X(:,dim), y, 'notch', 'on');
+end
+set(gca,'xticklabel',classnames);
+xlabel(''); ylabel('');
+title(sprintf('%s', varnames{dim}))
+end
+printPmtkFigure irisBoxNotch
+
+%}
+##### SOURCE END #####
+--></body></html>
