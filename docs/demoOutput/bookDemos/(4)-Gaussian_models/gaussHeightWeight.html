@@ -1,0 +1,150 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Gauss Height Weight Demo in 2d</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="gaussHeightWeight.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Gauss Height Weight Demo in 2d</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+rawdata = loadData(<span class="string">'heightWeight'</span>); <span class="comment">% comma delimited file</span>
+data.Y = rawdata(:,1); <span class="comment">% 1=male, 2=female</span>
+data.X = [rawdata(:,2) rawdata(:,3)]; <span class="comment">% height, weight</span>
+maleNdx = find(data.Y == 1);
+femaleNdx = find(data.Y == 2);
+classNdx = {maleNdx, femaleNdx};
+
+<span class="comment">% Raw data</span>
+figure;
+h=scatter(data.X(:,1), data.X(:,2), 100, <span class="string">'o'</span>);
+xlabel(<span class="string">'height'</span>); ylabel(<span class="string">'weight'</span>)
+printPmtkFigure(<span class="string">'heightWeightScatterNoLabels'</span>)
+
+<span class="comment">% Color coded by class</span>
+figure;
+colors = <span class="string">'br'</span>;
+sym = <span class="string">'xo'</span>;
+<span class="keyword">for</span> c=1:2
+  str = sprintf(<span class="string">'%s%s'</span>, sym(c), colors(c));
+  X = data.X(classNdx{c},:);
+  h=scatter(X(:,1), X(:,2), 100, str); <span class="comment">%set(h, 'markersize', 10);</span>
+  hold <span class="string">on</span>;
+<span class="keyword">end</span>
+xlabel(<span class="string">'height'</span>); ylabel(<span class="string">'weight'</span>)
+title(<span class="string">'red = female, blue=male'</span>);
+printPmtkFigure(<span class="string">'heightWeightScatter'</span>)
+
+<span class="comment">% Superimpose Gaussian fits</span>
+<span class="keyword">for</span> c=1:2
+  X = data.X(classNdx{c},:);
+  mu = mean(X); Sigma = cov(X);
+  gaussPlot2d(mu, Sigma, <span class="string">'color'</span>, colors(c));
+<span class="keyword">end</span>
+printPmtkFigure(<span class="string">'heightWeightScatterCov'</span>)
+</pre><img vspace="5" hspace="5" src="gaussHeightWeight_01.png" alt=""> <img vspace="5" hspace="5" src="gaussHeightWeight_02.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Gauss Height Weight Demo in 2d
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+rawdata = loadData('heightWeight'); % comma delimited file
+data.Y = rawdata(:,1); % 1=male, 2=female
+data.X = [rawdata(:,2) rawdata(:,3)]; % height, weight
+maleNdx = find(data.Y == 1);
+femaleNdx = find(data.Y == 2);
+classNdx = {maleNdx, femaleNdx};
+
+% Raw data
+figure;
+h=scatter(data.X(:,1), data.X(:,2), 100, 'o');
+xlabel('height'); ylabel('weight')
+printPmtkFigure('heightWeightScatterNoLabels')
+   
+% Color coded by class
+figure;
+colors = 'br';
+sym = 'xo';
+for c=1:2
+  str = sprintf('%s%s', sym(c), colors(c));
+  X = data.X(classNdx{c},:);
+  h=scatter(X(:,1), X(:,2), 100, str); %set(h, 'markersize', 10);
+  hold on;
+end
+xlabel('height'); ylabel('weight')
+title('red = female, blue=male');
+printPmtkFigure('heightWeightScatter')
+
+% Superimpose Gaussian fits
+for c=1:2
+  X = data.X(classNdx{c},:);
+  mu = mean(X); Sigma = cov(X);
+  gaussPlot2d(mu, Sigma, 'color', colors(c));
+end
+printPmtkFigure('heightWeightScatterCov')
+
+ 
+
+
+
+##### SOURCE END #####
+--></body></html>

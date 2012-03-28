@@ -1,0 +1,121 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Plot different smoothing kernels</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="smoothingKernelPlot.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Plot different smoothing kernels</h1><pre class="codeinput">box = @(u) (1/2)*(abs(u) &lt;= 1);
+epa = @(u) (3/4)*(1-u.^2).*(abs(u) &lt;= 1);
+<span class="comment">%tri = @(u) (35/23)*(1-u.^2).^3.*(abs(u) &lt;= 1);</span>
+tri = @(u) (70/81)*(1-abs(u).^3).^3.*(abs(u) &lt;= 1);
+gauss = @(u) (1/sqrt(2*pi))*exp(-u.^2/2);
+fns = {box, epa, tri, gauss};
+names = {<span class="string">'Boxcar'</span>, <span class="string">'Epanechnikov'</span>, <span class="string">'Tricube'</span>, <span class="string">'Gaussian'</span>}
+xs = -1.5:0.01:1.5;
+[styles, colors, symbols, str] =  plotColors();
+figure; hold <span class="string">on</span>;
+<span class="keyword">for</span> i=1:numel(fns)
+  f = fns{i};
+  fx = f(xs);
+  b = xs(2)-xs(1);
+  fprintf(<span class="string">'integral is %f\n'</span>, sum(fx));
+  plot(xs, fx, sprintf(<span class="string">'%s%s'</span>, styles{i}, colors(i)), <span class="string">'linewidth'</span>, 3);
+<span class="keyword">end</span>
+legend(names);
+printPmtkFigure(<span class="string">'smoothingKernelPlot'</span>)
+</pre><pre class="codeoutput">names = 
+  Columns 1 through 3
+    'Boxcar'    'Epanechnikov'    'Tricube'
+  Column 4
+    'Gaussian'
+integral is 100.500000
+integral is 99.997500
+integral is 100.000000
+integral is 86.767754
+</pre><img vspace="5" hspace="5" src="smoothingKernelPlot_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Plot different smoothing kernels
+
+box = @(u) (1/2)*(abs(u) <= 1);
+epa = @(u) (3/4)*(1-u.^2).*(abs(u) <= 1);
+%tri = @(u) (35/23)*(1-u.^2).^3.*(abs(u) <= 1);
+tri = @(u) (70/81)*(1-abs(u).^3).^3.*(abs(u) <= 1);
+gauss = @(u) (1/sqrt(2*pi))*exp(-u.^2/2);
+fns = {box, epa, tri, gauss};
+names = {'Boxcar', 'Epanechnikov', 'Tricube', 'Gaussian'}
+xs = -1.5:0.01:1.5;
+[styles, colors, symbols, str] =  plotColors();
+figure; hold on;
+for i=1:numel(fns)
+  f = fns{i};
+  fx = f(xs);
+  b = xs(2)-xs(1);
+  fprintf('integral is %f\n', sum(fx));
+  plot(xs, fx, sprintf('%s%s', styles{i}, colors(i)), 'linewidth', 3);
+end
+legend(names);
+printPmtkFigure('smoothingKernelPlot')
+
+
+
+##### SOURCE END #####
+--></body></html>

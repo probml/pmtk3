@@ -1,0 +1,283 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>This function returns the numerical derivative of an analytic function.</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="derivComplexTrick.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>This function returns the numerical derivative of an analytic function.</h1><p>Of special note, is the incorporation of the "complex step-derivative" approach which offers greatly improved derivative accuracy compared to forward and central difference approximations.  This is especially germain when accuracy at the level of machine precision is a concern.</p><p>This function was motivated by: <a href="a">href="matlab:web('http://www.biomedicalcomputationreview.org/2/3/8.pdf','-browser')"&gt;Complex Step Derivatives&lt;/a</a> authored by Michael Sherman   -The function with no inputs generates the example used in the above link.   -For more information see the following citation which is also found in the above link:      --Martins JR, Sturdza P, and Alonso JJ        <a href="a">href="matlab:web('http://portal.acm.org/citation.cfm?id=838250.838251','-browser')"&gt;The complex-step derivative approximation&lt;/a</a>        ACM Trans. Math. Softw. 29(3) (2003)</p><p>SYNTAX:   dfdx=deriv(f,x,h,method)</p><p>INPUTS:   f      - A function a handle (eg f=@(x) sin(x))           x      - Interval over which f(x) is defined           h      - Derivative step-size           method - Numerical methods used to compute derivative                    'forward2' - Two point forward difference                    'forward3' - Three point forward difference                    'central2' - Two point central difference                    'central4' - Four point central difference                    'complex'  - Complex step-derivative approximation</p><p>OUTPUTS:  dfdx   - Numerical estimate of the derivative of f(x)</p><p>Example:  These simple examples produce results in the stack if the "links" are clicked.           Compare the accuracy of different methods:             <a href="a">href="matlab:eval('deriv;')"</a>&gt;&gt; deriv&lt;/a&gt;</p><pre>         Example of how to use the function:
+           &lt;a href="matlab:eval('x=linspace(0,2*pi,1e3);')"&gt;&gt;&gt;x=linspace(0,2*pi,1e3);&lt;/a&gt;
+           &lt;a href="matlab:eval('f=@(x) sin(x);')"&gt;&gt;&gt;f=@(x) sin(x);&lt;/a&gt;
+           &lt;a href="matlab:eval('dfdx=deriv(f,x,1e-3,''forward2''); fprintf(''The results are in the STACK.\n'')')"&gt;&gt;&gt;dfdx=deriv(f,x,1e-3,'forward2');&lt;/a&gt;</pre><p>DBE 2006.07.31</p><pre class="codeinput"><span class="comment">%PMTKurl http://www.mathworks.com/matlabcentral/files/11870/deriv.m</span>
+<span class="comment">%PMTKauthor Daniel Ellis</span>
+</pre><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="keyword">function</span> dfdx=derivComplexTrick(f,x,h,method)
+
+DISP=0;  <span class="comment">% Flag to turn on/off a plot of the result...this is of marginal utility, therefore the default is ZERO</span>
+
+<span class="keyword">if</span> nargin==0 <span class="comment">% Generate an example of different derivatives and their precision.</span>
+
+  DISP=0;
+
+  f=@(x) sin(3*x).*log(x);
+
+  h2=1e-7;
+  h3=1e-5;
+  hc=1e-20;
+  x=[0.7];
+
+  format <span class="string">long</span>
+  dfdxForward2 =(f(x+h2)-f(x))   /   h2 ;                           <span class="comment">% Two Point Forward Difference</span>
+  dfdxCentral2 =(f(x+h3)-f(x-h3))/(2*h3);                           <span class="comment">% Two Point Central Difference</span>
+
+  dfdxForward3 =(-f(x+2*h2)+4*f(x+h2)-3*f(x))/(2*h2);               <span class="comment">% Three Point Forward Difference</span>
+  dfdxCentral4 =(-f(x+2*h3)+8*f(x+h3)-8*f(x-h3)+f(x-2*h3))/(12*h3); <span class="comment">% Four Point Central Difference</span>
+
+  dfdxComplex =imag(f(x+hc*i)   /   hc);                            <span class="comment">% Complex difference</span>
+  dfdxAnalytic=sin(3*x)./x+3*cos(3*x).*log(x);                      <span class="comment">% Analytic result</span>
+
+  fprintf(<span class="string">'Evaluating the numerical derivative of the analytic function, f(x)=sin(3x).*log(x) @ x=0.7.\n'</span>);
+  fprintf(<span class="string">'Comparison of precision of each numerical method to the analytic result:\n'</span>);
+  fprintf(<span class="string">' Note the differences in step size.\n'</span>);
+  fprintf([<span class="string">'  df/dx Forward_2 = '</span>,num2str(dfdxForward2 ,<span class="string">'%.16f'</span>),<span class="string">', Stepsize='</span>,num2str(h2,<span class="string">'%3.1e'</span>),<span class="string">'\n'</span>]);
+  fprintf([<span class="string">'  df/dx Centra1_2 = '</span>,num2str(dfdxCentral2 ,<span class="string">'%.16f'</span>),<span class="string">', Stepsize='</span>,num2str(h3,<span class="string">'%3.1e'</span>),<span class="string">'\n'</span>]);
+  fprintf([<span class="string">'  df/dx Forward_3 = '</span>,num2str(dfdxForward3 ,<span class="string">'%.16f'</span>),<span class="string">', Stepsize='</span>,num2str(h2,<span class="string">'%3.1e'</span>),<span class="string">'\n'</span>]);
+  fprintf([<span class="string">'  df/dx Central_4 = '</span>,num2str(dfdxCentral4 ,<span class="string">'%.16f'</span>),<span class="string">', Stepsize='</span>,num2str(h3,<span class="string">'%3.1e'</span>),<span class="string">'\n'</span>]);
+  fprintf([<span class="string">'  df/dx Complex   = '</span>,num2str(dfdxComplex  ,<span class="string">'%.16f'</span>),<span class="string">', Stepsize='</span>,num2str(hc,<span class="string">'%3.1e'</span>),<span class="string">'\n'</span>]);
+  fprintf([<span class="string">'  df/dx Analytic  = '</span>,num2str(dfdxAnalytic ,<span class="string">'%.16f'</span>),<span class="string">'\n'</span>]);
+
+  <span class="keyword">if</span> DISP  <span class="comment">% This is *marginally* useful...</span>
+    warning(<span class="string">'It is VERY hard to see the results visually due to the level of precision involved...'</span>);
+    figure; hold <span class="string">on</span>;
+    xx=linspace(1e-6,1.4,1e3);
+    plot(xx,f(xx),<span class="string">'k'</span>);
+
+    xx_max=0;
+    xx_min=1.4;
+    plot([xx_min xx_max],[f(x)+dfdxForward2*(xx_min-x) f(x)+dfdxForward2*(xx_max-x)],<span class="string">'r'</span>);
+    plot([xx_min xx_max],[f(x)+dfdxCentral2*(xx_min-x) f(x)+dfdxCentral2*(xx_max-x)],<span class="string">'g'</span>);
+    plot([xx_min xx_max],[f(x)+dfdxAnalytic*(xx_min-x) f(x)+dfdxAnalytic*(xx_max-x)],<span class="string">'b'</span>);
+  <span class="keyword">end</span>
+<span class="keyword">elseif</span> nargin==4
+  DISP=0;
+
+  <span class="keyword">switch</span> lower(method)
+    <span class="keyword">case</span> <span class="string">'forward2'</span>                                           <span class="comment">% Two point forward difference</span>
+      dfdx=(f(x+h)-f(x))/h;
+    <span class="keyword">case</span> <span class="string">'central2'</span>                                           <span class="comment">% Two point central difference</span>
+      dfdx=(f(x+h)-f(x-h))/(2*h);
+    <span class="keyword">case</span> <span class="string">'forward3'</span>                                           <span class="comment">% Three point forward difference</span>
+      dfdx=(-f(x+2*h)+4*f(x+h)-3*f(x))/(2*h);
+    <span class="keyword">case</span> <span class="string">'central4'</span>                                           <span class="comment">% Four point central difference</span>
+      dfdx =(-f(x+2*h)+8*f(x+h)-8*f(x-h)+f(x-2*h))/(12*h);
+    <span class="keyword">case</span> <span class="string">'complex'</span>                                            <span class="comment">% Complex difference</span>
+      dfdx=imag(f(x+h*i)/h);                                  <span class="comment">% This is the *magic*</span>
+    <span class="keyword">otherwise</span>
+      error(<span class="string">'Derivative METHOD not known.'</span>);
+  <span class="keyword">end</span>
+
+  <span class="keyword">if</span> DISP  <span class="comment">% This is *marginally* useful...</span>
+    figure; hold <span class="string">on</span>;
+      plot(x,f(x),<span class="string">'r'</span>);
+      plot(x,dfdx,<span class="string">'b'</span>);
+      legend(<span class="string">'f(x)'</span>,<span class="string">'df(x)/dx'</span>);
+  <span class="keyword">end</span>
+<span class="keyword">else</span>
+  error(<span class="string">'FOUR input arguments are REQUIRED.'</span>);
+<span class="keyword">end</span>
+
+<span class="keyword">return</span>
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">Evaluating the numerical derivative of the analytic function, f(x)=sin(3x).*log(x) @ x=0.7.
+Comparison of precision of each numerical method to the analytic result:
+ Note the differences in step size.
+  df/dx Forward_2 = 1.7733539398046005, Stepsize=1.0e-07
+  df/dx Centra1_2 = 1.7733541058356781, Stepsize=1.0e-05
+  df/dx Forward_3 = 1.7733541046727197, Stepsize=1.0e-07
+  df/dx Central_4 = 1.7733541062330453, Stepsize=1.0e-05
+  df/dx Complex   = 1.7733541062373444, Stepsize=1.0e-20
+  df/dx Analytic  = 1.7733541062373446
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% This function returns the numerical derivative of an analytic function.
+% Of special note, is the incorporation of the "complex step-derivative"
+% approach which offers greatly improved derivative accuracy compared to 
+% forward and central difference approximations.  This is especially germain 
+% when accuracy at the level of machine precision is a concern.
+%
+% This function was motivated by: <a href="matlab:web('http://www.biomedicalcomputationreview.org/2/3/8.pdf','-browser')">Complex Step Derivatives</a> authored by Michael Sherman
+%   -The function with no inputs generates the example used in the above link.
+%   -For more information see the following citation which is also found in the above link:
+%      REPLACE_WITH_DASH_DASHMartins JR, Sturdza P, and Alonso JJ
+%        <a href="matlab:web('http://portal.acm.org/citation.cfm?id=838250.838251','-browser')">The complex-step derivative approximation</a>
+%        ACM Trans. Math. Softw. 29(3) (2003)
+%
+% SYNTAX:   dfdx=deriv(f,x,h,method)
+%
+% INPUTS:   f      - A function a handle (eg f=@(x) sin(x))
+%           x      - Interval over which f(x) is defined
+%           h      - Derivative step-size
+%           method - Numerical methods used to compute derivative
+%                    'forward2' - Two point forward difference
+%                    'forward3' - Three point forward difference
+%                    'central2' - Two point central difference
+%                    'central4' - Four point central difference
+%                    'complex'  - Complex step-derivative approximation
+%
+% OUTPUTS:  dfdx   - Numerical estimate of the derivative of f(x)
+%
+% Example:  These simple examples produce results in the stack if the "links" are clicked.
+%           Compare the accuracy of different methods:
+%             <a href="matlab:eval('deriv;')">>> deriv</a>
+%
+%           Example of how to use the function:
+%             <a href="matlab:eval('x=linspace(0,2*pi,1e3);')">>>x=linspace(0,2*pi,1e3);</a>
+%             <a href="matlab:eval('f=@(x) sin(x);')">>>f=@(x) sin(x);</a>
+%             <a href="matlab:eval('dfdx=deriv(f,x,1e-3,''forward2''); fprintf(''The results are in the STACK.\n'')')">>>dfdx=deriv(f,x,1e-3,'forward2');</a>
+%
+% DBE 2006.07.31
+%PMTKurl http://www.mathworks.com/matlabcentral/files/11870/deriv.m
+%PMTKauthor Daniel Ellis 
+%%
+
+% This file is from pmtk3.googlecode.com
+
+function dfdx=derivComplexTrick(f,x,h,method)
+
+DISP=0;  % Flag to turn on/off a plot of the result...this is of marginal utility, therefore the default is ZERO
+
+if nargin==0 % Generate an example of different derivatives and their precision.
+
+  DISP=0;
+
+  f=@(x) sin(3*x).*log(x);
+
+  h2=1e-7;
+  h3=1e-5;
+  hc=1e-20;
+  x=[0.7];
+
+  format long
+  dfdxForward2 =(f(x+h2)-f(x))   /   h2 ;                           % Two Point Forward Difference
+  dfdxCentral2 =(f(x+h3)-f(x-h3))/(2*h3);                           % Two Point Central Difference
+
+  dfdxForward3 =(-f(x+2*h2)+4*f(x+h2)-3*f(x))/(2*h2);               % Three Point Forward Difference
+  dfdxCentral4 =(-f(x+2*h3)+8*f(x+h3)-8*f(x-h3)+f(x-2*h3))/(12*h3); % Four Point Central Difference
+
+  dfdxComplex =imag(f(x+hc*i)   /   hc);                            % Complex difference
+  dfdxAnalytic=sin(3*x)./x+3*cos(3*x).*log(x);                      % Analytic result
+  
+  fprintf('Evaluating the numerical derivative of the analytic function, f(x)=sin(3x).*log(x) @ x=0.7.\n');
+  fprintf('Comparison of precision of each numerical method to the analytic result:\n');
+  fprintf(' Note the differences in step size.\n');
+  fprintf(['  df/dx Forward_2 = ',num2str(dfdxForward2 ,'%.16f'),', Stepsize=',num2str(h2,'%3.1e'),'\n']);
+  fprintf(['  df/dx Centra1_2 = ',num2str(dfdxCentral2 ,'%.16f'),', Stepsize=',num2str(h3,'%3.1e'),'\n']);
+  fprintf(['  df/dx Forward_3 = ',num2str(dfdxForward3 ,'%.16f'),', Stepsize=',num2str(h2,'%3.1e'),'\n']);
+  fprintf(['  df/dx Central_4 = ',num2str(dfdxCentral4 ,'%.16f'),', Stepsize=',num2str(h3,'%3.1e'),'\n']);
+  fprintf(['  df/dx Complex   = ',num2str(dfdxComplex  ,'%.16f'),', Stepsize=',num2str(hc,'%3.1e'),'\n']);
+  fprintf(['  df/dx Analytic  = ',num2str(dfdxAnalytic ,'%.16f'),'\n']);
+
+  if DISP  % This is *marginally* useful...
+    warning('It is VERY hard to see the results visually due to the level of precision involved...');
+    figure; hold on;
+    xx=linspace(1e-6,1.4,1e3);
+    plot(xx,f(xx),'k');
+
+    xx_max=0;
+    xx_min=1.4;
+    plot([xx_min xx_max],[f(x)+dfdxForward2*(xx_min-x) f(x)+dfdxForward2*(xx_max-x)],'r');
+    plot([xx_min xx_max],[f(x)+dfdxCentral2*(xx_min-x) f(x)+dfdxCentral2*(xx_max-x)],'g');
+    plot([xx_min xx_max],[f(x)+dfdxAnalytic*(xx_min-x) f(x)+dfdxAnalytic*(xx_max-x)],'b');
+  end
+elseif nargin==4
+  DISP=0;
+
+  switch lower(method)
+    case 'forward2'                                           % Two point forward difference
+      dfdx=(f(x+h)-f(x))/h;
+    case 'central2'                                           % Two point central difference
+      dfdx=(f(x+h)-f(x-h))/(2*h);
+    case 'forward3'                                           % Three point forward difference
+      dfdx=(-f(x+2*h)+4*f(x+h)-3*f(x))/(2*h);
+    case 'central4'                                           % Four point central difference
+      dfdx =(-f(x+2*h)+8*f(x+h)-8*f(x-h)+f(x-2*h))/(12*h);
+    case 'complex'                                            % Complex difference
+      dfdx=imag(f(x+h*i)/h);                                  % This is the *magic*
+    otherwise
+      error('Derivative METHOD not known.');
+  end
+  
+  if DISP  % This is *marginally* useful...
+    figure; hold on;
+      plot(x,f(x),'r');
+      plot(x,dfdx,'b');
+      legend('f(x)','df(x)/dx');
+  end
+else
+  error('FOUR input arguments are REQUIRED.');
+end
+
+return
+end
+
+##### SOURCE END #####
+--></body></html>

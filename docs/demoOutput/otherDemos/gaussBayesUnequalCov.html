@@ -1,0 +1,154 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Bayesian updating of a 2D Gaussian</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="gaussBayesUnequalCov.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Bayesian updating of a 2D Gaussian</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="keyword">function</span> gaussBayesUnequalCov()
+
+Sigmas = {0.01*eye(2), 0.01*eye(2)};
+helper(Sigmas, <span class="string">'Equal'</span>)
+
+Sigmas = {0.05*eye(2), 0.01*eye(2)};
+helper(Sigmas, <span class="string">'Two'</span>)
+
+<span class="comment">%Sigmas = {0.01*[10 1; 1 1], 0.01*[1 1; 1 10]};</span>
+Sigmas = {0.01*[1 1; 1 10], 0.01*[10 1; 1 1]};
+helper(Sigmas, <span class="string">'Mixed'</span>)
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> helper(Sigmas, suffix)
+y1 = [0 -1]';
+y2 = [1 0]';
+y = [y1(:); y2(:)];
+prior.mu = [0 0]';
+prior.Sigma = 1e10*eye(2);
+A = repmat(eye(2), 2, 1);
+py.mu = zeros(4, 1);
+py.Sigma = blkdiag(Sigmas{1}, Sigmas{2});
+
+post = gaussSoftCondition(prior, py, A, y);
+figure;
+gaussPlot2d(y1, Sigmas{1}, <span class="string">'color'</span>, <span class="string">'r'</span>);
+hh=plot(y1(1), y1(2),  <span class="string">'rx'</span>, <span class="string">'markersize'</span>, 12, <span class="string">'linewidth'</span>, 3);
+hold <span class="string">on</span>
+grid <span class="string">off</span>;
+gaussPlot2d(y2, Sigmas{2},<span class="string">'color'</span>, <span class="string">'g'</span>);
+hh=plot(y2(1), y2(2),  <span class="string">'go'</span>, <span class="string">'markersize'</span>, 12, <span class="string">'linewidth'</span>, 3);
+mu = post.mu; Sigma = post.Sigma;
+gaussPlot2d(mu, Sigma, <span class="string">'color'</span>, <span class="string">'k'</span>);
+hh=plot(mu(1), mu(2),  <span class="string">'k+'</span>, <span class="string">'markersize'</span>, 12, <span class="string">'linewidth'</span>, 3);
+axis([-1.5 1.5 -1.5 1.5]);
+printPmtkFigure(sprintf(<span class="string">'mvnBayesUnequalCov%s'</span>, suffix))
+
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="gaussBayesUnequalCov_01.png" alt=""> <img vspace="5" hspace="5" src="gaussBayesUnequalCov_02.png" alt=""> <img vspace="5" hspace="5" src="gaussBayesUnequalCov_03.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Bayesian updating of a 2D Gaussian
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+function gaussBayesUnequalCov()
+
+Sigmas = {0.01*eye(2), 0.01*eye(2)};
+helper(Sigmas, 'Equal')
+
+Sigmas = {0.05*eye(2), 0.01*eye(2)};
+helper(Sigmas, 'Two')
+
+%Sigmas = {0.01*[10 1; 1 1], 0.01*[1 1; 1 10]};
+Sigmas = {0.01*[1 1; 1 10], 0.01*[10 1; 1 1]};
+helper(Sigmas, 'Mixed')
+end
+
+function helper(Sigmas, suffix)
+y1 = [0 -1]';
+y2 = [1 0]';
+y = [y1(:); y2(:)];
+prior.mu = [0 0]';
+prior.Sigma = 1e10*eye(2);
+A = repmat(eye(2), 2, 1);
+py.mu = zeros(4, 1);
+py.Sigma = blkdiag(Sigmas{1}, Sigmas{2});
+
+post = gaussSoftCondition(prior, py, A, y);
+figure;
+gaussPlot2d(y1, Sigmas{1}, 'color', 'r');
+hh=plot(y1(1), y1(2),  'rx', 'markersize', 12, 'linewidth', 3);
+hold on
+grid off;
+gaussPlot2d(y2, Sigmas{2},'color', 'g');
+hh=plot(y2(1), y2(2),  'go', 'markersize', 12, 'linewidth', 3);
+mu = post.mu; Sigma = post.Sigma;
+gaussPlot2d(mu, Sigma, 'color', 'k');
+hh=plot(mu(1), mu(2),  'k+', 'markersize', 12, 'linewidth', 3);
+axis([-1.5 1.5 -1.5 1.5]);
+printPmtkFigure(sprintf('mvnBayesUnequalCov%s', suffix))
+
+end
+
+##### SOURCE END #####
+--></body></html>

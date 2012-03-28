@@ -1,0 +1,132 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Change of Variables Demo 1D</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="changeOfVarsDemo1d.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Change of Variables Demo 1D</h1><!--introduction--><p>x ~ U(-1,1), y=x^2, plot pdf of y</p><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+xs = -1:0.1:1;
+a = -1; b = 1;
+<span class="comment">%dist = UnifDist(a,b);</span>
+<span class="comment">%px = exp(logprob(dist, xs));</span>
+px = 1/(b-a) * ones(1,length(xs));
+fn = @(x) x.^2;
+ys = fn(xs);
+
+<span class="comment">% analtyic</span>
+ppy = 1./(2*sqrt(ys));
+
+<span class="comment">% Monte Carlo</span>
+n=1000;
+<span class="comment">%samples = sample(dist, 1000);</span>
+samples = rand(1, 1000)*(b-a) + a; <span class="comment">% sample from U(a,b)</span>
+samples2 = fn(samples);
+<span class="comment">%[f, xi] = ksdensity(samples2);</span>
+[h,bins] = hist(samples2,20);
+h = normalize(h);
+
+figure(2);clf
+nr = 1; nc = 3;
+subplot(nr,nc,1); plot(xs, px, <span class="string">'-'</span>);
+subplot(nr,nc,2); plot(ys, ppy, <span class="string">'-'</span>);
+subplot(nr,nc,3);  bar(bins,h);
+
+printPmtkFigure(<span class="string">'changeOfVars'</span>);
+</pre><img vspace="5" hspace="5" src="changeOfVarsDemo1d_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Change of Variables Demo 1D
+% x ~ U(-1,1), y=x^2, plot pdf of y
+%%
+
+% This file is from pmtk3.googlecode.com
+
+xs = -1:0.1:1;
+a = -1; b = 1;
+%dist = UnifDist(a,b);
+%px = exp(logprob(dist, xs));
+px = 1/(b-a) * ones(1,length(xs));
+fn = @(x) x.^2;
+ys = fn(xs);
+
+% analtyic
+ppy = 1./(2*sqrt(ys));
+
+% Monte Carlo
+n=1000;
+%samples = sample(dist, 1000);
+samples = rand(1, 1000)*(b-a) + a; % sample from U(a,b)
+samples2 = fn(samples);
+%[f, xi] = ksdensity(samples2);
+[h,bins] = hist(samples2,20);
+h = normalize(h);
+
+figure(2);clf
+nr = 1; nc = 3;
+subplot(nr,nc,1); plot(xs, px, '-');
+subplot(nr,nc,2); plot(ys, ppy, '-');
+subplot(nr,nc,3);  bar(bins,h);
+
+printPmtkFigure('changeOfVars');
+
+##### SOURCE END #####
+--></body></html>

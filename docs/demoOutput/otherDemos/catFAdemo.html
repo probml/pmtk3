@@ -1,0 +1,644 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>catFAdemo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="catFAdemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> catFAdemo()
+<span class="comment">% Factor analysis with categorical and continuous data</span>
+<span class="comment">% We reproduce the demo from</span>
+<span class="comment">% http://www.cs.ubc.ca/~emtiyaz/software/mixedDataFA.html</span>
+<span class="comment">% This just check the code runs, it is not intrinsically interesting.</span>
+
+clear <span class="string">all</span>
+setSeed(16)
+<span class="comment">% generate data - data is stored along columns not rows!</span>
+[trainData,testData,simParams] = makeSimDataMixedDataFA(100);
+nClass = simParams.nClass;
+<span class="comment">% introduce missing variables in train data</span>
+missProb = 0.1;
+trainData.continuousTruth = trainData.continuous;
+trainData.discreteTruth = trainData.discrete;
+[D,N] = size(trainData.continuous);
+miss = rand(D,N)&lt;missProb;
+trainData.continuous(miss) = NaN;
+[D,N] = size(trainData.discrete);
+miss = rand(D,N)&lt;missProb;
+trainData.discrete(miss) = NaN;
+
+
+Dz = 2;
+[model, loglikTrace] = catFAfit(trainData.discrete',  trainData.continuous', Dz);
+
+[mu, Sigma, loglik] = catFAinferLatent(model, testData.discrete', testData.continuous')
+
+[predD, predC] = catFApredictMissing(model,testData.discrete', testData.continuous')
+
+
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> [trainData, testData, params] = makeSimDataMixedDataFA(N)
+<span class="comment">% [TRAINDATA, TESTDATA, PARAMS] = makeSimDataMixedDataFA(N) makes simulated data</span>
+<span class="comment">% for mixedDataFA with N data points</span>
+<span class="comment">%</span>
+<span class="comment">% Written by Emtiyaz, CS, UBC</span>
+<span class="comment">% Modified on June 09, 2010</span>
+
+  missProb = 0.3;
+  Dz = 2;
+  mean_ = [5 -5]';<span class="comment">% -5 -5]';</span>
+  covMat = eye(Dz);
+  z = repmat(mean_,1,N) + chol(covMat)*randn(Dz,N);
+  Dc = 5;
+  nClass = 2*ones(10,1);<span class="comment">%[3 2 4];</span>
+  noiseCovMat = 0.01*eye(Dc);<span class="comment">%abs(diag(randn(Dc,1)));</span>
+  Bc = rand(Dc,Dz);
+
+  <span class="comment">% generate data</span>
+  yc = Bc*z + chol(noiseCovMat)*randn(Dc,N);
+  <span class="comment">%yc = yc - repmat(mean(yc,2), 1, N);</span>
+
+  Bm = [];
+  <span class="keyword">for</span> c = 1:length(nClass)
+    Bmc = rand(nClass(c)-1,Dz);
+    p = [exp(Bmc*z); ones(1,N)];
+    pMult = p./repmat(sum(p,1),nClass(c),1);
+    yd(c,:) = sum(repmat([1:nClass(c)],N,1).*mnrnd(1,pMult'),2);
+    Bm = [Bm; Bmc];
+  <span class="keyword">end</span>
+
+  <span class="comment">% model parameters structure</span>
+  params.nClass = nClass;
+  params.mean = mean_;
+  params.covMat = covMat;
+  params.noiseCovMat = noiseCovMat;
+  params.betaMult = Bm;
+  params.betaCont = Bc;
+
+  <span class="comment">% split test and train data</span>
+  ratio = .7;
+  [trainData, testData] = splitData(yc,yd,ratio);
+
+<span class="comment">%{
+</span><span class="comment">  % introduce missing variables in test data
+</span><span class="comment">  testData.continuousTruth = testData.continuous;
+</span><span class="comment">  testData.discreteTruth = testData.discrete;
+</span><span class="comment">  [D,N] = size(testData.continuous);
+</span><span class="comment">  miss = rand(D,N)&lt;missProb;
+</span><span class="comment">  testData.continuous(miss) = NaN;
+</span><span class="comment">  [D,N] = size(testData.discrete);
+</span><span class="comment">  miss = rand(D,N)&lt;missProb;
+</span><span class="comment">  testData.discrete(miss) = NaN;
+</span><span class="comment">  %}
+</span>
+
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> [trainData, testData, idx] = splitData(yc, yd, ratio)
+<span class="comment">% splits data into training and testing set</span>
+<span class="comment">% yc is the continuous data, yd is discrete data</span>
+<span class="comment">% ratio is the split ratio</span>
+
+  [Dc,Nc] = size(yc);
+  [Dd,Nd] = size(yd);
+  N = max(Nc,Nd);
+  nTrain = ceil(ratio*N);
+  idx = randperm(N);
+  <span class="keyword">if</span> Dc&gt;0
+    testData.continuous = yc(:,idx(nTrain+1:end));
+    trainData.continuous = yc(:,idx(1:nTrain));
+  <span class="keyword">else</span>
+    testData.continuous = [];
+    trainData.continuous = [];
+  <span class="keyword">end</span>
+  <span class="keyword">if</span> Dd&gt;0
+    testData.discrete = yd(:,idx(nTrain+1:end));
+    trainData.discrete = yd(:,idx(1:nTrain));
+  <span class="keyword">else</span>
+    testData.discrete = [];
+    trainData.discrete = [];
+  <span class="keyword">end</span>
+
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">Dm =
+    10
+Nm =
+    70
+funcName = 
+        inferFunc: @inferMixedDataFA_miss
+    maxParamsFunc: @maxParamsMixedDataFA
+Iter 1 Lower bound -18.409521, increase by NaN
+Iter 2 Lower bound -8.212192, increase by 10.197330
+Iter 3 Lower bound -6.928520, increase by 1.283672
+Iter 4 Lower bound -6.394206, increase by 0.534314
+Iter 5 Lower bound -6.147565, increase by 0.246641
+Iter 6 Lower bound -6.033628, increase by 0.113937
+Iter 7 Lower bound -5.980998, increase by 0.052631
+Iter 8 Lower bound -5.952946, increase by 0.028052
+Iter 9 Lower bound -5.935735, increase by 0.017211
+Iter 10 Lower bound -5.923496, increase by 0.012239
+Iter 11 Lower bound -5.913724, increase by 0.009772
+Iter 12 Lower bound -5.905300, increase by 0.008424
+Iter 13 Lower bound -5.897687, increase by 0.007613
+Iter 14 Lower bound -5.890602, increase by 0.007085
+Iter 15 Lower bound -5.883883, increase by 0.006719
+Iter 16 Lower bound -5.877433, increase by 0.006450
+Iter 17 Lower bound -5.871188, increase by 0.006245
+Iter 18 Lower bound -5.865107, increase by 0.006081
+Iter 19 Lower bound -5.859162, increase by 0.005946
+Iter 20 Lower bound -5.853331, increase by 0.005831
+Iter 21 Lower bound -5.847599, increase by 0.005731
+Iter 22 Lower bound -5.841957, increase by 0.005642
+Iter 23 Lower bound -5.836396, increase by 0.005561
+Iter 24 Lower bound -5.830909, increase by 0.005487
+Iter 25 Lower bound -5.825492, increase by 0.005417
+Iter 26 Lower bound -5.820141, increase by 0.005351
+Iter 27 Lower bound -5.814853, increase by 0.005288
+Iter 28 Lower bound -5.809626, increase by 0.005228
+Iter 29 Lower bound -5.804457, increase by 0.005169
+Iter 30 Lower bound -5.799344, increase by 0.005112
+Iter 31 Lower bound -5.794288, increase by 0.005057
+Iter 32 Lower bound -5.789285, increase by 0.005003
+Iter 33 Lower bound -5.784336, increase by 0.004949
+Iter 34 Lower bound -5.779439, increase by 0.004897
+Iter 35 Lower bound -5.774593, increase by 0.004845
+Iter 36 Lower bound -5.769799, increase by 0.004795
+Iter 37 Lower bound -5.765054, increase by 0.004744
+Iter 38 Lower bound -5.760359, increase by 0.004695
+Iter 39 Lower bound -5.755714, increase by 0.004646
+Iter 40 Lower bound -5.751116, increase by 0.004597
+Iter 41 Lower bound -5.746567, increase by 0.004549
+Iter 42 Lower bound -5.742065, increase by 0.004502
+Iter 43 Lower bound -5.737610, increase by 0.004455
+Iter 44 Lower bound -5.733202, increase by 0.004408
+Iter 45 Lower bound -5.728839, increase by 0.004362
+Iter 46 Lower bound -5.724523, increase by 0.004316
+Iter 47 Lower bound -5.720252, increase by 0.004271
+Iter 48 Lower bound -5.716026, increase by 0.004226
+Iter 49 Lower bound -5.711844, increase by 0.004182
+Iter 50 Lower bound -5.707707, increase by 0.004138
+Iter 51 Lower bound -5.703613, increase by 0.004094
+Iter 52 Lower bound -5.699562, increase by 0.004050
+Iter 53 Lower bound -5.695555, increase by 0.004008
+Iter 54 Lower bound -5.691590, increase by 0.003965
+Iter 55 Lower bound -5.687667, increase by 0.003923
+Iter 56 Lower bound -5.683786, increase by 0.003881
+Iter 57 Lower bound -5.679947, increase by 0.003839
+Iter 58 Lower bound -5.676148, increase by 0.003798
+Iter 59 Lower bound -5.672391, increase by 0.003758
+Iter 60 Lower bound -5.668674, increase by 0.003717
+Iter 61 Lower bound -5.664996, increase by 0.003677
+Iter 62 Lower bound -5.661359, increase by 0.003638
+Iter 63 Lower bound -5.657761, increase by 0.003598
+Iter 64 Lower bound -5.654201, increase by 0.003559
+Iter 65 Lower bound -5.650681, increase by 0.003521
+Iter 66 Lower bound -5.647198, increase by 0.003482
+Iter 67 Lower bound -5.643754, increase by 0.003444
+Iter 68 Lower bound -5.640347, increase by 0.003407
+Iter 69 Lower bound -5.636978, increase by 0.003370
+Iter 70 Lower bound -5.633645, increase by 0.003333
+Iter 71 Lower bound -5.630349, increase by 0.003296
+Iter 72 Lower bound -5.627089, increase by 0.003260
+Iter 73 Lower bound -5.623865, increase by 0.003224
+Iter 74 Lower bound -5.620677, increase by 0.003188
+Iter 75 Lower bound -5.617525, increase by 0.003153
+Iter 76 Lower bound -5.614407, increase by 0.003118
+Iter 77 Lower bound -5.611324, increase by 0.003083
+Iter 78 Lower bound -5.608275, increase by 0.003049
+Iter 79 Lower bound -5.605261, increase by 0.003014
+Iter 80 Lower bound -5.602280, increase by 0.002981
+Iter 81 Lower bound -5.599333, increase by 0.002947
+Iter 82 Lower bound -5.596419, increase by 0.002914
+Iter 83 Lower bound -5.593538, increase by 0.002881
+Iter 84 Lower bound -5.590690, increase by 0.002848
+Iter 85 Lower bound -5.587874, increase by 0.002816
+Iter 86 Lower bound -5.585090, increase by 0.002784
+Iter 87 Lower bound -5.582338, increase by 0.002752
+Iter 88 Lower bound -5.579618, increase by 0.002720
+Iter 89 Lower bound -5.576929, increase by 0.002689
+Iter 90 Lower bound -5.574270, increase by 0.002658
+Iter 91 Lower bound -5.571643, increase by 0.002627
+Iter 92 Lower bound -5.569046, increase by 0.002597
+Iter 93 Lower bound -5.566479, increase by 0.002567
+Iter 94 Lower bound -5.563942, increase by 0.002537
+Iter 95 Lower bound -5.561435, increase by 0.002507
+Iter 96 Lower bound -5.558957, increase by 0.002478
+Iter 97 Lower bound -5.556508, increase by 0.002449
+Iter 98 Lower bound -5.554089, increase by 0.002420
+Iter 99 Lower bound -5.551698, increase by 0.002391
+Iter 100 Lower bound -5.549335, increase by 0.002363
+mu =
+  Columns 1 through 4
+    1.3885    2.9480    1.8987    2.7372
+   -3.0577   -3.1614   -2.1277   -2.6098
+  Columns 5 through 8
+    2.6659    3.6904    3.1013    2.3360
+   -2.8929   -2.7376   -3.7489   -3.2208
+  Columns 9 through 12
+    1.8329    3.5204    3.4087    2.7515
+   -3.9668   -1.6033   -2.6702   -2.9163
+  Columns 13 through 16
+    1.1946    2.9379    1.4227    1.8145
+   -3.8028   -1.5213   -3.3678   -2.1938
+  Columns 17 through 20
+    2.2821    3.3209    3.2928    2.9471
+   -2.5547   -3.1526   -2.5707   -3.7284
+  Columns 21 through 24
+    2.6062    1.8992    1.5329    2.9229
+   -3.2077   -3.9946   -3.3541   -2.4296
+  Columns 25 through 28
+    3.0560    1.7794    3.5681    3.0621
+   -2.0644   -4.0108   -2.2169   -2.5482
+  Columns 29 through 30
+    1.6584    1.7760
+   -3.8498   -3.0418
+Sigma =
+    0.0889   -0.0339
+   -0.0339    0.0459
+loglik =
+  Columns 1 through 4
+ -249.7620 -249.7620 -249.7620 -249.7620
+  Columns 5 through 8
+ -249.7620 -249.7620 -249.7620 -249.7620
+  Columns 9 through 12
+ -249.7620 -249.7620 -249.7620 -249.7620
+  Columns 13 through 16
+ -249.7620 -249.7620 -249.7620 -249.7620
+  Columns 17 through 20
+ -249.7620 -249.7620 -249.7620 -249.7620
+  Columns 21 through 24
+ -249.7620 -249.7620 -249.7620 -249.7620
+  Columns 25 through 28
+ -249.7620 -249.7620 -249.7620 -249.7620
+  Columns 29 through 30
+ -249.7620 -249.7620
+predD(:,:,1) =
+  Columns 1 through 7
+     1     1     0     1     0     0     0
+     1     0     0     1     0     1     0
+     1     0     0     0     0     0     1
+     0     0     0     1     0     1     0
+     1     0     0     1     1     1     0
+     1     1     0     1     0     1     0
+     1     0     0     1     0     1     0
+     1     1     0     1     0     0     0
+     1     0     0     1     0     1     0
+     1     1     1     1     1     0     1
+     1     1     0     1     0     1     1
+     1     0     0     1     0     1     0
+     1     1     0     1     0     0     0
+     1     1     1     1     1     1     1
+     1     1     0     1     0     0     0
+     1     0     0     1     0     1     0
+     1     1     0     1     0     0     0
+     1     0     0     1     0     1     0
+     1     0     0     1     0     1     0
+     1     0     0     1     0     1     0
+     1     1     0     1     0     1     0
+     0     0     0     1     0     0     0
+     1     0     0     1     0     1     0
+     1     1     0     1     0     1     0
+     1     1     0     1     0     1     0
+     0     0     0     1     0     1     0
+     1     0     0     1     0     1     1
+     1     0     0     1     0     0     0
+     1     0     0     1     0     0     0
+     1     0     0     1     1     0     0
+  Columns 8 through 10
+     0     0     0
+     0     0     0
+     0     1     0
+     1     1     1
+     1     0     0
+     1     0     0
+     1     0     0
+     0     0     0
+     0     0     0
+     1     0     0
+     1     0     0
+     1     0     1
+     0     0     0
+     1     0     0
+     0     0     0
+     1     0     0
+     1     0     0
+     1     0     0
+     1     0     0
+     0     0     0
+     1     1     0
+     1     0     0
+     0     0     0
+     0     0     1
+     1     0     0
+     0     0     0
+     1     0     0
+     1     0     0
+     1     0     0
+     1     0     0
+predD(:,:,2) =
+  Columns 1 through 7
+     0     0     1     0     1     1     1
+     0     1     1     0     1     0     1
+     0     1     1     1     1     1     0
+     1     1     1     0     1     0     1
+     0     1     1     0     0     0     1
+     0     0     1     0     1     0     1
+     0     1     1     0     1     0     1
+     0     0     1     0     1     1     1
+     0     1     1     0     1     0     1
+     0     0     0     0     0     1     0
+     0     0     1     0     1     0     0
+     0     1     1     0     1     0     1
+     0     0     1     0     1     1     1
+     0     0     0     0     0     0     0
+     0     0     1     0     1     1     1
+     0     1     1     0     1     0     1
+     0     0     1     0     1     1     1
+     0     1     1     0     1     0     1
+     0     1     1     0     1     0     1
+     0     1     1     0     1     0     1
+     0     0     1     0     1     0     1
+     1     1     1     0     1     1     1
+     0     1     1     0     1     0     1
+     0     0     1     0     1     0     1
+     0     0     1     0     1     0     1
+     1     1     1     0     1     0     1
+     0     1     1     0     1     0     0
+     0     1     1     0     1     1     1
+     0     1     1     0     1     1     1
+     0     1     1     0     0     1     1
+  Columns 8 through 10
+     1     1     1
+     1     1     1
+     1     0     1
+     0     0     0
+     0     1     1
+     0     1     1
+     0     1     1
+     1     1     1
+     1     1     1
+     0     1     1
+     0     1     1
+     0     1     0
+     1     1     1
+     0     1     1
+     1     1     1
+     0     1     1
+     0     1     1
+     0     1     1
+     0     1     1
+     1     1     1
+     0     0     1
+     0     1     1
+     1     1     1
+     1     1     0
+     0     1     1
+     1     1     1
+     0     1     1
+     0     1     1
+     0     1     1
+     0     1     1
+predC =
+  Columns 1 through 4
+   -0.2539   -1.6533    1.1172   -0.1332
+    0.1023   -0.7584    2.4090   -0.2782
+   -0.0081   -0.4418    1.6792   -0.2381
+    0.2793   -0.4591    2.1352   -0.1247
+    0.0428   -0.8494    2.1215   -0.0827
+    0.4071   -0.0889    3.0096   -0.0075
+    0.0233   -1.1026    2.4570   -0.1058
+   -0.1278   -1.1367    2.0128   -0.1786
+   -0.3789   -2.0105    1.3509   -0.2028
+    0.5293    0.7544    2.9671   -0.0602
+    0.3506   -0.1197    2.6964   -0.0736
+    0.0413   -0.6830    2.1836   -0.2199
+   -0.6712   -2.3958    1.1145   -0.2564
+    0.5579    0.3184    2.2771   -0.1275
+   -0.3469   -1.6846    1.0399   -0.2307
+    0.0656   -0.7381    1.3026   -0.0929
+    0.1438   -0.5645    1.7398   -0.0851
+    0.1553   -0.5908    2.7576   -0.2575
+    0.1260   -0.0393    2.7048    0.0063
+   -0.1262   -1.1003    2.4232   -0.4134
+   -0.0186   -1.0084    2.0307   -0.0519
+   -0.4190   -2.0784    1.7026   -0.1697
+   -0.3049   -1.7677    1.0993   -0.2292
+    0.1033   -0.2686    2.4326    0.0488
+    0.4487    0.0563    2.4394   -0.2989
+   -0.3416   -2.1782    1.4187   -0.3777
+    0.5564    0.2962    2.8517   -0.0724
+    0.4302   -0.2521    2.5271    0.0513
+   -0.4109   -2.1631    1.4364   -0.2379
+   -0.1907   -1.3895    1.4016   -0.1876
+  Column 5
+   -3.4035
+   -3.2287
+   -2.2435
+   -2.7943
+   -2.9528
+   -2.5285
+   -4.0581
+   -3.4452
+   -4.5842
+   -1.1883
+   -2.6351
+   -3.0277
+   -4.2903
+   -1.1872
+   -3.9496
+   -2.1708
+   -2.7227
+   -3.0866
+   -2.3856
+   -4.0108
+   -3.5161
+   -4.5016
+   -3.7843
+   -2.3124
+   -1.7004
+   -4.5927
+   -1.9153
+   -2.4116
+   -4.2791
+   -3.3657
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+function catFAdemo()
+% Factor analysis with categorical and continuous data
+% We reproduce the demo from
+% http://www.cs.ubc.ca/~emtiyaz/software/mixedDataFA.html
+% This just check the code runs, it is not intrinsically interesting.
+
+clear all
+setSeed(16)
+% generate data - data is stored along columns not rows!
+[trainData,testData,simParams] = makeSimDataMixedDataFA(100);
+nClass = simParams.nClass;
+% introduce missing variables in train data
+missProb = 0.1;
+trainData.continuousTruth = trainData.continuous;
+trainData.discreteTruth = trainData.discrete;
+[D,N] = size(trainData.continuous);
+miss = rand(D,N)<missProb;
+trainData.continuous(miss) = NaN;
+[D,N] = size(trainData.discrete);
+miss = rand(D,N)<missProb;
+trainData.discrete(miss) = NaN;
+
+
+Dz = 2;
+[model, loglikTrace] = catFAfit(trainData.discrete',  trainData.continuous', Dz);
+
+[mu, Sigma, loglik] = catFAinferLatent(model, testData.discrete', testData.continuous')
+
+[predD, predC] = catFApredictMissing(model,testData.discrete', testData.continuous')
+
+  
+end
+
+function [trainData, testData, params] = makeSimDataMixedDataFA(N)
+% [TRAINDATA, TESTDATA, PARAMS] = makeSimDataMixedDataFA(N) makes simulated data
+% for mixedDataFA with N data points
+%
+% Written by Emtiyaz, CS, UBC
+% Modified on June 09, 2010
+
+  missProb = 0.3;
+  Dz = 2;
+  mean_ = [5 -5]';% -5 -5]';
+  covMat = eye(Dz);
+  z = repmat(mean_,1,N) + chol(covMat)*randn(Dz,N);
+  Dc = 5;
+  nClass = 2*ones(10,1);%[3 2 4];
+  noiseCovMat = 0.01*eye(Dc);%abs(diag(randn(Dc,1)));
+  Bc = rand(Dc,Dz);
+  
+  % generate data
+  yc = Bc*z + chol(noiseCovMat)*randn(Dc,N);
+  %yc = yc - repmat(mean(yc,2), 1, N);
+
+  Bm = [];
+  for c = 1:length(nClass)
+    Bmc = rand(nClass(c)-1,Dz);
+    p = [exp(Bmc*z); ones(1,N)];
+    pMult = p./repmat(sum(p,1),nClass(c),1);
+    yd(c,:) = sum(repmat([1:nClass(c)],N,1).*mnrnd(1,pMult'),2);
+    Bm = [Bm; Bmc];
+  end
+ 
+  % model parameters structure
+  params.nClass = nClass;
+  params.mean = mean_;
+  params.covMat = covMat;
+  params.noiseCovMat = noiseCovMat;
+  params.betaMult = Bm;
+  params.betaCont = Bc;
+
+  % split test and train data
+  ratio = .7;
+  [trainData, testData] = splitData(yc,yd,ratio);
+
+%{
+  % introduce missing variables in test data 
+  testData.continuousTruth = testData.continuous;
+  testData.discreteTruth = testData.discrete;
+  [D,N] = size(testData.continuous);
+  miss = rand(D,N)<missProb;
+  testData.continuous(miss) = NaN;
+  [D,N] = size(testData.discrete);
+  miss = rand(D,N)<missProb;
+  testData.discrete(miss) = NaN;
+  %}
+
+
+end
+
+function [trainData, testData, idx] = splitData(yc, yd, ratio) 
+% splits data into training and testing set
+% yc is the continuous data, yd is discrete data
+% ratio is the split ratio
+
+  [Dc,Nc] = size(yc);
+  [Dd,Nd] = size(yd);
+  N = max(Nc,Nd);
+  nTrain = ceil(ratio*N);
+  idx = randperm(N);
+  if Dc>0
+    testData.continuous = yc(:,idx(nTrain+1:end));
+    trainData.continuous = yc(:,idx(1:nTrain));
+  else
+    testData.continuous = [];
+    trainData.continuous = [];
+  end
+  if Dd>0
+    testData.discrete = yd(:,idx(nTrain+1:end));
+    trainData.discrete = yd(:,idx(1:nTrain));
+  else
+    testData.discrete = [];
+    trainData.discrete = [];
+  end
+ 
+end
+
+
+##### SOURCE END #####
+--></body></html>

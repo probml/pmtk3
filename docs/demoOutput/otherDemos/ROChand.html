@@ -1,0 +1,176 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>ROC curves for two hypothetical classification systems</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="ROChand.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>ROC curves for two hypothetical classification systems</h1><!--introduction--><p>A is better than B. Plots true positive rate, (tpr) vs false positive rate, (fpr).</p><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+domain = 0:0.01:1;
+fA = @(x)x.^(1/3);
+fB = @(x)x.^(2/3);
+linewidth = {<span class="string">'LineWidth'</span>, 3};
+hold <span class="string">all</span>;
+
+plot(domain, fA(domain), <span class="string">'-r'</span>, linewidth{:});
+plot(domain, fB(domain), <span class="string">'-b'</span>, linewidth{:});
+shade(fB, 0, 0, 1, <span class="string">'b'</span>, 0.01);
+plot([0;1], [1;0], <span class="string">'-k'</span>, linewidth{:});
+
+intersectA = 0.3177; <span class="comment">% found using double(solve('(x^(1/3))+x-1','x'))</span>
+intersectB = 0.4302; <span class="comment">% found using double(solve('(x^(2/3))+x-1','x'))</span>
+plot(intersectA, fA(intersectA), <span class="string">'.r'</span>, <span class="string">'MarkerSize'</span>, 40);
+plot(intersectB, fB(intersectB), <span class="string">'.b'</span>, <span class="string">'MarkerSize'</span>, 40);
+
+axis([0, 1, 0, 1]);
+set(gca, <span class="string">'XTick'</span>, [0, 1], <span class="string">'YTick'</span>, [0, 1], <span class="string">'FontSize'</span>, 20);
+xlabel(<span class="string">'fpr'</span>, <span class="string">'fontsize'</span>, 50);
+ylabel(<span class="string">'tpr'</span>, <span class="string">'fontsize'</span>, 50);
+box <span class="string">on</span>;
+
+<span class="comment">%A</span>
+annotation(gcf, <span class="string">'textbox'</span>, [0.3822 0.74 0.06254 0.08795], <span class="keyword">...</span>
+    <span class="string">'String'</span>       , {<span class="string">'A'</span>}   , <span class="keyword">...</span>
+    <span class="string">'FontSize'</span>     , 50      , <span class="keyword">...</span>
+    <span class="string">'FitBoxToText'</span> , <span class="string">'off'</span>   , <span class="keyword">...</span>
+    <span class="string">'LineStyle'</span>    , <span class="string">'none'</span>  , <span class="keyword">...</span>
+    <span class="string">'Color'</span>        , [1 0 0] );
+
+<span class="comment">% B</span>
+annotation(gcf, <span class="string">'textbox'</span>, [0.4837 0.66 0.06254 0.08795], <span class="keyword">...</span>
+    <span class="string">'String'</span>       , {<span class="string">'B'</span>}   , <span class="keyword">...</span>
+    <span class="string">'FontSize'</span>     , 50      , <span class="keyword">...</span>
+    <span class="string">'FitBoxToText'</span> , <span class="string">'off'</span>   , <span class="keyword">...</span>
+    <span class="string">'LineStyle'</span>    , <span class="string">'none'</span>  , <span class="keyword">...</span>
+    <span class="string">'Color'</span>        , [0 0 1] );
+
+<span class="comment">% AUC</span>
+<span class="comment">%{
+</span><span class="comment">annotation(gcf, 'textbox', [0.45 0.25 0.104 0.1205], ...
+</span><span class="comment">    'String'       , {'AUC'} , ...
+</span><span class="comment">    'FontSize'     , 24      , ...
+</span><span class="comment">    'FitBoxToText' , 'off'   , ...
+</span><span class="comment">    'LineStyle'    , 'none'  , ...
+</span><span class="comment">    'Color'        , [0 0 1] );
+</span><span class="comment">%}
+</span>printPmtkFigure <span class="string">ROChand</span>;
+</pre><img vspace="5" hspace="5" src="ROChand_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% ROC curves for two hypothetical classification systems
+% A is better than B. Plots true positive rate, (tpr) vs false positive
+% rate, (fpr).
+%%
+
+% This file is from pmtk3.googlecode.com
+
+domain = 0:0.01:1;
+fA = @(x)x.^(1/3);
+fB = @(x)x.^(2/3);
+linewidth = {'LineWidth', 3};
+hold all;
+
+plot(domain, fA(domain), '-r', linewidth{:});
+plot(domain, fB(domain), '-b', linewidth{:});
+shade(fB, 0, 0, 1, 'b', 0.01);
+plot([0;1], [1;0], '-k', linewidth{:});
+
+intersectA = 0.3177; % found using double(solve('(x^(1/3))+x-1','x'))
+intersectB = 0.4302; % found using double(solve('(x^(2/3))+x-1','x'))
+plot(intersectA, fA(intersectA), '.r', 'MarkerSize', 40);
+plot(intersectB, fB(intersectB), '.b', 'MarkerSize', 40);
+
+axis([0, 1, 0, 1]);
+set(gca, 'XTick', [0, 1], 'YTick', [0, 1], 'FontSize', 20); 
+xlabel('fpr', 'fontsize', 50);
+ylabel('tpr', 'fontsize', 50);
+box on;
+
+%A
+annotation(gcf, 'textbox', [0.3822 0.74 0.06254 0.08795], ...
+    'String'       , {'A'}   , ...
+    'FontSize'     , 50      , ...
+    'FitBoxToText' , 'off'   , ...
+    'LineStyle'    , 'none'  , ...
+    'Color'        , [1 0 0] );
+
+% B
+annotation(gcf, 'textbox', [0.4837 0.66 0.06254 0.08795], ...
+    'String'       , {'B'}   , ...
+    'FontSize'     , 50      , ...
+    'FitBoxToText' , 'off'   , ...
+    'LineStyle'    , 'none'  , ...
+    'Color'        , [0 0 1] );
+
+% AUC
+%{
+annotation(gcf, 'textbox', [0.45 0.25 0.104 0.1205], ...
+    'String'       , {'AUC'} , ...
+    'FontSize'     , 24      , ...
+    'FitBoxToText' , 'off'   , ...
+    'LineStyle'    , 'none'  , ...
+    'Color'        , [0 0 1] );
+%}
+printPmtkFigure ROChand;
+
+
+##### SOURCE END #####
+--></body></html>

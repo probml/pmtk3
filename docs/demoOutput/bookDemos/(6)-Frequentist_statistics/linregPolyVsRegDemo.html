@@ -1,0 +1,490 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Ridge regression: visualize effect of changing lambda and selecting it with CV and EB</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="linregPolyVsRegDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Ridge regression: visualize effect of changing lambda and selecting it with CV and EB</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Fit model by MLE and plot</a></li><li><a href="#3">compute train/test error for each  lambda using ridge</a></li><li><a href="#4">print fitted function for certain chosen lambdas</a></li><li><a href="#5">Cross validation</a></li><li><a href="#6">Bayes</a></li><li><a href="#7">Now optimize alpha and beta using empirical Bayes</a></li><li><a href="#8">Now infer alpha and beta using VB</a></li></ul></div><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="comment">%ns = [21 50];</span>
+<span class="comment">%for n=ns(:)'</span>
+  n = 21;
+setSeed(0);
+[xtrain, ytrain, xtest, ytestNoisefree, ytest, sigma2] =<span class="keyword">...</span>
+  polyDataMake(<span class="string">'sampling'</span>,<span class="string">'thibaux'</span>,<span class="string">'n'</span>,n);
+
+deg = 14;
+
+addOnes = false;
+<span class="keyword">if</span> ~addOnes
+  <span class="comment">% To avoid the need to add 1s to X, let us center the response</span>
+  <span class="comment">%[y, ybar] = centerCols(y);</span>
+  <span class="comment">%w   = fitFn(X, y, lambda);</span>
+  <span class="comment">%model.w0  = ybar - mean(X)*w;</span>
+  ytrain = centerCols(ytrain);
+  ytest = centerCols(ytest);
+<span class="keyword">end</span>
+
+<span class="keyword">if</span> 1
+  <span class="comment">% Because the dataset is so small, we proprocess it outside the</span>
+  <span class="comment">% CV loop, so that all folds get the same treatment,</span>
+  pp = preprocessorCreate(<span class="string">'poly'</span>, deg, <span class="string">'rescaleX'</span>, true, <span class="string">'standardizeX'</span>, false, <span class="string">'addOnes'</span>, false);
+  [pp, Xtrain] = preprocessorApplyToTrain(pp, xtrain);
+  [Xtest] = preprocessorApplyToTest(pp, xtest);
+  pp = preprocessorCreate( <span class="string">'standardizeX'</span>, false, <span class="string">'addOnes'</span>, addOnes);
+<span class="keyword">else</span>
+  Xtrain = xtrain; Xtest = xtest;
+  pp = preprocessorCreate(<span class="string">'rescaleX'</span>, true, <span class="string">'poly'</span>, deg, <span class="string">'addOnes'</span>, addOnes);
+<span class="keyword">end</span>
+</pre><h2>Fit model by MLE and plot<a name="2"></a></h2><pre class="codeinput">model = linregFit(Xtrain, ytrain, <span class="string">'preproc'</span>, pp);
+[ypredTest] = linregPredict(model, Xtest);
+figure;
+scatter(xtrain, ytrain,<span class="string">'b'</span>,<span class="string">'filled'</span>); hold <span class="string">on</span>;
+plot(xtest, ypredTest, <span class="string">'k'</span>, <span class="string">'linewidth'</span>, 3);
+</pre><img vspace="5" hspace="5" src="linregPolyVsRegDemo_01.png" alt=""> <h2>compute train/test error for each  lambda using ridge<a name="3"></a></h2><pre class="codeinput">lambdas = logspace(-10,1.3,10);
+NL = length(lambdas);
+printNdx = round(linspace(2, NL-1, 3));
+testMse = zeros(1,NL); trainMse = zeros(1,NL);
+<span class="keyword">for</span> k=1:NL
+  lambda = lambdas(k);
+  [model] = linregFit(Xtrain, ytrain, <span class="string">'lambda'</span>, lambda, <span class="string">'preproc'</span>, pp);
+  [ypredTest, s2] = linregPredict(model, Xtest);
+  ypredTrain = linregPredict(model, Xtrain);
+  testMse(k) = mean((ypredTest - ytest).^2);
+  trainMse(k) = mean((ypredTrain - ytrain).^2);
+<span class="keyword">end</span>
+
+
+hlam=figure; hold <span class="string">on</span>
+ndx =  log(lambdas); <span class="comment">% 1:length(lambdas);</span>
+plot(ndx, trainMse, <span class="string">'bs:'</span>, <span class="string">'linewidth'</span>, 2, <span class="string">'markersize'</span>, 12);
+plot(ndx, testMse, <span class="string">'rx-'</span>, <span class="string">'linewidth'</span>, 2, <span class="string">'markersize'</span>, 12);
+legend(<span class="string">'train mse'</span>, <span class="string">'test mse'</span>, <span class="string">'location'</span>, <span class="string">'northwest'</span>)
+xlabel(<span class="string">'log lambda'</span>)
+title(<span class="string">'mean squared error'</span>)
+<span class="comment">% Indicate which lambda values were chosen for plotting</span>
+<span class="comment">%for i=printNdx(:)',  plot(ndx(i), 0, '*', 'markersize', 12, 'linewidth', 2); end</span>
+printPmtkFigure(sprintf(<span class="string">'linregPolyVsRegTestErrN%d'</span>, n))
+</pre><img vspace="5" hspace="5" src="linregPolyVsRegDemo_02.png" alt=""> <h2>print fitted function for certain chosen lambdas<a name="4"></a></h2><pre class="codeinput"><span class="keyword">for</span> k=printNdx
+  lambda = lambdas(k);
+  [model] = linregFit(Xtrain, ytrain, <span class="string">'lambda'</span>, lambda, <span class="string">'preproc'</span>, pp);
+  [ypredTest, s2] = linregPredict(model, Xtest);
+  ypredTrain = linregPredict(model, Xtrain);
+  sig = sqrt(s2);
+  figure;
+  scatter(xtrain, ytrain,<span class="string">'b'</span>,<span class="string">'filled'</span>);
+  hold <span class="string">on</span>;
+  plot(xtest, ypredTest, <span class="string">'k'</span>, <span class="string">'linewidth'</span>, 3);
+  plot(xtest, ypredTest + sig, <span class="string">'b:'</span>);
+  plot(xtest, ypredTest - sig, <span class="string">'b:'</span>);
+  title(sprintf(<span class="string">'ln lambda %5.3f'</span>, log(lambda)))
+  printPmtkFigure(sprintf(<span class="string">'linregPolyVsRegFitK%dN%d'</span>, k, n))
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="linregPolyVsRegDemo_03.png" alt=""> <img vspace="5" hspace="5" src="linregPolyVsRegDemo_04.png" alt=""> <img vspace="5" hspace="5" src="linregPolyVsRegDemo_05.png" alt=""> <h2>Cross validation<a name="5"></a></h2><pre class="codeinput"><span class="keyword">for</span> k=1:NL
+  lambda = lambdas(k);
+  fitFn = @(Xtr,ytr) linregFit(Xtr, ytr, <span class="string">'lambda'</span>, lambda, <span class="string">'preproc'</span>, pp);
+  predFn = @(mod, Xte) linregPredict(mod, Xte);
+  lossFn = @(yhat, yte)  mean((yhat - yte).^2);
+  N = size(Xtrain, 1);
+  <span class="comment">%nfolds = N; % LOOCV</span>
+  nfolds = 5;
+  <span class="comment">% since the data is sorted left to right, we must randomize the order</span>
+  randomizeOrder = false;
+  [mu(k), se(k)] = cvEstimate(fitFn, predFn, lossFn, Xtrain, ytrain, nfolds, <span class="keyword">...</span>
+    <span class="string">'randomizeOrder'</span>, randomizeOrder);
+<span class="keyword">end</span>
+
+figure; hold <span class="string">on</span>
+ndx =  log(lambdas); <span class="comment">% 1:length(lambdas);</span>
+xlabel(<span class="string">'log lambda'</span>)
+ylabel(<span class="string">'mse'</span>)
+errorbar(ndx, mu, se, <span class="string">'ko-'</span>,<span class="string">'linewidth'</span>, 2, <span class="string">'markersize'</span>, 12 );
+title(sprintf(<span class="string">'%d-fold cross validation, ntrain = %d'</span>, nfolds, N))
+<span class="keyword">if</span> n &lt;= 21
+  <span class="comment">% When N is small, CV massively over-estimates error for small</span>
+  <span class="comment">% lambda, so we have to use log scale</span>
+  set(gca,<span class="string">'yscale'</span>,<span class="string">'log'</span>)
+<span class="keyword">else</span>
+  yy = get(gca,<span class="string">'ylim'</span>);
+  set(gca,<span class="string">'ylim'</span>,[0 min(yy(2), 20)])
+  grid <span class="string">on</span>
+<span class="keyword">end</span>
+
+<span class="comment">% draw vertical line at best value</span>
+dof = 1./(eps+lambdas);
+<span class="keyword">if</span> n &lt;= 21
+  idx_opt  = argmin(mu);
+<span class="keyword">else</span>
+  idx_opt = oneStdErrorRule(mu, se, dof);
+<span class="keyword">end</span>
+verticalLine(ndx(idx_opt), <span class="string">'color'</span>,<span class="string">'b'</span>, <span class="string">'linewidth'</span>,2);
+printPmtkFigure(sprintf(<span class="string">'linregPolyVsRegCvN%d'</span>, n))
+
+<span class="comment">% do it again using fitCV</span>
+fitFn2 = @(Xtr,ytr,lam) linregFit(Xtr, ytr, <span class="string">'lambda'</span>, lam, <span class="string">'preproc'</span>, pp);
+[model2, bestParam2, mu2, se2] = <span class="keyword">...</span>
+    fitCv(lambdas, fitFn2, predFn, lossFn, Xtrain, ytrain,  nfolds,<span class="keyword">...</span>
+    <span class="string">'randomizeOrder'</span>, randomizeOrder);
+  <span class="keyword">if</span> ~randomizeOrder
+    assert(approxeq(mu, mu2))
+    assert(approxeq(se, se2))
+  <span class="keyword">end</span>
+
+<span class="comment">% do it again using path algo</span>
+<span class="keyword">if</span> glmnetInstalled()
+  [bestModel, path] = linregFitPathCv(Xtrain, ytrain, <span class="string">'regtype'</span>, <span class="string">'l2'</span>,  <span class="string">'preproc'</span>, pp,<span class="keyword">...</span>
+    <span class="string">'nfolds'</span>, nfolds);
+  figure;
+  <span class="comment">%plot(path.errMean)</span>
+  plot(path.cvErr)
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="linregPolyVsRegDemo_06.png" alt=""> <h2>Bayes<a name="6"></a></h2><p>We  compute log evidence for each value of alpha to see how it compares to test error To simplify things, we use the known noise variance</p><pre class="codeinput">beta = 1/sigma2;
+alphas = beta * lambdas;
+
+<span class="keyword">for</span> k=1:NL
+  lambda = lambdas(k);
+  [model, logev(k)] = linregFitBayes(Xtrain, ytrain, <span class="string">'preproc'</span>, pp, <span class="keyword">...</span>
+    <span class="string">'prior'</span>, <span class="string">'gauss'</span>, <span class="string">'alpha'</span>, alphas(k), <span class="string">'beta'</span>, beta);
+  ypredTest = linregPredictBayes(model, Xtest);
+  ypredTrain = linregPredictBayes(model, Xtrain);
+  testMseB(k) = mean((ypredTest - ytest).^2);
+  trainMseB(k) = mean((ypredTrain - ytrain).^2);
+<span class="keyword">end</span>
+<span class="comment">% Sanity check - Bayes with fixed sigma should be same as ridge</span>
+assert(approxeq(testMseB, testMse))
+assert(approxeq(trainMseB, trainMse))
+
+<span class="comment">% Error vs alpha - should be same as error vs lambda</span>
+figure; hold <span class="string">on</span>
+ndx =  log(alphas);
+plot(ndx, trainMseB, <span class="string">'bs:'</span>, <span class="string">'linewidth'</span>, 2, <span class="string">'markersize'</span>, 12);
+plot(ndx, testMseB, <span class="string">'rx-'</span>, <span class="string">'linewidth'</span>, 2, <span class="string">'markersize'</span>, 12);
+legend(<span class="string">'train mse'</span>, <span class="string">'test mse'</span>, <span class="string">'location'</span>, <span class="string">'northwest'</span>)
+xlabel(<span class="string">'log alpha'</span>)
+title(<span class="string">'mean squared error'</span>)
+
+
+<span class="comment">% Log evidence vs alpha</span>
+figLogev = figure;
+plot(log(alphas), logev, <span class="string">'ko-'</span>, <span class="string">'linewidth'</span>, 2, <span class="string">'markersize'</span>, 12);
+xlabel(<span class="string">'log alpha'</span>)
+title(<span class="string">'log evidence'</span>)
+
+<span class="comment">% Plot p(m|D) vs alpha</span>
+figure;
+prob = exp(normalizeLogspace(logev));
+bar(log(alphas), prob);
+xlabel(<span class="string">'log alpha'</span>)
+title(<span class="string">'p(alpha|data)'</span>)
+</pre><img vspace="5" hspace="5" src="linregPolyVsRegDemo_07.png" alt=""> <img vspace="5" hspace="5" src="linregPolyVsRegDemo_08.png" alt=""> <img vspace="5" hspace="5" src="linregPolyVsRegDemo_09.png" alt=""> <h2>Now optimize alpha and beta using empirical Bayes<a name="7"></a></h2><pre class="codeinput">[modelEB, logevEB] = linregFitBayes(Xtrain, ytrain, <span class="string">'preproc'</span>, pp, <span class="string">'prior'</span>, <span class="string">'eb'</span>);
+alphaEB = modelEB.netlab.alpha;
+figure(figLogev);
+verticalLine(log(alphaEB), <span class="string">'linewidth'</span>, 3, <span class="string">'color'</span>, <span class="string">'r'</span>);
+printPmtkFigure(sprintf(<span class="string">'linregPolyVsRegTestEbN%d'</span>, n))
+</pre><img vspace="5" hspace="5" src="linregPolyVsRegDemo_10.png" alt=""> <h2>Now infer alpha and beta using VB<a name="8"></a></h2><pre class="codeinput">[modelVB, logevVB] = linregFitBayes(Xtrain, ytrain, <span class="string">'preproc'</span>, pp, <span class="string">'prior'</span>, <span class="string">'vb'</span>);
+alphaVB = modelVB.expectAlpha;
+figure(figLogev);
+verticalLine(log(alphaVB), <span class="string">'linewidth'</span>, 3, <span class="string">'color'</span>, <span class="string">'b'</span>);
+
+
+<span class="comment">% Make figure containing both EB and CV</span>
+<span class="comment">% We need to rescale the vertical axes</span>
+figLogevCv = figure;
+logevErr = -logev; logevErr = logevErr/max(logevErr);
+plot(log(alphas), logevErr, <span class="string">'ko-'</span>, <span class="string">'linewidth'</span>, 2, <span class="string">'markersize'</span>, 12);
+hold <span class="string">on</span>
+cvErr = log(mu); cvErr = cvErr/max(cvErr);
+plot(log(alphas), cvErr, <span class="string">'bx:'</span>,<span class="string">'linewidth'</span>, 2, <span class="string">'markersize'</span>, 12 );
+xlabel(<span class="string">'log lambda'</span>)
+legend(<span class="string">'negative log marg. likelihood'</span>, <span class="string">'CV estimate of MSE'</span>)
+set(gca, <span class="string">'xlim'</span>, [-20 5])
+printPmtkFigure(sprintf(<span class="string">'linregPolyVsRegCvEvidence'</span>))
+
+<span class="comment">%end % for n</span>
+</pre><img vspace="5" hspace="5" src="linregPolyVsRegDemo_11.png" alt=""> <img vspace="5" hspace="5" src="linregPolyVsRegDemo_12.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Ridge regression: visualize effect of changing lambda and selecting it with CV and EB
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+%ns = [21 50];
+%for n=ns(:)'
+  n = 21;
+setSeed(0);
+[xtrain, ytrain, xtest, ytestNoisefree, ytest, sigma2] =...
+  polyDataMake('sampling','thibaux','n',n);
+
+deg = 14;
+
+addOnes = false;
+if ~addOnes
+  % To avoid the need to add 1s to X, let us center the response
+  %[y, ybar] = centerCols(y);
+  %w   = fitFn(X, y, lambda);
+  %model.w0  = ybar - mean(X)*w;
+  ytrain = centerCols(ytrain);
+  ytest = centerCols(ytest);
+end
+
+if 1
+  % Because the dataset is so small, we proprocess it outside the
+  % CV loop, so that all folds get the same treatment,
+  pp = preprocessorCreate('poly', deg, 'rescaleX', true, 'standardizeX', false, 'addOnes', false);
+  [pp, Xtrain] = preprocessorApplyToTrain(pp, xtrain);
+  [Xtest] = preprocessorApplyToTest(pp, xtest);
+  pp = preprocessorCreate( 'standardizeX', false, 'addOnes', addOnes);
+else
+  Xtrain = xtrain; Xtest = xtest;
+  pp = preprocessorCreate('rescaleX', true, 'poly', deg, 'addOnes', addOnes);
+end
+
+
+%% Fit model by MLE and plot
+model = linregFit(Xtrain, ytrain, 'preproc', pp);
+[ypredTest] = linregPredict(model, Xtest);
+figure;
+scatter(xtrain, ytrain,'b','filled'); hold on;
+plot(xtest, ypredTest, 'k', 'linewidth', 3);
+
+
+%% compute train/test error for each  lambda using ridge
+lambdas = logspace(-10,1.3,10);
+NL = length(lambdas);
+printNdx = round(linspace(2, NL-1, 3));
+testMse = zeros(1,NL); trainMse = zeros(1,NL);
+for k=1:NL
+  lambda = lambdas(k);
+  [model] = linregFit(Xtrain, ytrain, 'lambda', lambda, 'preproc', pp);
+  [ypredTest, s2] = linregPredict(model, Xtest);
+  ypredTrain = linregPredict(model, Xtrain);
+  testMse(k) = mean((ypredTest - ytest).^2);
+  trainMse(k) = mean((ypredTrain - ytrain).^2);
+end
+
+
+hlam=figure; hold on
+ndx =  log(lambdas); % 1:length(lambdas);
+plot(ndx, trainMse, 'bs:', 'linewidth', 2, 'markersize', 12);
+plot(ndx, testMse, 'rx-', 'linewidth', 2, 'markersize', 12);
+legend('train mse', 'test mse', 'location', 'northwest')
+xlabel('log lambda')
+title('mean squared error')
+% Indicate which lambda values were chosen for plotting
+%for i=printNdx(:)',  plot(ndx(i), 0, '*', 'markersize', 12, 'linewidth', 2); end
+printPmtkFigure(sprintf('linregPolyVsRegTestErrN%d', n))
+
+%% print fitted function for certain chosen lambdas
+for k=printNdx
+  lambda = lambdas(k);
+  [model] = linregFit(Xtrain, ytrain, 'lambda', lambda, 'preproc', pp);
+  [ypredTest, s2] = linregPredict(model, Xtest);
+  ypredTrain = linregPredict(model, Xtrain);
+  sig = sqrt(s2);
+  figure;
+  scatter(xtrain, ytrain,'b','filled');
+  hold on;
+  plot(xtest, ypredTest, 'k', 'linewidth', 3);
+  plot(xtest, ypredTest + sig, 'b:');
+  plot(xtest, ypredTest - sig, 'b:');
+  title(sprintf('ln lambda %5.3f', log(lambda)))
+  printPmtkFigure(sprintf('linregPolyVsRegFitK%dN%d', k, n))
+end
+
+
+%% Cross validation
+for k=1:NL
+  lambda = lambdas(k);
+  fitFn = @(Xtr,ytr) linregFit(Xtr, ytr, 'lambda', lambda, 'preproc', pp);
+  predFn = @(mod, Xte) linregPredict(mod, Xte);
+  lossFn = @(yhat, yte)  mean((yhat - yte).^2);
+  N = size(Xtrain, 1);
+  %nfolds = N; % LOOCV
+  nfolds = 5;
+  % since the data is sorted left to right, we must randomize the order
+  randomizeOrder = false;
+  [mu(k), se(k)] = cvEstimate(fitFn, predFn, lossFn, Xtrain, ytrain, nfolds, ...
+    'randomizeOrder', randomizeOrder);
+end
+
+figure; hold on
+ndx =  log(lambdas); % 1:length(lambdas);
+xlabel('log lambda')
+ylabel('mse')
+errorbar(ndx, mu, se, 'ko-','linewidth', 2, 'markersize', 12 );
+title(sprintf('%d-fold cross validation, ntrain = %d', nfolds, N))
+if n <= 21
+  % When N is small, CV massively over-estimates error for small 
+  % lambda, so we have to use log scale
+  set(gca,'yscale','log')
+else
+  yy = get(gca,'ylim');
+  set(gca,'ylim',[0 min(yy(2), 20)])
+  grid on
+end
+
+% draw vertical line at best value
+dof = 1./(eps+lambdas);
+if n <= 21
+  idx_opt  = argmin(mu);
+else
+  idx_opt = oneStdErrorRule(mu, se, dof);
+end
+verticalLine(ndx(idx_opt), 'color','b', 'linewidth',2);
+printPmtkFigure(sprintf('linregPolyVsRegCvN%d', n))
+
+% do it again using fitCV
+fitFn2 = @(Xtr,ytr,lam) linregFit(Xtr, ytr, 'lambda', lam, 'preproc', pp);
+[model2, bestParam2, mu2, se2] = ...
+    fitCv(lambdas, fitFn2, predFn, lossFn, Xtrain, ytrain,  nfolds,...
+    'randomizeOrder', randomizeOrder);
+  if ~randomizeOrder
+    assert(approxeq(mu, mu2))
+    assert(approxeq(se, se2))
+  end
+  
+% do it again using path algo
+if glmnetInstalled()
+  [bestModel, path] = linregFitPathCv(Xtrain, ytrain, 'regtype', 'l2',  'preproc', pp,...
+    'nfolds', nfolds);
+  figure;
+  %plot(path.errMean)
+  plot(path.cvErr)
+end
+
+
+%% Bayes
+% We  compute log evidence for each value of alpha
+% to see how it compares to test error
+% To simplify things, we use the known noise variance
+beta = 1/sigma2;
+alphas = beta * lambdas;
+
+for k=1:NL
+  lambda = lambdas(k);
+  [model, logev(k)] = linregFitBayes(Xtrain, ytrain, 'preproc', pp, ...
+    'prior', 'gauss', 'alpha', alphas(k), 'beta', beta);
+  ypredTest = linregPredictBayes(model, Xtest);
+  ypredTrain = linregPredictBayes(model, Xtrain);
+  testMseB(k) = mean((ypredTest - ytest).^2);
+  trainMseB(k) = mean((ypredTrain - ytrain).^2);
+end
+% Sanity check - Bayes with fixed sigma should be same as ridge
+assert(approxeq(testMseB, testMse))
+assert(approxeq(trainMseB, trainMse))
+
+% Error vs alpha - should be same as error vs lambda
+figure; hold on
+ndx =  log(alphas);
+plot(ndx, trainMseB, 'bs:', 'linewidth', 2, 'markersize', 12);
+plot(ndx, testMseB, 'rx-', 'linewidth', 2, 'markersize', 12);
+legend('train mse', 'test mse', 'location', 'northwest')
+xlabel('log alpha')
+title('mean squared error')
+
+
+% Log evidence vs alpha
+figLogev = figure;
+plot(log(alphas), logev, 'ko-', 'linewidth', 2, 'markersize', 12);
+xlabel('log alpha')
+title('log evidence')
+
+% Plot p(m|D) vs alpha
+figure;
+prob = exp(normalizeLogspace(logev));
+bar(log(alphas), prob);
+xlabel('log alpha')
+title('p(alpha|data)')
+
+%% Now optimize alpha and beta using empirical Bayes
+[modelEB, logevEB] = linregFitBayes(Xtrain, ytrain, 'preproc', pp, 'prior', 'eb');
+alphaEB = modelEB.netlab.alpha;
+figure(figLogev);
+verticalLine(log(alphaEB), 'linewidth', 3, 'color', 'r');
+printPmtkFigure(sprintf('linregPolyVsRegTestEbN%d', n))
+
+
+%% Now infer alpha and beta using VB
+[modelVB, logevVB] = linregFitBayes(Xtrain, ytrain, 'preproc', pp, 'prior', 'vb');
+alphaVB = modelVB.expectAlpha;
+figure(figLogev);
+verticalLine(log(alphaVB), 'linewidth', 3, 'color', 'b');
+
+
+% Make figure containing both EB and CV
+% We need to rescale the vertical axes
+figLogevCv = figure;
+logevErr = -logev; logevErr = logevErr/max(logevErr);
+plot(log(alphas), logevErr, 'ko-', 'linewidth', 2, 'markersize', 12);
+hold on
+cvErr = log(mu); cvErr = cvErr/max(cvErr); 
+plot(log(alphas), cvErr, 'bx:','linewidth', 2, 'markersize', 12 );
+xlabel('log lambda')
+legend('negative log marg. likelihood', 'CV estimate of MSE')
+set(gca, 'xlim', [-20 5])
+printPmtkFigure(sprintf('linregPolyVsRegCvEvidence'))
+
+%end % for n
+
+##### SOURCE END #####
+--></body></html>

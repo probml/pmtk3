@@ -1,0 +1,252 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Yeast Clustergram Demo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="clusterYeast.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Yeast Clustergram Demo</h1><pre class="codeinput"><span class="comment">%PMTKneedsStatsToolbox pdist, linkage, dendrogram, cluster</span>
+<span class="comment">%PMTKneedsBioToolbox clustergram, redgreencmap</span>
+</pre><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+
+requireStatsToolbox
+requireBioinfoToolbox
+loadData(<span class="string">'yeastData310'</span>) <span class="comment">% 'X', 'genes', 'times');</span>
+
+
+corrDist = pdist(X, <span class="string">'corr'</span>);
+clusterTree = linkage(corrDist, <span class="string">'average'</span>);
+clusters = cluster(clusterTree, <span class="string">'maxclust'</span>, 16);
+figure();
+<span class="keyword">for</span> c = 1:16
+    subplot(4,4,c);
+    plot(times,X((clusters == c),:)');
+    axis <span class="string">tight</span>
+<span class="keyword">end</span>
+suptitle(<span class="string">'Hierarchical Clustering of Profiles'</span>)
+printPmtkFigure <span class="string">clusterYeastHier16</span>;
+
+[ctrs, cidx] = kmeansFit(X, 16);
+ctrs = ctrs';
+
+<span class="comment">%[cidx, ctrs] = kmeans(X, 16,...</span>
+<span class="comment">%                      'dist','corr',...</span>
+<span class="comment">%                      'rep',5,...</span>
+<span class="comment">%                      'disp','final');</span>
+figure();
+<span class="keyword">for</span> c = 1:16
+    subplot(4,4,c);
+    plot(times,X((cidx == c),:)');
+    axis <span class="string">tight</span>
+<span class="keyword">end</span>
+suptitle(<span class="string">'K-Means Clustering of Profiles'</span>);
+
+printPmtkFigure <span class="string">clusterYeastKmeans16</span>
+
+figure();
+<span class="keyword">for</span> c = 1:16
+    subplot(4,4,c);
+    plot(times,ctrs(c,:)');
+    axis <span class="string">tight</span>
+    axis <span class="string">off</span>    <span class="comment">% turn off the axis</span>
+<span class="keyword">end</span>
+suptitle(<span class="string">'K-Means centroids'</span>)
+
+printPmtkFigure <span class="string">clusterYeastKmeansCentroids16</span>
+
+figure();
+imagesc(X);
+colormap(redgreencmap)
+xlabel(<span class="string">'time'</span>)
+set(gca,<span class="string">'xticklabel'</span>,times)
+ylabel(<span class="string">'genes'</span>)
+title(<span class="string">'yeast data (filtered)'</span>)
+colorbar
+printPmtkFigure <span class="string">clusterYeast310</span>
+
+
+clustergram(X(:,2:end),<span class="string">'RowLabels'</span>,genes, <span class="string">'ColumnLabels'</span>,times(2:end))
+title(<span class="string">'hierarchical clustering'</span>)
+
+printPmtkFigure <span class="string">clusterYeastRowPerm</span>
+
+figure();
+dendrogram(linkage(corrDist, <span class="string">'average'</span>));
+title(<span class="string">'average link'</span>)
+set(gca,<span class="string">'xticklabel'</span>,<span class="string">''</span>)
+
+printPmtkFigure <span class="string">clusterYeastAvgLink</span>
+
+
+figure();
+dendrogram(linkage(corrDist, <span class="string">'complete'</span>))
+title(<span class="string">'complete link'</span>)
+set(gca,<span class="string">'xticklabel'</span>,<span class="string">''</span>)
+
+printPmtkFigure <span class="string">clusterYeastCompleteLink</span>
+
+figure();
+dendrogram(linkage(corrDist, <span class="string">'single'</span>))
+title(<span class="string">'single link'</span>)
+set(gca,<span class="string">'xticklabel'</span>,<span class="string">''</span>)
+
+printPmtkFigure <span class="string">clusterYeastSingleLink</span>
+</pre><pre class="codeoutput">Error using ==&gt; plot
+Vectors must be the same lengths.
+
+Error in ==&gt; clusterYeast at 36
+    plot(times,X((cidx == c),:)');
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Yeast Clustergram Demo
+%PMTKneedsStatsToolbox pdist, linkage, dendrogram, cluster
+%PMTKneedsBioToolbox clustergram, redgreencmap
+%%
+
+% This file is from pmtk3.googlecode.com
+
+
+requireStatsToolbox
+requireBioinfoToolbox
+loadData('yeastData310') % 'X', 'genes', 'times');
+
+
+corrDist = pdist(X, 'corr');
+clusterTree = linkage(corrDist, 'average');
+clusters = cluster(clusterTree, 'maxclust', 16);
+figure();
+for c = 1:16
+    subplot(4,4,c);
+    plot(times,X((clusters == c),:)');
+    axis tight
+end
+suptitle('Hierarchical Clustering of Profiles')
+printPmtkFigure clusterYeastHier16;
+
+[ctrs, cidx] = kmeansFit(X, 16);
+ctrs = ctrs';
+
+%[cidx, ctrs] = kmeans(X, 16,... 
+%                      'dist','corr',...
+%                      'rep',5,...
+%                      'disp','final');
+figure(); 
+for c = 1:16
+    subplot(4,4,c);
+    plot(times,X((cidx == c),:)');
+    axis tight
+end
+suptitle('K-Means Clustering of Profiles');
+
+printPmtkFigure clusterYeastKmeans16
+
+figure();
+for c = 1:16
+    subplot(4,4,c);
+    plot(times,ctrs(c,:)');
+    axis tight
+    axis off    % turn off the axis
+end
+suptitle('K-Means centroids')
+
+printPmtkFigure clusterYeastKmeansCentroids16
+
+figure();
+imagesc(X);
+colormap(redgreencmap)
+xlabel('time')
+set(gca,'xticklabel',times)
+ylabel('genes')
+title('yeast data (filtered)')
+colorbar
+printPmtkFigure clusterYeast310
+
+
+clustergram(X(:,2:end),'RowLabels',genes, 'ColumnLabels',times(2:end))
+title('hierarchical clustering')
+
+printPmtkFigure clusterYeastRowPerm
+
+figure();
+dendrogram(linkage(corrDist, 'average'));
+title('average link')
+set(gca,'xticklabel','')
+
+printPmtkFigure clusterYeastAvgLink
+
+
+figure();
+dendrogram(linkage(corrDist, 'complete'))
+title('complete link')
+set(gca,'xticklabel','')
+
+printPmtkFigure clusterYeastCompleteLink
+
+figure();
+dendrogram(linkage(corrDist, 'single'))
+title('single link')
+set(gca,'xticklabel','')
+
+printPmtkFigure clusterYeastSingleLink
+
+##### SOURCE END #####
+--></body></html>

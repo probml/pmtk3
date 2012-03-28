@@ -1,0 +1,110 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Plotting Beta Distributions</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="betaPlotDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Plotting Beta Distributions</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+as = [0.1 1 2 8]; bs = [0.1 1 3 4];
+figure;
+[styles, colors, symbols] = plotColors;
+legendStr = cell(length(as),1);
+<span class="keyword">for</span> i=1:length(as)
+    a = as(i); b = bs(i);
+    xs = linspace(0, 1, 40);
+    ps = exp(betaLogprob(structure(a, b), xs));
+    plot(xs , ps, [styles{i}, colors(i)], <span class="string">'linewidth'</span>, 3);
+    hold <span class="string">on</span>
+    legendStr{i} = sprintf(<span class="string">'a=%2.1f, b=%2.1f'</span>, a, b);
+<span class="keyword">end</span>
+legend(legendStr,<span class="string">'fontsize'</span>, 12, <span class="string">'Location'</span>,<span class="string">'NorthWest'</span>);
+title(<span class="string">'beta distributions'</span>)
+axis([-0.02,1.02,-0.1,3.1])
+printPmtkFigure(<span class="string">'betadist'</span>);
+</pre><img vspace="5" hspace="5" src="betaPlotDemo_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Plotting Beta Distributions
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+as = [0.1 1 2 8]; bs = [0.1 1 3 4];
+figure;
+[styles, colors, symbols] = plotColors;
+legendStr = cell(length(as),1);
+for i=1:length(as)
+    a = as(i); b = bs(i);
+    xs = linspace(0, 1, 40);
+    ps = exp(betaLogprob(structure(a, b), xs));
+    plot(xs , ps, [styles{i}, colors(i)], 'linewidth', 3);
+    hold on
+    legendStr{i} = sprintf('a=%2.1f, b=%2.1f', a, b);
+end
+legend(legendStr,'fontsize', 12, 'Location','NorthWest');
+title('beta distributions')
+axis([-0.02,1.02,-0.1,3.1])
+printPmtkFigure('betadist');
+
+##### SOURCE END #####
+--></body></html>

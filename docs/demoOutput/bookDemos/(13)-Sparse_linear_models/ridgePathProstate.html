@@ -1,0 +1,186 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Plot the full L2 regularization path for the prostate data set</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="ridgePathProstate.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Plot the full L2 regularization path for the prostate data set</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">now use path algorithm</a></li></ul></div><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+loadData(<span class="string">'prostateStnd'</span>);
+setSeed(0);
+<span class="comment">%[X, y] = shuffleRows(X, y);</span>
+<span class="comment">%X = centerCols(X);</span>
+
+NL = 20;
+ lambdas = [logspace(4, 0, NL) 0];
+ [n, d] = size(X);
+ nlambdas = numel(lambdas);
+ w = zeros(nlambdas, d);
+ <span class="keyword">for</span> i=1:nlambdas
+     model = linregFit(X, y, <span class="string">'lambda'</span>, lambdas(i), <span class="string">'preproc'</span>, struct(<span class="string">'addOnes'</span>, false));
+     w(i, :) = rowvec(model.w);
+ <span class="keyword">end</span>
+dof = linregDofL2(X, lambdas);
+figure
+plot(dof, w, <span class="string">'-o'</span>, <span class="string">'LineWidth'</span>, 2);
+<span class="comment">%plot(w, '-o', 'LineWidth', 2);</span>
+legend(names{1:size(X, 2)}, <span class="string">'Location'</span>, <span class="string">'NorthWest'</span>);
+xlabel(<span class="string">'dof'</span>);
+ylabel(<span class="string">'regression weights'</span>);
+title(<span class="string">'Ridge path on prostate data'</span>);
+printPmtkFigure <span class="string">ridgePathDemo</span>
+
+<span class="keyword">if</span> 0
+figure
+plot(log(lambdas), w, <span class="string">'-o'</span>, <span class="string">'LineWidth'</span>, 2);
+legend(names{1:size(X, 2)}, <span class="string">'Location'</span>, <span class="string">'NorthEast'</span>);
+xlabel(<span class="string">'log(lambda)'</span>);
+ylabel(<span class="string">'regression weights'</span>);
+title(<span class="string">'Ridge path on prostate data'</span>);
+printPmtkFigure <span class="string">ridgePathDemoLambda</span>
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="ridgePathProstate_01.png" alt=""> <h2>now use path algorithm<a name="2"></a></h2><pre class="codeinput"><span class="keyword">if</span> ~glmnetInstalled, <span class="keyword">return</span>; <span class="keyword">end</span>
+pp = preprocessorCreate();
+options = glmnetSet();
+<span class="comment">%options.lambda = lambdas;</span>
+<span class="comment">%options.standardize = false;</span>
+options.nlambda = 30;
+
+[bestModel, path] = linregFitPathCv(X, y, <span class="string">'regtype'</span>, <span class="string">'l2'</span>,  <span class="string">'preproc'</span>, pp,<span class="keyword">...</span>
+  <span class="string">'options'</span>, options, <span class="string">'nfolds'</span>, 5);
+figure;
+lambdas2 = rowvec(path.lambdas);
+dof2 = linregDofL2(X, lambdas2, false);
+plot(path.w', <span class="string">'-o'</span>, <span class="string">'LineWidth'</span>, 2);
+<span class="comment">%plot(dof2, path.w', '-o', 'LineWidth', 2);</span>
+legend(names{1:size(X, 2)}, <span class="string">'Location'</span>, <span class="string">'NorthWest'</span>);
+hold <span class="string">on</span>
+bestNdx = find(bestModel.lambda==lambdas2);
+verticalLine(bestNdx, <span class="string">'linewidth'</span>, 2, <span class="string">'color'</span>, <span class="string">'r'</span>);
+<span class="comment">%verticalLine(dof2(bestNdx), 'linewidth', 2, 'color', 'r');</span>
+printPmtkFigure <span class="string">ridgePathDemoCv</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Plot the full L2 regularization path for the prostate data set 
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+loadData('prostateStnd');
+setSeed(0);
+%[X, y] = shuffleRows(X, y);
+%X = centerCols(X);
+
+NL = 20;
+ lambdas = [logspace(4, 0, NL) 0];
+ [n, d] = size(X);
+ nlambdas = numel(lambdas);
+ w = zeros(nlambdas, d);
+ for i=1:nlambdas
+     model = linregFit(X, y, 'lambda', lambdas(i), 'preproc', struct('addOnes', false));
+     w(i, :) = rowvec(model.w);
+ end
+dof = linregDofL2(X, lambdas);
+figure
+plot(dof, w, '-o', 'LineWidth', 2);
+%plot(w, '-o', 'LineWidth', 2);
+legend(names{1:size(X, 2)}, 'Location', 'NorthWest');
+xlabel('dof');
+ylabel('regression weights');
+title('Ridge path on prostate data');
+printPmtkFigure ridgePathDemo
+
+if 0
+figure
+plot(log(lambdas), w, '-o', 'LineWidth', 2);
+legend(names{1:size(X, 2)}, 'Location', 'NorthEast');
+xlabel('log(lambda)');
+ylabel('regression weights');
+title('Ridge path on prostate data');
+printPmtkFigure ridgePathDemoLambda
+end
+
+%% now use path algorithm
+if ~glmnetInstalled, return; end
+pp = preprocessorCreate();
+options = glmnetSet();
+%options.lambda = lambdas;
+%options.standardize = false;
+options.nlambda = 30;
+
+[bestModel, path] = linregFitPathCv(X, y, 'regtype', 'l2',  'preproc', pp,...
+  'options', options, 'nfolds', 5);
+figure;
+lambdas2 = rowvec(path.lambdas);
+dof2 = linregDofL2(X, lambdas2, false);
+plot(path.w', '-o', 'LineWidth', 2);
+%plot(dof2, path.w', '-o', 'LineWidth', 2);
+legend(names{1:size(X, 2)}, 'Location', 'NorthWest');
+hold on
+bestNdx = find(bestModel.lambda==lambdas2);
+verticalLine(bestNdx, 'linewidth', 2, 'color', 'r');
+%verticalLine(dof2(bestNdx), 'linewidth', 2, 'color', 'r');
+printPmtkFigure ridgePathDemoCv
+
+##### SOURCE END #####
+--></body></html>

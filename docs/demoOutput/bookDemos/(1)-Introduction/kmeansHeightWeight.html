@@ -1,0 +1,140 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>K-means clustering for Height Weight data</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="kmeansHeightWeight.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>K-means clustering for Height Weight data</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+rawdata = loadData(<span class="string">'heightWeight'</span>);
+X = [rawdata(:,2) rawdata(:,3)]; <span class="comment">% height, weight</span>
+[styles, colors, symbols] = plotColors();
+plotArgs = {<span class="string">'linewidth'</span>, 1.5, <span class="string">'markersize'</span>, 10};
+
+figure();
+plot(X(:, 1), X(:, 2), [symbols(1), colors(1)], plotArgs{:});
+printPmtkFigure(<span class="string">'heightWeightScatterNoLabels'</span>);
+xlabel(<span class="string">'height'</span>); ylabel(<span class="string">'weight'</span>)
+axis([50 80 80 300]);
+
+setSeed(1);
+Ks = [2 3];
+<span class="keyword">for</span> ki=1:length(Ks)
+    K = Ks(ki);
+    [mu, Z] = kmeansFit(X, K);
+    figure;
+    <span class="keyword">for</span> c=1:K
+        ndx = Z==c;
+        marker = [symbols(c+1), colors(c+1)];
+        plot(X(ndx, 1), X(ndx, 2), marker, plotArgs{:});
+        hold <span class="string">on</span>;
+    <span class="keyword">end</span>
+    box <span class="string">on</span>;
+    axis([50 80 80 300]);
+    xlabel(<span class="string">'height'</span>); ylabel(<span class="string">'weight'</span>)
+    title(sprintf(<span class="string">'K=%d'</span>, K));
+    printPmtkFigure(sprintf(<span class="string">'heightWeightKmeans%d'</span>, K))
+<span class="keyword">end</span>
+
+placeFigures();
+</pre><img vspace="5" hspace="5" src="kmeansHeightWeight_01.png" alt=""> <img vspace="5" hspace="5" src="kmeansHeightWeight_02.png" alt=""> <img vspace="5" hspace="5" src="kmeansHeightWeight_03.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% K-means clustering for Height Weight data
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+rawdata = loadData('heightWeight');
+X = [rawdata(:,2) rawdata(:,3)]; % height, weight
+[styles, colors, symbols] = plotColors();
+plotArgs = {'linewidth', 1.5, 'markersize', 10}; 
+
+figure();
+plot(X(:, 1), X(:, 2), [symbols(1), colors(1)], plotArgs{:});
+printPmtkFigure('heightWeightScatterNoLabels');
+xlabel('height'); ylabel('weight')
+axis([50 80 80 300]);
+
+setSeed(1);
+Ks = [2 3];
+for ki=1:length(Ks)
+    K = Ks(ki);
+    [mu, Z] = kmeansFit(X, K);
+    figure;
+    for c=1:K
+        ndx = Z==c;
+        marker = [symbols(c+1), colors(c+1)];
+        plot(X(ndx, 1), X(ndx, 2), marker, plotArgs{:});
+        hold on;
+    end
+    box on;
+    axis([50 80 80 300]);
+    xlabel('height'); ylabel('weight')
+    title(sprintf('K=%d', K));
+    printPmtkFigure(sprintf('heightWeightKmeans%d', K))
+end
+
+placeFigures();
+
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,121 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Convert a dgm to a pairwise mrf</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="dgmMrf2Demo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Convert a dgm to a pairwise mrf</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">first compute marginals using dgmInferNodes</a></li><li><a href="#3">compare these to beliefs from equivalent pairwise fg (low level)</a></li><li><a href="#4">convert to Mark Schmidt's UGM format</a></li><li><a href="#5">quick mrfToMrf2 test</a></li></ul></div><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+dgm = mkSprinklerDgm;
+</pre><h2>first compute marginals using dgmInferNodes<a name="2"></a></h2><pre class="codeinput">nodeBels = dgmInferNodes(dgm);
+</pre><h2>compare these to beliefs from equivalent pairwise fg (low level)<a name="3"></a></h2><pre class="codeinput">fg2 = factorGraphMakePairwise(dgmToFactorGraph(dgm));
+cg2 = cliqueGraphCreate(fg2.factors, fg2.nstates);
+jt2 = jtreeCalibrate(jtreeCreate(cg2));
+nodeBels2 = jtreeQuery(jt2, num2cell(1:4));
+tfequal(nodeBels, nodeBels2);
+</pre><h2>convert to Mark Schmidt's UGM format<a name="4"></a></h2><pre class="codeinput">mrf2 = dgmToMrf2(dgm, <span class="string">'method'</span>, <span class="string">'Tree'</span>);
+nodeBels3 = mrf2InferNodesAndEdges(mrf2);
+<span class="comment">% remove padding:</span>
+nodeBels3 = nodeBels3(1:4, 1:2)';
+assert(approxeq(nodeBels3, tfMarg2Mat(nodeBels)));
+</pre><h2>quick mrfToMrf2 test<a name="5"></a></h2><pre class="codeinput">mrf = dgmToMrf(dgm);
+nodeBels4 = mrfInferNodes(mrf);
+tfequal(nodeBels4, nodeBels);
+mrf2 = mrfToMrf2(mrf, <span class="string">'method'</span>, <span class="string">'Tree'</span>);
+nodeBels5 = mrf2InferNodesAndEdges(mrf2);
+nodeBels5 = nodeBels5(1:4, 1:2)';
+assert(approxeq(nodeBels5, tfMarg2Mat(nodeBels)));
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Convert a dgm to a pairwise mrf
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+dgm = mkSprinklerDgm;
+%% first compute marginals using dgmInferNodes
+nodeBels = dgmInferNodes(dgm); 
+%% compare these to beliefs from equivalent pairwise fg (low level)
+fg2 = factorGraphMakePairwise(dgmToFactorGraph(dgm));
+cg2 = cliqueGraphCreate(fg2.factors, fg2.nstates);
+jt2 = jtreeCalibrate(jtreeCreate(cg2));
+nodeBels2 = jtreeQuery(jt2, num2cell(1:4));
+tfequal(nodeBels, nodeBels2); 
+
+%% convert to Mark Schmidt's UGM format
+mrf2 = dgmToMrf2(dgm, 'method', 'Tree'); 
+nodeBels3 = mrf2InferNodesAndEdges(mrf2);
+% remove padding:
+nodeBels3 = nodeBels3(1:4, 1:2)';
+assert(approxeq(nodeBels3, tfMarg2Mat(nodeBels))); 
+%% quick mrfToMrf2 test
+mrf = dgmToMrf(dgm);
+nodeBels4 = mrfInferNodes(mrf);
+tfequal(nodeBels4, nodeBels); 
+mrf2 = mrfToMrf2(mrf, 'method', 'Tree'); 
+nodeBels5 = mrf2InferNodesAndEdges(mrf2); 
+nodeBels5 = nodeBels5(1:4, 1:2)';
+assert(approxeq(nodeBels5, tfMarg2Mat(nodeBels))); 
+
+##### SOURCE END #####
+--></body></html>

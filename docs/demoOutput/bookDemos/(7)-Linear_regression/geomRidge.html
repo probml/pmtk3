@@ -1,0 +1,172 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>geomRidge</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="geomRidge.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% Geometry of Ridge Regression</span>
+
+<span class="comment">%{
+</span><span class="comment">setSeed(0);
+</span><span class="comment">mu = [3; 3];
+</span><span class="comment">sigma2 = 1;
+</span><span class="comment">Sigma = [3,0;0,1];
+</span><span class="comment">N = 100;
+</span><span class="comment">X = gaussSample(mu, Sigma, N);
+</span><span class="comment">xbar = mean(X);
+</span><span class="comment">mleCov = X'*X;
+</span><span class="comment">%}
+</span>
+xbar = [3;3];
+S = [3,0;0,1];
+
+Mu0 = [0;0];
+Sigma0 = eye(2);
+
+
+hold <span class="string">on</span>;
+<span class="comment">%axis([-5 8 -4 8], 'nolabel');</span>
+axis <span class="string">equal</span>
+gaussPlot2d(xbar,S,<span class="string">'color'</span>,<span class="string">'r'</span>);
+<span class="comment">%gaussPlot2d(xbar,mleCov,'color','r');</span>
+gaussPlot2d(Mu0,Sigma0,<span class="string">'color'</span>,<span class="string">'g'</span>);
+fs = 14;
+text(Mu0(1) + 1/4, Mu0(2), <span class="string">'prior mean'</span>, <span class="string">'fontsize'</span>, fs);
+
+wml = xbar;
+
+<span class="comment">%m0 = 2; n = 1;</span>
+<span class="comment">%wmap = (n*S + m0*Sigma0)\(n*S) * xbar;</span>
+wmap = [1, 2.5]; <span class="comment">% artist's rendition</span>
+
+
+plot(wmap(1), wmap(2), <span class="string">'b*'</span>,<span class="string">'linewidth'</span>,3);
+<span class="comment">% text('Interpreter', 'latex', 'String', '$$w_{MAP}$$', 'Position', [wmap(1) + 1/2, wmap(2)]);</span>
+text(wmap(1) + 1/4, wmap(2), <span class="string">'MAP Estimate'</span>, <span class="string">'fontsize'</span>, fs);
+
+plot(wml(1), wml(2), <span class="string">'r*'</span>,<span class="string">'linewidth'</span>,3);
+text(wml(1) + 1/4, wml(2) + 1/4, <span class="string">'ML Estimate'</span>, <span class="string">'fontsize'</span>, fs);
+
+line([wml(1),wml(1)+3],[wml(2),wml(2)],<span class="string">'linewidth'</span>,3)
+text(wml(1)+3,wml(2)+1/2,<span class="string">'u_1'</span>, <span class="string">'fontsize'</span>, fs);
+
+line([wml(1),wml(1)],[wml(2),wml(2)+3],<span class="string">'linewidth'</span>,3);
+text(wml(1)+1/2,wml(2)+3,<span class="string">'u_2'</span>, <span class="string">'fontsize'</span>, fs);
+
+axis <span class="string">off</span>
+printPmtkFigure(<span class="string">'geomRidge'</span>)
+</pre><img vspace="5" hspace="5" src="geomRidge_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+% Geometry of Ridge Regression
+
+%{
+setSeed(0);
+mu = [3; 3];
+sigma2 = 1;
+Sigma = [3,0;0,1];
+N = 100;
+X = gaussSample(mu, Sigma, N);
+xbar = mean(X);
+mleCov = X'*X;
+%}
+
+xbar = [3;3];
+S = [3,0;0,1];
+
+Mu0 = [0;0];
+Sigma0 = eye(2);
+
+
+hold on;
+%axis([-5 8 -4 8], 'nolabel');
+axis equal
+gaussPlot2d(xbar,S,'color','r');
+%gaussPlot2d(xbar,mleCov,'color','r');
+gaussPlot2d(Mu0,Sigma0,'color','g');
+fs = 14;
+text(Mu0(1) + 1/4, Mu0(2), 'prior mean', 'fontsize', fs);
+
+wml = xbar;
+
+%m0 = 2; n = 1;
+%wmap = (n*S + m0*Sigma0)\(n*S) * xbar; 
+wmap = [1, 2.5]; % artist's rendition
+
+
+plot(wmap(1), wmap(2), 'b*','linewidth',3);
+% text('Interpreter', 'latex', 'String', '$$w_{MAP}$$', 'Position', [wmap(1) + 1/2, wmap(2)]);
+text(wmap(1) + 1/4, wmap(2), 'MAP Estimate', 'fontsize', fs);
+
+plot(wml(1), wml(2), 'r*','linewidth',3);
+text(wml(1) + 1/4, wml(2) + 1/4, 'ML Estimate', 'fontsize', fs);
+
+line([wml(1),wml(1)+3],[wml(2),wml(2)],'linewidth',3)
+text(wml(1)+3,wml(2)+1/2,'u_1', 'fontsize', fs);
+
+line([wml(1),wml(1)],[wml(2),wml(2)+3],'linewidth',3);
+text(wml(1)+1/2,wml(2)+3,'u_2', 'fontsize', fs);
+
+axis off
+printPmtkFigure('geomRidge')
+
+##### SOURCE END #####
+--></body></html>

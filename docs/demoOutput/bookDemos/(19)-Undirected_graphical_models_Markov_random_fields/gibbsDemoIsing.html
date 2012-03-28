@@ -1,0 +1,194 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>gibbsDemoIsing</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="gibbsDemoIsing.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% Sampling from an Ising model using Gibbs</span>
+<span class="comment">% Based on code by Brani  Vidakovic</span>
+<span class="comment">% http://www2.isye.gatech.edu/~brani/isyebayes/programs.html</span>
+
+<span class="keyword">function</span> gibbsDemoIsing()
+
+
+pixelX = 100;
+pixelY = 100;
+
+Xsamp = zeros(pixelX, pixelY, 3, 3);
+
+temps = [5 2.5 0.1];
+seeds = 1;
+<span class="keyword">for</span> t=1:length(temps)
+  T= temps(t);
+  J = 1/T;
+  <span class="keyword">for</span> trial=1:length(seeds)
+    seed  = seeds(trial);
+    rand(<span class="string">'state'</span>, seed);
+    figure(1);clf
+    Xsamp(:,:,trial,t) = gibbs(pixelX, pixelY, J);
+  <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+figure(2);clf
+<span class="keyword">for</span> t=1:length(temps)
+  <span class="keyword">for</span> trial=1:length(seeds)
+    subplot2(length(seeds),length(temps),trial,t)
+    imagesc(Xsamp(:,:,trial,t)); colormap(gray); axis <span class="string">off</span>
+     title(sprintf(<span class="string">'trial %d temp %3.2f'</span>, trial, temps(t)))
+  <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+
+<span class="comment">%%%%%%%%%%%</span>
+
+<span class="keyword">function</span> X = gibbs(pixelX, pixelY, J)
+
+X = ( 2 .* ( rand( pixelX, pixelY ) &gt; 0.5 ) - 1 );
+<span class="keyword">for</span> iter = 1 : 50000
+  <span class="keyword">if</span> iter&gt;10000 &amp; mod(iter,5000) == 0
+    imagesc(X); colormap(gray); title(sprintf(<span class="string">'J=%5.3f iter=%d'</span>, J, iter))
+    drawnow
+    <span class="comment">%Xsamp(:,:,cnt) = X;</span>
+    <span class="comment">%cnt = cnt + 1;</span>
+  <span class="keyword">end</span>
+  <span class="comment">% Select a pixel at random</span>
+  ix = ceil( pixelX * rand(1) );
+  iy = ceil( pixelY * rand(1) );
+  pos = ( ix - 1 ) * pixelY + iy; <span class="comment">% Index of pixel</span>
+  <span class="comment">% Find indicies of neighbours</span>
+  neighborhood = pos + [-1 1 -pixelY pixelY];
+  <span class="comment">% Remove indices outside picture</span>
+  neighborhood( find( [iy == 1    iy == pixelY    ix == 1   ix == pixelX] ) ) = [];
+  wi = sum(  X(neighborhood) );
+  <span class="keyword">if</span> rand(1) &lt; sigmoid(2*J*wi);
+    X( iy, ix ) = +1;
+  <span class="keyword">else</span>
+    X( iy, ix ) = -1;
+  <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="gibbsDemoIsing_01.png" alt=""> <img vspace="5" hspace="5" src="gibbsDemoIsing_02.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+% Sampling from an Ising model using Gibbs
+% Based on code by Brani  Vidakovic
+% http://www2.isye.gatech.edu/~brani/isyebayes/programs.html
+
+function gibbsDemoIsing()
+
+
+pixelX = 100;
+pixelY = 100;
+
+Xsamp = zeros(pixelX, pixelY, 3, 3);
+
+temps = [5 2.5 0.1];
+seeds = 1;
+for t=1:length(temps)
+  T= temps(t);
+  J = 1/T;
+  for trial=1:length(seeds)
+    seed  = seeds(trial);
+    rand('state', seed);
+    figure(1);clf
+    Xsamp(:,:,trial,t) = gibbs(pixelX, pixelY, J);
+  end
+end
+
+figure(2);clf
+for t=1:length(temps)
+  for trial=1:length(seeds)
+    subplot2(length(seeds),length(temps),trial,t)
+    imagesc(Xsamp(:,:,trial,t)); colormap(gray); axis off
+     title(sprintf('trial %d temp %3.2f', trial, temps(t)))
+  end
+end
+
+
+%%%%%%%%%%%
+
+function X = gibbs(pixelX, pixelY, J)
+
+X = ( 2 .* ( rand( pixelX, pixelY ) > 0.5 ) - 1 );
+for iter = 1 : 50000
+  if iter>10000 & mod(iter,5000) == 0
+    imagesc(X); colormap(gray); title(sprintf('J=%5.3f iter=%d', J, iter))
+    drawnow
+    %Xsamp(:,:,cnt) = X;
+    %cnt = cnt + 1;
+  end
+  % Select a pixel at random
+  ix = ceil( pixelX * rand(1) );  
+  iy = ceil( pixelY * rand(1) );
+  pos = ( ix - 1 ) * pixelY + iy; % Index of pixel
+  % Find indicies of neighbours
+  neighborhood = pos + [-1 1 -pixelY pixelY]; 
+  % Remove indices outside picture
+  neighborhood( find( [iy == 1    iy == pixelY    ix == 1   ix == pixelX] ) ) = []; 
+  wi = sum(  X(neighborhood) );  
+  if rand(1) < sigmoid(2*J*wi);
+    X( iy, ix ) = +1;
+  else 
+    X( iy, ix ) = -1;
+  end
+end
+
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,283 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Compare L1, L2, allSubsets, and OLS linear regression on the prostate data set</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="prostateComparison.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Compare L1, L2, allSubsets, and OLS linear regression on the prostate data set</h1><!--introduction--><p>Approximately reproduces table 3.3 and fig 3.7 on p63 of "Elements of statistical learning" 2nd edn (The OLS results should be identical  - the fact that they are not suggests something strange is going on - most likely to do with the offset term, which should be unregularized.)</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#4">All subsets</a></li><li><a href="#6">for plotting purposes, look at fewer subsets</a></li><li><a href="#7">OLS</a></li></ul></div><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="keyword">function</span> prostateComparison()
+</pre><pre class="codeinput">setSeed(0);
+saveLatex = false;
+data = loadData(<span class="string">'prostate'</span>);
+[Xtrain, ytrain] = shuffleRows(data.Xtrain, data.ytrain);
+<span class="comment">% the data has been sorted which messes up CV</span>
+
+Xtest   = data.Xtest;
+ytest  = data.ytest;
+nfolds = 10;
+</pre><pre class="codeinput">maxLambda    =  log10(lambdaMaxLasso(Xtrain, ytrain));
+lambdaRange  =  logspace(-2, maxLambda, 30);
+loss = @(yhat, ytest) mean((yhat - ytest).^2);
+fit = @(regType)fitCv(lambdaRange,<span class="keyword">...</span>
+    @(X, y, l)linregFit(X, y, <span class="string">'lambda'</span>, l, <span class="string">'regType'</span>, regType),<span class="keyword">...</span>
+    @linregPredict, loss, Xtrain, ytrain, nfolds, <span class="string">'useSErule'</span>, false, <span class="string">'doPlot'</span>, true);
+
+
+
+<span class="comment">%fit = @(regType)linregFit(Xtrain, ytrain,'lambda',...</span>
+<span class="comment">%      lambdaRange, 'regType', regType, 'plotCv', true, 'nfolds', nfolds);</span>
+
+
+figureNames   = {<span class="string">'prostateLassoCV'</span>, <span class="string">'prostateRidgeCV'</span>};
+titlePrefixes = {<span class="string">'lasso'</span>, <span class="string">'ridge'</span>};
+regTypes = {<span class="string">'L1'</span>, <span class="string">'L2'</span>};
+
+<span class="keyword">for</span> i=1:numel(regTypes)
+   [model, lambdaStar, mu, se] = fit(regTypes{i});
+    set(gca, <span class="string">'xdir'</span>, <span class="string">'reverse'</span>);
+    set(gca, <span class="string">'xscale'</span>, <span class="string">'log'</span>);
+    xlabel(<span class="string">'lambda value'</span>);
+    yhat = linregPredict(model, Xtest);
+    mse(i) = loss(yhat, ytest);
+    title(sprintf(<span class="string">'%s, mseTest = %5.3f'</span>, titlePrefixes{i}, mse(i)));
+    printPmtkFigure(figureNames{i});
+    weights(:, i) = colvec(model.w);
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="prostateComparison_01.png" alt=""> <img vspace="5" hspace="5" src="prostateComparison_02.png" alt=""> <h2>All subsets<a name="4"></a></h2><pre class="codeinput">    <span class="keyword">function</span> model = fitFn(X, y, ndx)
+       [N,D] = size(X);
+       include = ndx;
+       exclude = setdiff(1:D, include);
+       X(:, exclude) = 0;
+       lambda = eps; <span class="comment">% needed to avoid numerical issues caused by 0 entries in X</span>
+       model = linregFit(X, y, <span class="string">'lambda'</span>, lambda);
+    <span class="keyword">end</span>
+</pre><pre class="codeinput">d = size(data.Xtrain, 2);
+ss = powerset(1:d); <span class="comment">% 256 models</span>
+[modelFull, ssStarFull] = <span class="keyword">...</span>
+        fitCv(ss, @fitFn, @linregPredict, loss, Xtrain, ytrain, nfolds);
+</pre><h2>for plotting purposes, look at fewer subsets<a name="6"></a></h2><pre class="codeinput">ssSmall = {[], 1, 1:2, 1:3, 1:4, 1:5, 1:6, 1:7, 1:8};
+[model, ssStar, mu, se] = <span class="keyword">...</span>
+        fitCv(ssSmall, @fitFn, @linregPredict, loss, Xtrain, ytrain, nfolds);
+
+ssStarNdx = cellfind(ssSmall, ssStar) - 1;
+useLogScale = false;
+figure;
+plotCVcurve(0:8, mu, se, numel(ssStarFull), useLogScale); <span class="comment">% plot w.r.t to subset sizes</span>
+xlabel(<span class="string">'subset size'</span>);
+yhat = linregPredict(modelFull, data.Xtest);
+mse(3) = loss(yhat, data.ytest);
+t = {  sprintf(<span class="string">'%s, mseTest = %5.3f'</span>, <span class="string">'all subsets'</span>, mse(3));
+       [<span class="string">'best subset = '</span>, mat2str(ssStarFull)]
+    };
+title(t);
+printPmtkFigure(<span class="string">'prostateSubsetsCV'</span>);
+
+weights(:, 3) = colvec(modelFull.w);
+</pre><img vspace="5" hspace="5" src="prostateComparison_03.png" alt=""> <h2>OLS<a name="7"></a></h2><pre class="codeinput">model = linregFit(data.Xtrain, data.ytrain, <span class="string">'lambda'</span>, 0);
+weights(:, 4) = colvec(model.w);
+yhat = linregPredict(model, data.Xtest);
+mse(4) = loss(yhat, data.ytest);
+</pre><pre class="codeinput">fprintf(<span class="string">'| OLS | SS | L2 | L1 |\n'</span>);
+fprintf(<span class="string">'weights: \n'</span>);
+display(roundto(weights(:, end:-1:1), 0.001));
+fprintf(<span class="string">'mse: \n'</span>);
+display(roundto(mse(end:-1:1), 0.001));
+</pre><pre class="codeoutput">| OLS | SS | L2 | L1 |
+weights: 
+ans =
+    0.4290   -0.4060    0.7890    0.1460
+    0.5770    0.5570    0.5710    0.5750
+    0.6140    0.5290    0.5220    0.6310
+   -0.0190         0   -0.0170   -0.0180
+    0.1450    0.1350    0.1490    0.1410
+    0.7370    0.7970    0.5330    0.7190
+   -0.2060   -0.0960   -0.1530   -0.1940
+   -0.0300         0   -0.0440    0.0020
+    0.0090         0    0.0100    0.0090
+mse: 
+ans =
+    0.5860    0.5290    0.5690    0.5790
+</pre><pre class="codeinput"><span class="keyword">if</span> saveLatex
+   weights = weights(:, end:-1:1);
+   mse = mse(end:-1:1);
+   headers = {<span class="string">'Term'</span>, <span class="string">'LS'</span>, <span class="string">'Best Subset'</span>, <span class="string">'Ridge'</span>, <span class="string">'Lasso'</span>};
+   terms = [{<span class="string">'Intercept'</span>}, data.names(1:8), {<span class="string">'Test Error'</span>}]';
+   table = [cell(10, 1), num2cell([weights; rowvec(mse)])];
+   latextable(table, <span class="string">'Horiz'</span>, headers, <span class="string">'Vert'</span>, terms, <span class="string">'format'</span>, <span class="string">'%.3f'</span>, <span class="string">'Hline'</span>, [1, 10]);
+<span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Compare L1, L2, allSubsets, and OLS linear regression on the prostate data set
+% Approximately reproduces table 3.3 and fig 3.7 on p63 of "Elements of statistical
+% learning" 2nd edn
+% (The OLS results should be identical  - the fact that they are not
+% suggests something strange is going on - most likely to do with
+% the offset term, which should be unregularized.)
+%%
+
+% This file is from pmtk3.googlecode.com
+
+function prostateComparison() 
+
+setSeed(0);
+saveLatex = false;
+data = loadData('prostate');
+[Xtrain, ytrain] = shuffleRows(data.Xtrain, data.ytrain); 
+% the data has been sorted which messes up CV
+
+Xtest   = data.Xtest;   
+ytest  = data.ytest;
+nfolds = 10;
+%%
+
+maxLambda    =  log10(lambdaMaxLasso(Xtrain, ytrain));
+lambdaRange  =  logspace(-2, maxLambda, 30); 
+loss = @(yhat, ytest) mean((yhat - ytest).^2);                 
+fit = @(regType)fitCv(lambdaRange,...
+    @(X, y, l)linregFit(X, y, 'lambda', l, 'regType', regType),...
+    @linregPredict, loss, Xtrain, ytrain, nfolds, 'useSErule', false, 'doPlot', true);
+
+
+
+%fit = @(regType)linregFit(Xtrain, ytrain,'lambda',...
+%      lambdaRange, 'regType', regType, 'plotCv', true, 'nfolds', nfolds);
+
+
+figureNames   = {'prostateLassoCV', 'prostateRidgeCV'};
+titlePrefixes = {'lasso', 'ridge'};
+regTypes = {'L1', 'L2'};
+
+for i=1:numel(regTypes)
+   [model, lambdaStar, mu, se] = fit(regTypes{i});  
+    set(gca, 'xdir', 'reverse');
+    set(gca, 'xscale', 'log'); 
+    xlabel('lambda value');
+    yhat = linregPredict(model, Xtest); 
+    mse(i) = loss(yhat, ytest);
+    title(sprintf('%s, mseTest = %5.3f', titlePrefixes{i}, mse(i)));
+    printPmtkFigure(figureNames{i});
+    weights(:, i) = colvec(model.w); 
+end
+
+
+%% All subsets
+    function model = fitFn(X, y, ndx)    
+       [N,D] = size(X);
+       include = ndx;
+       exclude = setdiff(1:D, include);
+       X(:, exclude) = 0;
+       lambda = eps; % needed to avoid numerical issues caused by 0 entries in X
+       model = linregFit(X, y, 'lambda', lambda); 
+    end
+%%    
+d = size(data.Xtrain, 2); 
+ss = powerset(1:d); % 256 models
+[modelFull, ssStarFull] = ...
+        fitCv(ss, @fitFn, @linregPredict, loss, Xtrain, ytrain, nfolds);
+
+
+%% for plotting purposes, look at fewer subsets
+ssSmall = {[], 1, 1:2, 1:3, 1:4, 1:5, 1:6, 1:7, 1:8};
+[model, ssStar, mu, se] = ...
+        fitCv(ssSmall, @fitFn, @linregPredict, loss, Xtrain, ytrain, nfolds);
+
+ssStarNdx = cellfind(ssSmall, ssStar) - 1;
+useLogScale = false; 
+figure;
+plotCVcurve(0:8, mu, se, numel(ssStarFull), useLogScale); % plot w.r.t to subset sizes
+xlabel('subset size');
+yhat = linregPredict(modelFull, data.Xtest); 
+mse(3) = loss(yhat, data.ytest);
+t = {  sprintf('%s, mseTest = %5.3f', 'all subsets', mse(3)); 
+       ['best subset = ', mat2str(ssStarFull)]
+    };
+title(t);
+printPmtkFigure('prostateSubsetsCV');
+
+weights(:, 3) = colvec(modelFull.w);
+%% OLS
+model = linregFit(data.Xtrain, data.ytrain, 'lambda', 0);
+weights(:, 4) = colvec(model.w);
+yhat = linregPredict(model, data.Xtest);
+mse(4) = loss(yhat, data.ytest); 
+%%
+fprintf('| OLS | SS | L2 | L1 |\n');
+fprintf('weights: \n');
+display(roundto(weights(:, end:-1:1), 0.001));
+fprintf('mse: \n'); 
+display(roundto(mse(end:-1:1), 0.001));
+%%
+if saveLatex
+   weights = weights(:, end:-1:1); 
+   mse = mse(end:-1:1);
+   headers = {'Term', 'LS', 'Best Subset', 'Ridge', 'Lasso'};
+   terms = [{'Intercept'}, data.names(1:8), {'Test Error'}]';
+   table = [cell(10, 1), num2cell([weights; rowvec(mse)])];
+   latextable(table, 'Horiz', headers, 'Vert', terms, 'format', '%.3f', 'Hline', [1, 10]); 
+end
+
+end
+
+##### SOURCE END #####
+--></body></html>

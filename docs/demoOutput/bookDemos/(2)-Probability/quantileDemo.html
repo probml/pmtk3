@@ -1,0 +1,183 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Gaussian plot with shaded tails</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="quantileDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Gaussian plot with shaded tails</h1><!--introduction--><p>Plot a standard normal distribution and shade in the left and right tails together representing alpha % of the probability mass.</p><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="keyword">function</span> quantileDemo
+</pre><pre class="codeinput">    scrsz = get(0,<span class="string">'ScreenSize'</span>);
+    width = 2*scrsz(3)/3;
+    height = width/2;
+    figure(<span class="string">'Position'</span>,[(scrsz(3)-width)/2,(scrsz(4)-height)/2,width,height]);
+    f = @(x)gaussProb(x, 0, 1);
+    x = -4:0.1:4;
+    y = f(x);
+    plot(x,y,<span class="string">'r'</span>,<span class="string">'LineWidth'</span>,3.5);
+    axis([-4,4,0,0.5]);
+    set(gca,<span class="string">'XTick'</span>,[], <span class="string">'Ytick'</span>, []);
+    shade(f,0.001, -4,   -1.96, <span class="string">'r'</span>, 0.005);
+    shade(f,0.001, 1.96,  4,    <span class="string">'r'</span>, 0.005);
+    annotate;
+    printPmtkFigure <span class="string">normalDistAlphaRed</span>
+    <span class="comment">%printPmtkFigure quantile</span>
+</pre><img vspace="5" hspace="5" src="quantileDemo_01.png" alt=""> <pre class="codeinput"><span class="keyword">function</span> annotate
+     <span class="comment">%annotation(gcf,'textbox','String',{'-Z_{\alpha/2}'},'FontSize',13,...</span>
+     annotation(gcf,<span class="string">'textbox'</span>,<span class="string">'String'</span>,{<span class="string">'\Phi^{-1}(\alpha/2)'</span>},<span class="string">'FontSize'</span>,35,<span class="keyword">...</span>
+    <span class="string">'FitHeightToText'</span>,<span class="string">'off'</span>,<span class="keyword">...</span>
+    <span class="string">'LineStyle'</span>,<span class="string">'none'</span>,<span class="keyword">...</span>
+    <span class="string">'FontSize'</span>,35,<span class="keyword">...</span>
+    <span class="string">'Position'</span>,[0.225 0.080 0.04908 0.03338]);
+
+     annotation(gcf,<span class="string">'textbox'</span>,<span class="string">'String'</span>,{<span class="string">'0'</span>},<span class="string">'FontSize'</span>,35,<span class="keyword">...</span>
+    <span class="string">'FitHeightToText'</span>,<span class="string">'off'</span>,<span class="keyword">...</span>
+    <span class="string">'LineStyle'</span>,<span class="string">'none'</span>,<span class="keyword">...</span>
+    <span class="string">'FontSize'</span>,35,<span class="keyword">...</span>
+    <span class="string">'Position'</span>,[0.5 0.080 0.04908 0.03338]);
+
+     <span class="comment">%annotation(gcf,'textbox','String',{'Z_{\alpha/2}'},'FontSize',13,...</span>
+     annotation(gcf,<span class="string">'textbox'</span>,<span class="string">'String'</span>,{<span class="string">'\Phi^{-1}(1-\alpha/2)'</span>},<span class="string">'FontSize'</span>,35,<span class="keyword">...</span>
+    <span class="string">'FitHeightToText'</span>,<span class="string">'off'</span>,<span class="keyword">...</span>
+    <span class="string">'LineStyle'</span>,<span class="string">'none'</span>,<span class="keyword">...</span>
+    <span class="string">'FontSize'</span>,35,<span class="keyword">...</span>
+    <span class="string">'Position'</span>,[0.7 0.080 0.04908 0.03338]);
+
+    annotation(gcf,<span class="string">'textarrow'</span>,[0.2694 0.3118],[0.2844 0.1486],<span class="keyword">...</span>
+    <span class="string">'TextEdgeColor'</span>,<span class="string">'none'</span>,<span class="keyword">...</span>
+    <span class="string">'FontSize'</span>,35,<span class="keyword">...</span>
+    <span class="string">'String'</span>,{<span class="string">'\alpha/2'</span>});
+
+    annotation(gcf,<span class="string">'textarrow'</span>,[0.7639 0.7194],[0.2844 0.1486],<span class="keyword">...</span>
+    <span class="string">'TextEdgeColor'</span>,<span class="string">'none'</span>,<span class="keyword">...</span>
+    <span class="string">'FontSize'</span>,35,<span class="keyword">...</span>
+    <span class="string">'String'</span>,{<span class="string">'\alpha/2'</span>});
+
+
+
+<span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Gaussian plot with shaded tails 
+% Plot a standard normal distribution and shade in the left and right tails
+% together representing alpha % of the probability mass. 
+%%
+
+% This file is from pmtk3.googlecode.com
+
+function quantileDemo
+    scrsz = get(0,'ScreenSize');
+    width = 2*scrsz(3)/3;
+    height = width/2;
+    figure('Position',[(scrsz(3)-width)/2,(scrsz(4)-height)/2,width,height]);
+    f = @(x)gaussProb(x, 0, 1);
+    x = -4:0.1:4;
+    y = f(x);
+    plot(x,y,'r','LineWidth',3.5);
+    axis([-4,4,0,0.5]);
+    set(gca,'XTick',[], 'Ytick', []);
+    shade(f,0.001, -4,   -1.96, 'r', 0.005);
+    shade(f,0.001, 1.96,  4,    'r', 0.005);
+    annotate;
+    printPmtkFigure normalDistAlphaRed
+    %printPmtkFigure quantile
+%%
+function annotate
+     %annotation(gcf,'textbox','String',{'-Z_{\alpha/2}'},'FontSize',13,...
+     annotation(gcf,'textbox','String',{'\Phi^{-1}(\alpha/2)'},'FontSize',35,...
+    'FitHeightToText','off',...
+    'LineStyle','none',...
+    'FontSize',35,...
+    'Position',[0.225 0.080 0.04908 0.03338]);    
+
+     annotation(gcf,'textbox','String',{'0'},'FontSize',35,...
+    'FitHeightToText','off',...
+    'LineStyle','none',...
+    'FontSize',35,...
+    'Position',[0.5 0.080 0.04908 0.03338]);    
+
+     %annotation(gcf,'textbox','String',{'Z_{\alpha/2}'},'FontSize',13,...
+     annotation(gcf,'textbox','String',{'\Phi^{-1}(1-\alpha/2)'},'FontSize',35,...
+    'FitHeightToText','off',...
+    'LineStyle','none',...
+    'FontSize',35,...
+    'Position',[0.7 0.080 0.04908 0.03338]);
+
+    annotation(gcf,'textarrow',[0.2694 0.3118],[0.2844 0.1486],...
+    'TextEdgeColor','none',...
+    'FontSize',35,...
+    'String',{'\alpha/2'});
+    
+    annotation(gcf,'textarrow',[0.7639 0.7194],[0.2844 0.1486],...
+    'TextEdgeColor','none',...
+    'FontSize',35,...
+    'String',{'\alpha/2'});
+
+
+
+end
+
+end
+
+##### SOURCE END #####
+--></body></html>

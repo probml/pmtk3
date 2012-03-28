@@ -1,0 +1,274 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>subSuperGaussPlot</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="subSuperGaussPlot.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> subSuperGaussPlot()
+<span class="comment">% Plot sub-Gaussian, Gaussian, and super-Gaussian (Laplace) distributios</span>
+<span class="comment">% in 1d and 2d</span>
+<span class="comment">%Generalized Gaussian distribution with mean 0, scale 1, and shape 8</span>
+<span class="comment">%(see http://en.wikipedia.org/wiki/Generalized_normal_distribution)</span>
+
+<span class="comment">%PMTKauthor Kevin Swersky</span>
+
+setSeed(0);
+
+figure; hold <span class="string">on</span>
+x = -4:0.01:4;
+plot(x,normpdf(x,0,1), <span class="string">'linewidth'</span>, 3);
+plot(x,laplacian_pdf(x,0,1),<span class="string">'r:'</span>, <span class="string">'linewidth'</span>, 3);
+plot(x, unif_pdf(x,-2,2), <span class="string">'g--'</span>, <span class="string">'linewidth'</span>, 3);
+<span class="comment">%plot(x,generalized_gauss_pdf(x,0,1,8),'g--', 'linewidth', 3);</span>
+printPmtkFigure(<span class="string">'supSuperGauss'</span>)
+legend(<span class="string">'Gaussian'</span>, <span class="string">'Laplace'</span>, <span class="string">'Uniform'</span>)
+
+n = 5000;
+figure;
+x1 = normrnd(0,1,n,1);
+x2 = normrnd(0,1,n,1);
+plot(x1,x2,<span class="string">'b.'</span>);
+<span class="comment">%axis([-8,8,-8,8]);</span>
+axis <span class="string">equal</span>
+title(<span class="string">'Gaussian'</span>)
+printPmtkFigure(<span class="string">'supSuperGauss2d'</span>)
+
+figure;
+x1 = randraw(<span class="string">'laplace'</span>, [0, 1], n);
+x2 = randraw(<span class="string">'laplace'</span>, [0, 1], n);
+<span class="comment">%x1 = rand_laplacian(0,1,n);</span>
+<span class="comment">%x2 = rand_laplacian(0,1,n);</span>
+plot(x1,x2,<span class="string">'r.'</span>);
+<span class="comment">%axis([-8,8,-8,8]);</span>
+axis <span class="string">equal</span>
+title(<span class="string">'Laplace'</span>)
+printPmtkFigure(<span class="string">'supSuperLaplace2d'</span>)
+
+
+figure;
+<span class="comment">%x1 = rand_generalized_gauss_rej(0,1,8,2,n);</span>
+<span class="comment">%x2 = rand_generalized_gauss_rej(0,1,8,2,n);</span>
+x1 = unifrnd(-2,2,1,n);
+x2 = unifrnd(-2,2,1,n);
+plot(x1,x2,<span class="string">'g.'</span>);
+<span class="comment">%axis([-8,8,-8,8]);</span>
+axis <span class="string">equal</span>
+<span class="comment">%title('Generalized Gaussian')</span>
+title(<span class="string">'Uniform'</span>)
+<span class="comment">%printPmtkFigure('supSuperGgauss2d')</span>
+printPmtkFigure(<span class="string">'supSuperUnif2d'</span>)
+
+
+<span class="keyword">end</span>
+
+
+<span class="keyword">function</span>[p] = unif_pdf(x,a,b)
+p = zeros(size(x));
+ndx  = (x&gt;=a) &amp; (x&lt;=b);
+p(ndx) = 1./(b-a);
+<span class="keyword">end</span>
+
+<span class="keyword">function</span>[p] = generalized_gauss_pdf(x,u,a,b)
+p = (b/(2*a*gamma(1/b))).*(exp(-(abs(x-u)./a).^b));
+<span class="keyword">end</span>
+
+<span class="keyword">function</span>[p] = laplacian_pdf(x,u,b)
+p = (0.5/b).*exp(-abs(x-u)./b);
+<span class="keyword">end</span>
+
+<span class="keyword">function</span>[x] = rand_laplacian(u,b,n)
+<span class="keyword">if</span> (nargin &lt; 3)
+    n = 1;
+<span class="keyword">end</span>
+r = rand(n,1)-0.5;
+x = r - b.*sign(r).*log(1-2.*abs(r));
+<span class="keyword">end</span>
+
+<span class="keyword">function</span>[x,rejrate] = rand_generalized_gauss_rej(u,a,b,M,n)
+<span class="keyword">if</span> (nargin &lt; 5)
+    n = 1;
+<span class="keyword">end</span>
+x = zeros(n,1);
+k = 1;
+rejrate = 0;
+<span class="keyword">for</span> i=1:n
+    accept = 0;
+    <span class="keyword">while</span> (~accept)
+        xt = normrnd(u,a);
+        <span class="keyword">if</span> (rand() &lt; (generalized_gauss_pdf(xt,u,a,b)/(M*normpdf(xt,u,a))))
+            x(i) = xt;
+            accept = 1;
+        <span class="keyword">else</span>
+            rejrate = rejrate + 1;
+        <span class="keyword">end</span>
+        k = k + 1;
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+rejrate = rejrate/k;
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="subSuperGaussPlot_01.png" alt=""> <img vspace="5" hspace="5" src="subSuperGaussPlot_02.png" alt=""> <img vspace="5" hspace="5" src="subSuperGaussPlot_03.png" alt=""> <img vspace="5" hspace="5" src="subSuperGaussPlot_04.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+function subSuperGaussPlot()
+% Plot sub-Gaussian, Gaussian, and super-Gaussian (Laplace) distributios
+% in 1d and 2d
+%Generalized Gaussian distribution with mean 0, scale 1, and shape 8
+%(see http://en.wikipedia.org/wiki/Generalized_normal_distribution)
+
+%PMTKauthor Kevin Swersky
+
+setSeed(0);
+
+figure; hold on
+x = -4:0.01:4;
+plot(x,normpdf(x,0,1), 'linewidth', 3); 
+plot(x,laplacian_pdf(x,0,1),'r:', 'linewidth', 3); 
+plot(x, unif_pdf(x,-2,2), 'gREPLACE_WITH_DASH_DASH', 'linewidth', 3);
+%plot(x,generalized_gauss_pdf(x,0,1,8),'gREPLACE_WITH_DASH_DASH', 'linewidth', 3); 
+printPmtkFigure('supSuperGauss')
+legend('Gaussian', 'Laplace', 'Uniform')
+
+n = 5000;
+figure;
+x1 = normrnd(0,1,n,1);
+x2 = normrnd(0,1,n,1);
+plot(x1,x2,'b.');
+%axis([-8,8,-8,8]);
+axis equal
+title('Gaussian')
+printPmtkFigure('supSuperGauss2d')
+
+figure;
+x1 = randraw('laplace', [0, 1], n);
+x2 = randraw('laplace', [0, 1], n);
+%x1 = rand_laplacian(0,1,n);
+%x2 = rand_laplacian(0,1,n);
+plot(x1,x2,'r.');
+%axis([-8,8,-8,8]);
+axis equal
+title('Laplace')
+printPmtkFigure('supSuperLaplace2d')
+
+
+figure;
+%x1 = rand_generalized_gauss_rej(0,1,8,2,n);
+%x2 = rand_generalized_gauss_rej(0,1,8,2,n);
+x1 = unifrnd(-2,2,1,n);
+x2 = unifrnd(-2,2,1,n);
+plot(x1,x2,'g.');
+%axis([-8,8,-8,8]);
+axis equal
+%title('Generalized Gaussian')
+title('Uniform')
+%printPmtkFigure('supSuperGgauss2d')
+printPmtkFigure('supSuperUnif2d')
+
+
+end
+
+
+function[p] = unif_pdf(x,a,b)
+p = zeros(size(x));
+ndx  = (x>=a) & (x<=b);
+p(ndx) = 1./(b-a);
+end
+
+function[p] = generalized_gauss_pdf(x,u,a,b)
+p = (b/(2*a*gamma(1/b))).*(exp(-(abs(x-u)./a).^b));
+end
+
+function[p] = laplacian_pdf(x,u,b)
+p = (0.5/b).*exp(-abs(x-u)./b);
+end
+
+function[x] = rand_laplacian(u,b,n)
+if (nargin < 3)
+    n = 1;
+end
+r = rand(n,1)-0.5;
+x = r - b.*sign(r).*log(1-2.*abs(r));
+end
+
+function[x,rejrate] = rand_generalized_gauss_rej(u,a,b,M,n)
+if (nargin < 5)
+    n = 1;
+end
+x = zeros(n,1);
+k = 1;
+rejrate = 0;
+for i=1:n
+    accept = 0;
+    while (~accept)
+        xt = normrnd(u,a);
+        if (rand() < (generalized_gauss_pdf(xt,u,a,b)/(M*normpdf(xt,u,a))))
+            x(i) = xt;
+            accept = 1;
+        else
+            rejrate = rejrate + 1;
+        end
+        k = k + 1;
+    end
+end
+rejrate = rejrate/k;
+end
+
+##### SOURCE END #####
+--></body></html>

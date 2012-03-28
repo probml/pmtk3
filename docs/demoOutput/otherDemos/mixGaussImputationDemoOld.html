@@ -1,0 +1,186 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Imputation for a mixture of Gaussians</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="mixGaussImputationDemoOld.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Imputation for a mixture of Gaussians</h1><!--introduction--><p>PMTKneedsStatsToolbox regstats</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Make data</a></li><li><a href="#3">Impute</a></li><li><a href="#4">Plotting</a></li></ul></div><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+requireStatsToolbox
+</pre><h2>Make data<a name="2"></a></h2><pre class="codeinput">setSeed(1);
+d = 10; n = 100; pcMissing = 0.5;
+
+K = 5;
+mu = rand(d,K); mixweight = normalize(rand(1,K));
+Sigma = zeros(d,d,K);
+<span class="keyword">for</span> k=1:K
+  Sigma(:,:,k) = randpd(d);
+<span class="keyword">end</span>
+trueModel = struct(<span class="string">'mu'</span>, mu, <span class="string">'Sigma'</span>, Sigma, <span class="string">'mixweight'</span>, mixweight);
+[Xfull] = mixGaussSample(mu, Sigma, mixweight, n);
+
+
+missing = rand(n,d) &lt; pcMissing;
+Xmiss = Xfull;
+Xmiss(missing) = NaN;
+</pre><h2>Impute<a name="3"></a></h2><pre class="codeinput"><span class="comment">% Impute using true model</span>
+<span class="comment">%[XimputeTruth] = gaussImpute(trueModel, Xmiss);</span>
+
+<span class="comment">% Fit a single Gaussian</span>
+[model, LLtrace] = gaussMissingFitEm(Xmiss, <span class="string">'verbose'</span>, false);
+
+<span class="comment">% Impute using learning model</span>
+[XimputeEM] = gaussImpute(model, Xmiss);
+</pre><h2>Plotting<a name="4"></a></h2><pre class="codeinput">Xmiss0 = Xmiss; Xmiss0(isnan(Xmiss0))=0;
+ndx = 1:20; <span class="comment">% just plot first 20 rows</span>
+
+<span class="comment">%hintonDiagram(Xmiss0(ndx,:)); title('observed data');</span>
+<span class="comment">%printPmtkFigure('mixGaussImputeObs');</span>
+
+<span class="comment">% Scatter plots</span>
+figure; nr = 2; nc = 2;
+<span class="keyword">for</span> j=1:(nr*nc)
+  subplot(nr, nc, j);
+  miss = find(isnan(Xmiss(:,j)));
+  scatter(Xfull(miss, j), XimputeEM(miss,j))
+  xlabel(<span class="string">'truth'</span>); ylabel(<span class="string">'imputed'</span>);
+  mini = min(Xfull(:,j)); maxi = max(Xfull(:,j));
+  line([mini maxi], [mini maxi]);
+  axis <span class="string">square</span>
+  grid <span class="string">on</span>
+  stats = regstats(Xfull(miss,j), XimputeEM(miss,j));
+  r = stats.rsquare;
+  title(sprintf(<span class="string">'R^2 = %5.3f'</span>, r))
+<span class="keyword">end</span>
+suptitle(<span class="string">'Imputation using estimated parameters'</span>)
+printPmtkFigure(<span class="string">'mixGaussImputeScatterEm'</span>);
+</pre><img vspace="5" hspace="5" src="mixGaussImputationDemoOld_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Imputation for a mixture of Gaussians
+% PMTKneedsStatsToolbox regstats
+%%
+
+% This file is from pmtk3.googlecode.com
+
+requireStatsToolbox
+%% Make data
+setSeed(1);
+d = 10; n = 100; pcMissing = 0.5;
+
+K = 5;
+mu = rand(d,K); mixweight = normalize(rand(1,K));
+Sigma = zeros(d,d,K);
+for k=1:K
+  Sigma(:,:,k) = randpd(d);
+end
+trueModel = struct('mu', mu, 'Sigma', Sigma, 'mixweight', mixweight);
+[Xfull] = mixGaussSample(mu, Sigma, mixweight, n);
+
+
+missing = rand(n,d) < pcMissing;
+Xmiss = Xfull;
+Xmiss(missing) = NaN;
+
+%% Impute  
+
+% Impute using true model
+%[XimputeTruth] = gaussImpute(trueModel, Xmiss);
+
+% Fit a single Gaussian
+[model, LLtrace] = gaussMissingFitEm(Xmiss, 'verbose', false);
+
+% Impute using learning model
+[XimputeEM] = gaussImpute(model, Xmiss);
+
+
+
+%% Plotting
+Xmiss0 = Xmiss; Xmiss0(isnan(Xmiss0))=0;
+ndx = 1:20; % just plot first 20 rows
+
+%hintonDiagram(Xmiss0(ndx,:)); title('observed data');
+%printPmtkFigure('mixGaussImputeObs');
+
+% Scatter plots
+figure; nr = 2; nc = 2;
+for j=1:(nr*nc)
+  subplot(nr, nc, j);
+  miss = find(isnan(Xmiss(:,j)));
+  scatter(Xfull(miss, j), XimputeEM(miss,j))
+  xlabel('truth'); ylabel('imputed');
+  mini = min(Xfull(:,j)); maxi = max(Xfull(:,j));
+  line([mini maxi], [mini maxi]);
+  axis square
+  grid on
+  stats = regstats(Xfull(miss,j), XimputeEM(miss,j));
+  r = stats.rsquare;
+  title(sprintf('R^2 = %5.3f', r))
+end
+suptitle('Imputation using estimated parameters')
+printPmtkFigure('mixGaussImputeScatterEm');
+
+
+
+
+
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,168 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Classifying a speech signal with an HMM as "four" or "five"</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="isolatedWordClassificationWithHmmsDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Classifying a speech signal with an HMM as "four" or "five"</h1><!--introduction--><p>Xtrain{i} is a 13 x T(i) sequence of MFCC data, where T(i) is the length</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Initial Guess</a></li><li><a href="#6">Do the same thing with a tied mixture of Gaussians observation model</a></li></ul></div><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+loadData(<span class="string">'speechDataDigits4And5'</span>);
+nstates = 5;
+setSeed(0);
+Xtrain = [train4'; train5'];
+ytrain = [repmat(4, numel(train4), 1) ; repmat(5, numel(train5), 1)];
+[Xtrain, ytrain] = shuffleRows(Xtrain, ytrain);
+Xtest = test45';
+ytest = labels';
+[Xtest, ytest] = shuffleRows(Xtest, ytest);
+</pre><h2>Initial Guess<a name="2"></a></h2><pre class="codeinput">pi0 = [1, 0, 0, 0, 0];
+transmat0 = normalize(diag(ones(nstates, 1)) + <span class="keyword">...</span>
+            diag(ones(nstates-1, 1), 1), 2);
+</pre><pre class="codeinput">fitArgs = {<span class="string">'pi0'</span>, pi0, <span class="string">'trans0'</span>, transmat0, <span class="string">'maxIter'</span>, 10, <span class="string">'verbose'</span>, true};
+fitFn   = @(X)hmmFit(X, nstates, <span class="string">'gauss'</span>, fitArgs{:});
+model = generativeClassifierFit(fitFn, Xtrain, ytrain);
+</pre><pre class="codeoutput">initializing model for EM
+1	 loglik: -136774
+2	 loglik: -80469.3
+3	 loglik: -75503.9
+4	 loglik: -73980.4
+5	 loglik: -73064.5
+6	 loglik: -72316.7
+7	 loglik: -71873.3
+8	 loglik: -71498.2
+9	 loglik: -71272.6
+10	 loglik: -71173.4
+11	 loglik: -71122.6
+initializing model for EM
+1	 loglik: -150882
+2	 loglik: -99493.4
+3	 loglik: -89818
+4	 loglik: -88251.6
+5	 loglik: -88045.9
+6	 loglik: -87758.7
+7	 loglik: -87518.5
+8	 loglik: -87350
+9	 loglik: -87241.1
+10	 loglik: -87097.6
+11	 loglik: -86920.6
+</pre><pre class="codeinput">logprobFn = @hmmLogprob;
+[yhat, post] = generativeClassifierPredict(logprobFn, model, Xtest);
+</pre><pre class="codeinput">nerrors = sum(yhat ~= ytest);
+display(nerrors);
+
+<span class="keyword">if</span> 0
+</pre><h2>Do the same thing with a tied mixture of Gaussians observation model<a name="6"></a></h2><pre class="codeinput">nmix    = 3;
+fitArgs = [fitArgs, {<span class="string">'nmix'</span>, nmix}];
+fitFn   = @(X)hmmFit(X, nstates, <span class="string">'mixGaussTied'</span>, fitArgs{:});
+model = generativeClassifierFit(fitFn, Xtrain, ytrain);
+[yhat, post] = generativeClassifierPredict(logprobFn, model, Xtest);
+</pre><pre class="codeinput">nerrors = sum(yhat ~= ytest);
+display(nerrors);
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><pre class="codeoutput">nerrors =
+     0
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Classifying a speech signal with an HMM as "four" or "five"
+% Xtrain{i} is a 13 x T(i) sequence of MFCC data, where T(i) is the length
+%%
+
+% This file is from pmtk3.googlecode.com
+
+loadData('speechDataDigits4And5'); 
+nstates = 5;
+setSeed(0); 
+Xtrain = [train4'; train5'];
+ytrain = [repmat(4, numel(train4), 1) ; repmat(5, numel(train5), 1)];
+[Xtrain, ytrain] = shuffleRows(Xtrain, ytrain);
+Xtest = test45'; 
+ytest = labels'; 
+[Xtest, ytest] = shuffleRows(Xtest, ytest); 
+%% Initial Guess
+pi0 = [1, 0, 0, 0, 0];
+transmat0 = normalize(diag(ones(nstates, 1)) + ...
+            diag(ones(nstates-1, 1), 1), 2);
+%%        
+fitArgs = {'pi0', pi0, 'trans0', transmat0, 'maxIter', 10, 'verbose', true};
+fitFn   = @(X)hmmFit(X, nstates, 'gauss', fitArgs{:}); 
+model = generativeClassifierFit(fitFn, Xtrain, ytrain); 
+%%
+logprobFn = @hmmLogprob;
+[yhat, post] = generativeClassifierPredict(logprobFn, model, Xtest);
+%%
+nerrors = sum(yhat ~= ytest);
+display(nerrors);
+
+if 0
+%% Do the same thing with a tied mixture of Gaussians observation model
+nmix    = 3; 
+fitArgs = [fitArgs, {'nmix', nmix}];
+fitFn   = @(X)hmmFit(X, nstates, 'mixGaussTied', fitArgs{:}); 
+model = generativeClassifierFit(fitFn, Xtrain, ytrain); 
+[yhat, post] = generativeClassifierPredict(logprobFn, model, Xtest);
+%%
+nerrors = sum(yhat ~= ytest);
+display(nerrors);
+end
+
+##### SOURCE END #####
+--></body></html>

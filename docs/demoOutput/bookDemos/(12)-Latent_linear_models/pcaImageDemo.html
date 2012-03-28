@@ -1,0 +1,337 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>PCA Image Demo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="pcaImageDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>PCA Image Demo</h1><!--introduction--><p>Based on code by Mark Girolami, but uses eig instead of svd to save memory</p><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+setSeed(0);
+
+<span class="keyword">if</span> 0
+  loadData(<span class="string">'mnistAll'</span>); <span class="comment">% mnist structure</span>
+  <span class="comment">%train_images: [28x28x60000 uint8]  0 to 255</span>
+  <span class="comment">%   test_images: [28x28x10000 uint8]</span>
+  <span class="comment">%  train_labels: [60000x1 uint8]</span>
+  <span class="comment">%   test_labels: [10000x1 uint8]</span>
+  h = 28; w = 28; d= h*w;
+  ndx = find(mnist.train_labels==3);
+  ndx = ndx(1:1000); n = length(ndx);
+  X = double(reshape(mnist.train_images(:,:,ndx),[d n]))';
+  name = <span class="string">'mnist3'</span>
+<span class="keyword">end</span>
+
+<span class="keyword">if</span> 1
+  loadData(<span class="string">'olivettiFaces'</span>); <span class="comment">% 0 to 255, from http://www.cs.toronto.edu/~roweis/data.html</span>
+  X=faces'; clear <span class="string">faces</span>; <span class="comment">% 4096x400  (64x64=4096)</span>
+  <span class="comment">% 10 images per person, 40 images</span>
+  y = repmat((1:40),10,1); y = y(:);
+  [n d] = size(X);
+  <span class="comment">%X = rescaleData(X, 0, 1); % introduces many artefacts!</span>
+  h = 64; w = 64;
+  name = <span class="string">'faces'</span>
+<span class="keyword">end</span>
+
+<span class="comment">%%%%%%%</span>
+
+<span class="keyword">if</span> 0
+  X = loadData(<span class="string">'digits3Htf'</span>); <span class="comment">% 658 x 256 - row order, not column!</span>
+  <span class="comment">%http://www-stat.stanford.edu/~tibs/ElemStatLearn/data.html</span>
+  h  = 16; w = 16;
+  [n d] = size(X)
+  X = reshape(X, [n h w]);
+  X = permute(X, [3 2 1]); <span class="comment">% 16 x 16 x 658</span>
+  X = reshape(X, [h*w n])';
+<span class="keyword">end</span>
+
+<span class="keyword">if</span> 0
+  X = loadData(<span class="string">'uspsAll'</span>); <span class="comment">% data: [256x1100x10 uint8]</span>
+  <span class="comment">% http://www.cs.toronto.edu/~roweis/data.html</span>
+  X = double(data(:,:,3))';
+  h = 16; w = 16;
+<span class="keyword">end</span>
+
+<span class="keyword">if</span> 0
+  <span class="comment">% use all 10 classes at once - gives hard to interpret bases</span>
+  loadData(<span class="string">'mnistAll'</span>); <span class="comment">% mnist structure</span>
+  <span class="comment">%train_images: [28x28x60000 uint8]  0 to 255</span>
+  <span class="comment">%   test_images: [28x28x10000 uint8]</span>
+  <span class="comment">%  train_labels: [60000x1 uint8]</span>
+  <span class="comment">%   test_labels: [10000x1 uint8]</span>
+  h = 28; w = 28; d= h*w;
+  ndx = randperm(10000); <span class="comment">% random classes</span>
+  ndx = ndx(1:1000); n = length(ndx);
+  X = double(reshape(mnist.train_images(:,:,ndx),[d n]))';
+<span class="keyword">end</span>
+
+
+<span class="comment">% Visualize a random subset of the data as a single image</span>
+perm = randperm(n);
+figure(1); clf
+<span class="comment">%K = 24; %XX = reshape(X(perm(1:K),:)', [h w 1 K]); montage(XX)</span>
+<span class="comment">%title(sprintf('%d random training images', K))</span>
+<span class="keyword">for</span> i=1:25
+  subplot(5,5,i)
+  f = reshape(X(perm(i),:), [h w]);
+  imagesc(f);  axis <span class="string">off</span>; colormap <span class="string">gray</span>
+<span class="keyword">end</span>
+printPmtkFigure(sprintf(<span class="string">'pcaImages-%s-images'</span>,name));
+
+mu = mean(X);
+XC = X-repmat(mu,size(X,1),1);
+sprintf(<span class="string">'Performing PCA.... stay tuned\n'</span>);
+<span class="comment">%[U,S,V] = svd(XC,0);</span>
+<span class="comment">%evals = (1/n)*diag(S).^2;</span>
+[V, Z, evals] = pcaPmtk(X);
+
+<span class="comment">% visualize basis functions (eigenfaces)</span>
+figure(2);clf
+subplot(2,2,1)
+imagesc(reshape(mu,[h w])); colormap(gray); axis <span class="string">off</span>;
+title(<span class="string">'mean'</span>)
+<span class="keyword">for</span> i=1:3
+  subplot(2,2,i+1)
+  imagesc(reshape(V(:,i),[h w])); colormap(gray); axis <span class="string">off</span>;
+  title(sprintf(<span class="string">'principal basis %d'</span>, i))
+<span class="keyword">end</span>
+printPmtkFigure(sprintf(<span class="string">'pcaImages-%s-basis'</span>,name));
+
+
+<span class="comment">% Plot reconstruction error</span>
+figure(3); clf
+n = size(X,1);
+Ks = [1:10 10:5:50 50:25:rank(X)];
+clear <span class="string">mse</span>
+<span class="keyword">for</span> ki=1:length(Ks)
+  k = Ks(ki);
+  <span class="comment">%Xrecon = U(:,1:k) * S(1:k,1:k) * V(:,1:k)' + repmat(mu, n, 1);</span>
+  Xrecon = Z(:,1:k)*V(:,1:k)' + repmat(mu, n, 1);
+  err = (Xrecon - X);
+  mse(ki) = sqrt(mean(err(:).^2));
+<span class="keyword">end</span>
+plot(Ks, mse, <span class="string">'-o'</span>)
+ylabel(<span class="string">'mse'</span>); xlabel(<span class="string">'K'</span>); title(<span class="string">'reconstruction error'</span>);
+printPmtkFigure(sprintf(<span class="string">'pcaImages-%s-recon'</span>, name));
+
+<span class="comment">% Scree plot</span>
+figure(4);clf
+plot(cumsum(evals)/sum(evals), <span class="string">'ko-'</span>)
+ylabel(<span class="string">'proportion of variance'</span>)
+xlabel(<span class="string">'K'</span>)
+printPmtkFigure(sprintf(<span class="string">'pcaImages-%s-scree'</span>, name));
+
+
+<span class="comment">% Plot reconstructed image</span>
+ndx = 125; <span class="comment">% selected face</span>
+Ks = [2 10 100 rank(X)];
+figure(5);clf
+<span class="keyword">for</span> ki=1:length(Ks)
+  k = Ks(ki);
+  <span class="comment">%Xrecon = U(ndx,1:K) * S(1:K,1:K) * V(:,1:K)' + mu;</span>
+  Xrecon = Z(ndx,1:k)*V(:,1:k)' + mu;
+  subplot(2,2,ki);
+  imagesc(reshape(Xrecon', h, w)); axis <span class="string">off</span>; colormap(gray)
+  title(sprintf(<span class="string">'reconstructed with %d bases'</span>, k))
+<span class="keyword">end</span>
+printPmtkFigure(sprintf(<span class="string">'pcaImages-%s-reconImages'</span>, name));
+</pre><pre class="codeoutput">name =
+faces
+</pre><img vspace="5" hspace="5" src="pcaImageDemo_01.png" alt=""> <img vspace="5" hspace="5" src="pcaImageDemo_02.png" alt=""> <img vspace="5" hspace="5" src="pcaImageDemo_03.png" alt=""> <img vspace="5" hspace="5" src="pcaImageDemo_04.png" alt=""> <img vspace="5" hspace="5" src="pcaImageDemo_05.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% PCA Image Demo
+% Based on code by Mark Girolami, but uses eig instead of svd to save memory
+%%
+
+% This file is from pmtk3.googlecode.com
+
+setSeed(0);
+
+if 0
+  loadData('mnistAll'); % mnist structure
+  %train_images: [28x28x60000 uint8]  0 to 255
+  %   test_images: [28x28x10000 uint8]
+  %  train_labels: [60000x1 uint8]
+  %   test_labels: [10000x1 uint8]
+  h = 28; w = 28; d= h*w;
+  ndx = find(mnist.train_labels==3);
+  ndx = ndx(1:1000); n = length(ndx); 
+  X = double(reshape(mnist.train_images(:,:,ndx),[d n]))';
+  name = 'mnist3'
+end
+
+if 1
+  loadData('olivettiFaces'); % 0 to 255, from http://www.cs.toronto.edu/~roweis/data.html
+  X=faces'; clear faces; % 4096x400  (64x64=4096) 
+  % 10 images per person, 40 images
+  y = repmat((1:40),10,1); y = y(:);
+  [n d] = size(X);
+  %X = rescaleData(X, 0, 1); % introduces many artefacts!
+  h = 64; w = 64;
+  name = 'faces'
+end
+
+%%%%%%%
+
+if 0
+  X = loadData('digits3Htf'); % 658 x 256 - row order, not column!
+  %http://www-stat.stanford.edu/~tibs/ElemStatLearn/data.html
+  h  = 16; w = 16;
+  [n d] = size(X)
+  X = reshape(X, [n h w]);
+  X = permute(X, [3 2 1]); % 16 x 16 x 658
+  X = reshape(X, [h*w n])';
+end
+
+if 0
+  X = loadData('uspsAll'); % data: [256x1100x10 uint8]
+  % http://www.cs.toronto.edu/~roweis/data.html
+  X = double(data(:,:,3))';
+  h = 16; w = 16;
+end
+
+if 0
+  % use all 10 classes at once - gives hard to interpret bases
+  loadData('mnistAll'); % mnist structure
+  %train_images: [28x28x60000 uint8]  0 to 255
+  %   test_images: [28x28x10000 uint8]
+  %  train_labels: [60000x1 uint8]
+  %   test_labels: [10000x1 uint8]
+  h = 28; w = 28; d= h*w;
+  ndx = randperm(10000); % random classes
+  ndx = ndx(1:1000); n = length(ndx); 
+  X = double(reshape(mnist.train_images(:,:,ndx),[d n]))';
+end
+
+
+% Visualize a random subset of the data as a single image
+perm = randperm(n);
+figure(1); clf
+%K = 24; %XX = reshape(X(perm(1:K),:)', [h w 1 K]); montage(XX)
+%title(sprintf('%d random training images', K))
+for i=1:25
+  subplot(5,5,i)
+  f = reshape(X(perm(i),:), [h w]);
+  imagesc(f);  axis off; colormap gray
+end
+printPmtkFigure(sprintf('pcaImages-%s-images',name)); 
+
+mu = mean(X);
+XC = X-repmat(mu,size(X,1),1);
+sprintf('Performing PCA.... stay tuned\n');
+%[U,S,V] = svd(XC,0);
+%evals = (1/n)*diag(S).^2;
+[V, Z, evals] = pcaPmtk(X);
+
+% visualize basis functions (eigenfaces)
+figure(2);clf
+subplot(2,2,1)
+imagesc(reshape(mu,[h w])); colormap(gray); axis off;
+title('mean')
+for i=1:3
+  subplot(2,2,i+1)
+  imagesc(reshape(V(:,i),[h w])); colormap(gray); axis off;
+  title(sprintf('principal basis %d', i))
+end
+printPmtkFigure(sprintf('pcaImages-%s-basis',name));
+
+
+% Plot reconstruction error
+figure(3); clf
+n = size(X,1);
+Ks = [1:10 10:5:50 50:25:rank(X)];
+clear mse
+for ki=1:length(Ks)
+  k = Ks(ki);
+  %Xrecon = U(:,1:k) * S(1:k,1:k) * V(:,1:k)' + repmat(mu, n, 1);
+  Xrecon = Z(:,1:k)*V(:,1:k)' + repmat(mu, n, 1);
+  err = (Xrecon - X);
+  mse(ki) = sqrt(mean(err(:).^2));
+end
+plot(Ks, mse, '-o')
+ylabel('mse'); xlabel('K'); title('reconstruction error');
+printPmtkFigure(sprintf('pcaImages-%s-recon', name)); 
+
+% Scree plot
+figure(4);clf
+plot(cumsum(evals)/sum(evals), 'ko-')
+ylabel('proportion of variance')
+xlabel('K')
+printPmtkFigure(sprintf('pcaImages-%s-scree', name)); 
+
+
+% Plot reconstructed image
+ndx = 125; % selected face
+Ks = [2 10 100 rank(X)];
+figure(5);clf
+for ki=1:length(Ks)
+  k = Ks(ki);
+  %Xrecon = U(ndx,1:K) * S(1:K,1:K) * V(:,1:K)' + mu;
+  Xrecon = Z(ndx,1:k)*V(:,1:k)' + mu;
+  subplot(2,2,ki);
+  imagesc(reshape(Xrecon', h, w)); axis off; colormap(gray)
+  title(sprintf('reconstructed with %d bases', k))
+end
+printPmtkFigure(sprintf('pcaImages-%s-reconImages', name)); 
+
+
+##### SOURCE END #####
+--></body></html>

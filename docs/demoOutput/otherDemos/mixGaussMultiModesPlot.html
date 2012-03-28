@@ -1,0 +1,136 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Plot Mixtures of 2, 2D Gaussians with 1,2, and 3 modes Respectively.</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="mixGaussMultiModesPlot.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Plot Mixtures of 2, 2D Gaussians with 1,2, and 3 modes Respectively.</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+mixweight = [0.5; 0.5];
+model.K = 2;
+<span class="comment">% M = desired num. modes</span>
+<span class="keyword">for</span> M=1:3
+    <span class="keyword">switch</span> M
+        <span class="keyword">case</span> 3,
+            <span class="comment">% 3 modes</span>
+            mu = [0 0; 1 1]';
+            Sigma(:,:,1) = [1 0; 0 0.05];
+            Sigma(:,:,2) = [0.05 0; 0 1];
+            xrange = [-3 3 -3 3];
+        <span class="keyword">case</span> 2,
+            mu = [-1 -1; 1 1]';
+            Sigma(:,:,1) = 0.5*eye(2);
+            Sigma(:,:,2) = 0.5*eye(2);
+            xrange = [-3 3 -3 3];
+        <span class="keyword">case</span> 1,
+            mu = [-0.5 -0.5; 0.5 0.5]';
+            Sigma(:,:,1) = 0.5*eye(2);
+            Sigma(:,:,2) = 0.5*eye(2);
+            xrange = [-3 3 -3 3];
+    <span class="keyword">end</span>
+    plotSurface(@(x)exp(mixGaussLogprob(mu, Sigma, mixweight, x)), xrange);
+    shading <span class="string">interp</span>
+    view([118, 46])
+    xlabel(<span class="string">'x1'</span>); ylabel(<span class="string">'x2'</span>);
+    printPmtkFigure(sprintf(<span class="string">'gmmMultiModes%d'</span>, M))
+<span class="keyword">end</span>
+view([150, 42])
+</pre><img vspace="5" hspace="5" src="mixGaussMultiModesPlot_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Plot Mixtures of 2, 2D Gaussians with 1,2, and 3 modes Respectively. 
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+mixweight = [0.5; 0.5];
+model.K = 2;
+% M = desired num. modes
+for M=1:3    
+    switch M
+        case 3,
+            % 3 modes
+            mu = [0 0; 1 1]';
+            Sigma(:,:,1) = [1 0; 0 0.05];
+            Sigma(:,:,2) = [0.05 0; 0 1];
+            xrange = [-3 3 -3 3];
+        case 2,
+            mu = [-1 -1; 1 1]';
+            Sigma(:,:,1) = 0.5*eye(2);
+            Sigma(:,:,2) = 0.5*eye(2);
+            xrange = [-3 3 -3 3];
+        case 1,
+            mu = [-0.5 -0.5; 0.5 0.5]';
+            Sigma(:,:,1) = 0.5*eye(2);
+            Sigma(:,:,2) = 0.5*eye(2);
+            xrange = [-3 3 -3 3];
+    end
+    plotSurface(@(x)exp(mixGaussLogprob(mu, Sigma, mixweight, x)), xrange);
+    shading interp
+    view([118, 46])
+    xlabel('x1'); ylabel('x2');
+    printPmtkFigure(sprintf('gmmMultiModes%d', M))
+end
+view([150, 42])
+
+##### SOURCE END #####
+--></body></html>

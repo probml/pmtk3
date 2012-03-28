@@ -1,0 +1,136 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Minfunc Logreg Demo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="logregMultinomMinfuncDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Minfunc Logreg Demo</h1><pre class="codeinput"><span class="comment">%PMTKauthor Mark Schmidt</span>
+<span class="comment">%PMTKurl  http://people.cs.ubc.ca/~schmidtm/Software/minFunc/minFunc.html</span>
+</pre><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+options.Display = <span class="string">'none'</span>;
+setSeed(1);
+nClasses = 5;
+nInstances = 1000;
+<span class="comment">%nInstances = 100;</span>
+nVars = 2;
+[X,y] = makeData(<span class="string">'multinomial'</span>,nInstances,nVars,nClasses);
+
+<span class="comment">% Add bias</span>
+X0 = X;
+X = [ones(nInstances,1) X];
+
+
+funObj = @(W)SoftmaxLoss2(W,X,y,nClasses);
+lambda0 = 1e-4;
+lambda = lambda0*ones(nVars+1,nClasses-1);
+lambda(1,:) = 0; <span class="comment">% Don't penalize biases</span>
+fprintf(<span class="string">'Training multinomial logistic regression model...\n'</span>);
+wSoftmax = minFunc(@penalizedL2,zeros((nVars+1)*(nClasses-1),1),options,funObj,lambda(:));
+wSoftmax = reshape(wSoftmax,[nVars+1 nClasses-1]);
+wSoftmax = [wSoftmax zeros(nVars+1,1)];
+[junk yhat] = max(X*wSoftmax,[],2);
+trainErr = sum(yhat~=y)/length(y)
+
+figure;
+plotClassifier(X,y,wSoftmax,<span class="string">'Multinomial Logistic Regression'</span>);
+</pre><pre class="codeoutput">Training multinomial logistic regression model...
+trainErr =
+   0.003000000000000
+</pre><img vspace="5" hspace="5" src="logregMultinomMinfuncDemo_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Minfunc Logreg Demo
+%PMTKauthor Mark Schmidt
+%PMTKurl  http://people.cs.ubc.ca/~schmidtm/Software/minFunc/minFunc.html
+%%
+
+% This file is from pmtk3.googlecode.com
+
+options.Display = 'none';
+setSeed(1); 
+nClasses = 5;
+nInstances = 1000;
+%nInstances = 100;
+nVars = 2;
+[X,y] = makeData('multinomial',nInstances,nVars,nClasses);
+
+% Add bias
+X0 = X;
+X = [ones(nInstances,1) X];
+
+
+funObj = @(W)SoftmaxLoss2(W,X,y,nClasses);
+lambda0 = 1e-4;
+lambda = lambda0*ones(nVars+1,nClasses-1);
+lambda(1,:) = 0; % Don't penalize biases
+fprintf('Training multinomial logistic regression model...\n');
+wSoftmax = minFunc(@penalizedL2,zeros((nVars+1)*(nClasses-1),1),options,funObj,lambda(:));
+wSoftmax = reshape(wSoftmax,[nVars+1 nClasses-1]);
+wSoftmax = [wSoftmax zeros(nVars+1,1)];
+[junk yhat] = max(X*wSoftmax,[],2);
+trainErr = sum(yhat~=y)/length(y)
+
+figure;
+plotClassifier(X,y,wSoftmax,'Multinomial Logistic Regression');
+
+##### SOURCE END #####
+--></body></html>

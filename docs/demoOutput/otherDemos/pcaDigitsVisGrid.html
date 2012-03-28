@@ -1,0 +1,188 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Embed the digit 3 into 2D and sample from the space</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="pcaDigitsVisGrid.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Embed the digit 3 into 2D and sample from the space</h1><!--introduction--><p>Reproduce fig 14.23 from Hastie's book p489</p><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="keyword">if</span> 0
+    loadData(<span class="string">'uspsAll'</span>); <span class="comment">% data(1:256, 1:1100, 1:10)</span>
+    c = 3;
+    n = size(data,2);
+    X = double(data(:,:,c))'; <span class="comment">% n x 256</span>
+    figure(3);clf;montageKPM(reshape(X', [16 16 n]))
+<span class="keyword">else</span>
+    X = loadData(<span class="string">'digits3Htf'</span>); <span class="comment">% 658 x 256 - row order, not column!</span>
+    X = reshape(X, [658 16 16]);
+    X = permute(X, [3 2 1]); <span class="comment">% 16 x 16 x 658</span>
+    <span class="comment">%figure(3);clf;montageKPM(X)</span>
+    X = reshape(X, [256 658])';
+<span class="keyword">end</span>
+
+
+h = 16; w = 16;
+
+<span class="comment">% Hastie's book p489 recommends computing quantiles of ui1, ui2</span>
+<span class="comment">% to compute the grid location to sample represenative images in latent space</span>
+mu = mean(X);
+XC = X-repmat(mu,size(X,1),1);
+[U,S,V] = svd(XC,0);
+pc = [-U(:,1) -U(:,2)]; <span class="comment">% to match fig 14.23 of HTF</span>
+<span class="comment">%pc = U*S; pc = [pc(:,1) pc(:,2)];</span>
+pct1 = quantilePMTK(pc(:,1), [0.05 0.25 0.5 0.75 0.95]);
+pct2 = quantilePMTK(pc(:,2), [0.05 0.25 0.5 0.75 0.95]);
+
+fig2 = figure();
+fig1 = figure();
+plot(pc(:,1), pc(:,2), <span class="string">'.'</span>);
+hold <span class="string">on</span>
+<span class="keyword">for</span> i=1:5
+    line([pct1(i) pct1(i)], [pct2(1) pct2(end)]);
+    line([pct1(1) pct1(end)], [pct2(i) pct2(i)]);
+<span class="keyword">end</span>
+pct2r = flipud(pct2')'; <span class="comment">% top left image corresponds to +ve Z2</span>
+<span class="keyword">for</span> i=1:5
+    <span class="keyword">for</span> j=1:5
+        figure(1);
+        x1 = pct1(j); x2 = pct2r(i);
+        plot(x1, x2, <span class="string">'rx'</span>);
+        dst = sqdist([x1 x2]', pc');
+        k = argmin(dst);
+        plot(pc(k,1), pc(k,2), <span class="string">'ro'</span>);
+        figure(fig2); subplot2(5,5,i,j); hold <span class="string">on</span>
+        imagesc(reshape(X(k,:),[h w])); axis <span class="string">off</span>; colormap(gray);
+
+
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+figure(fig1)
+printPmtkFigure <span class="string">fht14-23images</span>
+figure(fig2)
+printPmtkFigure <span class="string">fht14-23dots</span>
+<span class="comment">% figure(3);imagesc(reshape(X(73,:),16,16));colormap(gray)</span>
+</pre><img vspace="5" hspace="5" src="pcaDigitsVisGrid_01.png" alt=""> <img vspace="5" hspace="5" src="pcaDigitsVisGrid_02.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Embed the digit 3 into 2D and sample from the space
+% Reproduce fig 14.23 from Hastie's book p489
+%%
+
+% This file is from pmtk3.googlecode.com
+
+if 0
+    loadData('uspsAll'); % data(1:256, 1:1100, 1:10)
+    c = 3;
+    n = size(data,2);
+    X = double(data(:,:,c))'; % n x 256
+    figure(3);clf;montageKPM(reshape(X', [16 16 n]))
+else
+    X = loadData('digits3Htf'); % 658 x 256 - row order, not column!
+    X = reshape(X, [658 16 16]);
+    X = permute(X, [3 2 1]); % 16 x 16 x 658
+    %figure(3);clf;montageKPM(X)
+    X = reshape(X, [256 658])';
+end
+
+
+h = 16; w = 16;
+
+% Hastie's book p489 recommends computing quantiles of ui1, ui2
+% to compute the grid location to sample represenative images in latent space
+mu = mean(X);
+XC = X-repmat(mu,size(X,1),1);
+[U,S,V] = svd(XC,0);
+pc = [-U(:,1) -U(:,2)]; % to match fig 14.23 of HTF
+%pc = U*S; pc = [pc(:,1) pc(:,2)];
+pct1 = quantilePMTK(pc(:,1), [0.05 0.25 0.5 0.75 0.95]);
+pct2 = quantilePMTK(pc(:,2), [0.05 0.25 0.5 0.75 0.95]);
+
+fig2 = figure();
+fig1 = figure();
+plot(pc(:,1), pc(:,2), '.');
+hold on
+for i=1:5
+    line([pct1(i) pct1(i)], [pct2(1) pct2(end)]);
+    line([pct1(1) pct1(end)], [pct2(i) pct2(i)]);
+end
+pct2r = flipud(pct2')'; % top left image corresponds to +ve Z2
+for i=1:5
+    for j=1:5
+        figure(1);
+        x1 = pct1(j); x2 = pct2r(i);
+        plot(x1, x2, 'rx');
+        dst = sqdist([x1 x2]', pc');
+        k = argmin(dst);
+        plot(pc(k,1), pc(k,2), 'ro');
+        figure(fig2); subplot2(5,5,i,j); hold on
+        imagesc(reshape(X(k,:),[h w])); axis off; colormap(gray);
+        
+        
+    end
+end
+figure(fig1)
+printPmtkFigure fht14-23images
+figure(fig2)
+printPmtkFigure fht14-23dots
+% figure(3);imagesc(reshape(X(73,:),16,16));colormap(gray)
+
+##### SOURCE END #####
+--></body></html>

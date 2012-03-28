@@ -1,0 +1,264 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>gaussInterpNoisyDemo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="gaussInterpNoisyDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Interpolate some data using a joint Gaussian</a></li><li><a href="#3">Numerically unstable method</a></li><li><a href="#4">Plot</a></li></ul></div><h2>Interpolate some data using a joint Gaussian<a name="1"></a></h2><p>Based on p140 of "Introduction to Bayesian scientific computation" by Calvetti and Somersalo</p><pre class="codeinput">clear <span class="string">all</span>
+
+setSeed(1);
+D = 150;
+Nobs = 10;
+xs = linspace(0, 1, D);
+perm = randperm(D);
+obsNdx = perm(1:Nobs);
+hidNdx = setdiff(1:D, obsNdx);
+
+<span class="comment">% Noisy observations of the x values at obsNdx</span>
+obsNoiseVar = 1;
+y = sqrt(obsNoiseVar)*randn(Nobs, 1);
+A = zeros(Nobs, D);
+<span class="keyword">for</span> i=1:Nobs
+    A(i, obsNdx(i)) = 1;
+<span class="keyword">end</span>
+
+
+<span class="comment">% Model is: p(y|x) = N(Ax, noiseLevel * I)</span>
+<span class="comment">% p(x) = N(0, inv(lambda * L'L))</span>
+
+<span class="comment">% Make a (D-2) * D tridiagonal matrix</span>
+L = spdiags(ones(D-2,1) * [-1 2 -1], [0 1 2], D-2, D);
+
+<span class="comment">% lamba is the prior precision and should be related to</span>
+<span class="comment">% the obs noise; it affects the posterior mean</span>
+lambdas = [30, 0.1];
+names = { <span class="string">'30'</span>, <span class="string">'0p1'</span>};
+<span class="keyword">for</span> trial=1:numel(lambdas)
+</pre><pre class="codeinput">    <span class="comment">%names{trial} = sprintf('%4.3f', lambdas(trial));</span>
+    lambda = lambdas(trial);
+L = L*lambda;
+</pre><h2>Numerically unstable method<a name="3"></a></h2><pre class="codeinput"><span class="comment">%</span>
+precMat = L'*L + 1e-3;
+priorDist.mu = zeros(D, 1);
+priorDist.Sigma = inv(precMat);
+obsDist.Sigma = obsNoiseVar*eye(Nobs, Nobs);
+<span class="comment">%postDist = gaussSoftCondition(priorDist, obsDist, A, y);</span>
+obsPrec = inv(obsDist.Sigma);
+postDist.Sigma = inv(precMat + A'*obsPrec*A);
+postDist.mu = postDist.Sigma*A'*obsPrec*y;
+
+
+
+<span class="comment">%{
+</span><span class="comment">% Their book - in this method, the prior precision
+</span><span class="comment">% has no effect on the posterior mean, which is very odd
+</span><span class="comment">C = obsNoiseVar * eye(Nobs);
+</span><span class="comment">L1 = L(:, hidNdx);
+</span><span class="comment">L2 = L(:, obsNdx);
+</span><span class="comment">
+</span><span class="comment">B11 = L1'*L1;
+</span><span class="comment">B12 = L1'*L2;
+</span><span class="comment">B21 = B12';
+</span><span class="comment">Lambda = zeros(D, D); % posterior precision
+</span><span class="comment">Lambda(hidNdx, hidNdx) = B11;
+</span><span class="comment">Lambda(hidNdx, obsNdx) = B12;
+</span><span class="comment">Lambda(obsNdx, hidNdx) = B21;
+</span><span class="comment">Lambda(obsNdx, obsNdx) = B21*inv(B11)*B12 + inv(C);
+</span><span class="comment">postDist.Sigma = inv(Lambda);
+</span><span class="comment">xobs = zeros(D, 1);
+</span><span class="comment">xobs(obsNdx) = y;
+</span><span class="comment">postDist.mu = postDist.Sigma*xobs;
+</span><span class="comment">%}</span>
+</pre><h2>Plot<a name="4"></a></h2><pre class="codeinput">figure; hold <span class="string">on</span>;
+mu = postDist.mu;
+plot(xs(obsNdx), y, <span class="string">'kx'</span>, <span class="string">'markersize'</span>, 14, <span class="string">'linewidth'</span>, 3);
+plot(xs, mu, <span class="string">'k-'</span>, <span class="string">'linewidth'</span>, 2);
+title(sprintf(<span class="string">'%s=%s'</span>, <span class="string">'\lambda'</span>, names{trial}));
+
+
+<span class="comment">% plot marginal posterior sd as gray band</span>
+figure; hold <span class="string">on</span>;
+mu = postDist.mu;
+S2 = diag(postDist.Sigma);
+f = [mu+2*sqrt(S2);flipdim(mu-2*sqrt(S2),1)];
+fill([xs'; flipdim(xs',1)], f, [7 7 7]/8, <span class="string">'EdgeColor'</span>, [7 7 7]/8);
+plot(xs(obsNdx), y, <span class="string">'kx'</span>, <span class="string">'markersize'</span>, 14, <span class="string">'linewidth'</span>, 3);
+plot(xs, mu, <span class="string">'k-'</span>, <span class="string">'linewidth'</span>, 2);
+title(sprintf(<span class="string">'%s=%s'</span>, <span class="string">'\lambda'</span>, names{trial}));
+set(gca, <span class="string">'ylim'</span>,[-5 5]);
+
+<span class="comment">% plot samples from posterior predictive</span>
+<span class="keyword">for</span> i=1:3
+  fs = gaussSample(postDist, 1);
+  plot(xs, fs, <span class="string">'k-'</span>, <span class="string">'linewidth'</span>, 1)
+<span class="keyword">end</span>
+
+printPmtkFigure(sprintf(<span class="string">'gaussInterpNoisyDemo%s'</span>, names{trial}))
+</pre><img vspace="5" hspace="5" src="gaussInterpNoisyDemo_01.png" alt=""> <img vspace="5" hspace="5" src="gaussInterpNoisyDemo_02.png" alt=""> <img vspace="5" hspace="5" src="gaussInterpNoisyDemo_03.png" alt=""> <img vspace="5" hspace="5" src="gaussInterpNoisyDemo_04.png" alt=""> <pre class="codeinput"><span class="keyword">end</span> <span class="comment">% next trial</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Interpolate some data using a joint Gaussian
+% Based on p140 of "Introduction to Bayesian scientific computation"
+% by Calvetti and Somersalo
+
+clear all
+
+setSeed(1);
+D = 150;
+Nobs = 10;
+xs = linspace(0, 1, D);
+perm = randperm(D);
+obsNdx = perm(1:Nobs);
+hidNdx = setdiff(1:D, obsNdx);
+
+% Noisy observations of the x values at obsNdx
+obsNoiseVar = 1;
+y = sqrt(obsNoiseVar)*randn(Nobs, 1);
+A = zeros(Nobs, D);
+for i=1:Nobs
+    A(i, obsNdx(i)) = 1;
+end
+
+
+% Model is: p(y|x) = N(Ax, noiseLevel * I)
+% p(x) = N(0, inv(lambda * L'L))
+
+% Make a (D-2) * D tridiagonal matrix
+L = spdiags(ones(D-2,1) * [-1 2 -1], [0 1 2], D-2, D);
+
+% lamba is the prior precision and should be related to
+% the obs noise; it affects the posterior mean 
+lambdas = [30, 0.1];
+names = { '30', '0p1'};
+for trial=1:numel(lambdas)
+    %names{trial} = sprintf('%4.3f', lambdas(trial));
+    lambda = lambdas(trial);
+L = L*lambda;
+
+%% Numerically unstable method
+
+%
+precMat = L'*L + 1e-3;
+priorDist.mu = zeros(D, 1);
+priorDist.Sigma = inv(precMat);
+obsDist.Sigma = obsNoiseVar*eye(Nobs, Nobs);
+%postDist = gaussSoftCondition(priorDist, obsDist, A, y);
+obsPrec = inv(obsDist.Sigma);
+postDist.Sigma = inv(precMat + A'*obsPrec*A);
+postDist.mu = postDist.Sigma*A'*obsPrec*y;
+
+
+
+%{
+% Their book - in this method, the prior precision
+% has no effect on the posterior mean, which is very odd
+C = obsNoiseVar * eye(Nobs);
+L1 = L(:, hidNdx);
+L2 = L(:, obsNdx);
+
+B11 = L1'*L1;
+B12 = L1'*L2;
+B21 = B12';
+Lambda = zeros(D, D); % posterior precision
+Lambda(hidNdx, hidNdx) = B11;
+Lambda(hidNdx, obsNdx) = B12;
+Lambda(obsNdx, hidNdx) = B21;
+Lambda(obsNdx, obsNdx) = B21*inv(B11)*B12 + inv(C);    
+postDist.Sigma = inv(Lambda);
+xobs = zeros(D, 1);     
+xobs(obsNdx) = y;
+postDist.mu = postDist.Sigma*xobs;
+%}
+
+
+%% Plot
+
+figure; hold on;
+mu = postDist.mu;
+plot(xs(obsNdx), y, 'kx', 'markersize', 14, 'linewidth', 3);
+plot(xs, mu, 'k-', 'linewidth', 2);
+title(sprintf('%s=%s', '\lambda', names{trial}));
+
+
+% plot marginal posterior sd as gray band
+figure; hold on;
+mu = postDist.mu;
+S2 = diag(postDist.Sigma);
+f = [mu+2*sqrt(S2);flipdim(mu-2*sqrt(S2),1)];
+fill([xs'; flipdim(xs',1)], f, [7 7 7]/8, 'EdgeColor', [7 7 7]/8);
+plot(xs(obsNdx), y, 'kx', 'markersize', 14, 'linewidth', 3);
+plot(xs, mu, 'k-', 'linewidth', 2);
+title(sprintf('%s=%s', '\lambda', names{trial}));
+set(gca, 'ylim',[-5 5]);
+
+% plot samples from posterior predictive
+for i=1:3
+  fs = gaussSample(postDist, 1);
+  plot(xs, fs, 'k-', 'linewidth', 1)
+end
+
+printPmtkFigure(sprintf('gaussInterpNoisyDemo%s', names{trial}))
+
+end % next trial
+
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,197 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>glmnetDemo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="glmnetDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">if</span> ~glmnetInstalled
+    fprintf(<span class="string">'cannot run %s without glmnet; skipping\n'</span>, mfilename());
+    <span class="keyword">return</span>;
+<span class="keyword">end</span>
+
+<span class="keyword">if</span> 0
+x=randn(100,20);
+y=randn(100,1);
+g2=randsample(2,100,true);
+g4=randsample(4,100,true);
+fit1=glmnet(x,y);
+glmnetPrint(fit1);
+glmnetCoef(fit1,0.01) <span class="comment">% extract coefficients at a single value of lambda</span>
+glmnetPredict(fit1,<span class="string">'response'</span>,x(1:10,:),[0.01,0.005]') <span class="comment">% make predictions</span>
+fit2=glmnet(x,g2,<span class="string">'binomial'</span>);
+fit3=glmnet(x,g4,<span class="string">'multinomial'</span>);
+<span class="keyword">end</span>
+
+<span class="keyword">if</span> 0
+clear <span class="string">all</span>
+load(<span class="string">'prostateStnd'</span>);
+options = glmnetSet;
+
+<span class="comment">% ridge path</span>
+
+<span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+options.alpha = 0;
+options.nlambda = 10;
+fit = glmnet(X, y, <span class="string">'gaussian'</span>, options);
+<span class="comment">%df = linregDofL2(X, fit.lambda)</span>
+figure; plot(fit.beta', <span class="string">'-o'</span>); title(<span class="string">'ridge'</span>)
+
+<span class="comment">% lasso path</span>
+options.alpha = 1;
+options.nlambda = 30;
+fit = glmnet(X, y, <span class="string">'gaussian'</span>, options);
+figure; plot(fit.beta', <span class="string">'-o'</span>); title(<span class="string">'lasso'</span>)
+
+<span class="comment">% lasso path using lars</span>
+XS = standardize(X);
+w = lars(XS,y);
+figure; plot(w, <span class="string">'-o'</span>); title(<span class="string">'lars'</span>)
+
+<span class="comment">% cv</span>
+options = glmnetSet;
+options.nlambda = 10;
+CVerr=cvglmnet(X,y,10,[],<span class="string">'response'</span>,<span class="string">'gaussian'</span>,options,1);
+
+<span class="keyword">end</span>
+
+<span class="keyword">if</span> 1
+  load(<span class="string">'soy'</span>); <span class="comment">% 3 class, X is 307*35, Y is 307*1</span>
+  family = <span class="string">'multinomial'</span>;
+options = glmnetSet;
+models = glmnet(X, Y, family, options);
+
+<span class="comment">%options.nlambda = 10;</span>
+nfolds = 5; foldid = []; type = [];
+verbose = 1;
+CVerr=cvglmnetMulticlass(X,Y,nfolds,foldid, type, family, options, verbose);
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">cannot run glmnetDemo without glmnet; skipping
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+
+
+if ~glmnetInstalled
+    fprintf('cannot run %s without glmnet; skipping\n', mfilename());
+    return;
+end
+
+if 0
+x=randn(100,20);
+y=randn(100,1);
+g2=randsample(2,100,true);
+g4=randsample(4,100,true);
+fit1=glmnet(x,y);
+glmnetPrint(fit1);
+glmnetCoef(fit1,0.01) % extract coefficients at a single value of lambda
+glmnetPredict(fit1,'response',x(1:10,:),[0.01,0.005]') % make predictions
+fit2=glmnet(x,g2,'binomial');
+fit3=glmnet(x,g4,'multinomial');
+end
+
+if 0
+clear all
+load('prostateStnd');
+options = glmnetSet;
+
+% ridge path
+
+% This file is from pmtk3.googlecode.com
+
+options.alpha = 0; 
+options.nlambda = 10;
+fit = glmnet(X, y, 'gaussian', options);
+%df = linregDofL2(X, fit.lambda)
+figure; plot(fit.beta', '-o'); title('ridge')
+
+% lasso path
+options.alpha = 1; 
+options.nlambda = 30;
+fit = glmnet(X, y, 'gaussian', options);
+figure; plot(fit.beta', '-o'); title('lasso')
+
+% lasso path using lars
+XS = standardize(X);
+w = lars(XS,y);
+figure; plot(w, '-o'); title('lars')
+
+% cv
+options = glmnetSet;
+options.nlambda = 10;
+CVerr=cvglmnet(X,y,10,[],'response','gaussian',options,1);
+
+end
+
+if 1
+  load('soy'); % 3 class, X is 307*35, Y is 307*1
+  family = 'multinomial';
+options = glmnetSet;
+models = glmnet(X, Y, family, options);
+
+%options.nlambda = 10;
+nfolds = 5; foldid = []; type = []; 
+verbose = 1;
+CVerr=cvglmnetMulticlass(X,Y,nfolds,foldid, type, family, options, verbose);
+end
+
+##### SOURCE END #####
+--></body></html>

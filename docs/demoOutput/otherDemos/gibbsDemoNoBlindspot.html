@@ -1,0 +1,195 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Denoising an Image Using Gibbs Sampling</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="gibbsDemoNoBlindspot.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Denoising an Image Using Gibbs Sampling</h1><!--introduction--><p>Here we use an Ising Prior and a Gaussian likelihood.</p><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+setSeed(4);
+sigma = 1; <span class="comment">% noise level</span>
+A = loadData(<span class="string">'letterA'</span>);
+y = A.AwithoutHole;
+<span class="comment">%load('imageWithBlackHole.mat') % defines y</span>
+<span class="comment">%load('imageWithWhiteHole.mat') % defines y</span>
+
+<span class="comment">% observation model</span>
+offState = 1;  onState = 2;
+mus = zeros(1, 2);
+mus(offState) = -1; mus(onState) = +1;
+sigmas = [sigma sigma];
+[M, N] = size(y);
+Npixels = M*N;
+localEvidence = ones(Npixels, 2);
+<span class="keyword">for</span> k=1:2
+    localEvidence(:,k) = uniGaussPdf(y(:), mus(k), sigmas(k).^2);
+<span class="keyword">end</span>
+guess = maxidx(localEvidence, [], 2);
+X = ones(M, N);
+X(guess==offState) = -1;
+X(guess==onState)  = +1;
+Xinit = X;
+figure();
+imagesc(y);colormap <span class="string">gray</span>; axis <span class="string">square</span>;
+fig = figure();
+J = 5;
+avgX = zeros(M,N);
+X = Xinit;
+maxIter = 100000;
+<span class="keyword">for</span> iter =1:maxIter
+    <span class="comment">% select a pixel at random</span>
+    ix = ceil( N * rand(1) ); iy = ceil( M * rand(1) );
+    pos = iy + M*(ix-1);
+    neighborhood = pos + [-1,1,-M,M];
+    neighborhood([iy==1,iy==M,ix==1,ix==N]) = [];
+    <span class="comment">% compute local conditional</span>
+    wi = sum( X(neighborhood) );
+    <span class="keyword">if</span> any(isnan(localEvidence(pos,:)))
+        error(<span class="string">'no evidence at %d, %d'</span>, ix, iy)
+    <span class="keyword">end</span>
+    p1  = exp(J*wi) * localEvidence(pos,onState);
+    p0  = exp(-J*wi) * localEvidence(pos,offState);
+    prob = p1/(p0+p1+eps);
+    <span class="keyword">if</span> rand &lt; prob
+        X(pos) = +1;
+    <span class="keyword">else</span>
+        X(pos) = -1;
+    <span class="keyword">end</span>
+    avgX = avgX+X;
+    <span class="comment">% plotting</span>
+    <span class="keyword">if</span> rem(iter,10000) == 0,
+        figure(fig);
+        imagesc(X);  axis(<span class="string">'square'</span>); colormap <span class="string">gray</span>; axis <span class="string">off</span>;
+        title(sprintf(<span class="string">'sample %d'</span>, iter));
+        <span class="comment">%</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="gibbsDemoNoBlindspot_01.png" alt=""> <img vspace="5" hspace="5" src="gibbsDemoNoBlindspot_02.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Denoising an Image Using Gibbs Sampling
+% Here we use an Ising Prior and a Gaussian likelihood.
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+setSeed(4);
+sigma = 1; % noise level
+A = loadData('letterA'); 
+y = A.AwithoutHole; 
+%load('imageWithBlackHole.mat') % defines y
+%load('imageWithWhiteHole.mat') % defines y
+
+% observation model
+offState = 1;  onState = 2;
+mus = zeros(1, 2);
+mus(offState) = -1; mus(onState) = +1;
+sigmas = [sigma sigma];
+[M, N] = size(y);
+Npixels = M*N;
+localEvidence = ones(Npixels, 2);
+for k=1:2
+    localEvidence(:,k) = uniGaussPdf(y(:), mus(k), sigmas(k).^2);
+end
+guess = maxidx(localEvidence, [], 2);
+X = ones(M, N);
+X(guess==offState) = -1;
+X(guess==onState)  = +1;
+Xinit = X;
+figure();
+imagesc(y);colormap gray; axis square;
+fig = figure();
+J = 5;
+avgX = zeros(M,N);
+X = Xinit;
+maxIter = 100000;
+for iter =1:maxIter
+    % select a pixel at random
+    ix = ceil( N * rand(1) ); iy = ceil( M * rand(1) );
+    pos = iy + M*(ix-1);
+    neighborhood = pos + [-1,1,-M,M];
+    neighborhood([iy==1,iy==M,ix==1,ix==N]) = [];
+    % compute local conditional
+    wi = sum( X(neighborhood) );
+    if any(isnan(localEvidence(pos,:)))
+        error('no evidence at %d, %d', ix, iy)
+    end
+    p1  = exp(J*wi) * localEvidence(pos,onState);
+    p0  = exp(-J*wi) * localEvidence(pos,offState);
+    prob = p1/(p0+p1+eps);
+    if rand < prob
+        X(pos) = +1;
+    else
+        X(pos) = -1;
+    end
+    avgX = avgX+X;
+    % plotting
+    if rem(iter,10000) == 0,
+        figure(fig);
+        imagesc(X);  axis('square'); colormap gray; axis off;
+        title(sprintf('sample %d', iter));
+        %
+    end
+end
+
+##### SOURCE END #####
+--></body></html>

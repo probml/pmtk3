@@ -1,0 +1,139 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Larsen and Marx p332</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="confintDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Larsen and Marx p332</h1><!--introduction--><p>PMTKneedsStatsToolbox mle, chi2inv (or Matlab version &gt; 2009a)</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">stats toolbox</a></li></ul></div><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+requireStatsToolbox
+D = [249 254 243 268 253 269 287 241 273 306 303 280 260 256 278 344 304 283 310];
+N = length(D);
+alpha = 0.05;
+
+muHat = mean(D);
+S2 = var(D); <span class="comment">% unbiased</span>
+nu = N-1;
+SS = sqrt(S2/N);
+L = muHat + SS*tinvPMTK(alpha/2,nu);
+U = muHat - SS*tinvPMTK(alpha/2,nu);
+muCI = [L, U] <span class="comment">% 263.8416  289.9478</span>
+
+sigma2HatMLE = var(D,1);
+LL = N*sigma2HatMLE/chi2invPMTK(1-alpha/2,nu);
+UU = N*sigma2HatMLE/chi2invPMTK(alpha/2,nu);
+sigma2CI = [LL UU] <span class="comment">% 418.75       1603.96</span>
+sigmaCI = sqrt([LL, UU])  <span class="comment">% 20.46         40.05</span>
+</pre><pre class="codeoutput">muCI =
+  263.8416  289.9478
+sigma2CI =
+   1.0e+03 *
+    0.4188    1.6040
+sigmaCI =
+   20.4635   40.0495
+</pre><h2>stats toolbox<a name="2"></a></h2><pre class="codeinput">[pHat, pCI] = mle(D, <span class="string">'distribution'</span>, <span class="string">'normal'</span>)
+<span class="comment">%pHat = [mean(D), std(D, 1)];</span>
+assert(approxeq(pHat, [muHat sqrt(sigma2HatMLE)]))
+assert(approxeq(pCI, [muCI(:) sigmaCI(:)]))
+</pre><pre class="codeoutput">pHat =
+  276.8947   26.3596
+pCI =
+  263.8416   20.4635
+  289.9478   40.0495
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Larsen and Marx p332
+% PMTKneedsStatsToolbox mle, chi2inv (or Matlab version > 2009a)
+%% 
+
+% This file is from pmtk3.googlecode.com
+
+requireStatsToolbox
+D = [249 254 243 268 253 269 287 241 273 306 303 280 260 256 278 344 304 283 310];
+N = length(D);
+alpha = 0.05;
+
+muHat = mean(D);
+S2 = var(D); % unbiased
+nu = N-1;
+SS = sqrt(S2/N);
+L = muHat + SS*tinvPMTK(alpha/2,nu);
+U = muHat - SS*tinvPMTK(alpha/2,nu);
+muCI = [L, U] % 263.8416  289.9478
+
+sigma2HatMLE = var(D,1);
+LL = N*sigma2HatMLE/chi2invPMTK(1-alpha/2,nu);
+UU = N*sigma2HatMLE/chi2invPMTK(alpha/2,nu);
+sigma2CI = [LL UU] % 418.75       1603.96
+sigmaCI = sqrt([LL, UU])  % 20.46         40.05
+
+%% stats toolbox
+[pHat, pCI] = mle(D, 'distribution', 'normal')
+%pHat = [mean(D), std(D, 1)];
+assert(approxeq(pHat, [muHat sqrt(sigma2HatMLE)]))
+assert(approxeq(pCI, [muCI(:) sigmaCI(:)]))
+
+
+
+
+##### SOURCE END #####
+--></body></html>

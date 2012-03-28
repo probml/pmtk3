@@ -1,0 +1,1265 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>discreteDensityModelsShootout</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="discreteDensityModelsShootout.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Data</a></li><li><a href="#3">Models/ methods</a></li><li><a href="#4">CV</a></li><li><a href="#5">Plot performance</a></li><li><a href="#6">Visualize models themselves</a></li></ul></div><pre class="codeinput"><span class="comment">%PMTKslow</span>
+
+<span class="comment">% Compare various joint density models on categorical (mostly binary) datsets</span>
+<span class="comment">% We visualize the learned structuers and evaluate loglik and</span>
+<span class="comment">% imputation error on test sets</span>
+</pre><h2>Data<a name="2"></a></h2><p>labels is N*D, where labels(n,d) in {1..Nstates(d)}</p><pre class="codeinput">Nfolds = 1;
+<span class="comment">% pcTrain and pcTest do not need to sum to one</span>
+<span class="comment">% This way, you can use a fraction of the overall data</span>
+pcTrain = 0.1; pcTest = 0.1;
+pcMissing =  0.3;
+
+<span class="comment">%dataName = 'SUN09';</span>
+dataName = <span class="string">'newsgroups'</span>;
+<span class="comment">%dataName = 'newsgroups1';</span>
+<span class="comment">%dataName = 'ases4';</span>
+
+<span class="keyword">switch</span> dataName
+  <span class="keyword">case</span> <span class="string">'newsgroups'</span>
+  loadData(<span class="string">'20news_w100'</span>);
+  <span class="comment">% documents, wordlist, newsgroups, groupnames</span>
+  labels = double(full(documents))'+1; <span class="comment">% 16,642 documents by 100 words  (sparse logical  matrix)</span>
+  nodeNames = wordlist;
+  Nstates = 2*ones(1,numel(nodeNames));
+
+  <span class="keyword">case</span> <span class="string">'newsgroups1'</span>
+    load([<span class="string">'a3newsgroups.mat'</span>]);
+    <span class="comment">% select class</span>
+    classId = 1;<span class="comment">%there are 4 classes</span>
+    idx = find(newsgroups == classId);
+    data.discrete = documents(:,idx)' + 1;
+    data.discrete = data.discrete'; <span class="comment">%KPM</span>
+    data.continuous = [];
+    <span class="comment">% it is possible that some words are always absent</span>
+    <span class="comment">% In this case, nClass(d)=1 but we want it to be 2</span>
+    <span class="comment">%nClass = max(data.discrete,[],2);</span>
+    nClass = 2*ones(1, size(data.discrete,1));
+    labels = data.discrete'; <span class="comment">% N*D</span>
+    Nstates = nClass;
+    nodeNames = wordlist;
+
+  <span class="keyword">case</span> <span class="string">'SUN09'</span>
+  loadData(<span class="string">'sceneContextSUN09'</span>, <span class="string">'ismatfile'</span>, false)
+  load(<span class="string">'SUN09data'</span>)
+  <span class="comment">% 8684 images x 111 tags</span>
+  <span class="comment">% we merge the training and test data into one big blob</span>
+  <span class="comment">% so that we can use CV</span>
+  labels = [data.train.presence; data.test.presence]+1;
+  nodeNames = data.names;
+  clear <span class="string">data</span>
+  Nstates = 2*ones(1,numel(nodeNames));
+
+ <span class="keyword">case</span> <span class="string">'voting'</span>
+   load(<span class="string">'house-votes-84'</span>)
+   Y = data.X; <span class="comment">% 435 x 17</span>
+   <span class="comment">% omit columns 3,11,12, which are not very correlated</span>
+   <span class="comment">%ndx = [1:2 4:10 13:17];</span>
+   ndx = 1:17;
+   Y = Y(:,ndx);
+   <span class="comment">% omit rows with any Nan - this leaves 232 rows</span>
+   idx = find(~sum(isnan(Y),2));
+   labels = Y(idx, :);
+   nodeNames = data.names(ndx);
+   Nstates = 2*ones(1,numel(nodeNames));
+
+  <span class="keyword">case</span> <span class="string">'temperature'</span>
+    load <span class="string">deshpande_intel</span> <span class="comment">% X is 18,054 x 54, 0,1,2,3</span>
+    <span class="comment">%labels = (X&gt;=2)+1; % binarize</span>
+    labels = X+1;
+    D = size(labels,2);
+    nodeNames = cellfun(@(d) sprintf(<span class="string">'n%d'</span>, d), num2cell(1:D), <span class="string">'uniformoutput'</span>, false);
+    Nstates = nunique(labels(:))*ones(1,numel(nodeNames));
+
+  <span class="keyword">case</span> <span class="string">'ases4'</span>
+    <span class="comment">%a = importdata([dirName 'asesLarge.txt']);</span>
+    <span class="comment">%Y = a.data;</span>
+    <span class="comment">%names = a.colheaders;</span>
+    load(<span class="string">'ases'</span>); <span class="comment">% Y is 18253x52 double, names is 1x53 cell</span>
+    <span class="comment">%  remove rows with any missing values</span>
+    idx = find(~sum(isnan(Y),2));
+    X = Y(idx,:); <span class="comment">% 8735 * 53</span>
+    labels = X(:,[3:44]);
+    names = names(3:44);
+    nClass = max(labels,[],1);
+    <span class="comment">% currently KPM's code assumes all nodes have the same #values</span>
+    <span class="comment">% So we extract features with 4 states each</span>
+    ndx = find(nClass==4);
+    labels = labels(:, ndx); <span class="comment">% 8735 * 17</span>
+    names = names(ndx);
+    nClass = 4*ones(1,numel(names));
+    Nstates = nClass;
+    nodeNames = names;
+
+    <span class="keyword">case</span> <span class="string">'ases'</span>
+    <span class="comment">%a = importdata([dirName 'asesLarge.txt']);</span>
+    <span class="comment">%Y = a.data;</span>
+    <span class="comment">%names = a.colheaders;</span>
+    load(<span class="string">'ases'</span>); <span class="comment">% Y is 18253x52 double, names is 1x53 cell</span>
+    <span class="comment">%  remove rows with any missing values</span>
+    idx = find(~sum(isnan(Y),2));
+    X = Y(idx,:); <span class="comment">% 8735 * 53</span>
+    labels = X(:,[3:44]);
+    names = names(3:44);
+    nClass = max(labels,[],1);
+    Nstates = nClass;
+    nodeNames = names;
+
+<span class="keyword">end</span>
+isbinary =  all(Nstates==2);
+nClass = Nstates;
+
+<span class="comment">%{
+</span><span class="comment">figure; imagesc(labels); colorbar
+</span><span class="comment">title(sprintf('%s, N=%d, D=%d', dataName, size(labels,1), size(labels,2)))
+</span><span class="comment">drawnow
+</span><span class="comment">%}
+</span>
+<span class="comment">% Where to store plots (set figFolder = [] to turn of printing)</span>
+<span class="keyword">if</span> isunix
+  figFolder = <span class="string">'/home/kpmurphy/Dropbox/figures/googleJointModelsTalk'</span>;
+<span class="keyword">end</span>
+<span class="keyword">if</span> ismac
+  figFolder = <span class="string">'/Users/kpmurphy/Dropbox/figures/googleJointModelsTalk'</span>;
+<span class="keyword">end</span>
+figFolder = []; <span class="comment">% for public use, turn off figure saving</span>
+</pre><h2>Models/ methods<a name="3"></a></h2><pre class="codeinput">methods = [];
+m = 0;
+
+
+m = m + 1;
+methods(m).modelname = <span class="string">'indep'</span>;
+methods(m).fitFn = @(labels) discreteFit(labels);
+methods(m).logprobFn = @(model, labels) discreteLogprob(model, labels);
+methods(m).predictMissingFn = @(model, labels) discretePredictMissing(model, labels);
+
+
+
+<span class="comment">%%%%%%%%%%%%%% Tree</span>
+
+<span class="comment">%{
+</span><span class="comment">m = m + 1;
+</span><span class="comment">methods(m).modelname = 'tree';
+</span><span class="comment">methods(m).fitFn = @(labels) treegmFit(labels);
+</span><span class="comment">methods(m).logprobFn = @(model, labels) treegmLogprob(model, labels);
+</span><span class="comment">methods(m).predictMissingFn = @(model, labels) treegmPredictMissing(model, labels);
+</span><span class="comment">%}
+</span>
+
+<span class="comment">%%%%%%%%%%%%%% DGM</span>
+<span class="comment">%{
+</span><span class="comment">% For debugging - an empty dag should be the same as the independent model
+</span><span class="comment">m = m + 1;
+</span><span class="comment">methods(m).modelname = 'dgm-empty';
+</span><span class="comment">methods(m).fitFn = @(labels) dgmFitStruct(labels, 'nodeNames', nodeNames, 'emptyGraph', true);
+</span><span class="comment">methods(m).logprobFn = @(model, labels) dgmLogprob(model, 'obs', labels);
+</span><span class="comment">%}
+</span>
+
+
+<span class="comment">%{
+</span><span class="comment">% For debugging - if we initialize search at a tree and perform 0
+</span><span class="comment">% iterations of DAG search, we should get the same resutls as treegmFit
+</span><span class="comment">m = m + 1;
+</span><span class="comment">methods(m).modelname = 'dgm-tree';
+</span><span class="comment">methods(m).fitFn = @(labels) dgmFitStruct(labels, 'nodeNames', nodeNames, 'maxFamEvals', 500, ...
+</span><span class="comment">  'figFolder', figFolder, 'nrestarts', 0, 'maxIter', 0, 'initMethod', 'tree');
+</span><span class="comment">methods(m).logprobFn = @(model, labels) dgmLogprob(model, 'obs', labels);
+</span><span class="comment">%}
+</span>
+<span class="comment">%{
+</span><span class="comment">% Using no edge restrictions is very slow!
+</span><span class="comment">m = m + 1;
+</span><span class="comment">methods(m).modelname = 'dgm-init-tree-restrict-none';
+</span><span class="comment">methods(m).fitFn = @(labels) dgmFitStruct(labels, 'nodeNames', nodeNames, 'maxFamEvals', 500, ...
+</span><span class="comment">  'figFolder', figFolder, 'nrestarts', 2, 'initMethod', 'tree', 'edgeRestrict', 'none');
+</span><span class="comment">methods(m).logprobFn = @(model, labels) dgmLogprob(model, 'obs', labels);
+</span><span class="comment">%}
+</span>
+
+<span class="comment">%{
+</span><span class="comment">m = m + 1;
+</span><span class="comment">methods(m).modelname = 'dgm-init-tree';
+</span><span class="comment">methods(m).fitFn = @(labels) dgmFitStruct(labels, 'nodeNames', nodeNames, 'maxFamEvals', 1000, ...
+</span><span class="comment">  'figFolder', figFolder, 'nrestarts', 0, 'initMethod', 'tree', 'edgeRestrict', 'MI');
+</span><span class="comment">methods(m).logprobFn = @(model, labels) dgmLogprob(model, 'obs', labels);
+</span><span class="comment">%}
+</span>
+<span class="comment">%{
+</span><span class="comment">m = m + 1;
+</span><span class="comment">methods(m).modelname = 'dgm-init-empty';
+</span><span class="comment">methods(m).fitFn = @(labels) dgmFitStruct(labels, 'nodeNames', nodeNames, 'maxFamEvals', 1000, ...
+</span><span class="comment">  'figFolder', figFolder, 'nrestarts', 2, 'initMethod', 'empty', 'edgeRestrict', 'MI');
+</span><span class="comment">methods(m).logprobFn = @(model, labels) dgmLogprob(model, 'obs', labels);
+</span><span class="comment">
+</span><span class="comment">%}
+</span>
+<span class="comment">%{
+</span><span class="comment">
+</span><span class="comment">m = m + 1;
+</span><span class="comment">methods(m).modelname = 'dgm-init-tree-restrict-L1';
+</span><span class="comment">methods(m).fitFn = @(labels) dgmFitStruct(labels, 'nodeNames', nodeNames, 'maxFamEvals', 1000, ...
+</span><span class="comment">  'figFolder', figFolder, 'nrestarts', 2, 'initMethod', 'tree', 'edgeRestrict', 'L1');
+</span><span class="comment">methods(m).logprobFn = @(model, labels) dgmLogprob(model, 'obs', labels);
+</span><span class="comment">
+</span><span class="comment">%}
+</span>
+
+<span class="comment">%%%%%%%%%%%%%% MRF</span>
+
+<span class="comment">%{
+</span><span class="comment">m = m + 1;
+</span><span class="comment">lambdaNode = 0.1; lambdaEdge = 50;
+</span><span class="comment">methods(m).modelname = 'mrf-L1';
+</span><span class="comment">methods(m).fitFn = @(labels) mrf2FitStruct(labels, ...
+</span><span class="comment">  'lambdaNode', lambdaNode, 'lambdaEdge', lambdaEdge, 'nstates', 2*ones(1,numel(nodeNames)), ...
+</span><span class="comment">  'nodeNames', nodeNames);
+</span><span class="comment">methods(m).logprobFn = @(model, labels) mrf2Logprob(model, labels);
+</span><span class="comment">%[logZBF, nodeBelBF] = crf2InferNodes(model, X(testNdx,:,:), [], 'infMethod', 'bruteforce');
+</span><span class="comment">%}
+</span>
+
+<span class="comment">%%%%%%%%%%%%%% Mix</span>
+
+
+
+<span class="comment">%{
+</span><span class="comment">Ks = [1,5,20,40];
+</span><span class="comment">for kk=1:numel(Ks)
+</span><span class="comment">  K = Ks(kk);
+</span><span class="comment">  m = m + 1;
+</span><span class="comment">  alpha = 1.1;
+</span><span class="comment">  %methods(m).modelname = sprintf('mixK%d,a%2.1f', K, alpha);
+</span><span class="comment">  methods(m).modelname = sprintf('mix%d', K);
+</span><span class="comment">  methods(m).fitFn = @(labels) mixDiscreteFit(labels, K, 'maxIter', 30, ...
+</span><span class="comment">    'verbose', false, 'alpha', 1.1);
+</span><span class="comment">  methods(m).logprobFn = @(model, labels) mixDiscreteLogprob(model, labels);
+</span><span class="comment">  methods(m).predictMissingFn = @(model, labels) mixDiscretePredictMissing(model, labels);
+</span><span class="comment">end
+</span><span class="comment">%}
+</span>
+<span class="comment">%%%%%%%%%%%%%% Categorical FA</span>
+
+
+<span class="comment">%{
+</span><span class="comment">Ks = [1,5,20,40];
+</span><span class="comment">for kk=1:numel(Ks)
+</span><span class="comment">  K = Ks(kk);
+</span><span class="comment">  m = m + 1;
+</span><span class="comment">  methods(m).modelname = sprintf('dFA-%d', K);
+</span><span class="comment">  methods(m).fitFn = @(labels) catFAfit(labels, [],  K,  'nClass', Nstates, ...
+</span><span class="comment">    'maxIter', 15, 'verbose', true);
+</span><span class="comment">  methods(m).logprobFn = @(model, labels) nan(size(labels,1),1);
+</span><span class="comment">  methods(m).predictMissingFn = @(model, labels) catFApredictMissing(model, labels, []);
+</span><span class="comment">end
+</span><span class="comment">%}
+</span>
+<span class="comment">%%%%%%%%%%%%%% binary FA</span>
+
+<span class="comment">%Ks = [150,200,250,300];</span>
+Ks = [1,20,50,100,150];
+<span class="keyword">for</span> kk=1:numel(Ks)
+  K = Ks(kk);
+  m = m + 1;
+  methods(m).modelname = sprintf(<span class="string">'bFA-%d'</span>, K);
+  methods(m).fitFn = @(labels) binaryFAfit(labels,  K,   <span class="keyword">...</span>
+    <span class="string">'maxIter'</span>, 15, <span class="string">'verbose'</span>, true, <span class="string">'computeLoglik'</span>, false);
+  methods(m).logprobFn = @(model, labels) nan(size(labels,1),1);
+  methods(m).predictMissingFn = @(model, labels) argout(2, @binaryFApredictMissing, model, labels);
+<span class="keyword">end</span>
+
+
+Nmethods = numel(methods);
+</pre><h2>CV<a name="4"></a></h2><pre class="codeinput">setSeed(0);
+N = size(labels, 1)
+<span class="keyword">if</span> Nfolds == 1
+  <span class="comment">% it is important to shuffle the rows to eliminate ordering effects</span>
+  <span class="comment">% (the newsgroup data is sorted by category)</span>
+  perm = randperm(N);
+  stop = floor(N*pcTrain);
+  trainfolds{1}  = perm(1:stop);
+  stop2 = floor(N*pcTest);
+  testfolds{1} = perm(stop+1: stop+stop2);
+  <span class="comment">%fprintf('train=1:%d, test = %d:%d\n', stop, stop+1, stop+stop2);</span>
+  <span class="comment">%trainfolds{1} = 1:N;</span>
+  <span class="comment">%testfolds{1} = 1:N;</span>
+<span class="keyword">else</span>
+  randomize = true;
+  [trainfolds, testfolds] = Kfold(N, Nfolds, randomize);
+<span class="keyword">end</span>
+
+
+loglik_models = zeros(Nfolds, Nmethods);
+imputation_err_entropy = zeros(Nfolds, Nmethods);
+imputation_err_binary = zeros(Nfolds, Nmethods);
+
+
+<span class="keyword">for</span> fold=1:Nfolds
+
+  train.labels = labels(trainfolds{fold}, :);
+  test.labels = labels(testfolds{fold}, :);
+  [Ntrain, Nnodes] = size(train.labels);
+  [Ntest, Nnodes2] = size(test.labels);
+
+  fprintf(<span class="string">'fold %d of %d, Ntrain %d, Ntest %d\n'</span>, <span class="keyword">...</span>
+    fold, Nfolds, Ntrain, Ntest);
+
+
+  missingMask = rand(Ntest, Nnodes) &lt; pcMissing;
+  test.labelsMasked = test.labels;
+  test.labelsMasked(missingMask) = nan;
+
+
+  models = cell(1, Nmethods);
+  methodNames = cell(1, Nmethods);
+  <span class="keyword">for</span> m=1:Nmethods
+    methodNames{m} = sprintf(<span class="string">'%s'</span>, methods(m).modelname);
+    fprintf(<span class="string">'fitting %s\n'</span>, methodNames{m});
+    models{m} = methods(m).fitFn(train.labels);
+  <span class="keyword">end</span>
+
+
+  ll = zeros(1, Nmethods);
+  imputationErr = zeros(1,Nmethods);
+  imputationErrBinary = zeros(1,Nmethods);
+  <span class="keyword">for</span> m=1:Nmethods
+    fprintf(<span class="string">'evaluating %s\n'</span>, methodNames{m});
+    ll(m) = sum(methods(m).logprobFn(models{m}, test.labels))/Ntest;
+
+    <span class="keyword">if</span> isfield(methods(m), <span class="string">'predictMissingFn'</span>)
+      pred = methods(m).predictMissingFn(models{m}, test.labelsMasked);
+      <span class="comment">% for binary data - MSE is fine</span>
+      probOn = pred(:,:,2);
+      testBinary = (test.labels==2);
+      imputationErrBinary(m) = sum(sum((probOn-testBinary).^2))/Ntest;
+
+
+<span class="comment">      %{
+</span><span class="comment">      % for K-ary data - MSE not so meaningful
+</span><span class="comment">      % so we use cross entropy
+</span><span class="comment">      [~,truth3d] = dummyEncoding(test.labels, Nstates);
+</span><span class="comment">      %imputationErr(m) = sum(sum(sum((truth3d-pred).^2)))/Ntest;
+</span><span class="comment">      %logprob = sum(sum(log(sum(truth3d .* pred, 3))))/Ntest;
+</span><span class="comment">      logprob = reshape(log2(pred(find(truth3d)) + eps), [Ntest Nnodes]);
+</span><span class="comment">      logprobAvg = mean(logprob(:));
+</span><span class="comment">      logprobAvg2 = mean(logprob(missingMask(:)));
+</span><span class="comment">
+</span><span class="comment">      % Just assess performance on the missing entries
+</span><span class="comment">      % This does not affect the relative performance of methods
+</span><span class="comment">      %logprob = log(sum(truth3d .* pred, 3)); % N*D
+</span><span class="comment">      %logprobAvg = sum(sum(logprob(missingMask)))/sum(missingMask(:));
+</span><span class="comment">
+</span><span class="comment">
+</span><span class="comment">      %logprob = sum(truth3d(missingMask3d) .* log2(pred(missingMask3d)+eps), 3); % logprob(n,d)
+</span><span class="comment">      %logprobAvg = sum(sum(logprob))/(Ntest*length(nClass))
+</span><span class="comment">      %}
+</span>
+      <span class="comment">% Emt's evaluation code</span>
+      nClass = Nstates;
+      yd = test.labelsMasked';
+      ydT = test.labels';
+      ydT_oneOfM = encodeDataOneOfM(ydT, nClass, <span class="string">'M'</span>);
+      yd_oneOfM = encodeDataOneOfM(yd, nClass, <span class="string">'M'</span>);
+      N = size(yd_oneOfM,2);
+      miss = isnan(yd_oneOfM);
+      <span class="comment">% pred is N * D * K</span>
+      pred2 = permute(pred, [3 2 1]); <span class="comment">% K D N</span>
+      pred3 = reshape(pred2, [sum(nClass) Ntest]); <span class="comment">% KD * N</span>
+      <span class="comment">%yhatD = reshape(pred+eps, [Ntest sum(nClass)])';</span>
+
+
+      <span class="comment">% if predict [0 0], replace with eps</span>
+      M = nClass;
+      <span class="keyword">for</span> d = 1:length(M)
+        idx = sum(M(1:d-1))+1:sum(M(1:d));
+        p1 = pred3(idx,:);
+        <span class="keyword">if</span> ~isempty(find(sum(p1,2) == 0))
+          p1 = p1 + eps;
+          p1 = bsxfun(@times, p1, 1./sum(p1));
+        <span class="keyword">end</span>
+        pred3(idx,:) = p1;
+      <span class="keyword">end</span>
+      yhatD = pred3;
+      entrpyD = -sum(ydT_oneOfM(miss).*log2(yhatD(miss)))/(Ntest*length(nClass));
+      <span class="comment">%entrpyD = -sum(ydT_oneOfM(miss).*log2(yhatD(miss)))/(sum(miss(:)));</span>
+
+      imputationErr(m) =  entrpyD;
+    <span class="keyword">end</span>
+  <span class="keyword">end</span>
+  loglik_models(fold, :) = ll;
+  imputation_err_entropy(fold, :) = imputationErr;
+  imputation_err_binary(fold, :) = imputationErrBinary;
+<span class="keyword">end</span> <span class="comment">% fold</span>
+
+
+
+<span class="comment">%{
+</span><span class="comment">% Debug - check that tree has correct marginals
+</span><span class="comment">% Compute unconditional marginals from tree
+</span><span class="comment">mTree = strfindCell('tree', methodNames);
+</span><span class="comment">[logZ, nodeBelTree] = treegmInferNodes(models{mTree});
+</span><span class="comment">
+</span><span class="comment">
+</span><span class="comment">% Compare to marginals from indep model
+</span><span class="comment">mIndep = strfindCell('indep', methodNames);
+</span><span class="comment">nodeBelIndep = models{mIndep}.T;
+</span><span class="comment">assert(approxeq(nodeBelIndep, nodeBelTree))
+</span><span class="comment">%}
+</span>
+<span class="comment">%{
+</span><span class="comment">% Debug - check that independent model is same
+</span><span class="comment">% as mixture with 1 component
+</span><span class="comment">mMix = strfindCell('mix1', methodNames);
+</span><span class="comment">mIndep = strfindCell('indep', methodNames);
+</span><span class="comment">predIndep = methods(mIndep).predictMissingFn(models{mIndep}, test.labelsMasked);
+</span><span class="comment">predMix = methods(mMix).predictMissingFn(models{mMix}, test.labelsMasked);
+</span><span class="comment">assert(approxeq(predIndep, predMix))
+</span><span class="comment">%predTree = methods(mTree).predictMissingFn(models{mTree}, test.labelsMasked);
+</span><span class="comment">%}</span>
+</pre><pre class="codeoutput">N =
+       16242
+fold 1 of 1, Ntrain 1624, Ntest 1624
+fitting indep
+fitting bFA-1
+initializing model for EM
+1	 loglik: 0
+2	 loglik: 0
+3	 loglik: 0
+4	 loglik: 0
+5	 loglik: 0
+6	 loglik: 0
+7	 loglik: 0
+8	 loglik: 0
+9	 loglik: 0
+10	 loglik: 0
+11	 loglik: 0
+12	 loglik: 0
+13	 loglik: 0
+14	 loglik: 0
+15	 loglik: 0
+16	 loglik: 0
+fitting bFA-20
+initializing model for EM
+1	 loglik: 0
+2	 loglik: 0
+3	 loglik: 0
+4	 loglik: 0
+5	 loglik: 0
+6	 loglik: 0
+7	 loglik: 0
+8	 loglik: 0
+9	 loglik: 0
+10	 loglik: 0
+11	 loglik: 0
+12	 loglik: 0
+13	 loglik: 0
+14	 loglik: 0
+15	 loglik: 0
+16	 loglik: 0
+fitting bFA-50
+initializing model for EM
+1	 loglik: 0
+2	 loglik: 0
+3	 loglik: 0
+4	 loglik: 0
+5	 loglik: 0
+6	 loglik: 0
+7	 loglik: 0
+8	 loglik: 0
+9	 loglik: 0
+10	 loglik: 0
+11	 loglik: 0
+12	 loglik: 0
+13	 loglik: 0
+14	 loglik: 0
+15	 loglik: 0
+16	 loglik: 0
+fitting bFA-100
+initializing model for EM
+1	 loglik: 0
+2	 loglik: 0
+3	 loglik: 0
+4	 loglik: 0
+5	 loglik: 0
+6	 loglik: 0
+7	 loglik: 0
+8	 loglik: 0
+9	 loglik: 0
+10	 loglik: 0
+11	 loglik: 0
+12	 loglik: 0
+13	 loglik: 0
+14	 loglik: 0
+15	 loglik: 0
+16	 loglik: 0
+fitting bFA-150
+initializing model for EM
+1	 loglik: 0
+2	 loglik: 0
+3	 loglik: 0
+4	 loglik: 0
+5	 loglik: 0
+6	 loglik: 0
+7	 loglik: 0
+8	 loglik: 0
+9	 loglik: 0
+10	 loglik: 0
+11	 loglik: 0
+12	 loglik: 0
+13	 loglik: 0
+14	 loglik: 0
+15	 loglik: 0
+16	 loglik: 0
+evaluating indep
+evaluating bFA-1
+evaluating bFA-20
+evaluating bFA-50
+evaluating bFA-100
+evaluating bFA-150
+</pre><h2>Plot performance<a name="5"></a></h2><pre class="codeinput">[styles, colors, symbols, plotstr] =  plotColors();
+
+
+
+<span class="comment">% NLL - for catFA, which cannot compute valid loglik,</span>
+<span class="comment">% we use NaNs</span>
+figure;
+ndx = 1:Nmethods;
+<span class="keyword">if</span> Nfolds==1
+  plot(-loglik_models(ndx), <span class="string">'x'</span>, <span class="string">'markersize'</span>, 12, <span class="string">'linewidth'</span>, 2)
+  axis_pct
+  -loglik_models
+<span class="keyword">else</span>
+  boxplot(-loglik_models(:, ndx))
+<span class="keyword">end</span>
+set(gca, <span class="string">'xtick'</span>, 1:numel(ndx))
+set(gca, <span class="string">'xticklabel'</span>, methodNames(ndx))
+<span class="comment">%xticklabelRot(methodNames(ndx), -45);</span>
+title(sprintf(<span class="string">'NLL on %s, D=%d, Ntr=%d, Nte=%d'</span>, <span class="keyword">...</span>
+  dataName, Nnodes, Ntrain, Ntest))
+printPmtkFigure(sprintf(<span class="string">'negloglik-%s.png'</span>, dataName), <span class="string">'png'</span>, figFolder);
+
+
+<span class="comment">% imputation error</span>
+figure;
+ndx = 1:Nmethods;
+<span class="keyword">if</span> Nfolds==1
+  plot(imputation_err_entropy(ndx), <span class="string">'x'</span>, <span class="string">'markersize'</span>, 12, <span class="string">'linewidth'</span>, 2)
+  axis_pct
+ imputation_err_entropy
+<span class="keyword">else</span>
+  boxplot(imputation_err_entropy(:, ndx))
+<span class="keyword">end</span>
+set(gca, <span class="string">'xtick'</span>, 1:numel(ndx))
+set(gca, <span class="string">'xticklabel'</span>, methodNames(ndx))
+<span class="comment">%xticklabelRot(methodNames(ndx), -45);</span>
+title(sprintf(<span class="string">'imputation error (cross entropy) on %s, %5.3fpc missing, D=%d, Ntr=%d, Nte=%d'</span>, <span class="keyword">...</span>
+  dataName, pcMissing, Nnodes, Ntrain, Ntest))
+printPmtkFigure(sprintf(<span class="string">'imputation-%s.png'</span>, dataName), <span class="string">'png'</span>, figFolder);
+
+<span class="comment">% mse error</span>
+figure;
+ndx = 1:Nmethods;
+<span class="keyword">if</span> Nfolds==1
+  plot(imputation_err_binary(ndx), <span class="string">'x'</span>, <span class="string">'markersize'</span>, 12, <span class="string">'linewidth'</span>, 2)
+  axis_pct
+<span class="keyword">else</span>
+  boxplot(imputation_err_binary(:, ndx))
+<span class="keyword">end</span>
+set(gca, <span class="string">'xtick'</span>, 1:numel(ndx))
+set(gca, <span class="string">'xticklabel'</span>, methodNames(ndx))
+<span class="comment">%xticklabelRot(methodNames(ndx), -45);</span>
+title(sprintf(<span class="string">'imputation error (mse) on %s, %5.3fpc missing, D=%d, Ntr=%d, Nte=%d'</span>, <span class="keyword">...</span>
+  dataName, pcMissing, Nnodes, Ntrain, Ntest))
+printPmtkFigure(sprintf(<span class="string">'imputation-mse-%s.png'</span>, dataName), <span class="string">'png'</span>, figFolder);
+</pre><pre class="codeoutput">ans =
+  Columns 1 through 2
+  15.580054998137765                 NaN
+  Columns 3 through 4
+                 NaN                 NaN
+  Columns 5 through 6
+                 NaN                 NaN
+imputation_err_entropy =
+  Columns 1 through 2
+   0.068498305595224   0.068440811536275
+  Columns 3 through 4
+   0.067584901143097   0.067002260694711
+  Columns 5 through 6
+   0.066466492812077   0.066352039080297
+</pre><img vspace="5" hspace="5" src="discreteDensityModelsShootout_01.png" alt=""> <img vspace="5" hspace="5" src="discreteDensityModelsShootout_02.png" alt=""> <img vspace="5" hspace="5" src="discreteDensityModelsShootout_03.png" alt=""> <h2>Visualize models themselves<a name="6"></a></h2><pre class="codeinput"><span class="comment">%{
+</span><span class="comment">
+</span><span class="comment">m = strfindCell('tree', methodNames);
+</span><span class="comment">if ~isempty(m)
+</span><span class="comment">  tree = models{m};
+</span><span class="comment">  % The tree is undirected, but for some reason, gviz makes directed graphs
+</span><span class="comment">  % more readable than undirected graphs
+</span><span class="comment">  fname = fullfile(figFolder, sprintf('tree-%s', dataName))
+</span><span class="comment">  graphviz(tree.edge_weights, 'labels', nodeNames, 'directed', 1, 'filename', fname);
+</span><span class="comment">end
+</span><span class="comment">%}
+</span>
+
+<span class="comment">%{
+</span><span class="comment">m = strfindCell('dgm', methodNames);
+</span><span class="comment">if ~isempty(m)
+</span><span class="comment">  dgm = models{m};
+</span><span class="comment">  % The node names get permuted so we must use dgm.nodeNames
+</span><span class="comment">  fname = fullfile(figFolder, sprintf('dgm-%s', dataName))
+</span><span class="comment">  graphviz(dgm.G, 'labels', dgm.nodeNames, 'directed', 1, 'filename', fname);
+</span><span class="comment">end
+</span><span class="comment">%}
+</span>
+<span class="comment">%{
+</span><span class="comment">m = strfindCell('mrf-L1', methodNames);
+</span><span class="comment">if ~isempty(m)
+</span><span class="comment">  mrf = models{m};
+</span><span class="comment">  fname = fullfile(figFolder, sprintf('mrf-L1-%s', dataName))
+</span><span class="comment">  graphviz(mrf.G, 'labels', nodeNames, 'directed', 0, 'filename', fname);
+</span><span class="comment">end
+</span><span class="comment">
+</span><span class="comment">
+</span><span class="comment">m = strfindCell('mix10', methodNames);
+</span><span class="comment">if ~isempty(m)
+</span><span class="comment">  mix = models{m};
+</span><span class="comment">  K = mix.nmix;
+</span><span class="comment">  [nr,nc] = nsubplots(K);
+</span><span class="comment">  %figure;
+</span><span class="comment">  for k=1:K
+</span><span class="comment">    T = squeeze(mix.cpd.T(k,2,:));
+</span><span class="comment">    ndx = topAboveThresh(T, 5, 0.1);
+</span><span class="comment">    memberNames = sprintf('%s,', nodeNames{ndx});
+</span><span class="comment">    disp(memberNames)
+</span><span class="comment">    %subplot(nr, nc, k)
+</span><span class="comment">    %bar(T);
+</span><span class="comment">    %title(sprintf('%5.3f', mix.mixWeight(k)))
+</span><span class="comment">  end
+</span><span class="comment">end
+</span><span class="comment">%}
+</span>
+<span class="comment">%{
+</span><span class="comment">% Fit a depnet to the labels
+</span><span class="comment">%model = depnetFit(labels, 'nodeNames', nodeNames, 'method', 'ARD');
+</span><span class="comment">model = depnetFit(labels, 'nodeNames', nodeNames, 'method', 'MI');
+</span><span class="comment">fname = fullfile(figFolder, sprintf('depnet-MI-%s', dataName))
+</span><span class="comment">graphviz(model.G, 'labels', nodeNames, 'directed', 1, 'filename', fname);
+</span><span class="comment">%}</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%PMTKslow
+
+% Compare various joint density models on categorical (mostly binary) datsets
+% We visualize the learned structuers and evaluate loglik and
+% imputation error on test sets
+
+
+%% Data
+% labels is N*D, where labels(n,d) in {1..Nstates(d)}
+
+
+
+Nfolds = 1;
+% pcTrain and pcTest do not need to sum to one
+% This way, you can use a fraction of the overall data
+pcTrain = 0.1; pcTest = 0.1;
+pcMissing =  0.3;
+
+%dataName = 'SUN09';
+dataName = 'newsgroups';
+%dataName = 'newsgroups1';
+%dataName = 'ases4';
+
+switch dataName
+  case 'newsgroups'
+  loadData('20news_w100');
+  % documents, wordlist, newsgroups, groupnames
+  labels = double(full(documents))'+1; % 16,642 documents by 100 words  (sparse logical  matrix)
+  nodeNames = wordlist;
+  Nstates = 2*ones(1,numel(nodeNames));
+  
+  case 'newsgroups1'
+    load(['a3newsgroups.mat']);
+    % select class
+    classId = 1;%there are 4 classes
+    idx = find(newsgroups == classId);
+    data.discrete = documents(:,idx)' + 1;
+    data.discrete = data.discrete'; %KPM
+    data.continuous = [];
+    % it is possible that some words are always absent
+    % In this case, nClass(d)=1 but we want it to be 2
+    %nClass = max(data.discrete,[],2);
+    nClass = 2*ones(1, size(data.discrete,1));
+    labels = data.discrete'; % N*D
+    Nstates = nClass;
+    nodeNames = wordlist;
+    
+  case 'SUN09'
+  loadData('sceneContextSUN09', 'ismatfile', false)
+  load('SUN09data')
+  % 8684 images x 111 tags
+  % we merge the training and test data into one big blob
+  % so that we can use CV
+  labels = [data.train.presence; data.test.presence]+1;
+  nodeNames = data.names;
+  clear data
+  Nstates = 2*ones(1,numel(nodeNames));
+
+ case 'voting'
+   load('house-votes-84')
+   Y = data.X; % 435 x 17
+   % omit columns 3,11,12, which are not very correlated
+   %ndx = [1:2 4:10 13:17];
+   ndx = 1:17;
+   Y = Y(:,ndx);
+   % omit rows with any Nan - this leaves 232 rows
+   idx = find(~sum(isnan(Y),2));
+   labels = Y(idx, :);
+   nodeNames = data.names(ndx);
+   Nstates = 2*ones(1,numel(nodeNames));
+   
+  case 'temperature'
+    load deshpande_intel % X is 18,054 x 54, 0,1,2,3
+    %labels = (X>=2)+1; % binarize
+    labels = X+1;
+    D = size(labels,2);
+    nodeNames = cellfun(@(d) sprintf('n%d', d), num2cell(1:D), 'uniformoutput', false);
+    Nstates = nunique(labels(:))*ones(1,numel(nodeNames));
+    
+  case 'ases4'
+    %a = importdata([dirName 'asesLarge.txt']);
+    %Y = a.data;
+    %names = a.colheaders;
+    load('ases'); % Y is 18253x52 double, names is 1x53 cell
+    %  remove rows with any missing values
+    idx = find(~sum(isnan(Y),2));
+    X = Y(idx,:); % 8735 * 53
+    labels = X(:,[3:44]);
+    names = names(3:44);
+    nClass = max(labels,[],1);
+    % currently KPM's code assumes all nodes have the same #values
+    % So we extract features with 4 states each
+    ndx = find(nClass==4);
+    labels = labels(:, ndx); % 8735 * 17
+    names = names(ndx);
+    nClass = 4*ones(1,numel(names));
+    Nstates = nClass;
+    nodeNames = names;
+    
+    case 'ases'
+    %a = importdata([dirName 'asesLarge.txt']);
+    %Y = a.data;
+    %names = a.colheaders;
+    load('ases'); % Y is 18253x52 double, names is 1x53 cell
+    %  remove rows with any missing values
+    idx = find(~sum(isnan(Y),2));
+    X = Y(idx,:); % 8735 * 53
+    labels = X(:,[3:44]);
+    names = names(3:44);
+    nClass = max(labels,[],1);
+    Nstates = nClass;
+    nodeNames = names;
+    
+end 
+isbinary =  all(Nstates==2);
+nClass = Nstates;
+
+%{
+figure; imagesc(labels); colorbar
+title(sprintf('%s, N=%d, D=%d', dataName, size(labels,1), size(labels,2)))
+drawnow
+%}
+
+% Where to store plots (set figFolder = [] to turn of printing)
+if isunix
+  figFolder = '/home/kpmurphy/Dropbox/figures/googleJointModelsTalk';
+end
+if ismac
+  figFolder = '/Users/kpmurphy/Dropbox/figures/googleJointModelsTalk';
+end
+figFolder = []; % for public use, turn off figure saving
+
+%% Models/ methods
+
+methods = [];
+m = 0;
+
+  
+m = m + 1;
+methods(m).modelname = 'indep';
+methods(m).fitFn = @(labels) discreteFit(labels);
+methods(m).logprobFn = @(model, labels) discreteLogprob(model, labels);
+methods(m).predictMissingFn = @(model, labels) discretePredictMissing(model, labels);
+
+
+
+%%%%%%%%%%%%%% Tree
+
+%{
+m = m + 1;
+methods(m).modelname = 'tree';
+methods(m).fitFn = @(labels) treegmFit(labels);
+methods(m).logprobFn = @(model, labels) treegmLogprob(model, labels);
+methods(m).predictMissingFn = @(model, labels) treegmPredictMissing(model, labels);
+%}
+
+
+%%%%%%%%%%%%%% DGM
+%{
+% For debugging - an empty dag should be the same as the independent model
+m = m + 1;
+methods(m).modelname = 'dgm-empty';
+methods(m).fitFn = @(labels) dgmFitStruct(labels, 'nodeNames', nodeNames, 'emptyGraph', true);
+methods(m).logprobFn = @(model, labels) dgmLogprob(model, 'obs', labels);
+%}
+
+
+
+%{
+% For debugging - if we initialize search at a tree and perform 0
+% iterations of DAG search, we should get the same resutls as treegmFit
+m = m + 1;
+methods(m).modelname = 'dgm-tree';
+methods(m).fitFn = @(labels) dgmFitStruct(labels, 'nodeNames', nodeNames, 'maxFamEvals', 500, ...
+  'figFolder', figFolder, 'nrestarts', 0, 'maxIter', 0, 'initMethod', 'tree');
+methods(m).logprobFn = @(model, labels) dgmLogprob(model, 'obs', labels);
+%}
+
+%{
+% Using no edge restrictions is very slow!
+m = m + 1;
+methods(m).modelname = 'dgm-init-tree-restrict-none';
+methods(m).fitFn = @(labels) dgmFitStruct(labels, 'nodeNames', nodeNames, 'maxFamEvals', 500, ...
+  'figFolder', figFolder, 'nrestarts', 2, 'initMethod', 'tree', 'edgeRestrict', 'none');
+methods(m).logprobFn = @(model, labels) dgmLogprob(model, 'obs', labels);
+%}
+
+
+%{
+m = m + 1;
+methods(m).modelname = 'dgm-init-tree';
+methods(m).fitFn = @(labels) dgmFitStruct(labels, 'nodeNames', nodeNames, 'maxFamEvals', 1000, ...
+  'figFolder', figFolder, 'nrestarts', 0, 'initMethod', 'tree', 'edgeRestrict', 'MI');
+methods(m).logprobFn = @(model, labels) dgmLogprob(model, 'obs', labels);
+%}
+
+%{
+m = m + 1;
+methods(m).modelname = 'dgm-init-empty';
+methods(m).fitFn = @(labels) dgmFitStruct(labels, 'nodeNames', nodeNames, 'maxFamEvals', 1000, ...
+  'figFolder', figFolder, 'nrestarts', 2, 'initMethod', 'empty', 'edgeRestrict', 'MI');
+methods(m).logprobFn = @(model, labels) dgmLogprob(model, 'obs', labels);
+
+%}
+
+%{
+
+m = m + 1;
+methods(m).modelname = 'dgm-init-tree-restrict-L1';
+methods(m).fitFn = @(labels) dgmFitStruct(labels, 'nodeNames', nodeNames, 'maxFamEvals', 1000, ...
+  'figFolder', figFolder, 'nrestarts', 2, 'initMethod', 'tree', 'edgeRestrict', 'L1');
+methods(m).logprobFn = @(model, labels) dgmLogprob(model, 'obs', labels);
+
+%}
+
+
+%%%%%%%%%%%%%% MRF
+
+%{
+m = m + 1;
+lambdaNode = 0.1; lambdaEdge = 50;
+methods(m).modelname = 'mrf-L1';
+methods(m).fitFn = @(labels) mrf2FitStruct(labels, ...
+  'lambdaNode', lambdaNode, 'lambdaEdge', lambdaEdge, 'nstates', 2*ones(1,numel(nodeNames)), ...
+  'nodeNames', nodeNames);
+methods(m).logprobFn = @(model, labels) mrf2Logprob(model, labels);
+%[logZBF, nodeBelBF] = crf2InferNodes(model, X(testNdx,:,:), [], 'infMethod', 'bruteforce');
+%}
+
+
+%%%%%%%%%%%%%% Mix
+
+
+
+%{
+Ks = [1,5,20,40];
+for kk=1:numel(Ks)
+  K = Ks(kk);
+  m = m + 1;
+  alpha = 1.1;
+  %methods(m).modelname = sprintf('mixK%d,a%2.1f', K, alpha);
+  methods(m).modelname = sprintf('mix%d', K);
+  methods(m).fitFn = @(labels) mixDiscreteFit(labels, K, 'maxIter', 30, ...
+    'verbose', false, 'alpha', 1.1);
+  methods(m).logprobFn = @(model, labels) mixDiscreteLogprob(model, labels);
+  methods(m).predictMissingFn = @(model, labels) mixDiscretePredictMissing(model, labels);
+end 
+%}
+
+%%%%%%%%%%%%%% Categorical FA
+
+
+%{
+Ks = [1,5,20,40];
+for kk=1:numel(Ks)
+  K = Ks(kk);
+  m = m + 1;
+  methods(m).modelname = sprintf('dFA-%d', K);
+  methods(m).fitFn = @(labels) catFAfit(labels, [],  K,  'nClass', Nstates, ...
+    'maxIter', 15, 'verbose', true);
+  methods(m).logprobFn = @(model, labels) nan(size(labels,1),1);
+  methods(m).predictMissingFn = @(model, labels) catFApredictMissing(model, labels, []);
+end
+%}
+
+%%%%%%%%%%%%%% binary FA
+
+%Ks = [150,200,250,300];
+Ks = [1,20,50,100,150];
+for kk=1:numel(Ks)
+  K = Ks(kk);
+  m = m + 1;
+  methods(m).modelname = sprintf('bFA-%d', K);
+  methods(m).fitFn = @(labels) binaryFAfit(labels,  K,   ...
+    'maxIter', 15, 'verbose', true, 'computeLoglik', false);
+  methods(m).logprobFn = @(model, labels) nan(size(labels,1),1);
+  methods(m).predictMissingFn = @(model, labels) argout(2, @binaryFApredictMissing, model, labels);
+end
+
+
+Nmethods = numel(methods);
+
+
+%% CV
+setSeed(0);
+N = size(labels, 1)
+if Nfolds == 1
+  % it is important to shuffle the rows to eliminate ordering effects
+  % (the newsgroup data is sorted by category)
+  perm = randperm(N);
+  stop = floor(N*pcTrain);
+  trainfolds{1}  = perm(1:stop);
+  stop2 = floor(N*pcTest);
+  testfolds{1} = perm(stop+1: stop+stop2);
+  %fprintf('train=1:%d, test = %d:%d\n', stop, stop+1, stop+stop2);
+  %trainfolds{1} = 1:N;
+  %testfolds{1} = 1:N;
+else
+  randomize = true;
+  [trainfolds, testfolds] = Kfold(N, Nfolds, randomize);
+end
+
+
+loglik_models = zeros(Nfolds, Nmethods);
+imputation_err_entropy = zeros(Nfolds, Nmethods);
+imputation_err_binary = zeros(Nfolds, Nmethods);
+
+
+for fold=1:Nfolds
+
+  train.labels = labels(trainfolds{fold}, :);
+  test.labels = labels(testfolds{fold}, :);
+  [Ntrain, Nnodes] = size(train.labels);
+  [Ntest, Nnodes2] = size(test.labels);
+  
+  fprintf('fold %d of %d, Ntrain %d, Ntest %d\n', ...
+    fold, Nfolds, Ntrain, Ntest);
+ 
+  
+  missingMask = rand(Ntest, Nnodes) < pcMissing;
+  test.labelsMasked = test.labels;
+  test.labelsMasked(missingMask) = nan;
+ 
+ 
+  models = cell(1, Nmethods);
+  methodNames = cell(1, Nmethods);
+  for m=1:Nmethods
+    methodNames{m} = sprintf('%s', methods(m).modelname); 
+    fprintf('fitting %s\n', methodNames{m});
+    models{m} = methods(m).fitFn(train.labels);
+  end
+ 
+  
+  ll = zeros(1, Nmethods);
+  imputationErr = zeros(1,Nmethods);
+  imputationErrBinary = zeros(1,Nmethods);
+  for m=1:Nmethods
+    fprintf('evaluating %s\n', methodNames{m});
+    ll(m) = sum(methods(m).logprobFn(models{m}, test.labels))/Ntest;
+    
+    if isfield(methods(m), 'predictMissingFn')
+      pred = methods(m).predictMissingFn(models{m}, test.labelsMasked);
+      % for binary data - MSE is fine
+      probOn = pred(:,:,2);  
+      testBinary = (test.labels==2);
+      imputationErrBinary(m) = sum(sum((probOn-testBinary).^2))/Ntest; 
+      
+
+      %{
+      % for K-ary data - MSE not so meaningful
+      % so we use cross entropy
+      [~,truth3d] = dummyEncoding(test.labels, Nstates);
+      %imputationErr(m) = sum(sum(sum((truth3d-pred).^2)))/Ntest;
+      %logprob = sum(sum(log(sum(truth3d .* pred, 3))))/Ntest;
+      logprob = reshape(log2(pred(find(truth3d)) + eps), [Ntest Nnodes]);
+      logprobAvg = mean(logprob(:));
+      logprobAvg2 = mean(logprob(missingMask(:)));
+      
+      % Just assess performance on the missing entries
+      % This does not affect the relative performance of methods
+      %logprob = log(sum(truth3d .* pred, 3)); % N*D
+      %logprobAvg = sum(sum(logprob(missingMask)))/sum(missingMask(:));
+      
+      
+      %logprob = sum(truth3d(missingMask3d) .* log2(pred(missingMask3d)+eps), 3); % logprob(n,d)
+      %logprobAvg = sum(sum(logprob))/(Ntest*length(nClass))
+      %}
+      
+      % Emt's evaluation code
+      nClass = Nstates;
+      yd = test.labelsMasked';
+      ydT = test.labels';
+      ydT_oneOfM = encodeDataOneOfM(ydT, nClass, 'M');
+      yd_oneOfM = encodeDataOneOfM(yd, nClass, 'M');
+      N = size(yd_oneOfM,2);
+      miss = isnan(yd_oneOfM);
+      % pred is N * D * K
+      pred2 = permute(pred, [3 2 1]); % K D N
+      pred3 = reshape(pred2, [sum(nClass) Ntest]); % KD * N 
+      %yhatD = reshape(pred+eps, [Ntest sum(nClass)])';
+      
+      
+      % if predict [0 0], replace with eps
+      M = nClass;
+      for d = 1:length(M)
+        idx = sum(M(1:d-1))+1:sum(M(1:d));
+        p1 = pred3(idx,:);
+        if ~isempty(find(sum(p1,2) == 0))
+          p1 = p1 + eps;
+          p1 = bsxfun(@times, p1, 1./sum(p1));
+        end
+        pred3(idx,:) = p1;
+      end
+      yhatD = pred3;
+      entrpyD = -sum(ydT_oneOfM(miss).*log2(yhatD(miss)))/(Ntest*length(nClass));
+      %entrpyD = -sum(ydT_oneOfM(miss).*log2(yhatD(miss)))/(sum(miss(:)));    
+      
+      imputationErr(m) =  entrpyD;
+    end
+  end
+  loglik_models(fold, :) = ll;
+  imputation_err_entropy(fold, :) = imputationErr;
+  imputation_err_binary(fold, :) = imputationErrBinary;
+end % fold
+
+    
+    
+%{
+% Debug - check that tree has correct marginals
+% Compute unconditional marginals from tree
+mTree = strfindCell('tree', methodNames);
+[logZ, nodeBelTree] = treegmInferNodes(models{mTree});
+
+
+% Compare to marginals from indep model
+mIndep = strfindCell('indep', methodNames);
+nodeBelIndep = models{mIndep}.T;
+assert(approxeq(nodeBelIndep, nodeBelTree))
+%}
+
+%{
+% Debug - check that independent model is same
+% as mixture with 1 component
+mMix = strfindCell('mix1', methodNames);
+mIndep = strfindCell('indep', methodNames);
+predIndep = methods(mIndep).predictMissingFn(models{mIndep}, test.labelsMasked); 
+predMix = methods(mMix).predictMissingFn(models{mMix}, test.labelsMasked);
+assert(approxeq(predIndep, predMix))
+%predTree = methods(mTree).predictMissingFn(models{mTree}, test.labelsMasked);
+%}
+
+
+%% Plot performance
+
+[styles, colors, symbols, plotstr] =  plotColors();
+
+
+
+% NLL - for catFA, which cannot compute valid loglik,
+% we use NaNs
+figure;
+ndx = 1:Nmethods;
+if Nfolds==1
+  plot(-loglik_models(ndx), 'x', 'markersize', 12, 'linewidth', 2)
+  axis_pct
+  -loglik_models
+else
+  boxplot(-loglik_models(:, ndx))
+end
+set(gca, 'xtick', 1:numel(ndx))
+set(gca, 'xticklabel', methodNames(ndx))
+%xticklabelRot(methodNames(ndx), -45);
+title(sprintf('NLL on %s, D=%d, Ntr=%d, Nte=%d', ...
+  dataName, Nnodes, Ntrain, Ntest))
+printPmtkFigure(sprintf('negloglik-%s.png', dataName), 'png', figFolder);
+
+
+% imputation error
+figure;
+ndx = 1:Nmethods; 
+if Nfolds==1
+  plot(imputation_err_entropy(ndx), 'x', 'markersize', 12, 'linewidth', 2)
+  axis_pct
+ imputation_err_entropy
+else
+  boxplot(imputation_err_entropy(:, ndx))
+end
+set(gca, 'xtick', 1:numel(ndx))
+set(gca, 'xticklabel', methodNames(ndx))
+%xticklabelRot(methodNames(ndx), -45);
+title(sprintf('imputation error (cross entropy) on %s, %5.3fpc missing, D=%d, Ntr=%d, Nte=%d', ...
+  dataName, pcMissing, Nnodes, Ntrain, Ntest))
+printPmtkFigure(sprintf('imputation-%s.png', dataName), 'png', figFolder);
+
+% mse error
+figure;
+ndx = 1:Nmethods; 
+if Nfolds==1
+  plot(imputation_err_binary(ndx), 'x', 'markersize', 12, 'linewidth', 2)
+  axis_pct
+else
+  boxplot(imputation_err_binary(:, ndx))
+end
+set(gca, 'xtick', 1:numel(ndx))
+set(gca, 'xticklabel', methodNames(ndx))
+%xticklabelRot(methodNames(ndx), -45);
+title(sprintf('imputation error (mse) on %s, %5.3fpc missing, D=%d, Ntr=%d, Nte=%d', ...
+  dataName, pcMissing, Nnodes, Ntrain, Ntest))
+printPmtkFigure(sprintf('imputation-mse-%s.png', dataName), 'png', figFolder);
+
+
+%% Visualize models themselves
+
+%{
+
+m = strfindCell('tree', methodNames);
+if ~isempty(m)
+  tree = models{m};
+  % The tree is undirected, but for some reason, gviz makes directed graphs
+  % more readable than undirected graphs
+  fname = fullfile(figFolder, sprintf('tree-%s', dataName))
+  graphviz(tree.edge_weights, 'labels', nodeNames, 'directed', 1, 'filename', fname);
+end
+%}
+
+
+%{
+m = strfindCell('dgm', methodNames);
+if ~isempty(m)
+  dgm = models{m};
+  % The node names get permuted so we must use dgm.nodeNames
+  fname = fullfile(figFolder, sprintf('dgm-%s', dataName))
+  graphviz(dgm.G, 'labels', dgm.nodeNames, 'directed', 1, 'filename', fname);
+end
+%}
+
+%{
+m = strfindCell('mrf-L1', methodNames);
+if ~isempty(m)
+  mrf = models{m};
+  fname = fullfile(figFolder, sprintf('mrf-L1-%s', dataName))
+  graphviz(mrf.G, 'labels', nodeNames, 'directed', 0, 'filename', fname);
+end
+
+
+m = strfindCell('mix10', methodNames);
+if ~isempty(m)
+  mix = models{m};
+  K = mix.nmix;
+  [nr,nc] = nsubplots(K);
+  %figure;
+  for k=1:K
+    T = squeeze(mix.cpd.T(k,2,:));
+    ndx = topAboveThresh(T, 5, 0.1);
+    memberNames = sprintf('%s,', nodeNames{ndx});
+    disp(memberNames)
+    %subplot(nr, nc, k)
+    %bar(T);
+    %title(sprintf('%5.3f', mix.mixWeight(k)))
+  end
+end
+%}
+
+%{
+% Fit a depnet to the labels
+%model = depnetFit(labels, 'nodeNames', nodeNames, 'method', 'ARD');
+model = depnetFit(labels, 'nodeNames', nodeNames, 'method', 'MI');
+fname = fullfile(figFolder, sprintf('depnet-MI-%s', dataName))
+graphviz(model.G, 'labels', nodeNames, 'directed', 1, 'filename', fname);
+%}
+
+
+
+##### SOURCE END #####
+--></body></html>

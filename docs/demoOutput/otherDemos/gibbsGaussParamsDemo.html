@@ -1,0 +1,338 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>gibbsGaussParamsDemo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="gibbsGaussParamsDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> gibbsGaussParamsDemo()
+<span class="comment">% Gibbs sample mu and Sigma given complete observations of an MVN</span>
+<span class="comment">% We use the reading comprehension dataset</span>
+<span class="comment">% from Peter Hoff's book p113</span>
+
+<span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+
+<span class="comment">%PMTKauthor Emtiyaz Khan</span>
+<span class="comment">%PMTKneedsStatsToolbox iwishrnd</span>
+
+data = [59  77
+43  39
+34  46
+32  26
+42  38
+38  43
+55  68
+67  86
+64  77
+45  60
+49  50
+72  59
+34  38
+70  48
+34  55
+50  58
+41  54
+52  60
+60  75
+34  47
+28  48
+35  33];
+
+params.mean0 = [50 50]';
+params.covMat0 = [625 312.5; 312.5 625];
+params.nu0 = 4;
+params.S0 = params.covMat0;
+
+setSeed(0);
+nSamples = 1000;
+<span class="comment">% data should be D*N</span>
+samples = gibbsSampler(data', params, nSamples);
+burnin = 250;
+samples.mu = samples.mu(:,burnin:end);
+samples.Sigma = samples.Sigma(:,:,burnin:end);
+Nsamples = size(samples.mu, 2);
+
+<span class="comment">% Plot posterior on mu</span>
+[p, grid1, grid2] = ksdensity2d(samples.mu');
+figure;
+contour(grid1, grid2, p);
+hold <span class="string">on</span>
+ndx = 1:1:Nsamples;
+plot(samples.mu(1,ndx), samples.mu(2,ndx), <span class="string">'.'</span>);
+line([35 65], [35 65], <span class="string">'color'</span>, <span class="string">'r'</span>, <span class="string">'linewidth'</span>, 3);
+<span class="comment">%set(gca, 'xlim', mu1range);</span>
+<span class="comment">%set(gca, 'ylim', mu2range);</span>
+xlabel(sprintf(<span class="string">'%s'</span>, <span class="string">'\mu_1'</span>))
+ylabel(sprintf(<span class="string">'%s'</span>, <span class="string">'\mu_2'</span>))
+title(<span class="string">'posterior on \mu'</span>)
+printPmtkFigure(<span class="string">'gibbsGaussParamsPostMu'</span>)
+
+quantilePMTK( samples.mu(2,:) - samples.mu(1,:), [0.025 0.5 0.975])
+mean(samples.mu(2,:) &gt; samples.mu(1,:))
+
+
+<span class="comment">% Compute posterior predictive</span>
+Xpred = zeros(2,Nsamples);
+<span class="keyword">for</span> i=1:Nsamples
+  x = gaussSample(samples.mu(:,i), samples.Sigma(:,:,i), 1);
+  Xpred(:,i) = colvec(x);
+<span class="keyword">end</span>
+
+<span class="comment">% Now plot posterior predictive</span>
+[p, xgrid1, xgrid2] = ksdensity2d(Xpred');
+figure;
+contour(xgrid1, xgrid2, p)
+hold <span class="string">on</span>
+plot(Xpred(1,:), Xpred(2,:), <span class="string">'.'</span>);
+plot(data(:,1), data(:,2), <span class="string">'x'</span>, <span class="string">'color'</span>, <span class="string">'r'</span>, <span class="keyword">...</span>
+  <span class="string">'markersize'</span>, 8, <span class="string">'linewidth'</span>, 2);
+line([0 100], [0 100], <span class="string">'color'</span>, <span class="string">'r'</span>, <span class="string">'linewidth'</span>, 3);
+<span class="comment">%set(gca, 'xlim', [0 100]);</span>
+<span class="comment">%set(gca, 'ylim', [0 100]);</span>
+xlabel(sprintf(<span class="string">'%s'</span>, <span class="string">'x_1'</span>))
+ylabel(sprintf(<span class="string">'%s'</span>, <span class="string">'x_2'</span>))
+title(<span class="string">'posterior predictive'</span>)
+printPmtkFigure(<span class="string">'gibbsGaussParamsPostPred'</span>)
+
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> [samples] = gibbsSampler(data, params, nSamples)
+<span class="comment">% Sample mu and Sigma given a fully observed MVN</span>
+<span class="comment">% samples.mu(:,s), samples.Sigma(:,:,s)</span>
+<span class="comment">% We assume a factored Normal * IW prior</span>
+<span class="comment">% See Peter Hoff's book sec 7.4</span>
+<span class="comment">%</span>
+<span class="comment">% Written by Emtiyaz, CS, UBC</span>
+<span class="comment">% Modified on Jan 29, 2010</span>
+
+
+<span class="comment">% hyperparameters</span>
+mean0 = params.mean0;
+precMat0 = inv(params.covMat0);
+nu0 = params.nu0;
+S0 = params.S0;
+[d,n] = size(data);
+
+<span class="comment">% Initialize chain by setting mu= sample mean</span>
+xbar = mean(data,2);
+mu = xbar;
+<span class="keyword">for</span> i = 1:nSamples
+  <span class="comment">% sample Sigma given mu</span>
+  nu = nu0 + n;
+  diff = data - repmat(mu,1,n);
+  S = S0 + diff*diff';
+  Sigma = iwishrnd(S,nu);
+
+  <span class="comment">% sample mu given Sigma</span>
+  precMat = inv(Sigma);
+  covMat = inv(precMat0 + n*precMat);
+  mean_ = covMat*(precMat0*mean0 + n*precMat*xbar);
+  mu = mean_ + chol(covMat)*randn(d,1);
+
+  <span class="comment">% collect samples</span>
+  samples.mu(:,i) = mu;
+  samples.Sigma(:,:,i) = Sigma;
+<span class="keyword">end</span>
+
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">ans =
+   0.447833679585727
+   6.506260531267550
+  12.649579197773548
+ans =
+   0.981358189081225
+</pre><img vspace="5" hspace="5" src="gibbsGaussParamsDemo_01.png" alt=""> <img vspace="5" hspace="5" src="gibbsGaussParamsDemo_02.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+function gibbsGaussParamsDemo()
+% Gibbs sample mu and Sigma given complete observations of an MVN
+% We use the reading comprehension dataset
+% from Peter Hoff's book p113
+
+% This file is from pmtk3.googlecode.com
+
+
+%PMTKauthor Emtiyaz Khan
+%PMTKneedsStatsToolbox iwishrnd
+
+data = [59  77
+43  39
+34  46
+32  26
+42  38
+38  43
+55  68
+67  86
+64  77
+45  60
+49  50
+72  59
+34  38
+70  48
+34  55
+50  58
+41  54
+52  60
+60  75
+34  47
+28  48
+35  33];
+
+params.mean0 = [50 50]';
+params.covMat0 = [625 312.5; 312.5 625];
+params.nu0 = 4;
+params.S0 = params.covMat0;
+
+setSeed(0);
+nSamples = 1000;
+% data should be D*N
+samples = gibbsSampler(data', params, nSamples);
+burnin = 250;
+samples.mu = samples.mu(:,burnin:end);
+samples.Sigma = samples.Sigma(:,:,burnin:end);
+Nsamples = size(samples.mu, 2);
+
+% Plot posterior on mu
+[p, grid1, grid2] = ksdensity2d(samples.mu');
+figure;
+contour(grid1, grid2, p);
+hold on
+ndx = 1:1:Nsamples;
+plot(samples.mu(1,ndx), samples.mu(2,ndx), '.');
+line([35 65], [35 65], 'color', 'r', 'linewidth', 3);
+%set(gca, 'xlim', mu1range);
+%set(gca, 'ylim', mu2range);
+xlabel(sprintf('%s', '\mu_1'))
+ylabel(sprintf('%s', '\mu_2'))
+title('posterior on \mu')
+printPmtkFigure('gibbsGaussParamsPostMu')
+
+quantilePMTK( samples.mu(2,:) - samples.mu(1,:), [0.025 0.5 0.975])
+mean(samples.mu(2,:) > samples.mu(1,:))
+
+
+% Compute posterior predictive
+Xpred = zeros(2,Nsamples);
+for i=1:Nsamples
+  x = gaussSample(samples.mu(:,i), samples.Sigma(:,:,i), 1);
+  Xpred(:,i) = colvec(x);
+end
+
+% Now plot posterior predictive
+[p, xgrid1, xgrid2] = ksdensity2d(Xpred');
+figure;
+contour(xgrid1, xgrid2, p)
+hold on
+plot(Xpred(1,:), Xpred(2,:), '.');
+plot(data(:,1), data(:,2), 'x', 'color', 'r', ...
+  'markersize', 8, 'linewidth', 2);
+line([0 100], [0 100], 'color', 'r', 'linewidth', 3);
+%set(gca, 'xlim', [0 100]);
+%set(gca, 'ylim', [0 100]);
+xlabel(sprintf('%s', 'x_1'))
+ylabel(sprintf('%s', 'x_2'))
+title('posterior predictive')
+printPmtkFigure('gibbsGaussParamsPostPred')
+
+end
+
+function [samples] = gibbsSampler(data, params, nSamples)
+% Sample mu and Sigma given a fully observed MVN
+% samples.mu(:,s), samples.Sigma(:,:,s)
+% We assume a factored Normal * IW prior
+% See Peter Hoff's book sec 7.4
+% 
+% Written by Emtiyaz, CS, UBC 
+% Modified on Jan 29, 2010
+
+
+% hyperparameters
+mean0 = params.mean0;
+precMat0 = inv(params.covMat0);
+nu0 = params.nu0;
+S0 = params.S0;
+[d,n] = size(data);
+
+% Initialize chain by setting mu= sample mean
+xbar = mean(data,2);
+mu = xbar;
+for i = 1:nSamples
+  % sample Sigma given mu
+  nu = nu0 + n;
+  diff = data - repmat(mu,1,n);
+  S = S0 + diff*diff';
+  Sigma = iwishrnd(S,nu);
+  
+  % sample mu given Sigma
+  precMat = inv(Sigma);
+  covMat = inv(precMat0 + n*precMat);
+  mean_ = covMat*(precMat0*mean0 + n*precMat*xbar);
+  mu = mean_ + chol(covMat)*randn(d,1);
+  
+  % collect samples
+  samples.mu(:,i) = mu;
+  samples.Sigma(:,:,i) = Sigma;
+end
+
+end
+
+##### SOURCE END #####
+--></body></html>

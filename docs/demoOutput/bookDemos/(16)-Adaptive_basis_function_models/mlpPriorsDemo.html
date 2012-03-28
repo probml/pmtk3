@@ -1,0 +1,234 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Demonstrate the effect of changing the hyper-parameters for an MLP</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="mlpPriorsDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Demonstrate the effect of changing the hyper-parameters for an MLP</h1><!--introduction--><p>based on demprior from netlab, but without the GUI code</p><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+setSeed(1);
+<span class="keyword">if</span> 0
+<span class="comment">% values from Bishop p260 - clearly not correct</span>
+aw1s = [1 1 1000 1000];
+ab1s = [1 1 100 1000];
+aw2s = [1 10 1 1];
+ab2s = [1 1 1 1];
+<span class="keyword">end</span>
+
+
+params0 = [0.01 0.1 1 1]; <span class="comment">% aw1 ab1 aw2 ab2</span>
+
+<span class="comment">% params(trial, param number)</span>
+params = repmat(params0, 5, 1);
+params(2,1) = params0(1)/10;
+params(3,2) = params0(2)/10;
+params(4,3) = params0(3)/10;
+params(5,4) = params0(4)/10;
+
+
+
+W1big = []; B1big = []; W2big = []; B2big = [];
+ntrials = size(params,1);
+<span class="keyword">for</span> t=1:ntrials
+  <span class="comment">%aw1 = aw1s(t); ab1 = ab1s(t); aw2 = aw2s(t); ab2 = ab2s(t);</span>
+  aw1 = params(t, 1); ab1 = params(t,2); aw2 = params(t,3); ab2 = params(t,4);
+
+  nhidden = 12;
+  prior = mlpprior(1, nhidden, 1, aw1, ab1, aw2, ab2);
+  xvals = -1:0.005:1;
+  nsample = 10;    <span class="comment">% Number of samples from prior.</span>
+  figure
+  hold <span class="string">on</span>
+  axis([-1 1 -10 10]);
+
+  net = mlp(1, nhidden, 1, <span class="string">'linear'</span>, prior);
+  <span class="keyword">for</span> i = 1:nsample
+    net = mlpinit(net, prior);
+    yvals = mlpfwd(net, xvals');
+    plot(xvals', yvals, <span class="string">'k'</span>, <span class="string">'linewidth'</span>, 2);
+
+    W1(i,:) = net.w1;
+    B1(i,:) = net.b1;
+    W2(i,:) = net.w2';
+    B2(i) = net.b2;
+    <span class="comment">%M(i,:) = [net.w1 0 net.b1 0 net.w2' 0 net.b2];</span>
+  <span class="keyword">end</span>
+  pad = zeros(5, 12);
+  pad1 = zeros(1,5);
+  W1big = [W1big; pad; W1];
+  B1big = [B1big; pad; B1];
+  W2big = [W2big; pad; W2];
+  B2big = [B2big pad1 B2];
+  W1mean(t) = mean(W1(:));
+  B1mean(t) = mean(B1(:));
+  W2mean(t) = mean(W2(:));
+  B2mean(t) = mean(B2(:));
+
+  ttl{t} = sprintf(<span class="string">'aw1=%5.3f, ab1=%5.3f, aw2=%5.3f, ab2=%5.3f'</span>, <span class="keyword">...</span>
+    aw1, ab1, aw2, ab2);
+  title(ttl{t})
+  printPmtkFigure(sprintf(<span class="string">'mlpPriorsDemo%d'</span>, t))
+<span class="keyword">end</span>
+
+<span class="keyword">if</span> 0
+figure; imagesc(W1big); colorbar; title(<span class="string">'W1'</span>)
+figure; imagesc(B1big); colorbar; title(<span class="string">'b1'</span>)
+figure; imagesc(W2big); colorbar; title(<span class="string">'W2'</span>)
+figure; imagesc(B2big'); colorbar; title(<span class="string">'b2'</span>)
+
+
+figure;hold <span class="string">on</span>
+plot(W1mean, <span class="string">'-ro'</span>);
+plot(B1mean, <span class="string">':gd'</span>);
+plot(W2mean, <span class="string">'-.bs'</span>);
+plot(B2mean, <span class="string">'--k*'</span>);
+legend(<span class="string">'W1'</span>, <span class="string">'B1'</span>, <span class="string">'W2'</span>, <span class="string">'B2'</span>)
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="mlpPriorsDemo_01.png" alt=""> <img vspace="5" hspace="5" src="mlpPriorsDemo_02.png" alt=""> <img vspace="5" hspace="5" src="mlpPriorsDemo_03.png" alt=""> <img vspace="5" hspace="5" src="mlpPriorsDemo_04.png" alt=""> <img vspace="5" hspace="5" src="mlpPriorsDemo_05.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Demonstrate the effect of changing the hyper-parameters for an MLP
+% based on demprior from netlab, but without the GUI code
+%%
+
+% This file is from pmtk3.googlecode.com
+
+setSeed(1);
+if 0
+% values from Bishop p260 - clearly not correct
+aw1s = [1 1 1000 1000];
+ab1s = [1 1 100 1000];
+aw2s = [1 10 1 1];
+ab2s = [1 1 1 1];
+end
+
+
+params0 = [0.01 0.1 1 1]; % aw1 ab1 aw2 ab2
+
+% params(trial, param number)
+params = repmat(params0, 5, 1);
+params(2,1) = params0(1)/10;
+params(3,2) = params0(2)/10;
+params(4,3) = params0(3)/10;
+params(5,4) = params0(4)/10;
+
+
+
+W1big = []; B1big = []; W2big = []; B2big = [];
+ntrials = size(params,1);
+for t=1:ntrials
+  %aw1 = aw1s(t); ab1 = ab1s(t); aw2 = aw2s(t); ab2 = ab2s(t);
+  aw1 = params(t, 1); ab1 = params(t,2); aw2 = params(t,3); ab2 = params(t,4);
+  
+  nhidden = 12;
+  prior = mlpprior(1, nhidden, 1, aw1, ab1, aw2, ab2);
+  xvals = -1:0.005:1;
+  nsample = 10;    % Number of samples from prior.
+  figure
+  hold on
+  axis([-1 1 -10 10]);  
+  
+  net = mlp(1, nhidden, 1, 'linear', prior);
+  for i = 1:nsample
+    net = mlpinit(net, prior);
+    yvals = mlpfwd(net, xvals');
+    plot(xvals', yvals, 'k', 'linewidth', 2);
+    
+    W1(i,:) = net.w1;
+    B1(i,:) = net.b1;
+    W2(i,:) = net.w2';
+    B2(i) = net.b2;
+    %M(i,:) = [net.w1 0 net.b1 0 net.w2' 0 net.b2];
+  end
+  pad = zeros(5, 12);
+  pad1 = zeros(1,5);
+  W1big = [W1big; pad; W1];
+  B1big = [B1big; pad; B1];
+  W2big = [W2big; pad; W2];
+  B2big = [B2big pad1 B2];
+  W1mean(t) = mean(W1(:));
+  B1mean(t) = mean(B1(:));
+  W2mean(t) = mean(W2(:));
+  B2mean(t) = mean(B2(:));
+  
+  ttl{t} = sprintf('aw1=%5.3f, ab1=%5.3f, aw2=%5.3f, ab2=%5.3f', ...
+    aw1, ab1, aw2, ab2);
+  title(ttl{t})
+  printPmtkFigure(sprintf('mlpPriorsDemo%d', t))
+end
+
+if 0
+figure; imagesc(W1big); colorbar; title('W1')
+figure; imagesc(B1big); colorbar; title('b1')
+figure; imagesc(W2big); colorbar; title('W2')
+figure; imagesc(B2big'); colorbar; title('b2')
+
+
+figure;hold on
+plot(W1mean, '-ro');
+plot(B1mean, ':gd');
+plot(W2mean, '-.bs');
+plot(B2mean, 'REPLACE_WITH_DASH_DASHk*');
+legend('W1', 'B1', 'W2', 'B2')
+end
+
+##### SOURCE END #####
+--></body></html>

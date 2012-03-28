@@ -1,0 +1,179 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Simple test of mixGaussMissingFitEM</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="mixGaussImputationTest.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Simple test of mixGaussMissingFitEM</h1><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+setSeed(1);
+nmix = 5;
+d = 2;
+model.mu = 10*randn(d, nmix);
+Sigma = zeros(d, d, nmix);
+<span class="keyword">for</span> c=1:nmix
+   Sigma(:,:,c) = randpd(d) + 0.1*eye(d);
+<span class="keyword">end</span>
+model.Sigma = Sigma;
+model.mixweight = normalize(rand(1, nmix) + ones(1, nmix));
+nsamples = 100;
+X = mixGaussSample(model.mu, model.Sigma, model.mixweight, nsamples);
+Xmissing = X;
+Xmissing(1:7:end) = NaN;
+</pre><pre class="codeinput">model = mixGaussMissingFitEm(Xmissing, nmix, <span class="string">'doMap'</span>, true, <span class="string">'verbose'</span>, true);
+figure; hold <span class="string">on</span>;
+plot(X(:, 1), X(:, 2), <span class="string">'.'</span>);
+<span class="keyword">for</span> i=1:nmix
+   plot(model.cpd.mu(1, i), model.cpd.mu(2, i), <span class="string">'+'</span>, <span class="string">'markersize'</span>, 10, <span class="string">'color'</span>, <span class="string">'r'</span>)
+<span class="keyword">end</span>
+
+
+<span class="comment">% If data is fully observed should get same results</span>
+<span class="comment">% as standard EM, provided we initialise in the same way</span>
+setSeed(0);
+modelMissing = mixGaussMissingFitEm(X, nmix);
+modelMissing.cpd.mu
+
+setSeed(0)
+modelNotMissing = mixGaussFit(X, nmix);
+modelNotMissing.cpd.mu
+</pre><pre class="codeoutput">initializing model for EM
+1	 loglik: -534.586
+2	 loglik: -510.547
+3	 loglik: -506.734
+4	 loglik: -506.362
+5	 loglik: -506.31
+6	 loglik: -506.29
+ans =
+  Columns 1 through 2
+  -9.589120743776119  -8.641368742062172
+   1.047661786139787   8.637593261302005
+  Columns 3 through 4
+ -10.401504157841799   8.803354416124698
+   3.840518581423399   0.908673861418563
+  Column 5
+  -3.936483072976696
+  -4.281580166798546
+initializing model for EM
+1	 loglik: -539.999
+2	 loglik: -525.284
+3	 loglik: -523.69
+4	 loglik: -523.174
+5	 loglik: -523.02
+6	 loglik: -522.91
+7	 loglik: -522.816
+8	 loglik: -522.733
+9	 loglik: -522.664
+10	 loglik: -522.605
+11	 loglik: -522.552
+12	 loglik: -522.501
+ans =
+  Columns 1 through 2
+  -9.483499040957479  -8.719110390462687
+   0.917690270460604   8.798889648248972
+  Columns 3 through 4
+ -10.267734005839953   8.799726512969473
+   4.108384996670424   0.908296480673940
+  Column 5
+  -3.933539391341792
+  -4.278947450912984
+</pre><img vspace="5" hspace="5" src="mixGaussImputationTest_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Simple test of mixGaussMissingFitEM
+
+% This file is from pmtk3.googlecode.com
+
+setSeed(1);
+nmix = 5;
+d = 2;
+model.mu = 10*randn(d, nmix);
+Sigma = zeros(d, d, nmix);
+for c=1:nmix
+   Sigma(:,:,c) = randpd(d) + 0.1*eye(d); 
+end
+model.Sigma = Sigma;
+model.mixweight = normalize(rand(1, nmix) + ones(1, nmix)); 
+nsamples = 100;
+X = mixGaussSample(model.mu, model.Sigma, model.mixweight, nsamples);
+Xmissing = X;
+Xmissing(1:7:end) = NaN;
+%%
+
+model = mixGaussMissingFitEm(Xmissing, nmix, 'doMap', true, 'verbose', true);
+figure; hold on;
+plot(X(:, 1), X(:, 2), '.');
+for i=1:nmix
+   plot(model.cpd.mu(1, i), model.cpd.mu(2, i), '+', 'markersize', 10, 'color', 'r') 
+end
+
+
+% If data is fully observed should get same results
+% as standard EM, provided we initialise in the same way
+setSeed(0);
+modelMissing = mixGaussMissingFitEm(X, nmix);
+modelMissing.cpd.mu
+
+setSeed(0)
+modelNotMissing = mixGaussFit(X, nmix);
+modelNotMissing.cpd.mu
+##### SOURCE END #####
+--></body></html>

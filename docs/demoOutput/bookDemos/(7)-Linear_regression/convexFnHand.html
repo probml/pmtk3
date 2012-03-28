@@ -1,0 +1,264 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>convexFnHand</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="convexFnHand.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">====================================================================</a></li><li><a href="#4">====================================================================</a></li><li><a href="#5">====================================================================</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> convexFnHand
+</pre><h2>====================================================================<a name="3"></a></h2><p>Figure 1 =====================================================================</p><pre class="codeinput">    x = (-10:1:13) + 10;
+    y = convexFn(x);
+
+    x0 = 3;
+    y0= convexFn(x0);
+    x1 = x0 + 8;
+    x2 = x0 + 17;
+    y2 = convexFn(x2);
+
+    ratio = (y2 - y0) / (x2 - x0);
+    y1 = (x1 - x0) * ratio + y0;
+
+    figure(1); clf; hold <span class="string">on</span>;
+
+    <span class="comment">% plot function</span>
+    plot(x, y, <span class="string">'-b'</span>, <span class="string">'LineWidth'</span>, 3);
+
+    <span class="comment">% plot a tangent line</span>
+    plot([x0-2,x2+2], [y0-2*ratio,y2+2*ratio], <span class="string">'-r'</span>, <span class="string">'LineWidth'</span>, 3);
+
+    <span class="comment">% plot other lines</span>
+    plot([x0, x0], [y0, 1], <span class="string">'--g'</span>, <span class="string">'LineWidth'</span>, 3);
+    plot([x1, x1], [y1, 1], <span class="string">'--g'</span>, <span class="string">'LineWidth'</span>, 3);
+    plot([x2, x2], [y2, 1], <span class="string">'--g'</span>, <span class="string">'LineWidth'</span>, 3);
+
+    text(x0+3, y0+25, <span class="string">'\lambda'</span>, <span class="string">'FontSize'</span>, 24, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>, <span class="string">'Rotation'</span>,acot(ratio) * 180 / pi);
+    text(x0+10, y0+45, <span class="string">'1 - \lambda'</span>, <span class="string">'FontSize'</span>, 24, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>, <span class="string">'Rotation'</span>, acot(ratio) * 180 / pi);
+
+    xlim([-2, 25]);
+    set(gca, <span class="string">'YTick'</span>, []);
+    set(gca, <span class="string">'XTick'</span>, [x0, x1, x2]);
+    set(gca, <span class="string">'XTickLabel'</span>, {<span class="string">'x'</span>, <span class="string">''</span>, <span class="string">'y'</span>}, <span class="string">'FontSize'</span>, 24, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>);
+    hold <span class="string">off</span>;
+</pre><img vspace="5" hspace="5" src="convexFnHand_01.png" alt=""> <h2>====================================================================<a name="4"></a></h2><p>Figure 2 =====================================================================</p><pre class="codeinput">    x = (-12:1:10) + 13;
+    y = concaveFn(x);
+
+    x0 = 4;
+    y0 = concaveFn(x0);
+    x2 = 18.5;
+    y2 = concaveFn(x2);
+    ratio = (y2 - y0) / (x2 - x0);
+
+    figure(2); clf; hold <span class="string">on</span>;
+    <span class="comment">% plot function</span>
+    plot(x, y, <span class="string">'-b'</span>, <span class="string">'LineWidth'</span>, 3);
+
+    <span class="comment">% plot a tangent line</span>
+    plot([x0-2,x2+2], [y0-2*ratio,y2+2*ratio], <span class="string">'-r'</span>, <span class="string">'LineWidth'</span>, 3);
+
+    set(gca, <span class="string">'XTick'</span>, [], <span class="string">'YTick'</span>, []);
+    ylim([-180, 0]);
+    hold <span class="string">off</span>;
+</pre><img vspace="5" hspace="5" src="convexFnHand_02.png" alt=""> <h2>====================================================================<a name="5"></a></h2><p>Figure 3 =====================================================================</p><pre class="codeinput">    x = 0.5*pi : 0.1 : 4 * pi;
+    y = periodicFn(x);
+    x0 = pi;
+    y0 = periodicFn(x0);
+    x2 = 3 * pi;
+    y2 = periodicFn(x2);
+    ratio = (y2 - y0) / (x2 - x0);
+    x1 = 1.4 * pi;
+    y1 = periodicFn(x1);
+
+    figure(3); clf; hold <span class="string">on</span>;
+    plot(x, y, <span class="string">'-b'</span>, <span class="string">'LineWidth'</span>, 3);
+
+    <span class="comment">% plot a tangent line</span>
+    plot([x1-3,x1+8], [y1-3*ratio,y1+8*ratio], <span class="string">'-r'</span>, <span class="string">'LineWidth'</span>, 3);
+
+    plot([x0, x0], [y0, 0], <span class="string">'--g'</span>, <span class="string">'LineWidth'</span>, 3);
+    plot([x2, x2], [y2, 0], <span class="string">'--g'</span>, <span class="string">'LineWidth'</span>, 3);
+
+    set(gca, <span class="string">'YTick'</span>, []);
+    set(gca, <span class="string">'XTick'</span>, [x0, x2], <span class="string">'XTickLabel'</span>, {<span class="string">'A'</span>, <span class="string">'B'</span>}, <span class="string">'FontSize'</span>, 24, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>);
+    axis <span class="string">equal</span>;
+    ylim([0, max(y)+1]);
+    xlim([min(x)-1, max(x)+1]);
+    hold <span class="string">off</span>;
+</pre><img vspace="5" hspace="5" src="convexFnHand_03.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
+
+<span class="keyword">function</span> y = convexFn(x)
+   y = (x - 10).^2 + 20;
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> y = concaveFn(x)
+   y = - ((x - 13).^2 + 20);
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> y = periodicFn(x)
+   y = 0.6 * (pi*cos(x) - 0.8*x) + 8;
+<span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+function convexFnHand
+    
+    %% ====================================================================
+    % Figure 1
+    % =====================================================================
+    x = (-10:1:13) + 10;
+    y = convexFn(x);
+
+    x0 = 3;
+    y0= convexFn(x0);
+    x1 = x0 + 8;
+    x2 = x0 + 17;
+    y2 = convexFn(x2);
+    
+    ratio = (y2 - y0) / (x2 - x0);
+    y1 = (x1 - x0) * ratio + y0;
+    
+    figure(1); clf; hold on;
+    
+    % plot function
+    plot(x, y, '-b', 'LineWidth', 3);
+    
+    % plot a tangent line
+    plot([x0-2,x2+2], [y0-2*ratio,y2+2*ratio], '-r', 'LineWidth', 3);
+    
+    % plot other lines
+    plot([x0, x0], [y0, 1], 'REPLACE_WITH_DASH_DASHg', 'LineWidth', 3);
+    plot([x1, x1], [y1, 1], 'REPLACE_WITH_DASH_DASHg', 'LineWidth', 3);
+    plot([x2, x2], [y2, 1], 'REPLACE_WITH_DASH_DASHg', 'LineWidth', 3);
+    
+    text(x0+3, y0+25, '\lambda', 'FontSize', 24, 'FontWeight', 'bold', 'Rotation',acot(ratio) * 180 / pi);
+    text(x0+10, y0+45, '1 - \lambda', 'FontSize', 24, 'FontWeight', 'bold', 'Rotation', acot(ratio) * 180 / pi);
+    
+    xlim([-2, 25]);
+    set(gca, 'YTick', []);
+    set(gca, 'XTick', [x0, x1, x2]);
+    set(gca, 'XTickLabel', {'x', '', 'y'}, 'FontSize', 24, 'FontWeight', 'bold');
+    hold off;
+    
+    
+    %% ====================================================================
+    % Figure 2
+    % =====================================================================
+    x = (-12:1:10) + 13;
+    y = concaveFn(x);
+
+    x0 = 4;
+    y0 = concaveFn(x0);
+    x2 = 18.5;
+    y2 = concaveFn(x2);
+    ratio = (y2 - y0) / (x2 - x0);
+    
+    figure(2); clf; hold on;
+    % plot function
+    plot(x, y, '-b', 'LineWidth', 3);
+    
+    % plot a tangent line
+    plot([x0-2,x2+2], [y0-2*ratio,y2+2*ratio], '-r', 'LineWidth', 3);
+    
+    set(gca, 'XTick', [], 'YTick', []);
+    ylim([-180, 0]);
+    hold off;
+    
+    %% ====================================================================
+    % Figure 3
+    % =====================================================================
+    x = 0.5*pi : 0.1 : 4 * pi;
+    y = periodicFn(x);
+    x0 = pi;
+    y0 = periodicFn(x0);
+    x2 = 3 * pi;
+    y2 = periodicFn(x2);
+    ratio = (y2 - y0) / (x2 - x0);
+    x1 = 1.4 * pi;
+    y1 = periodicFn(x1);
+    
+    figure(3); clf; hold on;
+    plot(x, y, '-b', 'LineWidth', 3);
+
+    % plot a tangent line
+    plot([x1-3,x1+8], [y1-3*ratio,y1+8*ratio], '-r', 'LineWidth', 3);
+    
+    plot([x0, x0], [y0, 0], 'REPLACE_WITH_DASH_DASHg', 'LineWidth', 3);
+    plot([x2, x2], [y2, 0], 'REPLACE_WITH_DASH_DASHg', 'LineWidth', 3);
+
+    set(gca, 'YTick', []);
+    set(gca, 'XTick', [x0, x2], 'XTickLabel', {'A', 'B'}, 'FontSize', 24, 'FontWeight', 'bold');
+    axis equal;
+    ylim([0, max(y)+1]);
+    xlim([min(x)-1, max(x)+1]);
+    hold off;
+end
+
+function y = convexFn(x)
+   y = (x - 10).^2 + 20;
+end
+
+function y = concaveFn(x)
+   y = - ((x - 13).^2 + 20);
+end
+
+function y = periodicFn(x)
+   y = 0.6 * (pi*cos(x) - 0.8*x) + 8;
+end
+##### SOURCE END #####
+--></body></html>

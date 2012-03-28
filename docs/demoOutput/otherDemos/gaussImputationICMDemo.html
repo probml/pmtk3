@@ -1,0 +1,220 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Gauss Imputation Demo using ICM</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="gaussImputationICMDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Gauss Imputation Demo using ICM</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="keyword">function</span> gaussImputationICMDemo()
+
+setSeed(0);
+d = 10;
+mu = randn(d,1); Sigma = randpd(d);
+
+<span class="comment">% Training data is larger than test data, and is missing data at random</span>
+[XfullTrain, XmissTrain] = mkData(mu, Sigma, 100, true);
+
+<span class="comment">% Test data omits 'stripe' rather than at random, for easier visualization</span>
+[Xfull, Xmiss, Xhid] = mkData(mu, Sigma, 10, false);
+
+verb = true;
+<span class="comment">%for useFull = [true false]</span>
+<span class="keyword">for</span> useFull = false
+    <span class="keyword">if</span> useFull
+        modelHat = gaussMissingFitICM(XfullTrain, <span class="string">'verbose'</span>, verb);
+        [Ximpute, V] = gaussImpute(modelHat, Xmiss);
+        Xtrain = XfullTrain;
+        fname = <span class="string">'mvnImputeFull'</span>;
+    <span class="keyword">else</span>
+        [modelHat, LLtrace] = gaussMissingFitICM(XmissTrain, <span class="string">'verbose'</span>, verb);
+        figure; plot(LLtrace); title(<span class="string">'EM loglik vs iteration'</span>)
+        [Ximpute, V] = gaussImpute(modelHat, Xmiss);
+        Xtrain = XmissTrain;
+        fname = <span class="string">'mvnImputeEm'</span>;
+    <span class="keyword">end</span>
+    conf = 1./V;
+    conf(isinf(conf))=0;
+
+    figure;
+    hintonScale({Xtrain}, {<span class="string">'map'</span>, <span class="string">'jet'</span>, <span class="string">'title'</span>, <span class="string">'training data'</span>}, <span class="keyword">...</span>
+        {Xmiss}, {<span class="string">'map'</span>, <span class="string">'Jet'</span>, <span class="string">'title'</span>, <span class="string">'observed'</span>}, <span class="keyword">...</span>
+        {Ximpute, conf}, {<span class="string">'title'</span>, <span class="string">'imputed'</span>}, <span class="keyword">...</span>
+        {Xhid}, {<span class="string">'title'</span>, <span class="string">'hidden truth'</span>});
+    printPmtkFigure(fname);
+<span class="keyword">end</span>
+
+<span class="keyword">end</span>
+
+
+<span class="keyword">function</span> [Xfull, Xmiss, Xhid, missing] = mkData(mu, Sigma, n, rnd)
+
+
+pcMissing = 0.5;
+d = length(mu);
+model = struct(<span class="string">'mu'</span>, mu, <span class="string">'Sigma'</span>, Sigma);
+Xfull = gaussSample(model, n);
+
+<span class="keyword">if</span> rnd
+    <span class="comment">% Random missing pattern</span>
+    missing = rand(n,d) &lt; pcMissing;
+<span class="keyword">else</span>
+    <span class="comment">% Make the first 3 stripes (features) be completely missing</span>
+    missing = false(n,d);
+    missing(:, 1:floor(pcMissing*d)) = true;
+<span class="keyword">end</span>
+
+Xmiss = Xfull;
+Xmiss(missing) = NaN;
+Xhid = Xfull;
+Xhid(~missing) = NaN;
+
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">1: LL = -1896.048
+2: LL = -1718.131
+3: LL = -1534.928
+4: LL = -1380.896
+5: LL = -1278.109
+6: LL = -1204.580
+7: LL = -1080.044
+8: LL = -884.983
+9: LL = -621.099
+10: LL = -114.108
+11: LL = 624.167
+Warning: Warning: Obtained Nonsingular
+Sigma.  Exiting with last reasonable
+parameters \n 
+</pre><img vspace="5" hspace="5" src="gaussImputationICMDemo_01.png" alt=""> <img vspace="5" hspace="5" src="gaussImputationICMDemo_02.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Gauss Imputation Demo using ICM
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+function gaussImputationICMDemo()
+
+setSeed(0);
+d = 10;
+mu = randn(d,1); Sigma = randpd(d);
+
+% Training data is larger than test data, and is missing data at random
+[XfullTrain, XmissTrain] = mkData(mu, Sigma, 100, true);
+
+% Test data omits 'stripe' rather than at random, for easier visualization
+[Xfull, Xmiss, Xhid] = mkData(mu, Sigma, 10, false);
+
+verb = true;
+%for useFull = [true false]
+for useFull = false
+    if useFull
+        modelHat = gaussMissingFitICM(XfullTrain, 'verbose', verb);
+        [Ximpute, V] = gaussImpute(modelHat, Xmiss);
+        Xtrain = XfullTrain;
+        fname = 'mvnImputeFull';
+    else
+        [modelHat, LLtrace] = gaussMissingFitICM(XmissTrain, 'verbose', verb);
+        figure; plot(LLtrace); title('EM loglik vs iteration')
+        [Ximpute, V] = gaussImpute(modelHat, Xmiss);
+        Xtrain = XmissTrain;
+        fname = 'mvnImputeEm';
+    end
+    conf = 1./V;
+    conf(isinf(conf))=0;
+    
+    figure;
+    hintonScale({Xtrain}, {'map', 'jet', 'title', 'training data'}, ...
+        {Xmiss}, {'map', 'Jet', 'title', 'observed'}, ...
+        {Ximpute, conf}, {'title', 'imputed'}, ...
+        {Xhid}, {'title', 'hidden truth'});
+    printPmtkFigure(fname);
+end
+
+end
+
+
+function [Xfull, Xmiss, Xhid, missing] = mkData(mu, Sigma, n, rnd)
+
+
+pcMissing = 0.5;
+d = length(mu);
+model = struct('mu', mu, 'Sigma', Sigma);
+Xfull = gaussSample(model, n);
+
+if rnd
+    % Random missing pattern
+    missing = rand(n,d) < pcMissing;
+else
+    % Make the first 3 stripes (features) be completely missing
+    missing = false(n,d);
+    missing(:, 1:floor(pcMissing*d)) = true;
+end
+
+Xmiss = Xfull;
+Xmiss(missing) = NaN;
+Xhid = Xfull;
+Xhid(~missing) = NaN;
+
+end
+
+##### SOURCE END #####
+--></body></html>

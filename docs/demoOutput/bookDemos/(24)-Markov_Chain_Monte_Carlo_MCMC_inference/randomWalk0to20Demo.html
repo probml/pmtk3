@@ -1,0 +1,141 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Perform a random walk on the integers 0:20</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="randomWalk0to20Demo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Perform a random walk on the integers 0:20</h1><!--introduction--><p>Visualize the probability of the the states for various time steps, and different initial conditions.</p><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="keyword">function</span> randomWalk0to20Demo
+</pre><pre class="codeinput">T = diag(repmat(0.5, 1, 20), -1) + diag(repmat(0.5, 1, 20), 1);
+T(1, 1) = 0.5; T(21, 21) = 0.5;
+plotPoints = [1, 2, 3, 10, 100, 200, 400];
+sp = @(x)subplot(numel(plotPoints)+1, 1, x+1);
+p0_a = zeros(1,21);  p0_a(11) = 1;
+p0_b = zeros(1,21);  p0_b(18) = 1;
+p0 = {p0_a, p0_b};
+<span class="keyword">for</span> i=1:numel(p0)
+</pre><pre class="codeinput">    figure; hold <span class="string">on</span>;
+    sp(0); stemPlot(p0{i},0);
+    <span class="keyword">for</span> j=1:numel(plotPoints)
+        N = plotPoints(j);
+        sp(j);
+        stemPlot(p0{i}*(T^N),N);
+    <span class="keyword">end</span>
+    set(gcf,<span class="string">'Position'</span>,[sub(get(gcf,<span class="string">'Position'</span>),1),50,sub(get(gcf,<span class="string">'Position'</span>),3), sub(get(0,<span class="string">'ScreenSize'</span>),4)-125]);
+    x0 = find(p0{i})-1;
+    suptitle(sprintf(<span class="string">'Initial Condition X_0 = %d'</span>,x0),12);
+    printPmtkFigure(sprintf(<span class="string">'randomWalk%d'</span>, x0));
+</pre><img vspace="5" hspace="5" src="randomWalk0to20Demo_01.png" alt=""> <img vspace="5" hspace="5" src="randomWalk0to20Demo_02.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
+</pre><pre class="codeinput">    <span class="keyword">function</span> stemPlot(pn,titleNum)
+        h = stem(pn); hold <span class="string">on</span>;
+        set(h,<span class="string">'MarkerFaceColor'</span>, <span class="string">'red'</span>, <span class="string">'MarkerEdgeColor'</span>, <span class="string">'black'</span>, <span class="string">'LineWidth'</span>,2);
+        h = stem(pn);
+        set(h,<span class="string">'MarkerFaceColor'</span>, <span class="string">'red'</span>, <span class="string">'MarkerEdgeColor'</span>, <span class="string">'black'</span>, <span class="string">'LineWidth'</span>, 2, <span class="string">'LineStyle'</span>, <span class="string">'none'</span>);
+        ylabel(sprintf(<span class="string">'p^{(%d)}(x)'</span>, titleNum), <span class="string">'FontSize'</span>, 12, <span class="string">'Rotation'</span>, 0, <span class="string">'HorizontalAlignment'</span>, <span class="string">'right'</span>);
+        set(gca,<span class="string">'YTick'</span>, [], <span class="string">'LineWidth'</span>, 2, <span class="string">'TickLength'</span>, [0,0], <span class="string">'XLim'</span>, [0.5,21.5], <span class="string">'XTick'</span>, 1:5:21, <span class="string">'XTickLabel'</span>, {<span class="string">'0'</span>,<span class="string">'5'</span>,<span class="string">'10'</span>,<span class="string">'15'</span>,<span class="string">'20'</span>});
+    <span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Perform a random walk on the integers 0:20
+% Visualize the probability of the the states for various time steps,
+% and different initial conditions.
+%%
+
+% This file is from pmtk3.googlecode.com
+
+function randomWalk0to20Demo
+T = diag(repmat(0.5, 1, 20), -1) + diag(repmat(0.5, 1, 20), 1);
+T(1, 1) = 0.5; T(21, 21) = 0.5;
+plotPoints = [1, 2, 3, 10, 100, 200, 400];
+sp = @(x)subplot(numel(plotPoints)+1, 1, x+1);
+p0_a = zeros(1,21);  p0_a(11) = 1;
+p0_b = zeros(1,21);  p0_b(18) = 1;
+p0 = {p0_a, p0_b};
+for i=1:numel(p0)
+    figure; hold on;
+    sp(0); stemPlot(p0{i},0);
+    for j=1:numel(plotPoints)
+        N = plotPoints(j);
+        sp(j);
+        stemPlot(p0{i}*(T^N),N);
+    end
+    set(gcf,'Position',[sub(get(gcf,'Position'),1),50,sub(get(gcf,'Position'),3), sub(get(0,'ScreenSize'),4)-125]);
+    x0 = find(p0{i})-1;
+    suptitle(sprintf('Initial Condition X_0 = %d',x0),12);
+    printPmtkFigure(sprintf('randomWalk%d', x0));
+    %%
+end
+%%
+    function stemPlot(pn,titleNum)
+        h = stem(pn); hold on;
+        set(h,'MarkerFaceColor', 'red', 'MarkerEdgeColor', 'black', 'LineWidth',2);
+        h = stem(pn);
+        set(h,'MarkerFaceColor', 'red', 'MarkerEdgeColor', 'black', 'LineWidth', 2, 'LineStyle', 'none');
+        ylabel(sprintf('p^{(%d)}(x)', titleNum), 'FontSize', 12, 'Rotation', 0, 'HorizontalAlignment', 'right');
+        set(gca,'YTick', [], 'LineWidth', 2, 'TickLength', [0,0], 'XLim', [0.5,21.5], 'XTick', 1:5:21, 'XTickLabel', {'0','5','10','15','20'});
+    end
+end
+
+##### SOURCE END #####
+--></body></html>

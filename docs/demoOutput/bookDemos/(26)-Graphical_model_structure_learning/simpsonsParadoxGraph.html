@@ -1,0 +1,97 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>simpsonsParadoxGraph</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="simpsonsParadoxGraph.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> simpsonsParadoxGraph
+    figure(1); clf; hold <span class="string">on</span>;
+
+    plot([0,10], [0,10], <span class="string">'-b'</span>, <span class="string">'LineWidth'</span>, 3);
+    plot([4,5,6],[5.7,4.7,3.7], <span class="string">'ro'</span>, <span class="string">'LineWidth'</span>, 3, <span class="string">'MarkerSize'</span>, 10);
+    plot([3,4,5],[4.4,3.4,2.4], <span class="string">'kx'</span>, <span class="string">'LineWidth'</span>, 3, <span class="string">'MarkerSize'</span>, 15);
+    axis <span class="string">equal</span>;
+    xlim([0,10]);
+    ylim([0,10]);
+    set(gca, <span class="string">'XTick'</span>, [], <span class="string">'YTick'</span>, []);
+    xlabel(<span class="string">'x'</span>, <span class="string">'FontSize'</span>, 24, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>);
+    ylabel(<span class="string">'y'</span>, <span class="string">'FontSize'</span>, 24, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>);
+    hold <span class="string">off</span>;
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="simpsonsParadoxGraph_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+function simpsonsParadoxGraph
+    figure(1); clf; hold on;
+    
+    plot([0,10], [0,10], '-b', 'LineWidth', 3);
+    plot([4,5,6],[5.7,4.7,3.7], 'ro', 'LineWidth', 3, 'MarkerSize', 10);
+    plot([3,4,5],[4.4,3.4,2.4], 'kx', 'LineWidth', 3, 'MarkerSize', 15);
+    axis equal;
+    xlim([0,10]);
+    ylim([0,10]);
+    set(gca, 'XTick', [], 'YTick', []);
+    xlabel('x', 'FontSize', 24, 'FontWeight', 'bold');
+    ylabel('y', 'FontSize', 24, 'FontWeight', 'bold');
+    hold off;
+end
+##### SOURCE END #####
+--></body></html>

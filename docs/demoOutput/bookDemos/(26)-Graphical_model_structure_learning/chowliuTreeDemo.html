@@ -1,0 +1,220 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Find the MLE tree from a word-document binary matrix</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="chowliuTreeDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Find the MLE tree from a word-document binary matrix</h1><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+
+loadData(<span class="string">'20news_w100'</span>); <span class="comment">% documents, wordlist, newsgroups</span>
+<span class="comment">%X is 16,642 documents by 100 words  (sparse logical  matrix)</span>
+X = documents';
+disp(<span class="string">'mlapa chowliu demo'</span>)
+
+<span class="comment">%setSeed(0);</span>
+<span class="comment">%X = randn(100,5)&gt;0;</span>
+model = treegmFit(X);
+<span class="comment">%dgm = treeToDgm(model);</span>
+
+ll = treegmLogprob(model, X);
+
+
+<span class="keyword">if</span> ~isOctave()
+    drawNetwork(<span class="string">'-adjMat'</span>, model.adjmat, <span class="string">'-nodeLabels'</span>, wordlist);
+<span class="keyword">end</span>
+<span class="comment">% Plot loglikelihood of training cases</span>
+figure;hist(ll,100); title(<span class="string">'log-likelihood of training cases using ChowLiu tree'</span>)
+
+<span class="comment">% Find words in datacases with best  and worst  likelihoods</span>
+[junk, ndx] = sort(ll, <span class="string">'descend'</span>);
+chosen = [ndx(1:5)' ndx(end-2:end-1)']; <span class="comment">% sentence indexes</span>
+<span class="keyword">for</span> i=1:length(chosen)
+  j = chosen(i);
+  fprintf(<span class="string">'words in sentence %d with loglik %5.3f\n'</span>, j, ll(j));
+  wordlist(X(j,:))
+<span class="keyword">end</span>
+
+<span class="comment">% loglik decreases as number of density of bit vector increases</span>
+doclen = sum(X, 2);
+figure;
+plot(doclen(ndx), <span class="string">'r-'</span>);
+hold <span class="string">on</span>
+plot(ll(ndx), <span class="string">'b:'</span>)
+legend(<span class="string">'doclen'</span>, <span class="string">'loglik'</span>)
+</pre><pre class="codeoutput">mlapa chowliu demo
+words in sentence 26 with loglik -5.323
+ans = 
+    'help'
+words in sentence 44 with loglik -5.323
+ans = 
+    'help'
+words in sentence 49 with loglik -5.323
+ans = 
+    'help'
+words in sentence 105 with loglik -5.323
+ans = 
+    'help'
+words in sentence 268 with loglik -5.323
+ans = 
+    'help'
+words in sentence 638 with loglik -92.855
+ans = 
+  Columns 1 through 3
+    'aids'    'computer'    'course'
+  Columns 4 through 7
+    'data'    'display'    'dos'    'drive'
+  Columns 8 through 11
+    'email'    'files'    'format'    'ftp'
+  Columns 12 through 14
+    'graphics'    'help'    'human'
+  Columns 15 through 18
+    'image'    'israel'    'mac'    'nasa'
+  Columns 19 through 22
+    'number'    'pc'    'phone'    'power'
+  Columns 23 through 25
+    'president'    'program'    'research'
+  Columns 26 through 28
+    'satellite'    'science'    'server'
+  Columns 29 through 31
+    'shuttle'    'software'    'space'
+  Columns 32 through 34
+    'system'    'technology'    'university'
+  Columns 35 through 37
+    'version'    'video'    'windows'
+  Column 38
+    'world'
+words in sentence 13159 with loglik -97.077
+ans = 
+  Columns 1 through 3
+    'card'    'case'    'children'
+  Columns 4 through 6
+    'computer'    'dealer'    'disease'
+  Columns 7 through 9
+    'doctor'    'email'    'evidence'
+  Columns 10 through 12
+    'fact'    'files'    'ftp'
+  Columns 13 through 15
+    'government'    'gun'    'health'
+  Columns 16 through 19
+    'help'    'hit'    'human'    'image'
+  Columns 20 through 22
+    'jews'    'law'    'medicine'
+  Columns 23 through 25
+    'memory'    'number'    'phone'
+  Columns 26 through 28
+    'president'    'problem'    'program'
+  Columns 29 through 31
+    'question'    'research'    'rights'
+  Columns 32 through 34
+    'science'    'server'    'state'
+  Columns 35 through 37
+    'studies'    'system'    'technology'
+  Columns 38 through 40
+    'university'    'version'    'video'
+  Columns 41 through 42
+    'war'    'world'
+</pre><img vspace="5" hspace="5" src="chowliuTreeDemo_01.png" alt=""> <img vspace="5" hspace="5" src="chowliuTreeDemo_02.png" alt=""> <img vspace="5" hspace="5" src="chowliuTreeDemo_03.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Find the MLE tree from a word-document binary matrix
+
+% This file is from pmtk3.googlecode.com
+
+
+loadData('20news_w100'); % documents, wordlist, newsgroups
+%X is 16,642 documents by 100 words  (sparse logical  matrix)
+X = documents';
+disp('mlapa chowliu demo')
+
+%setSeed(0);
+%X = randn(100,5)>0;
+model = treegmFit(X);
+%dgm = treeToDgm(model);
+
+ll = treegmLogprob(model, X);
+
+
+if ~isOctave()
+    drawNetwork('-adjMat', model.adjmat, '-nodeLabels', wordlist);
+end
+% Plot loglikelihood of training cases
+figure;hist(ll,100); title('log-likelihood of training cases using ChowLiu tree')
+
+% Find words in datacases with best  and worst  likelihoods
+[junk, ndx] = sort(ll, 'descend');
+chosen = [ndx(1:5)' ndx(end-2:end-1)']; % sentence indexes
+for i=1:length(chosen)
+  j = chosen(i);
+  fprintf('words in sentence %d with loglik %5.3f\n', j, ll(j));
+  wordlist(X(j,:))
+end
+
+% loglik decreases as number of density of bit vector increases
+doclen = sum(X, 2);
+figure;
+plot(doclen(ndx), 'r-');
+hold on
+plot(ll(ndx), 'b:')
+legend('doclen', 'loglik')
+
+##### SOURCE END #####
+--></body></html>

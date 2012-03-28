@@ -1,0 +1,96 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Visually compare tanh and sigmoid functions</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="tanhPlot.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Visually compare tanh and sigmoid functions</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+xs = -10:0.1:10;
+pt = tanh(xs);
+ps = 1./(1+exp(-xs));
+figure;
+plot(xs, pt, <span class="string">'r-'</span>, <span class="string">'linewidth'</span>, 3)
+hold <span class="string">on</span>
+plot(xs, ps, <span class="string">'g:'</span>, <span class="string">'linewidth'</span>, 3)
+legend(<span class="string">'tanh'</span>, <span class="string">'sigmoid'</span>);
+printPmtkFigure(<span class="string">'tanhPlot'</span>)
+</pre><img vspace="5" hspace="5" src="tanhPlot_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Visually compare tanh and sigmoid functions
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+xs = -10:0.1:10;
+pt = tanh(xs);
+ps = 1./(1+exp(-xs));
+figure;
+plot(xs, pt, 'r-', 'linewidth', 3)
+hold on
+plot(xs, ps, 'g:', 'linewidth', 3)
+legend('tanh', 'sigmoid');
+printPmtkFigure('tanhPlot')
+
+##### SOURCE END #####
+--></body></html>

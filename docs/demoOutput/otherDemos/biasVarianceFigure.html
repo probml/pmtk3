@@ -1,0 +1,185 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Visualization of error versus amount of regularization</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="biasVarianceFigure.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Visualization of error versus amount of regularization</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Ficticious bias,variance,error functions</a></li></ul></div><h2>Ficticious bias,variance,error functions<a name="1"></a></h2><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+varFN = @(lambda) 0.012 -(0.025/4)*lambda;
+biasFN  = @(lambda)((2.5.^(1.5*lambda-2.5))/20)+ 0.0012;
+biasvarFN = @(lambda) varFN(lambda) + biasFN(lambda);
+testerrorFN = @(lambda) biasvarFN(lambda) + 0.05;
+
+domain = -2.5:0.01:1.5;
+lineSpec = {<span class="string">'LineWidth'</span>,5};
+
+
+plot(domain,testerrorFN(domain),<span class="string">'-k'</span>,lineSpec{:});hold <span class="string">on</span>;
+plot(domain,biasvarFN(domain),<span class="string">'-m'</span>,lineSpec{:});
+plot(domain,varFN(domain),<span class="string">'-r'</span>,lineSpec{:});
+plot(domain,biasFN(domain),<span class="string">'-b'</span>,lineSpec{:});
+
+
+set(gca,<span class="string">'XTick'</span>    ,-3:2,<span class="keyword">...</span>
+        <span class="string">'YTick'</span>    ,0:0.03:0.15,<span class="keyword">...</span>
+        <span class="string">'XLim'</span>     ,[-3,2],<span class="keyword">...</span>
+        <span class="string">'YLim'</span>     ,[0,0.15],<span class="keyword">...</span>
+        <span class="string">'LineWidth'</span>,3,<span class="keyword">...</span>
+        <span class="string">'FontSize'</span> ,16,<span class="keyword">...</span>
+        <span class="string">'box'</span>      ,<span class="string">'on'</span>);
+
+
+legend(<span class="string">'test error'</span>         ,<span class="keyword">...</span>
+       <span class="string">'(bias)^2 + variance'</span>,<span class="keyword">...</span>
+       <span class="string">'variance'</span>           ,<span class="keyword">...</span>
+       <span class="string">'(bias)^2'</span>           ,<span class="keyword">...</span>
+       <span class="string">'Location'</span>,<span class="string">'NorthWest'</span>);
+
+
+font = {<span class="string">'fontSize'</span>,14};
+
+<span class="keyword">if</span>(true) <span class="comment">%Label with arrows for black and white</span>
+annotation(gcf,<span class="string">'textarrow'</span>,[0.85,0.82],[0.74,0.62],<span class="keyword">...</span>
+               <span class="string">'String'</span>   ,{<span class="string">'test error'</span>},font{:},<span class="keyword">...</span>
+               <span class="string">'TextColor'</span>,<span class="string">'k'</span>);
+
+annotation(gcf,<span class="string">'textarrow'</span>,[0.84,0.795],[0.49 0.32],<span class="keyword">...</span>
+               <span class="string">'String'</span>   ,{<span class="string">'(bias)^2 + variance'</span>},font{:},<span class="keyword">...</span>
+               <span class="string">'TextColor'</span>,<span class="string">'m'</span>);
+
+annotation(gcf,<span class="string">'textarrow'</span>,[0.85,0.82],[0.26,0.14],<span class="keyword">...</span>
+               <span class="string">'String'</span>   ,{<span class="string">'variance'</span>},font{:},<span class="keyword">...</span>
+               <span class="string">'TextColor'</span>,<span class="string">'r'</span>);
+
+annotation(gcf,<span class="string">'textarrow'</span>,[0.855,0.83],[0.43 0.33],<span class="keyword">...</span>
+               <span class="string">'String'</span>   ,{<span class="string">'(bias)^2'</span>},font{:},<span class="keyword">...</span>
+               <span class="string">'TextColor'</span>,<span class="string">'b'</span>);
+<span class="keyword">end</span>
+
+xlabel(<span class="string">'ln \lambda'</span>,<span class="string">'FontSize'</span>,20);
+maximizeFigure;
+</pre><img vspace="5" hspace="5" src="biasVarianceFigure_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Visualization of error versus amount of regularization
+%
+%% Ficticious bias,variance,error functions
+
+% This file is from pmtk3.googlecode.com
+
+varFN = @(lambda) 0.012 -(0.025/4)*lambda;
+biasFN  = @(lambda)((2.5.^(1.5*lambda-2.5))/20)+ 0.0012;
+biasvarFN = @(lambda) varFN(lambda) + biasFN(lambda);
+testerrorFN = @(lambda) biasvarFN(lambda) + 0.05;
+
+domain = -2.5:0.01:1.5;
+lineSpec = {'LineWidth',5};
+
+
+plot(domain,testerrorFN(domain),'-k',lineSpec{:});hold on;
+plot(domain,biasvarFN(domain),'-m',lineSpec{:});
+plot(domain,varFN(domain),'-r',lineSpec{:});
+plot(domain,biasFN(domain),'-b',lineSpec{:});
+
+
+set(gca,'XTick'    ,-3:2,...
+        'YTick'    ,0:0.03:0.15,...
+        'XLim'     ,[-3,2],...
+        'YLim'     ,[0,0.15],...
+        'LineWidth',3,...
+        'FontSize' ,16,...
+        'box'      ,'on');
+ 
+        
+legend('test error'         ,...
+       '(bias)^2 + variance',...
+       'variance'           ,...
+       '(bias)^2'           ,...
+       'Location','NorthWest'); 
+   
+   
+font = {'fontSize',14};   
+
+if(true) %Label with arrows for black and white
+annotation(gcf,'textarrow',[0.85,0.82],[0.74,0.62],...
+               'String'   ,{'test error'},font{:},...
+               'TextColor','k');
+                        
+annotation(gcf,'textarrow',[0.84,0.795],[0.49 0.32],...
+               'String'   ,{'(bias)^2 + variance'},font{:},...
+               'TextColor','m');
+           
+annotation(gcf,'textarrow',[0.85,0.82],[0.26,0.14],...
+               'String'   ,{'variance'},font{:},...
+               'TextColor','r');           
+
+annotation(gcf,'textarrow',[0.855,0.83],[0.43 0.33],...
+               'String'   ,{'(bias)^2'},font{:},...
+               'TextColor','b');
+end
+
+xlabel('ln \lambda','FontSize',20);   
+maximizeFigure;
+
+
+##### SOURCE END #####
+--></body></html>

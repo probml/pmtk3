@@ -1,0 +1,256 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Optimization in high dimensions using minFunc</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="demoMinfuncHighdim.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Optimization in high dimensions using minFunc</h1><!--introduction--><p>PMTKslow</p><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="keyword">function</span> demoMinfuncHighdim()
+
+<span class="comment">%methods = {'sd', 'cg',  'bb'};</span>
+methods = {<span class="string">'sd'</span>, <span class="string">'cg'</span>,  <span class="string">'bb'</span>, <span class="string">'newton'</span>, <span class="string">'newtoncg'</span>, <span class="string">'bfgs'</span>, <span class="string">'lbfgs'</span>};
+<span class="comment">%methods = {'sd', 'cg',  'bb', 'newton', 'newtoncg', 'bfgs', 'lbfgs', 'newton0', 'newton0lbfgs'};</span>
+[styles, colors, symbols, plotstyles]  = plotColors();
+
+names = {<span class="string">'sd'</span>, <span class="string">'cg'</span>,  <span class="string">'bb'</span>, <span class="string">'n'</span>, <span class="string">'ncg'</span>, <span class="string">'bfgs'</span>, <span class="string">'lbfgs'</span>};
+
+
+seed = 1; setSeed(seed);
+dims = [10 100 500];
+dims = [10 100];
+clear <span class="string">str</span>
+<span class="keyword">for</span> j=1:length(dims)
+  d = dims(j);
+  x0 = randn(d,1);
+  figure;
+  <span class="keyword">for</span> i=1:length(methods)
+    hold <span class="string">on</span>
+    [fx(i,j), fcount(i,j),tim(i,j)] = helper(x0, methods{i}, plotstyles{i});
+
+    str{i} = sprintf(<span class="string">'%s (f* = %5.2f, %d feval, %3.2f sec)'</span>, <span class="keyword">...</span>
+      names{i}, fx(i,j), fcount(i,j), tim(i,j));
+    drawnow
+  <span class="keyword">end</span>
+  legend(str)
+  ylabel(<span class="string">'log f(x)'</span>)
+  xlabel(<span class="string">'fevals'</span>)
+  title(sprintf(<span class="string">'rosenbrock in %d dimensions'</span>, d))
+<span class="keyword">end</span>
+
+figure;
+nr = 3; nc = length(dims);
+<span class="keyword">for</span> j=1:length(dims)
+  d = dims(j);
+  subplot2(nr, nc, 1,j)
+  bar(fx(:,j))
+  set(gca,<span class="string">'xticklabel'</span>,names)
+  title(sprintf(<span class="string">'f^* d=%d'</span>, d))
+
+  subplot2(nr,nc, 2,j)
+  bar(fcount(:,j))
+  set(gca,<span class="string">'xticklabel'</span>,names)
+  title(sprintf(<span class="string">'fcount d=%d'</span>, d))
+
+  subplot2(nr, nc, 3,j)
+  bar(tim(:,j))
+  set(gca,<span class="string">'xticklabel'</span>,names)
+  title(sprintf(<span class="string">'time d=%d'</span>, d))
+  drawnow
+<span class="keyword">end</span>
+printPmtkFigure <span class="string">minfuncRosenBar</span>
+
+<span class="keyword">end</span>
+<span class="comment">%%%%%%%%</span>
+
+<span class="keyword">function</span> [fx, fcount,t] = helper(x0, method, plotstyle)
+
+<span class="keyword">global</span> xhist fhist funcounthist
+xhist = []; fhist = []; funcounthist = [];
+
+dim = length(x0);
+<span class="keyword">if</span> 0 <span class="comment">%  strcmp(method, 'newton') &amp; dim&gt;200</span>
+  <span class="comment">% too slow, skip it</span>
+  fx = 0; fcount = 0; t = 0; <span class="keyword">return</span>;
+<span class="keyword">end</span>
+
+options.display = <span class="string">'none'</span>;
+options.maxFunEvals = 500;
+options.tolFun = 1e-2;
+options.outputFcn = @optimstore;
+options.Method = method;
+options.HessianModify = 1;
+<span class="keyword">if</span> strcmp(method, <span class="string">'newtoncg'</span>)
+  options.cgSolve = 1; <span class="comment">% as opposed to direct solver</span>
+  options.Method = <span class="string">'newton'</span>;
+<span class="keyword">end</span>
+
+tic;
+[x, fx, exitflag, output] = minFunc(@rosenbrock,x0,options);
+t = toc;
+plot(funcounthist, log(fhist), plotstyle);
+<span class="comment">%plot(log(funcounthist), log(fhist), plotstyle);</span>
+fcount = output.funcCount;
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="demoMinfuncHighdim_01.png" alt=""> <img vspace="5" hspace="5" src="demoMinfuncHighdim_02.png" alt=""> <img vspace="5" hspace="5" src="demoMinfuncHighdim_03.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Optimization in high dimensions using minFunc
+% PMTKslow
+%%
+
+% This file is from pmtk3.googlecode.com
+
+function demoMinfuncHighdim()
+
+%methods = {'sd', 'cg',  'bb'};
+methods = {'sd', 'cg',  'bb', 'newton', 'newtoncg', 'bfgs', 'lbfgs'};
+%methods = {'sd', 'cg',  'bb', 'newton', 'newtoncg', 'bfgs', 'lbfgs', 'newton0', 'newton0lbfgs'};
+[styles, colors, symbols, plotstyles]  = plotColors();
+
+names = {'sd', 'cg',  'bb', 'n', 'ncg', 'bfgs', 'lbfgs'};
+
+
+seed = 1; setSeed(seed);
+dims = [10 100 500];
+dims = [10 100];
+clear str
+for j=1:length(dims)
+  d = dims(j);
+  x0 = randn(d,1);
+  figure;
+  for i=1:length(methods)
+    hold on
+    [fx(i,j), fcount(i,j),tim(i,j)] = helper(x0, methods{i}, plotstyles{i});
+   
+    str{i} = sprintf('%s (f* = %5.2f, %d feval, %3.2f sec)', ...
+      names{i}, fx(i,j), fcount(i,j), tim(i,j));
+    drawnow
+  end
+  legend(str)
+  ylabel('log f(x)')
+  xlabel('fevals')
+  title(sprintf('rosenbrock in %d dimensions', d))
+end
+
+figure;
+nr = 3; nc = length(dims);
+for j=1:length(dims)
+  d = dims(j);
+  subplot2(nr, nc, 1,j)
+  bar(fx(:,j))
+  set(gca,'xticklabel',names)
+  title(sprintf('f^* d=%d', d))
+  
+  subplot2(nr,nc, 2,j)
+  bar(fcount(:,j))
+  set(gca,'xticklabel',names)
+  title(sprintf('fcount d=%d', d))
+  
+  subplot2(nr, nc, 3,j)
+  bar(tim(:,j))
+  set(gca,'xticklabel',names)
+  title(sprintf('time d=%d', d))
+  drawnow
+end
+printPmtkFigure minfuncRosenBar
+
+end
+%%%%%%%%
+
+function [fx, fcount,t] = helper(x0, method, plotstyle)
+
+global xhist fhist funcounthist
+xhist = []; fhist = []; funcounthist = [];
+
+dim = length(x0);
+if 0 %  strcmp(method, 'newton') & dim>200
+  % too slow, skip it
+  fx = 0; fcount = 0; t = 0; return;
+end
+
+options.display = 'none';
+options.maxFunEvals = 500;
+options.tolFun = 1e-2;
+options.outputFcn = @optimstore;
+options.Method = method;
+options.HessianModify = 1;
+if strcmp(method, 'newtoncg')
+  options.cgSolve = 1; % as opposed to direct solver
+  options.Method = 'newton';
+end
+
+tic;
+[x, fx, exitflag, output] = minFunc(@rosenbrock,x0,options);
+t = toc;
+plot(funcounthist, log(fhist), plotstyle);
+%plot(log(funcounthist), log(fhist), plotstyle);
+fcount = output.funcCount;
+end
+
+
+
+
+
+
+
+##### SOURCE END #####
+--></body></html>

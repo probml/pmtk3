@@ -1,0 +1,170 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Reproduce Figure B.1 p447 from Bernardo94</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="riskFnGauss.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Reproduce Figure B.1 p447 from Bernardo94</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+ns = [5 20];
+[styles, colors, symbols] = plotColors;
+<span class="keyword">for</span> ni=1:length(ns)
+  n = ns(ni);
+mus = -1.8:0.1:1.8;
+M = length(mus);
+n0 = 1;
+n0B = 5;
+mu0 = 0;
+r1 = (1/n) * ones(1,M);
+r2 = (pi/(2*n)) * ones(1,M);
+r3 = (mus-mu0).^2;
+r4 = (n+n0)^(-2) * (n + n0^2*(mu0-mus).^2);
+r5 = (n+n0B)^(-2) * (n + n0B^2*(mu0-mus).^2);
+legendStr = {<span class="string">'mle'</span>,<span class="string">'median'</span>,<span class="string">'fixed'</span>,<span class="string">'postmean1'</span>, <span class="string">'postmean5'</span>};
+
+r = {r1, r2, r3, r4, r5};
+figure;
+<span class="keyword">for</span> i=1:5
+plot(mus, r{i}, [styles{i}, colors(i)], <span class="string">'linewidth'</span>, 3);
+ <span class="comment">% 'displayname', legendStr{i});</span>
+ hold <span class="string">on</span>
+<span class="keyword">end</span>
+legend(legendStr,<span class="string">'fontsize'</span>, 12, <span class="string">'Location'</span>,<span class="string">'NorthWest'</span>);
+<span class="keyword">if</span> ni==1
+  set(gca,<span class="string">'ylim'</span>,[0 0.5])
+<span class="keyword">else</span>
+  set(gca,<span class="string">'ylim'</span>,[0 0.18])
+<span class="keyword">end</span>
+
+<span class="comment">%grid on</span>
+
+
+<span class="comment">%%text(0.7, 0.4, 'fixed', 'fontsize', 14, 'color', 'b')</span>
+<span class="comment">%%text(1.2, 0.3, 'postmean', 'fontsize', 14, 'color', 'k')</span>
+<span class="comment">%text(1.2, 0.18, 'median', 'fontsize', 14, 'color', 'g')</span>
+<span class="comment">%text(1.2, 0.08, 'mle', 'fontsize', 14, 'color', 'r')</span>
+
+xlabel(<span class="string">'\theta_*'</span>)
+ylabel(<span class="string">'R(\theta_*,\delta)'</span>)
+
+title(sprintf(<span class="string">'risk functions for n=%d'</span>,  n))
+printPmtkFigure(sprintf(<span class="string">'riskFnGaussN%d'</span>, n))
+
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="riskFnGauss_01.png" alt=""> <img vspace="5" hspace="5" src="riskFnGauss_02.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Reproduce Figure B.1 p447 from Bernardo94
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+ns = [5 20];
+[styles, colors, symbols] = plotColors;
+for ni=1:length(ns)
+  n = ns(ni);
+mus = -1.8:0.1:1.8;
+M = length(mus);
+n0 = 1;
+n0B = 5;
+mu0 = 0;
+r1 = (1/n) * ones(1,M);
+r2 = (pi/(2*n)) * ones(1,M);
+r3 = (mus-mu0).^2;
+r4 = (n+n0)^(-2) * (n + n0^2*(mu0-mus).^2);
+r5 = (n+n0B)^(-2) * (n + n0B^2*(mu0-mus).^2);
+legendStr = {'mle','median','fixed','postmean1', 'postmean5'};
+
+r = {r1, r2, r3, r4, r5};
+figure; 
+for i=1:5
+plot(mus, r{i}, [styles{i}, colors(i)], 'linewidth', 3);
+ % 'displayname', legendStr{i});
+ hold on
+end
+legend(legendStr,'fontsize', 12, 'Location','NorthWest');
+if ni==1
+  set(gca,'ylim',[0 0.5])
+else
+  set(gca,'ylim',[0 0.18])
+end
+
+%grid on
+
+
+%%text(0.7, 0.4, 'fixed', 'fontsize', 14, 'color', 'b')
+%%text(1.2, 0.3, 'postmean', 'fontsize', 14, 'color', 'k')
+%text(1.2, 0.18, 'median', 'fontsize', 14, 'color', 'g')
+%text(1.2, 0.08, 'mle', 'fontsize', 14, 'color', 'r')
+
+xlabel('\theta_*')
+ylabel('R(\theta_*,\delta)')
+
+title(sprintf('risk functions for n=%d',  n))
+printPmtkFigure(sprintf('riskFnGaussN%d', n))
+
+end
+
+
+
+##### SOURCE END #####
+--></body></html>

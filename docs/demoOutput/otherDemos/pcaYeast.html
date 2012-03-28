@@ -1,0 +1,200 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>PCA Yeast Demo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="pcaYeast.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>PCA Yeast Demo</h1><!--introduction--><p>The microarray data for this example is from DeRisi, JL, Iyer, VR, and Brown, PO.; "Exploring the metabolic and genetic control of gene expression on a genomic scale"; Science, 1997, Oct 24;278(5338):680-6, PMID: 9381177. The authors used DNA microarrays to study temporal gene expression of almost all genes in Saccharomyces cerevisiae during the metabolic shift from fermentation to respiration. We filtered the 6400 genes down to 310 using the steps described here: <a href="http://www.mathworks.com/access/helpdesk/help/toolbox/bioinfo/index.html">http://www.mathworks.com/access/helpdesk/help/toolbox/bioinfo/index.html</a>? /access/helpdesk/help/toolbox/bioinfo/ug/a1060813239b1.html See microarrayDemoMathworks PMTKinteractive</p><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+loadData(<span class="string">'yeastData310'</span>);
+
+[B, Z, evals, Xrecon, mu] = pcaPmtk(X);
+
+figure;
+cumsum(evals./sum(evals) * 100)
+title(<span class="string">'scree plot'</span>)
+
+figure; plot(X'); set(gca,<span class="string">'xticklabel'</span>,times);
+title(<span class="string">'raw data'</span>)
+
+[styles, colors, symbols] = plotColors;
+figure;
+K = size(B,2);
+<span class="comment">%nBasis = 2;</span>
+nBasis = 7
+<span class="keyword">for</span> i=1:nBasis
+    plot(times, B(:,i), [styles{i}, colors(i)], <span class="string">'linewidth'</span>, 2);
+    hold <span class="string">on</span>
+    str{i} = sprintf(<span class="string">'pc %d'</span>, i);
+<span class="keyword">end</span>
+title(<span class="string">'principal bases'</span>)
+legend(str,<span class="string">'location'</span>,<span class="string">'northwest'</span>)
+<span class="keyword">if</span>(nBasis == 2)
+    printPmtkFigure(<span class="string">'pcaYeastbasis2'</span>);
+<span class="keyword">else</span>
+    printPmtkFigure(<span class="string">'pcaYeastBasis'</span>);
+<span class="keyword">end</span>
+
+figure;
+scatter(Z(:,1), Z(:,2));
+title(<span class="string">'first 2 principal components'</span>)
+printPmtkFigure(<span class="string">'pcaYeast2d'</span>);
+
+<span class="keyword">if</span> 0
+    figure(3);clf
+    K = 6;
+    pcclusters = clusterdata(Z(:,1:2),K);
+    gscatter(Z(:,1), Z(:,2), pcclusters)
+    title(<span class="string">'clusering of the first 2 PCs'</span>)
+<span class="keyword">end</span>
+
+<span class="comment">% Click on some points in R2 (fig 3)</span>
+<span class="comment">% and visualize the corrsponding raw data in R7 (fig 4)</span>
+
+figure(4);clf
+<span class="keyword">for</span> kk=1:9
+    figure(3); Xsel = ginput(1);
+    text(Xsel(1), Xsel(2), sprintf(<span class="string">'%d'</span>, kk), <span class="string">'fontsize'</span>, 24);
+    distance = sqdist(Xsel', Z(:,1:2)');
+    [junk, closest] = min(distance,[],2);
+    figure(4);subplot(3,3,kk);
+    i = closest;
+    plot(times, X(i,:), <span class="string">'-'</span>);
+    title(sprintf(<span class="string">'%d'</span>, kk))
+<span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% PCA Yeast Demo
+% The microarray data for this example is from DeRisi, JL, Iyer, VR, and
+% Brown, PO.; "Exploring the metabolic and genetic control of gene
+% expression on a genomic scale"; Science, 1997, Oct 24;278(5338):680-6,
+% PMID: 9381177. The authors used DNA microarrays to study temporal gene
+% expression of almost all genes in Saccharomyces cerevisiae during the
+% metabolic shift from fermentation to respiration. We filtered the 6400
+% genes down to 310 using the steps described here:
+% http://www.mathworks.com/access/helpdesk/help/toolbox/bioinfo/index.html?
+% /access/helpdesk/help/toolbox/bioinfo/ug/a1060813239b1.html See
+% microarrayDemoMathworks 
+% PMTKinteractive
+%%
+
+% This file is from pmtk3.googlecode.com
+
+loadData('yeastData310');
+
+[B, Z, evals, Xrecon, mu] = pcaPmtk(X);
+
+figure;
+cumsum(evals./sum(evals) * 100)
+title('scree plot')
+
+figure; plot(X'); set(gca,'xticklabel',times);
+title('raw data')
+
+[styles, colors, symbols] = plotColors;
+figure;
+K = size(B,2);
+%nBasis = 2;
+nBasis = 7
+for i=1:nBasis
+    plot(times, B(:,i), [styles{i}, colors(i)], 'linewidth', 2);
+    hold on
+    str{i} = sprintf('pc %d', i);
+end
+title('principal bases')
+legend(str,'location','northwest')
+if(nBasis == 2)
+    printPmtkFigure('pcaYeastbasis2');
+else
+    printPmtkFigure('pcaYeastBasis');
+end
+
+figure;
+scatter(Z(:,1), Z(:,2));
+title('first 2 principal components')
+printPmtkFigure('pcaYeast2d');
+
+if 0
+    figure(3);clf
+    K = 6;
+    pcclusters = clusterdata(Z(:,1:2),K);
+    gscatter(Z(:,1), Z(:,2), pcclusters)
+    title('clusering of the first 2 PCs')
+end
+
+% Click on some points in R2 (fig 3)
+% and visualize the corrsponding raw data in R7 (fig 4)
+
+figure(4);clf
+for kk=1:9
+    figure(3); Xsel = ginput(1);
+    text(Xsel(1), Xsel(2), sprintf('%d', kk), 'fontsize', 24);
+    distance = sqdist(Xsel', Z(:,1:2)');
+    [junk, closest] = min(distance,[],2);
+    figure(4);subplot(3,3,kk);
+    i = closest;
+    plot(times, X(i,:), '-');
+    title(sprintf('%d', kk))
+end
+
+##### SOURCE END #####
+--></body></html>

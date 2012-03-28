@@ -1,0 +1,150 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>From Schmee and Hahn, "A simple method for regression analysis</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="linregCensoredSchmeeHahnDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>From Schmee and Hahn, "A simple method for regression analysis</h1><!--introduction--><p>with censored data", technometrics 1979 table 1 PMTKauthor Hannes Bretschneider</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Load</a></li><li><a href="#2">Estimate EM</a></li><li><a href="#3">Estimate OLS</a></li><li><a href="#4">Compute predictions</a></li><li><a href="#5">Plot</a></li></ul></div><h2>Load<a name="1"></a></h2><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+setSeed(0);
+loadData(<span class="string">'schmeeHahn'</span>);
+y = log10(time);
+x = 1000./(temp+273.2);
+n = length(y);
+uncensored = ~censored;
+</pre><h2>Estimate EM<a name="2"></a></h2><pre class="codeinput">[model, Ez] = linregCensoredFitEm(x, y, censored);
+fprintf(<span class="string">'w0 = %5.3f, w1 = %5.3f, sigma = %5.3f\n'</span>, <span class="keyword">...</span>
+  model.w(1), model.w(2), model.sigma);
+<span class="comment">% These numbers correspond to those on</span>
+<span class="comment">% p69 of Tanner "Tools for statistical inference"</span>
+</pre><pre class="codeoutput">w0 = -6.019, w1 = 4.311, sigma = 0.259
+</pre><h2>Estimate OLS<a name="3"></a></h2><pre class="codeinput">X = [ones(n,1) x];
+wOLS = X\y;
+</pre><h2>Compute predictions<a name="4"></a></h2><pre class="codeinput">yhatEM = X*model.w;
+yhatOLS = X*wOLS;
+
+mseEM = mean((yhatEM - y).^2)
+mseOLS = mean((yhatOLS - y).^2)
+</pre><pre class="codeoutput">mseEM =
+    0.0518
+mseOLS =
+    0.0235
+</pre><h2>Plot<a name="5"></a></h2><pre class="codeinput">figure; hold <span class="string">on</span>;
+plot(x, yhatEM, <span class="string">'r:'</span>, <span class="string">'linewidth'</span>, 2);
+plot(x, yhatOLS, <span class="string">'b-'</span>, <span class="string">'linewidth'</span>, 2);
+plot(x(uncensored), y(uncensored), <span class="string">'ko'</span>, <span class="string">'markersize'</span>, 8, <span class="string">'linewidth'</span>, 2);
+plot(x(censored), y(censored), <span class="string">'rx'</span>, <span class="string">'markersize'</span>, 15, <span class="string">'linewidth'</span>, 2);
+plot(x(censored), Ez(censored), <span class="string">'g*'</span>, <span class="string">'markersize'</span>, 15, <span class="string">'linewidth'</span>, 2);
+legend(<span class="string">'EM'</span>, <span class="string">'OLS'</span>);
+xlabel(<span class="string">'inverse temperature'</span>)
+ylabel(<span class="string">'survival time'</span>)
+title(<span class="string">'regression with censored data; red x = censored, green * = predicted'</span>)
+printPmtkFigure(<span class="string">'linregCensoredSchmeeHahn'</span>)
+</pre><img vspace="5" hspace="5" src="linregCensoredSchmeeHahnDemo_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% From Schmee and Hahn, "A simple method for regression analysis
+% with censored data", technometrics 1979 table 1
+% PMTKauthor Hannes Bretschneider
+%% Load
+
+% This file is from pmtk3.googlecode.com
+
+setSeed(0);
+loadData('schmeeHahn');
+y = log10(time);
+x = 1000./(temp+273.2);
+n = length(y);
+uncensored = ~censored;
+
+%% Estimate EM
+[model, Ez] = linregCensoredFitEm(x, y, censored);
+fprintf('w0 = %5.3f, w1 = %5.3f, sigma = %5.3f\n', ...
+  model.w(1), model.w(2), model.sigma);
+% These numbers correspond to those on
+% p69 of Tanner "Tools for statistical inference"
+
+%% Estimate OLS
+X = [ones(n,1) x];
+wOLS = X\y;
+
+%% Compute predictions
+yhatEM = X*model.w;
+yhatOLS = X*wOLS;
+
+mseEM = mean((yhatEM - y).^2)
+mseOLS = mean((yhatOLS - y).^2)
+
+%% Plot
+figure; hold on;
+plot(x, yhatEM, 'r:', 'linewidth', 2);
+plot(x, yhatOLS, 'b-', 'linewidth', 2);
+plot(x(uncensored), y(uncensored), 'ko', 'markersize', 8, 'linewidth', 2);
+plot(x(censored), y(censored), 'rx', 'markersize', 15, 'linewidth', 2);
+plot(x(censored), Ez(censored), 'g*', 'markersize', 15, 'linewidth', 2);
+legend('EM', 'OLS');
+xlabel('inverse temperature')
+ylabel('survival time')
+title('regression with censored data; red x = censored, green * = predicted')
+printPmtkFigure('linregCensoredSchmeeHahn')
+
+##### SOURCE END #####
+--></body></html>

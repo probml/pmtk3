@@ -1,0 +1,219 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Plot unigrams and bigrams of Darwin's "On the origin of species"</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="ngramPlot.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Plot unigrams and bigrams of Darwin's "On the origin of species"</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+
+loadData(<span class="string">'ngramData'</span>); <span class="comment">% cotnains bigrams, ugrams, etc (use ngramMake to create this)</span>
+<span class="keyword">if</span>(0) <span class="comment">% Plot bigram frequencies</span>
+    bigramFig = figure;
+    axes1 = axes(<span class="string">'Parent'</span>,bigramFig,<span class="keyword">...</span>
+        <span class="string">'YTickLabel'</span>, insertFront(<span class="string">' '</span>, num2cell(<span class="string">'a'</span>:<span class="string">'z'</span>)),<span class="keyword">...</span>
+        <span class="string">'YTick'</span>,1.5:27.5,<span class="keyword">...</span>
+        <span class="string">'XTickLabel'</span>,insertFront(<span class="string">' '</span>, num2cell(<span class="string">'a'</span>:<span class="string">'z'</span>)),<span class="keyword">...</span>
+        <span class="string">'XTick'</span>,1.5:27.5);
+
+    hold <span class="string">on</span>;
+    bifreq = bigrams ./ max(max(bigrams));
+    bifreq = [bifreq bifreq(:,27)]; <span class="comment">%Add dummy row and col for pcolor</span>
+    bifreq = [bifreq ; bifreq(27,:)];
+    <span class="comment">%pcolor(bifreq);</span>
+    hintonw(bifreq);
+    colormap(gray(256));
+    axis <span class="string">square</span>;
+    axis([1,28,1,28]);
+    title(<span class="string">'Bigram Relative Frequencies'</span>);
+    colorbar;
+<span class="keyword">end</span>
+
+<span class="keyword">if</span>(1) <span class="comment">% Plot unigram and bigram frequencies</span>
+    main = figure;
+    hintonDiagram(ugrams);
+    <span class="comment">%hintonDiagram(normalize(ugrams));</span>
+    title(<span class="string">'Unigrams'</span>, <span class="string">'fontsize'</span>, 20);
+    uniAx = gca;
+    set(uniAx,<span class="string">'XTick'</span>,[],<span class="string">'YTick'</span>,1:27,<span class="string">'Color'</span>,<span class="string">'k'</span>,<span class="string">'Position'</span>,[0.25,0.1,0.04,0.8],<span class="string">'FontName'</span>,<span class="string">'Courier'</span>);
+    set(findobj(uniAx,<span class="string">'Type'</span>,<span class="string">'Patch'</span>),<span class="string">'FaceColor'</span>,<span class="string">'w'</span>)
+    set(findobj(uniAx,<span class="string">'Type'</span>,<span class="string">'line'</span>),<span class="string">'Color'</span>,<span class="string">'k'</span>);
+    xlabel(<span class="string">''</span>);  ylabel(<span class="string">''</span>);  grid <span class="string">off</span>;
+    letters = {<span class="string">'_'</span>,<span class="string">'a'</span>,<span class="string">'b'</span>,<span class="string">'c'</span>,<span class="string">'d'</span>,<span class="string">'e'</span>,<span class="string">'f'</span>,<span class="string">'g'</span>,<span class="string">'h'</span>,<span class="string">'i'</span>,<span class="string">'j'</span>,<span class="string">'k'</span>,<span class="string">'l'</span>,<span class="string">'m'</span>,<span class="string">'n'</span>,<span class="string">'o'</span>,<span class="string">'p'</span>,<span class="string">'q'</span>,<span class="string">'r'</span>,<span class="string">'s'</span>,<span class="string">'t'</span>,<span class="string">'u'</span>,<span class="string">'v'</span>,<span class="string">'w'</span>,<span class="string">'x'</span>,<span class="string">'y'</span>,<span class="string">'z'</span>};
+    spaces = repmat(<span class="string">'   '</span>,27,1);
+    labels = [num2str((1:27)') spaces num2str(ugramsNorm,<span class="string">'%4.5f'</span>) spaces char(letters)];
+    set(uniAx,<span class="string">'YTickLabel'</span>,labels);
+
+    tmp = figure;
+    hintonDiagram(bigrams);
+    <span class="comment">%hintonDiagram(normalize(bigrams)); % joint probability</span>
+    title(<span class="string">'Bigrams'</span>, <span class="string">'fontsize'</span>, 20);
+    xlabel(<span class="string">''</span>); ylabel(<span class="string">''</span>);
+    biAx = gca;
+    set(biAx,<span class="string">'Parent'</span>,main,<span class="string">'Position'</span>,[0.4,0.1,0.55,0.8]);
+    close(tmp);
+    set(biAx,<span class="string">'XTick'</span>,1:27,<span class="string">'YTick'</span>,1:27,<span class="string">'Color'</span>,<span class="string">'k'</span>,<span class="string">'XAxisLocation'</span>,<span class="string">'top'</span>,<span class="string">'XTickLabel'</span>,<span class="keyword">...</span>
+        letters,<span class="string">'YTickLabel'</span>,letters,<span class="string">'FontName'</span>,<span class="string">'Courier'</span>);
+    set(findobj(biAx,<span class="string">'Type'</span>,<span class="string">'Patch'</span>),<span class="string">'FaceColor'</span>,<span class="string">'w'</span>)
+    set(findobj(biAx,<span class="string">'Type'</span>,<span class="string">'line'</span>),<span class="string">'Color'</span>,<span class="string">'k'</span>);
+    grid <span class="string">off</span>;
+    set(main,<span class="string">'Color'</span>,<span class="string">'w'</span>);
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="ngramPlot_01.png" alt=""> <pre class="codeinput"><span class="keyword">if</span>(0) <span class="comment">% Print a table of unigram frequencies to the console</span>
+    fprintf(<span class="string">'\n%10s %7s %12s\n\n'</span>,<span class="string">'Index'</span>,<span class="string">'Letter'</span>,<span class="string">'Frequency'</span>);
+    <span class="keyword">for</span> i = 1:length(validSet)
+        fprintf(<span class="string">'%8s %6s %15s\n'</span>,num2str(i),char(validSet(i)),num2str(ugramsNorm(i),<span class="string">'%4.3f'</span>));
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+
+<span class="keyword">if</span>(0) <span class="comment">% Print a histogram of unigram frequencies</span>
+    ugramHist = figure;
+    axes2 = axes(<span class="string">'Parent'</span>,ugramHist,<span class="string">'XTickLabel'</span>,letters,<span class="string">'XTick'</span>,1:27);
+    hold <span class="string">on</span>;
+    bar(ugramsNorm);
+    title(<span class="string">'Unigrams'</span>);
+<span class="keyword">end</span>
+
+<span class="comment">%printPmtkFigure uniBigram;</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Plot unigrams and bigrams of Darwin's "On the origin of species"
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+
+loadData('ngramData'); % cotnains bigrams, ugrams, etc (use ngramMake to create this)
+if(0) % Plot bigram frequencies
+    bigramFig = figure;
+    axes1 = axes('Parent',bigramFig,...
+        'YTickLabel', insertFront(' ', num2cell('a':'z')),...
+        'YTick',1.5:27.5,...
+        'XTickLabel',insertFront(' ', num2cell('a':'z')),...
+        'XTick',1.5:27.5);
+    
+    hold on;
+    bifreq = bigrams ./ max(max(bigrams));
+    bifreq = [bifreq bifreq(:,27)]; %Add dummy row and col for pcolor
+    bifreq = [bifreq ; bifreq(27,:)];
+    %pcolor(bifreq);
+    hintonw(bifreq);
+    colormap(gray(256));
+    axis square;
+    axis([1,28,1,28]);
+    title('Bigram Relative Frequencies');
+    colorbar;
+end
+
+if(1) % Plot unigram and bigram frequencies
+    main = figure;
+    hintonDiagram(ugrams);
+    %hintonDiagram(normalize(ugrams));
+    title('Unigrams', 'fontsize', 20);
+    uniAx = gca;
+    set(uniAx,'XTick',[],'YTick',1:27,'Color','k','Position',[0.25,0.1,0.04,0.8],'FontName','Courier');
+    set(findobj(uniAx,'Type','Patch'),'FaceColor','w')
+    set(findobj(uniAx,'Type','line'),'Color','k');
+    xlabel('');  ylabel('');  grid off;
+    letters = {'_','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'};
+    spaces = repmat('   ',27,1);
+    labels = [num2str((1:27)') spaces num2str(ugramsNorm,'%4.5f') spaces char(letters)];
+    set(uniAx,'YTickLabel',labels);
+    
+    tmp = figure;
+    hintonDiagram(bigrams);
+    %hintonDiagram(normalize(bigrams)); % joint probability
+    title('Bigrams', 'fontsize', 20);
+    xlabel(''); ylabel('');
+    biAx = gca;
+    set(biAx,'Parent',main,'Position',[0.4,0.1,0.55,0.8]);
+    close(tmp);
+    set(biAx,'XTick',1:27,'YTick',1:27,'Color','k','XAxisLocation','top','XTickLabel',...
+        letters,'YTickLabel',letters,'FontName','Courier');
+    set(findobj(biAx,'Type','Patch'),'FaceColor','w')
+    set(findobj(biAx,'Type','line'),'Color','k');
+    grid off;
+    set(main,'Color','w');
+end
+%%
+if(0) % Print a table of unigram frequencies to the console
+    fprintf('\n%10s %7s %12s\n\n','Index','Letter','Frequency');
+    for i = 1:length(validSet)
+        fprintf('%8s %6s %15s\n',num2str(i),char(validSet(i)),num2str(ugramsNorm(i),'%4.3f'));
+    end
+end
+
+
+if(0) % Print a histogram of unigram frequencies
+    ugramHist = figure;
+    axes2 = axes('Parent',ugramHist,'XTickLabel',letters,'XTick',1:27);
+    hold on;
+    bar(ugramsNorm);
+    title('Unigrams');
+end
+
+%printPmtkFigure uniBigram;
+
+##### SOURCE END #####
+--></body></html>

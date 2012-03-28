@@ -1,0 +1,155 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Visualize low rank approximations of an image</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="svdImageDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Visualize low rank approximations of an image</h1><!--introduction--><p>based on Cleve Moler's book ch10 p25</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#4">Scramble the data and replot (Hastie01 p491)</a></li></ul></div><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="comment">%loadData('clown');</span>
+load(<span class="string">'clown'</span>); <span class="comment">% builtin to matlab</span>
+r = rank(X);
+disp(r);
+[U, S, V] = svd(X, 0);
+ranks = [1 2 5 10 20 r];
+R = length(ranks);
+</pre><pre class="codeoutput">   200
+</pre><pre class="codeinput"><span class="keyword">for</span> i=1:R
+  figure();
+  k = ranks(i);
+  Xhat = (U(:, 1:k)*S(1:k, 1:k)*V(:, 1:k)');
+  image(Xhat);
+  colormap(gray(64));
+  axis <span class="string">image</span>;
+  axis <span class="string">off</span>
+  title(sprintf(<span class="string">'rank %d'</span>, k))
+  printPmtkFigure(sprintf(<span class="string">'svdImageDemoClown%d'</span>, k));
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="svdImageDemo_01.png" alt=""> <img vspace="5" hspace="5" src="svdImageDemo_02.png" alt=""> <img vspace="5" hspace="5" src="svdImageDemo_03.png" alt=""> <img vspace="5" hspace="5" src="svdImageDemo_04.png" alt=""> <img vspace="5" hspace="5" src="svdImageDemo_05.png" alt=""> <img vspace="5" hspace="5" src="svdImageDemo_06.png" alt=""> <pre class="codeinput">fs = 14;
+sigma = diag(S);
+K = 100;
+figure();
+plot(log(sigma(1:K)), <span class="string">'r-'</span>, <span class="string">'linewidth'</span>, 4)
+ylabel(sprintf(<span class="string">'log(%s_i)'</span>,<span class="string">'\sigma'</span>), <span class="string">'fontsize'</span>, fs);
+xlabel(<span class="string">'i'</span>, <span class="string">'fontsize'</span>, fs)
+<span class="comment">%printPmtkFigure svdImageDemoClownSigma;</span>
+</pre><img vspace="5" hspace="5" src="svdImageDemo_07.png" alt=""> <h2>Scramble the data and replot (Hastie01 p491)<a name="4"></a></h2><pre class="codeinput">N = numel(X);
+perm = randperm(N);
+X2 = reshape(X(perm), size(X));
+[U, S2, V] = svd(X2, 0);
+sigma2 = diag(S2);
+hold <span class="string">on</span>
+plot(log(sigma2(1:K)), <span class="string">'g:'</span>, <span class="string">'linewidth'</span>, 4)
+h=legend(<span class="string">'original'</span>, <span class="string">'randomized'</span>);
+set(h, <span class="string">'fontsize'</span>, fs);
+printPmtkFigure <span class="string">svdImageDemoClownSigmaScrambled</span>;
+</pre><img vspace="5" hspace="5" src="svdImageDemo_08.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Visualize low rank approximations of an image
+% based on Cleve Moler's book ch10 p25
+%%
+
+% This file is from pmtk3.googlecode.com
+
+%loadData('clown'); 
+load('clown'); % builtin to matlab
+r = rank(X);
+disp(r); 
+[U, S, V] = svd(X, 0);
+ranks = [1 2 5 10 20 r];
+R = length(ranks);
+%%
+for i=1:R
+  figure();
+  k = ranks(i);
+  Xhat = (U(:, 1:k)*S(1:k, 1:k)*V(:, 1:k)');
+  image(Xhat);
+  colormap(gray(64));
+  axis image; 
+  axis off
+  title(sprintf('rank %d', k))
+  printPmtkFigure(sprintf('svdImageDemoClown%d', k));
+end
+%%
+fs = 14;
+sigma = diag(S);
+K = 100;
+figure(); 
+plot(log(sigma(1:K)), 'r-', 'linewidth', 4)
+ylabel(sprintf('log(%s_i)','\sigma'), 'fontsize', fs);
+xlabel('i', 'fontsize', fs)
+%printPmtkFigure svdImageDemoClownSigma;
+%% Scramble the data and replot (Hastie01 p491)
+N = numel(X);
+perm = randperm(N);
+X2 = reshape(X(perm), size(X));
+[U, S2, V] = svd(X2, 0);
+sigma2 = diag(S2);
+hold on
+plot(log(sigma2(1:K)), 'g:', 'linewidth', 4)
+h=legend('original', 'randomized');
+set(h, 'fontsize', fs);
+printPmtkFigure svdImageDemoClownSigmaScrambled;
+%%
+
+##### SOURCE END #####
+--></body></html>

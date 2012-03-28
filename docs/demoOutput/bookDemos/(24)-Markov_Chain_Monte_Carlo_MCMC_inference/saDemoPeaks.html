@@ -1,0 +1,365 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Demo of Simulated Annealing</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="saDemoPeaks.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Demo of Simulated Annealing</h1><p>for finding the most probable point of a peaky 2D surface</p><pre class="codeinput"><span class="comment">%PMTKneedsStatsToolbox hist3</span>
+</pre><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="keyword">function</span> saDemoPeaks()
+</pre><pre class="codeinput">requireStatsToolbox
+findMAX = true;
+
+[XX, YY]=meshgrid(1:49,1:49);
+Z = peaks; <span class="comment">% 49x49 surface surface</span>
+m = min(Z(:));
+Zpos = Z+abs(m)+1;
+
+<span class="comment">% Plot the surface at different temperatures</span>
+<span class="comment">%temps = [0.3];</span>
+temps = [1.5, 1, 0.2];
+<span class="comment">%fig1 = figure; fig2= figure;</span>
+<span class="keyword">for</span> ti=1:length(temps)
+    t = temps(ti);
+    Zt = Zpos.^(1/t);
+    <span class="comment">%figure(fig1); subplot(2,2,ti)</span>
+    figure;
+    <span class="comment">%surf(XX,YY,Zt); title(sprintf('temp %5.3f', t));</span>
+    surf(YY,XX,Zt); title(sprintf(<span class="string">'temp %5.3f'</span>, t));
+    xlabel(<span class="string">'x'</span>); ylabel(<span class="string">'y'</span>)
+    <span class="keyword">if</span> t&gt;=1
+        set(gca,<span class="string">'zlim'</span>,[0 10]);
+    <span class="keyword">end</span>
+    <span class="comment">%figure(fig2); subplot(2,2,ti);</span>
+    printPmtkFigure(sprintf(<span class="string">'SApeaksSurf%d'</span>, ti));
+
+    <span class="keyword">if</span> 0
+    figure;
+    imagesc(Zt); axis <span class="string">xy</span>;
+    colorbar; title(sprintf(<span class="string">'temp %5.3f'</span>, t));
+    printPmtkFigure(sprintf(<span class="string">'SApeaksSurfImagesc%d'</span>, ti));
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+
+
+<span class="comment">% find optimum by exhaustive search</span>
+M = max(Z(:)); <span class="comment">% 8.0752</span>
+[row,col] = find(Z==M); <span class="comment">% max  row 38, col 25</span>
+fprintf(<span class="string">'max =%5.3f at r=%d,c=%d\n'</span>, M, row, col);
+M = min(Z(:)); <span class="comment">% -6.54566</span>
+[row,col] = find(Z==M); <span class="comment">% min  row 12, col 27</span>
+fprintf(<span class="string">'min =%5.3f at r=%d,c=%d\n'</span>, M, row, col);
+
+
+<span class="keyword">if</span> findMAX
+    setSeed(2);
+    xinit = [35,25];
+    M = max(Z(:)); <span class="comment">% 8.0752</span>
+    [row,col] = find(Z==M);
+    <span class="comment">%figure(1); hold on; h=plot(row,col,'ro');set(h,'markersize',15);</span>
+<span class="keyword">else</span>
+    setSeed(1);
+    xinit = [25,25]; <span class="comment">% initial state is in middle of grid</span>
+<span class="keyword">end</span>
+
+
+
+Sigma_prop = 2^2 * eye(2); <span class="comment">%2^2 = variance</span>
+Nsamples  = 1000;
+opts = struct(<span class="keyword">...</span>
+    <span class="string">'proposal'</span>, @(x) (x+(gaussSample(zeros(2,1), Sigma_prop, 1))), <span class="keyword">...</span>
+    <span class="string">'maxIter'</span>, Nsamples, <span class="keyword">...</span>
+    <span class="string">'minIter'</span>, Nsamples, <span class="keyword">...</span>
+    <span class="string">'temp'</span>, @(T,iter) (0.995*T), <span class="keyword">...</span>
+    <span class="string">'verbose'</span>, 0);
+
+[xopt, fval, samples, energies, acceptRate, temp] =  <span class="keyword">...</span>
+    simAnneal(@target, xinit, opts);
+xopt
+fval
+
+figure; plot(temp); title(<span class="string">'temperature vs iteration'</span>);
+printPmtkFigure(<span class="string">'SApeaksTemp'</span>);
+
+figure; plot(energies); title(<span class="string">'energy vs iteration'</span>)
+printPmtkFigure(<span class="string">'SApeaksEnergy'</span>);
+
+
+<span class="comment">% plot the histogram of samples</span>
+N_bins = 20; <span class="comment">% otherwise the image file gets too large</span>
+Nsamples = size(samples, 1);
+Ns = round(linspace(100, Nsamples, 3));
+<span class="comment">%fig1 = figure; fig2 = figure;</span>
+<span class="keyword">for</span> i=1:length(Ns)
+    T = Ns(i);
+    <span class="comment">%figure(fig1)</span>
+    <span class="comment">%subplot(2,2,i)</span>
+    figure;
+    hist3(samples(1:T,:), [N_bins N_bins], <span class="string">'FaceAlpha'</span>, 0.65);
+    xlabel(<span class="string">'x'</span>); ylabel(<span class="string">'y'</span>)
+    title(sprintf(<span class="string">'iter %d, temp %5.3f'</span>, T, temp(T)));
+    <span class="comment">%view(-37,34);</span>
+    set(get(gca, <span class="string">'child'</span>), <span class="string">'FaceColor'</span>, <span class="string">'interp'</span>, <span class="string">'CDataMode'</span>, <span class="string">'auto'</span>);
+    printPmtkFigure(sprintf(<span class="string">'SApeaksSamples%d'</span>, i));
+
+    <span class="keyword">if</span> 0
+    <span class="comment">%figure(fig2); subplot(2,2,i);</span>
+    figure;
+    hh= hist3(samples(1:T,:), [N_bins N_bins]);
+    imagesc(hh'); axis <span class="string">xy</span>;  colorbar;
+    title(sprintf(<span class="string">'iter %d, temp %5.3f'</span>, T, temp(T)));
+    set(get(gca, <span class="string">'child'</span>), <span class="string">'FaceColor'</span>, <span class="string">'interp'</span>, <span class="string">'CDataMode'</span>, <span class="string">'auto'</span>);
+    printPmtkFigure(sprintf(<span class="string">'SApeaksImagesc%d'</span>, i));
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+<span class="comment">%{
+</span><span class="comment">figure;
+</span><span class="comment">surf(XX,YY,Z);
+</span><span class="comment">xlabel('x');ylabel('y')
+</span><span class="comment">title('energy function')
+</span><span class="comment">%}</span>
+</pre><pre class="codeoutput">max =8.075 at r=38,c=25
+min =-6.547 at r=12,c=27
+xopt =
+   37.6690   24.6061
+fval =
+   -8.0752
+</pre><img vspace="5" hspace="5" src="saDemoPeaks_01.png" alt=""> <img vspace="5" hspace="5" src="saDemoPeaks_02.png" alt=""> <img vspace="5" hspace="5" src="saDemoPeaks_03.png" alt=""> <img vspace="5" hspace="5" src="saDemoPeaks_04.png" alt=""> <img vspace="5" hspace="5" src="saDemoPeaks_05.png" alt=""> <img vspace="5" hspace="5" src="saDemoPeaks_06.png" alt=""> <img vspace="5" hspace="5" src="saDemoPeaks_07.png" alt=""> <img vspace="5" hspace="5" src="saDemoPeaks_08.png" alt=""> <pre class="codeinput">    <span class="keyword">function</span> p = target2(xy)
+        x = xy(1); y = xy(2);
+        p =  3*(1-x).^2.*exp(-(x.^2) - (y+1).^2) <span class="keyword">...</span>
+            - 10*(x/5 - x.^3 - y.^5).*exp(-x.^2-y.^2) <span class="keyword">...</span>
+            - 1/3*exp(-(x+1).^2 - y.^2);
+        <span class="keyword">if</span> findMAX, p = -p; <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><pre class="codeinput">    <span class="keyword">function</span>  p = target(x)
+        <span class="keyword">if</span> findMAX
+            Z = -peaks;
+        <span class="keyword">else</span>
+            Z = peaks;
+        <span class="keyword">end</span>
+        r = round(x(1)); c = round(x(2));
+        <span class="keyword">if</span> r &gt;= 1 &amp; r &lt;= size(Z,1) &amp; c &gt;= 1 &amp; c &lt;= size(Z,2)
+            p = Z(r,c);
+        <span class="keyword">else</span>
+            p = inf; <span class="comment">% invalid</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Demo of Simulated Annealing 
+% for finding the most probable point of a peaky 2D surface
+%PMTKneedsStatsToolbox hist3
+%%
+
+% This file is from pmtk3.googlecode.com
+
+function saDemoPeaks()
+
+requireStatsToolbox
+findMAX = true;
+
+[XX, YY]=meshgrid(1:49,1:49);
+Z = peaks; % 49x49 surface surface
+m = min(Z(:));
+Zpos = Z+abs(m)+1;
+
+% Plot the surface at different temperatures
+%temps = [0.3];
+temps = [1.5, 1, 0.2];
+%fig1 = figure; fig2= figure;
+for ti=1:length(temps)
+    t = temps(ti);
+    Zt = Zpos.^(1/t);
+    %figure(fig1); subplot(2,2,ti)
+    figure;
+    %surf(XX,YY,Zt); title(sprintf('temp %5.3f', t));
+    surf(YY,XX,Zt); title(sprintf('temp %5.3f', t));
+    xlabel('x'); ylabel('y')
+    if t>=1
+        set(gca,'zlim',[0 10]);
+    end
+    %figure(fig2); subplot(2,2,ti);
+    printPmtkFigure(sprintf('SApeaksSurf%d', ti));
+    
+    if 0
+    figure;
+    imagesc(Zt); axis xy;
+    colorbar; title(sprintf('temp %5.3f', t));
+    printPmtkFigure(sprintf('SApeaksSurfImagesc%d', ti));
+    end
+end
+
+
+
+% find optimum by exhaustive search
+M = max(Z(:)); % 8.0752
+[row,col] = find(Z==M); % max  row 38, col 25
+fprintf('max =%5.3f at r=%d,c=%d\n', M, row, col);
+M = min(Z(:)); % -6.54566
+[row,col] = find(Z==M); % min  row 12, col 27
+fprintf('min =%5.3f at r=%d,c=%d\n', M, row, col);
+
+
+if findMAX
+    setSeed(2);
+    xinit = [35,25];
+    M = max(Z(:)); % 8.0752
+    [row,col] = find(Z==M);
+    %figure(1); hold on; h=plot(row,col,'ro');set(h,'markersize',15);
+else
+    setSeed(1);
+    xinit = [25,25]; % initial state is in middle of grid
+end
+
+
+
+Sigma_prop = 2^2 * eye(2); %2^2 = variance
+Nsamples  = 1000;
+opts = struct(...
+    'proposal', @(x) (x+(gaussSample(zeros(2,1), Sigma_prop, 1))), ...
+    'maxIter', Nsamples, ...
+    'minIter', Nsamples, ...
+    'temp', @(T,iter) (0.995*T), ...
+    'verbose', 0);
+
+[xopt, fval, samples, energies, acceptRate, temp] =  ...
+    simAnneal(@target, xinit, opts);
+xopt
+fval
+
+figure; plot(temp); title('temperature vs iteration');
+printPmtkFigure('SApeaksTemp');
+
+figure; plot(energies); title('energy vs iteration')
+printPmtkFigure('SApeaksEnergy');
+
+
+% plot the histogram of samples
+N_bins = 20; % otherwise the image file gets too large
+Nsamples = size(samples, 1);
+Ns = round(linspace(100, Nsamples, 3));
+%fig1 = figure; fig2 = figure;
+for i=1:length(Ns)
+    T = Ns(i);
+    %figure(fig1)
+    %subplot(2,2,i)
+    figure;
+    hist3(samples(1:T,:), [N_bins N_bins], 'FaceAlpha', 0.65);
+    xlabel('x'); ylabel('y')
+    title(sprintf('iter %d, temp %5.3f', T, temp(T)));
+    %view(-37,34);
+    set(get(gca, 'child'), 'FaceColor', 'interp', 'CDataMode', 'auto');
+    printPmtkFigure(sprintf('SApeaksSamples%d', i));
+    
+    if 0
+    %figure(fig2); subplot(2,2,i);
+    figure;
+    hh= hist3(samples(1:T,:), [N_bins N_bins]);
+    imagesc(hh'); axis xy;  colorbar;
+    title(sprintf('iter %d, temp %5.3f', T, temp(T)));
+    set(get(gca, 'child'), 'FaceColor', 'interp', 'CDataMode', 'auto');
+    printPmtkFigure(sprintf('SApeaksImagesc%d', i));
+    end
+end
+%{
+figure;
+surf(XX,YY,Z);
+xlabel('x');ylabel('y')
+title('energy function')
+%}
+
+
+%%
+    function p = target2(xy)
+        x = xy(1); y = xy(2);
+        p =  3*(1-x).^2.*exp(-(x.^2) - (y+1).^2) ...
+            - 10*(x/5 - x.^3 - y.^5).*exp(-x.^2-y.^2) ...
+            - 1/3*exp(-(x+1).^2 - y.^2);
+        if findMAX, p = -p; end
+    end
+
+%%
+    function  p = target(x)
+        if findMAX
+            Z = -peaks;
+        else
+            Z = peaks;
+        end
+        r = round(x(1)); c = round(x(2));
+        if r >= 1 & r <= size(Z,1) & c >= 1 & c <= size(Z,2)
+            p = Z(r,c);
+        else
+            p = inf; % invalid
+        end
+    end
+
+
+end
+
+
+
+
+##### SOURCE END #####
+--></body></html>

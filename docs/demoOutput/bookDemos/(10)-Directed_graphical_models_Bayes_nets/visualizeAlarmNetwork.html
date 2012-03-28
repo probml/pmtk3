@@ -1,0 +1,192 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>visualizeAlarmNetwork</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="visualizeAlarmNetwork.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Uses drawNetwork to display the alarm network DGM</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> visualizeAlarmNetwork()
+</pre><h2>Uses drawNetwork to display the alarm network DGM<a name="2"></a></h2><p>This file is from pmtk3.googlecode.com</p><pre class="codeinput">[G, names] = parseAlarmData();
+N = camelCaseNames();
+g = drawNetwork(<span class="string">'-adjMat'</span>, G, <span class="string">'-nodeLabels'</span>, N, <span class="string">'-splitLabels'</span>, 1, <span class="string">'-layout'</span>, Treelayout);
+maximizeFigure;
+g.tightenAxes;
+g.growNodes;
+g.growNodes;
+g.increaseFontSize;
+g.increaseFontSize;
+</pre><img vspace="5" hspace="5" src="visualizeAlarmNetwork_01.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
+
+
+<span class="keyword">function</span> N = camelCaseNames()
+<span class="comment">% Same names but formatted so that drawNetwork will split the</span>
+<span class="comment">% longer names over two lines nicely.</span>
+N =  {
+
+    <span class="string">'History'</span>
+    <span class="string">'CVP'</span>
+    <span class="string">'PCWP'</span>
+    <span class="string">'HypoVolemia'</span>
+    <span class="string">'LvedVolume'</span>
+    <span class="string">'LvFailure'</span>
+    <span class="string">'StrokeVolume'</span>
+    <span class="string">'ErrlowOutput'</span>
+    <span class="string">'HRBP'</span>
+    <span class="string">'HrEKG'</span>
+    <span class="string">'ErrCauter'</span>
+    <span class="string">'HRSAT'</span>
+    <span class="string">'InsuffAnesth'</span>
+    <span class="string">'AnaphyLaxis'</span>
+    <span class="string">'TPR'</span>
+    <span class="string">'ExpCo2'</span>
+    <span class="string">'KinkedTube'</span>
+    <span class="string">'MinVol'</span>
+    <span class="string">'FIO2'</span>
+    <span class="string">'PVSAT'</span>
+    <span class="string">'SAO2'</span>
+    <span class="string">'PAP'</span>
+    <span class="string">'PulmEmbolus'</span>
+    <span class="string">'Shunt'</span>
+    <span class="string">'Intubation'</span>
+    <span class="string">'Press'</span>
+    <span class="string">'Disconnect'</span>
+    <span class="string">'MinVolset'</span>
+    <span class="string">'VentMach'</span>
+    <span class="string">'VentTube'</span>
+    <span class="string">'VentLung'</span>
+    <span class="string">'VentAlv'</span>
+    <span class="string">'Artco2'</span>
+    <span class="string">'Catechol'</span>
+    <span class="string">'HR'</span>
+    <span class="string">'CO'</span>
+    <span class="string">'BP'</span>
+    };
+
+
+<span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+function visualizeAlarmNetwork()
+%% Uses drawNetwork to display the alarm network DGM
+% This file is from pmtk3.googlecode.com
+
+[G, names] = parseAlarmData();
+N = camelCaseNames(); 
+g = drawNetwork('-adjMat', G, '-nodeLabels', N, '-splitLabels', 1, '-layout', Treelayout);
+maximizeFigure;
+g.tightenAxes;
+g.growNodes;
+g.growNodes;
+g.increaseFontSize;
+g.increaseFontSize; 
+
+
+end
+
+
+function N = camelCaseNames()
+% Same names but formatted so that drawNetwork will split the
+% longer names over two lines nicely.  
+N =  {
+
+    'History'
+    'CVP'
+    'PCWP'
+    'HypoVolemia'
+    'LvedVolume'
+    'LvFailure'
+    'StrokeVolume'
+    'ErrlowOutput'
+    'HRBP'
+    'HrEKG'
+    'ErrCauter'
+    'HRSAT'
+    'InsuffAnesth'
+    'AnaphyLaxis'
+    'TPR'
+    'ExpCo2'
+    'KinkedTube'
+    'MinVol'
+    'FIO2'
+    'PVSAT'
+    'SAO2'
+    'PAP'
+    'PulmEmbolus'
+    'Shunt'
+    'Intubation'
+    'Press'
+    'Disconnect'
+    'MinVolset'
+    'VentMach'
+    'VentTube'
+    'VentLung'
+    'VentAlv'
+    'Artco2'
+    'Catechol'
+    'HR'
+    'CO'
+    'BP'
+    };
+
+
+end
+##### SOURCE END #####
+--></body></html>

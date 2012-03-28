@@ -1,0 +1,184 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>ldaQdaDemoIris</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="ldaQdaDemoIris.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% Demonstrate LDA/QDA on 2d 3class iris data</span>
+<span class="comment">% From http://www.mathworks.com/products/statistics/demos.html?file=/products/demos/shipping/stats/classdemo.html</span>
+
+requireStatsToolbox();
+
+<span class="comment">% "Resubstitution error" is the training set error</span>
+
+load <span class="string">fisheriris</span>
+
+<span class="keyword">if</span> 0
+  figure
+gscatter(meas(:,1), meas(:,2), species,<span class="string">'rgb'</span>,<span class="string">'osd'</span>);
+xlabel(<span class="string">'Sepal length'</span>);
+ylabel(<span class="string">'Sepal width'</span>);
+<span class="keyword">end</span>
+N = size(meas,1);
+
+s = RandStream(<span class="string">'mt19937ar'</span>,<span class="string">'seed'</span>,0);
+RandStream.setDefaultStream(s);
+
+types  ={<span class="string">'linear'</span>, <span class="string">'quadratic'</span>};
+<span class="keyword">for</span> t=1:2
+  type = types{t};
+
+
+ldaClass = classify(meas(:,1:2),meas(:,1:2),species, type);
+[ldaResubCM,grpOrder] = confusionmat(species,ldaClass);
+bad = ~strcmp(ldaClass,species);
+ldaResubErr = sum(bad) / N
+
+cp = cvpartition(species,<span class="string">'k'</span>,10);
+ldaClassFun= @(xtrain,ytrain,xtest)(classify(xtest,xtrain,ytrain, type));
+ldaCVErr  = crossval(<span class="string">'mcr'</span>,meas(:,1:2),species,<span class="string">'predfun'</span>, <span class="keyword">...</span>
+             ldaClassFun,<span class="string">'partition'</span>,cp)
+
+<span class="comment">% Plot data and errors</span>
+figure;
+gscatter(meas(:,1), meas(:,2), species,<span class="string">'rgb'</span>,<span class="string">'osd'</span>);
+xlabel(<span class="string">'Sepal length'</span>);
+ylabel(<span class="string">'Sepal width'</span>);
+hold <span class="string">on</span>;
+plot(meas(bad,1), meas(bad,2), <span class="string">'kx'</span>, <span class="string">'markersize'</span>, 10, <span class="string">'linewidth'</span>, 2);
+title(sprintf(<span class="string">'%s, train error %5.3f, cv error %5.3f'</span>, type, ldaResubErr, ldaCVErr))
+
+<span class="comment">% Plot decision boundary</span>
+figure;
+[x,y] = meshgrid(4:.1:8,2:.1:4.5);
+x = x(:);
+y = y(:);
+j = classify([x y],meas(:,1:2),species, type);
+gscatter(x,y,j,<span class="string">'grb'</span>,<span class="string">'sod'</span>)
+title(sprintf(<span class="string">'%s, train error %5.3f, cv error %5.3f'</span>, type, ldaResubErr, ldaCVErr))
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">ldaResubErr =
+   0.200000000000000
+ldaCVErr =
+   0.200000000000000
+ldaResubErr =
+   0.200000000000000
+ldaCVErr =
+   0.226666666666667
+</pre><img vspace="5" hspace="5" src="ldaQdaDemoIris_01.png" alt=""> <img vspace="5" hspace="5" src="ldaQdaDemoIris_02.png" alt=""> <img vspace="5" hspace="5" src="ldaQdaDemoIris_03.png" alt=""> <img vspace="5" hspace="5" src="ldaQdaDemoIris_04.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+% Demonstrate LDA/QDA on 2d 3class iris data
+% From http://www.mathworks.com/products/statistics/demos.html?file=/products/demos/shipping/stats/classdemo.html
+
+requireStatsToolbox(); 
+
+% "Resubstitution error" is the training set error
+
+load fisheriris
+
+if 0
+  figure
+gscatter(meas(:,1), meas(:,2), species,'rgb','osd');
+xlabel('Sepal length');
+ylabel('Sepal width');
+end
+N = size(meas,1);
+
+s = RandStream('mt19937ar','seed',0);
+RandStream.setDefaultStream(s);
+
+types  ={'linear', 'quadratic'};
+for t=1:2
+  type = types{t};
+  
+
+ldaClass = classify(meas(:,1:2),meas(:,1:2),species, type);
+[ldaResubCM,grpOrder] = confusionmat(species,ldaClass);
+bad = ~strcmp(ldaClass,species);
+ldaResubErr = sum(bad) / N
+
+cp = cvpartition(species,'k',10);
+ldaClassFun= @(xtrain,ytrain,xtest)(classify(xtest,xtrain,ytrain, type));
+ldaCVErr  = crossval('mcr',meas(:,1:2),species,'predfun', ...
+             ldaClassFun,'partition',cp)
+           
+% Plot data and errors
+figure;
+gscatter(meas(:,1), meas(:,2), species,'rgb','osd');
+xlabel('Sepal length');
+ylabel('Sepal width');
+hold on;
+plot(meas(bad,1), meas(bad,2), 'kx', 'markersize', 10, 'linewidth', 2);
+title(sprintf('%s, train error %5.3f, cv error %5.3f', type, ldaResubErr, ldaCVErr))
+
+% Plot decision boundary
+figure;
+[x,y] = meshgrid(4:.1:8,2:.1:4.5);
+x = x(:);
+y = y(:);
+j = classify([x y],meas(:,1:2),species, type);
+gscatter(x,y,j,'grb','sod')
+title(sprintf('%s, train error %5.3f, cv error %5.3f', type, ldaResubErr, ldaCVErr))
+end
+
+##### SOURCE END #####
+--></body></html>

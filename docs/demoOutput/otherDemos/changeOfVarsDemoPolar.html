@@ -1,0 +1,126 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>change of variables demo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="changeOfVarsDemoPolar.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>change of variables demo</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+mu = [0 0];
+Sigma = eye(2);
+xrange = [-1 1 -1 1]; npoints = 20;
+[X1,X2] = meshgrid(linspace(xrange(1), xrange(2), npoints)',<span class="keyword">...</span>
+  linspace(xrange(3), xrange(4), npoints)');
+[nr] = size(X1,1); nc = size(X2,1);
+X = [X1(:) X2(:)];
+pxy = gaussProb(X, mu, Sigma);
+
+r = sqrt(X(:,1).^2 + X(:,2).^2);
+t = atan(X(:,2) ./ X(:,1));
+prt = pxy .* r;
+model.mu = mu; model.Sigma = Sigma;
+samples = gaussSample(model, 1000);
+rs = sqrt(samples(:,1).^2 + samples(:,2).^2);
+ts = atan(samples(:,2) ./ samples(:,1));
+
+
+figure;
+subplot(2,2,1);contour(X1, X2, reshape(pxy, nr, nc)); title(<span class="string">'cartesian'</span>)
+subplot(2,2,2);contour(X1, X2, reshape(prt, nr, nc)); title(<span class="string">'polar'</span>)
+subplot(2,2,3);plot(samples(:,1), samples(:,2), <span class="string">'.'</span>); title(<span class="string">'cartesian'</span>);
+subplot(2,2,4);plot(rs,ts,<span class="string">'.'</span>); title(<span class="string">'polar'</span>)
+</pre><img vspace="5" hspace="5" src="changeOfVarsDemoPolar_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% change of variables demo
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+mu = [0 0];
+Sigma = eye(2);
+xrange = [-1 1 -1 1]; npoints = 20;
+[X1,X2] = meshgrid(linspace(xrange(1), xrange(2), npoints)',...
+  linspace(xrange(3), xrange(4), npoints)');
+[nr] = size(X1,1); nc = size(X2,1);
+X = [X1(:) X2(:)];
+pxy = gaussProb(X, mu, Sigma); 
+
+r = sqrt(X(:,1).^2 + X(:,2).^2);
+t = atan(X(:,2) ./ X(:,1));
+prt = pxy .* r;
+model.mu = mu; model.Sigma = Sigma; 
+samples = gaussSample(model, 1000);
+rs = sqrt(samples(:,1).^2 + samples(:,2).^2);
+ts = atan(samples(:,2) ./ samples(:,1));
+
+
+figure;
+subplot(2,2,1);contour(X1, X2, reshape(pxy, nr, nc)); title('cartesian')
+subplot(2,2,2);contour(X1, X2, reshape(prt, nr, nc)); title('polar')
+subplot(2,2,3);plot(samples(:,1), samples(:,2), '.'); title('cartesian');
+subplot(2,2,4);plot(rs,ts,'.'); title('polar')
+
+
+
+##### SOURCE END #####
+--></body></html>

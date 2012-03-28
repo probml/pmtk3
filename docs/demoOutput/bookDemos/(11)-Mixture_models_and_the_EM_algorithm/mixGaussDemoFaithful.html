@@ -1,0 +1,188 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Visualize fitting a mixture of Gaussians to the old faithful dataset</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="mixGaussDemoFaithful.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Visualize fitting a mixture of Gaussians to the old faithful dataset</h1><!--introduction--><p>reproduce Bishop fig 9.8</p><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="keyword">function</span> mixGaussDemoFaithful
+
+setSeed(0);
+K = 2;
+X = loadData(<span class="string">'faithful'</span>);
+X = standardizeCols(X);
+[N,D] = size(X);
+
+<span class="comment">% specify initial params to make for a pretty plot</span>
+initParams.mu = [-1.5 1.5; 1.5 -1.5]' + 1*randn(2,2);
+initParams.Sigma = repmat(0.1*eye(2),[1 1 K]);
+initParams.mixWeight = normalize(ones(1,K));
+
+model = mixGaussCreate(initParams.mu, initParams.Sigma, initParams.mixWeight);
+plotfn(model, X, struct(<span class="string">'weights'</span>, mkStochastic(ones(N,K))), -inf, 0);
+
+
+<span class="comment">% Fit</span>
+[model, loglikHist] = mixGaussFit(X, K,   <span class="string">'initParams'</span>, initParams, <span class="keyword">...</span>
+  <span class="string">'maxIter'</span>, 10, <span class="string">'plotfn'</span>, @plotfn);
+
+<span class="comment">% Plot objective function</span>
+figure;
+plot(loglikHist, <span class="string">'o-'</span>, <span class="string">'linewidth'</span>, 3)
+xlabel(<span class="string">'iter'</span>)
+ylabel(<span class="string">'average loglik'</span>)
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> plotfn(model, X, ess, loglik, iter)
+post = ess.weights; mu = model.cpd.mu; Sigma = model.cpd.Sigma;
+str = sprintf(<span class="string">'iteration %d, loglik %5.4f\n'</span>, iter, loglik);
+n = size(X, 1);
+colors = [post(:,1), zeros(n, 1), post(:,2)]; <span class="comment">% fraction of red and blue</span>
+figure; hold <span class="string">on</span>;
+<span class="keyword">for</span> i=1:n
+  plot(X(i, 1), X(i, 2), <span class="string">'o'</span>, <span class="string">'MarkerSize'</span>, 6, <span class="string">'MarkerFaceColor'</span>, colors(i, :), <span class="string">'MarkerEdgeColor'</span>, <span class="string">'k'</span>);
+<span class="keyword">end</span>
+classColors = <span class="string">'rb'</span>;
+K  = size(mu,2);
+<span class="keyword">for</span> k=1:K
+  gaussPlot2d(mu(:,k), Sigma(:,:,k), <span class="string">'color'</span>, classColors(k));
+  plot(mu(1,k), mu(2,k),<span class="string">'o'</span>,<span class="string">'linewidth'</span>,2, <span class="string">'color'</span>, classColors(k));
+<span class="keyword">end</span>
+title(str)
+axis <span class="string">equal</span>
+box <span class="string">on</span>
+set(gca, <span class="string">'YTick'</span>, -2:2);
+<span class="comment">%pause</span>
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">initializing model for EM
+1	 loglik: -4929.38
+2	 loglik: -441.956
+3	 loglik: -426.925
+4	 loglik: -408.688
+5	 loglik: -394.64
+6	 loglik: -390.019
+7	 loglik: -389.769
+8	 loglik: -389.76
+</pre><img vspace="5" hspace="5" src="mixGaussDemoFaithful_01.png" alt=""> <img vspace="5" hspace="5" src="mixGaussDemoFaithful_02.png" alt=""> <img vspace="5" hspace="5" src="mixGaussDemoFaithful_03.png" alt=""> <img vspace="5" hspace="5" src="mixGaussDemoFaithful_04.png" alt=""> <img vspace="5" hspace="5" src="mixGaussDemoFaithful_05.png" alt=""> <img vspace="5" hspace="5" src="mixGaussDemoFaithful_06.png" alt=""> <img vspace="5" hspace="5" src="mixGaussDemoFaithful_07.png" alt=""> <img vspace="5" hspace="5" src="mixGaussDemoFaithful_08.png" alt=""> <img vspace="5" hspace="5" src="mixGaussDemoFaithful_09.png" alt=""> <img vspace="5" hspace="5" src="mixGaussDemoFaithful_10.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Visualize fitting a mixture of Gaussians to the old faithful dataset
+% reproduce Bishop fig 9.8
+%%
+
+% This file is from pmtk3.googlecode.com
+
+function mixGaussDemoFaithful
+
+setSeed(0);
+K = 2;
+X = loadData('faithful');
+X = standardizeCols(X);
+[N,D] = size(X);
+
+% specify initial params to make for a pretty plot
+initParams.mu = [-1.5 1.5; 1.5 -1.5]' + 1*randn(2,2);
+initParams.Sigma = repmat(0.1*eye(2),[1 1 K]);
+initParams.mixWeight = normalize(ones(1,K));
+
+model = mixGaussCreate(initParams.mu, initParams.Sigma, initParams.mixWeight);
+plotfn(model, X, struct('weights', mkStochastic(ones(N,K))), -inf, 0); 
+
+
+% Fit
+[model, loglikHist] = mixGaussFit(X, K,   'initParams', initParams, ...
+  'maxIter', 10, 'plotfn', @plotfn); 
+
+% Plot objective function
+figure;
+plot(loglikHist, 'o-', 'linewidth', 3)
+xlabel('iter')
+ylabel('average loglik')
+end
+
+function plotfn(model, X, ess, loglik, iter)
+post = ess.weights; mu = model.cpd.mu; Sigma = model.cpd.Sigma;
+str = sprintf('iteration %d, loglik %5.4f\n', iter, loglik);
+n = size(X, 1);
+colors = [post(:,1), zeros(n, 1), post(:,2)]; % fraction of red and blue
+figure; hold on;
+for i=1:n
+  plot(X(i, 1), X(i, 2), 'o', 'MarkerSize', 6, 'MarkerFaceColor', colors(i, :), 'MarkerEdgeColor', 'k');
+end
+classColors = 'rb';
+K  = size(mu,2);
+for k=1:K
+  gaussPlot2d(mu(:,k), Sigma(:,:,k), 'color', classColors(k));
+  plot(mu(1,k), mu(2,k),'o','linewidth',2, 'color', classColors(k));
+end
+title(str)
+axis equal
+box on
+set(gca, 'YTick', -2:2);
+%pause
+end
+
+
+
+
+##### SOURCE END #####
+--></body></html>

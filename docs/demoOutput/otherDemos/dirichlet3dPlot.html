@@ -1,0 +1,154 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Plot a Dirichlet distribution</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="dirichlet3dPlot.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Plot a Dirichlet distribution</h1><p>Here we plot the dirichlet distribution as a function of a three dimensional alpha vector, which we can do as the distribtion lives on a lower dimensional simplex due to the sum to one constraint.</p><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+
+alphas = [10 0.1];
+<span class="keyword">for</span> alpha=alphas(:)'
+</pre><pre class="codeinput">xyrange = [0 1 0 1];
+model.alpha = alpha;
+npoints = 100;
+</pre><p>The dirichletLogprob function returns NaNs for values that lie outside of the simplex, which plot() ignores giving us the nice simplex plot.</p><pre class="codeinput">figure();
+<span class="comment">% when alpha &lt; 1  plots of exp(logp)  are</span>
+<span class="comment">% ugly due to numerical error, but for alpha = 0.1, the plots of</span>
+<span class="comment">% p and logp look very similar, except that exp(logp) is more sharply</span>
+<span class="comment">% peaked around the corners. So we use logp.</span>
+<span class="keyword">if</span> 0 <span class="comment">% alpha&lt;1</span>
+  useLog = true;
+<span class="keyword">else</span>
+  useLog = false;
+<span class="keyword">end</span>
+
+<span class="keyword">if</span> useLog
+  plotSurface(@(X)dirichletLogprob(model, X), xyrange, <span class="string">'npoints'</span>, npoints);
+<span class="keyword">else</span>
+  plotSurface(@(X)exp(dirichletLogprob(model, X)), xyrange, <span class="string">'npoints'</span>, npoints);
+<span class="keyword">end</span>
+shading <span class="string">interp</span>;
+camlight <span class="string">right</span>;
+lighting <span class="string">phong</span>;
+<span class="comment">%view([-32 50]);</span>
+set(gca, <span class="string">'xtick'</span>, 0:0.5:1, <span class="string">'ytick'</span>, 0:0.5:1);
+<span class="keyword">if</span> useLog
+  zlabel(<span class="string">'log(p)'</span>);
+<span class="keyword">else</span>
+  zlabel(<span class="string">'p'</span>)
+<span class="keyword">end</span>
+title(sprintf(<span class="string">'%s=%3.2f'</span>, <span class="string">'\alpha'</span>, model.alpha))
+printPmtkFigure(sprintf(<span class="string">'DirSimplex%d'</span>, model.alpha*10))
+</pre><img vspace="5" hspace="5" src="dirichlet3dPlot_01.png" alt=""> <img vspace="5" hspace="5" src="dirichlet3dPlot_02.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Plot a Dirichlet distribution
+% Here we plot the dirichlet distribution as a function of a three
+% dimensional alpha vector, which we can do as the distribtion lives on a 
+% lower dimensional simplex due to the sum to one constraint. 
+
+% This file is from pmtk3.googlecode.com
+
+
+alphas = [10 0.1];
+for alpha=alphas(:)'
+xyrange = [0 1 0 1];
+model.alpha = alpha;
+npoints = 100; 
+%% 
+% The dirichletLogprob function returns NaNs for values that lie outside of
+% the simplex, which plot() ignores giving us the nice simplex plot. 
+figure();
+% when alpha < 1  plots of exp(logp)  are
+% ugly due to numerical error, but for alpha = 0.1, the plots of
+% p and logp look very similar, except that exp(logp) is more sharply
+% peaked around the corners. So we use logp.
+if 0 % alpha<1
+  useLog = true;
+else
+  useLog = false;
+end
+
+if useLog
+  plotSurface(@(X)dirichletLogprob(model, X), xyrange, 'npoints', npoints);
+else
+  plotSurface(@(X)exp(dirichletLogprob(model, X)), xyrange, 'npoints', npoints);
+end
+shading interp;
+camlight right;
+lighting phong;
+%view([-32 50]);
+set(gca, 'xtick', 0:0.5:1, 'ytick', 0:0.5:1);
+if useLog
+  zlabel('log(p)');
+else
+  zlabel('p')
+end
+title(sprintf('%s=%3.2f', '\alpha', model.alpha))
+printPmtkFigure(sprintf('DirSimplex%d', model.alpha*10))
+
+end
+
+
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,142 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Plot an MVN in 2D</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="gaussPlot2Ddemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Plot an MVN in 2D</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Decorrelate</a></li><li><a href="#3">Whiten</a></li></ul></div><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+model = struct(<span class="string">'mu'</span>, [0 0]', <span class="string">'Sigma'</span>, [2 1.8; 1.8 2]);
+figure; plotContour(@(x)gaussProb(x, model.mu, model.Sigma), [-5 5 -10 10]);
+title(<span class="string">'full'</span>);
+printPmtkFigure <span class="string">gaussPlot2dDemoContourFull</span>
+figure; plotSurface(@(x)gaussProb(x, model.mu, model.Sigma));
+title(<span class="string">'full'</span>);
+printPmtkFigure <span class="string">gaussPlot2dDemoSurfFull</span>
+</pre><img vspace="5" hspace="5" src="gaussPlot2Ddemo_01.png" alt=""> <img vspace="5" hspace="5" src="gaussPlot2Ddemo_02.png" alt=""> <h2>Decorrelate<a name="2"></a></h2><pre class="codeinput">[U, D] = eig(model.Sigma);
+S1 = U'*model.Sigma*U;
+
+figure; plotContour(@(x)gaussProb(x, model.mu, S1), [-5 5 -10 10]);
+title(<span class="string">'diagonal'</span>);
+printPmtkFigure <span class="string">gaussPlot2dDemoSurfDiag</span>
+figure; plotSurface(@(x)gaussProb(x, model.mu, S1), [-5 5 -10 10]);
+title(<span class="string">'diagonal'</span>);
+printPmtkFigure <span class="string">gaussPlot2dDemoContourDiag</span>
+</pre><img vspace="5" hspace="5" src="gaussPlot2Ddemo_03.png" alt=""> <img vspace="5" hspace="5" src="gaussPlot2Ddemo_04.png" alt=""> <h2>Whiten<a name="3"></a></h2><pre class="codeinput">A = sqrt(inv(D))*U';
+mu2 = A*model.mu;
+S2  = A*model.Sigma*A'; <span class="comment">% might not be numerically equal to I</span>
+assert(approxeq(S2, eye(2)))
+S2 = eye(2); <span class="comment">% to ensure picture is pretty</span>
+
+<span class="comment">% we plot centered on original mu, not shifted mu</span>
+
+figure; plotContour(@(x)gaussProb(x, model.mu, S2), [-5 5 -5 5]);
+title <span class="string">spherical</span>
+axis <span class="string">equal</span>
+printPmtkFigure <span class="string">gaussPlot2dDemoContourSpherical</span>
+figure; plotSurface(@(x)gaussProb(x, model.mu, S2), [-5 5 -5 5]);
+title <span class="string">spherical</span>;
+printPmtkFigure <span class="string">gaussPlot2dDemoSurfSpherical</span>
+</pre><img vspace="5" hspace="5" src="gaussPlot2Ddemo_05.png" alt=""> <img vspace="5" hspace="5" src="gaussPlot2Ddemo_06.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Plot an MVN in 2D
+%
+%%  
+
+% This file is from pmtk3.googlecode.com
+
+model = struct('mu', [0 0]', 'Sigma', [2 1.8; 1.8 2]);
+figure; plotContour(@(x)gaussProb(x, model.mu, model.Sigma), [-5 5 -10 10]);
+title('full');
+printPmtkFigure gaussPlot2dDemoContourFull
+figure; plotSurface(@(x)gaussProb(x, model.mu, model.Sigma));
+title('full');
+printPmtkFigure gaussPlot2dDemoSurfFull
+%% Decorrelate
+[U, D] = eig(model.Sigma);
+S1 = U'*model.Sigma*U;
+
+figure; plotContour(@(x)gaussProb(x, model.mu, S1), [-5 5 -10 10]);
+title('diagonal');
+printPmtkFigure gaussPlot2dDemoSurfDiag
+figure; plotSurface(@(x)gaussProb(x, model.mu, S1), [-5 5 -10 10]);
+title('diagonal');
+printPmtkFigure gaussPlot2dDemoContourDiag
+%% Whiten
+A = sqrt(inv(D))*U';
+mu2 = A*model.mu;
+S2  = A*model.Sigma*A'; % might not be numerically equal to I
+assert(approxeq(S2, eye(2)))
+S2 = eye(2); % to ensure picture is pretty
+
+% we plot centered on original mu, not shifted mu
+
+figure; plotContour(@(x)gaussProb(x, model.mu, S2), [-5 5 -5 5]);
+title spherical 
+axis equal
+printPmtkFigure gaussPlot2dDemoContourSpherical
+figure; plotSurface(@(x)gaussProb(x, model.mu, S2), [-5 5 -5 5]);
+title spherical;
+printPmtkFigure gaussPlot2dDemoSurfSpherical
+
+##### SOURCE END #####
+--></body></html>

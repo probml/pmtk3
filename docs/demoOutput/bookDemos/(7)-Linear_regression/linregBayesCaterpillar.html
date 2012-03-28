@@ -1,0 +1,236 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Bayesian linear regression with an uninformative prior</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="linregBayesCaterpillar.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Bayesian linear regression with an uninformative prior</h1><!--introduction--><p>PMTKneedsStatsToolbox regress, ridge</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">plot the data</a></li><li><a href="#3">MLE</a></li><li><a href="#4">inference with uninformative prior</a></li></ul></div><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+requireStatsToolbox
+X = loadData(<span class="string">'caterpillar'</span>); <span class="comment">% from http://www.ceremade.dauphine.fr/~xian/BCS/caterpillar</span>
+y = log(X(:,11)); <span class="comment">% log number of nests</span>
+X = X(:,1:10);
+[n,d] = size(X);
+</pre><h2>plot the data<a name="2"></a></h2><pre class="codeinput"><span class="keyword">if</span> 0
+figure;
+<span class="keyword">for</span> i=1:9
+   subplot(3,3,i);
+   h=scatter(X(:,i),y, 3, <span class="string">'filled'</span>);
+   xlabel(sprintf(<span class="string">'x%d'</span>, i));
+   ylabel(<span class="string">'y'</span>)
+<span class="keyword">end</span>
+printPmtkFigure(<span class="string">'caterpillarScatter'</span>)
+<span class="keyword">end</span>
+</pre><h2>MLE<a name="3"></a></h2><pre class="codeinput">[model] = linregFit(X, y)
+X1 = [ones(size(X,1),1) X];
+what = X1\y;
+assert(approxeq(model.w, what))
+</pre><pre class="codeoutput">model = 
+        lambda: 0
+             w: [11x1 double]
+        sigma2: 0.4585
+       preproc: [1x1 struct]
+     modelType: 'linreg'
+    likelihood: 'gaussian'
+</pre><h2>inference with uninformative prior<a name="4"></a></h2><pre class="codeinput">[model, logev, postSummary] = linregFitBayes(X, y, <span class="string">'prior'</span>, <span class="string">'uninf'</span>, <span class="keyword">...</span>
+  <span class="string">'displaySummary'</span>, true);
+<span class="comment">%post = linregParamsBayes(model, 'display', true, 'latex', false);</span>
+
+<span class="keyword">if</span> 0
+  <span class="comment">% direct calculation of posterior - sanity check</span>
+  [Q,R] = qr(X1,0);
+  what = R\(Q'*y); <span class="comment">% posterior mean</span>
+  Rinv = inv(R); <span class="comment">% upper triangular, easy to invert</span>
+  C = Rinv*Rinv'; <span class="comment">% posterior covariance</span>
+  <span class="comment">%what = X1\y;</span>
+  <span class="comment">%C = pinv(X1'*X1);</span>
+
+  yhat = X1*what;
+  s2 = (y-yhat)'*(y-yhat);
+  dof = n-d-1;
+  stderr = sqrt(diag(C)*s2/dof);
+  alpha = 0.95;
+  tc = tinvPMTK(1-(1-alpha)/2, dof); <span class="comment">% quantiles of a T</span>
+  credint = [what-tc*stderr what+tc*stderr];
+
+  <span class="keyword">for</span> i=1:(d+1)
+    fprintf(<span class="string">'w%d &amp; %3.3f &amp; %3.5f &amp; [%3.3f, %3.3f]\\\\\n'</span>, <span class="keyword">...</span>
+      i-1, what(i), stderr(i), credint(i,1), credint(i,2))
+  <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">coeff mean       stddev     95pc CI              sig   
+   w0   10.998   3.06027  [   4.652,   17.345]     * 
+   w1   -0.004   0.00156  [  -0.008,   -0.001]     * 
+   w2   -0.054   0.02190  [  -0.099,   -0.008]     * 
+   w3    0.068   0.09947  [  -0.138,    0.274]       
+   w4   -1.294   0.56381  [  -2.463,   -0.124]     * 
+   w5    0.232   0.10438  [   0.015,    0.448]     * 
+   w6   -0.357   1.56646  [  -3.605,    2.892]       
+   w7   -0.237   1.00601  [  -2.324,    1.849]       
+   w8    0.181   0.23672  [  -0.310,    0.672]       
+   w9   -1.285   0.86485  [  -3.079,    0.508]       
+  w10   -0.433   0.73487  [  -1.957,    1.091]       
+
+</pre><p>check that Bayesian credible interval is same as freq conf int needs stats toolbox (see also linregFrequentistSummary)</p><pre class="codeinput">X1 = [ones(n,1), X];
+[b, bint, residuals, residualInt, stats] = regress(y, X1);
+R2 = stats(1); Fstat  = stats(2); pval = stats(3); sigma2 = stats(4);
+<span class="comment">% b(j) is coefficient j, bint(j,:) = lower and upper 95% conf interval</span>
+assert(approxeq(b, postSummary.what))
+assert(approxeq(bint, postSummary.credint))
+<span class="keyword">for</span> i=1:length(b)
+  fprintf(<span class="string">'%8.3f, [%8.3f, %8.3f]\n'</span>, b(i), bint(i,1), bint(i,2));
+<span class="keyword">end</span>
+fprintf(<span class="string">'\n'</span>);
+</pre><pre class="codeoutput">  10.998, [   4.652,   17.345]
+  -0.004, [  -0.008,   -0.001]
+  -0.054, [  -0.099,   -0.008]
+   0.068, [  -0.138,    0.274]
+  -1.294, [  -2.463,   -0.124]
+   0.232, [   0.015,    0.448]
+  -0.357, [  -3.605,    2.892]
+  -0.237, [  -2.324,    1.849]
+   0.181, [  -0.310,    0.672]
+  -1.285, [  -3.079,    0.508]
+  -0.433, [  -1.957,    1.091]
+
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Bayesian linear regression with an uninformative prior 
+% PMTKneedsStatsToolbox regress, ridge
+%%
+
+% This file is from pmtk3.googlecode.com
+
+requireStatsToolbox
+X = loadData('caterpillar'); % from http://www.ceremade.dauphine.fr/~xian/BCS/caterpillar
+y = log(X(:,11)); % log number of nests
+X = X(:,1:10);
+[n,d] = size(X);
+
+
+%% plot the data
+if 0
+figure;
+for i=1:9
+   subplot(3,3,i);
+   h=scatter(X(:,i),y, 3, 'filled');
+   xlabel(sprintf('x%d', i));
+   ylabel('y')
+end
+printPmtkFigure('caterpillarScatter')
+end
+
+%% MLE
+[model] = linregFit(X, y) 
+X1 = [ones(size(X,1),1) X];
+what = X1\y;
+assert(approxeq(model.w, what))
+
+
+
+%% inference with uninformative prior
+
+[model, logev, postSummary] = linregFitBayes(X, y, 'prior', 'uninf', ...
+  'displaySummary', true);
+%post = linregParamsBayes(model, 'display', true, 'latex', false);
+
+if 0
+  % direct calculation of posterior - sanity check
+  [Q,R] = qr(X1,0);
+  what = R\(Q'*y); % posterior mean
+  Rinv = inv(R); % upper triangular, easy to invert
+  C = Rinv*Rinv'; % posterior covariance
+  %what = X1\y;
+  %C = pinv(X1'*X1);
+  
+  yhat = X1*what;
+  s2 = (y-yhat)'*(y-yhat);
+  dof = n-d-1;
+  stderr = sqrt(diag(C)*s2/dof);
+  alpha = 0.95;
+  tc = tinvPMTK(1-(1-alpha)/2, dof); % quantiles of a T
+  credint = [what-tc*stderr what+tc*stderr];
+  
+  for i=1:(d+1)
+    fprintf('w%d & %3.3f & %3.5f & [%3.3f, %3.3f]\\\\\n', ...
+      i-1, what(i), stderr(i), credint(i,1), credint(i,2))
+  end
+end
+
+
+%%
+% check that Bayesian credible interval is same as freq conf int
+% needs stats toolbox
+% (see also linregFrequentistSummary)
+X1 = [ones(n,1), X];
+[b, bint, residuals, residualInt, stats] = regress(y, X1);
+R2 = stats(1); Fstat  = stats(2); pval = stats(3); sigma2 = stats(4);
+% b(j) is coefficient j, bint(j,:) = lower and upper 95% conf interval
+assert(approxeq(b, postSummary.what))
+assert(approxeq(bint, postSummary.credint))
+for i=1:length(b)
+  fprintf('%8.3f, [%8.3f, %8.3f]\n', b(i), bint(i,1), bint(i,2));
+end
+fprintf('\n');
+
+##### SOURCE END #####
+--></body></html>

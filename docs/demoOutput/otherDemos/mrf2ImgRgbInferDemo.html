@@ -1,0 +1,231 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>mrf2ImgRgbInferDemo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="mrf2ImgRgbInferDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Demonstrate inference  in a 2d grid of a multi-state noisy image of an X</a></li><li><a href="#2">Get model and data</a></li><li><a href="#3">Independent Decoding</a></li><li><a href="#4">MAP estimation</a></li><li><a href="#5">Inference</a></li></ul></div><h2>Demonstrate inference  in a 2d grid of a multi-state noisy image of an X<a name="1"></a></h2><p>Based on <a href="http://www.cs.ubc.ca/~schmidtm/Software/UGM/alphaBeta.html">http://www.cs.ubc.ca/~schmidtm/Software/UGM/alphaBeta.html</a></p><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+</pre><h2>Get model and data<a name="2"></a></h2><pre class="codeinput">setSeed(0);
+loadData(<span class="string">'XimgRgb'</span>);
+Xclean = Xrgb;
+X = Xclean + 0.5*randn(size(Xclean));
+[nRows, nCols, ncolors] = size(Xclean);
+
+<span class="comment">%{
+</span><span class="comment">figure; image(Xclean);
+</span><span class="comment">title('clean'); printPmtkFigure('mrfImgRbgClean')
+</span><span class="comment">
+</span><span class="comment">figure; imshow(X);
+</span><span class="comment">title('noisy');printPmtkFigure('mrfImgRgbNoisy')
+</span><span class="comment">%}</span>
+</pre><h2>Independent Decoding<a name="3"></a></h2><pre class="codeinput">[model] = mrf2MkLatticeXrgb(X, y, <span class="string">'dummy'</span>);
+[junk IndDecoding] = max(model.nodePot,[],2);
+figure; imagesc(reshape(IndDecoding,nRows,nCols));
+colormap([1 1 1;1 0 0;0 1 0;0 0 1]);
+ title(<span class="string">'Independent Decoding'</span>);
+printPmtkFigure(<span class="string">'mrfImgRgbIndep'</span>)
+</pre><img vspace="5" hspace="5" src="mrf2ImgRgbInferDemo_01.png" alt=""> <h2>MAP estimation<a name="4"></a></h2><pre class="codeinput">methods = {};
+methodArgs = {};
+
+<span class="comment">%{
+</span><span class="comment">methods{end+1} = 'ICM';
+</span><span class="comment">methodArgs{end+1} = {'nRestarts', 100};
+</span><span class="comment">
+</span><span class="comment">methods{end+1} = 'AlphaBetaSwap';
+</span><span class="comment">methodArgs{end+1} = {};
+</span><span class="comment">%}
+</span>
+methods{end+1} = <span class="string">'LBP'</span>;
+methodArgs{end+1} = {<span class="string">'maxIter'</span>, 100};
+
+
+<span class="keyword">for</span> i=1:length(methods)
+  method = methods{i};
+  args = methodArgs{i};
+  [model] = mrf2MkLatticeXrgb(X, y, method, args);
+  zhat = mrf2Map(model);
+  energy = mrf2Energy(model, zhat);
+  figure; imagesc(reshape(zhat,nRows,nCols));
+  colormap([1 1 1;1 0 0;0 1 0;0 0 1]);
+  title(sprintf(<span class="string">'MAP estimate using %s, E=%5.3f'</span>, method, energy));
+  printPmtkFigure(sprintf(<span class="string">'mrfImgRgbEst%s'</span>, method))
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="mrf2ImgRgbInferDemo_02.png" alt=""> <h2>Inference<a name="5"></a></h2><pre class="codeinput">methods = {};
+methodArgs = {};
+
+methods{end+1} = <span class="string">'Gibbs'</span>;
+methodArgs{end+1} = {<span class="string">'burnIn'</span>, 100, <span class="string">'nSamples'</span>, 200};
+
+methods{end+1} = <span class="string">'MeanField'</span>;
+methodArgs{end+1} = {<span class="string">'maxIter'</span>, 100};
+
+methods{end+1} = <span class="string">'LBP'</span>;
+methodArgs{end+1} = {<span class="string">'maxIter'</span>, 100};
+
+
+
+<span class="keyword">for</span> i=1:length(methods)
+  method = methods{i};
+  args = methodArgs{i};
+  [model] = mrf2MkLatticeXrgb(X, y, method, args);
+
+  [nodeBel]  = mrf2InferNodesAndEdges(model);
+  [junk zhat] = max(nodeBel,[],2);
+  figure; imagesc(reshape(zhat,nRows,nCols));
+  colormap([1 1 1;1 0 0;0 1 0;0 0 1]);
+  title(sprintf(<span class="string">'max of marginals using %s'</span>, method));
+  printPmtkFigure(sprintf(<span class="string">'mrfImgRgbMaxOfMarginals%s'</span>, method))
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="mrf2ImgRgbInferDemo_03.png" alt=""> <img vspace="5" hspace="5" src="mrf2ImgRgbInferDemo_04.png" alt=""> <img vspace="5" hspace="5" src="mrf2ImgRgbInferDemo_05.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Demonstrate inference  in a 2d grid of a multi-state noisy image of an X
+% Based on http://www.cs.ubc.ca/~schmidtm/Software/UGM/alphaBeta.html
+
+% This file is from pmtk3.googlecode.com
+
+
+%% Get model and data
+setSeed(0);
+loadData('XimgRgb');
+Xclean = Xrgb;
+X = Xclean + 0.5*randn(size(Xclean));
+[nRows, nCols, ncolors] = size(Xclean);
+
+%{
+figure; image(Xclean); 
+title('clean'); printPmtkFigure('mrfImgRbgClean')
+
+figure; imshow(X); 
+title('noisy');printPmtkFigure('mrfImgRgbNoisy')
+%}
+
+%% Independent Decoding
+[model] = mrf2MkLatticeXrgb(X, y, 'dummy');
+[junk IndDecoding] = max(model.nodePot,[],2);
+figure; imagesc(reshape(IndDecoding,nRows,nCols));
+colormap([1 1 1;1 0 0;0 1 0;0 0 1]);
+ title('Independent Decoding');
+printPmtkFigure('mrfImgRgbIndep')
+
+%% MAP estimation
+
+methods = {};
+methodArgs = {};
+
+%{
+methods{end+1} = 'ICM';
+methodArgs{end+1} = {'nRestarts', 100};
+
+methods{end+1} = 'AlphaBetaSwap';
+methodArgs{end+1} = {};
+%}
+
+methods{end+1} = 'LBP';
+methodArgs{end+1} = {'maxIter', 100};
+
+
+for i=1:length(methods)
+  method = methods{i};
+  args = methodArgs{i};
+  [model] = mrf2MkLatticeXrgb(X, y, method, args);
+  zhat = mrf2Map(model);
+  energy = mrf2Energy(model, zhat);
+  figure; imagesc(reshape(zhat,nRows,nCols));
+  colormap([1 1 1;1 0 0;0 1 0;0 0 1]);
+  title(sprintf('MAP estimate using %s, E=%5.3f', method, energy));
+  printPmtkFigure(sprintf('mrfImgRgbEst%s', method))
+end
+
+%% Inference
+
+
+methods = {};
+methodArgs = {};
+
+methods{end+1} = 'Gibbs';
+methodArgs{end+1} = {'burnIn', 100, 'nSamples', 200};
+
+methods{end+1} = 'MeanField';
+methodArgs{end+1} = {'maxIter', 100};
+
+methods{end+1} = 'LBP';
+methodArgs{end+1} = {'maxIter', 100};
+
+
+
+for i=1:length(methods)
+  method = methods{i};
+  args = methodArgs{i};
+  [model] = mrf2MkLatticeXrgb(X, y, method, args);
+  
+  [nodeBel]  = mrf2InferNodesAndEdges(model);
+  [junk zhat] = max(nodeBel,[],2);
+  figure; imagesc(reshape(zhat,nRows,nCols)); 
+  colormap([1 1 1;1 0 0;0 1 0;0 0 1]);
+  title(sprintf('max of marginals using %s', method));
+  printPmtkFigure(sprintf('mrfImgRgbMaxOfMarginals%s', method))
+end
+
+
+
+##### SOURCE END #####
+--></body></html>

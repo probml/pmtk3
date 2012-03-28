@@ -1,0 +1,132 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Probabilistic PCA in 2D</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="ppcaDemo2d.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Probabilistic PCA in 2D</h1><!--introduction--><p>Based on figure 7.6 of the netlab book</p><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+setSeed(0);
+n = 5;
+X=[randn(n,2)+2.*ones(n,2);2.*randn(n,2)-2.*ones(n,2)];
+X = centerCols(X);
+[n d] = size(X);
+model = ppcaFit(X, 1);
+<span class="comment">%sigma2=eps;</span>
+Xrecon = ppcaReconstruct(model, X);
+mu = model.mu;
+figure;
+plot(mu(1), mu(2), <span class="string">'*'</span>, <span class="string">'markersize'</span>, 20, <span class="string">'color'</span>, <span class="string">'r'</span>);
+hold <span class="string">on</span>
+plot(X(:,1), X(:,2), <span class="string">'ro'</span>, <span class="string">'markersize'</span>, 20);
+hold <span class="string">on</span>
+plot(Xrecon(:,1), Xrecon(:,2), <span class="string">'g+'</span>, <span class="string">'markersize'</span>, 20, <span class="string">'linewidth'</span>,2);
+<span class="keyword">for</span> i=1:n
+  line([Xrecon(i,1) X(i,1)], [Xrecon(i,2) X(i,2)])
+<span class="keyword">end</span>
+<span class="comment">% plot the linear subspace</span>
+Z2 = [-2;1.5];
+<span class="comment">%Z2 = [-5;5]; % 2 ``extreme'' points in latent space</span>
+Xrecon2 = Z2*model.W' + repmat(rowvec(mu), 2,1);
+line([Xrecon2(1,1) Xrecon2(2,1)], [Xrecon2(1,2) Xrecon2(2,2)], <span class="string">'color'</span>, <span class="string">'m'</span>)
+axis;
+
+printPmtkFigure(<span class="string">'ppcaDemo2d'</span>);
+</pre><img vspace="5" hspace="5" src="ppcaDemo2d_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Probabilistic PCA in 2D
+% Based on figure 7.6 of the netlab book
+%%
+
+% This file is from pmtk3.googlecode.com
+
+setSeed(0);
+n = 5;
+X=[randn(n,2)+2.*ones(n,2);2.*randn(n,2)-2.*ones(n,2)];
+X = centerCols(X);
+[n d] = size(X);
+model = ppcaFit(X, 1);
+%sigma2=eps;
+Xrecon = ppcaReconstruct(model, X);
+mu = model.mu;
+figure;
+plot(mu(1), mu(2), '*', 'markersize', 20, 'color', 'r');
+hold on
+plot(X(:,1), X(:,2), 'ro', 'markersize', 20);
+hold on
+plot(Xrecon(:,1), Xrecon(:,2), 'g+', 'markersize', 20, 'linewidth',2);
+for i=1:n
+  line([Xrecon(i,1) X(i,1)], [Xrecon(i,2) X(i,2)])
+end
+% plot the linear subspace
+Z2 = [-2;1.5];
+%Z2 = [-5;5]; % 2 ``extreme'' points in latent space
+Xrecon2 = Z2*model.W' + repmat(rowvec(mu), 2,1);
+line([Xrecon2(1,1) Xrecon2(2,1)], [Xrecon2(1,2) Xrecon2(2,2)], 'color', 'm')
+axis;
+
+printPmtkFigure('ppcaDemo2d'); 
+
+
+
+##### SOURCE END #####
+--></body></html>

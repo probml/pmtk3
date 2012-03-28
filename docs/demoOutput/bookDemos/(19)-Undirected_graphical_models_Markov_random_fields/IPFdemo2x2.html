@@ -1,0 +1,172 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Approximate joint density as a product of two marginals</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="IPFdemo2x2.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Approximate joint density as a product of two marginals</h1><p>i.e., fit a 2 node disconnedted MRF  X1  X2 Example From <a href="http://en.wikipedia.org/wiki/Iterative_proportional_fitting">http://en.wikipedia.org/wiki/Iterative_proportional_fitting</a></p><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+C = [43 9;
+     44 4];
+
+<span class="comment">%C = normalize(C);</span>
+C1 = sum(C,2);
+C2 = sum(C, 1);
+
+nstates = size(C);
+psi1 = ones(1,nstates(1)); <span class="comment">%rowvec(C1); %</span>
+psi2 = ones(1,nstates(2)); <span class="comment">%rowvec(C2); %</span>
+
+<span class="keyword">for</span> iter=1:2
+  joint = psi1(:) * psi2(:)';
+
+  M1 = sum(joint,2);
+  psi1 = psi1 .* (C1 ./ M1)'
+
+  joint = psi1(:) * psi2(:)';
+  M2 = sum(joint,1);
+  psi2 = psi2 .* (C2 ./ M2)
+<span class="keyword">end</span>
+
+joint = psi1(:) * psi2(:)';
+assert(approxeq(C1, sum(joint,2)))
+assert(approxeq(C2, sum(joint,1)))
+
+tables = {C, joint};
+<span class="keyword">for</span> t=1:2
+  T = tables{t};
+  RS = sum(T,2); <span class="comment">% row sums</span>
+  CS = sum(T,1); <span class="comment">% col sums</span>
+  <span class="keyword">for</span> i=1:2
+    fprintf(<span class="string">'%5.2f &amp; %5.2f &amp; %5.2f \n'</span>, T(i,1), T(i,2), RS(i));
+  <span class="keyword">end</span>
+  fprintf(<span class="string">'%5.2f &amp; %5.2f &amp; %5.2f\n'</span>, CS(1), CS(2), sum(T(:)));
+  fprintf(<span class="string">'\n\n'</span>);
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">psi1 =
+    26    24
+psi2 =
+    1.7400    0.2600
+psi1 =
+    26    24
+psi2 =
+    1.7400    0.2600
+43.00 &amp;  9.00 &amp; 52.00 
+44.00 &amp;  4.00 &amp; 48.00 
+87.00 &amp; 13.00 &amp; 100.00
+
+
+45.24 &amp;  6.76 &amp; 52.00 
+41.76 &amp;  6.24 &amp; 48.00 
+87.00 &amp; 13.00 &amp; 100.00
+
+
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Approximate joint density as a product of two marginals
+% i.e., fit a 2 node disconnedted MRF  X1  X2
+% Example From
+% http://en.wikipedia.org/wiki/Iterative_proportional_fitting
+
+% This file is from pmtk3.googlecode.com
+
+C = [43 9;
+     44 4];
+
+%C = normalize(C);
+C1 = sum(C,2);
+C2 = sum(C, 1);
+
+nstates = size(C);
+psi1 = ones(1,nstates(1)); %rowvec(C1); % 
+psi2 = ones(1,nstates(2)); %rowvec(C2); % 
+ 
+for iter=1:2
+  joint = psi1(:) * psi2(:)';
+  
+  M1 = sum(joint,2);
+  psi1 = psi1 .* (C1 ./ M1)'
+  
+  joint = psi1(:) * psi2(:)';
+  M2 = sum(joint,1);
+  psi2 = psi2 .* (C2 ./ M2)
+end
+
+joint = psi1(:) * psi2(:)';
+assert(approxeq(C1, sum(joint,2)))
+assert(approxeq(C2, sum(joint,1)))
+
+tables = {C, joint};
+for t=1:2
+  T = tables{t};
+  RS = sum(T,2); % row sums
+  CS = sum(T,1); % col sums
+  for i=1:2
+    fprintf('%5.2f & %5.2f & %5.2f \n', T(i,1), T(i,2), RS(i));
+  end
+  fprintf('%5.2f & %5.2f & %5.2f\n', CS(1), CS(2), sum(T(:)));
+  fprintf('\n\n');
+end
+
+
+##### SOURCE END #####
+--></body></html>

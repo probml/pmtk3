@@ -1,0 +1,370 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Comparison of methods for imputing missing values in a gene microarray</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="imputationGeneMicroarrayDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Comparison of methods for imputing missing values in a gene microarray</h1><!--introduction--><p>PMTKslow PMTKauthor Kevin Murphy PMTKneedsStatsToolbox boxplot</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#3">For each percentage of missing, do several trials</a></li><li><a href="#5">Plot</a></li></ul></div><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="keyword">function</span> [] = imputationGeneMicroarrayDemo()
+
+requireStatsToolbox
+<span class="comment">% yeastStress 6152x174, 5338 fully observed rows (on 15 chosen columns)</span>
+<span class="comment">% yeastCellCycle 6221x81, 3222 fully observed rows</span>
+datasets = {<span class="string">'yeastStress'</span>, <span class="string">'yeastCellCycle'</span>};
+<span class="keyword">for</span> di=1:length(datasets)
+</pre><pre class="codeinput">    dataName = datasets{di};
+    loadData(dataName)
+    <span class="keyword">if</span> strcmpi(dataName, <span class="string">'yeastStress'</span>)
+        <span class="comment">% extract the 15 columns used in the Ouyang, Welsh, Georgopolous paper</span>
+        <span class="comment">% These are features that are not too correlated (unlike cell cycle)</span>
+        X = yeastStress.X;
+        ndx = [45 53 68 70 74 82 89 95 98 99 104 117 158 165 145];
+        X = X(:,ndx);
+    <span class="keyword">end</span>
+
+    <span class="comment">% only use the rows with no missing data</span>
+    nomissing = any(isnan(X),2) == 0;
+    X = X(nomissing, :);
+    fprintf(<span class="string">'%s, num fully observed rows %d\n'</span>, dataName, sum(nomissing));
+
+    <span class="comment">% initialize bookkeeping variables</span>
+    setSeed(0);
+    [N, D] = size(X);
+    pc = [0.01, 0.1];
+    ntrials = 3; <span class="comment">% for speed</span>
+    opts = {<span class="string">'verbose'</span>, true, <span class="string">'doMAP'</span>, true};
+    methodNames = {<span class="string">'row mean'</span>, <span class="string">'col mean'</span>, <span class="string">'knn1'</span>, <span class="string">'knn5'</span>, <span class="string">'mixGauss1'</span>}; <span class="comment">% 'mixGauss5'};</span>
+    imputeRows = @(X)imputeColumns(X')';
+    m = struct(<span class="string">'mu'</span>, [], <span class="string">'Sigma'</span>, [], <span class="string">'mixweight'</span>, [], <span class="string">'K'</span>, 1);
+    imputeFns = {imputeRows, @imputeColumns, @(X)imputeKnn(X, 1), @(X)imputeKnn(X, 5), <span class="keyword">...</span>
+        @(X)mixGaussImpute(m, X, opts{:})};
+    <span class="comment">%@(X)imputeMixGauss(X, 5, opts{:})};</span>
+    nMethod = length(methodNames);
+</pre><pre class="codeoutput">yeastStress, num fully observed rows 5338
+</pre><pre class="codeoutput">yeastCellCycle, num fully observed rows 3222
+</pre><h2>For each percentage of missing, do several trials<a name="3"></a></h2><pre class="codeinput">    <span class="keyword">for</span> pidx = 1:length(pc)
+</pre><pre class="codeinput">        errors = zeros(ntrials, nMethod);
+        times = zeros(ntrials, nMethod);
+        <span class="keyword">for</span> trial = 1:ntrials
+            missing = rand(N,D) &lt; pc(pidx);
+            Xmiss = X;
+            Xmiss(missing) = NaN;
+            <span class="keyword">for</span> method = 1:nMethod
+                fn = imputeFns{method};
+                tic
+                fprintf(<span class="string">'p %3.5f, trial %d, method %s\n'</span>, pc(pidx), trial, methodNames{method});
+                Ximpute = fn(Xmiss);
+                t=toc;
+                times(trial, method) = t;
+                errors(trial, method) = NRMSE(X, Ximpute, missing);
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+</pre><pre class="codeoutput">p 0.01000, trial 1, method row mean
+p 0.01000, trial 1, method col mean
+p 0.01000, trial 1, method knn1
+p 0.01000, trial 1, method knn5
+p 0.01000, trial 1, method mixGauss1
+initializing model for EM
+1	 loglik: -96006.6
+2	 loglik: -58001
+3	 loglik: -57851.7
+4	 loglik: -57851.6
+p 0.01000, trial 2, method row mean
+p 0.01000, trial 2, method col mean
+p 0.01000, trial 2, method knn1
+p 0.01000, trial 2, method knn5
+p 0.01000, trial 2, method mixGauss1
+initializing model for EM
+1	 loglik: -96089.7
+2	 loglik: -57979.2
+3	 loglik: -57840.4
+4	 loglik: -57840.3
+p 0.01000, trial 3, method row mean
+p 0.01000, trial 3, method col mean
+p 0.01000, trial 3, method knn1
+p 0.01000, trial 3, method knn5
+p 0.01000, trial 3, method mixGauss1
+initializing model for EM
+1	 loglik: -96032.4
+2	 loglik: -57947.2
+3	 loglik: -57784.3
+4	 loglik: -57784.2
+</pre><pre class="codeoutput">p 0.10000, trial 1, method row mean
+p 0.10000, trial 1, method col mean
+p 0.10000, trial 1, method knn1
+p 0.10000, trial 1, method knn5
+p 0.10000, trial 1, method mixGauss1
+initializing model for EM
+1	 loglik: -89121.1
+2	 loglik: -58168.1
+3	 loglik: -53419.9
+4	 loglik: -53123.4
+5	 loglik: -53103.9
+6	 loglik: -53102.3
+p 0.10000, trial 2, method row mean
+p 0.10000, trial 2, method col mean
+p 0.10000, trial 2, method knn1
+p 0.10000, trial 2, method knn5
+p 0.10000, trial 2, method mixGauss1
+initializing model for EM
+1	 loglik: -89301.2
+2	 loglik: -58354.1
+3	 loglik: -53647.2
+4	 loglik: -53375.4
+5	 loglik: -53360.3
+6	 loglik: -53359.2
+p 0.10000, trial 3, method row mean
+p 0.10000, trial 3, method col mean
+p 0.10000, trial 3, method knn1
+p 0.10000, trial 3, method knn5
+p 0.10000, trial 3, method mixGauss1
+initializing model for EM
+1	 loglik: -89474.9
+2	 loglik: -58170.6
+3	 loglik: -53655
+4	 loglik: -53405.8
+5	 loglik: -53391.5
+6	 loglik: -53390.5
+</pre><pre class="codeoutput">p 0.01000, trial 1, method row mean
+p 0.01000, trial 1, method col mean
+p 0.01000, trial 1, method knn1
+p 0.01000, trial 1, method knn5
+p 0.01000, trial 1, method mixGauss1
+initializing model for EM
+1	 loglik: -283359
+2	 loglik: -49163.4
+3	 loglik: -40147.8
+4	 loglik: -39982.4
+5	 loglik: -39982.4
+p 0.01000, trial 2, method row mean
+p 0.01000, trial 2, method col mean
+p 0.01000, trial 2, method knn1
+p 0.01000, trial 2, method knn5
+p 0.01000, trial 2, method mixGauss1
+initializing model for EM
+1	 loglik: -283380
+2	 loglik: -49904.7
+3	 loglik: -40675.5
+4	 loglik: -40128.1
+5	 loglik: -40127.8
+p 0.01000, trial 3, method row mean
+p 0.01000, trial 3, method col mean
+p 0.01000, trial 3, method knn1
+p 0.01000, trial 3, method knn5
+p 0.01000, trial 3, method mixGauss1
+initializing model for EM
+1	 loglik: -283389
+2	 loglik: -49096.1
+3	 loglik: -40244.6
+4	 loglik: -40023.4
+5	 loglik: -40023.3
+</pre><pre class="codeoutput">p 0.10000, trial 1, method row mean
+p 0.10000, trial 1, method col mean
+p 0.10000, trial 1, method knn1
+p 0.10000, trial 1, method knn5
+p 0.10000, trial 1, method mixGauss1
+initializing model for EM
+1	 loglik: -266935
+2	 loglik: -100512
+3	 loglik: -49216.9
+4	 loglik: -41315.9
+5	 loglik: -39384.5
+6	 loglik: -39224.4
+7	 loglik: -39220.3
+8	 loglik: -39220
+p 0.10000, trial 2, method row mean
+p 0.10000, trial 2, method col mean
+p 0.10000, trial 2, method knn1
+p 0.10000, trial 2, method knn5
+p 0.10000, trial 2, method mixGauss1
+initializing model for EM
+1	 loglik: -266678
+2	 loglik: -100970
+3	 loglik: -49504.4
+4	 loglik: -41513.2
+5	 loglik: -39502.9
+6	 loglik: -39317.3
+7	 loglik: -39312.6
+8	 loglik: -39312.3
+p 0.10000, trial 3, method row mean
+p 0.10000, trial 3, method col mean
+p 0.10000, trial 3, method knn1
+p 0.10000, trial 3, method knn5
+p 0.10000, trial 3, method mixGauss1
+initializing model for EM
+1	 loglik: -266632
+2	 loglik: -100979
+3	 loglik: -49415.8
+4	 loglik: -41462.9
+5	 loglik: -39212.6
+6	 loglik: -38901.1
+7	 loglik: -38892.2
+8	 loglik: -38891.9
+</pre><h2>Plot<a name="5"></a></h2><pre class="codeinput">        figure;
+        boxplot(errors, <span class="string">'labels'</span>, methodNames);
+        title(sprintf(<span class="string">'NRMSE, data=%s, pcMissing = %5.3f'</span>, dataName, pc(pidx)));
+        printPmtkFigure(sprintf(<span class="string">'imputationGeneError%s%dpc2'</span>, dataName, pc(pidx)*100));
+
+        figure;
+        boxplot(times, <span class="string">'labels'</span>, methodNames);
+        title(sprintf(<span class="string">'times, data=%s, pcMissing = %5.3f'</span>, dataName, pc(pidx)));
+        printPmtkFigure(sprintf(<span class="string">'imputationGeneTime%s%dpc2'</span>, dataName, pc(pidx)*100));
+</pre><img vspace="5" hspace="5" src="imputationGeneMicroarrayDemo_01.png" alt=""> <img vspace="5" hspace="5" src="imputationGeneMicroarrayDemo_02.png" alt=""> <img vspace="5" hspace="5" src="imputationGeneMicroarrayDemo_03.png" alt=""> <img vspace="5" hspace="5" src="imputationGeneMicroarrayDemo_04.png" alt=""> <img vspace="5" hspace="5" src="imputationGeneMicroarrayDemo_05.png" alt=""> <img vspace="5" hspace="5" src="imputationGeneMicroarrayDemo_06.png" alt=""> <img vspace="5" hspace="5" src="imputationGeneMicroarrayDemo_07.png" alt=""> <img vspace="5" hspace="5" src="imputationGeneMicroarrayDemo_08.png" alt=""> <pre class="codeinput">    <span class="keyword">end</span> <span class="comment">% p</span>
+</pre><pre class="codeinput"><span class="keyword">end</span> <span class="comment">% di</span>
+<span class="keyword">end</span> <span class="comment">% functon</span>
+
+<span class="keyword">function</span> error = NRMSE(Xfull, Ximputed, miss)
+idx = find(miss == 1);
+numer = (Ximputed(idx) - Xfull(idx)).^2;
+denom = (Xfull(idx)).^2;
+error = sqrt(sum(numer)) / sqrt(sum(denom));
+<span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Comparison of methods for imputing missing values in a gene microarray
+% PMTKslow
+% PMTKauthor Kevin Murphy
+% PMTKneedsStatsToolbox boxplot
+%%
+
+% This file is from pmtk3.googlecode.com
+
+function [] = imputationGeneMicroarrayDemo()
+
+requireStatsToolbox
+% yeastStress 6152x174, 5338 fully observed rows (on 15 chosen columns)
+% yeastCellCycle 6221x81, 3222 fully observed rows
+datasets = {'yeastStress', 'yeastCellCycle'};
+for di=1:length(datasets)
+    dataName = datasets{di};
+    loadData(dataName)
+    if strcmpi(dataName, 'yeastStress')
+        % extract the 15 columns used in the Ouyang, Welsh, Georgopolous paper
+        % These are features that are not too correlated (unlike cell cycle)
+        X = yeastStress.X; 
+        ndx = [45 53 68 70 74 82 89 95 98 99 104 117 158 165 145];
+        X = X(:,ndx);
+    end
+    
+    % only use the rows with no missing data
+    nomissing = any(isnan(X),2) == 0;
+    X = X(nomissing, :);
+    fprintf('%s, num fully observed rows %d\n', dataName, sum(nomissing));
+    
+    % initialize bookkeeping variables
+    setSeed(0);
+    [N, D] = size(X);
+    pc = [0.01, 0.1];
+    ntrials = 3; % for speed
+    opts = {'verbose', true, 'doMAP', true};
+    methodNames = {'row mean', 'col mean', 'knn1', 'knn5', 'mixGauss1'}; % 'mixGauss5'};
+    imputeRows = @(X)imputeColumns(X')';
+    m = struct('mu', [], 'Sigma', [], 'mixweight', [], 'K', 1); 
+    imputeFns = {imputeRows, @imputeColumns, @(X)imputeKnn(X, 1), @(X)imputeKnn(X, 5), ...
+        @(X)mixGaussImpute(m, X, opts{:})};
+    %@(X)imputeMixGauss(X, 5, opts{:})};
+    nMethod = length(methodNames);
+    
+    %% For each percentage of missing, do several trials
+    for pidx = 1:length(pc)
+        errors = zeros(ntrials, nMethod);
+        times = zeros(ntrials, nMethod);
+        for trial = 1:ntrials
+            missing = rand(N,D) < pc(pidx);
+            Xmiss = X;
+            Xmiss(missing) = NaN;
+            for method = 1:nMethod
+                fn = imputeFns{method};
+                tic
+                fprintf('p %3.5f, trial %d, method %s\n', pc(pidx), trial, methodNames{method});
+                Ximpute = fn(Xmiss);
+                t=toc;
+                times(trial, method) = t;
+                errors(trial, method) = NRMSE(X, Ximpute, missing);
+            end
+        end
+        
+        
+        %% Plot
+        figure;
+        boxplot(errors, 'labels', methodNames);
+        title(sprintf('NRMSE, data=%s, pcMissing = %5.3f', dataName, pc(pidx)));
+        printPmtkFigure(sprintf('imputationGeneError%s%dpc2', dataName, pc(pidx)*100));
+        
+        figure;
+        boxplot(times, 'labels', methodNames);
+        title(sprintf('times, data=%s, pcMissing = %5.3f', dataName, pc(pidx)));
+        printPmtkFigure(sprintf('imputationGeneTime%s%dpc2', dataName, pc(pidx)*100));
+    end % p
+end % di
+end % functon
+
+function error = NRMSE(Xfull, Ximputed, miss)
+idx = find(miss == 1);
+numer = (Ximputed(idx) - Xfull(idx)).^2;
+denom = (Xfull(idx)).^2;
+error = sqrt(sum(numer)) / sqrt(sum(denom));
+end
+
+##### SOURCE END #####
+--></body></html>

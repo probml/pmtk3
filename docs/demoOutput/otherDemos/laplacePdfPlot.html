@@ -1,0 +1,142 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Compare Gauss, and Laplacian distributions</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="laplacePdfPlot.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Compare Gauss, and Laplacian distributions</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+xs = -4:0.2:4;
+v = 1;
+mu = 0;
+
+pr{1} = gaussProb(xs, mu, sqrt(v));
+
+<span class="comment">% variance of laplace = 2b^2</span>
+b = sqrt(v/2);
+pr{2} = 1/(2*b)*exp(-abs(xs-mu)/b);
+
+legendStr = {<span class="string">'Gauss'</span>, <span class="string">'Laplace'</span>};
+
+
+<span class="comment">%[styles, colors, symbols] =  plotColors;</span>
+styles = {<span class="string">'k:'</span>,  <span class="string">'b--'</span>, <span class="string">'r-'</span>};
+
+figure; hold <span class="string">on</span>
+<span class="keyword">for</span> i=1:2
+  plot(xs, pr{i}, styles{i}, <span class="string">'linewidth'</span>,3, <span class="string">'markersize'</span>, 10);
+<span class="keyword">end</span>
+legend(legendStr)
+printPmtkFigure(<span class="string">'laplacePdf'</span>)
+title(<span class="string">'prob. density functions'</span>)
+
+figure; hold <span class="string">on</span>
+<span class="keyword">for</span> i=1:2
+  plot(xs, log(pr{i}), styles{i}, <span class="string">'linewidth'</span>, 3, <span class="string">'markersize'</span>, 10);
+<span class="keyword">end</span>
+legend(legendStr)
+printPmtkFigure(<span class="string">'laplaceLogpdf'</span>)
+title(<span class="string">'log prob. density functions'</span>)
+</pre><img vspace="5" hspace="5" src="laplacePdfPlot_01.png" alt=""> <img vspace="5" hspace="5" src="laplacePdfPlot_02.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Compare Gauss, and Laplacian distributions
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+xs = -4:0.2:4;
+v = 1;
+mu = 0;
+
+pr{1} = gaussProb(xs, mu, sqrt(v));
+
+% variance of laplace = 2b^2
+b = sqrt(v/2);
+pr{2} = 1/(2*b)*exp(-abs(xs-mu)/b);
+
+legendStr = {'Gauss', 'Laplace'};
+
+
+%[styles, colors, symbols] =  plotColors;
+styles = {'k:',  'bREPLACE_WITH_DASH_DASH', 'r-'};
+
+figure; hold on
+for i=1:2
+  plot(xs, pr{i}, styles{i}, 'linewidth',3, 'markersize', 10);
+end
+legend(legendStr)
+printPmtkFigure('laplacePdf')
+title('prob. density functions')
+
+figure; hold on
+for i=1:2
+  plot(xs, log(pr{i}), styles{i}, 'linewidth', 3, 'markersize', 10);
+end
+legend(legendStr)
+printPmtkFigure('laplaceLogpdf')
+title('log prob. density functions')
+
+
+
+##### SOURCE END #####
+--></body></html>

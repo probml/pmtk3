@@ -1,0 +1,185 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>An illustration of Newton's method in 1D</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="newtonIteration1d.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>An illustration of Newton's method in 1D</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+figure(<span class="string">'Color'</span>,[1,1,1]);
+hold <span class="string">on</span>;
+
+xmin = 7.5; xmax = 10;
+ymin = -1;  ymax = 2.5e4;
+domain = xmin+0.2:0.001:xmax;
+
+e = exp(1);
+f = @(x) e.^(x);
+t = @(x) e^9*x-8*e^9;
+
+plot(domain,f(domain),<span class="string">'-b'</span>,<span class="string">'LineWidth'</span>,3.5);
+plot(domain,t(domain),<span class="string">'-r'</span>,<span class="string">'LineWidth'</span>,3);
+plot([9,9],[3000,f(9)],<span class="string">'--r'</span>,<span class="string">'LineWidth'</span>,2);
+
+plot(9,f(9),<span class="string">'.r'</span>,<span class="string">'MarkerSize'</span>,30);
+plot(log(3000),3000,<span class="string">'.k'</span>,<span class="string">'MarkerSize'</span>,30);
+plot(8.3702,3000,<span class="string">'.k'</span>,<span class="string">'MarkerSize'</span>,30);
+plot(9,3000,<span class="string">'.k'</span>,<span class="string">'MarkerSize'</span>,30);
+
+axis <span class="string">off</span>;
+axis([xmin,xmax,ymin,ymax]);
+
+annotation(gcf,<span class="string">'arrow'</span>,rel2absX([xmin,xmax]),rel2absY([3000,3000]),<span class="keyword">...</span>
+    <span class="string">'HeadStyle'</span>,<span class="string">'plain'</span>,<span class="keyword">...</span>
+    <span class="string">'LineWidth'</span>,3);
+
+annotation(gcf,<span class="string">'arrow'</span>,rel2absX([xmin+0.2,xmin+0.2]),<span class="keyword">...</span>
+                       rel2absY([ymin,ymax]), <span class="string">'HeadStyle'</span>, <span class="string">'plain'</span>,<span class="keyword">...</span>
+                       <span class="string">'LineWidth'</span>,3);
+
+<span class="comment">%x</span>
+annotation(gcf,<span class="string">'textbox'</span>,[0.28 0.13 0.04981 0.07317],<span class="string">'String'</span>,{<span class="string">'x'</span>},<span class="keyword">...</span>
+    <span class="string">'FontSize'</span>,16,<span class="keyword">...</span>
+    <span class="string">'FitBoxToText'</span>,<span class="string">'off'</span>,<span class="keyword">...</span>
+    <span class="string">'LineStyle'</span>,<span class="string">'none'</span>);
+
+<span class="comment">%x_n-1</span>
+annotation(gcf,<span class="string">'textbox'</span>,[0.39 0.13 0.04981 0.07317],<span class="keyword">...</span>
+    <span class="string">'String'</span>,{<span class="string">'x_{n-1}'</span>},<span class="keyword">...</span>
+    <span class="string">'FontSize'</span>,16,<span class="keyword">...</span>
+    <span class="string">'FitBoxToText'</span>,<span class="string">'off'</span>,<span class="keyword">...</span>
+    <span class="string">'LineStyle'</span>,<span class="string">'none'</span>);
+
+<span class="comment">%x_n</span>
+annotation(gcf,<span class="string">'textbox'</span>,[0.59 0.13 0.04981 0.07317],<span class="keyword">...</span>
+    <span class="string">'String'</span>,{<span class="string">'x_n'</span>},<span class="keyword">...</span>
+    <span class="string">'FontSize'</span>,16,<span class="keyword">...</span>
+    <span class="string">'FitBoxToText'</span>,<span class="string">'off'</span>,<span class="keyword">...</span>
+    <span class="string">'LineStyle'</span>,<span class="string">'none'</span>);
+
+set(gca,<span class="string">'FontSize'</span>,16);
+legend(<span class="string">'y = f(x)'</span>,<span class="string">'tangent line'</span>,<span class="string">'Location'</span>,<span class="string">'North'</span>);
+</pre><img vspace="5" hspace="5" src="newtonIteration1d_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% An illustration of Newton's method in 1D
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+figure('Color',[1,1,1]);
+hold on;
+
+xmin = 7.5; xmax = 10;
+ymin = -1;  ymax = 2.5e4;
+domain = xmin+0.2:0.001:xmax;
+
+e = exp(1);
+f = @(x) e.^(x);
+t = @(x) e^9*x-8*e^9;
+
+plot(domain,f(domain),'-b','LineWidth',3.5);
+plot(domain,t(domain),'-r','LineWidth',3);
+plot([9,9],[3000,f(9)],'REPLACE_WITH_DASH_DASHr','LineWidth',2);
+
+plot(9,f(9),'.r','MarkerSize',30);
+plot(log(3000),3000,'.k','MarkerSize',30);
+plot(8.3702,3000,'.k','MarkerSize',30);
+plot(9,3000,'.k','MarkerSize',30);
+
+axis off;
+axis([xmin,xmax,ymin,ymax]);
+
+annotation(gcf,'arrow',rel2absX([xmin,xmax]),rel2absY([3000,3000]),...
+    'HeadStyle','plain',...
+    'LineWidth',3);
+
+annotation(gcf,'arrow',rel2absX([xmin+0.2,xmin+0.2]),...
+                       rel2absY([ymin,ymax]), 'HeadStyle', 'plain',...
+                       'LineWidth',3);
+
+%x
+annotation(gcf,'textbox',[0.28 0.13 0.04981 0.07317],'String',{'x'},...
+    'FontSize',16,...
+    'FitBoxToText','off',...
+    'LineStyle','none');
+
+%x_n-1
+annotation(gcf,'textbox',[0.39 0.13 0.04981 0.07317],...
+    'String',{'x_{n-1}'},...
+    'FontSize',16,...
+    'FitBoxToText','off',...
+    'LineStyle','none');
+
+%x_n
+annotation(gcf,'textbox',[0.59 0.13 0.04981 0.07317],...
+    'String',{'x_n'},...
+    'FontSize',16,...
+    'FitBoxToText','off',...
+    'LineStyle','none');
+
+set(gca,'FontSize',16);
+legend('y = f(x)','tangent line','Location','North');
+
+
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,197 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Demo of factor analysis in 2d</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="faBiplotDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Demo of factor analysis in 2d</h1><!--introduction--><p>Based on <a href="http://www.mathworks.com/products/demos/statistics/factorandemo.html">http://www.mathworks.com/products/demos/statistics/factorandemo.html</a> PMTKneedsStatsToolbox factoran datasets in stats toolbox are listed here <a href="http://www.mathworks.com/access/helpdesk/help/toolbox/stats/bq9uxn4.html">http://www.mathworks.com/access/helpdesk/help/toolbox/stats/bq9uxn4.html</a></p><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+requireStatsToolbox
+dataset = <span class="string">'cars04'</span>;
+<span class="keyword">switch</span> dataset
+    <span class="keyword">case</span> <span class="string">'examgrades'</span>
+        loadData(<span class="string">'examGrades'</span>); <span class="comment">% 120x5</span>
+        X = grades;
+        varlabels = {<span class="string">'lit1'</span>, <span class="string">'lit2'</span>, <span class="string">'math1'</span>, <span class="string">'math2'</span>, <span class="string">'general'</span>};
+    <span class="keyword">case</span> <span class="string">'car'</span>
+        <span class="comment">%load carsmall % 100 rows, several features</span>
+        loadData(<span class="string">'carBig'</span>); <span class="comment">% 406 rows, several features</span>
+        <span class="comment">%X = [Acceleration Displacement Horsepower MPG Weight];</span>
+        X = [Acceleration Cylinders Displacement Horsepower MPG Weight];
+        ndx = all(~isnan(X),2);
+        X = X(ndx,:);
+        names = num2cell(Model(ndx,:),2);
+        varlabels = {<span class="string">'Acc'</span>, <span class="string">'Cyl'</span>, <span class="string">'Displ'</span>, <span class="string">'Hp'</span>, <span class="string">'MPG'</span>, <span class="string">'Weight'</span>};
+    <span class="keyword">case</span> <span class="string">'cars04'</span>
+        <span class="comment">%http://www.amstat.org/publications/jse/datasets/04cars.txt</span>
+        <span class="comment">%http://www.stat.cmu.edu/~cshalizi/350/lectures/10/cars-fixed04.dat</span>
+        loadData(<span class="string">'04cars'</span>); <span class="comment">% X is 387*18</span>
+        X = X(:, 8:18); <span class="comment">% use cts features, not binary</span>
+        varlabels = varlabels(8:18);
+<span class="keyword">end</span>
+
+Ks = [2 3];
+Ks = [2];
+<span class="keyword">for</span> ki=1:length(Ks)
+    K = Ks(ki);
+    rotations = {<span class="string">'none'</span>, <span class="string">'varimax'</span>};
+    rotations = {<span class="string">'none'</span>};
+    <span class="keyword">for</span> i=1:length(rotations)
+        <span class="comment">%X = zscore(X);</span>
+        [W, Psi, R, stats, Z] = factoran(X, K, <span class="string">'rotate'</span>, rotations{i});
+        f1=figure;
+        biplotPmtk(W, <span class="string">'varLabels'</span>, varlabels,  <span class="string">'Scores'</span>,Z);
+        title(sprintf(<span class="string">'rotation=%s'</span>, rotations{i}))
+        printPmtkFigure(sprintf(<span class="string">'faBiplot-%s-%s-K%d'</span>, dataset, rotations{i}, K))
+
+
+        <span class="keyword">if</span> 0
+            <span class="comment">% Click on some points and plot their names</span>
+            <span class="comment">%figure(f1);</span>
+            figure;
+            biplotPmtk(W,  <span class="string">'Scores'</span>,Z);
+            hold <span class="string">on</span>
+            ZZ=Z;
+            <span class="keyword">while</span> 1
+                Xsel = ginput(1);
+                dst = sqdist(Xsel', ZZ(:,1:2)');
+                [junk, closest] = min(dst,[],2);
+                c = closest;
+                h=text(ZZ(c,1), ZZ(c,2), names{c});
+                set(h, <span class="string">'color'</span>, <span class="string">'b'</span>);
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="faBiplotDemo_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Demo of factor analysis in 2d
+% Based on http://www.mathworks.com/products/demos/statistics/factorandemo.html
+% PMTKneedsStatsToolbox factoran
+% datasets in stats toolbox are listed here
+% http://www.mathworks.com/access/helpdesk/help/toolbox/stats/bq9uxn4.html
+%%
+
+% This file is from pmtk3.googlecode.com
+
+requireStatsToolbox
+dataset = 'cars04';
+switch dataset
+    case 'examgrades'
+        loadData('examGrades'); % 120x5
+        X = grades;
+        varlabels = {'lit1', 'lit2', 'math1', 'math2', 'general'};
+    case 'car'
+        %load carsmall % 100 rows, several features
+        loadData('carBig'); % 406 rows, several features
+        %X = [Acceleration Displacement Horsepower MPG Weight];
+        X = [Acceleration Cylinders Displacement Horsepower MPG Weight];
+        ndx = all(~isnan(X),2);
+        X = X(ndx,:);
+        names = num2cell(Model(ndx,:),2);
+        varlabels = {'Acc', 'Cyl', 'Displ', 'Hp', 'MPG', 'Weight'};
+    case 'cars04'
+        %http://www.amstat.org/publications/jse/datasets/04cars.txt
+        %http://www.stat.cmu.edu/~cshalizi/350/lectures/10/cars-fixed04.dat
+        loadData('04cars'); % X is 387*18
+        X = X(:, 8:18); % use cts features, not binary
+        varlabels = varlabels(8:18);
+end
+
+Ks = [2 3];
+Ks = [2];
+for ki=1:length(Ks)
+    K = Ks(ki);
+    rotations = {'none', 'varimax'};
+    rotations = {'none'};
+    for i=1:length(rotations)
+        %X = zscore(X);
+        [W, Psi, R, stats, Z] = factoran(X, K, 'rotate', rotations{i});
+        f1=figure;
+        biplotPmtk(W, 'varLabels', varlabels,  'Scores',Z);
+        title(sprintf('rotation=%s', rotations{i}))
+        printPmtkFigure(sprintf('faBiplot-%s-%s-K%d', dataset, rotations{i}, K))
+        
+        
+        if 0
+            % Click on some points and plot their names
+            %figure(f1);
+            figure;
+            biplotPmtk(W,  'Scores',Z);
+            hold on
+            ZZ=Z;
+            while 1
+                Xsel = ginput(1);
+                dst = sqdist(Xsel', ZZ(:,1:2)');
+                [junk, closest] = min(dst,[],2);
+                c = closest;
+                h=text(ZZ(c,1), ZZ(c,2), names{c});
+                set(h, 'color', 'b');
+            end
+        end
+        
+    end
+end
+
+##### SOURCE END #####
+--></body></html>

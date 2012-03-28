@@ -1,0 +1,262 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>pcaEmStepByStep</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="pcaEmStepByStep.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Illustrate EM for PCA</a></li><li><a href="#3">E Step</a></li><li><a href="#4">M step</a></li></ul></div><h2>Illustrate EM for PCA<a name="1"></a></h2><pre class="codeinput"><span class="comment">%PMTKauthor Cody Severinski</span>
+
+<span class="comment">% Some code has been reused by pcaFitEm</span>
+setSeed(10);
+n = 25; d = 2;
+mu0 = mvnrnd(eye(1,d),eye(d),1);
+Sigma = [1,-0.7;-0.7,1];
+X = mvnrnd(mu0,Sigma,n);
+k = 1;
+
+mu = mean(X);
+X = X - repmat(mu, n, 1);
+X = X'; <span class="comment">% algorithm in book uses [d,n] dimensional X</span>
+
+<span class="comment">% Generating (distributional) values;</span>
+[U,S,V] = svd(Sigma,0);
+Wtrue = V(:,1:k);
+
+<span class="comment">% Empirical (data-driven) values;</span>
+[U,S,V] = svd(cov(X));
+Wdata = V(:,1:k);
+
+<span class="comment">% Initial (random) guess</span>
+W = rand(size(X, 1), k);
+
+<span class="comment">% Setup EM</span>
+converged = false;
+negmseNew = -inf;
+<span class="comment">% The actual algorithm</span>
+iter = 1;
+<span class="keyword">while</span>(~converged)
+</pre><pre class="codeinput">  negmseOld = negmseNew;
+</pre><h2>E Step<a name="3"></a></h2><pre class="codeinput">  Z = (W'*W) \ (W' * X);
+  Xrecon = W*Z;
+
+  <span class="comment">% Plot the E-step results</span>
+  figure;
+  Wortho = orth(W);
+  gaussPlot2d(zeros(1,d),Sigma); hold <span class="string">on</span>;
+  plot(X(1,:),X(2,:),<span class="string">'g*'</span>);
+  plot(Xrecon(1,:),Xrecon(2,:),<span class="string">'ko'</span>,<span class="string">'markersize'</span>,10);
+  xlim = get(gca,<span class="string">'XLim'</span>);
+  line(xlim,Wortho(2)/Wortho(1) * xlim,<span class="string">'color'</span>,<span class="string">'c'</span>, <span class="string">'linewidth'</span>, 2);
+  <span class="comment">%line(xlim,Wdata(2)/Wdata(1) * xlim,'color','g');</span>
+  line([X(1,:);Xrecon(1,:)],[X(2,:);Xrecon(2,:)],<span class="string">'color'</span>,<span class="string">'k'</span>);
+  axis <span class="string">square</span>;
+  title(sprintf(<span class="string">'E step %d'</span>, iter))
+  printPmtkFigure(sprintf(<span class="string">'pcaEmStepByStepEstep%d'</span>,iter'));
+  <span class="comment">%pause;</span>
+</pre><img vspace="5" hspace="5" src="pcaEmStepByStep_01.png" alt=""> <img vspace="5" hspace="5" src="pcaEmStepByStep_03.png" alt=""> <img vspace="5" hspace="5" src="pcaEmStepByStep_05.png" alt=""> <img vspace="5" hspace="5" src="pcaEmStepByStep_07.png" alt=""> <h2>M step<a name="4"></a></h2><pre class="codeinput">  W = (X*Z')/(Z*Z');
+  negmseNew = -mean((Xrecon(:) - X(:)).^2)
+
+  <span class="comment">% Check for convergence</span>
+  converged = convergenceTest(negmseOld,negmseNew, 1e-2)
+
+  <span class="comment">% Plot the M-step results;</span>
+  figure;
+  Wortho = orth(W);
+  Z = X'*Wortho; <span class="comment">% Z is [n,d]</span>
+  <span class="comment">% From pcaFitEm</span>
+  [evecs, evals] = eig(Z'*Z/n);
+  [evals, perm] = sort(diag(evals), <span class="string">'descend'</span>);
+  evecs = evecs(:, perm);
+  West = W*evecs;
+  Z = X'*West;
+  Xrecon = Z*West';<span class="comment">% + repmat(mu, n, 1); we are not going to recenter the data, since we are working with centered data for visualization purposes;</span>
+  gaussPlot2d(zeros(1,d),Sigma); hold <span class="string">on</span>;
+  plot(X(1,:),X(2,:),<span class="string">'g*'</span>);
+  plot(Xrecon(:,1),Xrecon(:,2),<span class="string">'ko'</span>,<span class="string">'markersize'</span>,10);
+  xlim = get(gca,<span class="string">'XLim'</span>);
+  line(xlim,Wortho(2)/Wortho(1) * xlim,<span class="string">'color'</span>,<span class="string">'c'</span>, <span class="string">'linewidth'</span>, 2);
+  <span class="comment">%line(xlim,Wdata(2)/Wdata(1) * xlim,'color','g');</span>
+  line([X(1,:);Xrecon(:,1)'],[X(2,:);Xrecon(:,2)'],<span class="string">'color'</span>,<span class="string">'k'</span>);
+  axis <span class="string">square</span>;
+  title(sprintf(<span class="string">'M step %d'</span>, iter))
+  printPmtkFigure(sprintf(<span class="string">'pcaEmStepByStepMstep%d'</span>,iter'));
+  <span class="comment">%pause</span>
+
+  iter = iter + 1
+  <span class="comment">%if iter&gt;2, break; end</span>
+</pre><pre class="codeoutput">negmseNew =
+   -0.6415
+converged =
+     0
+iter =
+     2
+</pre><img vspace="5" hspace="5" src="pcaEmStepByStep_02.png" alt=""> <pre class="codeoutput">negmseNew =
+   -0.2352
+converged =
+     0
+iter =
+     3
+</pre><img vspace="5" hspace="5" src="pcaEmStepByStep_04.png" alt=""> <pre class="codeoutput">negmseNew =
+   -0.1943
+converged =
+     0
+iter =
+     4
+</pre><img vspace="5" hspace="5" src="pcaEmStepByStep_06.png" alt=""> <pre class="codeoutput">negmseNew =
+   -0.1925
+converged =
+     1
+iter =
+     5
+</pre><img vspace="5" hspace="5" src="pcaEmStepByStep_08.png" alt=""> <pre class="codeinput"><span class="keyword">end</span> <span class="comment">% of EM</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Illustrate EM for PCA
+%PMTKauthor Cody Severinski
+
+% Some code has been reused by pcaFitEm
+setSeed(10);
+n = 25; d = 2;
+mu0 = mvnrnd(eye(1,d),eye(d),1);
+Sigma = [1,-0.7;-0.7,1];
+X = mvnrnd(mu0,Sigma,n);
+k = 1;
+
+mu = mean(X);
+X = X - repmat(mu, n, 1);
+X = X'; % algorithm in book uses [d,n] dimensional X
+
+% Generating (distributional) values;
+[U,S,V] = svd(Sigma,0);
+Wtrue = V(:,1:k);
+
+% Empirical (data-driven) values;
+[U,S,V] = svd(cov(X));
+Wdata = V(:,1:k);
+
+% Initial (random) guess
+W = rand(size(X, 1), k);
+
+% Setup EM
+converged = false;
+negmseNew = -inf;
+% The actual algorithm
+iter = 1;
+while(~converged)
+  negmseOld = negmseNew;
+
+  %% E Step
+  Z = (W'*W) \ (W' * X);
+  Xrecon = W*Z;
+
+  % Plot the E-step results
+  figure;
+  Wortho = orth(W);
+  gaussPlot2d(zeros(1,d),Sigma); hold on;
+  plot(X(1,:),X(2,:),'g*');
+  plot(Xrecon(1,:),Xrecon(2,:),'ko','markersize',10);
+  xlim = get(gca,'XLim'); 
+  line(xlim,Wortho(2)/Wortho(1) * xlim,'color','c', 'linewidth', 2);
+  %line(xlim,Wdata(2)/Wdata(1) * xlim,'color','g');
+  line([X(1,:);Xrecon(1,:)],[X(2,:);Xrecon(2,:)],'color','k');
+  axis square;
+  title(sprintf('E step %d', iter))
+  printPmtkFigure(sprintf('pcaEmStepByStepEstep%d',iter'));
+  %pause;
+
+  %% M step
+  W = (X*Z')/(Z*Z');
+  negmseNew = -mean((Xrecon(:) - X(:)).^2)
+
+  % Check for convergence
+  converged = convergenceTest(negmseOld,negmseNew, 1e-2)
+
+  % Plot the M-step results;
+  figure;
+  Wortho = orth(W);
+  Z = X'*Wortho; % Z is [n,d]
+  % From pcaFitEm
+  [evecs, evals] = eig(Z'*Z/n);
+  [evals, perm] = sort(diag(evals), 'descend');
+  evecs = evecs(:, perm);
+  West = W*evecs;
+  Z = X'*West;
+  Xrecon = Z*West';% + repmat(mu, n, 1); we are not going to recenter the data, since we are working with centered data for visualization purposes;
+  gaussPlot2d(zeros(1,d),Sigma); hold on;
+  plot(X(1,:),X(2,:),'g*');
+  plot(Xrecon(:,1),Xrecon(:,2),'ko','markersize',10);
+  xlim = get(gca,'XLim'); 
+  line(xlim,Wortho(2)/Wortho(1) * xlim,'color','c', 'linewidth', 2);
+  %line(xlim,Wdata(2)/Wdata(1) * xlim,'color','g');
+  line([X(1,:);Xrecon(:,1)'],[X(2,:);Xrecon(:,2)'],'color','k');
+  axis square;
+  title(sprintf('M step %d', iter))
+  printPmtkFigure(sprintf('pcaEmStepByStepMstep%d',iter'));
+  %pause
+  
+  iter = iter + 1
+  %if iter>2, break; end
+end % of EM
+
+
+##### SOURCE END #####
+--></body></html>

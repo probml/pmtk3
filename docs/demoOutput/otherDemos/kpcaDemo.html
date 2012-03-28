@@ -1,0 +1,159 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Kpca demo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="kpcaDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Kpca demo</h1><pre class="codeinput">setSeed(0);
+
+<span class="comment">%{
+</span><span class="comment">% Make data on a 2d circle (from stprtool/data/gencircledata.m)
+</span><span class="comment">num_data = 500;
+</span><span class="comment">Center = [0;0];
+</span><span class="comment">R = 10;
+</span><span class="comment">phi = 2*pi*rand(1,num_data);
+</span><span class="comment">gnd_X = repmat(Center,1,num_data)+R*[cos(phi);sin(phi)];
+</span><span class="comment">gnd_y = ones(1,num_data);
+</span><span class="comment">% add noise
+</span><span class="comment">dev = 1;
+</span><span class="comment">X = gnd_X + randn(2,num_data)*dev;
+</span><span class="comment">X = X'; % rows are cases
+</span><span class="comment">figure;
+</span><span class="comment">plot(X(:,1), X(:,2), '.')
+</span><span class="comment">
+</span><span class="comment">%}
+</span>
+<span class="comment">% Make 3d swiss role data (from drtoolbox/generate_data)</span>
+n = 500;
+noise = 1;
+t = (3 * pi / 2) * (1 + 2 * rand(n, 1));
+height = 30 * rand(n, 1);
+X = [t .* cos(t) height t .* sin(t)] + noise * randn(n, 3);
+<span class="comment">%labels = uint8(t);</span>
+labels = rem(sum([round(t / 2) round(height / 12)], 2), 2);
+t = [t height];
+
+
+<span class="comment">% KPCA</span>
+<span class="comment">%[mappedX, mapping] = kernel_pca(X, no_dims, varargin)</span>
+
+Zkpca = kpcaSimple(X',2); <span class="comment">% RBF kernel, sigma=1</span>
+figure;
+plot(Zkpca(1,:), Zkpca(2,:), <span class="string">'.'</span>)
+title(<span class="string">'kpca'</span>);
+
+<span class="comment">% PCA</span>
+[B, Zpca, evals, Xrecon, mu] = pcaPmtk(X, 2);
+figure;
+plot(Zpca(:,1), Zpca(:,2), <span class="string">'.'</span>)
+title(<span class="string">'pca'</span>);
+</pre><img vspace="5" hspace="5" src="kpcaDemo_01.png" alt=""> <img vspace="5" hspace="5" src="kpcaDemo_02.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Kpca demo
+
+setSeed(0);
+
+%{
+% Make data on a 2d circle (from stprtool/data/gencircledata.m)
+num_data = 500;
+Center = [0;0];
+R = 10;
+phi = 2*pi*rand(1,num_data);
+gnd_X = repmat(Center,1,num_data)+R*[cos(phi);sin(phi)];
+gnd_y = ones(1,num_data);
+% add noise
+dev = 1;
+X = gnd_X + randn(2,num_data)*dev;
+X = X'; % rows are cases
+figure;
+plot(X(:,1), X(:,2), '.')
+
+%}
+
+% Make 3d swiss role data (from drtoolbox/generate_data)
+n = 500;
+noise = 1;
+t = (3 * pi / 2) * (1 + 2 * rand(n, 1));  
+height = 30 * rand(n, 1);
+X = [t .* cos(t) height t .* sin(t)] + noise * randn(n, 3);
+%labels = uint8(t);
+labels = rem(sum([round(t / 2) round(height / 12)], 2), 2);
+t = [t height];
+
+
+% KPCA
+%[mappedX, mapping] = kernel_pca(X, no_dims, varargin)
+
+Zkpca = kpcaSimple(X',2); % RBF kernel, sigma=1
+figure;
+plot(Zkpca(1,:), Zkpca(2,:), '.')
+title('kpca');
+
+% PCA
+[B, Zpca, evals, Xrecon, mu] = pcaPmtk(X, 2);
+figure;
+plot(Zpca(:,1), Zpca(:,2), '.')
+title('pca');
+
+
+##### SOURCE END #####
+--></body></html>

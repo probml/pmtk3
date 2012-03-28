@@ -1,0 +1,156 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Linear Regression L1 Fit Test</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="linregFitL1Test.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Linear Regression L1 Fit Test</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#3">Make some data</a></li><li><a href="#4">Fit</a></li></ul></div><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="keyword">function</span> linregFitL1Test()
+</pre><h2>Make some data<a name="3"></a></h2><pre class="codeinput">setSeed(0);
+N=100;
+<span class="comment">%N=20;</span>
+D=50; <span class="comment">% dinensionality</span>
+rho=.5;
+correl=zeros(D,D);
+<span class="keyword">for</span> i=1:D
+    <span class="keyword">for</span> j=1:D
+        correl(i,j)=rho^(abs(i-j));
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+X=randn(N,D)*chol(correl);
+<span class="comment">% true weight vector has 3 non zero components</span>
+w_true=[3 1.5 0 0 2 0 0 0 zeros(1,D-8)]';
+sigma = 1;
+y=X*w_true+1*sigma*randn(N,1);
+
+figure; nr = 3; nc = 2;
+subplot(nr, nc, 1)
+doPlot(w_true, w_true, <span class="string">'true'</span>)
+</pre><img vspace="5" hspace="5" src="linregFitL1Test_01.png" alt=""> <h2>Fit<a name="4"></a></h2><pre class="codeinput">lambda = 10;
+model = linregFit(X, y, <span class="string">'lambda'</span>, lambda, <span class="string">'regType'</span>, <span class="string">'L1'</span>, <span class="string">'preproc'</span>, struct(<span class="string">'addOnes'</span>, false));
+doPlot(model.w, w_true, <span class="string">'L1 Projection'</span>);
+</pre><img vspace="5" hspace="5" src="linregFitL1Test_02.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
+
+
+<span class="keyword">function</span> doPlot(w, w_true, name)
+D = length(w);
+stem(w)
+err=norm(w-w_true);
+nz=sum(abs(w)&lt;10^-3);
+title(sprintf(<span class="string">'%s, error %5.3f, # zeros %d'</span>,  name, err, nz))
+xlim([.5,D+.5]);
+ylim([0 4])
+<span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Linear Regression L1 Fit Test
+%%
+
+% This file is from pmtk3.googlecode.com
+
+function linregFitL1Test()
+
+
+
+%% Make some data
+setSeed(0);
+N=100;
+%N=20;
+D=50; % dinensionality
+rho=.5;
+correl=zeros(D,D);
+for i=1:D
+    for j=1:D
+        correl(i,j)=rho^(abs(i-j));
+    end
+end
+X=randn(N,D)*chol(correl);
+% true weight vector has 3 non zero components
+w_true=[3 1.5 0 0 2 0 0 0 zeros(1,D-8)]';
+sigma = 1;
+y=X*w_true+1*sigma*randn(N,1);
+
+figure; nr = 3; nc = 2;
+subplot(nr, nc, 1)
+doPlot(w_true, w_true, 'true')
+
+%% Fit
+lambda = 10;
+model = linregFit(X, y, 'lambda', lambda, 'regType', 'L1', 'preproc', struct('addOnes', false)); 
+doPlot(model.w, w_true, 'L1 Projection'); 
+
+end
+
+
+function doPlot(w, w_true, name)
+D = length(w);
+stem(w)
+err=norm(w-w_true);
+nz=sum(abs(w)<10^-3);
+title(sprintf('%s, error %5.3f, # zeros %d',  name, err, nz))
+xlim([.5,D+.5]);
+ylim([0 4])
+end
+
+##### SOURCE END #####
+--></body></html>

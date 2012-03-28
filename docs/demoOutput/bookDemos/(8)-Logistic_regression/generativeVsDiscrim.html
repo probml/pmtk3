@@ -1,0 +1,270 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Sketch of difference between Generative vs Discriminative classifier</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="generativeVsDiscrim.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Sketch of difference between Generative vs Discriminative classifier</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Class conditional densities</a></li><li><a href="#2">Class posterior</a></li><li><a href="#3">Illustration of the generalization error vs size of training set</a></li></ul></div><h2>Class conditional densities<a name="1"></a></h2><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+figure;
+hold <span class="string">all</span>;
+
+domain = 0:0.001:1;
+f1 = @(x)gaussProb(x,0.7,0.09.^2);
+<span class="comment">%f2 = @(x) 0.4*gaussProb(x,0.2,0.09.^2) + 0.6*gaussProb(x,0.5,0.09.^2);</span>
+f2 = @(x) 0.6*gaussProb(x,0.1,0.09.^2) + 0.4*gaussProb(x,0.4,0.09.^2);
+linespec = {<span class="string">'LineWidth'</span>,3};
+plot(domain,f1(domain),<span class="string">'r:'</span>,linespec{:});
+plot(domain,f2(domain),<span class="string">'-k'</span>,linespec{:});
+
+set(gca,<span class="string">'XTick'</span>,0:0.2:1,<span class="string">'YTick'</span>,0:5,<span class="string">'XLim'</span>,[0,1],<span class="string">'YLim'</span>,[0,5],<span class="string">'box'</span>,<span class="string">'on'</span>,<span class="string">'FontSize'</span>,14);
+xlabel(<span class="string">'x'</span>,<span class="string">'FontSize'</span>,16);
+ylabel(<span class="string">'class conditional densities'</span>,<span class="string">'FontSize'</span>,16);
+
+<span class="comment">%p(x|C_1)</span>
+annotation(gcf,<span class="string">'textbox'</span>,[0.2366 0.4 0.096 0.07927],<span class="keyword">...</span>
+    <span class="string">'String'</span>,{<span class="string">'p(x|y=1)'</span>},<span class="keyword">...</span>
+    <span class="string">'FontSize'</span>,16,<span class="keyword">...</span>
+    <span class="string">'FitBoxToText'</span>,<span class="string">'off'</span>,<span class="keyword">...</span>
+    <span class="string">'LineStyle'</span>,<span class="string">'none'</span>);
+
+<span class="comment">%p(x|C_2)</span>
+annotation(gcf,<span class="string">'textbox'</span>,[0.7127 0.794 0.096 0.07927],<span class="keyword">...</span>
+    <span class="string">'String'</span>,{<span class="string">'p(x|y=2)'</span>},<span class="keyword">...</span>
+    <span class="string">'FontSize'</span>,16,<span class="keyword">...</span>
+    <span class="string">'FitBoxToText'</span>,<span class="string">'off'</span>,<span class="keyword">...</span>
+    <span class="string">'LineStyle'</span>,<span class="string">'none'</span>);
+
+  printPmtkFigure(<span class="string">'genVsDiscrimClassCond'</span>)
+</pre><img vspace="5" hspace="5" src="generativeVsDiscrim_01.png" alt=""> <h2>Class posterior<a name="2"></a></h2><pre class="codeinput"> figure();
+hold <span class="string">all</span>;
+domain = 0:0.001:1;
+f1 = @(x)sigmoid(27*x-15);
+f2 = @(x) sigmoid(-27*x+15);
+linespec = {<span class="string">'LineWidth'</span>,3};
+plot(domain,f1(domain),<span class="string">':r'</span>,linespec{:});
+plot(domain,f2(domain),<span class="string">'-k'</span>,linespec{:});
+plot([0.556,0.556],[0,1.2],<span class="string">'-g'</span>,linespec{:});
+
+set(gca, <span class="string">'XTick'</span>, 0:0.2:1, <span class="string">'YTick'</span>,0:0.2:1.2, <span class="keyword">...</span>
+    <span class="string">'XLim'</span>, [0,1], <span class="string">'YLim'</span>, [0,1.2], <span class="string">'box'</span>,<span class="string">'on'</span>, <span class="string">'FontSize'</span>, 14);
+xlabel(<span class="string">'x'</span>,<span class="string">'FontSize'</span>,14);
+
+<span class="comment">%p(x|C_1)</span>
+annotation(gcf,<span class="string">'textbox'</span>,[0.25 0.794 0.096 0.07927],<span class="keyword">...</span>
+    <span class="string">'String'</span>,{<span class="string">'p(y=1|x)'</span>},<span class="keyword">...</span>
+    <span class="string">'FontSize'</span>,14,<span class="keyword">...</span>
+    <span class="string">'FitBoxToText'</span>,<span class="string">'off'</span>,<span class="keyword">...</span>
+    <span class="string">'LineStyle'</span>,<span class="string">'none'</span>);
+<span class="comment">%p(x|C_2)</span>
+annotation(gcf,<span class="string">'textbox'</span>,[0.75 0.794 0.096 0.07927],<span class="keyword">...</span>
+    <span class="string">'String'</span>,{<span class="string">'p(y=2|x)'</span>},<span class="keyword">...</span>
+    <span class="string">'FontSize'</span>,14,<span class="keyword">...</span>
+    <span class="string">'FitBoxToText'</span>,<span class="string">'off'</span>,<span class="keyword">...</span>
+    <span class="string">'LineStyle'</span>,<span class="string">'none'</span>);
+
+   printPmtkFigure(<span class="string">'genVsDiscrimPost'</span>)
+</pre><img vspace="5" hspace="5" src="generativeVsDiscrim_02.png" alt=""> <h2>Illustration of the generalization error vs size of training set<a name="3"></a></h2><pre class="codeinput"><span class="comment">% We illustrate the theoretical differences between naive Bayes,</span>
+<span class="comment">% and logistic regression.</span>
+</pre><pre class="codeinput">figure;
+domain = 0:0.01:10;
+NB = @(x)x.^(-0.5);
+LR = @(x)(8./(x.^0.8))-2;
+
+linewidth = {<span class="string">'LineWidth'</span>,3};
+hold <span class="string">all</span>;
+set(gca,<span class="string">'XTick'</span>,[],<span class="string">'YTick'</span>,[],<span class="string">'FontSize'</span>,16);
+axis([-0.1,10,-1,10]);
+
+plot(domain,NB(domain),<span class="string">'--r'</span>,linewidth{:});
+plot(domain,LR(domain),<span class="string">'-b'</span>,linewidth{:});
+
+set(gca,<span class="string">'FontSize'</span>,14,<span class="string">'LineWidth'</span>,2);
+xlabel(<span class="string">'size of training set'</span>);
+ylabel(<span class="string">'test error'</span>);
+box <span class="string">on</span>;
+
+<span class="comment">%NB</span>
+annotation(gcf,<span class="string">'textbox'</span>,[0.1702 0.25 0.06392 0.1205],<span class="keyword">...</span>
+    <span class="string">'String'</span>,{<span class="string">'NB'</span>},<span class="keyword">...</span>
+    <span class="string">'FontSize'</span>,20,<span class="keyword">...</span>
+    <span class="string">'FitBoxToText'</span>,<span class="string">'off'</span>,<span class="keyword">...</span>
+    <span class="string">'LineStyle'</span>,<span class="string">'none'</span>,<span class="keyword">...</span>
+    <span class="string">'Color'</span>,<span class="string">'r'</span>);
+
+<span class="comment">% LR</span>
+annotation(gcf,<span class="string">'textbox'</span>,[0.2648 0.4 0.06392 0.1205],<span class="keyword">...</span>
+    <span class="string">'String'</span>,{<span class="string">'LR'</span>},<span class="keyword">...</span>
+    <span class="string">'FontSize'</span>,20,<span class="keyword">...</span>
+    <span class="string">'FitBoxToText'</span>,<span class="string">'off'</span>,<span class="keyword">...</span>
+    <span class="string">'LineStyle'</span>,<span class="string">'none'</span>,<span class="keyword">...</span>
+    <span class="string">'Color'</span>,<span class="string">'b'</span>);
+</pre><img vspace="5" hspace="5" src="generativeVsDiscrim_03.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Sketch of difference between Generative vs Discriminative classifier 
+%
+%% Class conditional densities
+
+% This file is from pmtk3.googlecode.com
+
+figure;
+hold all;
+
+domain = 0:0.001:1;
+f1 = @(x)gaussProb(x,0.7,0.09.^2);
+%f2 = @(x) 0.4*gaussProb(x,0.2,0.09.^2) + 0.6*gaussProb(x,0.5,0.09.^2);
+f2 = @(x) 0.6*gaussProb(x,0.1,0.09.^2) + 0.4*gaussProb(x,0.4,0.09.^2);
+linespec = {'LineWidth',3};
+plot(domain,f1(domain),'r:',linespec{:});
+plot(domain,f2(domain),'-k',linespec{:});
+
+set(gca,'XTick',0:0.2:1,'YTick',0:5,'XLim',[0,1],'YLim',[0,5],'box','on','FontSize',14);
+xlabel('x','FontSize',16);
+ylabel('class conditional densities','FontSize',16);
+
+%p(x|C_1)
+annotation(gcf,'textbox',[0.2366 0.4 0.096 0.07927],...
+    'String',{'p(x|y=1)'},...
+    'FontSize',16,...
+    'FitBoxToText','off',...
+    'LineStyle','none');
+
+%p(x|C_2)
+annotation(gcf,'textbox',[0.7127 0.794 0.096 0.07927],...
+    'String',{'p(x|y=2)'},...
+    'FontSize',16,...
+    'FitBoxToText','off',...
+    'LineStyle','none');
+
+  printPmtkFigure('genVsDiscrimClassCond')
+  
+ %% Class posterior
+ figure();
+hold all;
+domain = 0:0.001:1;
+f1 = @(x)sigmoid(27*x-15);
+f2 = @(x) sigmoid(-27*x+15);
+linespec = {'LineWidth',3};
+plot(domain,f1(domain),':r',linespec{:});
+plot(domain,f2(domain),'-k',linespec{:});
+plot([0.556,0.556],[0,1.2],'-g',linespec{:});
+
+set(gca, 'XTick', 0:0.2:1, 'YTick',0:0.2:1.2, ...
+    'XLim', [0,1], 'YLim', [0,1.2], 'box','on', 'FontSize', 14);
+xlabel('x','FontSize',14);
+
+%p(x|C_1)
+annotation(gcf,'textbox',[0.25 0.794 0.096 0.07927],...
+    'String',{'p(y=1|x)'},...
+    'FontSize',14,...
+    'FitBoxToText','off',...
+    'LineStyle','none');
+%p(x|C_2)
+annotation(gcf,'textbox',[0.75 0.794 0.096 0.07927],...
+    'String',{'p(y=2|x)'},...
+    'FontSize',14,...
+    'FitBoxToText','off',...
+    'LineStyle','none');
+
+   printPmtkFigure('genVsDiscrimPost')
+   
+  %% Illustration of the generalization error vs size of training set
+% We illustrate the theoretical differences between naive Bayes,
+% and logistic regression. 
+%%
+figure;
+domain = 0:0.01:10;
+NB = @(x)x.^(-0.5);
+LR = @(x)(8./(x.^0.8))-2;
+
+linewidth = {'LineWidth',3};
+hold all;
+set(gca,'XTick',[],'YTick',[],'FontSize',16);
+axis([-0.1,10,-1,10]);
+
+plot(domain,NB(domain),'REPLACE_WITH_DASH_DASHr',linewidth{:});
+plot(domain,LR(domain),'-b',linewidth{:});
+
+set(gca,'FontSize',14,'LineWidth',2);
+xlabel('size of training set');
+ylabel('test error');
+box on;
+
+%NB
+annotation(gcf,'textbox',[0.1702 0.25 0.06392 0.1205],...
+    'String',{'NB'},...
+    'FontSize',20,...
+    'FitBoxToText','off',...
+    'LineStyle','none',...
+    'Color','r');
+
+% LR
+annotation(gcf,'textbox',[0.2648 0.4 0.06392 0.1205],...
+    'String',{'LR'},...
+    'FontSize',20,...
+    'FitBoxToText','off',...
+    'LineStyle','none',...
+    'Color','b');
+
+
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,357 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Example of the laplace approximation for logistic regression</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="logregLaplaceGirolamiDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Example of the laplace approximation for logistic regression</h1><!--introduction--><p>Based on code written by Mark Girolami</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">We generate data from two Gaussians:</a></li><li><a href="#3">Plot data</a></li><li><a href="#4">Plot prior, likelihood, posterior</a></li><li><a href="#5">Plot the predictive distribution for logistic regression</a></li></ul></div><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+setSeed(0);
+</pre><h2>We generate data from two Gaussians:<a name="2"></a></h2><p>x|C=1 ~ gauss([1,5], I) x|C=0 ~ gauss([-5,1], 1.1I)</p><pre class="codeinput">N=30;
+D=2;
+mu1=[ones(N,1) 5*ones(N,1)];
+mu2=[-5*ones(N,1) 1*ones(N,1)];
+class1_std = 1;
+class2_std = 1.1;
+X = [class1_std*randn(N,2)+mu1;2*class2_std*randn(N,2)+mu2];
+t = [ones(N,1);zeros(N,1)];
+alpha=100; <span class="comment">%Variance of prior (alpha=1/lambda)</span>
+
+<span class="comment">% Limits and grid size for contour plotting</span>
+Range= 8;
+Step=0.1;
+[w1,w2]=meshgrid(-Range:Step:Range,-Range:Step:Range);
+[n,n]=size(w1);
+W=[reshape(w1,n*n,1) reshape(w2,n*n,1)];
+</pre><h2>Plot data<a name="3"></a></h2><pre class="codeinput">figure; hold <span class="string">on</span>
+plot(X(find(t==1),1),X(find(t==1),2),<span class="string">'r.'</span>, <span class="string">'markersize'</span>, 10);
+plot(X(find(t==0),1),X(find(t==0),2),<span class="string">'bo'</span>, <span class="string">'markersize'</span>, 10);
+title(<span class="string">'data'</span>)
+
+
+<span class="comment">% Plot predictions for certain chosen valyes of w</span>
+Xgrid = W; <span class="comment">% grid of x1, x2 valyes</span>
+ws = [3 1; 4 2; 5 3; 7 3];
+[styles, colors, symbols, str] =  plotColors();
+<span class="keyword">for</span> ii=1:size(ws,1)
+  w = ws(ii,:)';
+  pred = 1./(1+exp(-Xgrid*w));
+  [cc,h]=contour(w1,w2,reshape(pred,[n,n]),1);
+  set(h, <span class="string">'linestyle'</span>, styles{ii}, <span class="string">'linecolor'</span>, colors(ii), <span class="string">'linewidth'</span>, 2);
+<span class="keyword">end</span>
+printPmtkFigure(<span class="string">'logregLaplaceGirolamiData'</span>)
+</pre><img vspace="5" hspace="5" src="logregLaplaceGirolamiDemo_01.png" alt=""> <h2>Plot prior, likelihood, posterior<a name="4"></a></h2><pre class="codeinput">f=W*X';
+Log_Prior = log(gaussProb(W, zeros(1,D), eye(D).*alpha));
+Log_Like = W*X'*t - sum(log(1+exp(f)),2);
+Log_Joint = Log_Like + Log_Prior;
+
+figure();
+contour(w1,w2,reshape(-Log_Prior,[n,n]),30);
+title(<span class="string">'Log-Prior'</span>);
+printPmtkFigure(<span class="string">'logregLaplaceGirolamiPrior'</span>)
+
+figure;
+contour(w1,w2,reshape(-Log_Like,[n,n]),30);
+title(<span class="string">'Log-Likelihood'</span>);
+hold <span class="string">on</span>
+<span class="comment">% Plot points corresponding to chosen lines</span>
+<span class="keyword">for</span> ii=1:size(ws,1)
+  w = ws(ii,:)';
+  text(w(1), w(2), sprintf(<span class="string">'%d'</span>, ii), <span class="string">'color'</span>, colors(ii), <span class="string">'fontsize'</span>, 14);
+<span class="keyword">end</span>
+grid <span class="string">on</span>
+<span class="comment">% Identify the parameters w1 &amp; w2 which are MLE</span>
+[i,j]=max(Log_Like);
+wmle = W(j,:) <span class="comment">% mle satisfies w1 = 2.35*w2 and is maximized</span>
+wmle(1)/wmle(2)
+<span class="comment">%plot(wmle(1), wmle(2),'.','MarkerSize',40);</span>
+line([0 wmle(1)], [0 wmle(2)], <span class="string">'linewidth'</span>, 2);
+printPmtkFigure(<span class="string">'logregLaplaceGirolamiNLL'</span>)
+
+figure;
+contour(w1,w2,reshape(-Log_Joint,[n,n]),30);
+title(<span class="string">'Log-Unnormalised Posterior'</span>)
+hold <span class="string">on</span>
+<span class="comment">% Identify the parameters w1 &amp; w2 which maximise the posterior (joint)</span>
+[i,j]=max(Log_Joint);
+plot(W(j,1),W(j,2),<span class="string">'.'</span>,<span class="string">'MarkerSize'</span>,40);
+printPmtkFigure(<span class="string">'logregLaplaceGirolamiPost'</span>)
+
+
+<span class="comment">% Compute the Laplace Approximation</span>
+<span class="comment">%model = logregBinaryFitL2IRLS(X, t, 1/alpha, false);</span>
+<span class="comment">%wMAP = model.w; C = model.C;</span>
+pp =  preprocessorCreate(<span class="string">'addOnes'</span>, false, <span class="string">'standardizeX'</span>, false);
+model = logregFitBayes(X, t, <span class="string">'method'</span>, <span class="string">'laplace'</span>, <span class="string">'lambda'</span>, 1/alpha, <span class="string">'preproc'</span>, pp);
+wMAP = model.wN;
+C = model.VN;
+Log_Laplace_Posterior = log(gaussProb(W, wMAP', C)+eps);
+
+figure;
+contour(w1,w2,reshape(-Log_Laplace_Posterior,[n,n]),30);
+hold <span class="string">on</span>
+plot(W(j,1),W(j,2),<span class="string">'.'</span>,<span class="string">'MarkerSize'</span>,40);
+title(<span class="string">'Laplace Approximation to Posterior'</span>)
+printPmtkFigure(<span class="string">'logregLaplaceGirolamiPostLaplace'</span>)
+</pre><pre class="codeoutput">wmle =
+    8.0000    3.4000
+ans =
+    2.3529
+</pre><img vspace="5" hspace="5" src="logregLaplaceGirolamiDemo_02.png" alt=""> <img vspace="5" hspace="5" src="logregLaplaceGirolamiDemo_03.png" alt=""> <img vspace="5" hspace="5" src="logregLaplaceGirolamiDemo_04.png" alt=""> <img vspace="5" hspace="5" src="logregLaplaceGirolamiDemo_05.png" alt=""> <h2>Plot the predictive distribution for logistic regression<a name="5"></a></h2><pre class="codeinput">figure;
+Xgrid = W; <span class="comment">% grid of x1, x2 valyes</span>
+pred = 1./(1+exp(-Xgrid*wMAP));
+contour(w1,w2,reshape(pred,[n,n]),30);
+hold <span class="string">on</span>
+plot(X(find(t==1),1),X(find(t==1),2),<span class="string">'r.'</span>);
+plot(X(find(t==0),1),X(find(t==0),2),<span class="string">'bo'</span>);
+title(<span class="string">'p(y=1|x, wMAP)'</span>)
+printPmtkFigure(<span class="string">'logregLaplaceGirolamiPlugin'</span>)
+
+<span class="comment">% Samples</span>
+figure;
+plot(X(find(t==1),1),X(find(t==1),2),<span class="string">'r.'</span>);
+hold <span class="string">on</span>
+plot(X(find(t==0),1),X(find(t==0),2),<span class="string">'bo'</span>);
+predMean = zeros(n*n,1);
+S = 100;
+<span class="keyword">for</span> i=1:S
+  wsamp = gaussSample(wMAP(:), C, 1)';
+  pred = 1./(1+exp(-Xgrid*wsamp));
+  predMean = predMean + pred;
+  contour(w1,w2,reshape(pred,[n,n]),[0.5 0.5]);
+<span class="keyword">end</span>
+title(<span class="string">'decision boundary for sampled w'</span>)
+printPmtkFigure(<span class="string">'logregLaplaceGirolamiSamples'</span>)
+
+<span class="comment">% MC</span>
+figure;
+predMean = predMean / S;
+contour(w1,w2,reshape(predMean,[n,n]),30);
+hold <span class="string">on</span>
+plot(X(find(t==1),1),X(find(t==1),2),<span class="string">'r.'</span>);
+plot(X(find(t==0),1),X(find(t==0),2),<span class="string">'bo'</span>);
+title(<span class="string">'MC approx of p(y=1|x)'</span>)
+printPmtkFigure(<span class="string">'logregLaplaceGirolamiMc'</span>)
+
+<span class="comment">% Numerical</span>
+figure;
+[yhat, pred] = logregPredictBayes(model, Xgrid,<span class="string">'moderated'</span>);
+contour(w1,w2,reshape(pred,[n,n]),30);
+hold <span class="string">on</span>
+plot(X(find(t==1),1),X(find(t==1),2),<span class="string">'r.'</span>);
+plot(X(find(t==0),1),X(find(t==0),2),<span class="string">'bo'</span>);
+title(<span class="string">'numerical approx of p(y=1|x)'</span>)
+printPmtkFigure(<span class="string">'logregLaplaceGirolamiModerated'</span>)
+</pre><img vspace="5" hspace="5" src="logregLaplaceGirolamiDemo_06.png" alt=""> <img vspace="5" hspace="5" src="logregLaplaceGirolamiDemo_07.png" alt=""> <img vspace="5" hspace="5" src="logregLaplaceGirolamiDemo_08.png" alt=""> <img vspace="5" hspace="5" src="logregLaplaceGirolamiDemo_09.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Example of the laplace approximation for logistic regression
+% Based on code written by Mark Girolami
+%%
+
+% This file is from pmtk3.googlecode.com
+
+setSeed(0);
+
+%% We generate data from two Gaussians:
+% x|C=1 ~ gauss([1,5], I)
+% x|C=0 ~ gauss([-5,1], 1.1I)
+N=30;
+D=2;
+mu1=[ones(N,1) 5*ones(N,1)];
+mu2=[-5*ones(N,1) 1*ones(N,1)];
+class1_std = 1;
+class2_std = 1.1;
+X = [class1_std*randn(N,2)+mu1;2*class2_std*randn(N,2)+mu2];
+t = [ones(N,1);zeros(N,1)];
+alpha=100; %Variance of prior (alpha=1/lambda)
+
+% Limits and grid size for contour plotting
+Range= 8;
+Step=0.1;
+[w1,w2]=meshgrid(-Range:Step:Range,-Range:Step:Range);
+[n,n]=size(w1);
+W=[reshape(w1,n*n,1) reshape(w2,n*n,1)];
+
+%% Plot data
+figure; hold on
+plot(X(find(t==1),1),X(find(t==1),2),'r.', 'markersize', 10);
+plot(X(find(t==0),1),X(find(t==0),2),'bo', 'markersize', 10);
+title('data')
+
+
+% Plot predictions for certain chosen valyes of w
+Xgrid = W; % grid of x1, x2 valyes
+ws = [3 1; 4 2; 5 3; 7 3];
+[styles, colors, symbols, str] =  plotColors();
+for ii=1:size(ws,1)
+  w = ws(ii,:)';
+  pred = 1./(1+exp(-Xgrid*w));
+  [cc,h]=contour(w1,w2,reshape(pred,[n,n]),1);
+  set(h, 'linestyle', styles{ii}, 'linecolor', colors(ii), 'linewidth', 2);
+end
+printPmtkFigure('logregLaplaceGirolamiData')
+
+%% Plot prior, likelihood, posterior
+f=W*X';
+Log_Prior = log(gaussProb(W, zeros(1,D), eye(D).*alpha));
+Log_Like = W*X'*t - sum(log(1+exp(f)),2); 
+Log_Joint = Log_Like + Log_Prior;
+
+figure();
+contour(w1,w2,reshape(-Log_Prior,[n,n]),30);
+title('Log-Prior');
+printPmtkFigure('logregLaplaceGirolamiPrior')
+
+figure;
+contour(w1,w2,reshape(-Log_Like,[n,n]),30);
+title('Log-Likelihood');
+hold on
+% Plot points corresponding to chosen lines
+for ii=1:size(ws,1)
+  w = ws(ii,:)';
+  text(w(1), w(2), sprintf('%d', ii), 'color', colors(ii), 'fontsize', 14);
+end
+grid on
+% Identify the parameters w1 & w2 which are MLE
+[i,j]=max(Log_Like);
+wmle = W(j,:) % mle satisfies w1 = 2.35*w2 and is maximized
+wmle(1)/wmle(2)
+%plot(wmle(1), wmle(2),'.','MarkerSize',40);
+line([0 wmle(1)], [0 wmle(2)], 'linewidth', 2);
+printPmtkFigure('logregLaplaceGirolamiNLL')
+
+figure;
+contour(w1,w2,reshape(-Log_Joint,[n,n]),30);
+title('Log-Unnormalised Posterior')
+hold on
+% Identify the parameters w1 & w2 which maximise the posterior (joint)
+[i,j]=max(Log_Joint);
+plot(W(j,1),W(j,2),'.','MarkerSize',40);
+printPmtkFigure('logregLaplaceGirolamiPost')
+
+
+% Compute the Laplace Approximation
+%model = logregBinaryFitL2IRLS(X, t, 1/alpha, false);
+%wMAP = model.w; C = model.C; 
+pp =  preprocessorCreate('addOnes', false, 'standardizeX', false);
+model = logregFitBayes(X, t, 'method', 'laplace', 'lambda', 1/alpha, 'preproc', pp);
+wMAP = model.wN;
+C = model.VN; 
+Log_Laplace_Posterior = log(gaussProb(W, wMAP', C)+eps);
+
+figure;
+contour(w1,w2,reshape(-Log_Laplace_Posterior,[n,n]),30);
+hold on
+plot(W(j,1),W(j,2),'.','MarkerSize',40);
+title('Laplace Approximation to Posterior')
+printPmtkFigure('logregLaplaceGirolamiPostLaplace')
+
+
+%% Plot the predictive distribution for logistic regression
+figure;
+Xgrid = W; % grid of x1, x2 valyes
+pred = 1./(1+exp(-Xgrid*wMAP));
+contour(w1,w2,reshape(pred,[n,n]),30);
+hold on
+plot(X(find(t==1),1),X(find(t==1),2),'r.');
+plot(X(find(t==0),1),X(find(t==0),2),'bo');
+title('p(y=1|x, wMAP)')
+printPmtkFigure('logregLaplaceGirolamiPlugin')
+
+% Samples
+figure;
+plot(X(find(t==1),1),X(find(t==1),2),'r.');
+hold on
+plot(X(find(t==0),1),X(find(t==0),2),'bo');
+predMean = zeros(n*n,1);
+S = 100;
+for i=1:S
+  wsamp = gaussSample(wMAP(:), C, 1)';
+  pred = 1./(1+exp(-Xgrid*wsamp));
+  predMean = predMean + pred;
+  contour(w1,w2,reshape(pred,[n,n]),[0.5 0.5]);
+end
+title('decision boundary for sampled w')
+printPmtkFigure('logregLaplaceGirolamiSamples')
+
+% MC 
+figure;
+predMean = predMean / S;
+contour(w1,w2,reshape(predMean,[n,n]),30);
+hold on
+plot(X(find(t==1),1),X(find(t==1),2),'r.');
+plot(X(find(t==0),1),X(find(t==0),2),'bo');
+title('MC approx of p(y=1|x)')
+printPmtkFigure('logregLaplaceGirolamiMc')
+
+% Numerical
+figure;
+[yhat, pred] = logregPredictBayes(model, Xgrid,'moderated');
+contour(w1,w2,reshape(pred,[n,n]),30);
+hold on
+plot(X(find(t==1),1),X(find(t==1),2),'r.');
+plot(X(find(t==0),1),X(find(t==0),2),'bo');
+title('numerical approx of p(y=1|x)')
+printPmtkFigure('logregLaplaceGirolamiModerated')
+
+##### SOURCE END #####
+--></body></html>

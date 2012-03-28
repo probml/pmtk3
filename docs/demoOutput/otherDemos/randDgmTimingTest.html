@@ -1,0 +1,346 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Compare inference method speed w.r.t model size</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="randDgmTimingTest.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Compare inference method speed w.r.t model size</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="comment">%PMTKslow</span>
+
+<span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+setSeed(2);
+
+methods    = {<span class="string">'libdaiJtree'</span>, <span class="string">'jtree'</span>, <span class="string">'varelim'</span>};
+names      = {<span class="string">'libDAI jtree'</span>, <span class="string">'PMTK jtree'</span>, <span class="string">'PMTK varelim'</span>};
+ntrials    = 5;
+nnodes     = 40;
+maxFanIn   = 3;
+maxFanOut  = 2;
+sparsityFactor = 0.01; <span class="comment">% higher = denser</span>
+nstates    = 5:5:50;
+
+
+nmethods = numel(methods);
+failed = zeros(nmethods, 1);
+data = zeros(nmethods, numel(nnodes), ntrials);
+i = 1;
+<span class="keyword">while</span> i &lt;= ntrials
+    <span class="comment">%try</span>
+    <span class="keyword">for</span> j=1:numel(nstates)
+        ns = nstates(j);
+        baseDgm = mkRndDgm(nnodes, maxFanIn, maxFanOut, <span class="keyword">...</span>
+            ns, sparsityFactor, <span class="string">'infEngine'</span>, <span class="string">'varelim'</span>);
+        belNodes = cell(nmethods, 1);
+        logZ     = zeros(nmethods, 1);
+        <span class="keyword">for</span> k=1:nmethods
+            method = methods{k};
+            fprintf(<span class="string">'trial=%d nstates=%d method=%s\n'</span>, i, ns, method);
+            tic;
+            dgm = dgmCreate(baseDgm.G, baseDgm.CPDs, <span class="string">'infEngine'</span>, method);
+            [belNodes{k}, logZ(k)] = dgmInferNodes(dgm);
+            t = toc;
+            data(k, j, i) = t;
+        <span class="keyword">end</span>
+        <span class="keyword">if</span>(~tfequal(belNodes{:}))
+            fprintf(2, <span class="string">'methods do not agree!\n'</span>);
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+    <span class="comment">%catch %#ok may run out of memory</span>
+    <span class="comment">%    failed(k) = failed(k) + 1;</span>
+    <span class="comment">%    fprintf(2, 'error encountered!\n');</span>
+    <span class="comment">%    continue;</span>
+    <span class="comment">%end</span>
+    i = i+1;
+<span class="keyword">end</span>
+
+
+meanTimes = mean(data, 3);
+stdTimes = std(data, 0, 3);
+[styles, colors, symbols, str] =  plotColors();
+f = figure(); hold <span class="string">on</span>;
+<span class="keyword">for</span> k=1:nmethods -1
+    <span class="comment">%plot(nstates, meanTimes(k, :), ['.-', colors(k)],...</span>
+    <span class="comment">%    'linewidth', 2.5, 'markersize', 20, 'displayname', names{k});</span>
+     errorbar(nstates, meanTimes(k, :), stdTimes(k, :), [<span class="string">'.-'</span>, colors(k)],<span class="keyword">...</span>
+             <span class="string">'linewidth'</span>, 2.5, <span class="string">'markersize'</span>, 20, <span class="string">'displayname'</span>, names{k});
+<span class="keyword">end</span>
+xlabel(<span class="string">'max number of states per node'</span>);
+ylabel(<span class="string">'mean time in seconds'</span>);
+
+
+legend(<span class="string">'location'</span>, <span class="string">'northwest'</span>);
+
+
+<span class="keyword">if</span> 0 <span class="comment">% compare w.r.t. # of nodes</span>
+    setSeed(0);
+    methods    = {<span class="string">'libdaiJtree'</span>, <span class="string">'jtree'</span>};
+    names      = {<span class="string">'libDAI jtree'</span>, <span class="string">'PMTK jtree'</span>};
+    ntrials    = 5;
+    nnodes     = 10:20:150;
+    maxFanIn   = 3;
+    maxFanOut  = 2;
+    sparsityFactor = 0.06; <span class="comment">% higher = denser</span>
+    nstates = 15;
+
+
+    nmethods = numel(methods);
+    failed = zeros(nmethods, 1);
+    data = zeros(nmethods, numel(nnodes), ntrials);
+    i = 1;
+    <span class="keyword">while</span> i &lt;= ntrials
+        <span class="comment">%try</span>
+        <span class="keyword">for</span> j=1:numel(nnodes)
+            nn = nnodes(j);
+            baseDgm = mkRndDgm(nn, maxFanIn, maxFanOut, <span class="keyword">...</span>
+                nstates, sparsityFactor, <span class="string">'infEngine'</span>, <span class="string">'varelim'</span>);
+            belNodes = cell(nmethods, 1);
+            <span class="keyword">for</span> k=1:nmethods
+                method = methods{k};
+                fprintf(<span class="string">'trial=%d nnodes=%d method=%s\n'</span>, i, nn, method);
+                tic;
+                dgm = dgmCreate(baseDgm.G, baseDgm.CPDs, <span class="string">'infEngine'</span>, method);
+                belNodes{k} = dgmInferNodes(dgm);
+                t = toc;
+                data(k, j, i) = t;
+            <span class="keyword">end</span>
+            <span class="keyword">if</span>(~tfequal(belNodes{:}))
+                fprintf(2, <span class="string">'methods do not agree!\n'</span>);
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+        <span class="comment">%catch %#ok may run out of memory</span>
+        <span class="comment">%    failed(k) = failed(k) + 1;</span>
+        <span class="comment">%    fprintf(2, 'error encountered!\n');</span>
+        <span class="comment">%    continue;</span>
+        <span class="comment">%end</span>
+        i = i+1;
+    <span class="keyword">end</span>
+
+
+    meanTimes = mean(data, 3);
+    stdTimes = std(data, 0, 3);
+    [styles, colors, symbols, str] =  plotColors();
+    f = figure(); hold <span class="string">on</span>;
+    <span class="keyword">for</span> k=1:nmethods
+        <span class="comment">%plot(nnodes, meanTimes(k, :), ['.-', colors(k)],...</span>
+        <span class="comment">%    'linewidth', 2.5, 'markersize', 20, 'displayname', names{k});</span>
+        errorbar(nnodes, meanTimes(k, :), stdTimes(k, :), [<span class="string">'.-'</span>, colors(k)],<span class="keyword">...</span>
+             <span class="string">'linewidth'</span>, 2.5, <span class="string">'markersize'</span>, 20, <span class="string">'displayname'</span>, names{k});
+    <span class="keyword">end</span>
+    xlabel(<span class="string">'number of nodes'</span>);
+    ylabel(<span class="string">'mean time in seconds'</span>);
+
+
+    legend(<span class="string">'location'</span>, <span class="string">'northwest'</span>);
+
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">trial=1 nstates=5 method=libdaiJtree
+</pre><pre class="codeoutput">Error using ==&gt; libdaiInfer at 23
+could not find dai.mexmaci64 - need to install libdai
+
+Error in ==&gt; dgmInferQuery at 156
+            [logZ, nodeBels, cliques, cliqueLookup] = libdaiInfer(factors, args{:});
+
+Error in ==&gt; dgmInferNodes at 45
+[nodeBels, logZ] = dgmInferQuery(dgm, num2cell(hidVars), 'doSlice', doSlice, varargin{:});
+
+Error in ==&gt; randDgmTimingTest at 37
+            [belNodes{k}, logZ(k)] = dgmInferNodes(dgm);
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Compare inference method speed w.r.t model size
+%
+%%
+%PMTKslow
+
+% This file is from pmtk3.googlecode.com
+
+setSeed(2);
+
+methods    = {'libdaiJtree', 'jtree', 'varelim'};
+names      = {'libDAI jtree', 'PMTK jtree', 'PMTK varelim'};
+ntrials    = 5;
+nnodes     = 40;
+maxFanIn   = 3;
+maxFanOut  = 2;
+sparsityFactor = 0.01; % higher = denser
+nstates    = 5:5:50;
+
+
+nmethods = numel(methods);
+failed = zeros(nmethods, 1);
+data = zeros(nmethods, numel(nnodes), ntrials);
+i = 1;
+while i <= ntrials
+    %try
+    for j=1:numel(nstates)
+        ns = nstates(j);
+        baseDgm = mkRndDgm(nnodes, maxFanIn, maxFanOut, ...
+            ns, sparsityFactor, 'infEngine', 'varelim');
+        belNodes = cell(nmethods, 1);
+        logZ     = zeros(nmethods, 1); 
+        for k=1:nmethods
+            method = methods{k};
+            fprintf('trial=%d nstates=%d method=%s\n', i, ns, method);
+            tic;
+            dgm = dgmCreate(baseDgm.G, baseDgm.CPDs, 'infEngine', method);
+            [belNodes{k}, logZ(k)] = dgmInferNodes(dgm);
+            t = toc;
+            data(k, j, i) = t;
+        end
+        if(~tfequal(belNodes{:}))
+            fprintf(2, 'methods do not agree!\n');
+        end
+    end
+    %catch %#ok may run out of memory
+    %    failed(k) = failed(k) + 1;
+    %    fprintf(2, 'error encountered!\n');
+    %    continue;
+    %end
+    i = i+1;
+end
+
+
+meanTimes = mean(data, 3);
+stdTimes = std(data, 0, 3);
+[styles, colors, symbols, str] =  plotColors();
+f = figure(); hold on;
+for k=1:nmethods -1
+    %plot(nstates, meanTimes(k, :), ['.-', colors(k)],...
+    %    'linewidth', 2.5, 'markersize', 20, 'displayname', names{k});
+     errorbar(nstates, meanTimes(k, :), stdTimes(k, :), ['.-', colors(k)],...
+             'linewidth', 2.5, 'markersize', 20, 'displayname', names{k});
+end
+xlabel('max number of states per node');
+ylabel('mean time in seconds');
+
+
+legend('location', 'northwest');
+
+
+if 0 % compare w.r.t. # of nodes
+    setSeed(0);
+    methods    = {'libdaiJtree', 'jtree'};
+    names      = {'libDAI jtree', 'PMTK jtree'};
+    ntrials    = 5;
+    nnodes     = 10:20:150;
+    maxFanIn   = 3;
+    maxFanOut  = 2;
+    sparsityFactor = 0.06; % higher = denser
+    nstates = 15; 
+    
+    
+    nmethods = numel(methods);
+    failed = zeros(nmethods, 1);
+    data = zeros(nmethods, numel(nnodes), ntrials);
+    i = 1;
+    while i <= ntrials
+        %try
+        for j=1:numel(nnodes)
+            nn = nnodes(j);
+            baseDgm = mkRndDgm(nn, maxFanIn, maxFanOut, ...
+                nstates, sparsityFactor, 'infEngine', 'varelim');
+            belNodes = cell(nmethods, 1);
+            for k=1:nmethods
+                method = methods{k};
+                fprintf('trial=%d nnodes=%d method=%s\n', i, nn, method);
+                tic;
+                dgm = dgmCreate(baseDgm.G, baseDgm.CPDs, 'infEngine', method);
+                belNodes{k} = dgmInferNodes(dgm);
+                t = toc;
+                data(k, j, i) = t;
+            end
+            if(~tfequal(belNodes{:}))
+                fprintf(2, 'methods do not agree!\n');
+            end
+        end
+        %catch %#ok may run out of memory
+        %    failed(k) = failed(k) + 1;
+        %    fprintf(2, 'error encountered!\n');
+        %    continue;
+        %end
+        i = i+1;
+    end
+    
+    
+    meanTimes = mean(data, 3);
+    stdTimes = std(data, 0, 3);
+    [styles, colors, symbols, str] =  plotColors();
+    f = figure(); hold on;
+    for k=1:nmethods
+        %plot(nnodes, meanTimes(k, :), ['.-', colors(k)],...
+        %    'linewidth', 2.5, 'markersize', 20, 'displayname', names{k});
+        errorbar(nnodes, meanTimes(k, :), stdTimes(k, :), ['.-', colors(k)],...
+             'linewidth', 2.5, 'markersize', 20, 'displayname', names{k});
+    end
+    xlabel('number of nodes');
+    ylabel('mean time in seconds');
+    
+    
+    legend('location', 'northwest');
+    
+end
+
+
+
+
+##### SOURCE END #####
+--></body></html>

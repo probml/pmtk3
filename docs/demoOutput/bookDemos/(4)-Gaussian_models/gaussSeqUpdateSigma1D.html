@@ -1,0 +1,204 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Sequential Updating of Sigma in 1d given fixed mean</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="gaussSeqUpdateSigma1D.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Sequential Updating of Sigma in 1d given fixed mean</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Prior</a></li><li><a href="#3">True model</a></li><li><a href="#4">Generate data</a></li><li><a href="#7">Update</a></li></ul></div><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+setSeed(1);
+</pre><h2>Prior<a name="2"></a></h2><pre class="codeinput">nu = 0.001;
+S  = 0.001;
+prior.Sigma = S;
+prior.dof   = nu;
+</pre><h2>True model<a name="3"></a></h2><pre class="codeinput">mutrue = 5;
+Ctrue = 10;
+mtrue.mu    = mutrue;
+mtrue.Sigma = Ctrue;
+</pre><h2>Generate data<a name="4"></a></h2><pre class="codeinput">n = 500;
+X = gaussSample(mtrue, n);
+</pre><pre class="codeinput">ns = [2 5 50 100];
+fig1 = figure(); hold <span class="string">on</span>;
+fig2 = figure();
+[styles, colors, symbols] =  plotColors();
+<span class="keyword">for</span> i=1:length(ns)
+</pre><pre class="codeinput">    n = ns(i);
+    data = X(1:n);
+    mu = mtrue.mu;
+    T0 = prior.Sigma;
+    v0 = prior.dof;
+</pre><h2>Update<a name="7"></a></h2><pre class="codeinput">    vn = v0 + n;
+    xbar = mean(data);
+    data = data - xbar;
+    XX = data'*data/n;
+    <span class="keyword">if</span> n &gt; 0
+        Tn = T0 + n*XX + n*(xbar-mu)*(xbar-mu)';
+    <span class="keyword">else</span>
+        Tn = T0;
+    <span class="keyword">end</span>
+    post.dof   = vn;
+    post.Sigma = Tn;
+</pre><pre class="codeinput">    figure(fig1);
+    xs = 0.1:0.1:15;
+    str = sprintf(<span class="string">'N=%d'</span>, n);
+    plot(xs, exp(invWishartLogprob(post, xs)), styles{i}, <span class="keyword">...</span>
+        <span class="string">'color'</span>, colors(i),<span class="string">'linewidth'</span>, 3, <span class="string">'displayname'</span>, str);
+    xlabel(<span class="string">'\sigma^2'</span>);
+</pre><img vspace="5" hspace="5" src="gaussSeqUpdateSigma1D_01.png" alt=""> <img vspace="5" hspace="5" src="gaussSeqUpdateSigma1D_03.png" alt=""> <img vspace="5" hspace="5" src="gaussSeqUpdateSigma1D_05.png" alt=""> <img vspace="5" hspace="5" src="gaussSeqUpdateSigma1D_07.png" alt=""> <pre class="codeinput">    <span class="keyword">if</span> statsToolboxInstalled
+        <span class="keyword">if</span>  nu&lt;1 &amp;&amp; n==0 <span class="comment">% improper prior, cannot sample from it</span>
+            <span class="keyword">continue</span>;
+        <span class="keyword">end</span>
+        figure(fig2); subplot(length(ns),1,i);
+        model.a = post.dof/2;
+        model.b = post.Sigma/2;
+        XX = invGammaSample(model, 100);
+        hist(XX)
+        title(str)
+        suptitle(<span class="string">'samples from X'</span>);
+    <span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="gaussSeqUpdateSigma1D_02.png" alt=""> <img vspace="5" hspace="5" src="gaussSeqUpdateSigma1D_04.png" alt=""> <img vspace="5" hspace="5" src="gaussSeqUpdateSigma1D_06.png" alt=""> <img vspace="5" hspace="5" src="gaussSeqUpdateSigma1D_08.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
+figure(fig1);
+legend(<span class="string">'location'</span>, <span class="string">'northwest'</span>);
+titlestr = sprintf(<span class="string">'prior = IW(%s=%5.3f, S=%5.3f), true %s=%5.3f'</span>, <span class="keyword">...</span>
+                   <span class="string">'\nu'</span>, nu, S, <span class="string">'\sigma^2'</span>, Ctrue);
+title(titlestr)
+printPmtkFigure <span class="string">sigmaPost</span>;
+figure(fig2);
+suptitle(titlestr);
+</pre><img vspace="5" hspace="5" src="gaussSeqUpdateSigma1D_09.png" alt=""> <img vspace="5" hspace="5" src="gaussSeqUpdateSigma1D_10.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Sequential Updating of Sigma in 1d given fixed mean
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+setSeed(1);
+%% Prior
+nu = 0.001; 
+S  = 0.001;
+prior.Sigma = S;
+prior.dof   = nu;
+%% True model
+% 
+mutrue = 5; 
+Ctrue = 10;
+mtrue.mu    = mutrue;
+mtrue.Sigma = Ctrue;
+%% Generate data
+n = 500;
+X = gaussSample(mtrue, n);
+%%
+ns = [2 5 50 100];
+fig1 = figure(); hold on;
+fig2 = figure();
+[styles, colors, symbols] =  plotColors();
+for i=1:length(ns)
+    n = ns(i);
+    data = X(1:n);
+    mu = mtrue.mu;
+    T0 = prior.Sigma;
+    v0 = prior.dof;
+    %% Update
+    vn = v0 + n;
+    xbar = mean(data);
+    data = data - xbar;
+    XX = data'*data/n;
+    if n > 0
+        Tn = T0 + n*XX + n*(xbar-mu)*(xbar-mu)';
+    else
+        Tn = T0;
+    end
+    post.dof   = vn;
+    post.Sigma = Tn;
+    %%
+    figure(fig1);
+    xs = 0.1:0.1:15;
+    str = sprintf('N=%d', n);
+    plot(xs, exp(invWishartLogprob(post, xs)), styles{i}, ...
+        'color', colors(i),'linewidth', 3, 'displayname', str);
+    xlabel('\sigma^2');
+    %%
+    if statsToolboxInstalled 
+        if  nu<1 && n==0 % improper prior, cannot sample from it
+            continue;
+        end 
+        figure(fig2); subplot(length(ns),1,i);
+        model.a = post.dof/2;
+        model.b = post.Sigma/2;
+        XX = invGammaSample(model, 100);
+        hist(XX)
+        title(str)
+        suptitle('samples from X');
+    end
+end
+figure(fig1);
+legend('location', 'northwest');
+titlestr = sprintf('prior = IW(%s=%5.3f, S=%5.3f), true %s=%5.3f', ...
+                   '\nu', nu, S, '\sigma^2', Ctrue);
+title(titlestr)
+printPmtkFigure sigmaPost;
+figure(fig2); 
+suptitle(titlestr);
+
+##### SOURCE END #####
+--></body></html>

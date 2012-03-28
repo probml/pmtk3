@@ -1,0 +1,188 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>covariance matrix shrinkage Demo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="shrinkcovDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>covariance matrix shrinkage Demo</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+setSeed(0);
+d = 50;
+<span class="comment">%Sigma = randpd(d);</span>
+condnumber = 10; a = randn(d,1);
+[Sigma] = covcond(condnumber,a); <span class="comment">% create matrix with specified condnum</span>
+evalsTrue = sort(eig(Sigma),<span class="string">'descend'</span>);
+mu = zeros(1,d);
+f = [2 1 1/2]; <span class="comment">% fraction of d</span>
+condNumMLE = zeros(1,3); condNumShrink = zeros(1,3);
+figure;
+<span class="keyword">for</span> i=1:length(f)
+    n = f(i)*d;
+    X = gaussSample(mu, Sigma, n);
+    Smle = cov(X);
+    evalsMle = sort(eig(Smle),<span class="string">'descend'</span>);
+    lambda = 0.9;
+    Sshrink = lambda*diag(diag(Smle)) + (1-lambda)*Smle;
+    evalsShrink = sort(eig(Sshrink),<span class="string">'descend'</span>);
+    <span class="comment">%figure;</span>
+    subplot(1,3,i)
+    hold <span class="string">on</span>
+    ndx = 1:2:d;
+    <span class="keyword">if</span> 1
+        <span class="comment">%plot(evalsTrue(ndx), 'k-o', 'linewidth', 2, 'markersize', 8);</span>
+        <span class="comment">%plot(evalsMle(ndx), 'b-x', 'linewidth', 2, 'markersize', 8);</span>
+        <span class="comment">%plot(evalsShrink(ndx), 'r:s', 'linewidth', 2, 'markersize', 8);</span>
+
+         plot(evalsTrue(ndx), <span class="string">'k-'</span>, <span class="string">'linewidth'</span>, 3);
+        plot(evalsMle(ndx), <span class="string">'b:'</span>, <span class="string">'linewidth'</span>, 3);
+        plot(evalsShrink(ndx), <span class="string">'r-.'</span>, <span class="string">'linewidth'</span>, 3);
+
+        ylabel(<span class="string">'eigenvalue'</span>)
+        fname = sprintf(<span class="string">'covshrinkDemoN%d'</span>, n);
+    <span class="keyword">else</span>
+        plot(log(evalsTrue(ndx)), <span class="string">'k-o'</span>, <span class="string">'linewidth'</span>, 2, <span class="string">'markersize'</span>, 8);
+        z=log(evalsMle(ndx));
+        <span class="keyword">for</span> ii=1:length(z), <span class="keyword">if</span> ~isreal(z(ii)), z(ii)=nan; <span class="keyword">end</span>; <span class="keyword">end</span>
+        plot(z, <span class="string">'b-x'</span>, <span class="string">'linewidth'</span>, 2, <span class="string">'markersize'</span>, 12);
+        plot(log(evalsShrink(ndx)), <span class="string">'r:s'</span>, <span class="string">'linewidth'</span>, 2, <span class="string">'markersize'</span>, 8);
+        ylabel(<span class="string">'log(eigenvalue)'</span>)
+        fname = sprintf(<span class="string">'covshrinkDemoLogN%d'</span>, n);
+    <span class="keyword">end</span>
+    <span class="comment">%legend('true', 'mle', 'shrinkage')</span>
+    legendStr{1} = sprintf(<span class="string">'true, k=%4.2f'</span>, cond(Sigma));
+    legendStr{2} = sprintf(<span class="string">'MLE, k=%4.2g'</span>, cond(Smle));
+    legendStr{3} = sprintf(<span class="string">'MAP, k=%4.2f'</span>, cond(Sshrink));
+    legend(legendStr, <span class="string">'fontsize'</span>, 12)
+    title(sprintf(<span class="string">'N=%d, D=%d'</span>, n, d))
+
+    <span class="comment">%axis_pct</span>
+    set(gca, <span class="string">'ylim'</span>, [0 1.5])
+    <span class="comment">%printPmtkFigure(fname);</span>
+<span class="keyword">end</span>
+printPmtkFigure(<span class="string">'covshrinkDemo'</span>);
+</pre><img vspace="5" hspace="5" src="shrinkcovDemo_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% covariance matrix shrinkage Demo
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+setSeed(0);
+d = 50;
+%Sigma = randpd(d);
+condnumber = 10; a = randn(d,1);
+[Sigma] = covcond(condnumber,a); % create matrix with specified condnum
+evalsTrue = sort(eig(Sigma),'descend');
+mu = zeros(1,d);
+f = [2 1 1/2]; % fraction of d
+condNumMLE = zeros(1,3); condNumShrink = zeros(1,3);
+figure;
+for i=1:length(f)
+    n = f(i)*d;
+    X = gaussSample(mu, Sigma, n);
+    Smle = cov(X);
+    evalsMle = sort(eig(Smle),'descend');
+    lambda = 0.9;
+    Sshrink = lambda*diag(diag(Smle)) + (1-lambda)*Smle;
+    evalsShrink = sort(eig(Sshrink),'descend');
+    %figure;
+    subplot(1,3,i)
+    hold on
+    ndx = 1:2:d;
+    if 1
+        %plot(evalsTrue(ndx), 'k-o', 'linewidth', 2, 'markersize', 8);
+        %plot(evalsMle(ndx), 'b-x', 'linewidth', 2, 'markersize', 8);
+        %plot(evalsShrink(ndx), 'r:s', 'linewidth', 2, 'markersize', 8);
+        
+         plot(evalsTrue(ndx), 'k-', 'linewidth', 3);
+        plot(evalsMle(ndx), 'b:', 'linewidth', 3);
+        plot(evalsShrink(ndx), 'r-.', 'linewidth', 3);
+        
+        ylabel('eigenvalue')
+        fname = sprintf('covshrinkDemoN%d', n);
+    else
+        plot(log(evalsTrue(ndx)), 'k-o', 'linewidth', 2, 'markersize', 8);
+        z=log(evalsMle(ndx));
+        for ii=1:length(z), if ~isreal(z(ii)), z(ii)=nan; end; end
+        plot(z, 'b-x', 'linewidth', 2, 'markersize', 12);
+        plot(log(evalsShrink(ndx)), 'r:s', 'linewidth', 2, 'markersize', 8);
+        ylabel('log(eigenvalue)')
+        fname = sprintf('covshrinkDemoLogN%d', n);
+    end
+    %legend('true', 'mle', 'shrinkage')
+    legendStr{1} = sprintf('true, k=%4.2f', cond(Sigma));
+    legendStr{2} = sprintf('MLE, k=%4.2g', cond(Smle));
+    legendStr{3} = sprintf('MAP, k=%4.2f', cond(Sshrink));
+    legend(legendStr, 'fontsize', 12)
+    title(sprintf('N=%d, D=%d', n, d))
+    
+    %axis_pct
+    set(gca, 'ylim', [0 1.5])
+    %printPmtkFigure(fname);
+end
+printPmtkFigure('covshrinkDemo');
+
+
+
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,197 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Least means squares (Widrow-Hoff) Demo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="LMSdemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Least means squares (Widrow-Hoff) Demo</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+[X,y]=contoursSSEdemo; <span class="comment">% makes data X, y and plots surface</span>
+
+d = 2;
+w0 = [-0.5;2]; <span class="comment">% randn(d,1);</span>
+
+options.batchsize = 1;
+options.verbose = true;
+options.storeParamTrace = true;
+options.storeFvalTrace = true;
+options.maxUpdates = 20;
+
+
+lambda = 0;
+<span class="comment">%funObjXy = @(w,X,y) penalizedL2(w, @(ww) LinregLossScaled(ww, X, y), lambda);</span>
+funObjXy = @(ww,XX,yy) LinregLossScaled(ww, XX, yy);
+funObj = @(w) funObjXy(w, X, y);
+
+<span class="comment">% batch</span>
+<span class="comment">% [x,f,exitflag,output] = minFunc(funObj,x0,options,varargin)</span>
+opt.verbose = <span class="string">'none'</span>;
+opt.method = <span class="string">'lbfgs'</span>
+opt.derivativeCheck = <span class="string">'on'</span>;
+[wopt, fopt, exitflag, outputOpt] = minfunc(funObj, w0, opt);
+outputOpt.trace.fval'
+what = X\y
+
+[w, f, exitflag, output] = stochgradSimple(funObjXy, w0, options, X, y);
+trace = output.trace;
+[fvalTraceAvg, fvalTrace] = stochgradTracePostprocess(trace, funObjXy, X, y);
+
+contoursSSEdemo(true);
+whist2 = trace.params';
+hold <span class="string">on</span>
+plot(whist2(1,:), whist2(2,:), <span class="string">'ko-'</span>, <span class="string">'linewidth'</span>,2);
+title(<span class="string">'black line = LMS trajectory towards LS soln (red cross)'</span>)
+printPmtkFigure(<span class="string">'lmsTraj'</span>)
+
+
+figure;
+plot(fvalTrace, <span class="string">'ko-'</span>, <span class="string">'linewidth'</span>, 2);
+title(<span class="string">'obj vs iteration'</span>)
+horizontalLine(fopt, <span class="string">'linewidth'</span>, 2);
+printPmtkFigure(<span class="string">'lmsRssHist'</span>)
+
+<span class="keyword">if</span> 0
+figure;
+plot(trace.stepSize, <span class="string">'ko-'</span>, <span class="string">'linewidth'</span>, 2);
+title(<span class="string">'stepsize vs iteration'</span>)
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">opt = 
+    verbose: 'none'
+     method: 'lbfgs'
+Checking Gradient:
+Max difference between user and numerical gradient: 0.000002
+ Iteration   FunEvals     Step Length    Function Val        Opt Cond
+         1          2     3.73813e-01    -1.17733e+00     1.13602e+00
+         2          3     1.00000e+00    -2.13813e+00     2.10001e-01
+         3          4     1.00000e+00    -2.14456e+00     1.92747e-01
+         4          5     1.00000e+00    -2.15709e+00     1.05161e-05
+Directional Derivative below progTol
+ans =
+  Columns 1 through 4
+   -0.0123   -1.1773   -2.1381   -2.1446
+  Column 5
+   -2.1571
+what =
+    1.4530
+    0.9278
+20 batches of size 1
+epoch 1
+</pre><img vspace="5" hspace="5" src="LMSdemo_01.png" alt=""> <img vspace="5" hspace="5" src="LMSdemo_02.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Least means squares (Widrow-Hoff) Demo
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+[X,y]=contoursSSEdemo; % makes data X, y and plots surface
+
+d = 2;
+w0 = [-0.5;2]; % randn(d,1);
+
+options.batchsize = 1;
+options.verbose = true;
+options.storeParamTrace = true;
+options.storeFvalTrace = true;
+options.maxUpdates = 20;
+
+
+lambda = 0;
+%funObjXy = @(w,X,y) penalizedL2(w, @(ww) LinregLossScaled(ww, X, y), lambda);
+funObjXy = @(ww,XX,yy) LinregLossScaled(ww, XX, yy);
+funObj = @(w) funObjXy(w, X, y);
+
+% batch
+% [x,f,exitflag,output] = minFunc(funObj,x0,options,varargin)
+opt.verbose = 'none';
+opt.method = 'lbfgs'
+opt.derivativeCheck = 'on';
+[wopt, fopt, exitflag, outputOpt] = minfunc(funObj, w0, opt);
+outputOpt.trace.fval'
+what = X\y
+
+[w, f, exitflag, output] = stochgradSimple(funObjXy, w0, options, X, y);
+trace = output.trace; 
+[fvalTraceAvg, fvalTrace] = stochgradTracePostprocess(trace, funObjXy, X, y);
+ 
+contoursSSEdemo(true);
+whist2 = trace.params';
+hold on
+plot(whist2(1,:), whist2(2,:), 'ko-', 'linewidth',2);
+title('black line = LMS trajectory towards LS soln (red cross)')
+printPmtkFigure('lmsTraj')
+
+
+figure;
+plot(fvalTrace, 'ko-', 'linewidth', 2);
+title('obj vs iteration')
+horizontalLine(fopt, 'linewidth', 2);
+printPmtkFigure('lmsRssHist')
+
+if 0
+figure;
+plot(trace.stepSize, 'ko-', 'linewidth', 2);
+title('stepsize vs iteration')
+end
+
+##### SOURCE END #####
+--></body></html>

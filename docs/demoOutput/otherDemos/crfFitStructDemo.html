@@ -1,0 +1,602 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>crfFitStructDemo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="crfFitStructDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Learn the structure of a small CRF using group L1 regularization</a></li><li><a href="#2">Parameters of Experiment</a></li><li><a href="#3">Generate data</a></li><li><a href="#4">Mark's code</a></li><li><a href="#5">PMTK interface</a></li><li><a href="#6">Now compare Mark's brute force inference with jtree</a></li></ul></div><h2>Learn the structure of a small CRF using group L1 regularization<a name="1"></a></h2><p>We compare our resutls to 'example_UGMlearn' from <a href="http://www.cs.ubc.ca/~murphyk/Software/L1CRF/index.html">http://www.cs.ubc.ca/~murphyk/Software/L1CRF/index.html</a></p><pre class="codeinput">clear <span class="string">all</span>
+close <span class="string">all</span>
+display = 1; <span class="comment">% Set to 0 if you don't want to draw the graphs</span>
+</pre><h2>Parameters of Experiment<a name="2"></a></h2><pre class="codeinput">rand(<span class="string">'state'</span>,0); randn(<span class="string">'state'</span>,0);
+nTrain = 500; <span class="comment">% number of examples to use for training</span>
+nTest = 1000; <span class="comment">% number of examples to use for test</span>
+nFeatures = 5; <span class="comment">% 10; % number of features for each node</span>
+nNodes = 10; <span class="comment">% number of nodes</span>
+nStates = 2; <span class="comment">% number of states that each can take</span>
+edgeProb = .5; <span class="comment">% probability of each edge being included in the graph</span>
+edgeType = 1; <span class="comment">% set to 0 to make the edge features normally distributed</span>
+ising = 0; <span class="comment">% set to 1 to use ising potentials</span>
+trainType = <span class="string">'pseudo'</span>; <span class="comment">% set to 'pseudo' for pseudo-likelihood, 'loopy' for loopy belief propagation, 'exact' for 'exact inference</span>
+testType = <span class="string">'exact'</span>; <span class="comment">% set to 'loopy' to test with loopy belief propagation, 'exact' for exact inference</span>
+structureSeed = 0; <span class="comment">% change this to generate different structures</span>
+trainSeed = 0; <span class="comment">% vary seed from 0:9 to get paper results</span>
+useMex = 1; <span class="comment">% use mex files in UGM to speed things up</span>
+
+<span class="comment">% Regularization Parameters</span>
+lambdaNode = 10;
+lambdaEdge = 10;
+<span class="comment">% In the paper, we picked these two values by two-fold</span>
+<span class="comment">% cross-validation, testing the values 2.^[7:-1:-5] for each model</span>
+<span class="comment">% In the paper, we also used warm-starting to speed up the optimization</span>
+<span class="comment">%   for this sequence of values</span>
+</pre><h2>Generate data<a name="3"></a></h2><pre class="codeinput">fprintf(<span class="string">'Generating Synthetic CRF Data...\n'</span>);
+rand(<span class="string">'state'</span>,structureSeed);
+randn(<span class="string">'state'</span>,structureSeed);
+nInstances = nTrain+nTest;
+tied = 0;
+[y,adjTrue,X] = UGM_generate(nInstances,nFeatures,nNodes,edgeProb,nStates,ising,tied,edgeType);
+
+<span class="comment">% X: Ncases * Nfeatures * Nnodes (real)</span>
+<span class="comment">% y: Ncases * Nnodes (1,2)</span>
+
+[Ncases Nfeatures Nnodes] = size(X);
+<span class="keyword">if</span> true
+  <span class="comment">% mrf mode</span>
+  X = zeros(Ncases, 0, Nnodes);
+<span class="keyword">end</span>
+
+rand(<span class="string">'state'</span>,trainSeed);
+randn(<span class="string">'state'</span>,trainSeed);
+perm = randperm(nInstances);
+trainNdx = perm(1:nTrain);
+testNdx = perm(nTrain+1:end);
+
+<span class="keyword">if</span> isscalar(nStates)
+    nStates = repmat(nStates,[nNodes 1]);
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">Generating Synthetic CRF Data...
+Exact Sampling
+</pre><h2>Mark's code<a name="4"></a></h2><pre class="codeinput">subDisplay = false;
+type = <span class="string">'Discriminative L1: L1-L2'</span>;
+edgePenaltyType = <span class="string">'L1-L2'</span>; <span class="comment">% Train with L1 regularization on the edges</span>
+adjInit = fullAdjMatrix(nNodes);
+example_UGMlearnSub <span class="comment">% script computes adjFinal, nodeWeights, edgeWeights</span>
+</pre><pre class="codeoutput">
+
+Training Discriminative L1: L1-L2...
+ Iteration   FunEvals Projections     Step Length    Function Val        Opt Cond
+         1          2          4     1.49689e-04     3.44107e+03     9.99459e+01
+         2          3          6     1.00000e+00     3.27963e+03     6.49235e+01
+         3          4          8     1.00000e+00     3.22110e+03     4.10672e+01
+         4          5         10     1.00000e+00     3.18503e+03     4.42525e+01
+         5          6         12     1.00000e+00     3.17784e+03     3.85417e+01
+         6          7         14     1.00000e+00     3.15389e+03     3.10671e+01
+         7          8         16     1.00000e+00     3.14352e+03     2.66230e+01
+         8          9         18     1.00000e+00     3.13948e+03     2.42738e+01
+         9         10         20     1.00000e+00     3.12115e+03     1.23050e+01
+        10         11         22     1.00000e+00     3.11605e+03     1.84162e+01
+        11         12         24     1.00000e+00     3.32101e+03     1.17571e+02
+        12         13         26     1.00000e+00     3.13043e+03     2.99799e+01
+        13         14         28     1.00000e+00     3.11372e+03     8.18686e+00
+        14         15         30     1.00000e+00     3.11199e+03     9.32518e+00
+        15         16         32     1.00000e+00     3.10804e+03     1.04841e+01
+        16         17         34     1.00000e+00     3.12605e+03     3.46986e+01
+        17         18         36     1.00000e+00     3.20040e+03     7.81140e+01
+        18         19         38     1.00000e+00     3.10877e+03     1.35647e+01
+        19         20         40     1.00000e+00     3.10421e+03     5.92573e+00
+        20         21         42     1.00000e+00     3.10322e+03     7.16033e+00
+        21         22         44     1.00000e+00     3.10127e+03     5.31623e+00
+        22         23         46     1.00000e+00     3.10971e+03     3.58541e+01
+        23         24         48     1.00000e+00     3.10471e+03     1.33085e+01
+        24         25         50     1.00000e+00     3.09986e+03     7.34258e+00
+        25         26         52     1.00000e+00     3.09956e+03     6.07788e+00
+        26         27         54     1.00000e+00     3.09930e+03     5.66370e+00
+        27         28         56     1.00000e+00     3.10090e+03     1.86948e+01
+        28         30         58     1.33254e-01     3.09816e+03     3.94713e+00
+        29         31         60     1.00000e+00     3.09712e+03     2.15570e+00
+        30         32         62     1.00000e+00     3.09693e+03     5.80736e+00
+        31         33         64     1.00000e+00     3.09700e+03     4.32281e+00
+        32         34         66     1.00000e+00     3.09674e+03     3.70552e+00
+        33         35         68     1.00000e+00     3.09667e+03     2.43071e+00
+        34         36         70     1.00000e+00     3.09664e+03     2.41303e+00
+        35         37         72     1.00000e+00     3.09653e+03     2.15551e+00
+        36         38         74     1.00000e+00     3.09731e+03     1.48514e+01
+        37         40         76     1.01066e-01     3.09625e+03     1.56750e+00
+        38         41         78     1.00000e+00     3.09590e+03     1.24510e+00
+        39         42         80     1.00000e+00     3.09586e+03     1.36284e+00
+        40         43         82     1.00000e+00     3.09580e+03     1.31049e+00
+        41         44         84     1.00000e+00     3.09628e+03     7.01241e+00
+        42         45         86     1.00000e+00     3.09597e+03     4.82141e+00
+        43         46         88     1.00000e+00     3.09571e+03     1.02476e+00
+        44         47         90     1.00000e+00     3.09570e+03     1.12160e+00
+        45         48         92     1.00000e+00     3.09569e+03     1.11125e+00
+        46         49         94     1.00000e+00     3.09656e+03     1.05210e+01
+        47         51         96     1.14444e-01     3.09568e+03     1.49954e+00
+        48         52         98     1.00000e+00     3.09542e+03     6.06801e-01
+        49         53        100     1.00000e+00     3.09540e+03     8.89282e-01
+        50         54        102     1.00000e+00     3.09540e+03     1.62399e+00
+        51         55        104     1.00000e+00     3.09538e+03     9.84823e-01
+        52         56        106     1.00000e+00     3.09537e+03     2.78877e-01
+        53         57        108     1.00000e+00     3.09537e+03     2.79400e-01
+        54         58        110     1.00000e+00     3.09535e+03     5.01579e-01
+        55         59        112     1.00000e+00     3.09544e+03     3.24012e+00
+        56         60        114     1.00000e+00     3.09654e+03     1.12553e+01
+        57         61        116     1.00000e+00     3.09542e+03     2.52120e+00
+        58         62        118     1.00000e+00     3.09533e+03     7.57555e-01
+        59         63        120     1.00000e+00     3.09532e+03     5.19970e-01
+        60         64        122     1.00000e+00     3.09531e+03     4.83736e-01
+        61         65        124     1.00000e+00     3.09531e+03     2.11377e-01
+        62         66        126     1.00000e+00     3.09532e+03     1.19728e+00
+        63         67        128     1.00000e+00     3.09532e+03     1.36172e+00
+        64         68        130     1.00000e+00     3.09530e+03     3.71524e-01
+        65         69        132     1.00000e+00     3.09530e+03     2.72443e-01
+        66         70        134     1.00000e+00     3.09530e+03     2.88155e-01
+        67         71        136     1.00000e+00     3.09529e+03     8.59081e-01
+        68         73        138     7.98986e-02     3.09529e+03     1.65896e-01
+        69         74        140     1.00000e+00     3.09528e+03     2.26955e-01
+        70         75        142     1.00000e+00     3.09528e+03     1.73712e-01
+        71         76        144     1.00000e+00     3.09528e+03     3.36021e-01
+        72         77        146     1.00000e+00     3.09528e+03     7.45584e-01
+        73         78        148     1.00000e+00     3.09528e+03     1.87432e-01
+        74         79        150     1.00000e+00     3.09528e+03     1.89404e-01
+        75         80        152     1.00000e+00     3.09528e+03     1.89563e-01
+        76         82        154     1.06437e-01     3.09528e+03     3.23465e-01
+        77         84        156     1.20825e-01     3.09528e+03     1.75959e-01
+        78         85        158     1.00000e+00     3.09528e+03     1.52636e-01
+        79         86        160     1.00000e+00     3.09528e+03     2.26179e-01
+        80         87        162     1.00000e+00     3.09528e+03     7.49284e-01
+        81         88        164     1.00000e+00     3.09528e+03     5.63311e-01
+        82         89        166     1.00000e+00     3.09527e+03     1.54734e-01
+        83         90        168     1.00000e+00     3.09527e+03     1.51230e-01
+        84         91        170     1.00000e+00     3.09527e+03     1.29883e-01
+        85         93        172     1.58920e-02     3.09527e+03     1.72649e-01
+        86         95        174     2.03324e-01     3.09527e+03     1.81885e-01
+        87         96        176     1.00000e+00     3.09527e+03     9.82070e-02
+        88         97        178     1.00000e+00     3.09527e+03     1.76051e-01
+        89         98        180     1.00000e+00     3.09527e+03     2.32612e-01
+        90         99        182     1.00000e+00     3.09527e+03     1.43969e-01
+        91        100        184     1.00000e+00     3.09527e+03     1.24713e-01
+        92        101        186     1.00000e+00     3.09527e+03     1.25132e-01
+        93        102        188     1.00000e+00     3.09527e+03     7.81688e-02
+        94        104        190     4.32014e-02     3.09527e+03     1.04504e-01
+        95        105        192     1.00000e+00     3.09527e+03     3.79168e-01
+        96        106        194     1.00000e+00     3.09527e+03     4.23505e-01
+        97        107        196     1.00000e+00     3.09527e+03     1.06341e-01
+        98        108        198     1.00000e+00     3.09527e+03     1.08128e-01
+        99        109        200     1.00000e+00     3.09527e+03     1.01099e-01
+       100        111        202     2.35918e-02     3.09527e+03     1.30616e-01
+       101        113        204     2.08185e-01     3.09527e+03     1.31570e-01
+       102        114        206     1.00000e+00     3.09527e+03     7.15440e-02
+       103        115        208     1.00000e+00     3.09527e+03     1.35775e-01
+       104        116        210     1.00000e+00     3.09527e+03     1.94800e-01
+       105        117        212     1.00000e+00     3.09527e+03     1.22904e-01
+       106        118        214     1.00000e+00     3.09526e+03     9.12969e-02
+       107        119        216     1.00000e+00     3.09526e+03     9.02853e-02
+       108        120        218     1.00000e+00     3.09526e+03     5.50990e-02
+       109        122        220     2.88617e-02     3.09526e+03     7.51344e-02
+       110        123        222     1.00000e+00     3.09526e+03     1.03857e-01
+       111        124        224     1.00000e+00     3.09526e+03     2.19022e-01
+       112        125        226     1.00000e+00     3.09526e+03     8.33903e-02
+       113        126        228     1.00000e+00     3.09526e+03     7.75919e-02
+       114        127        230     1.00000e+00     3.09526e+03     7.75951e-02
+       115        128        232     1.00000e+00     3.09526e+03     1.62809e-01
+       116        130        234     3.35350e-02     3.09526e+03     3.37639e-02
+       117        131        236     1.00000e+00     3.09526e+03     7.40274e-02
+       118        132        238     1.00000e+00     3.09526e+03     4.54485e-02
+       119        133        240     1.00000e+00     3.09526e+03     1.28307e-01
+       120        134        242     1.00000e+00     3.09526e+03     1.46823e-01
+       121        135        244     1.00000e+00     3.09526e+03     5.49663e-02
+       122        136        246     1.00000e+00     3.09526e+03     5.54164e-02
+       123        137        248     1.00000e+00     3.09526e+03     5.46669e-02
+       124        139        250     3.99442e-02     3.09526e+03     7.03496e-02
+       125        141        252     1.78794e-01     3.09526e+03     6.13217e-02
+       126        142        254     1.00000e+00     3.09526e+03     4.09646e-02
+       127        143        256     1.00000e+00     3.09526e+03     5.95709e-02
+       128        144        258     1.00000e+00     3.09526e+03     1.07059e-01
+       129        145        260     1.00000e+00     3.09526e+03     8.09576e-02
+       130        146        262     1.00000e+00     3.09526e+03     4.66861e-02
+       131        147        264     1.00000e+00     3.09526e+03     4.62810e-02
+       132        148        266     1.00000e+00     3.09526e+03     3.61504e-02
+       133        150        268     4.15274e-02     3.09526e+03     4.95010e-02
+       134        152        270     1.27197e-01     3.09526e+03     3.94547e-02
+       135        153        272     1.00000e+00     3.09526e+03     3.76485e-02
+       136        154        274     1.00000e+00     3.09526e+03     3.78288e-02
+       137        155        276     1.00000e+00     3.09526e+03     7.72639e-02
+       138        156        278     1.00000e+00     3.09526e+03     4.50638e-02
+       139        157        280     1.00000e+00     3.09526e+03     3.72090e-02
+       140        158        282     1.00000e+00     3.09526e+03     3.68919e-02
+       141        159        284     1.00000e+00     3.09526e+03     1.80532e-02
+       142        161        286     3.50400e-02     3.09526e+03     3.39020e-02
+       143        162        288     1.00000e+00     3.09526e+03     1.41594e-01
+       144        163        290     1.00000e+00     3.09526e+03     1.57712e-01
+       145        164        292     1.00000e+00     3.09526e+03     3.34487e-02
+       146        165        294     1.00000e+00     3.09526e+03     3.20136e-02
+       147        166        296     1.00000e+00     3.09526e+03     2.99303e-02
+       148        168        298     3.45762e-02     3.09526e+03     3.88982e-02
+       149        170        300     1.82979e-01     3.09526e+03     3.59866e-02
+       150        171        302     1.00000e+00     3.09526e+03     2.22942e-02
+       151        172        304     1.00000e+00     3.09526e+03     3.69218e-02
+       152        173        306     1.00000e+00     3.09526e+03     6.70404e-02
+       153        174        308     1.00000e+00     3.09526e+03     4.67374e-02
+       154        175        310     1.00000e+00     3.09526e+03     2.65419e-02
+       155        176        312     1.00000e+00     3.09526e+03     2.64030e-02
+       156        177        314     1.00000e+00     3.09526e+03     1.16475e-02
+       157        179        316     3.16604e-02     3.09526e+03     2.55447e-02
+       158        180        318     1.00000e+00     3.09526e+03     4.90542e-02
+       159        181        320     1.00000e+00     3.09526e+03     8.08647e-02
+       160        182        322     1.00000e+00     3.09526e+03     2.40567e-02
+       161        183        324     1.00000e+00     3.09526e+03     2.29447e-02
+       162        184        326     1.00000e+00     3.09526e+03     2.19079e-02
+       163        186        328     1.77447e-01     3.09526e+03     4.01557e-02
+       164        188        330     9.24907e-02     3.09526e+03     1.60336e-02
+       165        189        332     1.00000e+00     3.09526e+03     1.89515e-02
+       166        190        334     1.00000e+00     3.09526e+03     2.04415e-02
+       167        191        336     1.00000e+00     3.09526e+03     5.98957e-02
+       168        192        338     1.00000e+00     3.09526e+03     5.97479e-02
+       169        193        340     1.00000e+00     3.09526e+03     1.79131e-02
+       170        194        342     1.00000e+00     3.09526e+03     1.76943e-02
+       171        195        344     1.00000e+00     3.09526e+03     1.65615e-02
+       172        197        346     1.43805e-02     3.09526e+03     1.83706e-02
+       173        198        348     1.00000e+00     3.09526e+03     1.16464e-01
+       174        199        350     1.00000e+00     3.09526e+03     5.37119e-02
+       175        200        352     1.00000e+00     3.09526e+03     1.95051e-02
+       176        201        354     1.00000e+00     3.09526e+03     1.59821e-02
+       177        202        356     1.00000e+00     3.09526e+03     1.66941e-02
+       178        203        358     1.00000e+00     3.09526e+03     7.64607e-03
+       179        205        360     1.11749e-01     3.09526e+03     2.01517e-02
+       180        206        362     1.00000e+00     3.09526e+03     5.43557e-02
+       181        207        364     1.00000e+00     3.09526e+03     5.03182e-02
+       182        208        366     1.00000e+00     3.09526e+03     1.48597e-02
+       183        209        368     1.00000e+00     3.09526e+03     1.40412e-02
+       184        210        370     1.00000e+00     3.09526e+03     1.16385e-02
+       185        212        372     9.60223e-02     3.09526e+03     2.11151e-02
+       186        214        374     9.04749e-02     3.09526e+03     1.02173e-02
+       187        215        376     1.00000e+00     3.09526e+03     1.09384e-02
+       188        216        378     1.00000e+00     3.09526e+03     1.36606e-02
+       189        217        380     1.00000e+00     3.09526e+03     3.94464e-02
+       190        218        382     1.00000e+00     3.09526e+03     2.47022e-02
+       191        219        384     1.00000e+00     3.09526e+03     1.05143e-02
+       192        220        386     1.00000e+00     3.09526e+03     1.03572e-02
+       193        221        388     1.00000e+00     3.09526e+03     7.78281e-03
+       194        223        390     3.39407e-02     3.09526e+03     1.25377e-02
+       195        225        392     1.10681e-01     3.09526e+03     9.39975e-03
+       196        226        394     1.00000e+00     3.09526e+03     7.63413e-03
+       197        227        396     1.00000e+00     3.09526e+03     1.36225e-02
+       198        228        398     1.00000e+00     3.09526e+03     4.41126e-02
+       199        229        400     1.00000e+00     3.09526e+03     2.05812e-02
+       200        230        402     1.00000e+00     3.09526e+03     8.03814e-03
+       201        231        404     1.00000e+00     3.09526e+03     7.93600e-03
+       202        232        406     1.00000e+00     3.09526e+03     4.86529e-03
+       203        234        408     2.24951e-02     3.09526e+03     8.41868e-03
+       204        235        410     1.00000e+00     3.09526e+03     6.04847e-03
+       205        236        412     1.00000e+00     3.09526e+03     1.83464e-02
+       206        237        414     1.00000e+00     3.09526e+03     1.83294e-02
+       207        238        416     1.00000e+00     3.09526e+03     5.84033e-03
+       208        239        418     1.00000e+00     3.09526e+03     6.64681e-03
+       209        240        420     1.00000e+00     3.09526e+03     6.61527e-03
+       210        242        422     1.29502e-01     3.09526e+03     9.35925e-03
+       211        244        424     1.22285e-01     3.09526e+03     5.62249e-03
+       212        245        426     1.00000e+00     3.09526e+03     5.62240e-03
+       213        246        428     1.00000e+00     3.09526e+03     5.56469e-03
+       214        247        430     1.00000e+00     3.09526e+03     1.43313e-02
+       215        248        432     1.00000e+00     3.09526e+03     8.95453e-03
+       216        249        434     1.00000e+00     3.09526e+03     5.53070e-03
+       217        250        436     1.00000e+00     3.09526e+03     5.46536e-03
+       218        251        438     1.00000e+00     3.09526e+03     3.36679e-03
+       219        253        440     1.23874e-01     3.09526e+03     5.52968e-03
+       220        255        442     5.59779e-02     3.09526e+03     1.84686e-03
+       221        256        444     1.00000e+00     3.09526e+03     4.83466e-03
+       222        257        446     1.00000e+00     3.09526e+03     3.73634e-03
+       223        258        448     1.00000e+00     3.09526e+03     3.69663e-03
+       224        259        450     1.00000e+00     3.09526e+03     3.46546e-03
+       225        260        452     1.00000e+00     3.09526e+03     3.45360e-03
+       226        261        454     1.00000e+00     3.09526e+03     3.62411e-03
+       227        262        456     1.00000e+00     3.09526e+03     2.81426e-02
+       228        263        458     1.00000e+00     3.09526e+03     2.56130e-02
+       229        264        460     1.00000e+00     3.09526e+03     3.02234e-03
+       230        265        462     1.00000e+00     3.09526e+03     3.26184e-03
+       231        266        464     1.00000e+00     3.09526e+03     3.28050e-03
+       232        268        466     8.64516e-02     3.09526e+03     3.54517e-03
+       233        270        468     1.52162e-01     3.09526e+03     2.81696e-03
+       234        271        470     1.00000e+00     3.09526e+03     2.85576e-03
+       235        272        472     1.00000e+00     3.09526e+03     2.95730e-03
+       236        273        474     1.00000e+00     3.09526e+03     6.65080e-03
+       237        274        476     1.00000e+00     3.09526e+03     8.38584e-03
+       238        275        478     1.00000e+00     3.09526e+03     2.91076e-03
+       239        276        480     1.00000e+00     3.09526e+03     2.85734e-03
+       240        277        482     1.00000e+00     3.09526e+03     2.76841e-03
+       241        279        484     3.52645e-02     3.09526e+03     2.92111e-03
+       242        281        486     2.03715e-01     3.09526e+03     3.42319e-03
+       243        282        488     1.00000e+00     3.09526e+03     1.96202e-03
+       244        283        490     1.00000e+00     3.09526e+03     3.36340e-03
+       245        284        492     1.00000e+00     3.09526e+03     4.82330e-03
+       246        285        494     1.00000e+00     3.09526e+03     2.93192e-03
+       247        286        496     1.00000e+00     3.09526e+03     2.48657e-03
+       248        287        498     1.00000e+00     3.09526e+03     2.48045e-03
+       249        288        500     1.00000e+00     3.09526e+03     1.91408e-03
+       250        290        502     3.19233e-02     3.09526e+03     2.10608e-03
+       251        292        504     1.70681e-01     3.09526e+03     2.21064e-03
+       252        293        506     1.00000e+00     3.09526e+03     2.10585e-03
+       253        294        508     1.00000e+00     3.09526e+03     2.13987e-03
+       254        295        510     1.00000e+00     3.09526e+03     2.93973e-03
+       255        296        512     1.00000e+00     3.09526e+03     2.10415e-03
+       256        297        514     1.00000e+00     3.09526e+03     2.11460e-03
+       257        298        516     1.00000e+00     3.09526e+03     2.09882e-03
+       258        299        518     1.00000e+00     3.09526e+03     1.85530e-03
+       259        301        520     8.71409e-02     3.09526e+03     2.62981e-03
+       260        303        522     1.89099e-01     3.09526e+03     1.77626e-03
+       261        304        524     1.00000e+00     3.09526e+03     1.88896e-03
+       262        305        526     1.00000e+00     3.09526e+03     1.86543e-03
+       263        306        528     1.00000e+00     3.09526e+03     4.48003e-03
+       264        307        530     1.00000e+00     3.09526e+03     7.43207e-03
+       265        308        532     1.00000e+00     3.09526e+03     1.80147e-03
+       266        309        534     1.00000e+00     3.09526e+03     1.82533e-03
+       267        310        536     1.00000e+00     3.09526e+03     1.80507e-03
+       268        312        538     3.63266e-02     3.09526e+03     1.88051e-03
+       269        314        540     1.76985e-01     3.09526e+03     1.92949e-03
+       270        315        542     1.00000e+00     3.09526e+03     1.40952e-03
+       271        316        544     1.00000e+00     3.09526e+03     1.90808e-03
+       272        317        546     1.00000e+00     3.09526e+03     3.76971e-03
+       273        318        548     1.00000e+00     3.09526e+03     2.50779e-03
+       274        319        550     1.00000e+00     3.09526e+03     1.57756e-03
+       275        320        552     1.00000e+00     3.09526e+03     1.56025e-03
+       276        321        554     1.00000e+00     3.09526e+03     9.93033e-04
+       277        323        556     3.53537e-02     3.09526e+03     1.41260e-03
+       278        324        558     1.00000e+00     3.09526e+03     8.37060e-03
+       279        325        560     1.00000e+00     3.09526e+03     7.52798e-03
+       280        326        562     1.00000e+00     3.09526e+03     1.31033e-03
+       281        327        564     1.00000e+00     3.09526e+03     1.35280e-03
+       282        328        566     1.00000e+00     3.09526e+03     1.34786e-03
+       283        330        568     3.10582e-02     3.09526e+03     1.23091e-03
+       284        331        570     1.00000e+00     3.09526e+03     9.51790e-03
+       285        332        572     1.00000e+00     3.09526e+03     3.40906e-03
+       286        333        574     1.00000e+00     3.09526e+03     1.35664e-03
+       287        334        576     1.00000e+00     3.09526e+03     1.30436e-03
+       288        335        578     1.00000e+00     3.09526e+03     1.32774e-03
+       289        336        580     1.00000e+00     3.09526e+03     1.00534e-03
+       290        338        582     7.55076e-02     3.09526e+03     1.08265e-03
+       291        339        584     1.00000e+00     3.09526e+03     1.11673e-03
+       292        340        586     1.00000e+00     3.09526e+03     1.21794e-03
+       293        341        588     1.00000e+00     3.09526e+03     5.39157e-03
+       294        342        590     1.00000e+00     3.09526e+03     2.23597e-03
+       295        343        592     1.00000e+00     3.09526e+03     1.02823e-03
+       296        344        594     1.00000e+00     3.09526e+03     1.01192e-03
+       297        345        596     1.00000e+00     3.09526e+03     8.63967e-04
+       298        347        598     1.97891e-01     3.09526e+03     1.23515e-03
+       299        349        600     7.10286e-02     3.09526e+03     4.54030e-04
+       300        350        602     1.00000e+00     3.09526e+03     8.16670e-04
+       301        351        604     1.00000e+00     3.09526e+03     6.74181e-04
+       302        352        606     1.00000e+00     3.09526e+03     3.20966e-03
+       303        354        608     1.04083e-01     3.09526e+03     7.57449e-04
+       304        355        610     1.00000e+00     3.09526e+03     6.84172e-04
+       305        356        612     1.00000e+00     3.09526e+03     6.81727e-04
+       306        357        614     1.00000e+00     3.09526e+03     9.02341e-04
+       307        359        616     5.78770e-02     3.09526e+03     2.93809e-04
+       308        360        618     1.00000e+00     3.09526e+03     6.09094e-04
+       309        361        620     1.00000e+00     3.09526e+03     4.48573e-04
+       310        362        622     1.00000e+00     3.09526e+03     9.00454e-04
+       311        363        624     1.00000e+00     3.09526e+03     3.31154e-03
+       312        364        626     1.00000e+00     3.09526e+03     6.55782e-04
+       313        365        628     1.00000e+00     3.09526e+03     4.79571e-04
+       314        366        630     1.00000e+00     3.09526e+03     4.83663e-04
+       315        367        632     1.00000e+00     3.09526e+03     4.72004e-04
+       316        369        634     7.37772e-02     3.09526e+03     3.25488e-04
+       317        370        636     1.00000e+00     3.09526e+03     2.14844e-03
+       318        371        638     1.00000e+00     3.09526e+03     1.11820e-03
+       319        372        640     1.00000e+00     3.09526e+03     4.40082e-04
+Directional Derivative below progTol
+Error Rate (Discriminative L1: L1-L2): 0.400
+</pre><h2>PMTK interface<a name="5"></a></h2><pre class="codeinput"><span class="comment">%{
+</span><span class="comment">useMex = 1;
+</span><span class="comment">edgeStruct = UGM_makeEdgeStruct(adjInit,nStates,useMex);
+</span><span class="comment">nEdges = size(edgeStruct.edgeEnds,1);
+</span><span class="comment">Xedge = UGM_makeEdgeFeatures(X, edgeStruct.edgeEnds);
+</span><span class="comment">%}
+</span>
+<span class="comment">% If the edge prunign threshold is 0, we should get the same</span>
+<span class="comment">% results as example_UGMlearnSub</span>
+model = crf2FitStruct(y(trainNdx,:), X(trainNdx,:,:), [], <span class="keyword">...</span>
+  <span class="string">'lambdaNode'</span>, lambdaNode, <span class="string">'lambdaEdge'</span>, lambdaEdge, <span class="string">'thresh'</span>, 0);
+approxeq(model.edgeWeights, edgeWeights)
+
+[logZBF, nodeBelBF] = crf2InferNodes(model, X(testNdx,:,:), [], <span class="string">'infMethod'</span>, <span class="string">'bruteforce'</span>);
+<span class="comment">% example_UGMlearnSub assigns some global variables for each test case</span>
+approxeq(logZBF(end), logZ)
+approxeq(nodeBelBF(:,:,end), nodeBel)
+</pre><pre class="codeoutput">learning structure using L1-L2, Nnodes=10, Nedges=45, LamNode=10.000, LamEdge=10.000
+Function Evaluations exceeds maxIter
+final graph has 45 edges
+ans =
+     0
+ans =
+     1
+ans =
+     1
+</pre><h2>Now compare Mark's brute force inference with jtree<a name="6"></a></h2><p>We first learn a sparse model</p><pre class="codeinput">lambdaEdge = 50;
+model = crf2FitStruct(y(trainNdx,:), X(trainNdx,:,:), [], <span class="keyword">...</span>
+  <span class="string">'lambdaNode'</span>, lambdaNode, <span class="string">'lambdaEdge'</span>, lambdaEdge, <span class="string">'thresh'</span>, 1e-1);
+
+ndx = testNdx(1:10);
+
+[logZBF, nodeBelBF, edgeBelBF] = crf2InferNodes(model, X(ndx,:,:), [], <span class="string">'infMethod'</span>, <span class="string">'bruteforce'</span>);
+
+[logZJ, nodeBelJ, edgeBelJ, mrf] = crf2InferNodes(model, X(ndx,:,:), [], <span class="string">'infMethod'</span>, <span class="string">'jtree'</span>);
+
+approxeq(nodeBelBF, nodeBelJ)
+approxeq(edgeBelBF, edgeBelJ)
+approxeq(logZBF, logZJ)
+</pre><pre class="codeoutput">learning structure using L1-L2, Nnodes=10, Nedges=45, LamNode=10.000, LamEdge=50.000
+Directional Derivative below progTol
+final graph has 4 edges
+crf treewidth = 2
+ans =
+     1
+ans =
+     1
+ans =
+     1
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Learn the structure of a small CRF using group L1 regularization
+% We compare our resutls to 'example_UGMlearn' from
+% http://www.cs.ubc.ca/~murphyk/Software/L1CRF/index.html
+
+clear all
+close all
+display = 1; % Set to 0 if you don't want to draw the graphs
+
+%% Parameters of Experiment
+rand('state',0); randn('state',0); 
+nTrain = 500; % number of examples to use for training
+nTest = 1000; % number of examples to use for test
+nFeatures = 5; % 10; % number of features for each node
+nNodes = 10; % number of nodes
+nStates = 2; % number of states that each can take
+edgeProb = .5; % probability of each edge being included in the graph
+edgeType = 1; % set to 0 to make the edge features normally distributed
+ising = 0; % set to 1 to use ising potentials
+trainType = 'pseudo'; % set to 'pseudo' for pseudo-likelihood, 'loopy' for loopy belief propagation, 'exact' for 'exact inference
+testType = 'exact'; % set to 'loopy' to test with loopy belief propagation, 'exact' for exact inference
+structureSeed = 0; % change this to generate different structures
+trainSeed = 0; % vary seed from 0:9 to get paper results
+useMex = 1; % use mex files in UGM to speed things up
+
+% Regularization Parameters
+lambdaNode = 10; 
+lambdaEdge = 10;
+% In the paper, we picked these two values by two-fold
+% cross-validation, testing the values 2.^[7:-1:-5] for each model
+% In the paper, we also used warm-starting to speed up the optimization 
+%   for this sequence of values
+
+%% Generate data
+fprintf('Generating Synthetic CRF Data...\n');
+rand('state',structureSeed);
+randn('state',structureSeed);
+nInstances = nTrain+nTest;
+tied = 0;
+[y,adjTrue,X] = UGM_generate(nInstances,nFeatures,nNodes,edgeProb,nStates,ising,tied,edgeType);
+
+% X: Ncases * Nfeatures * Nnodes (real)
+% y: Ncases * Nnodes (1,2)
+
+[Ncases Nfeatures Nnodes] = size(X);
+if true
+  % mrf mode
+  X = zeros(Ncases, 0, Nnodes);
+end
+
+rand('state',trainSeed);
+randn('state',trainSeed);
+perm = randperm(nInstances);
+trainNdx = perm(1:nTrain);
+testNdx = perm(nTrain+1:end);
+
+if isscalar(nStates)
+    nStates = repmat(nStates,[nNodes 1]);
+end
+
+%% Mark's code
+subDisplay = false;
+type = 'Discriminative L1: L1-L2';
+edgePenaltyType = 'L1-L2'; % Train with L1 regularization on the edges
+adjInit = fullAdjMatrix(nNodes);
+example_UGMlearnSub % script computes adjFinal, nodeWeights, edgeWeights
+
+%% PMTK interface
+%{
+useMex = 1;
+edgeStruct = UGM_makeEdgeStruct(adjInit,nStates,useMex);
+nEdges = size(edgeStruct.edgeEnds,1);
+Xedge = UGM_makeEdgeFeatures(X, edgeStruct.edgeEnds);
+%}
+
+% If the edge prunign threshold is 0, we should get the same
+% results as example_UGMlearnSub
+model = crf2FitStruct(y(trainNdx,:), X(trainNdx,:,:), [], ...
+  'lambdaNode', lambdaNode, 'lambdaEdge', lambdaEdge, 'thresh', 0);
+approxeq(model.edgeWeights, edgeWeights)
+
+[logZBF, nodeBelBF] = crf2InferNodes(model, X(testNdx,:,:), [], 'infMethod', 'bruteforce');
+% example_UGMlearnSub assigns some global variables for each test case
+approxeq(logZBF(end), logZ)
+approxeq(nodeBelBF(:,:,end), nodeBel)
+
+%% Now compare Mark's brute force inference with jtree
+% We first learn a sparse model
+
+lambdaEdge = 50;
+model = crf2FitStruct(y(trainNdx,:), X(trainNdx,:,:), [], ...
+  'lambdaNode', lambdaNode, 'lambdaEdge', lambdaEdge, 'thresh', 1e-1);
+
+ndx = testNdx(1:10);
+
+[logZBF, nodeBelBF, edgeBelBF] = crf2InferNodes(model, X(ndx,:,:), [], 'infMethod', 'bruteforce');
+
+[logZJ, nodeBelJ, edgeBelJ, mrf] = crf2InferNodes(model, X(ndx,:,:), [], 'infMethod', 'jtree');
+
+approxeq(nodeBelBF, nodeBelJ)
+approxeq(edgeBelBF, edgeBelJ)
+approxeq(logZBF, logZJ)
+
+##### SOURCE END #####
+--></body></html>

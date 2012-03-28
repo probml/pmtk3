@@ -1,0 +1,318 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Try to reproduce table 18.1 from "Elements of statistical learning" 2nd edn p656</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="cancerHighDimClassifDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Try to reproduce table 18.1 from "Elements of statistical learning" 2nd edn p656</h1><!--introduction--><p>PMTKauthor Hannes Bretschneider PMTKreallySlow</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Load data</a></li><li><a href="#2">Run methods</a></li><li><a href="#3">Print results</a></li></ul></div><h2>Load data<a name="1"></a></h2><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+
+loadData(<span class="string">'14cancer'</span>) <span class="comment">% Xtrain is 144*16063, Xtest is 54*16063</span>
+ytrain = colvec(ytrain);
+ytest = colvec(ytest);
+<span class="comment">% on p654, they say "the data from each patient (row) is standardized</span>
+<span class="comment">% to have mean 0 and variance 1"</span>
+xtrain_std = standardizeCols(Xtrain')';
+xtest_std = standardizeCols(Xtest')';
+[N, D] = size(xtrain_std);
+clear <span class="string">Xtest</span> <span class="string">Xtrain</span>
+
+<span class="comment">% we can either explicitly use the same folds as Hastie</span>
+<span class="comment">% or we can choose our own (which lets us control computation time)</span>
+<span class="comment">% The dataset is so small that some classes might not be present</span>
+<span class="comment">% in any given training fold. The Hastie folds have been carefully</span>
+<span class="comment">% chosen to avoid this (although it is really the algorithm's job</span>
+<span class="comment">% to handle this - the user should not have to worry about this).</span>
+<span class="keyword">if</span> 1
+    folds = folds.data(:,2:size(folds.data,2));
+    Nfolds = [];
+<span class="keyword">else</span>
+    Nfolds = 3;
+    folds = [];
+<span class="keyword">end</span>
+</pre><h2>Run methods<a name="2"></a></h2><p>L1 is very slow, L2 is somewhat slow</p><pre class="codeinput"><span class="comment">%methods = {'nsc', 'nb', 'rda', 'knn', 'l2logreg', 'svm', 'l1logreg'};</span>
+<span class="comment">%methods = {'nsc', 'nb', 'rda', 'knn', 'svm'};</span>
+methods = {<span class="string">'rda'</span>};
+
+<span class="comment">% warning - l1logreg can take upwards of 6 hours to run.</span>
+M = length(methods);
+
+<span class="keyword">for</span> m=1:M
+  tic;
+    method = methods{m};
+    <span class="keyword">switch</span> method
+        <span class="keyword">case</span> <span class="string">'nsc'</span>
+            name{m} = <span class="string">'Nearest shrunken centroids'</span>;
+            params = linspace(0, 10, 10)';
+            fitFn = @(X, y, lambda)discrimAnalysisFit(X, y, <span class="string">'shrunkenCentroids'</span>, <span class="string">'lambda'</span>, lambda);
+            predictFn = @discrimAnalysisPredict;
+            noGenesFn = @(model)D;
+        <span class="keyword">case</span> <span class="string">'nb'</span>
+            name{m} = <span class="string">'Naive bayes'</span>;
+            params = 1;
+            fitFn = @(X, y, param)discrimAnalysisFit(X, y, <span class="string">'diag'</span>);
+            predictFn = @discrimAnalysisPredict;
+            noGenesFn = @(model)D;
+        <span class="keyword">case</span> <span class="string">'rda'</span>
+            name{m} = <span class="string">'Regularized discriminant analysis'</span>;
+            <span class="comment">%params = linspace(0, 2, 10)';</span>
+            params = linspace(0, 2, 5)';
+
+            <span class="keyword">if</span> 0
+              fitFn = @(X,y, lambda) discrimAnalysisFit(X, y, <span class="string">'rda'</span>, <span class="string">'lambda'</span>, lambda);
+            <span class="keyword">else</span>
+              <span class="comment">% we do a single SVD on all the training data</span>
+              <span class="comment">% since we are just changing the weighting term.</span>
+              <span class="comment">% This is faster than the above, but also gives</span>
+              <span class="comment">% different answers since it does not compute</span>
+              <span class="comment">% a different SVD per fold</span>
+              [U S V] = svd(xtrain_std, <span class="string">'econ'</span>);
+              R = U*S;
+              fitFn = @(X,y, lambda) discrimAnalysisFit(X, y, <span class="string">'rda'</span>, <span class="string">'lambda'</span>, lambda, <span class="keyword">...</span>
+                <span class="string">'R'</span>, R, <span class="string">'V'</span>, V);
+            <span class="keyword">end</span>
+
+            predictFn = @discrimAnalysisPredict;
+            noGenesFn = @(model)D;
+        <span class="keyword">case</span> <span class="string">'knn'</span>
+            name{m} = <span class="string">'k-nearest neighbors'</span>;
+            params = (1:3)';
+            fitFn = @knnFit;
+            predictFn = @knnPredict;
+            noGenesFn = @(model)D;
+        <span class="keyword">case</span> <span class="string">'l2logreg'</span>
+            name{m} = <span class="string">'l2logreg'</span>;
+            params = linspace(0, 10, 10)';
+            fitFn = @(X, y, lambda)logregFitL2Dual(X, y, lambda);
+            predictFn = @logregPredict;
+            noGenesFn = @(m) D;
+        <span class="keyword">case</span> <span class="string">'l1logreg'</span>
+            name{m} = <span class="string">'l1-penalized logistic regression'</span>;
+            params = linspace(1, 10, 10)';
+            fitFn = @(X, y, param)logregFit(X, y, <span class="string">'lambda'</span>, param,<span class="keyword">...</span>
+                <span class="string">'regType'</span>, <span class="string">'L1'</span>, <span class="string">'fitOptions'</span>, struct(<span class="string">'corrections'</span>, 50, <span class="string">'maxIter'</span>, 20));
+            predictFn = @logregPredict;
+            noGenesFn = @(model) sum(sum(model.w,1)~=0);
+        <span class="keyword">case</span> <span class="string">'svm'</span>
+            params =  logspace(-1,1,5)';
+            name{m} = <span class="string">'SVM'</span>;
+            fitFn = @(X, y, param) svmFit(X, y, <span class="string">'kernel'</span>, <span class="string">'linear'</span>, <span class="string">'C'</span>, param);
+            predictFn = @svmPredict;
+            noGenesFn = @(model) D; <span class="comment">%sum(sum(model.w,1)~=0);</span>
+    <span class="keyword">end</span>
+
+    useSErule=0; doPlot=0; plotArgs= [];
+    [model{m}, bestParam(m)] = fitCv(params,<span class="keyword">...</span>
+        fitFn, predictFn, @zeroOneLossFn, xtrain_std, ytrain, <span class="keyword">...</span>
+        Nfolds, <span class="string">'useSErule'</span>, useSErule, <span class="string">'doPlot'</span>, doPlot, <span class="keyword">...</span>
+        <span class="string">'plotArgs'</span>, plotArgs, <span class="string">'testFolds'</span>, folds);
+    <span class="comment">%ndx = find(err==min(err), 1);</span>
+    <span class="comment">%lossCv(m)= err(ndx); seCv(m) = se(ndx);</span>
+    yhat = predictFn(model{m}, xtest_std);
+    lossTest(m) = sum(zeroOneLossFn(yhat, ytest));
+    noGenes(m) = noGenesFn(model{m});
+    time(m) = toc;
+<span class="keyword">end</span>
+</pre><h2>Print results<a name="3"></a></h2><pre class="codeinput">latextable([lossTest' noGenes' bestParam' time'],<span class="keyword">...</span>
+    <span class="string">'Horiz'</span>, {<span class="string">'Test errors'</span>, <span class="string">'Genes used'</span>, <span class="string">'Best Param'</span>, <span class="string">'Time'</span>},<span class="keyword">...</span>
+    <span class="string">'Vert'</span>, name, <span class="string">'name'</span>, <span class="string">''</span>)
+
+<span class="keyword">for</span> m=1:M
+    fprintf(<span class="string">'method %s, test errors %d, ngenes %d, best param %5.3f, time %5.3f\n'</span>, <span class="keyword">...</span>
+        name{m}, lossTest(m), noGenes(m), bestParam(m), time(m));
+<span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Try to reproduce table 18.1 from "Elements of statistical learning" 2nd edn p656
+% PMTKauthor Hannes Bretschneider
+% PMTKreallySlow
+%% Load data
+
+% This file is from pmtk3.googlecode.com
+
+
+loadData('14cancer') % Xtrain is 144*16063, Xtest is 54*16063
+ytrain = colvec(ytrain);
+ytest = colvec(ytest);
+% on p654, they say "the data from each patient (row) is standardized
+% to have mean 0 and variance 1"
+xtrain_std = standardizeCols(Xtrain')';
+xtest_std = standardizeCols(Xtest')';
+[N, D] = size(xtrain_std);
+clear Xtest Xtrain
+
+% we can either explicitly use the same folds as Hastie
+% or we can choose our own (which lets us control computation time)
+% The dataset is so small that some classes might not be present
+% in any given training fold. The Hastie folds have been carefully
+% chosen to avoid this (although it is really the algorithm's job
+% to handle this - the user should not have to worry about this).
+if 1
+    folds = folds.data(:,2:size(folds.data,2));
+    Nfolds = [];
+else
+    Nfolds = 3;
+    folds = [];
+end
+
+
+
+%% Run methods
+% L1 is very slow, L2 is somewhat slow
+
+%methods = {'nsc', 'nb', 'rda', 'knn', 'l2logreg', 'svm', 'l1logreg'};
+%methods = {'nsc', 'nb', 'rda', 'knn', 'svm'};
+methods = {'rda'};
+
+% warning - l1logreg can take upwards of 6 hours to run.
+M = length(methods);
+
+for m=1:M
+  tic;
+    method = methods{m};
+    switch method
+        case 'nsc'
+            name{m} = 'Nearest shrunken centroids';
+            params = linspace(0, 10, 10)';
+            fitFn = @(X, y, lambda)discrimAnalysisFit(X, y, 'shrunkenCentroids', 'lambda', lambda);
+            predictFn = @discrimAnalysisPredict;
+            noGenesFn = @(model)D;
+        case 'nb'
+            name{m} = 'Naive bayes';
+            params = 1;
+            fitFn = @(X, y, param)discrimAnalysisFit(X, y, 'diag');
+            predictFn = @discrimAnalysisPredict;
+            noGenesFn = @(model)D;
+        case 'rda'
+            name{m} = 'Regularized discriminant analysis';
+            %params = linspace(0, 2, 10)';
+            params = linspace(0, 2, 5)';
+            
+            if 0
+              fitFn = @(X,y, lambda) discrimAnalysisFit(X, y, 'rda', 'lambda', lambda);
+            else
+              % we do a single SVD on all the training data 
+              % since we are just changing the weighting term.
+              % This is faster than the above, but also gives
+              % different answers since it does not compute
+              % a different SVD per fold
+              [U S V] = svd(xtrain_std, 'econ');
+              R = U*S;
+              fitFn = @(X,y, lambda) discrimAnalysisFit(X, y, 'rda', 'lambda', lambda, ...
+                'R', R, 'V', V);
+            end
+            
+            predictFn = @discrimAnalysisPredict;
+            noGenesFn = @(model)D;
+        case 'knn'
+            name{m} = 'k-nearest neighbors';
+            params = (1:3)';
+            fitFn = @knnFit;
+            predictFn = @knnPredict;
+            noGenesFn = @(model)D;
+        case 'l2logreg'
+            name{m} = 'l2logreg';
+            params = linspace(0, 10, 10)';
+            fitFn = @(X, y, lambda)logregFitL2Dual(X, y, lambda);
+            predictFn = @logregPredict;
+            noGenesFn = @(m) D;
+        case 'l1logreg'
+            name{m} = 'l1-penalized logistic regression';
+            params = linspace(1, 10, 10)';
+            fitFn = @(X, y, param)logregFit(X, y, 'lambda', param,...
+                'regType', 'L1', 'fitOptions', struct('corrections', 50, 'maxIter', 20));
+            predictFn = @logregPredict;
+            noGenesFn = @(model) sum(sum(model.w,1)~=0);
+        case 'svm'
+            params =  logspace(-1,1,5)';
+            name{m} = 'SVM';
+            fitFn = @(X, y, param) svmFit(X, y, 'kernel', 'linear', 'C', param);
+            predictFn = @svmPredict;
+            noGenesFn = @(model) D; %sum(sum(model.w,1)~=0);
+    end
+    
+    useSErule=0; doPlot=0; plotArgs= [];
+    [model{m}, bestParam(m)] = fitCv(params,...
+        fitFn, predictFn, @zeroOneLossFn, xtrain_std, ytrain, ...
+        Nfolds, 'useSErule', useSErule, 'doPlot', doPlot, ...
+        'plotArgs', plotArgs, 'testFolds', folds);
+    %ndx = find(err==min(err), 1);
+    %lossCv(m)= err(ndx); seCv(m) = se(ndx);
+    yhat = predictFn(model{m}, xtest_std);
+    lossTest(m) = sum(zeroOneLossFn(yhat, ytest));
+    noGenes(m) = noGenesFn(model{m});
+    time(m) = toc;
+end
+
+%% Print results
+latextable([lossTest' noGenes' bestParam' time'],...
+    'Horiz', {'Test errors', 'Genes used', 'Best Param', 'Time'},...
+    'Vert', name, 'name', '')
+
+for m=1:M
+    fprintf('method %s, test errors %d, ngenes %d, best param %5.3f, time %5.3f\n', ...
+        name{m}, lossTest(m), noGenes(m), bestParam(m), time(m));
+end
+
+
+##### SOURCE END #####
+--></body></html>

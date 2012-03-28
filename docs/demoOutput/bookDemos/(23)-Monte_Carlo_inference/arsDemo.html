@@ -1,0 +1,271 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>arsDemo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="arsDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">example 1</a></li><li><a href="#4">example 2</a></li><li><a href="#5">example 3, more exotic</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> arsDemo()
+</pre><pre class="codeinput"><span class="comment">%PMTKauthor Daniel Eaton</span>
+
+fprintf(<span class="string">'running ARS demo\n'</span>);
+</pre><pre class="codeoutput">running ARS demo
+</pre><h2>example 1<a name="3"></a></h2><p>sample from a 1D gaussian</p><pre class="codeinput">func = inline(<span class="string">'log(exp(-x.^2/sigma))'</span>,<span class="string">'x'</span>,<span class="string">'sigma'</span>);
+a = -2; b = 2; <span class="comment">% any other a,b st a&lt;0 and b&lt;0 would work too</span>
+domain = [-inf inf];
+nSamples = 20000;
+sigma = 1;
+fprintf(sprintf(<span class="string">'drawing %i samples from a 1D gaussian\n'</span>,nSamples));
+samples = ars(func, a, b, domain, nSamples, sigma);
+figure;
+subplot(2,1,1);
+rng = [-3*sigma 3*sigma];
+x = rng(1):(rng(2)-rng(1))/(100-1):rng(2);
+y = exp(func(x,sigma));
+plot(x, y);
+axis([ rng(1) rng(2) 0 max(y)]);
+title(<span class="string">'f(x) gaussian'</span>);
+subplot(2,1,2);
+[N x] = hist(samples,100);
+bar(x, N);
+axis([ rng(1) rng(2) 0 max(N)]);
+title(<span class="string">'samples from f(x) (by ARS)'</span>);
+drawnow
+</pre><pre class="codeoutput">drawing 20000 samples from a 1D gaussian
+</pre><img vspace="5" hspace="5" src="arsDemo_01.png" alt=""> <h2>example 2<a name="4"></a></h2><p>sample from a 1D "half-gaussian" (0 for positive x)</p><pre class="codeinput"><span class="comment">%func = inline('log(exp(-x.^2/sigma)).*(1*(x&lt;=0)+1e300*(x&gt;0))','x','sigma');</span>
+func = inline(<span class="string">'log(exp(-x.^2/sigma)).*(1*(x&lt;=0)+0*(x&gt;0))'</span>,<span class="string">'x'</span>,<span class="string">'sigma'</span>);
+a = -2; b = 0;
+domain = [-inf, 0];
+nSamples = 20000;
+sigma = 3;
+fprintf(sprintf(<span class="string">'drawing %i samples from a 1D half-gaussian\n'</span>,nSamples));
+samples = ars(func, a, b, domain, nSamples, sigma);
+figure;
+subplot(2,1,1);
+rng = [-3*sigma 3*sigma];
+x = sort([rng(1):(rng(2)-rng(1))/(100-1):rng(2) 0]);
+y = exp(func(x,sigma));
+plot(x, y);
+axis([ rng(1) rng(2) 0 max(y)]);
+title(<span class="string">'f(x) half-gaussian'</span>);
+<span class="comment">%printPmtkFigure('arsDemoTruth')</span>
+
+subplot(2,1,2);
+<span class="comment">%figure;</span>
+[N x] = hist(samples,100);
+bar(x, N);
+axis([ rng(1) rng(2) 0 max(N)]);
+title(<span class="string">'samples from f(x) (by ARS)'</span>);
+printPmtkFigure(<span class="string">'arsDemo'</span>)
+drawnow
+</pre><pre class="codeoutput">drawing 20000 samples from a 1D half-gaussian
+</pre><img vspace="5" hspace="5" src="arsDemo_02.png" alt=""> <h2>example 3, more exotic<a name="5"></a></h2><p>conditional distribution function from gibbs sampling of a capture-recapture model</p><pre class="codeinput">func = @exFunc;
+a = 1; b = 20;
+domain = [1, inf];
+nSamples = 20000;
+beta = 10;
+p = rand(14,1);
+fprintf(sprintf(<span class="string">'drawing %i samples from a more exotic distribution\n'</span>,nSamples));
+samples = ars(func, a, b, domain, nSamples, beta, p);
+figure(3); clf;
+subplot(2,1,1);
+rng = [1 20];
+x = sort([rng(1):(rng(2)-rng(1))/(100-1):rng(2) 0]);
+y = exp(func(x,beta,p));
+plot(x, y);
+axis([ rng(1) rng(2) 0 max(y)]);
+title(<span class="string">'f(x) from a capture-recapture model'</span>);
+subplot(2,1,2);
+[N x] = hist(samples,100);
+bar(x, N);
+axis([ rng(1) rng(2) 0 max(N)]);
+title(<span class="string">'samples from f(x) (by ARS)'</span>);
+</pre><pre class="codeoutput">drawing 20000 samples from a more exotic distribution
+</pre><pre class="codeinput"><span class="keyword">function</span> v = exFunc(alpha, beta, p)
+<span class="comment">% example log-concave function from the model of:</span>
+<span class="comment">%   E. I. George and C. P. Robert. Capture-recapture estimation via Gibbs</span>
+<span class="comment">%   sampling. Biometrika, 79:677--683, 1992.</span>
+<span class="comment">% the conditional distribution of the hierarchial parameter alpha, given</span>
+<span class="comment">% the other model parameters</span>
+<span class="comment">%</span>
+<span class="comment">% the conditional is complicated (and not analytically normalizable),</span>
+<span class="comment">% but turns out to be log-concave</span>
+<span class="comment">%</span>
+<span class="comment">% the domain is [1, infinity]</span>
+<span class="comment">%</span>
+<span class="comment">% returns the log of p(alpha|beta,N,p,D) = p(alpha|beta,p)</span>
+
+I = length(p);
+
+<span class="keyword">for</span> vi=1:length(alpha)
+    v(vi) = I*(gammaln(alpha(vi)+beta)-gammaln(alpha(vi))-gammaln(beta));
+    v(vi) = v(vi) + alpha(vi)*sum(log(p)) -2*log(alpha(vi)+beta);
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="arsDemo_03.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+function arsDemo()
+
+%PMTKauthor Daniel Eaton
+
+fprintf('running ARS demo\n');
+
+%% example 1
+% sample from a 1D gaussian
+func = inline('log(exp(-x.^2/sigma))','x','sigma');
+a = -2; b = 2; % any other a,b st a<0 and b<0 would work too
+domain = [-inf inf];
+nSamples = 20000;
+sigma = 1;
+fprintf(sprintf('drawing %i samples from a 1D gaussian\n',nSamples));
+samples = ars(func, a, b, domain, nSamples, sigma);
+figure;
+subplot(2,1,1);
+rng = [-3*sigma 3*sigma];
+x = rng(1):(rng(2)-rng(1))/(100-1):rng(2);
+y = exp(func(x,sigma));
+plot(x, y);
+axis([ rng(1) rng(2) 0 max(y)]);
+title('f(x) gaussian');
+subplot(2,1,2);
+[N x] = hist(samples,100);
+bar(x, N);
+axis([ rng(1) rng(2) 0 max(N)]);
+title('samples from f(x) (by ARS)');
+drawnow
+
+%% example 2
+% sample from a 1D "half-gaussian" (0 for positive x)
+%func = inline('log(exp(-x.^2/sigma)).*(1*(x<=0)+1e300*(x>0))','x','sigma');
+func = inline('log(exp(-x.^2/sigma)).*(1*(x<=0)+0*(x>0))','x','sigma');
+a = -2; b = 0;
+domain = [-inf, 0];
+nSamples = 20000;
+sigma = 3;
+fprintf(sprintf('drawing %i samples from a 1D half-gaussian\n',nSamples));
+samples = ars(func, a, b, domain, nSamples, sigma);
+figure;
+subplot(2,1,1);
+rng = [-3*sigma 3*sigma];
+x = sort([rng(1):(rng(2)-rng(1))/(100-1):rng(2) 0]);
+y = exp(func(x,sigma));
+plot(x, y);
+axis([ rng(1) rng(2) 0 max(y)]);
+title('f(x) half-gaussian');
+%printPmtkFigure('arsDemoTruth')
+
+subplot(2,1,2);
+%figure;
+[N x] = hist(samples,100);
+bar(x, N);
+axis([ rng(1) rng(2) 0 max(N)]);
+title('samples from f(x) (by ARS)');
+printPmtkFigure('arsDemo')
+drawnow
+
+%% example 3, more exotic
+% conditional distribution function from gibbs sampling of a
+% capture-recapture model
+func = @exFunc;
+a = 1; b = 20;
+domain = [1, inf];
+nSamples = 20000;
+beta = 10;
+p = rand(14,1);
+fprintf(sprintf('drawing %i samples from a more exotic distribution\n',nSamples));
+samples = ars(func, a, b, domain, nSamples, beta, p);
+figure(3); clf;
+subplot(2,1,1);
+rng = [1 20];
+x = sort([rng(1):(rng(2)-rng(1))/(100-1):rng(2) 0]);
+y = exp(func(x,beta,p));
+plot(x, y);
+axis([ rng(1) rng(2) 0 max(y)]);
+title('f(x) from a capture-recapture model');
+subplot(2,1,2);
+[N x] = hist(samples,100);
+bar(x, N);
+axis([ rng(1) rng(2) 0 max(N)]);
+title('samples from f(x) (by ARS)');
+
+function v = exFunc(alpha, beta, p)
+% example log-concave function from the model of:
+%   E. I. George and C. P. Robert. Capture-recapture estimation via Gibbs
+%   sampling. Biometrika, 79:677REPLACE_WITH_DASH_DASH683, 1992. 
+% the conditional distribution of the hierarchial parameter alpha, given
+% the other model parameters
+%
+% the conditional is complicated (and not analytically normalizable), 
+% but turns out to be log-concave
+%
+% the domain is [1, infinity]
+%
+% returns the log of p(alpha|beta,N,p,D) = p(alpha|beta,p)
+
+I = length(p);
+
+for vi=1:length(alpha)
+    v(vi) = I*(gammaln(alpha(vi)+beta)-gammaln(alpha(vi))-gammaln(beta));
+    v(vi) = v(vi) + alpha(vi)*sum(log(p)) -2*log(alpha(vi)+beta);
+end
+
+
+##### SOURCE END #####
+--></body></html>

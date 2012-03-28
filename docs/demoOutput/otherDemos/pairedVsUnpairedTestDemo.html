@@ -1,0 +1,154 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Compare paired and unpaired Bayesian posteriors on contingency table differences</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="pairedVsUnpairedTestDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Compare paired and unpaired Bayesian posteriors on contingency table differences</h1><pre class="codeinput"><span class="comment">%PMTKneedsStatsToolbox ksdensity</span>
+</pre><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+requireStatsToolbox
+setSeed(1);
+thetaX = [0.3 0.4  0.45];
+thetaY = [0.5 0.5  0.5];
+Nthetas = length(thetaX);
+N = 10;
+Ntrials = 9; nr = 3; nc = 3;
+<span class="keyword">for</span> t=1:Nthetas
+</pre><pre class="codeinput">    <span class="keyword">for</span> i=1:Ntrials
+        X = rand(1,N) &lt; thetaX(t);
+        Y = rand(1,N) &lt; thetaY(t);
+        n1 = N; n2 = N; y1 = sum(X); y2 = sum(Y);
+        [deltasUnp, postUnp, thetasUnp] = <span class="keyword">...</span>
+            contingencyTableUnpairedDiffPostMc(n1,y1,n2,y2);
+        <span class="comment">%subplot(nr,nc,i);</span>
+        figure(); hold <span class="string">on</span>
+        plot(deltasUnp, postUnp, <span class="string">'linewidth'</span>, 3, <span class="string">'color'</span>, <span class="string">'k'</span>);
+        <span class="comment">%title(sprintf('unpaired, %s=%5.3f, %s=%5.3f', '\theta_1', thetaX(i), '\theta_2', thetaY(i)))</span>
+
+        C = computeCounts([X(:) Y(:)]+1, [2 2]);
+        n00 = C(1,1); n10 = C(2,1); n01=C(1,2); n11=C(2,2);
+        assert(N==(n00+n10+n01+n11));
+        [deltasPaired, postPaired, thetasPaired] = <span class="keyword">...</span>
+            contingencyTablePairedDiffPostMc(n00, n10, n01, n11);
+
+        plot(deltasPaired, postPaired, <span class="string">'r:'</span>, <span class="string">'linewidth'</span>, 3);
+        <span class="comment">%title(sprintf('paired, %s=%5.3f, %s=%5.3f', '\theta_1', thetaX(i), '\theta_2', thetaY(i)))</span>
+        deltaTrue = thetaX(t)-thetaY(t);
+        ttl = sprintf(<span class="string">'%s=%3.2f, n10=%d, n01=%d, y1=%d, y2=%d'</span>, <span class="keyword">...</span>
+            <span class="string">'\delta'</span>, deltaTrue, n10, n01, y1, y2);
+        title(ttl);
+        set(gca, <span class="string">'xlim'</span>, [-1 1]);
+        verticalLine(deltaTrue);
+    <span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="pairedVsUnpairedTestDemo_01.png" alt=""> <img vspace="5" hspace="5" src="pairedVsUnpairedTestDemo_02.png" alt=""> <img vspace="5" hspace="5" src="pairedVsUnpairedTestDemo_03.png" alt=""> <img vspace="5" hspace="5" src="pairedVsUnpairedTestDemo_04.png" alt=""> <img vspace="5" hspace="5" src="pairedVsUnpairedTestDemo_05.png" alt=""> <img vspace="5" hspace="5" src="pairedVsUnpairedTestDemo_06.png" alt=""> <img vspace="5" hspace="5" src="pairedVsUnpairedTestDemo_07.png" alt=""> <img vspace="5" hspace="5" src="pairedVsUnpairedTestDemo_08.png" alt=""> <img vspace="5" hspace="5" src="pairedVsUnpairedTestDemo_09.png" alt=""> <img vspace="5" hspace="5" src="pairedVsUnpairedTestDemo_10.png" alt=""> <img vspace="5" hspace="5" src="pairedVsUnpairedTestDemo_11.png" alt=""> <img vspace="5" hspace="5" src="pairedVsUnpairedTestDemo_12.png" alt=""> <img vspace="5" hspace="5" src="pairedVsUnpairedTestDemo_13.png" alt=""> <img vspace="5" hspace="5" src="pairedVsUnpairedTestDemo_14.png" alt=""> <img vspace="5" hspace="5" src="pairedVsUnpairedTestDemo_15.png" alt=""> <img vspace="5" hspace="5" src="pairedVsUnpairedTestDemo_16.png" alt=""> <img vspace="5" hspace="5" src="pairedVsUnpairedTestDemo_17.png" alt=""> <img vspace="5" hspace="5" src="pairedVsUnpairedTestDemo_18.png" alt=""> <img vspace="5" hspace="5" src="pairedVsUnpairedTestDemo_19.png" alt=""> <img vspace="5" hspace="5" src="pairedVsUnpairedTestDemo_20.png" alt=""> <img vspace="5" hspace="5" src="pairedVsUnpairedTestDemo_21.png" alt=""> <img vspace="5" hspace="5" src="pairedVsUnpairedTestDemo_22.png" alt=""> <img vspace="5" hspace="5" src="pairedVsUnpairedTestDemo_23.png" alt=""> <img vspace="5" hspace="5" src="pairedVsUnpairedTestDemo_24.png" alt=""> <img vspace="5" hspace="5" src="pairedVsUnpairedTestDemo_25.png" alt=""> <img vspace="5" hspace="5" src="pairedVsUnpairedTestDemo_26.png" alt=""> <img vspace="5" hspace="5" src="pairedVsUnpairedTestDemo_27.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
+
+<span class="comment">%placeFigures</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Compare paired and unpaired Bayesian posteriors on contingency table differences
+%PMTKneedsStatsToolbox ksdensity
+%%
+
+% This file is from pmtk3.googlecode.com
+
+requireStatsToolbox
+setSeed(1);
+thetaX = [0.3 0.4  0.45];
+thetaY = [0.5 0.5  0.5];
+Nthetas = length(thetaX);
+N = 10;
+Ntrials = 9; nr = 3; nc = 3;
+for t=1:Nthetas
+    for i=1:Ntrials
+        X = rand(1,N) < thetaX(t);
+        Y = rand(1,N) < thetaY(t);
+        n1 = N; n2 = N; y1 = sum(X); y2 = sum(Y);
+        [deltasUnp, postUnp, thetasUnp] = ...
+            contingencyTableUnpairedDiffPostMc(n1,y1,n2,y2);
+        %subplot(nr,nc,i);
+        figure(); hold on
+        plot(deltasUnp, postUnp, 'linewidth', 3, 'color', 'k');
+        %title(sprintf('unpaired, %s=%5.3f, %s=%5.3f', '\theta_1', thetaX(i), '\theta_2', thetaY(i)))
+        
+        C = computeCounts([X(:) Y(:)]+1, [2 2]);
+        n00 = C(1,1); n10 = C(2,1); n01=C(1,2); n11=C(2,2);
+        assert(N==(n00+n10+n01+n11));
+        [deltasPaired, postPaired, thetasPaired] = ...
+            contingencyTablePairedDiffPostMc(n00, n10, n01, n11);
+        
+        plot(deltasPaired, postPaired, 'r:', 'linewidth', 3);
+        %title(sprintf('paired, %s=%5.3f, %s=%5.3f', '\theta_1', thetaX(i), '\theta_2', thetaY(i)))
+        deltaTrue = thetaX(t)-thetaY(t);
+        ttl = sprintf('%s=%3.2f, n10=%d, n01=%d, y1=%d, y2=%d', ...
+            '\delta', deltaTrue, n10, n01, y1, y2);
+        title(ttl);
+        set(gca, 'xlim', [-1 1]);
+        verticalLine(deltaTrue);
+    end
+    %%
+end
+
+%placeFigures
+
+##### SOURCE END #####
+--></body></html>

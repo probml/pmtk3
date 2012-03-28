@@ -1,0 +1,215 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>negBinomDemo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="negBinomDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% Mixtures of negative binomials</span>
+<span class="comment">% Demo for Sohrab</span>
+
+<span class="keyword">function</span> negBinomDemo()
+
+<span class="keyword">for</span> trial=1:2
+N = 100;
+theta = 0.5;
+xs = 1:N;
+probs = [];
+c = 1;
+
+<span class="keyword">if</span> trial==1
+<span class="keyword">for</span> i=1:numel(xs)
+  x = xs(i);
+  probs(i,c) = binopdf(x,N,theta);
+<span class="keyword">end</span>
+names{c} = sprintf(<span class="string">'binom(%d, %3.1f)'</span>, N,theta);
+c = c+1;
+<span class="keyword">end</span>
+
+mu = N*theta;
+<span class="keyword">if</span> trial==1
+  thetas = [0.1, 0.5, 0.9];
+  <span class="comment">% make mean of negbinom match that of binom</span>
+  <span class="comment">% mean = f*theta/(1-theta)</span>
+  <span class="comment">% mode = (f-1) * theta/(1-theta) so f = mode*(1-theta)/theta + 1</span>
+  fs = 1+(1-thetas)./thetas * mu;
+<span class="keyword">else</span>
+  thetas = [0.5, 0.5, 0.5, 0.5];
+  fs = [1 10 30 50];
+<span class="keyword">end</span>
+
+<span class="keyword">for</span> k=1:numel(thetas)
+  theta=thetas(k);
+  f=fs(k);
+  names{c} = sprintf(<span class="string">'NB(%3.1f, %3.1f)'</span>,f,theta);
+  <span class="keyword">for</span> i=1:numel(xs)
+    x = xs(i);
+    probs(i,c) = exp(negbinomlogpdf(x,f,theta));
+  <span class="keyword">end</span>
+  c=c+1;
+<span class="keyword">end</span>
+
+[styles, colors, symbols, str] =  plotColors; <span class="comment">%#ok</span>
+figure; hold <span class="string">on</span>
+<span class="comment">%subplot(2,2,ti); hold on</span>
+<span class="keyword">for</span> j=1:size(probs,2)
+  plot(probs(:,j), sprintf(<span class="string">'%s'</span>, styles{j}), <span class="string">'color'</span>, colors(j), <span class="string">'linewidth'</span>, 3);
+<span class="keyword">end</span>
+legend(names)
+
+printPmtkFigure(sprintf(<span class="string">'negBinomDemo%d'</span>, trial))
+<span class="keyword">end</span>
+<span class="keyword">end</span>
+
+
+<span class="comment">%\NegBinom(s|f,\theta)</span>
+<span class="comment">% = \binom{s+f-1}{s}</span>
+<span class="comment">% (1-\theta)^f \theta^s</span>
+
+<span class="comment">%\mbox{mean} = f \frac{\theta}{1-\theta},</span>
+<span class="comment">%\mbox{var} = f \frac{\theta}{(1-\theta)^2}</span>
+
+<span class="keyword">function</span> p = negbinompdf(s,f,theta)
+  p = nchoosek(s+f-1,s)*theta^(s)*(1-theta)^f;
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> logp = negbinomlogpdf(s,f,theta)
+  logp = nchoosekln(s+f-1,s) +s*log(theta) + f*log(1-theta);
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="negBinomDemo_01.png" alt=""> <img vspace="5" hspace="5" src="negBinomDemo_02.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+% Mixtures of negative binomials
+% Demo for Sohrab
+
+function negBinomDemo()
+
+for trial=1:2
+N = 100;
+theta = 0.5;
+xs = 1:N;
+probs = [];
+c = 1;
+
+if trial==1
+for i=1:numel(xs)
+  x = xs(i);
+  probs(i,c) = binopdf(x,N,theta);
+end
+names{c} = sprintf('binom(%d, %3.1f)', N,theta);
+c = c+1;
+end
+
+mu = N*theta;
+if trial==1
+  thetas = [0.1, 0.5, 0.9];
+  % make mean of negbinom match that of binom
+  % mean = f*theta/(1-theta) 
+  % mode = (f-1) * theta/(1-theta) so f = mode*(1-theta)/theta + 1
+  fs = 1+(1-thetas)./thetas * mu;
+else
+  thetas = [0.5, 0.5, 0.5, 0.5];
+  fs = [1 10 30 50];
+end
+
+for k=1:numel(thetas)
+  theta=thetas(k);
+  f=fs(k);
+  names{c} = sprintf('NB(%3.1f, %3.1f)',f,theta);
+  for i=1:numel(xs)
+    x = xs(i);
+    probs(i,c) = exp(negbinomlogpdf(x,f,theta));
+  end
+  c=c+1;
+end
+
+[styles, colors, symbols, str] =  plotColors; %#ok
+figure; hold on
+%subplot(2,2,ti); hold on
+for j=1:size(probs,2)
+  plot(probs(:,j), sprintf('%s', styles{j}), 'color', colors(j), 'linewidth', 3);
+end
+legend(names)
+
+printPmtkFigure(sprintf('negBinomDemo%d', trial))
+end
+end
+
+
+%\NegBinom(s|f,\theta)
+% = \binom{s+f-1}{s}
+% (1-\theta)^f \theta^s 
+ 
+%\mbox{mean} = f \frac{\theta}{1-\theta},
+%\mbox{var} = f \frac{\theta}{(1-\theta)^2}
+
+function p = negbinompdf(s,f,theta)
+  p = nchoosek(s+f-1,s)*theta^(s)*(1-theta)^f;
+end
+
+function logp = negbinomlogpdf(s,f,theta)
+  logp = nchoosekln(s+f-1,s) +s*log(theta) + f*log(1-theta);
+end
+
+
+
+
+##### SOURCE END #####
+--></body></html>

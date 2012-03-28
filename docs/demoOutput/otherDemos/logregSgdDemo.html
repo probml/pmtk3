@@ -1,0 +1,288 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Stochastic gradient descent for logistic regression problem</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="logregSgdDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Stochastic gradient descent for logistic regression problem</h1><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="comment">%PMTKslow</span>
+
+setSeed(0);
+<span class="comment">% Use  classes 2,3 for simplicity</span>
+Ntrain = [];
+[Xtrain, ytrain, Xtest, ytest] = mnistLoad([2 3], Ntrain);
+
+<span class="comment">% replicate the training set to illustrate</span>
+<span class="comment">% benefit of SGD</span>
+rep = 1;
+Xtrain = repmat(Xtrain, rep, 1);
+ytrain = repmat(ytrain, rep, 1);
+
+ytrain = setSupport(ytrain, [-1 +1]);
+ytest = setSupport(ytest, [-1 +1]);
+[N,D] = size(Xtrain)
+winit = zeros(D,1); <span class="comment">% randn(D,1);</span>
+lambda = 1e-9;
+<span class="comment">%funObj = @(w)LogisticLossScaled(w,Xtrain,ytrain);</span>
+funObjXy = @(w,X,y) penalizedL2(w, @(ww) LogisticLossScaled(ww, X, y), lambda);
+funObj = @(w) funObjXy(w, Xtrain, ytrain);
+
+
+
+<span class="comment">% minfunc</span>
+options = [];
+options.derivativeCheck = <span class="string">'off'</span>;
+options.display = <span class="string">'none'</span>;
+<span class="comment">%options.display = 'iter';</span>
+options.maxIter = 100;
+options.maxFunEvals = 100;
+options.TolFun = 1e-3; <span class="comment">% defauly 1e-5</span>
+options.TolX = 1e-3; <span class="comment">% default 1e-5</span>
+
+sgdoptions.batchsize = 100;
+sgdoptions.verbose = true;
+sgdoptions.storeParamTrace = true;
+sgdoptions.storeFvalTrace = false;
+sgdoptions.maxUpdates = 1000;
+sgdoptions.avgstart = 5;
+sgdoptions.method = [];
+sgdoptions.lambda = 1;
+<span class="comment">%sgdoptions.stepSizeFn = @(t) 0.1*0.999^t;</span>
+<span class="comment">%sgdoptions.convTol = 1e-7;</span>
+
+
+<span class="comment">%methods = {'sgd', 'sd', 'cg', 'bb', 'newton', 'lbfgs'};</span>
+methods = {<span class="string">'sgd'</span>,  <span class="string">'lbfgs'</span>};
+<span class="comment">%methods = {'sgd'};</span>
+
+<span class="keyword">for</span> m=1:length(methods)
+  method = methods{m}
+  tic
+  <span class="keyword">switch</span> method
+    <span class="keyword">case</span> <span class="string">'sgd'</span>
+      sgdoptions.method = <span class="string">'sgd'</span>;
+      [w, f, exitflag, output{m}] = stochgrad(funObjXy, winit, sgdoptions, Xtrain, ytrain);
+    <span class="keyword">case</span> <span class="string">'sgdmf'</span>
+      sgdoptions.method = <span class="string">'minfunc'</span>;
+      [w, f, exitflag, output{m}] = stochgradComplex(funObjXy, winit, sgdoptions, Xtrain, ytrain);
+    <span class="keyword">otherwise</span>
+      options.Method = method;
+      [w, f, exitflag, output{m}] = minFunc(funObj, winit, options);
+      fvalTrace = output{m}.trace.fval;
+  <span class="keyword">end</span>
+  t = toc;
+  finalObj =  funObjXy(w, Xtrain, ytrain);
+  <span class="comment">%assert(approxeq(f, finalObj))</span>
+  <span class="keyword">if</span> strcmpi(method, <span class="string">'sgd'</span>) || strcmpi(method, <span class="string">'sgdmf'</span>)
+    <span class="comment">%fvalTrace = output.trace.fvalAvg;</span>
+    <span class="comment">%fvalTrace = output.trace.fvalMinibatchAvg;</span>
+    fprintf(<span class="string">'postprocessing\n'</span>);
+    [fvalTrace] = stochgradTracePostprocess(output{m}.trace, funObjXy, Xtrain, ytrain);
+  <span class="keyword">end</span>
+  figure;
+  plot(fvalTrace, <span class="string">'o-'</span>, <span class="string">'linewidth'</span>, 2);
+  title(sprintf(<span class="string">'%s, %5.3f seconds, final obj = %5.3f'</span>, <span class="keyword">...</span>
+    method, t, finalObj));
+  <span class="comment">%horizontalLine(finalObj)</span>
+  printPmtkFigure(sprintf(<span class="string">'logregOpt%s'</span>, method))
+
+  <span class="keyword">if</span> 0 <span class="comment">% strcmpi(method, 'sgd') || strcmpi(method, 'sgdmf')</span>
+    <span class="comment">% For diagnostic purposes, we cna look at the internal</span>
+    <span class="comment">% estimate of the objective, which is used to assess convergence</span>
+    figure; plot(output{m}.trace.fvalMinibatch); title(<span class="string">'minibatch'</span>)
+    figure; plot(output{m}.trace.fvalMinibatchAvg); title(<span class="string">'minibatch avg'</span>)
+  <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">N =
+       12089
+D =
+   784
+method =
+sgd
+5 batches of size 100
+epoch 1
+epoch 2
+5 batches of size 100
+epoch 1
+epoch 2
+5 batches of size 100
+epoch 1
+epoch 2
+121 batches of size 100
+epoch 1
+epoch 1 batch 100 nupdates 100
+epoch 2
+epoch 2 batch 100 nupdates 221
+epoch 3
+epoch 3 batch 100 nupdates 342
+epoch 4
+epoch 4 batch 100 nupdates 463
+epoch 5
+epoch 5 batch 100 nupdates 584
+epoch 6
+epoch 6 batch 100 nupdates 705
+epoch 7
+epoch 7 batch 100 nupdates 826
+epoch 8
+epoch 8 batch 100 nupdates 947
+epoch 9
+postprocessing
+method =
+lbfgs
+</pre><img vspace="5" hspace="5" src="logregSgdDemo_01.png" alt=""> <img vspace="5" hspace="5" src="logregSgdDemo_02.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Stochastic gradient descent for logistic regression problem
+
+% This file is from pmtk3.googlecode.com
+
+%PMTKslow
+
+setSeed(0);
+% Use  classes 2,3 for simplicity
+Ntrain = [];
+[Xtrain, ytrain, Xtest, ytest] = mnistLoad([2 3], Ntrain);
+
+% replicate the training set to illustrate
+% benefit of SGD
+rep = 1;
+Xtrain = repmat(Xtrain, rep, 1);
+ytrain = repmat(ytrain, rep, 1);
+
+ytrain = setSupport(ytrain, [-1 +1]);
+ytest = setSupport(ytest, [-1 +1]);
+[N,D] = size(Xtrain)
+winit = zeros(D,1); % randn(D,1);
+lambda = 1e-9; 
+%funObj = @(w)LogisticLossScaled(w,Xtrain,ytrain);
+funObjXy = @(w,X,y) penalizedL2(w, @(ww) LogisticLossScaled(ww, X, y), lambda);
+funObj = @(w) funObjXy(w, Xtrain, ytrain);
+
+
+
+% minfunc
+options = [];
+options.derivativeCheck = 'off';
+options.display = 'none';
+%options.display = 'iter';
+options.maxIter = 100;
+options.maxFunEvals = 100;
+options.TolFun = 1e-3; % defauly 1e-5
+options.TolX = 1e-3; % default 1e-5
+
+sgdoptions.batchsize = 100;
+sgdoptions.verbose = true;
+sgdoptions.storeParamTrace = true;
+sgdoptions.storeFvalTrace = false;
+sgdoptions.maxUpdates = 1000;
+sgdoptions.avgstart = 5;
+sgdoptions.method = [];
+sgdoptions.lambda = 1;
+%sgdoptions.stepSizeFn = @(t) 0.1*0.999^t;
+%sgdoptions.convTol = 1e-7;
+
+
+%methods = {'sgd', 'sd', 'cg', 'bb', 'newton', 'lbfgs'};
+methods = {'sgd',  'lbfgs'};
+%methods = {'sgd'};
+
+for m=1:length(methods)
+  method = methods{m}
+  tic
+  switch method
+    case 'sgd'
+      sgdoptions.method = 'sgd';
+      [w, f, exitflag, output{m}] = stochgrad(funObjXy, winit, sgdoptions, Xtrain, ytrain);
+    case 'sgdmf'
+      sgdoptions.method = 'minfunc';
+      [w, f, exitflag, output{m}] = stochgradComplex(funObjXy, winit, sgdoptions, Xtrain, ytrain);
+    otherwise
+      options.Method = method;
+      [w, f, exitflag, output{m}] = minFunc(funObj, winit, options);
+      fvalTrace = output{m}.trace.fval;
+  end
+  t = toc;
+  finalObj =  funObjXy(w, Xtrain, ytrain);
+  %assert(approxeq(f, finalObj))
+  if strcmpi(method, 'sgd') || strcmpi(method, 'sgdmf')
+    %fvalTrace = output.trace.fvalAvg;
+    %fvalTrace = output.trace.fvalMinibatchAvg;
+    fprintf('postprocessing\n');
+    [fvalTrace] = stochgradTracePostprocess(output{m}.trace, funObjXy, Xtrain, ytrain);
+  end
+  figure;
+  plot(fvalTrace, 'o-', 'linewidth', 2);
+  title(sprintf('%s, %5.3f seconds, final obj = %5.3f', ...
+    method, t, finalObj));
+  %horizontalLine(finalObj)
+  printPmtkFigure(sprintf('logregOpt%s', method))
+  
+  if 0 % strcmpi(method, 'sgd') || strcmpi(method, 'sgdmf')
+    % For diagnostic purposes, we cna look at the internal
+    % estimate of the objective, which is used to assess convergence
+    figure; plot(output{m}.trace.fvalMinibatch); title('minibatch')
+    figure; plot(output{m}.trace.fvalMinibatchAvg); title('minibatch avg')
+  end
+end
+
+##### SOURCE END #####
+--></body></html>

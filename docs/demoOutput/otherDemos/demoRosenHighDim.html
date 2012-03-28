@@ -1,0 +1,181 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>RosenBrock Demo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="demoRosenHighDim.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>RosenBrock Demo</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="comment">%PMTKinteractive</span>
+<span class="comment">%PMTKneedsOptimToolbox</span>
+
+
+<span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="comment">% "A note on the extended rosenbrock function" Evol. Comp. 2006</span>
+<span class="comment">% claims that for d=4 to 30 dims there are 2 local minima, at [1,1,...1] and</span>
+<span class="comment">% and near [-1,1,...,1].</span>
+<span class="comment">% Let us verify this for d=4 and d=5</span>
+<span class="comment">%xstart = [-0.77565923 0.61309337 0.38206285 0.14597202]';</span>
+xstart = [-0.96205109 0.93573953 0.88071386 0.77787813 0.60509438]';
+[f g H] = rosenbrock(xstart);
+assert(isposdef(H))
+norm(g)
+<span class="comment">% norm(g) : for d=4, 1e-7, for d=5: 1e-6</span>
+<span class="comment">% norm(g) when x=[1 1 ... 1] is zero!</span>
+<span class="comment">%</span>
+<span class="comment">% So the claim seems dubious...</span>
+<span class="comment">%</span>
+</pre><pre class="codeinput">requireOptimToolbox
+x = rand(10,1);
+[f g H] = rosenbrock(x);
+figure;spy(H)
+title(sprintf(<span class="string">'sparsity pattern of Hessian for extended Rosenbrock'</span>))
+  printPmtkFigure <span class="string">rosen10dSpy</span>
+
+
+<span class="comment">% Now compare speed of using Hessian or approximating it</span>
+
+d = 20; <span class="comment">% 200;</span>
+seed = 0;
+setSeed(seed);
+xstart = 2*rand(d,1)-1;
+opts = optimset(<span class="string">'display'</span>, <span class="string">'off'</span>, <span class="string">'DerivativeCheck'</span>, <span class="string">'off'</span>);
+[f g H] = rosenbrock(xstart);
+
+clear <span class="string">options</span>
+options{1} = optimset(opts, <span class="string">'GradObj'</span>, <span class="string">'on'</span>, <span class="string">'Hessian'</span>, <span class="string">'on'</span>); <span class="comment">% analtyic Hessian</span>
+options{2} = optimset(opts, <span class="string">'GradObj'</span>, <span class="string">'on'</span>, <span class="string">'Hessian'</span>, []); <span class="comment">% dense numerical Hessian</span>
+options{3} = optimset(opts, <span class="string">'GradObj'</span>, <span class="string">'on'</span>, <span class="string">'HessPattern'</span>, H); <span class="comment">% sparse numerical Hessian</span>
+options{4} = optimset(opts, <span class="string">'GradObj'</span>, [], <span class="string">'HessPattern'</span>, H, <span class="string">'LargeScale'</span>, <span class="string">'off'</span>); <span class="comment">% numerical gradient and Hessian</span>
+
+clear <span class="string">t</span> <span class="string">final</span>
+<span class="keyword">for</span> i=1:length(options)
+  tic
+  [x fval exitflag output] = fminunc(@rosenbrock, xstart, options{i});
+  t(i) = toc;
+  final(i) = fval;
+<span class="keyword">end</span>
+
+final
+t
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% RosenBrock Demo
+%
+%%
+%PMTKinteractive
+%PMTKneedsOptimToolbox
+
+
+% This file is from pmtk3.googlecode.com
+
+% "A note on the extended rosenbrock function" Evol. Comp. 2006
+% claims that for d=4 to 30 dims there are 2 local minima, at [1,1,...1] and
+% and near [-1,1,...,1].
+% Let us verify this for d=4 and d=5
+%xstart = [-0.77565923 0.61309337 0.38206285 0.14597202]';
+xstart = [-0.96205109 0.93573953 0.88071386 0.77787813 0.60509438]';
+[f g H] = rosenbrock(xstart);
+assert(isposdef(H))
+norm(g)
+% norm(g) : for d=4, 1e-7, for d=5: 1e-6
+% norm(g) when x=[1 1 ... 1] is zero!
+% 
+% So the claim seems dubious...
+%
+%%
+
+requireOptimToolbox
+x = rand(10,1);
+[f g H] = rosenbrock(x);
+figure;spy(H)
+title(sprintf('sparsity pattern of Hessian for extended Rosenbrock'))
+  printPmtkFigure rosen10dSpy
+
+
+% Now compare speed of using Hessian or approximating it
+
+d = 20; % 200;
+seed = 0;
+setSeed(seed);
+xstart = 2*rand(d,1)-1;
+opts = optimset('display', 'off', 'DerivativeCheck', 'off');
+[f g H] = rosenbrock(xstart);
+
+clear options
+options{1} = optimset(opts, 'GradObj', 'on', 'Hessian', 'on'); % analtyic Hessian
+options{2} = optimset(opts, 'GradObj', 'on', 'Hessian', []); % dense numerical Hessian
+options{3} = optimset(opts, 'GradObj', 'on', 'HessPattern', H); % sparse numerical Hessian
+options{4} = optimset(opts, 'GradObj', [], 'HessPattern', H, 'LargeScale', 'off'); % numerical gradient and Hessian
+
+clear t final
+for i=1:length(options)
+  tic
+  [x fval exitflag output] = fminunc(@rosenbrock, xstart, options{i});
+  t(i) = toc;
+  final(i) = fval;
+end
+
+final
+t
+
+##### SOURCE END #####
+--></body></html>

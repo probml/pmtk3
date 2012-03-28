@@ -1,0 +1,209 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Rosenbrock 2D demo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="demoRosen2d.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Rosenbrock 2D demo</h1><pre class="codeinput"><span class="comment">%PMTKneedsOptimToolbox fminunc</span>
+</pre><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+requireOptimToolbox;
+xstart = [-1 2];
+
+<span class="comment">% basic usage with anonymous function and numerical derivatives</span>
+[x fval exitflag output] = fminunc(@(X) (1-X(1))^2 + 100*(X(2)-X(1)^2)^2, xstart)
+
+<span class="comment">% now specify gradient and Hessian analytically</span>
+opts = optimset(<span class="string">'fminunc'</span>);
+opts = optimset(opts, <span class="string">'GradObj'</span>, <span class="string">'on'</span>, <span class="string">'Hessian'</span>, <span class="string">'on'</span>);
+[x fval exitflag output] = fminunc(@rosen2d, xstart, opts)
+
+<span class="comment">% now plot function values on top of contour plot</span>
+[xc,yc] = meshgrid(-2:.05:2);
+zc = reshape(rosen2d([xc(:),yc(:)]), size(xc));
+figure;
+contour(xc,yc,zc,[.1 1 4 16 64 256 1024 4096])
+hold <span class="string">on</span>
+opts = optimset(opts, <span class="string">'OutputFcn'</span>, @optimplot2d, <span class="string">'Display'</span>, <span class="string">'iter'</span>);
+[x fval] = fminunc(@rosen2d, xstart, opts)
+</pre><pre class="codeoutput">Warning: Gradient must be provided for
+trust-region algorithm;
+  using line-search algorithm instead. 
+
+Local minimum found.
+
+Optimization completed because the size of the gradient is less than
+the default value of the function tolerance.
+
+
+
+x =
+    1.0000    1.0000
+fval =
+   1.2262e-10
+exitflag =
+     1
+output = 
+       iterations: 39
+        funcCount: 150
+         stepsize: 1
+    firstorderopt: 3.1185e-04
+        algorithm: [1x38 char]
+          message: [1x436 char]
+
+Local minimum found.
+
+Optimization completed because the size of the gradient is less than
+the selected value of the function tolerance.
+
+
+
+x =
+    1.0000    1.0000
+fval =
+   1.9310e-17
+exitflag =
+     1
+output = 
+         iterations: 30
+          funcCount: 31
+       cgiterations: 25
+      firstorderopt: 2.7783e-08
+          algorithm: [1x32 char]
+            message: [1x498 char]
+    constrviolation: []
+
+                                Norm of      First-order 
+ Iteration        f(x)          step          optimality   CG-iterations
+     0                104                           396                
+     1                104             10            396           1
+     2                104            2.5            396           0
+     3            34.2215          0.625            344           0
+     4            6.72402        0.44365           5.58           1
+     5            5.86248          0.625           21.1           1
+     6            5.76078        1.02527           56.5           1
+     7            3.89104      0.0891933           6.37           1
+     8            3.42558       0.256317           6.48           1
+     9            2.93818       0.512635           18.5           1
+    10            2.18012       0.129349            5.3           1
+    11            2.18012        0.56811            5.3           1
+    12             1.8788       0.128159           3.53           0
+    13            1.50396       0.256317           8.01           1
+    14            1.08919       0.128576           3.31           1
+    15            0.95386       0.239305           11.5           1
+    16           0.531085       0.105161           1.02           1
+    17           0.531085       0.460406           1.02           1
+    18           0.408904       0.115102           2.48           0
+    19           0.305078       0.232187           6.48           1
+    20            0.15141       0.115211          0.715           1
+    21            0.15141       0.360146          0.715           1
+    22           0.112035      0.0900365          0.914           0
+    23          0.0649512       0.180073           3.22           1
+    24          0.0271872       0.133526           1.19           1
+    25          0.0105277       0.167655           2.44           1
+    26         0.00200985      0.0719453          0.286           1
+    27        0.000230681      0.0798709          0.518           1
+    28        2.38364e-06      0.0137429        0.00967           1
+    29        5.99054e-10     0.00338141       0.000882           1
+    30        1.93095e-17    2.33627e-05       2.78e-08           1
+
+Local minimum found.
+
+Optimization completed because the size of the gradient is less than
+the selected value of the function tolerance.
+
+
+
+x =
+    1.0000    1.0000
+fval =
+   1.9310e-17
+</pre><img vspace="5" hspace="5" src="demoRosen2d_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Rosenbrock 2D demo
+%PMTKneedsOptimToolbox fminunc
+%%
+
+% This file is from pmtk3.googlecode.com
+
+requireOptimToolbox;
+xstart = [-1 2];
+
+% basic usage with anonymous function and numerical derivatives
+[x fval exitflag output] = fminunc(@(X) (1-X(1))^2 + 100*(X(2)-X(1)^2)^2, xstart)
+
+% now specify gradient and Hessian analytically
+opts = optimset('fminunc');
+opts = optimset(opts, 'GradObj', 'on', 'Hessian', 'on');
+[x fval exitflag output] = fminunc(@rosen2d, xstart, opts)
+
+% now plot function values on top of contour plot
+[xc,yc] = meshgrid(-2:.05:2);
+zc = reshape(rosen2d([xc(:),yc(:)]), size(xc));
+figure;
+contour(xc,yc,zc,[.1 1 4 16 64 256 1024 4096])
+hold on
+opts = optimset(opts, 'OutputFcn', @optimplot2d, 'Display', 'iter');
+[x fval] = fminunc(@rosen2d, xstart, opts)
+
+##### SOURCE END #####
+--></body></html>

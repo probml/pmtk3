@@ -1,0 +1,143 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Illustration of central vs high posterior density intervals</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="postDensityIntervals.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Illustration of central vs high posterior density intervals</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="keyword">function</span> postDensityIntervals
+</pre><pre class="codeinput">f = @(x)gaussProb(x, 0, 1) + gaussProb(x, 6, 1);
+domain = -4:0.001:10;
+h = plot(domain , f(domain), <span class="string">'-r'</span>, <span class="string">'LineWidth'</span>, 2.5);
+axis([-4, 10, 0, 0.5]);
+shade(f, 0, -1.5, 7.5, <span class="string">'b'</span>, 0.005);
+set(gca, <span class="string">'XTick'</span>, [], <span class="string">'YTick'</span>, []);
+
+annotation(gcf, <span class="keyword">...</span>
+    <span class="string">'textarrow'</span>     , [0.1795 0.2454], [0.2971 0.1431], <span class="keyword">...</span>
+    <span class="string">'TextEdgeColor'</span> , <span class="string">'none'</span>         , <span class="keyword">...</span>
+    <span class="string">'FontSize'</span>      , 30             , <span class="keyword">...</span>
+    <span class="string">'String'</span>        , {<span class="string">'\alpha/2'</span>}   );
+
+annotation(gcf, <span class="keyword">...</span>
+    <span class="string">'textarrow'</span>     , [0.8522 0.7863], [0.2971 0.1431], <span class="keyword">...</span>
+    <span class="string">'TextEdgeColor'</span> , <span class="string">'none'</span>         , <span class="keyword">...</span>
+    <span class="string">'FontSize'</span>      , 30             ,<span class="keyword">...</span>
+    <span class="string">'String'</span>        , {<span class="string">'\alpha/2'</span>}   );
+
+uistack(h, <span class="string">'top'</span>);
+printPmtkFigure <span class="string">centralInterval</span>;
+</pre><img vspace="5" hspace="5" src="postDensityIntervals_01.png" alt=""> <pre class="codeinput">figure;
+h = plot(domain, f(domain), <span class="string">'-r'</span>, <span class="string">'LineWidth'</span>, 2.5);
+axis([-4, 10, 0, 0.5]);
+shade(f, 0, -1.5, 1.5, <span class="string">'b'</span>, 0.005);
+shade(f, 0,  4.5, 7.5, <span class="string">'b'</span>, 0.005);
+line([-4;10], [f(-1.5), f(-1.5)], <span class="string">'Color'</span>, <span class="string">'b'</span>, <span class="string">'LineWidth'</span>, 2);
+set(gca,<span class="string">'XTick'</span>, [], <span class="string">'YTick'</span>, f(-1.5), <span class="string">'YTickLabel'</span>, <span class="string">'pMIN'</span>, <span class="string">'fontsize'</span>, 20);
+uistack(h, <span class="string">'top'</span>);
+printPmtkFigure <span class="string">HPD</span>;
+</pre><img vspace="5" hspace="5" src="postDensityIntervals_02.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Illustration of central vs high posterior density intervals
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+function postDensityIntervals
+f = @(x)gaussProb(x, 0, 1) + gaussProb(x, 6, 1);
+domain = -4:0.001:10;
+h = plot(domain , f(domain), '-r', 'LineWidth', 2.5);
+axis([-4, 10, 0, 0.5]);
+shade(f, 0, -1.5, 7.5, 'b', 0.005);
+set(gca, 'XTick', [], 'YTick', []);
+
+annotation(gcf, ...
+    'textarrow'     , [0.1795 0.2454], [0.2971 0.1431], ...
+    'TextEdgeColor' , 'none'         , ...
+    'FontSize'      , 30             , ...
+    'String'        , {'\alpha/2'}   );
+
+annotation(gcf, ...
+    'textarrow'     , [0.8522 0.7863], [0.2971 0.1431], ...
+    'TextEdgeColor' , 'none'         , ...
+    'FontSize'      , 30             ,...
+    'String'        , {'\alpha/2'}   );
+
+uistack(h, 'top');
+printPmtkFigure centralInterval;
+%%
+figure;
+h = plot(domain, f(domain), '-r', 'LineWidth', 2.5);
+axis([-4, 10, 0, 0.5]);
+shade(f, 0, -1.5, 1.5, 'b', 0.005);
+shade(f, 0,  4.5, 7.5, 'b', 0.005);
+line([-4;10], [f(-1.5), f(-1.5)], 'Color', 'b', 'LineWidth', 2);
+set(gca,'XTick', [], 'YTick', f(-1.5), 'YTickLabel', 'pMIN', 'fontsize', 20);
+uistack(h, 'top');
+printPmtkFigure HPD;
+end
+
+##### SOURCE END #####
+--></body></html>

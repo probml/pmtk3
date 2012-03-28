@@ -1,0 +1,233 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Reproduce figure 18.4 from "Elements of statistical learning" 2nd ed.</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="shrunkenCentroidsSRBCTdemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Reproduce figure 18.4 from "Elements of statistical learning" 2nd ed.</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Error rates in the training and test sets for varying Delta</a></li><li><a href="#3">Cross validation</a></li><li><a href="#4">Plot centroids</a></li></ul></div><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+
+loadData(<span class="string">'srbct'</span>); <span class="comment">% Xtrain is 63*2308, Xtest is 25*2308, C=4</span>
+
+Xtest = Xtest(~isnan(ytest), :);
+ytest = ytest(~isnan(ytest));
+
+fitFn = @(X,y,lam)  discrimAnalysisFit(X, y, <span class="string">'shrunkenCentroids'</span>, <span class="string">'lambda'</span>, lam);
+predictFn = @(model, X)  discrimAnalysisPredict(model, X);
+</pre><h2>Error rates in the training and test sets for varying Delta<a name="2"></a></h2><pre class="codeinput">lambdas = linspace(0, 8, 20);
+nTrain = length(ytrain);
+nTest = length(ytest);
+<span class="keyword">for</span> i=1:length(lambdas)
+    model = fitFn(Xtrain, ytrain, lambdas(i));
+    yhatTrain = predictFn(model, Xtrain);
+    yhatTest = predictFn(model, Xtest);
+    errTrain(i) = sum(zeroOneLossFn(yhatTrain, ytrain))/nTrain;
+    errTest(i) = sum(zeroOneLossFn(yhatTest, ytest))/nTest;
+    numgenes(i) = sum(model.shrunkenCentroids(:) ~= 0);
+<span class="keyword">end</span>
+
+figure;
+plot(lambdas, errTrain, <span class="string">'gx-'</span>, lambdas, errTest, <span class="string">'bo--'</span>,<span class="keyword">...</span>
+  <span class="string">'MarkerSize'</span>, 10, <span class="string">'linewidth'</span>, 2)
+legend(<span class="string">'Training'</span>, <span class="string">'Test'</span>, <span class="string">'Location'</span>, <span class="string">'northwest'</span>);
+xlabel(<span class="string">'Amount of shrinkage'</span>)
+ylabel(<span class="string">'misclassification rate'</span>)
+title(<span class="string">'SRBCT data'</span>)
+</pre><img vspace="5" hspace="5" src="shrunkenCentroidsSRBCTdemo_01.png" alt=""> <h2>Cross validation<a name="3"></a></h2><p>We have to combine train and test sets to get the same CV curve as in Hastie fig 18.4...</p><pre class="codeinput">nFolds = 10;
+useSErule = false;
+[bestModel, bestDelta, errCV, se] = fitCv(lambdas, fitFn, predictFn,<span class="keyword">...</span>
+    @zeroOneLossFn, [Xtrain;Xtest], [ytrain;ytest], nFolds, <span class="string">'useSErule'</span>, useSErule);
+
+  figure;
+lambda = lambdas;
+xticklam=[1:8];
+xtickNgenes = numgenes(round(linspace(1,length(numgenes), length(xticklam))));
+axisH=axes;
+set(axisH,<span class="string">'xlabel'</span>,xlabel(<span class="string">'Number of Genes'</span>),<span class="string">'layer'</span>,<span class="string">'top'</span>,<span class="keyword">...</span>
+  <span class="string">'xaxislocation'</span>,<span class="string">'top'</span>,<span class="string">'xlim'</span>,[xticklam(1) xticklam(end)],<span class="string">'xminortick'</span>,<span class="string">'on'</span>,<span class="keyword">...</span>
+  <span class="string">'ytick'</span>,[],<span class="string">'yticklabel'</span>,[],<span class="string">'xticklabel'</span>,xtickNgenes,<span class="string">'xtick'</span>,xticklam);
+hold <span class="string">on</span>
+axes(<span class="string">'position'</span>,get(axisH,<span class="string">'position'</span>),<span class="string">'xminortick'</span>,<span class="string">'on'</span>,<span class="string">'xtick'</span>,xticklam,<span class="string">'xticklabel'</span>,xticklam,<span class="string">'layer'</span>,<span class="string">'bottom'</span>)
+hold <span class="string">on</span>
+plot(lambda,errTest,<span class="string">'bo--'</span>,<span class="string">'markersize'</span>,10,<span class="string">'linewidth'</span>,2)
+plot(lambda,errTrain,<span class="string">'gx-'</span>,<span class="string">'markersize'</span>,10,<span class="string">'linewidth'</span>,2)
+plot(lambda,errCV,<span class="string">'rs:'</span>,<span class="string">'markersize'</span>,10,<span class="string">'linewidth'</span>,2)
+axis([0 lambda(end) 0 1])
+xlabel(<span class="string">'\lambda'</span>)
+ylabel(<span class="string">'Misclassification Error'</span>,<span class="string">'position'</span>,[-0.7 0.49 1.001])
+<span class="comment">%ticks=get(gca,'ytick');</span>
+<span class="comment">%set(gca,'yticklabel',[]);</span>
+<span class="comment">%text(ticks*0-0.3,ticks-0.02,cellstr(num2str(ticks')),'rotation',90,'fontsize',15)</span>
+legend( <span class="string">'Test'</span>, <span class="string">'Train'</span>, <span class="string">'CV'</span>, <span class="string">'Location'</span>, <span class="string">'Best'</span>);
+bestNdx  = find(bestDelta==lambdas);
+fprintf(<span class="string">'best lambda=%5.3f, ngenes = %d\n'</span>, bestDelta, numgenes(bestNdx));
+line([bestDelta bestDelta], [0 1]);
+printPmtkFigure(<span class="string">'shrunkenCentroidsErrVsLambda'</span>)
+</pre><pre class="codeoutput">best lambda=0.421, ngenes = 5731
+</pre><img vspace="5" hspace="5" src="shrunkenCentroidsSRBCTdemo_02.png" alt=""> <h2>Plot centroids<a name="4"></a></h2><pre class="codeinput">centShrunk = bestModel.shrunkenCentroids;
+model = fitFn(Xtrain, ytrain, 0);
+centUnshrunk = model.shrunkenCentroids;
+
+[numGroups D] = size(centShrunk);
+<span class="keyword">for</span> g=1:numGroups
+    <span class="comment">%subplot(4,1,g);</span>
+    figure; hold <span class="string">on</span>;
+    plot(1:D, centUnshrunk(g,:), <span class="string">'Color'</span>, [.8 .8 .8]);
+    plot(1:D, centShrunk(g,:), <span class="string">'b'</span>, <span class="string">'LineWidth'</span>, 2);
+    title(sprintf(<span class="string">'Class %d'</span>, g));
+    hold <span class="string">off</span>;
+    printPmtkFigure(sprintf(<span class="string">'shrunkenCentroidsClass%d'</span>, g))
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="shrunkenCentroidsSRBCTdemo_03.png" alt=""> <img vspace="5" hspace="5" src="shrunkenCentroidsSRBCTdemo_04.png" alt=""> <img vspace="5" hspace="5" src="shrunkenCentroidsSRBCTdemo_05.png" alt=""> <img vspace="5" hspace="5" src="shrunkenCentroidsSRBCTdemo_06.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Reproduce figure 18.4 from "Elements of statistical learning" 2nd ed.
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+
+loadData('srbct'); % Xtrain is 63*2308, Xtest is 25*2308, C=4
+
+Xtest = Xtest(~isnan(ytest), :);
+ytest = ytest(~isnan(ytest));
+
+fitFn = @(X,y,lam)  discrimAnalysisFit(X, y, 'shrunkenCentroids', 'lambda', lam);
+predictFn = @(model, X)  discrimAnalysisPredict(model, X);
+
+
+%% Error rates in the training and test sets for varying Delta
+lambdas = linspace(0, 8, 20);
+nTrain = length(ytrain);
+nTest = length(ytest);
+for i=1:length(lambdas)
+    model = fitFn(Xtrain, ytrain, lambdas(i));
+    yhatTrain = predictFn(model, Xtrain);
+    yhatTest = predictFn(model, Xtest);
+    errTrain(i) = sum(zeroOneLossFn(yhatTrain, ytrain))/nTrain;
+    errTest(i) = sum(zeroOneLossFn(yhatTest, ytest))/nTest;
+    numgenes(i) = sum(model.shrunkenCentroids(:) ~= 0);
+end
+
+figure;
+plot(lambdas, errTrain, 'gx-', lambdas, errTest, 'boREPLACE_WITH_DASH_DASH',...
+  'MarkerSize', 10, 'linewidth', 2)
+legend('Training', 'Test', 'Location', 'northwest');
+xlabel('Amount of shrinkage')
+ylabel('misclassification rate')
+title('SRBCT data')
+
+
+%% Cross validation
+% We have to combine train and test sets to get the same
+% CV curve as in Hastie fig 18.4...
+nFolds = 10;
+useSErule = false;
+[bestModel, bestDelta, errCV, se] = fitCv(lambdas, fitFn, predictFn,...
+    @zeroOneLossFn, [Xtrain;Xtest], [ytrain;ytest], nFolds, 'useSErule', useSErule); 
+
+  figure;
+lambda = lambdas;
+xticklam=[1:8];
+xtickNgenes = numgenes(round(linspace(1,length(numgenes), length(xticklam))));
+axisH=axes;
+set(axisH,'xlabel',xlabel('Number of Genes'),'layer','top',...
+  'xaxislocation','top','xlim',[xticklam(1) xticklam(end)],'xminortick','on',...
+  'ytick',[],'yticklabel',[],'xticklabel',xtickNgenes,'xtick',xticklam);
+hold on
+axes('position',get(axisH,'position'),'xminortick','on','xtick',xticklam,'xticklabel',xticklam,'layer','bottom')
+hold on
+plot(lambda,errTest,'boREPLACE_WITH_DASH_DASH','markersize',10,'linewidth',2)
+plot(lambda,errTrain,'gx-','markersize',10,'linewidth',2)
+plot(lambda,errCV,'rs:','markersize',10,'linewidth',2)
+axis([0 lambda(end) 0 1])
+xlabel('\lambda')
+ylabel('Misclassification Error','position',[-0.7 0.49 1.001])
+%ticks=get(gca,'ytick');
+%set(gca,'yticklabel',[]);
+%text(ticks*0-0.3,ticks-0.02,cellstr(num2str(ticks')),'rotation',90,'fontsize',15)
+legend( 'Test', 'Train', 'CV', 'Location', 'Best');
+bestNdx  = find(bestDelta==lambdas);
+fprintf('best lambda=%5.3f, ngenes = %d\n', bestDelta, numgenes(bestNdx));
+line([bestDelta bestDelta], [0 1]);
+printPmtkFigure('shrunkenCentroidsErrVsLambda')
+  
+%% Plot centroids
+centShrunk = bestModel.shrunkenCentroids;
+model = fitFn(Xtrain, ytrain, 0);
+centUnshrunk = model.shrunkenCentroids;
+
+[numGroups D] = size(centShrunk);
+for g=1:numGroups
+    %subplot(4,1,g);
+    figure; hold on;
+    plot(1:D, centUnshrunk(g,:), 'Color', [.8 .8 .8]);
+    plot(1:D, centShrunk(g,:), 'b', 'LineWidth', 2);
+    title(sprintf('Class %d', g));
+    hold off;
+    printPmtkFigure(sprintf('shrunkenCentroidsClass%d', g))
+end
+
+
+
+##### SOURCE END #####
+--></body></html>

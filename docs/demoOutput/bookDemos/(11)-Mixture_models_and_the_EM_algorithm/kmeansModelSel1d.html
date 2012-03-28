@@ -1,0 +1,279 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Kmeans Model Selection in 1D</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="kmeansModelSel1d.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Kmeans Model Selection in 1D</h1><!--introduction--><p>Uses netlab since haven't had time to switch over to pmtk</p><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+clear <span class="string">all</span>
+setSeed(0);
+mix = gmm(1, 3, <span class="string">'spherical'</span>);
+mix.centres = [-1 0 1]';
+mix.covars = [0.1 0.1 0.1];
+<span class="comment">%e = 1e-2; e2 = e/2;</span>
+<span class="comment">%mix.priors = [0.5-e2, 0.5-e2, e];</span>
+
+bins = -2:0.1:2;
+n = 1000; ndx = 1:n;
+Xtrain = gmmsamp(mix, n);
+
+figure;
+hist(Xtrain, bins);
+title(<span class="string">'Xtrain'</span>)
+printPmtkFigure <span class="string">kmeansModelSel1dTrain</span>
+
+
+Xtest = gmmsamp(mix, n);
+
+<span class="comment">%figure</span>
+<span class="comment">%hist(Xtest, bins);</span>
+<span class="comment">%title('Xtest')</span>
+
+<span class="comment">%Ks = [1:9];</span>
+<span class="comment">%Ks = [1 2 3 4 5  10 15 20 25];</span>
+Ks = [2 3 4 5 6 10 15];
+
+<span class="comment">%pemp = normalize(hist(Xtrain, bins));</span>
+<span class="keyword">for</span> i=1:length(Ks)
+  K = Ks(i);
+  mu = kmeansFit(Xtrain, K)';
+  Xhat = kmeansDecode(kmeansEncode(Xtest, mu'), mu');
+  mse(i) = mean(sum((Xhat - Xtest).^2,2));
+  mus{i} = mu;
+<span class="keyword">end</span>
+
+figure;
+<span class="keyword">for</span> i=1:6
+  mu = mus{i}; K = Ks(i);
+  subplot(2,3,i);
+  <span class="comment">%bar(bins,pemp); hold on</span>
+  <span class="keyword">for</span> k=1:K
+    <span class="comment">%h=line([mu(k) mu(k)], [0 0.1*max(pemp)]);</span>
+    h=line([mu(k) mu(k)], [0 1]);
+    set(h, <span class="string">'color'</span>, <span class="string">'r'</span>, <span class="string">'linewidth'</span>, 3);
+    hold <span class="string">on</span>
+  <span class="keyword">end</span>
+  title(sprintf(<span class="string">'K=%d, mse=%5.4f'</span>, K, mse(i)))
+<span class="keyword">end</span>
+printPmtkFigure <span class="string">kmeansModelSel1dKmeans</span>
+
+figure;
+plot(Ks, mse, <span class="string">'o-'</span>, <span class="string">'linewidth'</span>, 2);
+title(<span class="string">'MSE on test vs K for K-means'</span>)
+printPmtkFigure <span class="string">kmeansModelSel1dMse</span>
+
+finebins = -2:0.001:2;
+options = foptions;
+<span class="keyword">for</span> i=1:length(Ks)
+  K = Ks(i);
+  mix = gmm(1, K, <span class="string">'spherical'</span>);
+  mix = gmmem(mix, Xtrain, options);
+  nll(i) = -sum(log(gmmprob(mix, Xtest)))
+  models{i} = mix;
+<span class="keyword">end</span>
+
+figure;
+<span class="keyword">for</span> i=1:6
+  mix = models{i};
+  subplot(2,3,i);
+  K = Ks(i);
+  pmodel = gmmprob(mix, finebins(:));
+  plot(finebins, pmodel, <span class="string">'-'</span>, <span class="string">'linewidth'</span>, 2);
+  title(sprintf(<span class="string">'K=%d, nll=%5.4f'</span>, K, nll(i)))
+<span class="keyword">end</span>
+printPmtkFigure <span class="string">kmeansModelSel1dGmm</span>
+
+figure;
+plot(Ks, nll, <span class="string">'o-'</span>, <span class="string">'linewidth'</span>, 2)
+title(<span class="string">'NLL on test set vs K for GMM'</span>)
+printPmtkFigure <span class="string">kmeansModelSel1dNLL</span>
+</pre><pre class="codeoutput">nll =
+   1.2448e+03
+Maximum number of iterations has been exceeded
+nll =
+   1.0e+03 *
+    1.2448    1.1990
+Maximum number of iterations has been exceeded
+nll =
+   1.0e+03 *
+    1.2448    1.1990    1.1970
+Maximum number of iterations has been exceeded
+nll =
+   1.0e+03 *
+    1.2448    1.1990    1.1970    1.2026
+Maximum number of iterations has been exceeded
+nll =
+   1.0e+03 *
+  Columns 1 through 4
+    1.2448    1.1990    1.1970    1.2026
+  Column 5
+    1.1996
+Maximum number of iterations has been exceeded
+nll =
+   1.0e+03 *
+  Columns 1 through 4
+    1.2448    1.1990    1.1970    1.2026
+  Columns 5 through 6
+    1.1996    1.2033
+Maximum number of iterations has been exceeded
+nll =
+   1.0e+03 *
+  Columns 1 through 4
+    1.2448    1.1990    1.1970    1.2026
+  Columns 5 through 7
+    1.1996    1.2033    1.2053
+</pre><img vspace="5" hspace="5" src="kmeansModelSel1d_01.png" alt=""> <img vspace="5" hspace="5" src="kmeansModelSel1d_02.png" alt=""> <img vspace="5" hspace="5" src="kmeansModelSel1d_03.png" alt=""> <img vspace="5" hspace="5" src="kmeansModelSel1d_04.png" alt=""> <img vspace="5" hspace="5" src="kmeansModelSel1d_05.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Kmeans Model Selection in 1D
+% Uses netlab since haven't had time to switch over to pmtk
+%%
+
+% This file is from pmtk3.googlecode.com
+
+clear all
+setSeed(0);
+mix = gmm(1, 3, 'spherical'); 
+mix.centres = [-1 0 1]';
+mix.covars = [0.1 0.1 0.1];
+%e = 1e-2; e2 = e/2;
+%mix.priors = [0.5-e2, 0.5-e2, e];
+
+bins = -2:0.1:2;
+n = 1000; ndx = 1:n;
+Xtrain = gmmsamp(mix, n);
+
+figure;
+hist(Xtrain, bins);
+title('Xtrain')
+printPmtkFigure kmeansModelSel1dTrain
+
+
+Xtest = gmmsamp(mix, n);
+
+%figure
+%hist(Xtest, bins);
+%title('Xtest')
+
+%Ks = [1:9];
+%Ks = [1 2 3 4 5  10 15 20 25];
+Ks = [2 3 4 5 6 10 15];
+
+%pemp = normalize(hist(Xtrain, bins));
+for i=1:length(Ks)
+  K = Ks(i);
+  mu = kmeansFit(Xtrain, K)';
+  Xhat = kmeansDecode(kmeansEncode(Xtest, mu'), mu');
+  mse(i) = mean(sum((Xhat - Xtest).^2,2));
+  mus{i} = mu;
+end
+
+figure;
+for i=1:6
+  mu = mus{i}; K = Ks(i);
+  subplot(2,3,i);
+  %bar(bins,pemp); hold on
+  for k=1:K
+    %h=line([mu(k) mu(k)], [0 0.1*max(pemp)]);
+    h=line([mu(k) mu(k)], [0 1]);
+    set(h, 'color', 'r', 'linewidth', 3);
+    hold on
+  end
+  title(sprintf('K=%d, mse=%5.4f', K, mse(i)))
+end
+printPmtkFigure kmeansModelSel1dKmeans
+
+figure;
+plot(Ks, mse, 'o-', 'linewidth', 2);
+title('MSE on test vs K for K-means')
+printPmtkFigure kmeansModelSel1dMse
+
+finebins = -2:0.001:2;
+options = foptions;
+for i=1:length(Ks)
+  K = Ks(i);
+  mix = gmm(1, K, 'spherical');
+  mix = gmmem(mix, Xtrain, options);
+  nll(i) = -sum(log(gmmprob(mix, Xtest)))
+  models{i} = mix;
+end
+
+figure;
+for i=1:6
+  mix = models{i};
+  subplot(2,3,i);
+  K = Ks(i);
+  pmodel = gmmprob(mix, finebins(:));
+  plot(finebins, pmodel, '-', 'linewidth', 2);
+  title(sprintf('K=%d, nll=%5.4f', K, nll(i)))
+end
+printPmtkFigure kmeansModelSel1dGmm
+
+figure;
+plot(Ks, nll, 'o-', 'linewidth', 2)
+title('NLL on test set vs K for GMM')
+printPmtkFigure kmeansModelSel1dNLL
+
+
+
+##### SOURCE END #####
+--></body></html>

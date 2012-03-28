@@ -1,0 +1,179 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Compare different inference methods for an HMM</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="hmm2DgmTest.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Compare different inference methods for an HMM</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Create a random hmm model</a></li><li><a href="#2">Sample data</a></li><li><a href="#3">infer single marginals using fwdback</a></li><li><a href="#4">infer single marginals using varelim</a></li><li><a href="#5">Infer single marginals using jtree</a></li><li><a href="#7">infer single marginals using libdai's Jtree code</a></li><li><a href="#8">Compare map assignments</a></li></ul></div><h2>Create a random hmm model<a name="1"></a></h2><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+setSeed(0);
+nstates = 250;
+d = 10;
+T = 100;
+model = mkRndGaussHmm(nstates, d);
+</pre><h2>Sample data<a name="2"></a></h2><pre class="codeinput">X = hmmSample(model, T, 1);
+</pre><h2>infer single marginals using fwdback<a name="3"></a></h2><pre class="codeinput">tic
+[gamma, logpHmm] = hmmInferNodes(model, X);
+t = toc;
+fprintf(<span class="string">'fwdbck: %g seconds\n'</span>, t);
+</pre><pre class="codeoutput">fwdbck: 0.0856987 seconds
+</pre><h2>infer single marginals using varelim<a name="4"></a></h2><pre class="codeinput"><span class="keyword">if</span> 0
+    tic;
+    dgm        = hmmToDgm(model, T, <span class="string">'infEngine'</span>, <span class="string">'varelim'</span>);
+    margVelim  = dgmInferNodes(dgm, <span class="string">'localev'</span>, X);
+    gammaVelim = tfMarg2Mat(margVelim);
+    t = toc;
+    fprintf(<span class="string">'velim : %g seconds\n'</span>, t);
+    assert(approxeq(gamma, gammaVelim));
+<span class="keyword">end</span>
+</pre><h2>Infer single marginals using jtree<a name="5"></a></h2><pre class="codeinput"><span class="keyword">if</span> 1
+    tic;
+    dgm        = hmmToDgm(model, T, <span class="string">'infEngine'</span>, <span class="string">'jtree'</span>);
+    [margJtree, logpDgm]  = dgmInferNodes(dgm, <span class="string">'localev'</span>, X);
+    gammaJtree = tfMarg2Mat(margJtree);
+    t = toc;
+    fprintf(<span class="string">'jtree : %g seconds\n'</span>, t);
+    assert(approxeq(gamma, gammaJtree));
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">jtree : 1.41736 seconds
+</pre><h2>infer single marginals using libdai's Jtree code<a name="7"></a></h2><pre class="codeinput"><span class="keyword">if</span> libdaiInstalled
+    tic;
+    dgm        = hmmToDgm(model, T, <span class="string">'infEngine'</span>, <span class="string">'libdaiJtree'</span>);
+    margLD     = dgmInferNodes(dgm, <span class="string">'localev'</span>, X);
+    gammaLD = tfMarg2Mat(margLD);
+    t = toc;
+    fprintf(<span class="string">'libdai: %g seconds\n'</span>, t);
+    assert(approxeq(gamma, gammaLD));
+<span class="keyword">end</span>
+</pre><h2>Compare map assignments<a name="8"></a></h2><pre class="codeinput">mapDGM = dgmMap(dgm, <span class="string">'localev'</span>, X);
+mapHMM = hmmMap(model, X);
+assert(isequal(mapDGM, mapHMM));
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Compare different inference methods for an HMM
+%
+%% Create a random hmm model
+
+% This file is from pmtk3.googlecode.com
+
+setSeed(0);
+nstates = 250;
+d = 10;
+T = 100;
+model = mkRndGaussHmm(nstates, d); 
+%% Sample data
+X = hmmSample(model, T, 1);
+%% infer single marginals using fwdback
+tic
+[gamma, logpHmm] = hmmInferNodes(model, X);
+t = toc;
+fprintf('fwdbck: %g seconds\n', t);
+%% infer single marginals using varelim
+if 0
+    tic;
+    dgm        = hmmToDgm(model, T, 'infEngine', 'varelim');
+    margVelim  = dgmInferNodes(dgm, 'localev', X);
+    gammaVelim = tfMarg2Mat(margVelim);
+    t = toc;
+    fprintf('velim : %g seconds\n', t);
+    assert(approxeq(gamma, gammaVelim));
+end
+%% Infer single marginals using jtree
+if 1
+    tic;
+    dgm        = hmmToDgm(model, T, 'infEngine', 'jtree');
+    [margJtree, logpDgm]  = dgmInferNodes(dgm, 'localev', X);
+    gammaJtree = tfMarg2Mat(margJtree);
+    t = toc;
+    fprintf('jtree : %g seconds\n', t);
+    assert(approxeq(gamma, gammaJtree));
+end
+%%
+%% infer single marginals using libdai's Jtree code
+if libdaiInstalled
+    tic;
+    dgm        = hmmToDgm(model, T, 'infEngine', 'libdaiJtree');
+    margLD     = dgmInferNodes(dgm, 'localev', X);
+    gammaLD = tfMarg2Mat(margLD);
+    t = toc;
+    fprintf('libdai: %g seconds\n', t);
+    assert(approxeq(gamma, gammaLD));
+end
+%% Compare map assignments
+mapDGM = dgmMap(dgm, 'localev', X); 
+mapHMM = hmmMap(model, X); 
+assert(isequal(mapDGM, mapHMM)); 
+
+
+
+
+
+
+
+
+
+
+
+
+
+##### SOURCE END #####
+--></body></html>

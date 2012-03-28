@@ -1,0 +1,206 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>2D Gaussian contour plot along with its 1D marginals and conditionals.</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="gauss2dMargCondPlot.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>2D Gaussian contour plot along with its 1D marginals and conditionals.</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="keyword">function</span> gauss2dMargCondPlot()
+fig = figure(<span class="string">'Color'</span>,<span class="string">'w'</span>);
+mu = [0.5 0.5];
+sigma = [0.018  0.01 ;  0.01 0.011];
+plot2d();
+plotMarginal();
+plotConditional();
+annotate();
+    <span class="keyword">function</span> plot2d()
+        f = @(X)gaussProb(X, mu, sigma);
+        [x,y] = meshgrid(-0.2:0.005:1.2, -0.2:0.005:1.2);
+        [r, c]=size(x);
+        data = [x(:) y(:)];
+        p = f(data);
+        p = reshape(p, r, c);
+        mainAx = axes(<span class="string">'Parent'</span>, fig, <span class="string">'Position'</span>, [0.3, 0.35, 0.65, 0.57]);
+        contour(<span class="string">'Parent'</span>, mainAx, x, y, p, <span class="string">'r'</span>, <span class="keyword">...</span>
+            <span class="string">'LineWidth'</span>, 2, <span class="string">'LevelList'</span>, [4 11 15]);
+        axis([0.2, 0.8, 0.2, 0.8]);
+        removeTicks();
+        title(<span class="string">'P(x,y)'</span>, <span class="string">'FontSize'</span>, 13);
+        hold <span class="string">on</span>;
+    <span class="keyword">end</span>
+    <span class="keyword">function</span> plotMarginal()
+        fmarge = @(x)gaussProb(x, mu(1), sigma(2, 2).^2);
+        margeAx = axes(<span class="string">'Parent'</span>, fig, <span class="string">'Position'</span>, [0.3,0.02,0.65,0.25]);
+        res = 0.45:0.0001:0.55;
+        plot(res,fmarge(res), <span class="string">'-b'</span>, <span class="string">'LineWidth'</span>, 2, <span class="string">'Parent'</span>, margeAx);
+        axis([0.45, 0.55, 0, 40]);
+        removeTicks();
+        title(<span class="string">'P(x)'</span>, <span class="string">'FontSize'</span>, 13);
+    <span class="keyword">end</span>
+    <span class="keyword">function</span> plotConditional()
+        <span class="comment">%p(x2|x1 = 0.4</span>
+        mu_cond = mu(2) + sigma(2,1)*(sigma(1,1)^(-1))*(0.4 - mu(1));
+        sigma_cond = sigma(2,2) - sigma(2,1)*(sigma(1,1)^(-1))*sigma(1,2);
+        fcond = @(x)gaussProb(x, mu_cond, sigma_cond.^2);
+        condAx = axes(<span class="string">'Parent'</span>, fig, <span class="string">'Position'</span>, [0.05 0.35 0.22 0.57]);
+        res = 0.43:0.001:0.465;
+        plot(res, fcond(res), <span class="string">'g'</span>, <span class="string">'LineWidth'</span>, 2, <span class="string">'Parent'</span>, condAx);
+        axis([0.43, 0.46, 0, 80]);
+        removeTicks();
+        view([90 90]);
+        title(<span class="string">'P(y | x = x_0)'</span>,<span class="string">'FontSize'</span>,13)
+    <span class="keyword">end</span>
+    <span class="keyword">function</span> annotate()
+        annotation(fig, <span class="string">'arrow'</span>, <span class="keyword">...</span>
+            [0.8938 0.8938], [0.8904 0.387], <span class="string">'LineWidth'</span>, 2);
+        annotation(fig, <span class="string">'textbox'</span>, <span class="string">'String'</span>, {<span class="string">'\Sigma'</span>},<span class="keyword">...</span>
+            <span class="string">'FontSize'</span>, 30, <span class="string">'FitBoxToText'</span>, <span class="string">'off'</span>, <span class="string">'LineStyle'</span>, <span class="string">'none'</span>,<span class="keyword">...</span>
+            <span class="string">'Position'</span>, [0.82 0.4991 0.03025 0.07531]);
+        annotation(fig, <span class="string">'line'</span>, <span class="keyword">...</span>
+            [0.4382 0.4382], [0.8571 0.373], <span class="string">'LineStyle'</span>,<span class="string">':'</span>);
+        annotation(fig, <span class="string">'textbox'</span>, <span class="string">'String'</span>, <span class="keyword">...</span>
+            {<span class="string">'X_0'</span>}, <span class="string">'FontSize'</span>, 14, <span class="string">'FitBoxToText'</span>,<span class="string">'off'</span>, <span class="keyword">...</span>
+            <span class="string">'LineStyle'</span>,<span class="string">'none'</span>,<span class="string">'Position'</span>,[0.4274 0.8704 0.02331 0.04904]);
+        annotation(fig, <span class="string">'arrow'</span>, <span class="keyword">...</span>
+            [0.4306 0.3125], [0.8501 0.8529], <span class="string">'LineWidth'</span>, 2);
+    <span class="keyword">end</span>
+    <span class="keyword">function</span> removeTicks()
+        set(gca, <span class="string">'XTick'</span>, []);
+        set(gca, <span class="string">'YTick'</span>, []);
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="gauss2dMargCondPlot_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% 2D Gaussian contour plot along with its 1D marginals and conditionals.
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+function gauss2dMargCondPlot()
+fig = figure('Color','w');
+mu = [0.5 0.5];
+sigma = [0.018  0.01 ;  0.01 0.011];
+plot2d();
+plotMarginal();
+plotConditional();
+annotate();
+    function plot2d()
+        f = @(X)gaussProb(X, mu, sigma);
+        [x,y] = meshgrid(-0.2:0.005:1.2, -0.2:0.005:1.2);
+        [r, c]=size(x);
+        data = [x(:) y(:)];
+        p = f(data);
+        p = reshape(p, r, c);
+        mainAx = axes('Parent', fig, 'Position', [0.3, 0.35, 0.65, 0.57]);
+        contour('Parent', mainAx, x, y, p, 'r', ...
+            'LineWidth', 2, 'LevelList', [4 11 15]);
+        axis([0.2, 0.8, 0.2, 0.8]);
+        removeTicks();
+        title('P(x,y)', 'FontSize', 13);
+        hold on;
+    end
+    function plotMarginal()
+        fmarge = @(x)gaussProb(x, mu(1), sigma(2, 2).^2);
+        margeAx = axes('Parent', fig, 'Position', [0.3,0.02,0.65,0.25]);
+        res = 0.45:0.0001:0.55;
+        plot(res,fmarge(res), '-b', 'LineWidth', 2, 'Parent', margeAx);
+        axis([0.45, 0.55, 0, 40]);
+        removeTicks();
+        title('P(x)', 'FontSize', 13);
+    end
+    function plotConditional()
+        %p(x2|x1 = 0.4
+        mu_cond = mu(2) + sigma(2,1)*(sigma(1,1)^(-1))*(0.4 - mu(1));
+        sigma_cond = sigma(2,2) - sigma(2,1)*(sigma(1,1)^(-1))*sigma(1,2);
+        fcond = @(x)gaussProb(x, mu_cond, sigma_cond.^2);
+        condAx = axes('Parent', fig, 'Position', [0.05 0.35 0.22 0.57]);
+        res = 0.43:0.001:0.465;
+        plot(res, fcond(res), 'g', 'LineWidth', 2, 'Parent', condAx);
+        axis([0.43, 0.46, 0, 80]);
+        removeTicks();
+        view([90 90]);
+        title('P(y | x = x_0)','FontSize',13)
+    end
+    function annotate()
+        annotation(fig, 'arrow', ...
+            [0.8938 0.8938], [0.8904 0.387], 'LineWidth', 2);
+        annotation(fig, 'textbox', 'String', {'\Sigma'},...
+            'FontSize', 30, 'FitBoxToText', 'off', 'LineStyle', 'none',...
+            'Position', [0.82 0.4991 0.03025 0.07531]);
+        annotation(fig, 'line', ...
+            [0.4382 0.4382], [0.8571 0.373], 'LineStyle',':');
+        annotation(fig, 'textbox', 'String', ...
+            {'X_0'}, 'FontSize', 14, 'FitBoxToText','off', ...
+            'LineStyle','none','Position',[0.4274 0.8704 0.02331 0.04904]);
+        annotation(fig, 'arrow', ...
+            [0.4306 0.3125], [0.8501 0.8529], 'LineWidth', 2);
+    end
+    function removeTicks()
+        set(gca, 'XTick', []);
+        set(gca, 'YTick', []);
+    end
+end
+
+##### SOURCE END #####
+--></body></html>

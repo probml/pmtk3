@@ -1,0 +1,167 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Probit Regression Demo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="probitRegDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Probit Regression Demo</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+setSeed(0);
+N = 100; D = 2;
+X = randn(N,D);
+w = randn(D,1);
+p = 0;
+y01 = flipBits(double((X*w&gt;0)), p); <span class="comment">% add some label noise</span>
+ypm1 = sign(y01-0.5);
+
+<span class="keyword">if</span> statsToolboxInstalled
+  wGlm = glmfit(X,y01,<span class="string">'binomial'</span>,<span class="string">'link'</span>,<span class="string">'probit'</span>,<span class="string">'constant'</span>,<span class="string">'on'</span>);
+  N = size(X,1);
+  probGlm = gausscdf([ones(N,1) X]*wGlm);
+<span class="keyword">end</span>
+
+lambda = 1e-1;
+
+[modelMinfunc, objTraceMinfunc] = probitRegFit(X, ypm1, <span class="string">'lambda'</span>, lambda, <span class="string">'method'</span>, <span class="string">'minfunc'</span>);
+[yhatMinfunc, probMinfunc] = probitRegPredict(modelMinfunc, X);
+
+[modelEm, objTraceEm] = probitRegFit(X, ypm1, <span class="string">'lambda'</span>, lambda, <span class="string">'method'</span>, <span class="string">'em'</span>);
+[yhatEm, probEm] = probitRegPredict(modelEm, X);
+
+
+figure;plot(probMinfunc, probEm, <span class="string">'o'</span>)
+xlabel(<span class="string">'minfunc'</span>); ylabel(<span class="string">'em'</span>);
+title(sprintf(<span class="string">'probit regression with L2 regularizer of %5.3f'</span>, lambda))
+
+
+<span class="keyword">if</span> statsToolboxInstalled
+  figure;plot(probGlm, probEm, <span class="string">'o'</span>)
+  xlabel(<span class="string">'glmfit'</span>); ylabel(<span class="string">'em'</span>);
+<span class="keyword">end</span>
+
+figure;
+plot(objTraceEm, <span class="string">'r-o'</span>, <span class="string">'linewidth'</span>, 2);
+hold <span class="string">on</span>
+plot(objTraceMinfunc, <span class="string">'k:s'</span>, <span class="string">'linewidth'</span>, 2);
+legend(<span class="string">'em'</span>, <span class="string">'minfunc'</span>)
+title(sprintf(<span class="string">'probit regression with L2 regularizer of %5.3f'</span>, lambda))
+ylabel(<span class="string">'logpost'</span>)
+xlabel(<span class="string">'iter'</span>)
+printPmtkFigure(<span class="string">'probitRegDemoNLL'</span>)
+</pre><img vspace="5" hspace="5" src="probitRegDemo_01.png" alt=""> <img vspace="5" hspace="5" src="probitRegDemo_02.png" alt=""> <img vspace="5" hspace="5" src="probitRegDemo_03.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Probit Regression Demo
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+setSeed(0);
+N = 100; D = 2;
+X = randn(N,D);
+w = randn(D,1);
+p = 0;
+y01 = flipBits(double((X*w>0)), p); % add some label noise
+ypm1 = sign(y01-0.5);
+ 
+if statsToolboxInstalled
+  wGlm = glmfit(X,y01,'binomial','link','probit','constant','on');
+  N = size(X,1);
+  probGlm = gausscdf([ones(N,1) X]*wGlm);
+end
+
+lambda = 1e-1;
+
+[modelMinfunc, objTraceMinfunc] = probitRegFit(X, ypm1, 'lambda', lambda, 'method', 'minfunc');
+[yhatMinfunc, probMinfunc] = probitRegPredict(modelMinfunc, X);
+
+[modelEm, objTraceEm] = probitRegFit(X, ypm1, 'lambda', lambda, 'method', 'em');
+[yhatEm, probEm] = probitRegPredict(modelEm, X);
+
+
+figure;plot(probMinfunc, probEm, 'o')
+xlabel('minfunc'); ylabel('em');
+title(sprintf('probit regression with L2 regularizer of %5.3f', lambda))
+
+
+if statsToolboxInstalled
+  figure;plot(probGlm, probEm, 'o')
+  xlabel('glmfit'); ylabel('em');
+end
+
+figure;
+plot(objTraceEm, 'r-o', 'linewidth', 2);
+hold on
+plot(objTraceMinfunc, 'k:s', 'linewidth', 2);
+legend('em', 'minfunc')
+title(sprintf('probit regression with L2 regularizer of %5.3f', lambda))
+ylabel('logpost')
+xlabel('iter')
+printPmtkFigure('probitRegDemoNLL')
+
+
+
+
+
+
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,185 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>crf2ImgTrainDemo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="crf2ImgTrainDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Demonstrate training a lattice-structured CRF</a></li><li><a href="#2">Get  data</a></li><li><a href="#3">Make model</a></li><li><a href="#4">Fit by PL, decode by ICM</a></li><li><a href="#5">Fit with submodular PL and decode with graph cuts</a></li></ul></div><h2>Demonstrate training a lattice-structured CRF<a name="1"></a></h2><p>Based on <a href="http://people.cs.ubc.ca/~schmidtm/Software/UGM/trainApprox">http://people.cs.ubc.ca/~schmidtm/Software/UGM/trainApprox</a></p><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+</pre><h2>Get  data<a name="2"></a></h2><pre class="codeinput">setSeed(0);
+X = loadData(<span class="string">'Ximg'</span>);
+Xclean = X;
+y = 1+X;
+X = Xclean + 0.5*randn(size(Xclean));
+figure; imagesc(X); colormap(gray)
+
+[nRows,nCols] = size(X);
+nNodes = nRows*nCols;
+nStates = 2;
+y = reshape(y,[1 1 nNodes]);
+X = reshape(X,1,1,nNodes);
+</pre><img vspace="5" hspace="5" src="crf2ImgTrainDemo_01.png" alt=""> <h2>Make model<a name="3"></a></h2><pre class="codeinput">adj = latticeAdjMatrix(nRows,nCols);
+tied = 1;
+ising = 1;
+edgeStruct = UGM_makeEdgeStruct(adj,nStates);
+
+<span class="comment">% Add bias and Standardize Columns</span>
+Xnode = [ones(1,1,nNodes) UGM_standardizeCols(X,tied)];
+sharedFeatures = [1 0];
+Xedge = UGM_makeEdgeFeatures(Xnode,edgeStruct.edgeEnds,sharedFeatures);
+</pre><h2>Fit by PL, decode by ICM<a name="4"></a></h2><pre class="codeinput">model = crf2Create(adj, nStates, <span class="string">'ising'</span>, ising, <span class="string">'tied'</span>, tied, <span class="string">'method'</span>, <span class="string">'ICM'</span>);
+model = crf2Train(model, Xnode, Xedge, y, <span class="string">'method'</span>, <span class="string">'PL'</span>);
+yDecode = crf2Map(model, Xnode, Xedge);
+
+figure;
+imagesc(reshape(yDecode,nRows,nCols)); colormap <span class="string">gray</span>
+title(<span class="string">'ICM Decoding with pseudo-likelihood parameters'</span>);
+</pre><img vspace="5" hspace="5" src="crf2ImgTrainDemo_02.png" alt=""> <h2>Fit with submodular PL and decode with graph cuts<a name="5"></a></h2><pre class="codeinput">sharedFeatures = [1 0];
+Xedge = UGM_makeEdgeFeaturesInvAbsDif(Xnode,edgeStruct.edgeEnds,sharedFeatures);
+model = crf2Create(adj, nStates, <span class="string">'ising'</span>, ising, <span class="string">'tied'</span>, tied, <span class="string">'method'</span>, <span class="string">'GraphCut'</span>);
+model = crf2Train(model, Xnode, Xedge, y, <span class="string">'method'</span>, <span class="string">'PLsubmod'</span>);
+
+figure;
+imagesc(reshape(yDecode,nRows,nCols)); colormap <span class="string">gray</span>
+title(<span class="string">'GraphCut Decoding with constrained pseudo-likelihood parameters'</span>);
+</pre><pre class="codeoutput"> Iteration   FunEvals     Step Length    Function Val        Opt Cond
+L-BFGS
+         1          2     3.09806e-04     1.49026e+02     4.41903e+02
+         2          3     1.00000e+00     1.29191e+02     3.22272e+02
+         3          4     1.00000e+00     9.81912e+01     1.52619e+02
+         4          5     1.00000e+00     8.22901e+01     8.50112e+01
+         5          6     1.00000e+00     6.91475e+01     4.13349e+01
+         6          7     1.00000e+00     6.21604e+01     1.91513e+01
+         7          8     1.00000e+00     5.86519e+01     9.84196e+00
+         8          9     1.00000e+00     5.64292e+01     6.43810e+00
+         9         10     1.00000e+00     5.37478e+01     3.77509e+00
+Cubic Backtracking
+        10         12     1.28583e-01     5.35776e+01     9.42550e-01
+        11         13     1.00000e+00     5.35542e+01     5.79182e-01
+        12         14     1.00000e+00     5.35440e+01     1.61820e-01
+        13         15     1.00000e+00     5.35436e+01     9.06866e-02
+        14         16     1.00000e+00     5.35434e+01     8.53332e-03
+        15         17     1.00000e+00     5.35434e+01     6.31346e-04
+        16         18     1.00000e+00     5.35434e+01     3.22259e-05
+Directional Derivative below progTol
+</pre><img vspace="5" hspace="5" src="crf2ImgTrainDemo_03.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Demonstrate training a lattice-structured CRF
+% Based on http://people.cs.ubc.ca/~schmidtm/Software/UGM/trainApprox
+
+% This file is from pmtk3.googlecode.com
+
+
+
+%% Get  data
+setSeed(0);
+X = loadData('Ximg');
+Xclean = X;
+y = 1+X;
+X = Xclean + 0.5*randn(size(Xclean));
+figure; imagesc(X); colormap(gray)
+
+[nRows,nCols] = size(X);
+nNodes = nRows*nCols;
+nStates = 2;
+y = reshape(y,[1 1 nNodes]);
+X = reshape(X,1,1,nNodes);
+
+
+
+%% Make model
+adj = latticeAdjMatrix(nRows,nCols);
+tied = 1;
+ising = 1;
+edgeStruct = UGM_makeEdgeStruct(adj,nStates);
+
+% Add bias and Standardize Columns
+Xnode = [ones(1,1,nNodes) UGM_standardizeCols(X,tied)];
+sharedFeatures = [1 0];
+Xedge = UGM_makeEdgeFeatures(Xnode,edgeStruct.edgeEnds,sharedFeatures);
+
+
+
+%% Fit by PL, decode by ICM
+model = crf2Create(adj, nStates, 'ising', ising, 'tied', tied, 'method', 'ICM');
+model = crf2Train(model, Xnode, Xedge, y, 'method', 'PL');
+yDecode = crf2Map(model, Xnode, Xedge);
+
+figure;
+imagesc(reshape(yDecode,nRows,nCols)); colormap gray
+title('ICM Decoding with pseudo-likelihood parameters');
+
+
+%% Fit with submodular PL and decode with graph cuts
+
+sharedFeatures = [1 0];
+Xedge = UGM_makeEdgeFeaturesInvAbsDif(Xnode,edgeStruct.edgeEnds,sharedFeatures);
+model = crf2Create(adj, nStates, 'ising', ising, 'tied', tied, 'method', 'GraphCut');
+model = crf2Train(model, Xnode, Xedge, y, 'method', 'PLsubmod');
+
+figure;
+imagesc(reshape(yDecode,nRows,nCols)); colormap gray
+title('GraphCut Decoding with constrained pseudo-likelihood parameters');
+
+
+
+##### SOURCE END #####
+--></body></html>

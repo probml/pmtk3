@@ -1,0 +1,175 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Compare inference in a QMR like network (dgm)</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="qmrDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Compare inference in a QMR like network (dgm)</h1><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+setSeed(0);
+nfindings = 100; <span class="comment">% turn down if you run out of memory</span>
+ndiseases = 15;
+nnodes = nfindings + ndiseases;
+
+<span class="comment">% first and last findings are hidden</span>
+<span class="comment">% first half are positive, second half negative</span>
+
+posNdx = ndiseases+2:ndiseases+2+floor((nfindings-2)/2)-1;
+negNdx = posNdx(end)+1:nnodes-1;
+
+NEG = 1; POS = 2;
+
+clamped = zeros(1, nnodes);
+clamped(posNdx) = POS;
+clamped(negNdx) = NEG;
+clamped = sparse(clamped);
+
+
+dgm = mkQmrNetwork(nfindings, ndiseases);
+<span class="keyword">if</span> ~isOctave &amp;&amp; nnodes &lt; 50
+    colors = repmat({[1 1 0.8]}, nnodes, 1);
+    colors(posNdx) = {<span class="string">'r'</span>};
+    colors(negNdx) = {<span class="string">'b'</span>};
+    drawNetwork(dgm.G, <span class="string">'-layout'</span>, Treelayout, <span class="string">'-nodeColors'</span>, colors);
+<span class="keyword">end</span>
+
+<span class="comment">% Since we do precomputation for jtree, recreate the dgm each time to get</span>
+<span class="comment">% accurate timing results.</span>
+CPDs = dgm.CPDs;
+G    = dgm.G;
+query = num2cell(1:ndiseases);
+methods = {<span class="string">'libdaiJtree'</span>, <span class="string">'varelim'</span>, <span class="string">'jtree'</span>};
+<span class="keyword">if</span> ~libdaiInstalled
+  methods = setdiff(methods, <span class="string">'libdaiJtree'</span>);
+<span class="keyword">end</span>
+nmethods = numel(methods);
+times = zeros(nmethods, 1);
+bels = cell(nmethods, 1);
+<span class="keyword">for</span> i=1:nmethods
+    tic;
+    d = dgmCreate(G, CPDs, <span class="string">'infEngine'</span>, methods{i});
+    bels{i} = dgmInferQuery(d, query, <span class="string">'clamped'</span>, clamped);
+    t = toc;
+    times(i) = t;
+    fprintf(<span class="string">'%s:%g seconds\n'</span>, methods{i}, t);
+<span class="keyword">end</span>
+assert(tfequal(bels{:}));
+</pre><pre class="codeoutput">jtree:1.3594 seconds
+varelim:7.28914 seconds
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Compare inference in a QMR like network (dgm)
+
+% This file is from pmtk3.googlecode.com
+
+setSeed(0); 
+nfindings = 100; % turn down if you run out of memory
+ndiseases = 15; 
+nnodes = nfindings + ndiseases; 
+
+% first and last findings are hidden
+% first half are positive, second half negative
+
+posNdx = ndiseases+2:ndiseases+2+floor((nfindings-2)/2)-1;
+negNdx = posNdx(end)+1:nnodes-1; 
+
+NEG = 1; POS = 2; 
+
+clamped = zeros(1, nnodes); 
+clamped(posNdx) = POS;
+clamped(negNdx) = NEG; 
+clamped = sparse(clamped); 
+
+
+dgm = mkQmrNetwork(nfindings, ndiseases); 
+if ~isOctave && nnodes < 50
+    colors = repmat({[1 1 0.8]}, nnodes, 1);
+    colors(posNdx) = {'r'};
+    colors(negNdx) = {'b'};
+    drawNetwork(dgm.G, '-layout', Treelayout, '-nodeColors', colors);
+end
+
+% Since we do precomputation for jtree, recreate the dgm each time to get
+% accurate timing results. 
+CPDs = dgm.CPDs;
+G    = dgm.G; 
+query = num2cell(1:ndiseases); 
+methods = {'libdaiJtree', 'varelim', 'jtree'};
+if ~libdaiInstalled
+  methods = setdiff(methods, 'libdaiJtree');
+end
+nmethods = numel(methods); 
+times = zeros(nmethods, 1); 
+bels = cell(nmethods, 1); 
+for i=1:nmethods
+    tic;
+    d = dgmCreate(G, CPDs, 'infEngine', methods{i}); 
+    bels{i} = dgmInferQuery(d, query, 'clamped', clamped); 
+    t = toc; 
+    times(i) = t;
+    fprintf('%s:%g seconds\n', methods{i}, t); 
+end
+assert(tfequal(bels{:})); 
+
+
+##### SOURCE END #####
+--></body></html>

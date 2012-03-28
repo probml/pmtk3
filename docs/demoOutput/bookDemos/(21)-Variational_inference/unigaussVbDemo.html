@@ -1,0 +1,313 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Variational bayes for univariate Gaussian</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="unigaussVbDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Variational bayes for univariate Gaussian</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#3">Make data with mean 0 and unit variance</a></li><li><a href="#4">The true posterior model using normal gamma prior</a></li><li><a href="#5">Initialize VB to fit univariate gaussian</a></li><li><a href="#6">Main loop of VB</a></li></ul></div><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="keyword">function</span> unigaussVbDemo()
+</pre><pre class="codeinput"><span class="comment">% PMTKauthor Robert Tseng</span>
+<span class="comment">% PMTKmodified Kevin Murphy</span>
+</pre><h2>Make data with mean 0 and unit variance<a name="3"></a></h2><pre class="codeinput">setSeed(0);
+N = 10; D = 1;
+data = rand(N, D);
+data = standardizeCols(data);
+m = mean(data);
+s = sum(data);
+sSq = sum(data.*data);
+xbar = m;
+sigma2Hat = sSq/N - xbar^2;
+</pre><h2>The true posterior model using normal gamma prior<a name="4"></a></h2><p>hyper parameters</p><pre class="codeinput">a0 = 0; b0 = 0; mu0 = 0; kappa0 = 0;
+truePost.mu = mean(data);
+truePost.kappa = N;
+truePost.alpha = N/2;
+truePost.beta = 1/2*sum((data - m).^2);
+</pre><h2>Initialize VB to fit univariate gaussian<a name="5"></a></h2><p>initial guess</p><pre class="codeinput">aN = 2.5; bN = 1;
+muN = 0.5; kappaN = 5;
+makePlot(truePost, aN, bN, muN, kappaN);
+printPmtkFigure(<span class="string">'unigaussVbDemo1'</span>)
+
+iter = 1;
+Lq = 0;
+maxIter = 100;
+converged = false;
+tol = 1e-5;
+Lbound(1) = Lq;
+</pre><img vspace="5" hspace="5" src="unigaussVbDemo_01.png" alt=""> <h2>Main loop of VB<a name="6"></a></h2><pre class="codeinput"><span class="keyword">while</span> iter &lt;= maxIter &amp;&amp; ~converged
+    LqOld = Lq;
+
+    <span class="comment">% update q(mu)</span>
+    elambda = aN / bN;
+    muN = (kappa0 * mu0 + N * m) / (kappa0 + N);
+    kappaN = (kappa0 + N) * elambda;
+    <span class="keyword">if</span> (iter == 1)
+        makePlot(truePost, aN, bN, muN, kappaN);
+        printPmtkFigure(<span class="string">'unigaussVbDemo2'</span>)
+    <span class="keyword">end</span>
+
+    <span class="comment">% update q(lambda)</span>
+    emu = muN;
+    emuSquare = 1/kappaN + muN^2;
+    aN = a0 + (N+1)/2;
+    bN = b0 + 1/2 * ((sSq + kappa0 * mu0^2) - 2 * emu *(s + kappa0 * mu0) + emuSquare*(kappa0+N));
+    <span class="keyword">if</span> (iter == 1)
+        makePlot(truePost, aN, bN, muN, kappaN);
+        printPmtkFigure(<span class="string">'unigaussVbDemo3'</span>)
+    <span class="keyword">end</span>
+
+    <span class="comment">% check convergence</span>
+    Lq = 1/2 * log(1/kappaN) + log(gamma(aN)) - aN * log(bN);
+    Lbound(iter) = Lq;
+    <span class="keyword">if</span> (iter &gt; 1)
+       <span class="keyword">if</span> (Lq - LqOld &lt; -tol)
+           fprintf(<span class="string">'Lq did not increase, iter = %d, LqOld = %.3f, Lq = %.3f\n'</span>, iter, LqOld, Lq);
+       <span class="keyword">elseif</span> (abs(Lq - LqOld) &lt; tol)
+           converged = true;
+       <span class="keyword">end</span>
+    <span class="keyword">end</span>
+
+    iter = iter + 1;
+<span class="keyword">end</span>
+fprintf(<span class="string">'Total # of iterations: %d\n'</span>, iter);
+makePlot(truePost, aN, bN, muN, kappaN);
+printPmtkFigure(<span class="string">'unigaussVbDemo4'</span>)
+
+figure; plot(Lbound, <span class="string">'o-'</span>, <span class="string">'linewidth'</span>, 3);
+title(<span class="string">'lower bound vs iteration'</span>)
+</pre><pre class="codeoutput">Total # of iterations: 5
+</pre><img vspace="5" hspace="5" src="unigaussVbDemo_02.png" alt=""> <img vspace="5" hspace="5" src="unigaussVbDemo_03.png" alt=""> <img vspace="5" hspace="5" src="unigaussVbDemo_04.png" alt=""> <img vspace="5" hspace="5" src="unigaussVbDemo_05.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
+
+<span class="comment">%{
+</span><span class="comment">function  L = bound(aN, bN, muN, kN, xbar, sigma2, N)
+</span><span class="comment">L = -0.5*log(kappaN)  + 0.5*(1+log(2*pi)) ...
+</span><span class="comment">  + gammaln(aN) - (aN-1)*digamma(aN) - log(bN) + aN ...
+</span><span class="comment">  -(N/2)*log(2*pi) + (N/2)*(digamma(aN) - log(bN)) ...
+</span><span class="comment">      -(N*aN)/(2*bN)*(sigma2 + xbar^2 - 2*muN*xbar + muN^2 + 1/kN) ...
+</span><span class="comment">      + (a0-1)*(digamma(aN) - log(bN)) - b0*aN/bN + a0*log(b0) - gammaln(a0) ...
+</span><span class="comment">      + 0.5*log(k0/(2*pi)) + 0.5*(digamma(aN)-log(bN)) ...
+</span><span class="comment">       - 0.5*k0*aN/bN*((1/kN) + (muN-mu0)^2);
+</span><span class="comment">end
+</span><span class="comment">%}
+</span>
+<span class="keyword">function</span> [] = makePlot(truePost, aN, bN, muN, kappaN)
+<span class="comment">% Plot the true NG posterior and the predicted posterior via VB</span>
+level = 5;
+
+figure;
+plotFnTrue = @(input) normalGammaPdf(input(:,1), input(:,2), truePost.mu, <span class="keyword">...</span>
+    truePost.kappa, truePost.alpha, truePost.beta);
+[p, h] = plotContour(plotFnTrue, [-1 1 0 2], level, <span class="string">'g-'</span>, <span class="string">'linewidth'</span>, 3, <span class="string">'npoints'</span>, 50);
+
+hold <span class="string">on</span>;
+plotFnPredict = @(input) vbPost(input(:,1), input(:,2), aN, bN, muN, kappaN);
+[p, h] = plotContour(plotFnPredict, [-1 1 0 2], level, <span class="string">'r:'</span>, <span class="string">'linewidth'</span>, 2, <span class="string">'npoints'</span>, 50);
+axis <span class="string">equal</span>
+
+xlabel(<span class="string">'\mu'</span>);
+ylabel(<span class="string">'\lambda'</span>);
+legend(<span class="string">'exact'</span>, <span class="string">'vb'</span>)
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> p = vbPost(mu, lambda, aN, bN, muN, kappaN)
+mup = gaussProb(mu, muN, (1/kappaN));
+lambdap = exp(gammaLogprob(struct(<span class="string">'a'</span>, aN, <span class="string">'b'</span>, bN), lambda));
+p = mup .* lambdap;
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> p = normalGammaPdf(mu, lambda, muprior, kappa, alpha, beta)
+C = (beta ^ alpha * sqrt(kappa)) / (gamma(alpha) * sqrt(2*pi));
+p = C * (lambda .^ (alpha-1/2)) .* (exp(-beta * lambda)) .* <span class="keyword">...</span>
+    (exp(-kappa/2* (lambda .* (mu - muprior).^2)));
+<span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Variational bayes for univariate Gaussian
+% 
+%%
+
+% This file is from pmtk3.googlecode.com
+
+function unigaussVbDemo()
+% PMTKauthor Robert Tseng
+% PMTKmodified Kevin Murphy
+%% Make data with mean 0 and unit variance
+setSeed(0);
+N = 10; D = 1;
+data = rand(N, D);
+data = standardizeCols(data);
+m = mean(data);
+s = sum(data);
+sSq = sum(data.*data);
+xbar = m;
+sigma2Hat = sSq/N - xbar^2;
+%% The true posterior model using normal gamma prior
+% hyper parameters
+a0 = 0; b0 = 0; mu0 = 0; kappa0 = 0;
+truePost.mu = mean(data);
+truePost.kappa = N;
+truePost.alpha = N/2;
+truePost.beta = 1/2*sum((data - m).^2);
+
+%% Initialize VB to fit univariate gaussian
+% initial guess
+aN = 2.5; bN = 1;
+muN = 0.5; kappaN = 5;
+makePlot(truePost, aN, bN, muN, kappaN);
+printPmtkFigure('unigaussVbDemo1')
+
+iter = 1;
+Lq = 0; 
+maxIter = 100;
+converged = false;
+tol = 1e-5;
+Lbound(1) = Lq;
+
+%% Main loop of VB
+while iter <= maxIter && ~converged
+    LqOld = Lq;
+    
+    % update q(mu)
+    elambda = aN / bN;
+    muN = (kappa0 * mu0 + N * m) / (kappa0 + N);
+    kappaN = (kappa0 + N) * elambda;
+    if (iter == 1)
+        makePlot(truePost, aN, bN, muN, kappaN);
+        printPmtkFigure('unigaussVbDemo2')
+    end
+    
+    % update q(lambda)
+    emu = muN;
+    emuSquare = 1/kappaN + muN^2;
+    aN = a0 + (N+1)/2;
+    bN = b0 + 1/2 * ((sSq + kappa0 * mu0^2) - 2 * emu *(s + kappa0 * mu0) + emuSquare*(kappa0+N));
+    if (iter == 1)
+        makePlot(truePost, aN, bN, muN, kappaN);
+        printPmtkFigure('unigaussVbDemo3')
+    end
+
+    % check convergence
+    Lq = 1/2 * log(1/kappaN) + log(gamma(aN)) - aN * log(bN);
+    Lbound(iter) = Lq;
+    if (iter > 1)
+       if (Lq - LqOld < -tol)
+           fprintf('Lq did not increase, iter = %d, LqOld = %.3f, Lq = %.3f\n', iter, LqOld, Lq);
+       elseif (abs(Lq - LqOld) < tol)
+           converged = true;
+       end
+    end
+    
+    iter = iter + 1;
+end
+fprintf('Total # of iterations: %d\n', iter);
+makePlot(truePost, aN, bN, muN, kappaN);
+printPmtkFigure('unigaussVbDemo4')
+
+figure; plot(Lbound, 'o-', 'linewidth', 3);
+title('lower bound vs iteration')
+end
+
+%{
+function  L = bound(aN, bN, muN, kN, xbar, sigma2, N)
+L = -0.5*log(kappaN)  + 0.5*(1+log(2*pi)) ...
+  + gammaln(aN) - (aN-1)*digamma(aN) - log(bN) + aN ...
+  -(N/2)*log(2*pi) + (N/2)*(digamma(aN) - log(bN)) ...
+      -(N*aN)/(2*bN)*(sigma2 + xbar^2 - 2*muN*xbar + muN^2 + 1/kN) ...
+      + (a0-1)*(digamma(aN) - log(bN)) - b0*aN/bN + a0*log(b0) - gammaln(a0) ...
+      + 0.5*log(k0/(2*pi)) + 0.5*(digamma(aN)-log(bN)) ...
+       - 0.5*k0*aN/bN*((1/kN) + (muN-mu0)^2);
+end
+%}
+
+function [] = makePlot(truePost, aN, bN, muN, kappaN)
+% Plot the true NG posterior and the predicted posterior via VB
+level = 5;
+
+figure;
+plotFnTrue = @(input) normalGammaPdf(input(:,1), input(:,2), truePost.mu, ...
+    truePost.kappa, truePost.alpha, truePost.beta);
+[p, h] = plotContour(plotFnTrue, [-1 1 0 2], level, 'g-', 'linewidth', 3, 'npoints', 50);
+
+hold on;
+plotFnPredict = @(input) vbPost(input(:,1), input(:,2), aN, bN, muN, kappaN);
+[p, h] = plotContour(plotFnPredict, [-1 1 0 2], level, 'r:', 'linewidth', 2, 'npoints', 50);
+axis equal
+
+xlabel('\mu');
+ylabel('\lambda');
+legend('exact', 'vb')
+end
+
+function p = vbPost(mu, lambda, aN, bN, muN, kappaN)
+mup = gaussProb(mu, muN, (1/kappaN)); 
+lambdap = exp(gammaLogprob(struct('a', aN, 'b', bN), lambda)); 
+p = mup .* lambdap;
+end
+
+function p = normalGammaPdf(mu, lambda, muprior, kappa, alpha, beta)
+C = (beta ^ alpha * sqrt(kappa)) / (gamma(alpha) * sqrt(2*pi));
+p = C * (lambda .^ (alpha-1/2)) .* (exp(-beta * lambda)) .* ...
+    (exp(-kappa/2* (lambda .* (mu - muprior).^2)));
+end
+
+##### SOURCE END #####
+--></body></html>

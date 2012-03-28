@@ -1,0 +1,210 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>deepBelNetClassifyDemo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="deepBelNetClassifyDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Classify some MNIST digits using a deepBelNet</a></li><li><a href="#2">Data</a></li><li><a href="#3">DBNs</a></li><li><a href="#4">Make a wide but shallow RBM</a></li></ul></div><h2>Classify some MNIST digits using a deepBelNet<a name="1"></a></h2><pre class="codeinput"><span class="comment">%PMTKauthor Andrej Karpathy</span>
+<span class="comment">%PMTKmodified Kevin Murphy</span>
+<span class="comment">%PMTKreallySlow</span>
+
+<span class="comment">% This file is from pmtk3.googlecode.com</span>
+</pre><h2>Data<a name="2"></a></h2><pre class="codeinput">setSeed(0);
+clear <span class="string">all</span>
+
+<span class="keyword">if</span> 0
+  <span class="comment">%all datasets above must conform to the following naming conventions:</span>
+  <span class="comment">%for training: 'data' NxD, 'labels' Nx1</span>
+  <span class="comment">%for testing : 'testdata' NxD, 'testlabels' Nx1</span>
+  load <span class="string">mnist_classify.mat</span>
+  Xtrain = data; ytrain1to10 = labels;
+  Xtest = testdata; ytest1to10 = testlabels;
+<span class="keyword">else</span>
+  Ntrain = 5000; Ntest = 1000; keepSparse = false;
+  binarize = false;
+  [Xtrain, ytrain, Xtest, ytest] = setupMnist(<span class="string">'binary'</span>, binarize, <span class="string">'ntrain'</span>,<span class="keyword">...</span>
+    Ntrain,<span class="string">'ntest'</span>, Ntest,<span class="string">'keepSparse'</span>, keepSparse);
+  ytest1to10 = ytest+1;
+  ytrain1to10 = ytrain+1;
+<span class="keyword">end</span>
+</pre><h2>DBNs<a name="3"></a></h2><pre class="codeinput"><span class="comment">%Nhidden =  [500 500 2000];</span>
+Nhidden =  [500 500 500];
+opts.verbose = true;
+opts.maxepoch = 20;
+opts.penalty = 2e-4; <span class="comment">%0.001;</span>
+
+<span class="keyword">for</span> i=1:numel(Nhidden)
+  tic
+  models{i} = deepBelNetFit(Xtrain, Nhidden(1:i), ytrain1to10, opts);
+  trainTime(i) = toc;
+  yhat1to10 = deepBelNetPredict(models{i}, Xtest);
+  errors = (yhat1to10 ~= ytest1to10);
+  nlayers(i) = numel(models{i}.layers)
+  errRate(i) = sum(errors)/length(yhat1to10)
+  fprintf(<span class="string">'RBM with %d hidden layers: errRate %5.3f, train time %5.3f\n'</span>, <span class="keyword">...</span>
+    nlayers(i), errRate(i)*100, trainTime(i))
+  nparams(i) = models{i}.nparams;
+<span class="keyword">end</span>
+
+
+figure; plot(errRate*100, <span class="string">'ro-'</span>, <span class="string">'linewidth'</span>, 2);
+xlabel(<span class="string">'num layers'</span>); ylabel(<span class="string">'misclassification rate'</span>)
+
+figure; plot(trainTime, <span class="string">'ro-'</span>, <span class="string">'linewidth'</span>, 2);
+xlabel(<span class="string">'num layers'</span>); ylabel(<span class="string">'training time (seconds)'</span>)
+</pre><h2>Make a wide but shallow RBM<a name="4"></a></h2><p>This has same num params as the deep model</p><pre class="codeinput">D = size(Xtrain,2);
+nh = ceil(nparams(end)/D);
+optsy = opts;
+optsy.y = ytrain1to10;
+i=numel(Nhidden)+1;
+tic
+models{i} = rbmFit(Xtrain, nh,  optsy);
+trainTime(i) = toc;
+yhat1to10 = rbmPredict(models{i}, Xtest);
+errors = (yhat1to10 ~= ytest1to10);
+nlayers(i) = 1;
+errRate(i) = sum(errors)/length(yhat1to10)
+fprintf(<span class="string">'RBM with %d hidden layers: errRate %5.3f, train time %5.3f\n'</span>, <span class="keyword">...</span>
+  nlayers(i), errRate(i)*100, trainTime(i))
+nparams(i) = models{i}.nparams;
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Classify some MNIST digits using a deepBelNet
+%PMTKauthor Andrej Karpathy
+%PMTKmodified Kevin Murphy
+%PMTKreallySlow
+
+% This file is from pmtk3.googlecode.com
+
+
+%% Data
+setSeed(0);
+clear all
+
+if 0
+  %all datasets above must conform to the following naming conventions:
+  %for training: 'data' NxD, 'labels' Nx1
+  %for testing : 'testdata' NxD, 'testlabels' Nx1
+  load mnist_classify.mat
+  Xtrain = data; ytrain1to10 = labels;
+  Xtest = testdata; ytest1to10 = testlabels;
+else
+  Ntrain = 5000; Ntest = 1000; keepSparse = false;
+  binarize = false;
+  [Xtrain, ytrain, Xtest, ytest] = setupMnist('binary', binarize, 'ntrain',...
+    Ntrain,'ntest', Ntest,'keepSparse', keepSparse);
+  ytest1to10 = ytest+1;
+  ytrain1to10 = ytrain+1;
+end
+
+
+%% DBNs
+%Nhidden =  [500 500 2000];
+Nhidden =  [500 500 500];
+opts.verbose = true;
+opts.maxepoch = 20;
+opts.penalty = 2e-4; %0.001;
+
+for i=1:numel(Nhidden)
+  tic
+  models{i} = deepBelNetFit(Xtrain, Nhidden(1:i), ytrain1to10, opts);
+  trainTime(i) = toc;
+  yhat1to10 = deepBelNetPredict(models{i}, Xtest);
+  errors = (yhat1to10 ~= ytest1to10);
+  nlayers(i) = numel(models{i}.layers)
+  errRate(i) = sum(errors)/length(yhat1to10)
+  fprintf('RBM with %d hidden layers: errRate %5.3f, train time %5.3f\n', ...
+    nlayers(i), errRate(i)*100, trainTime(i))
+  nparams(i) = models{i}.nparams;
+end
+
+    
+figure; plot(errRate*100, 'ro-', 'linewidth', 2);
+xlabel('num layers'); ylabel('misclassification rate')
+
+figure; plot(trainTime, 'ro-', 'linewidth', 2);
+xlabel('num layers'); ylabel('training time (seconds)')
+
+
+%% Make a wide but shallow RBM
+% This has same num params as the deep model
+D = size(Xtrain,2);
+nh = ceil(nparams(end)/D);
+optsy = opts;
+optsy.y = ytrain1to10;
+i=numel(Nhidden)+1;
+tic
+models{i} = rbmFit(Xtrain, nh,  optsy);
+trainTime(i) = toc;
+yhat1to10 = rbmPredict(models{i}, Xtest);
+errors = (yhat1to10 ~= ytest1to10);
+nlayers(i) = 1;
+errRate(i) = sum(errors)/length(yhat1to10)
+fprintf('RBM with %d hidden layers: errRate %5.3f, train time %5.3f\n', ...
+  nlayers(i), errRate(i)*100, trainTime(i))
+nparams(i) = models{i}.nparams;
+
+
+    
+
+##### SOURCE END #####
+--></body></html>

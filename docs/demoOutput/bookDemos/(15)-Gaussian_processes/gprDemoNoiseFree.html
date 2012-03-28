@@ -1,0 +1,171 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Reproduce figure 2.2 from GP book</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="gprDemoNoiseFree.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Reproduce figure 2.2 from GP book</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+setSeed(0);
+L = 1;
+xs = (-5:0.2:5)';
+ns = length(xs);
+keps = 1e-8;
+muFn = @(x) 0*x(:).^2;
+Kfn = @(x,z) 1*exp(-sq_dist(x'/L,z'/L)/2);
+
+
+<span class="comment">% plot sampled functions from the prior</span>
+figure; hold <span class="string">on</span>
+<span class="keyword">for</span> i=1:3
+  model = struct(<span class="string">'mu'</span>, muFn(xs), <span class="string">'Sigma'</span>,  Kfn(xs, xs) + 1e-15*eye(size(xs, 1)));
+  fs = gaussSample(model, 1);
+  plot(xs, fs, <span class="string">'k-'</span>, <span class="string">'linewidth'</span>, 2)
+<span class="keyword">end</span>
+printPmtkFigure(<span class="string">'gprDemoNoiseFreePrior'</span>)
+
+
+<span class="comment">% generate noise-less training data</span>
+Xtrain = [-4, -3, -2, -1, 1]';
+ftrain = sin(Xtrain);
+
+<span class="comment">% compute posterior predictive</span>
+K = Kfn(Xtrain, Xtrain); <span class="comment">% K</span>
+Ks = Kfn(Xtrain, xs); <span class="comment">%K_*</span>
+Kss = Kfn(xs, xs) + keps*eye(length(xs)); <span class="comment">% K_** (keps is essential!)</span>
+Ki = inv(K);
+postMu = muFn(xs) + Ks'*Ki*(ftrain - muFn(Xtrain));
+postCov = Kss - Ks'*Ki*Ks;
+
+figure; hold <span class="string">on</span>
+<span class="comment">% plot marginal posterior variance as gray band</span>
+mu = postMu(:);
+S2 = diag(postCov);
+f = [mu+2*sqrt(S2);flipdim(mu-2*sqrt(S2),1)];
+fill([xs; flipdim(xs,1)], f, [7 7 7]/8, <span class="string">'EdgeColor'</span>, [7 7 7]/8);
+
+<span class="comment">% plot samples from posterior predictive</span>
+<span class="keyword">for</span> i=1:3
+  model = struct(<span class="string">'mu'</span>, postMu(:)', <span class="string">'Sigma'</span>, postCov);
+  fs = gaussSample(model, 1);
+  plot(xs, fs, <span class="string">'k-'</span>, <span class="string">'linewidth'</span>, 2)
+  h=plot(Xtrain, ftrain, <span class="string">'kx'</span>, <span class="string">'markersize'</span>, 12, <span class="string">'linewidth'</span>, 3);
+<span class="keyword">end</span>
+printPmtkFigure(<span class="string">'gprDemoNoiseFreePost'</span>)
+</pre><img vspace="5" hspace="5" src="gprDemoNoiseFree_01.png" alt=""> <img vspace="5" hspace="5" src="gprDemoNoiseFree_02.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Reproduce figure 2.2 from GP book
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+setSeed(0);
+L = 1;
+xs = (-5:0.2:5)';
+ns = length(xs);
+keps = 1e-8;
+muFn = @(x) 0*x(:).^2;
+Kfn = @(x,z) 1*exp(-sq_dist(x'/L,z'/L)/2);
+
+
+% plot sampled functions from the prior
+figure; hold on
+for i=1:3
+  model = struct('mu', muFn(xs), 'Sigma',  Kfn(xs, xs) + 1e-15*eye(size(xs, 1)));
+  fs = gaussSample(model, 1);
+  plot(xs, fs, 'k-', 'linewidth', 2)
+end
+printPmtkFigure('gprDemoNoiseFreePrior')
+
+
+% generate noise-less training data
+Xtrain = [-4, -3, -2, -1, 1]';
+ftrain = sin(Xtrain);
+
+% compute posterior predictive
+K = Kfn(Xtrain, Xtrain); % K
+Ks = Kfn(Xtrain, xs); %K_*
+Kss = Kfn(xs, xs) + keps*eye(length(xs)); % K_** (keps is essential!)
+Ki = inv(K);
+postMu = muFn(xs) + Ks'*Ki*(ftrain - muFn(Xtrain));
+postCov = Kss - Ks'*Ki*Ks;
+
+figure; hold on
+% plot marginal posterior variance as gray band
+mu = postMu(:);
+S2 = diag(postCov);
+f = [mu+2*sqrt(S2);flipdim(mu-2*sqrt(S2),1)];
+fill([xs; flipdim(xs,1)], f, [7 7 7]/8, 'EdgeColor', [7 7 7]/8);
+
+% plot samples from posterior predictive
+for i=1:3
+  model = struct('mu', postMu(:)', 'Sigma', postCov);
+  fs = gaussSample(model, 1);
+  plot(xs, fs, 'k-', 'linewidth', 2)
+  h=plot(Xtrain, ftrain, 'kx', 'markersize', 12, 'linewidth', 3);
+end
+printPmtkFigure('gprDemoNoiseFreePost')
+
+
+##### SOURCE END #####
+--></body></html>

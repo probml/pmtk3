@@ -1,0 +1,188 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>bayesVsErmDemo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="bayesVsErmDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Compare Bayes and ERM</a></li><li><a href="#2">Gaussian case</a></li><li><a href="#3">Laplace case</a></li></ul></div><h2>Compare Bayes and ERM<a name="1"></a></h2><p>Based on Minka 2001 <a href="http://research.microsoft.com/en-us/um/people/minka/papers/erm.html">http://research.microsoft.com/en-us/um/people/minka/papers/erm.html</a></p><pre class="codeinput">setSeed(0);
+mu = 5; N = 20;
+[styles, colors, symbols, str] = plotColors;
+names = {<span class="string">'bayes'</span>, <span class="string">'ERM'</span>};
+</pre><h2>Gaussian case<a name="2"></a></h2><pre class="codeinput"><span class="keyword">for</span> trial=1:5000
+  y=randn(1,N) + mu;
+  yhat(1) = mean(y); <span class="comment">% bayes</span>
+  yhat(2) = median(y); <span class="comment">% ERM</span>
+  <span class="keyword">for</span> i=1:2
+    risk(i,trial) = 2*normpdf(yhat(i), mu, 1) + <span class="keyword">...</span>
+      2*(mu-yhat(i))*normcdf(mu-yhat(i)) - (mu-yhat(i));
+  <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+figure; hold <span class="string">on</span>
+<span class="keyword">for</span> i=1:2
+  bins = 0.01:0.01:1;
+  b(i,:) = hist(risk(i,:), bins);
+  c = normalize(b(i,:));
+  plot(bins, cumsum(c), styles{i}, <span class="string">'color'</span>, colors(i), <span class="string">'linewidth'</span>, 3);
+<span class="keyword">end</span>
+legend(names, <span class="string">'location'</span>, <span class="string">'southeast'</span>)
+ylabel(<span class="string">'fraction of trials'</span>)
+xlabel(<span class="string">'test-data loss'</span>)
+
+set(gca, <span class="string">'xlim'</span>, [0.8 1])
+title(<span class="string">'Data sampled from Gaussian'</span>)
+printPmtkFigure(sprintf(<span class="string">'bayesVsErmDemoGauss'</span>))
+</pre><img vspace="5" hspace="5" src="bayesVsErmDemo_01.png" alt=""> <h2>Laplace case<a name="3"></a></h2><pre class="codeinput">clear <span class="string">risk</span> <span class="string">b</span>
+<span class="keyword">for</span> trial=1:5000
+  y=randraw(<span class="string">'laplace'</span>, [mu, 1], N);
+  yhat(1) = median(y); <span class="comment">% bayes</span>
+  yhat(2) = mean(y); <span class="comment">% ERM</span>
+  <span class="keyword">for</span> i=1:2
+    risk(i,trial) = (mu-yhat(i))^2 + 2;
+  <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+
+figure; hold <span class="string">on</span>
+<span class="keyword">for</span> i=1:2
+  bins = 2.0:0.01:3;
+  b(i,:) = hist(risk(i,:), bins);
+  c = normalize(b(i,:));
+  plot(bins, cumsum(c), styles{i}, <span class="string">'color'</span>, colors(i), <span class="string">'linewidth'</span>, 3);
+<span class="keyword">end</span>
+legend(names, <span class="string">'location'</span>, <span class="string">'southeast'</span>)
+ylabel(<span class="string">'fraction of trials'</span>)
+xlabel(<span class="string">'test-data loss'</span>)
+
+set(gca, <span class="string">'xlim'</span>, [2 2.8])
+title(<span class="string">'Data sampled from Laplace'</span>)
+printPmtkFigure(sprintf(<span class="string">'bayesVsErmDemoLaplace'</span>))
+</pre><img vspace="5" hspace="5" src="bayesVsErmDemo_02.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Compare Bayes and ERM
+% Based on Minka 2001
+% http://research.microsoft.com/en-us/um/people/minka/papers/erm.html
+
+
+
+setSeed(0);
+mu = 5; N = 20;
+[styles, colors, symbols, str] = plotColors;
+names = {'bayes', 'ERM'};
+
+%% Gaussian case
+for trial=1:5000
+  y=randn(1,N) + mu;
+  yhat(1) = mean(y); % bayes
+  yhat(2) = median(y); % ERM
+  for i=1:2
+    risk(i,trial) = 2*normpdf(yhat(i), mu, 1) + ...
+      2*(mu-yhat(i))*normcdf(mu-yhat(i)) - (mu-yhat(i));
+  end
+end
+
+figure; hold on
+for i=1:2
+  bins = 0.01:0.01:1;
+  b(i,:) = hist(risk(i,:), bins);
+  c = normalize(b(i,:));
+  plot(bins, cumsum(c), styles{i}, 'color', colors(i), 'linewidth', 3);
+end
+legend(names, 'location', 'southeast')
+ylabel('fraction of trials')
+xlabel('test-data loss')
+
+set(gca, 'xlim', [0.8 1])
+title('Data sampled from Gaussian')
+printPmtkFigure(sprintf('bayesVsErmDemoGauss'))
+
+
+%% Laplace case
+clear risk b 
+for trial=1:5000
+  y=randraw('laplace', [mu, 1], N);
+  yhat(1) = median(y); % bayes
+  yhat(2) = mean(y); % ERM
+  for i=1:2
+    risk(i,trial) = (mu-yhat(i))^2 + 2;
+  end
+end
+
+
+figure; hold on
+for i=1:2
+  bins = 2.0:0.01:3;
+  b(i,:) = hist(risk(i,:), bins);
+  c = normalize(b(i,:));
+  plot(bins, cumsum(c), styles{i}, 'color', colors(i), 'linewidth', 3);
+end
+legend(names, 'location', 'southeast')
+ylabel('fraction of trials')
+xlabel('test-data loss')
+
+set(gca, 'xlim', [2 2.8])
+title('Data sampled from Laplace')
+printPmtkFigure(sprintf('bayesVsErmDemoLaplace'))
+
+
+##### SOURCE END #####
+--></body></html>

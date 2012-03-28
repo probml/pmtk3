@@ -1,0 +1,162 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Kernel pca demo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="kpcaDemo2.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Kernel pca demo</h1><pre class="codeinput"><span class="comment">%{
+</span><span class="comment">setSeed(0);
+</span><span class="comment">n = 1000;
+</span><span class="comment">[X, labels, t] = generate_data('swiss', n, 1);
+</span><span class="comment">figure;
+</span><span class="comment">plot3(X(:,1), X(:,2), X(:,3), '.')
+</span><span class="comment">grid on
+</span><span class="comment">%}
+</span>
+<span class="comment">% Data from kpcaScholopf</span>
+rbf_var = 0.1;
+xnum = 4;
+ynum = 2;
+max_ev = xnum*ynum;
+<span class="comment">% (extract features from the first &lt;max_ev&gt; Eigenvectors)</span>
+x_test_num = 15;
+y_test_num = 15;
+cluster_pos = [-0.5 -0.2; 0 0.6; 0.5 0];
+cluster_size = 30;
+num_clusters = size(cluster_pos,1);
+train_num = num_clusters*cluster_size;
+patterns = zeros(train_num, 2);
+range = 1;
+randn(<span class="string">'seed'</span>, 0);
+<span class="keyword">for</span> i=1:num_clusters,
+  patterns((i-1)*cluster_size+1:i*cluster_size,1) = cluster_pos(i,1)+0.1*randn(cluster_size,1);
+  patterns((i-1)*cluster_size+1:i*cluster_size,2) = cluster_pos(i,2)+0.1*randn(cluster_size,1);
+<span class="keyword">end</span>
+X = patterns;
+
+<span class="comment">% KPCA</span>
+<span class="comment">%[Zkpca, mappingKPCA] = kernel_pca(X, 2, 'gauss', rbf_var);</span>
+Zkpca = kpcaSimple(X',2)'; <span class="comment">% RBF kernel, sigma=1</span>
+figure;
+plot(Zkpca(:,1), Zkpca(:,2), <span class="string">'x'</span>, <span class="string">'markersize'</span>, 10, <span class="string">'linewidth'</span>, 3)
+title(<span class="string">'kpca'</span>, <span class="string">'fontsize'</span>, 16);
+printPmtkFigure(<span class="string">'kpcaDemo2Kernel'</span>)
+
+<span class="comment">% PCA</span>
+[B, Zpca, evals, Xrecon, mu] = pcaPmtk(X, 2);
+<span class="comment">%[Zpca, mappingPCA] = pca(X, 2);</span>
+figure;
+plot(Zpca(:,1), Zpca(:,2), <span class="string">'x'</span>, <span class="string">'markersize'</span>, 10, <span class="string">'linewidth'</span>, 3)
+title(<span class="string">'pca'</span>, <span class="string">'fontsize'</span>, 16);
+printPmtkFigure(<span class="string">'kpcaDemo2Regular'</span>)
+</pre><img vspace="5" hspace="5" src="kpcaDemo2_01.png" alt=""> <img vspace="5" hspace="5" src="kpcaDemo2_02.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Kernel pca demo
+
+%{ 
+setSeed(0);
+n = 1000;
+[X, labels, t] = generate_data('swiss', n, 1);
+figure;
+plot3(X(:,1), X(:,2), X(:,3), '.')
+grid on
+%}
+
+% Data from kpcaScholopf
+rbf_var = 0.1;
+xnum = 4;
+ynum = 2;
+max_ev = xnum*ynum;
+% (extract features from the first <max_ev> Eigenvectors)
+x_test_num = 15;
+y_test_num = 15;
+cluster_pos = [-0.5 -0.2; 0 0.6; 0.5 0];
+cluster_size = 30;
+num_clusters = size(cluster_pos,1);
+train_num = num_clusters*cluster_size;
+patterns = zeros(train_num, 2);
+range = 1;
+randn('seed', 0);
+for i=1:num_clusters,
+  patterns((i-1)*cluster_size+1:i*cluster_size,1) = cluster_pos(i,1)+0.1*randn(cluster_size,1);
+  patterns((i-1)*cluster_size+1:i*cluster_size,2) = cluster_pos(i,2)+0.1*randn(cluster_size,1);
+end
+X = patterns;
+
+% KPCA
+%[Zkpca, mappingKPCA] = kernel_pca(X, 2, 'gauss', rbf_var);
+Zkpca = kpcaSimple(X',2)'; % RBF kernel, sigma=1
+figure;
+plot(Zkpca(:,1), Zkpca(:,2), 'x', 'markersize', 10, 'linewidth', 3)
+title('kpca', 'fontsize', 16);
+printPmtkFigure('kpcaDemo2Kernel')
+
+% PCA
+[B, Zpca, evals, Xrecon, mu] = pcaPmtk(X, 2);
+%[Zpca, mappingPCA] = pca(X, 2);
+figure;
+plot(Zpca(:,1), Zpca(:,2), 'x', 'markersize', 10, 'linewidth', 3)
+title('pca', 'fontsize', 16);
+printPmtkFigure('kpcaDemo2Regular')
+
+##### SOURCE END #####
+--></body></html>

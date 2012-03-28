@@ -1,0 +1,275 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>All subsets regression</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="linregAllSubsetsGraycodeDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>All subsets regression</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+setSeed(0);
+<span class="comment">%N = 20;</span>
+N = 10;
+D = 10;
+w = randn(D,1);
+ndx = randperm(D);
+w(ndx(1:5))=0;
+keep = find(w ~= 0);
+<span class="comment">%X = randn(N,D);</span>
+Sigma = randpd(D);
+mu = randn(D,1);
+model = struct(<span class="string">'mu'</span>, mu, <span class="string">'Sigma'</span>, Sigma);
+X = gaussSample(model, N);
+sigma = 1;
+y = X*w + sigma*randn(N,1);
+
+<span class="comment">%{
+</span><span class="comment">loadData('prostate') % from prostateDataMake
+</span><span class="comment">[N,D] = size(X);
+</span><span class="comment">sigma = 1;
+</span><span class="comment">%}
+</span>
+numofmodel = 2^D;
+sigmaPrior = 100; <span class="comment">% variance of included weights</span>
+bitPrior = 0.1;
+score = zeros(1, numofmodel);
+Models = zeros(numofmodel, D);
+<span class="keyword">for</span> i= 1:numofmodel
+   <span class="keyword">if</span> i==1
+      s = zeros(1,D);
+   <span class="keyword">else</span>
+      s = graystep(s, 1);
+   <span class="keyword">end</span>
+   Models(i,:) = s;
+   Rs = diag(sigmaPrior*s);
+   norm0 = sum(s);
+   Phi1Inv = inv(X*Rs*X' + sigma*eye(N,N));
+   scoreSS(i) = - 0.5*y'*Phi1Inv*y + 0.5*log(det(Phi1Inv))- 0.5*N*log(2*pi) <span class="keyword">...</span>
+      + norm0*(log(bitPrior) - log(1-bitPrior)) + N*log(1-bitPrior);
+<span class="keyword">end</span>
+
+
+
+figure
+imagesc(Models');
+colormap <span class="string">gray</span>
+printPmtkFigure(<span class="string">'grayCodeModelsGray'</span>)
+
+figure
+plot(scoreSS);
+title(<span class="string">'log p(model, data)'</span>)
+axis_pct
+printPmtkFigure(<span class="string">'grayCodeLogpost'</span>)
+
+post = exp(normalizeLogspace(scoreSS));
+figure;
+stem(post)
+<span class="comment">%axis_pct</span>
+axis([-5 numofmodel+5 0 0.1])
+title(<span class="string">'p(model|data)'</span>)
+printPmtkFigure(<span class="string">'grayCodePost'</span>)
+
+marg = sum(Models .* repmat(post(:), 1, D), 1);
+figure;
+bar(marg)
+title(<span class="string">'p(gamma(j)|data'</span>)
+printPmtkFigure(<span class="string">'grayCodeMarg'</span>)
+
+fprintf(<span class="string">'top models\n'</span>);
+[post, perm] = sort(post, <span class="string">'descend'</span>);
+Models = Models(perm,:);
+ndx = find(post&gt;=0.01);
+<span class="keyword">for</span> i=1:length(ndx)
+   m = perm(i);
+   fprintf(<span class="string">'p(%d)=%5.3f: '</span>, m, post(i));
+   fprintf(<span class="string">'%d '</span>, find(Models(i,:)))
+   fprintf(<span class="string">'\n'</span>)
+   table{i,1} = m;
+   table{i,2} = post(i);
+   table{i,3} = sprintf(<span class="string">'%d, '</span>, find(Models(i,:)));
+<span class="keyword">end</span>
+latextable(table, <span class="string">'horiz'</span>, {<span class="string">'model'</span>, <span class="string">'prob'</span>, <span class="string">'members'</span>}, <span class="keyword">...</span>
+  <span class="string">'hline'</span>, 1, <span class="string">'name'</span>, [], <span class="string">'format'</span>, <span class="string">'%5.3f'</span>)
+
+fprintf(<span class="string">'true weight vector\n'</span>);
+fprintf(<span class="string">'%4.2f, '</span>, w); fprintf(<span class="string">'\n'</span>)
+</pre><pre class="codeoutput">top models
+p(4)=0.447: 2 
+p(61)=0.241: 2 6 
+p(452)=0.103: 2 6 9 
+p(60)=0.091: 2 3 6 
+p(29)=0.041: 2 5 
+p(68)=0.021: 2 6 7 
+p(36)=0.015: 2 5 6 
+p(5)=0.010: 2 3 
+\begin{tabular}{ccc}
+ model &amp; prob &amp; members \\
+\hline
+4.000 &amp;0.447 &amp;2, \\
+61.000 &amp;0.241 &amp;2, 6, \\
+452.000 &amp;0.103 &amp;2, 6, 9, \\
+60.000 &amp;0.091 &amp;2, 3, 6, \\
+29.000 &amp;0.041 &amp;2, 5, \\
+68.000 &amp;0.021 &amp;2, 6, 7, \\
+36.000 &amp;0.015 &amp;2, 5, 6, \\
+5.000 &amp;0.010 &amp;2, 3, \\
+\end{tabular}
+true weight vector
+0.00, -1.67, 0.13, 0.00, 0.00, 1.19, 0.00, -0.04, 0.33, 0.00, 
+</pre><img vspace="5" hspace="5" src="linregAllSubsetsGraycodeDemo_01.png" alt=""> <img vspace="5" hspace="5" src="linregAllSubsetsGraycodeDemo_02.png" alt=""> <img vspace="5" hspace="5" src="linregAllSubsetsGraycodeDemo_03.png" alt=""> <img vspace="5" hspace="5" src="linregAllSubsetsGraycodeDemo_04.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% All subsets regression
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+setSeed(0);
+%N = 20; 
+N = 10;
+D = 10;
+w = randn(D,1);
+ndx = randperm(D);
+w(ndx(1:5))=0;
+keep = find(w ~= 0);
+%X = randn(N,D);
+Sigma = randpd(D);
+mu = randn(D,1);
+model = struct('mu', mu, 'Sigma', Sigma);
+X = gaussSample(model, N);
+sigma = 1;
+y = X*w + sigma*randn(N,1);
+
+%{
+loadData('prostate') % from prostateDataMake
+[N,D] = size(X);
+sigma = 1;
+%}
+
+numofmodel = 2^D;
+sigmaPrior = 100; % variance of included weights
+bitPrior = 0.1;
+score = zeros(1, numofmodel);
+Models = zeros(numofmodel, D);
+for i= 1:numofmodel
+   if i==1
+      s = zeros(1,D);
+   else
+      s = graystep(s, 1);
+   end
+   Models(i,:) = s;
+   Rs = diag(sigmaPrior*s);
+   norm0 = sum(s);
+   Phi1Inv = inv(X*Rs*X' + sigma*eye(N,N));
+   scoreSS(i) = - 0.5*y'*Phi1Inv*y + 0.5*log(det(Phi1Inv))- 0.5*N*log(2*pi) ...
+      + norm0*(log(bitPrior) - log(1-bitPrior)) + N*log(1-bitPrior);
+end
+
+
+
+figure
+imagesc(Models');
+colormap gray
+printPmtkFigure('grayCodeModelsGray')
+
+figure
+plot(scoreSS);
+title('log p(model, data)')
+axis_pct
+printPmtkFigure('grayCodeLogpost')
+
+post = exp(normalizeLogspace(scoreSS));
+figure;
+stem(post)
+%axis_pct
+axis([-5 numofmodel+5 0 0.1])
+title('p(model|data)')
+printPmtkFigure('grayCodePost')
+
+marg = sum(Models .* repmat(post(:), 1, D), 1);
+figure; 
+bar(marg)
+title('p(gamma(j)|data')
+printPmtkFigure('grayCodeMarg')
+
+fprintf('top models\n');
+[post, perm] = sort(post, 'descend');
+Models = Models(perm,:);
+ndx = find(post>=0.01);
+for i=1:length(ndx)
+   m = perm(i);
+   fprintf('p(%d)=%5.3f: ', m, post(i));
+   fprintf('%d ', find(Models(i,:)))
+   fprintf('\n')
+   table{i,1} = m;
+   table{i,2} = post(i);
+   table{i,3} = sprintf('%d, ', find(Models(i,:)));
+end
+latextable(table, 'horiz', {'model', 'prob', 'members'}, ...
+  'hline', 1, 'name', [], 'format', '%5.3f')
+
+fprintf('true weight vector\n');
+fprintf('%4.2f, ', w); fprintf('\n')
+
+
+
+##### SOURCE END #####
+--></body></html>

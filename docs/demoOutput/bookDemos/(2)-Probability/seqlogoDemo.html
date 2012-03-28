@@ -1,0 +1,172 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>seqlogoDemo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="seqlogoDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">DNA Sequence Demo</a></li><li><a href="#2">MLE</a></li></ul></div><h2>DNA Sequence Demo<a name="1"></a></h2><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+close <span class="string">all</span>; clear <span class="string">all</span>
+setSeed(1);
+Nseq = 10;
+Nlocn = 15;
+Nletters = 4;
+Nmix = 4;
+pfg = 0.30;
+
+mixweights = [pfg/Nmix*ones(1,Nmix) 1-pfg]; <span class="comment">% 5 states</span>
+z = sampleDiscrete(mixweights, 1, Nlocn);
+alphas = 1*ones(Nletters,Nmix);
+<span class="keyword">for</span> i=1:Nmix
+  alphas(i,i) = 20; <span class="comment">% reflects purity</span>
+<span class="keyword">end</span>
+alphas(:,Nmix+1) = ones(Nletters, 1); <span class="comment">% state 5 is background</span>
+
+theta = zeros(Nletters, Nlocn);
+data = zeros(Nseq, Nlocn);
+chars = [<span class="string">'a'</span> <span class="string">'c'</span> <span class="string">'g'</span> <span class="string">'t'</span> <span class="string">'-'</span>]';
+<span class="keyword">for</span> t=1:Nlocn
+  theta(:,t) = dirichlet_sample(alphas(:,z(t)),1)';
+  data(:,t) = sampleDiscrete(theta(:,t), Nseq, 1);
+  dataStr(:,t) = chars(data(:,t));
+<span class="keyword">end</span>
+
+<span class="keyword">for</span> i=1:Nseq
+  <span class="keyword">for</span> t=1:Nlocn
+    fprintf(<span class="string">'%s '</span>, dataStr(i,t));
+  <span class="keyword">end</span>
+  fprintf(<span class="string">'\n'</span>);
+<span class="keyword">end</span>
+<span class="keyword">return</span>
+</pre><pre class="codeoutput">a t a g c c g g t a c g g c a 
+t t a g c t g c a a c c g c a 
+t c a g c c a c t a g a g c a 
+a t a a c c g c g a c c g c a 
+t t a g c c g c t a a g g t a 
+t a a g c c t c g t a c g t a 
+t t a g c c g t t a c g g c c 
+a t a t c c g g t a c a g t a 
+a t a g c a g g t a c c g a a 
+a c a t c c g t g a c g g a a 
+</pre><h2>MLE<a name="2"></a></h2><pre class="codeinput">counts = zeros(4, Nlocn);
+<span class="keyword">for</span> c=1:4
+   counts(c,:) = sum(data==c,1); <span class="comment">% sum across sequences</span>
+<span class="keyword">end</span>
+thetaHat = counts/Nseq;
+tmp = thetaHat; tmp(tmp==0) = 1; <span class="comment">% log(1)=0</span>
+matrixEntropy = -sum(tmp .* log2(tmp), 1);
+seqlogoPmtk(thetaHat)
+printPmtkFigure(<span class="string">'seqlogo'</span>)
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% DNA Sequence Demo
+%
+
+% This file is from pmtk3.googlecode.com
+
+close all; clear all
+setSeed(1);
+Nseq = 10;
+Nlocn = 15;
+Nletters = 4;
+Nmix = 4;
+pfg = 0.30;
+
+mixweights = [pfg/Nmix*ones(1,Nmix) 1-pfg]; % 5 states
+z = sampleDiscrete(mixweights, 1, Nlocn);
+alphas = 1*ones(Nletters,Nmix);
+for i=1:Nmix
+  alphas(i,i) = 20; % reflects purity
+end
+alphas(:,Nmix+1) = ones(Nletters, 1); % state 5 is background
+
+theta = zeros(Nletters, Nlocn);
+data = zeros(Nseq, Nlocn);
+chars = ['a' 'c' 'g' 't' '-']';
+for t=1:Nlocn
+  theta(:,t) = dirichlet_sample(alphas(:,z(t)),1)';
+  data(:,t) = sampleDiscrete(theta(:,t), Nseq, 1);
+  dataStr(:,t) = chars(data(:,t));
+end
+
+for i=1:Nseq
+  for t=1:Nlocn
+    fprintf('%s ', dataStr(i,t));
+  end
+  fprintf('\n');
+end
+return
+%% MLE
+counts = zeros(4, Nlocn);
+for c=1:4
+   counts(c,:) = sum(data==c,1); % sum across sequences
+end
+thetaHat = counts/Nseq;
+tmp = thetaHat; tmp(tmp==0) = 1; % log(1)=0
+matrixEntropy = -sum(tmp .* log2(tmp), 1);
+seqlogoPmtk(thetaHat)
+printPmtkFigure('seqlogo')
+
+
+
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,613 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>bayesRiskDemo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="bayesRiskDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">Frequentist Diagrams</a></li><li><a href="#4">Bayesian Diagramz</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> bayesRiskDemo()
+</pre><pre class="codeinput"><span class="comment">% draw_bayesrisk.m</span>
+<span class="comment">% Illustrates the symmetry of Bayesian and Frequentist Decision Theory.</span>
+<span class="comment">%</span>
+<span class="comment">%PMTKauthor Gabriel Goh.</span>
+<span class="comment">% 10 Jan 2010</span>
+
+range = 10;
+res = 0.1;
+
+[theta, x_bar] = meshgrid(-range:res:range,-range:res:range);
+
+<span class="comment">% Number of observations. Note that as n increases, both the Bayesian and</span>
+<span class="comment">% Frequentist estimates become sharper and converge to each other.</span>
+n = 1
+
+<span class="comment">% Where to place the camera</span>
+V =[[-0.6561    0.7547         0   -0.0493];
+    [-0.4436   -0.3856    0.8090    0.0101];
+    [-0.6106   -0.5308   -0.5878    9.5248];
+    [     0         0         0    1.0000]];
+
+<span class="comment">% If you get weird errors about the view function, uncomment the line</span>
+<span class="comment">% below.</span>
+V = 3
+normpdf = @(val,mean,sd) (1/(2*pi*sd^2))*exp(-(val-mean).^2/(2*sd));
+</pre><pre class="codeoutput">n =
+     1
+V =
+     3
+</pre><h2>Frequentist Diagrams<a name="3"></a></h2><pre class="codeinput">figure;
+
+subplot(2,2,1)
+
+<span class="comment">% L(theta,delta(x))*P(x_bar|theta)</span>
+fn =  @(theta_ij,x_bar_ij)((theta_ij - (1)*x_bar_ij)^2)*normpdf(x_bar_ij,theta_ij,1/n);
+
+lines3d(theta,x_bar,fn,<span class="keyword">...</span>
+        <span class="string">'xcol'</span>, @(X)[exp(-(X.^2)/10), 0, 0],<span class="keyword">...</span>
+        <span class="string">'ydraw'</span>, 0,<span class="keyword">...</span>
+        <span class="string">'border'</span>,50,<span class="keyword">...</span>
+        <span class="string">'axis'</span>,[-5  5 -5  5]);
+view(V);
+<span class="comment">%view(V(:,1:3))</span>
+
+subplot(2,2,2)
+
+<span class="comment">% P(x_bar|theta)</span>
+fn =  @(theta_ij,x_bar_ij)normpdf(x_bar_ij,theta_ij,1/n);
+
+lines3d(theta, x_bar, fn,<span class="keyword">...</span>
+        <span class="string">'xcol'</span>, @(X)[exp(-(X.^2)/10), 0, 0],<span class="keyword">...</span>
+        <span class="string">'ydraw'</span>, 0,<span class="keyword">...</span>
+        <span class="string">'xfunction'</span>,@(X)exp(-X.^2)/5, <span class="keyword">...</span>
+        <span class="string">'xsum'</span>, 1,<span class="keyword">...</span>
+        <span class="string">'border'</span>,50,<span class="keyword">...</span>
+        <span class="string">'axis'</span>,[-5  5 -5  5]);
+view(V);
+
+subplot(2,2,3)
+
+<span class="comment">% L(theta,delta(x))*P(x_bar|theta)*P(theta)</span>
+fn =  @(theta_ij,x_bar_ij)((theta_ij - (1)*x_bar_ij)^2)*normpdf(x_bar_ij,theta_ij,1/n)*normpdf(theta_ij,0,1);
+
+lines3d(theta, x_bar, fn,<span class="keyword">...</span>
+        <span class="string">'ydraw'</span>, 0,<span class="keyword">...</span>
+        <span class="string">'xsum'</span>,1,<span class="keyword">...</span>
+        <span class="string">'border'</span>,50,<span class="keyword">...</span>
+        <span class="string">'axis'</span>,[-5  5 -5  5]);
+view(V);
+
+subplot(2,2,4)
+
+<span class="comment">% L(theta,delta(x))</span>
+fn =  @(theta_ij,x_bar_ij)((theta_ij - (1)*x_bar_ij)^2);
+
+lines3d(theta, x_bar ,fn,<span class="keyword">...</span>
+        <span class="string">'ydraw'</span>, 0,<span class="keyword">...</span>
+        <span class="string">'scale'</span>,1,<span class="keyword">...</span>
+        <span class="string">'border'</span>,50,<span class="keyword">...</span>
+        <span class="string">'axis'</span>,[-5  5 -5  5]);
+view(V);
+</pre><img vspace="5" hspace="5" src="bayesRiskDemo_01.png" alt=""> <h2>Bayesian Diagramz<a name="4"></a></h2><pre class="codeinput">figure
+
+<span class="comment">% P(theta|x_bar)</span>
+subplot(2,2,1)
+
+fn =  @(theta_ij,x_bar_ij)normpdf(theta_ij,n*x_bar_ij/(1+n),1/(1+n));
+
+lines3d(theta,x_bar,fn,<span class="keyword">...</span>
+        <span class="string">'ycol'</span>, @(X)[0, 0, exp(-(X.^2)/10)],<span class="keyword">...</span>
+        <span class="string">'xdraw'</span>, 0,<span class="keyword">...</span>
+        <span class="string">'border'</span>,50,<span class="keyword">...</span>
+        <span class="string">'axis'</span>,[-5  5 -5  5]);
+
+view(V);
+
+subplot(2,2,2)
+
+<span class="comment">%  L(theta,delta(x))*P(theta|x_bar)</span>
+fn =  @(theta_ij,x_bar_ij)((theta_ij - (1)*x_bar_ij)^2)*normpdf(theta_ij,n*x_bar_ij/(1+n),1/(1+n));
+
+lines3d(theta, x_bar, fn,<span class="keyword">...</span>
+        <span class="string">'ycol'</span>, @(Y)[0, 0, exp(-((1*Y).^2)/10)],<span class="keyword">...</span>
+        <span class="string">'xdraw'</span>, 0,<span class="keyword">...</span>
+        <span class="string">'yfunction'</span>,@(X)5*exp(-(1*X).^2),<span class="keyword">...</span>
+        <span class="string">'ysum'</span>, 1,<span class="keyword">...</span>
+        <span class="string">'border'</span>,50,<span class="keyword">...</span>
+        <span class="string">'axis'</span>,[-5  5 -5  5]);
+
+view(V);
+
+subplot(2,2,3)
+
+<span class="comment">% L(theta,delta(x))*P(theta|x_bar)*P(theta)</span>
+fn =  @(theta_ij,x_bar_ij)((theta_ij - (1)*x_bar_ij)^2)*normpdf(x_bar_ij,theta_ij,1/n)*normpdf(theta_ij,0,1);
+
+lines3d(theta, x_bar, fn,<span class="keyword">...</span>
+        <span class="string">'ycol'</span>, @(Y)[0, 0, exp(-((1*Y).^2)/10)],<span class="keyword">...</span>
+        <span class="string">'xdraw'</span>, 0,<span class="keyword">...</span>
+        <span class="string">'ysum'</span>, 1,<span class="keyword">...</span>
+        <span class="string">'border'</span>,50,<span class="keyword">...</span>
+        <span class="string">'axis'</span>,[-5  5 -5  5]);
+
+view(V);
+
+subplot(2,2,4)
+
+<span class="comment">% L(theta,delta)</span>
+fn =  @(theta_ij,x_bar_ij)((theta_ij - (1)*x_bar_ij)^2);
+
+lines3d(theta, x_bar, fn,<span class="keyword">...</span>
+        <span class="string">'xdraw'</span>, 0,<span class="keyword">...</span>
+        <span class="string">'scale'</span>,1,<span class="keyword">...</span>
+        <span class="string">'border'</span>,50,<span class="keyword">...</span>
+        <span class="string">'axis'</span>,[-5  5 -5  5]);
+
+view(V);
+</pre><img vspace="5" hspace="5" src="bayesRiskDemo_02.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
+
+<span class="keyword">function</span> [L] = lines3d( X, Y, f , varargin )
+<span class="comment">%LINES3D - Draw a 3d function, f, as a series of line segments.</span>
+<span class="comment">%</span>
+<span class="comment">% Syntax:  lines3d(x,y,f,....)</span>
+<span class="comment">%</span>
+<span class="comment">% Inputs:</span>
+<span class="comment">%   x - matrix of x values (produced by meshgrid)</span>
+<span class="comment">%   y - matrix of y values (produced by meshgrid)</span>
+<span class="comment">%   f - function with two parameters returning a single value to be</span>
+<span class="comment">%   calculated.</span>
+<span class="comment">%</span>
+<span class="comment">% Optional Parameters:</span>
+<span class="comment">%   border - truncate "border" number of pixels when doing the plot. This</span>
+<span class="comment">%   function is useful if you wish to draw the sum beyond the current</span>
+<span class="comment">%   plotting range</span>
+<span class="comment">%   xdraw/ydraw - set to 0 to not draw lines along the x axis</span>
+<span class="comment">%   xcol/ycol - function defining the color gradient of the lines</span>
+<span class="comment">%   yfunction/xfunction - plot an "extra" function on the borders.</span>
+<span class="comment">%   scale - adjust the plotting range of the z values by adjusting the</span>
+<span class="comment">%   value of scale</span>
+<span class="comment">%   sumscale - adjust the sum by a factor of sumscale</span>
+<span class="comment">%   xsum/ysum - set to 1 to permit drawing of the sum of the values in x</span>
+<span class="comment">%   and y respectively (this can be intepreted as integrating the line in</span>
+<span class="comment">%   question using quardrature)</span>
+<span class="comment">%   axis - x and y axis</span>
+<span class="comment">%</span>
+<span class="comment">% Outputs:</span>
+<span class="comment">%    L - height matrix of function evaluated at f(x(i),y(j))</span>
+<span class="comment">%</span>
+<span class="comment">% Example:</span>
+<span class="comment">%   [x,y] = meshgrid(-1:0.01:1)</span>
+<span class="comment">%   lines3d(x,y,@(x,y) (x+y)^2)</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% this may look strange, but computing normpdf directly is no faster or</span>
+<span class="comment">% more stable than exp(normpdfln).</span>
+
+
+<span class="comment">% Draw a 3d function, f, as a series of line segments.</span>
+
+p = inputParser;   <span class="comment">% Create an instance of the inputParser class.</span>
+p.addOptional(<span class="string">'border'</span>, 1 );
+p.addOptional(<span class="string">'xdraw'</span>, 1);
+p.addOptional(<span class="string">'ydraw'</span>, 1);
+p.addOptional(<span class="string">'xcol'</span>, @(c)[0, 0, 0] );
+p.addOptional(<span class="string">'ycol'</span>, @(c)[0, 0, 0] );
+p.addOptional(<span class="string">'yfunction'</span>, 0);
+p.addOptional(<span class="string">'xfunction'</span>, 0);
+p.addOptional(<span class="string">'sumscale'</span>, 1/16);
+p.addOptional(<span class="string">'scale'</span>,2);
+p.addOptional(<span class="string">'xsum'</span>,0);
+p.addOptional(<span class="string">'ysum'</span>,0);
+p.addOptional(<span class="string">'axis'</span>,[]);
+
+p.parse(varargin{:});
+p.Results;
+
+
+[n,m] = size(X);
+
+L = zeros(n,m);
+
+<span class="keyword">for</span> i = 1:n
+    <span class="keyword">for</span> j = 1:m
+       L(i,j) = f(X(i,j),Y(i,j));
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+sumXY = sum(L);
+sumYX = sum(L,2)';
+
+<span class="comment">% We may wish to integrate beyond the boundaries of the matrix. To do so,</span>
+<span class="comment">% I generate matrix larger than the displayed matrix, and sum over the</span>
+<span class="comment">% larger matrix, but crop out</span>
+
+k = p.Results.border;
+L = L(k:end-k,k:end-k);
+X = X(k:end-k,k:end-k);
+Y = Y(k:end-k,k:end-k);
+sumXY = sumXY(k:end-k);
+sumYX = sumYX(k:end-k);
+
+hold <span class="string">on</span>
+grid <span class="string">off</span>
+
+<span class="keyword">if</span> ~isempty(p.Results.axis)
+    axis([p.Results.axis,<span class="keyword">...</span>
+          0    p.Results.scale*max(max(L))])
+<span class="keyword">end</span>
+
+<span class="comment">% New size, after crop</span>
+[n,] = size(X);
+
+xcol = p.Results.xcol;
+ycol = p.Results.ycol;
+
+<span class="keyword">for</span> i = fliplr(1:4:n)
+
+    <span class="keyword">if</span> p.Results.xdraw
+        color = xcol(X(1,i));
+        plot3(Y(:,i), X(:,i), L(:,i),<span class="string">'Color'</span>,color,<span class="string">'LineWidth'</span>,1)
+    <span class="keyword">end</span>
+
+    <span class="keyword">if</span> p.Results.ydraw
+        color = ycol(Y(i,1));
+        plot3(X(:,i), Y(:,i), L(i,:),<span class="string">'Color'</span>,color,<span class="string">'LineWidth'</span>,1)
+    <span class="keyword">end</span>
+
+<span class="keyword">end</span>
+
+sumscale = p.Results.sumscale;
+
+<span class="keyword">if</span> p.Results.xsum
+    plot3(X(:,end), Y(:,1), sumXY*sumscale ,<span class="string">'b'</span>,<span class="string">'LineWidth'</span>,2);
+<span class="keyword">end</span>
+
+<span class="keyword">if</span> p.Results.ysum
+    plot3(Y(:,1), X(:,end), sumYX*sumscale ,<span class="string">'b'</span>,<span class="string">'LineWidth'</span>,2);
+<span class="keyword">end</span>
+
+<span class="keyword">if</span> strcmp(class(p.Results.yfunction), <span class="string">'function_handle'</span>)
+    frontf = p.Results.yfunction;
+    plot3(Y(:,1), X(:,1), frontf(Y(:,1)),<span class="string">'b'</span>,<span class="string">'LineWidth'</span>,2);
+<span class="keyword">end</span>
+
+<span class="keyword">if</span> strcmp(class(p.Results.xfunction), <span class="string">'function_handle'</span>)
+   sidef = p.Results.xfunction;
+   plot3(X(:,1), Y(:,1), sidef(X(1,:)),<span class="string">'b'</span>,<span class="string">'LineWidth'</span>,2);
+<span class="keyword">end</span>
+
+<span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+function bayesRiskDemo()
+
+% draw_bayesrisk.m
+% Illustrates the symmetry of Bayesian and Frequentist Decision Theory.
+%
+%PMTKauthor Gabriel Goh.
+% 10 Jan 2010
+
+range = 10;
+res = 0.1;
+
+[theta, x_bar] = meshgrid(-range:res:range,-range:res:range);
+
+% Number of observations. Note that as n increases, both the Bayesian and
+% Frequentist estimates become sharper and converge to each other.
+n = 1
+
+% Where to place the camera
+V =[[-0.6561    0.7547         0   -0.0493];
+    [-0.4436   -0.3856    0.8090    0.0101];
+    [-0.6106   -0.5308   -0.5878    9.5248];
+    [     0         0         0    1.0000]];
+
+% If you get weird errors about the view function, uncomment the line
+% below.
+V = 3
+normpdf = @(val,mean,sd) (1/(2*pi*sd^2))*exp(-(val-mean).^2/(2*sd));
+%% Frequentist Diagrams
+
+figure;
+
+subplot(2,2,1)
+
+% L(theta,delta(x))*P(x_bar|theta)
+fn =  @(theta_ij,x_bar_ij)((theta_ij - (1)*x_bar_ij)^2)*normpdf(x_bar_ij,theta_ij,1/n);
+
+lines3d(theta,x_bar,fn,...
+        'xcol', @(X)[exp(-(X.^2)/10), 0, 0],...
+        'ydraw', 0,...
+        'border',50,...
+        'axis',[-5  5 -5  5]);
+view(V);
+%view(V(:,1:3))
+
+subplot(2,2,2)
+
+% P(x_bar|theta)
+fn =  @(theta_ij,x_bar_ij)normpdf(x_bar_ij,theta_ij,1/n);
+
+lines3d(theta, x_bar, fn,...
+        'xcol', @(X)[exp(-(X.^2)/10), 0, 0],...
+        'ydraw', 0,...
+        'xfunction',@(X)exp(-X.^2)/5, ...
+        'xsum', 1,...
+        'border',50,...
+        'axis',[-5  5 -5  5]);
+view(V);
+
+subplot(2,2,3)
+
+% L(theta,delta(x))*P(x_bar|theta)*P(theta)
+fn =  @(theta_ij,x_bar_ij)((theta_ij - (1)*x_bar_ij)^2)*normpdf(x_bar_ij,theta_ij,1/n)*normpdf(theta_ij,0,1);
+
+lines3d(theta, x_bar, fn,...
+        'ydraw', 0,...
+        'xsum',1,...
+        'border',50,...
+        'axis',[-5  5 -5  5]);
+view(V);
+    
+subplot(2,2,4)
+
+% L(theta,delta(x))
+fn =  @(theta_ij,x_bar_ij)((theta_ij - (1)*x_bar_ij)^2);
+
+lines3d(theta, x_bar ,fn,...
+        'ydraw', 0,...
+        'scale',1,...
+        'border',50,...
+        'axis',[-5  5 -5  5]);
+view(V);
+    
+%% Bayesian Diagramz
+figure
+
+% P(theta|x_bar) 
+subplot(2,2,1)
+
+fn =  @(theta_ij,x_bar_ij)normpdf(theta_ij,n*x_bar_ij/(1+n),1/(1+n));
+
+lines3d(theta,x_bar,fn,...
+        'ycol', @(X)[0, 0, exp(-(X.^2)/10)],...
+        'xdraw', 0,...
+        'border',50,...
+        'axis',[-5  5 -5  5]);
+
+view(V);
+
+subplot(2,2,2)
+
+%  L(theta,delta(x))*P(theta|x_bar) 
+fn =  @(theta_ij,x_bar_ij)((theta_ij - (1)*x_bar_ij)^2)*normpdf(theta_ij,n*x_bar_ij/(1+n),1/(1+n));
+
+lines3d(theta, x_bar, fn,...
+        'ycol', @(Y)[0, 0, exp(-((1*Y).^2)/10)],...
+        'xdraw', 0,...
+        'yfunction',@(X)5*exp(-(1*X).^2),...
+        'ysum', 1,...
+        'border',50,...
+        'axis',[-5  5 -5  5]);
+
+view(V);
+
+subplot(2,2,3)
+
+% L(theta,delta(x))*P(theta|x_bar)*P(theta)
+fn =  @(theta_ij,x_bar_ij)((theta_ij - (1)*x_bar_ij)^2)*normpdf(x_bar_ij,theta_ij,1/n)*normpdf(theta_ij,0,1);
+
+lines3d(theta, x_bar, fn,...
+        'ycol', @(Y)[0, 0, exp(-((1*Y).^2)/10)],...
+        'xdraw', 0,...
+        'ysum', 1,...
+        'border',50,...
+        'axis',[-5  5 -5  5]);
+
+view(V);
+
+subplot(2,2,4)
+
+% L(theta,delta)
+fn =  @(theta_ij,x_bar_ij)((theta_ij - (1)*x_bar_ij)^2);
+
+lines3d(theta, x_bar, fn,...
+        'xdraw', 0,...
+        'scale',1,...
+        'border',50,...
+        'axis',[-5  5 -5  5]);
+
+view(V);
+
+end
+
+function [L] = lines3d( X, Y, f , varargin )
+%LINES3D - Draw a 3d function, f, as a series of line segments.
+%
+% Syntax:  lines3d(x,y,f,....)
+%
+% Inputs:
+%   x - matrix of x values (produced by meshgrid)
+%   y - matrix of y values (produced by meshgrid)
+%   f - function with two parameters returning a single value to be
+%   calculated.
+% 
+% Optional Parameters:
+%   border - truncate "border" number of pixels when doing the plot. This
+%   function is useful if you wish to draw the sum beyond the current 
+%   plotting range
+%   xdraw/ydraw - set to 0 to not draw lines along the x axis
+%   xcol/ycol - function defining the color gradient of the lines
+%   yfunction/xfunction - plot an "extra" function on the borders.
+%   scale - adjust the plotting range of the z values by adjusting the
+%   value of scale
+%   sumscale - adjust the sum by a factor of sumscale
+%   xsum/ysum - set to 1 to permit drawing of the sum of the values in x
+%   and y respectively (this can be intepreted as integrating the line in
+%   question using quardrature)
+%   axis - x and y axis
+%
+% Outputs:
+%    L - height matrix of function evaluated at f(x(i),y(j))
+%
+% Example: 
+%   [x,y] = meshgrid(-1:0.01:1)
+%   lines3d(x,y,@(x,y) (x+y)^2)
+%
+%
+% this may look strange, but computing normpdf directly is no faster or
+% more stable than exp(normpdfln).
+
+
+% Draw a 3d function, f, as a series of line segments.
+
+p = inputParser;   % Create an instance of the inputParser class.
+p.addOptional('border', 1 );
+p.addOptional('xdraw', 1);
+p.addOptional('ydraw', 1);
+p.addOptional('xcol', @(c)[0, 0, 0] );
+p.addOptional('ycol', @(c)[0, 0, 0] );
+p.addOptional('yfunction', 0);
+p.addOptional('xfunction', 0);
+p.addOptional('sumscale', 1/16);
+p.addOptional('scale',2);
+p.addOptional('xsum',0);
+p.addOptional('ysum',0);
+p.addOptional('axis',[]);
+
+p.parse(varargin{:});
+p.Results;
+
+
+[n,m] = size(X);
+
+L = zeros(n,m);
+
+for i = 1:n
+    for j = 1:m
+       L(i,j) = f(X(i,j),Y(i,j));
+    end
+end
+
+sumXY = sum(L);
+sumYX = sum(L,2)';
+
+% We may wish to integrate beyond the boundaries of the matrix. To do so,
+% I generate matrix larger than the displayed matrix, and sum over the
+% larger matrix, but crop out 
+
+k = p.Results.border;
+L = L(k:end-k,k:end-k);
+X = X(k:end-k,k:end-k);
+Y = Y(k:end-k,k:end-k);
+sumXY = sumXY(k:end-k);
+sumYX = sumYX(k:end-k);
+
+hold on
+grid off
+
+if ~isempty(p.Results.axis)
+    axis([p.Results.axis,...   
+          0    p.Results.scale*max(max(L))])
+end
+
+% New size, after crop
+[n,] = size(X);
+
+xcol = p.Results.xcol;
+ycol = p.Results.ycol;
+
+for i = fliplr(1:4:n)
+
+    if p.Results.xdraw
+        color = xcol(X(1,i));
+        plot3(Y(:,i), X(:,i), L(:,i),'Color',color,'LineWidth',1)
+    end
+    
+    if p.Results.ydraw
+        color = ycol(Y(i,1));
+        plot3(X(:,i), Y(:,i), L(i,:),'Color',color,'LineWidth',1)
+    end
+    
+end
+
+sumscale = p.Results.sumscale;
+
+if p.Results.xsum
+    plot3(X(:,end), Y(:,1), sumXY*sumscale ,'b','LineWidth',2);
+end
+
+if p.Results.ysum
+    plot3(Y(:,1), X(:,end), sumYX*sumscale ,'b','LineWidth',2);
+end
+
+if strcmp(class(p.Results.yfunction), 'function_handle')
+    frontf = p.Results.yfunction;
+    plot3(Y(:,1), X(:,1), frontf(Y(:,1)),'b','LineWidth',2);
+end
+
+if strcmp(class(p.Results.xfunction), 'function_handle')
+   sidef = p.Results.xfunction;
+   plot3(X(:,1), Y(:,1), sidef(X(1,:)),'b','LineWidth',2);
+end
+
+end
+##### SOURCE END #####
+--></body></html>

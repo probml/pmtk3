@@ -1,0 +1,210 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Bernoulli mixture model for mnist digits</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="mixBerMnistEM.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Bernoulli mixture model for mnist digits</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Setup data</a></li><li><a href="#2">Fit</a></li><li><a href="#3">Plot</a></li></ul></div><h2>Setup data<a name="1"></a></h2><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+setSeed(0);
+binary     = true;
+keepSparse = false;
+Ntest      = 1000;
+
+<span class="keyword">if</span> 1
+    Ntrain  = 1000;
+    Kvalues = [2, 10];
+<span class="keyword">else</span>
+    Ntrain  = 1000;
+    Kvalues = 2:15;
+<span class="keyword">end</span>
+[Xtrain, ytrain, Xtest, ytest] = setupMnist(<span class="string">'binary'</span>, binary, <span class="string">'ntrain'</span>,<span class="keyword">...</span>
+    Ntrain,<span class="string">'ntest'</span>, Ntest,<span class="string">'keepSparse'</span>, keepSparse);
+Xtrain = Xtrain + 1; <span class="comment">% convert from 0:1 to 1:2</span>
+Xtest  = Xtest  + 1;
+</pre><h2>Fit<a name="2"></a></h2><pre class="codeinput">[n, d] = size(Xtrain);
+NK     = length(Kvalues);
+logp   = zeros(1, NK);
+bicVal = zeros(1, NK);
+options = {<span class="string">'maxIter'</span>, 10, <span class="string">'verbose'</span>, true};
+model = cell(1, NK);
+<span class="keyword">for</span> i=1:NK
+    K = Kvalues(i);
+    fprintf(<span class="string">'Fitting K = %d \n'</span>, K)
+    model{i}  = mixDiscreteFit(Xtrain, K, options{:});
+    logp(i)   = sum(mixDiscreteLogprob(model{i}, Xtest));
+    nParams   = K*d + K-1;
+    bicVal(i) = -2*logp(i) + nParams*log(n);
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">Fitting K = 2 
+initializing model for EM
+1	 loglik: -257080
+2	 loglik: -217079
+3	 loglik: -215418
+4	 loglik: -215353
+5	 loglik: -215339
+Fitting K = 10 
+initializing model for EM
+1	 loglik: -256578
+2	 loglik: -194822
+3	 loglik: -184042
+4	 loglik: -180940
+5	 loglik: -179022
+6	 loglik: -178232
+7	 loglik: -177943
+8	 loglik: -177808
+9	 loglik: -177667
+10	 loglik: -177483
+11	 loglik: -177253
+</pre><h2>Plot<a name="3"></a></h2><pre class="codeinput"><span class="keyword">for</span> i=1:NK
+    K = Kvalues(i);
+    figure();
+    [ynum, xnum] = nsubplots(K);
+    <span class="keyword">if</span> K==10
+        ynum = 2; xnum = 5;
+    <span class="keyword">end</span>
+    TK = model{i}.cpd.T;
+    mixweightK = model{i}.mixWeight;
+    <span class="keyword">for</span> j=1:K
+        subplot(ynum, xnum, j);
+        imagesc(reshape(TK(j, 2, :), 28, 28));
+        colormap(<span class="string">'gray'</span>);
+        title(sprintf(<span class="string">'%1.2f'</span>, mixweightK(j)), <span class="string">'fontsize'</span>, 30);
+        axis <span class="string">off</span>
+    <span class="keyword">end</span>
+
+    printPmtkFigure(sprintf(<span class="string">'mixBernoulliMnist%d'</span>, K));
+<span class="keyword">end</span>
+<span class="keyword">if</span> numel(Kvalues) &gt; 2
+    figure();
+    plot(Kvalues, bicVal, <span class="string">'-o'</span>, <span class="string">'LineWidth'</span>, 2, <span class="string">'MarkerSize'</span>, 8);
+    title(sprintf(<span class="string">'Minimum achieved for K = %d'</span>, Kvalues(minidx(bicVal))));
+    printPmtkFigure(<span class="string">'MnistBICvsKplot'</span>);
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="mixBerMnistEM_01.png" alt=""> <img vspace="5" hspace="5" src="mixBerMnistEM_02.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Bernoulli mixture model for mnist digits
+%
+%% Setup data
+
+% This file is from pmtk3.googlecode.com
+
+setSeed(0);
+binary     = true;
+keepSparse = false; 
+Ntest      = 1000;
+
+if 1
+    Ntrain  = 1000;
+    Kvalues = [2, 10]; 
+else
+    Ntrain  = 1000;
+    Kvalues = 2:15;
+end
+[Xtrain, ytrain, Xtest, ytest] = setupMnist('binary', binary, 'ntrain',...
+    Ntrain,'ntest', Ntest,'keepSparse', keepSparse);
+Xtrain = Xtrain + 1; % convert from 0:1 to 1:2
+Xtest  = Xtest  + 1; 
+%% Fit
+[n, d] = size(Xtrain); 
+NK     = length(Kvalues);
+logp   = zeros(1, NK);
+bicVal = zeros(1, NK);
+options = {'maxIter', 10, 'verbose', true};
+model = cell(1, NK); 
+for i=1:NK
+    K = Kvalues(i);
+    fprintf('Fitting K = %d \n', K)
+    model{i}  = mixDiscreteFit(Xtrain, K, options{:});
+    logp(i)   = sum(mixDiscreteLogprob(model{i}, Xtest));
+    nParams   = K*d + K-1;
+    bicVal(i) = -2*logp(i) + nParams*log(n);
+end
+%% Plot
+for i=1:NK
+    K = Kvalues(i);
+    figure();
+    [ynum, xnum] = nsubplots(K);
+    if K==10
+        ynum = 2; xnum = 5;
+    end
+    TK = model{i}.cpd.T; 
+    mixweightK = model{i}.mixWeight;
+    for j=1:K
+        subplot(ynum, xnum, j);
+        imagesc(reshape(TK(j, 2, :), 28, 28)); 
+        colormap('gray');
+        title(sprintf('%1.2f', mixweightK(j)), 'fontsize', 30);
+        axis off
+    end
+    
+    printPmtkFigure(sprintf('mixBernoulliMnist%d', K));
+end
+if numel(Kvalues) > 2
+    figure(); 
+    plot(Kvalues, bicVal, '-o', 'LineWidth', 2, 'MarkerSize', 8);
+    title(sprintf('Minimum achieved for K = %d', Kvalues(minidx(bicVal))));
+    printPmtkFigure('MnistBICvsKplot');
+end
+
+##### SOURCE END #####
+--></body></html>

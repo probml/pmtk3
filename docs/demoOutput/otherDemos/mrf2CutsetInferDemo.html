@@ -1,0 +1,426 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>mrf2CutsetInferDemo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="mrf2CutsetInferDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Demonstrate cutset conditioning  in cyclic  undirected markov chain</a></li><li><a href="#2">Setup model with a single loop</a></li><li><a href="#3">Unconditional inference</a></li><li><a href="#4">Setup model with multiple loops</a></li><li><a href="#5">Unconditional inference</a></li></ul></div><h2>Demonstrate cutset conditioning  in cyclic  undirected markov chain<a name="1"></a></h2><p>Based on <a href="http://www.cs.ubc.ca/~schmidtm/Software/UGM/cutset.html">http://www.cs.ubc.ca/~schmidtm/Software/UGM/cutset.html</a></p><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+</pre><h2>Setup model with a single loop<a name="2"></a></h2><pre class="codeinput">nNodes = 13;
+nStates = 25;
+adj = zeros(nNodes);
+<span class="keyword">for</span> i = 1:nNodes-1
+    adj(i,i+1) = 1;
+<span class="keyword">end</span>
+adj(nNodes,1) = 1;
+adj = adj+adj';
+
+<span class="keyword">if</span> 0
+labels = {<span class="string">'UBCLoop'</span>,<span class="string">'UniversityBoulevard'</span>,<span class="string">'AgronomyRoad'</span>,<span class="keyword">...</span>
+    <span class="string">'EastMall'</span>,<span class="string">'MainMall'</span>,<span class="string">'HawthorneLane'</span>,<span class="string">'StadiumRoad'</span>,<span class="keyword">...</span>
+    <span class="string">'AgronomyRoad'</span>,<span class="string">'UniversityBoulevard'</span>,<span class="string">'NitobeMemorial'</span>,<span class="keyword">...</span>
+    <span class="string">'WestMall'</span>,<span class="string">'CrescentRoad'</span>,<span class="string">'IonaDrive'</span>};
+drawNetwork(<span class="string">'-adjMat'</span>,adj,<span class="string">'-nodeLabels'</span>,labels,<span class="string">'-undirected'</span>, true);
+printPmtkFigure(<span class="string">'busNoHub'</span>)
+<span class="keyword">end</span>
+
+busy = [10
+    8
+    0
+    3
+    5
+    4
+    0
+    5
+    0
+    0
+    0
+    0
+    0];
+nodePot = zeros(nNodes,nStates);
+<span class="keyword">for</span> n = 1:nNodes
+   <span class="keyword">for</span> s = 1:nStates
+      nodePot(n,s) = exp(-(1/10)*(busy(n)-(s-1))^2);
+   <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+edgePot = zeros(nStates);
+<span class="keyword">for</span> s1 = 1:nStates
+    <span class="keyword">for</span> s2 = 1:nStates
+        edgePot(s1,s2) = exp(-(1/100)*(s1-s2)^2);
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+cutset = 1;
+model = mrf2Create(adj, nStates, <span class="string">'nodePot'</span>, nodePot, <span class="string">'edgePot'</span>, edgePot, <span class="keyword">...</span>
+  <span class="string">'method'</span>, <span class="string">'Cutset'</span>, <span class="string">'cutset'</span>, cutset);
+</pre><h2>Unconditional inference<a name="3"></a></h2><pre class="codeinput">map =  mrf2Map(model)-1
+
+[nodeBel, edgeBel, logZ] =  mrf2InferNodesAndEdges(model);
+
+setSeed(0);
+samples = mrf2Sample(model, 100);
+figure; imagesc(samples); colorbar;
+</pre><pre class="codeoutput">map =
+  Columns 1 through 7
+     9     8     1     3     5     4     1
+  Columns 8 through 13
+     4     0     0     0     0     1
+</pre><img vspace="5" hspace="5" src="mrf2CutsetInferDemo_01.png" alt=""> <h2>Setup model with multiple loops<a name="4"></a></h2><pre class="codeinput">nNodes = 131;
+nStates = 4;
+adj = zeros(nNodes);
+<span class="comment">% Route 1 (loop starting from node 1)</span>
+<span class="keyword">for</span> i = 1:12
+    adj(i,i+1) = 1;
+<span class="keyword">end</span>
+adj(13,1) = 1;
+<span class="comment">% Route 2 (loop starting from node 1)</span>
+adj(1,14) = 1;
+<span class="keyword">for</span> i = 14:29
+   adj(i+1,i) = 1;
+<span class="keyword">end</span>
+adj(30,1) = 1;
+<span class="comment">% Route 3 (loop starting from node 70)</span>
+<span class="keyword">for</span> i = 31:69
+    adj(i+1,i) = 1;
+<span class="keyword">end</span>
+adj(70,31) = 1;
+<span class="comment">% Route 4 (loop starting from node 81)</span>
+<span class="keyword">for</span> i = 71:80
+    adj(i,i+1) = 1;
+<span class="keyword">end</span>
+adj(81,71) = 1;
+<span class="comment">% Route 5 (loop through nodes 1 and 70)</span>
+adj(1,82) = 1;
+<span class="keyword">for</span> i = 82:90
+    adj(i,i+1) = 1;
+<span class="keyword">end</span>
+adj(91,70) = 1;
+adj(70,92) = 1;
+<span class="keyword">for</span> i = 92:99
+    adj(i,i+1) = 1;
+<span class="keyword">end</span>
+adj(100,1) = 1;
+<span class="comment">% Route 6 (loop through nodes 1 and 81)</span>
+adj(1,101) = 1;
+<span class="keyword">for</span> i = 101:110
+    adj(i,i+1) = 1;
+<span class="keyword">end</span>
+adj(111,81) = 1;
+adj(81,112) = 1;
+<span class="keyword">for</span> i = 112:120
+   adj(i,i+1) = 1;
+<span class="keyword">end</span>
+adj(121,1) = 1;
+<span class="comment">% Route 7 (direct path from 70 to 81)</span>
+adj(70,122) = 1;
+<span class="keyword">for</span> i = 122:130
+    adj(i,i+1) = 1;
+<span class="keyword">end</span>
+adj(131,81) = 1;
+
+adj = adj+adj';
+
+<span class="keyword">if</span> 0
+clf;
+<span class="keyword">for</span> i = 1:nNodes
+    labels{1,i} = <span class="string">'s'</span>;
+<span class="keyword">end</span>
+labels{1} = <span class="string">'H'</span>;
+labels{70} = <span class="string">'H'</span>;
+labels{81} = <span class="string">'H'</span>;
+drawNetwork(<span class="string">'-adjMat'</span>,adj,<span class="string">'-nodeLabels'</span>,labels,<span class="string">'-undirected'</span>, true);
+printPmtkFigure(<span class="string">'busloopHubs'</span>)
+<span class="keyword">end</span>
+
+
+busy = floor(rand(nNodes,1)*nStates);
+nodePot = zeros(nNodes,nStates);
+<span class="keyword">for</span> n = 1:nNodes
+   <span class="keyword">for</span> s = 1:nStates
+      nodePot(n,s) = exp(-(1/10)*(busy(n)-(s-1))^2);
+   <span class="keyword">end</span>
+<span class="keyword">end</span>
+edgePot = zeros(nStates);
+<span class="keyword">for</span> s1 = 1:nStates
+    <span class="keyword">for</span> s2 = 1:nStates
+        edgePot(s1,s2) = exp(-(1/10)*(s1-s2)^2);
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+cutset = [1 70 81];
+
+model = mrf2Create(adj, nStates, <span class="string">'nodePot'</span>, nodePot, <span class="string">'edgePot'</span>, edgePot, <span class="keyword">...</span>
+  <span class="string">'method'</span>, <span class="string">'Cutset'</span>, <span class="string">'cutset'</span>, cutset);
+</pre><h2>Unconditional inference<a name="5"></a></h2><pre class="codeinput">map =  mrf2Map(model)-1
+
+[nodeBel, edgeBel, logZ] =  mrf2InferNodesAndEdges(model);
+
+setSeed(0);
+samples = mrf2Sample(model, 100);
+figure; imagesc(samples); colorbar;
+</pre><pre class="codeoutput">map =
+  Columns 1 through 7
+     2     1     1     2     2     2     2
+  Columns 8 through 14
+     1     2     2     2     1     1     1
+  Columns 15 through 21
+     2     2     3     3     3     3     2
+  Columns 22 through 28
+     1     1     1     2     2     2     1
+  Columns 29 through 35
+     1     2     2     2     2     2     2
+  Columns 36 through 42
+     2     2     2     1     1     1     2
+  Columns 43 through 49
+     2     2     2     2     1     1     1
+  Columns 50 through 56
+     1     1     1     1     2     2     1
+  Columns 57 through 63
+     1     1     2     2     2     2     2
+  Columns 64 through 70
+     2     2     2     2     2     2     2
+  Columns 71 through 77
+     2     2     2     1     1     2     1
+  Columns 78 through 84
+     1     1     1     2     1     2     2
+  Columns 85 through 91
+     2     2     2     1     1     1     1
+  Columns 92 through 98
+     2     2     2     2     2     2     3
+  Columns 99 through 105
+     3     3     1     1     1     1     2
+  Columns 106 through 112
+     2     1     1     2     2     1     2
+  Columns 113 through 119
+     2     1     1     0     0     0     0
+  Columns 120 through 126
+     1     1     1     1     1     1     1
+  Columns 127 through 131
+     2     2     2     2     2
+</pre><img vspace="5" hspace="5" src="mrf2CutsetInferDemo_02.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Demonstrate cutset conditioning  in cyclic  undirected markov chain
+% Based on http://www.cs.ubc.ca/~schmidtm/Software/UGM/cutset.html
+
+% This file is from pmtk3.googlecode.com
+
+
+%% Setup model with a single loop
+nNodes = 13;
+nStates = 25;
+adj = zeros(nNodes);
+for i = 1:nNodes-1
+    adj(i,i+1) = 1;
+end
+adj(nNodes,1) = 1;
+adj = adj+adj';
+
+if 0
+labels = {'UBCLoop','UniversityBoulevard','AgronomyRoad',...
+    'EastMall','MainMall','HawthorneLane','StadiumRoad',...
+    'AgronomyRoad','UniversityBoulevard','NitobeMemorial',...
+    'WestMall','CrescentRoad','IonaDrive'};
+drawNetwork('-adjMat',adj,'-nodeLabels',labels,'-undirected', true);
+printPmtkFigure('busNoHub')
+end
+
+busy = [10
+    8
+    0
+    3
+    5
+    4
+    0
+    5
+    0
+    0
+    0
+    0
+    0];
+nodePot = zeros(nNodes,nStates);
+for n = 1:nNodes
+   for s = 1:nStates
+      nodePot(n,s) = exp(-(1/10)*(busy(n)-(s-1))^2);
+   end
+end
+    
+edgePot = zeros(nStates);
+for s1 = 1:nStates
+    for s2 = 1:nStates
+        edgePot(s1,s2) = exp(-(1/100)*(s1-s2)^2);
+    end
+end
+
+cutset = 1;
+model = mrf2Create(adj, nStates, 'nodePot', nodePot, 'edgePot', edgePot, ...
+  'method', 'Cutset', 'cutset', cutset);
+  
+%% Unconditional inference
+
+map =  mrf2Map(model)-1
+
+[nodeBel, edgeBel, logZ] =  mrf2InferNodesAndEdges(model);
+
+setSeed(0);
+samples = mrf2Sample(model, 100);
+figure; imagesc(samples); colorbar;
+
+%% Setup model with multiple loops
+
+nNodes = 131;
+nStates = 4;
+adj = zeros(nNodes);
+% Route 1 (loop starting from node 1)
+for i = 1:12
+    adj(i,i+1) = 1;
+end
+adj(13,1) = 1;
+% Route 2 (loop starting from node 1)
+adj(1,14) = 1;
+for i = 14:29
+   adj(i+1,i) = 1; 
+end
+adj(30,1) = 1;
+% Route 3 (loop starting from node 70)
+for i = 31:69
+    adj(i+1,i) = 1;
+end
+adj(70,31) = 1;
+% Route 4 (loop starting from node 81)
+for i = 71:80
+    adj(i,i+1) = 1;
+end
+adj(81,71) = 1;
+% Route 5 (loop through nodes 1 and 70)
+adj(1,82) = 1;
+for i = 82:90
+    adj(i,i+1) = 1;
+end
+adj(91,70) = 1;
+adj(70,92) = 1;
+for i = 92:99
+    adj(i,i+1) = 1;
+end
+adj(100,1) = 1;
+% Route 6 (loop through nodes 1 and 81)
+adj(1,101) = 1;
+for i = 101:110
+    adj(i,i+1) = 1;
+end
+adj(111,81) = 1;
+adj(81,112) = 1;
+for i = 112:120
+   adj(i,i+1) = 1; 
+end
+adj(121,1) = 1;
+% Route 7 (direct path from 70 to 81)
+adj(70,122) = 1;
+for i = 122:130
+    adj(i,i+1) = 1;
+end
+adj(131,81) = 1;
+
+adj = adj+adj';
+
+if 0
+clf;
+for i = 1:nNodes
+    labels{1,i} = 's';
+end
+labels{1} = 'H';
+labels{70} = 'H';
+labels{81} = 'H';
+drawNetwork('-adjMat',adj,'-nodeLabels',labels,'-undirected', true);
+printPmtkFigure('busloopHubs')
+end
+
+
+busy = floor(rand(nNodes,1)*nStates);
+nodePot = zeros(nNodes,nStates);
+for n = 1:nNodes
+   for s = 1:nStates
+      nodePot(n,s) = exp(-(1/10)*(busy(n)-(s-1))^2);
+   end
+end
+edgePot = zeros(nStates);
+for s1 = 1:nStates
+    for s2 = 1:nStates
+        edgePot(s1,s2) = exp(-(1/10)*(s1-s2)^2);
+    end
+end
+
+cutset = [1 70 81];
+
+model = mrf2Create(adj, nStates, 'nodePot', nodePot, 'edgePot', edgePot, ...
+  'method', 'Cutset', 'cutset', cutset);
+  
+%% Unconditional inference
+map =  mrf2Map(model)-1
+
+[nodeBel, edgeBel, logZ] =  mrf2InferNodesAndEdges(model);
+
+setSeed(0);
+samples = mrf2Sample(model, 100);
+figure; imagesc(samples); colorbar;
+
+##### SOURCE END #####
+--></body></html>

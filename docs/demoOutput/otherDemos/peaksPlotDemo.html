@@ -1,0 +1,154 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Display various plots of a multimodal 2D function, peaks()</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="peaksPlotDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Display various plots of a multimodal 2D function, peaks()</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">find optimum by exhaustive search</a></li></ul></div><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+[X, Y] = meshgrid(linspace(-2.5,2.5,40),linspace(-3,3,50));
+Z = peaks(X,Y);
+</pre><h2>find optimum by exhaustive search<a name="2"></a></h2><pre class="codeinput">Zmax = max(Z(:)); <span class="comment">% 8.0752</span>
+[rowMax, colMax] = find(Zmax==Z); <span class="comment">% max  row 38, col 25</span>
+Zmin = min(Z(:)); <span class="comment">% -6.54566</span>
+[rowMin, colMin] = find(Zmin==Z); <span class="comment">% min  row 12, col 27</span>
+Xmax = X(rowMax, colMax); Ymax = Y(rowMax, colMax);
+Xmin = X(rowMin, colMin); Ymin = Y(rowMin, colMin);
+</pre><pre class="codeinput">str = sprintf(<span class="string">'max = %5.3f at x = %5.3f, y = %5.3f, min = %5.3f at x = %5.3f, y = %5.3f'</span>, <span class="keyword">...</span>
+  Zmax, Xmax, Ymax, Zmin, Xmin, Ymin);
+figure;
+surf(X,Y,Z);
+xlabel(<span class="string">'x'</span>);
+ylabel(<span class="string">'y'</span>);
+view(-19, 48)
+hold <span class="string">on</span>;
+h = plot3(Xmax, Ymax, Zmax, <span class="string">'ro'</span>);
+set(h, <span class="string">'markerfacecolor'</span>, <span class="string">'r'</span>, <span class="string">'markersize'</span>, 12);
+hold <span class="string">on</span>;
+h = plot3(Xmin, Ymin, Zmin, <span class="string">'bo'</span>);
+set(h,<span class="string">'markerfacecolor'</span>, <span class="string">'b'</span>, <span class="string">'markersize'</span>,12);
+title(str)
+printPmtkFigure <span class="string">peaksSurf</span>;
+
+figure;
+contour(X,Y,Z);
+xlabel(<span class="string">'x'</span>);
+ylabel(<span class="string">'y'</span>);
+colorbar;
+printPmtkFigure <span class="string">peaksContour</span>;
+
+figure;
+imagesc(flipud(Z));
+colorbar;
+xlabel(<span class="string">'x'</span>);
+ylabel(<span class="string">'y'</span>);
+printPmtkFigure <span class="string">peaksImagesc</span>;
+</pre><img vspace="5" hspace="5" src="peaksPlotDemo_01.png" alt=""> <img vspace="5" hspace="5" src="peaksPlotDemo_02.png" alt=""> <img vspace="5" hspace="5" src="peaksPlotDemo_03.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Display various plots of a multimodal 2D function, peaks()
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+[X, Y] = meshgrid(linspace(-2.5,2.5,40),linspace(-3,3,50));
+Z = peaks(X,Y);
+%% find optimum by exhaustive search
+Zmax = max(Z(:)); % 8.0752
+[rowMax, colMax] = find(Zmax==Z); % max  row 38, col 25 
+Zmin = min(Z(:)); % -6.54566
+[rowMin, colMin] = find(Zmin==Z); % min  row 12, col 27
+Xmax = X(rowMax, colMax); Ymax = Y(rowMax, colMax);
+Xmin = X(rowMin, colMin); Ymin = Y(rowMin, colMin);
+%%
+str = sprintf('max = %5.3f at x = %5.3f, y = %5.3f, min = %5.3f at x = %5.3f, y = %5.3f', ...
+  Zmax, Xmax, Ymax, Zmin, Xmin, Ymin);
+figure;
+surf(X,Y,Z);
+xlabel('x'); 
+ylabel('y');
+view(-19, 48)
+hold on; 
+h = plot3(Xmax, Ymax, Zmax, 'ro');
+set(h, 'markerfacecolor', 'r', 'markersize', 12);
+hold on; 
+h = plot3(Xmin, Ymin, Zmin, 'bo');
+set(h,'markerfacecolor', 'b', 'markersize',12);
+title(str)
+printPmtkFigure peaksSurf;
+
+figure;
+contour(X,Y,Z);
+xlabel('x'); 
+ylabel('y'); 
+colorbar;
+printPmtkFigure peaksContour;
+
+figure;
+imagesc(flipud(Z)); 
+colorbar; 
+xlabel('x'); 
+ylabel('y');
+printPmtkFigure peaksImagesc;
+
+##### SOURCE END #####
+--></body></html>

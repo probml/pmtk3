@@ -1,0 +1,117 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Compute beta credible interval</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="betaCredibleInt.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Compute beta credible interval</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Monte Carlo approximation</a></li></ul></div><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+S = 47;
+N = 100;
+a = S+1;
+b = (N-S)+1;
+alpha = 0.05;
+l  = betainvPMTK(alpha/2, a, b);
+u  = betainvPMTK(1-alpha/2, a, b);
+CI = [l, u] <span class="comment">% 0.3749    0.5673</span>
+</pre><pre class="codeoutput">CI =
+    0.3749    0.5673
+</pre><h2>Monte Carlo approximation<a name="2"></a></h2><pre class="codeinput">setSeed(0);
+S = 1000;
+model = structure(a, b);
+X = betaSample(model, S);
+X = sort(X);
+Xl = X(round(S*alpha/2));
+Xu = X(round(S*(1-alpha/2)));
+CIhat = [Xl Xu]
+CIhat2 = [quantilePMTK(X, alpha/2), quantilePMTK(X, 1-alpha/2)];
+</pre><pre class="codeoutput">CIhat =
+    0.3727    0.5688
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Compute beta credible interval
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+S = 47; 
+N = 100; 
+a = S+1; 
+b = (N-S)+1; 
+alpha = 0.05;
+l  = betainvPMTK(alpha/2, a, b);
+u  = betainvPMTK(1-alpha/2, a, b);
+CI = [l, u] % 0.3749    0.5673
+%% Monte Carlo approximation
+setSeed(0);
+S = 1000;
+model = structure(a, b); 
+X = betaSample(model, S);
+X = sort(X);
+Xl = X(round(S*alpha/2));
+Xu = X(round(S*(1-alpha/2)));
+CIhat = [Xl Xu]
+CIhat2 = [quantilePMTK(X, alpha/2), quantilePMTK(X, 1-alpha/2)];
+
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,124 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>chisquaredTestDemo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="chisquaredTestDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% Demo of pearson's chi squared test</span>
+
+<span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+
+<span class="comment">% Data from</span>
+<span class="comment">% http://homepage.mac.com/samchops/B733177502/C1517039664/E20060507073109/index.html</span>
+<span class="comment">%Y=[ 21 16 145 2 6 ; 14 4 175 13 4];</span>
+
+<span class="comment">% Data from</span>
+<span class="comment">% http://en.wikipedia.org/wiki/Contingency_table</span>
+<span class="comment">% pval = 0.1825 - retain the null at 5% level</span>
+O = [9 43; 4 44];
+N=sum(sum(O));
+nidot=sum(O,2);
+ndotj=sum(O,1);
+pdotj = ndotj/N;
+pidot = nidot/N;
+E=N*pidot*pdotj;
+chi2 =sum(sum(((O-E).^2)./E))
+
+[J K] = size(O);
+dof = (J-1)*(K-1);
+pval = 1-chi2cdf(chi2, dof)
+</pre><pre class="codeoutput">chi2 =
+    1.7774
+pval =
+    0.1825
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+% Demo of pearson's chi squared test
+
+% This file is from pmtk3.googlecode.com
+
+
+% Data from
+% http://homepage.mac.com/samchops/B733177502/C1517039664/E20060507073109/index.html
+%Y=[ 21 16 145 2 6 ; 14 4 175 13 4];
+
+% Data from 
+% http://en.wikipedia.org/wiki/Contingency_table
+% pval = 0.1825 - retain the null at 5% level
+O = [9 43; 4 44];
+N=sum(sum(O));
+nidot=sum(O,2);
+ndotj=sum(O,1);
+pdotj = ndotj/N; 
+pidot = nidot/N;
+E=N*pidot*pdotj;
+chi2 =sum(sum(((O-E).^2)./E))
+
+[J K] = size(O);
+dof = (J-1)*(K-1);
+pval = 1-chi2cdf(chi2, dof)
+
+
+
+##### SOURCE END #####
+--></body></html>

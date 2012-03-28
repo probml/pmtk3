@@ -1,0 +1,219 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>linregPolyVsDegree</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="linregPolyVsDegree.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Linear Regression with Polynomial Basis of different degrees</a></li><li><a href="#3">Plot error vs degree</a></li><li><a href="#4">Plot fitted function for chosen values of degree</a></li><li><a href="#5">Compute log evidence for each model</a></li></ul></div><h2>Linear Regression with Polynomial Basis of different degrees<a name="1"></a></h2><pre class="codeinput"><span class="comment">% based on code code by Romain Thibaux</span>
+<span class="comment">% (Lecture 2 from http://www.cs.berkeley.edu/~asimma/294-fall06/)</span>
+</pre><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+
+
+N = 21;
+[xtrain, ytrain, xtest, ytestNoisefree, ytest] = <span class="keyword">...</span>
+    polyDataMake(<span class="string">'sampling'</span>,<span class="string">'thibaux'</span>, <span class="string">'n'</span>, N);
+
+
+<span class="comment">%degs = 0:2:20;</span>
+degs = 1:20;
+Nm = length(degs);
+</pre><h2>Plot error vs degree<a name="3"></a></h2><pre class="codeinput">mseTrain = zeros(1,Nm); mseTest = zeros(1,Nm);
+<span class="keyword">for</span> m=1:length(degs)
+    deg = degs(m);
+    pp = preprocessorCreate(<span class="string">'rescaleX'</span>, true, <span class="string">'poly'</span>, deg, <span class="string">'addOnes'</span>, true);
+    model = linregFit(xtrain, ytrain, <span class="string">'preproc'</span>, pp);
+    ypredTrain = linregPredict(model, xtrain);
+    ypredTest = linregPredict(model, xtest);
+    mseTrain(m) = mean((ytrain-ypredTrain).^2);
+    mseTest(m) = mean((ytest-ypredTest).^2);
+<span class="keyword">end</span>
+
+ndx = (degs&lt;=16);
+figure;
+hold <span class="string">on</span>
+plot(degs(ndx), mseTrain(ndx), <span class="string">'bs:'</span>, <span class="string">'linewidth'</span>, 2, <span class="string">'markersize'</span>, 24);
+plot(degs(ndx), mseTest(ndx), <span class="string">'rx-'</span>, <span class="string">'linewidth'</span>, 2, <span class="string">'markersize'</span>, 24);
+xlabel(<span class="string">'degree'</span>)
+ylabel(<span class="string">'mse'</span>)
+legend(<span class="string">'train'</span>, <span class="string">'test'</span>)
+printPmtkFigure(<span class="string">'linregPolyVsDegreeUcurve'</span>)
+</pre><img vspace="5" hspace="5" src="linregPolyVsDegree_01.png" alt=""> <h2>Plot fitted function for chosen values of degree<a name="4"></a></h2><pre class="codeinput"><span class="keyword">for</span> deg = [1, 2, 10, 14, 20]
+    pp = preprocessorCreate(<span class="string">'rescaleX'</span>, true, <span class="string">'poly'</span>, deg, <span class="string">'addOnes'</span>, true);
+    model = linregFit(xtrain, ytrain, <span class="string">'preproc'</span>, pp);
+    ypredTrain = linregPredict(model, xtrain);
+    ypredTest = linregPredict(model, xtest);
+    mseTrain(m) = mean((ytrain-ypredTrain).^2);
+    mseTest(m) = mean((ytest-ypredTest).^2);
+
+    figure;
+    plot(xtrain,ytrain,<span class="string">'.b'</span>, <span class="string">'markersize'</span>, 50);
+    hold <span class="string">on</span>;
+    plot(xtest, ypredTest, <span class="string">'k'</span>, <span class="string">'linewidth'</span>, 3, <span class="string">'markersize'</span>, 20);
+    hold <span class="string">off</span>
+    title(sprintf(<span class="string">'degree %d'</span>, deg))
+    set(gca,<span class="string">'ylim'</span>,[-10 15]);
+    set(gca,<span class="string">'xlim'</span>,[-1 21]);
+    printPmtkFigure(sprintf(<span class="string">'polyfitDemo%d'</span>, deg))
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="linregPolyVsDegree_02.png" alt=""> <img vspace="5" hspace="5" src="linregPolyVsDegree_03.png" alt=""> <img vspace="5" hspace="5" src="linregPolyVsDegree_04.png" alt=""> <img vspace="5" hspace="5" src="linregPolyVsDegree_05.png" alt=""> <img vspace="5" hspace="5" src="linregPolyVsDegree_06.png" alt=""> <h2>Compute log evidence for each model<a name="5"></a></h2><pre class="codeinput"><span class="keyword">for</span> m=1:length(degs)
+    deg = degs(m);
+    pp = preprocessorCreate(<span class="string">'rescaleX'</span>, true, <span class="string">'poly'</span>, deg, <span class="string">'addOnes'</span>, true);
+    [modelEB, logev(m)] = linregFitBayes(xtrain, ytrain, <span class="string">'preproc'</span>, pp, <span class="keyword">...</span>
+        <span class="string">'prior'</span>, <span class="string">'eb'</span>);
+<span class="keyword">end</span>
+
+figure;
+probs = exp(normalizeLogspace(logev));
+plot(degs, logev ,<span class="string">'ko-'</span>, <span class="string">'linewidth'</span>, 2, <span class="string">'markersize'</span>, 24);
+xlabel(<span class="string">'degree'</span>); ylabel(<span class="string">'log evidence'</span>)
+printPmtkFigure(<span class="string">'linregPolyVsDegreeLogev'</span>)
+
+figure; bar(degs, probs)
+xlabel(<span class="string">'degree'</span>); ylabel(<span class="string">'probability'</span>)
+printPmtkFigure(<span class="string">'linregPolyVsDegreeProbModel'</span>)
+</pre><img vspace="5" hspace="5" src="linregPolyVsDegree_07.png" alt=""> <img vspace="5" hspace="5" src="linregPolyVsDegree_08.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+    %% Linear Regression with Polynomial Basis of different degrees
+% based on code code by Romain Thibaux
+% (Lecture 2 from http://www.cs.berkeley.edu/~asimma/294-fall06/)
+%%
+
+% This file is from pmtk3.googlecode.com
+
+
+
+N = 21;
+[xtrain, ytrain, xtest, ytestNoisefree, ytest] = ...
+    polyDataMake('sampling','thibaux', 'n', N);
+
+
+%degs = 0:2:20;
+degs = 1:20;
+Nm = length(degs);
+
+%% Plot error vs degree
+mseTrain = zeros(1,Nm); mseTest = zeros(1,Nm);
+for m=1:length(degs)
+    deg = degs(m);
+    pp = preprocessorCreate('rescaleX', true, 'poly', deg, 'addOnes', true);
+    model = linregFit(xtrain, ytrain, 'preproc', pp);
+    ypredTrain = linregPredict(model, xtrain);
+    ypredTest = linregPredict(model, xtest);
+    mseTrain(m) = mean((ytrain-ypredTrain).^2);
+    mseTest(m) = mean((ytest-ypredTest).^2);
+end
+
+ndx = (degs<=16);
+figure;
+hold on
+plot(degs(ndx), mseTrain(ndx), 'bs:', 'linewidth', 2, 'markersize', 24);
+plot(degs(ndx), mseTest(ndx), 'rx-', 'linewidth', 2, 'markersize', 24);
+xlabel('degree')
+ylabel('mse')
+legend('train', 'test')
+printPmtkFigure('linregPolyVsDegreeUcurve')
+
+
+
+%% Plot fitted function for chosen values of degree
+for deg = [1, 2, 10, 14, 20]
+    pp = preprocessorCreate('rescaleX', true, 'poly', deg, 'addOnes', true);
+    model = linregFit(xtrain, ytrain, 'preproc', pp);
+    ypredTrain = linregPredict(model, xtrain);
+    ypredTest = linregPredict(model, xtest);
+    mseTrain(m) = mean((ytrain-ypredTrain).^2);
+    mseTest(m) = mean((ytest-ypredTest).^2);
+    
+    figure;
+    plot(xtrain,ytrain,'.b', 'markersize', 50);
+    hold on;
+    plot(xtest, ypredTest, 'k', 'linewidth', 3, 'markersize', 20);
+    hold off
+    title(sprintf('degree %d', deg))
+    set(gca,'ylim',[-10 15]);
+    set(gca,'xlim',[-1 21]);
+    printPmtkFigure(sprintf('polyfitDemo%d', deg))
+end
+
+%% Compute log evidence for each model
+for m=1:length(degs)
+    deg = degs(m);
+    pp = preprocessorCreate('rescaleX', true, 'poly', deg, 'addOnes', true);
+    [modelEB, logev(m)] = linregFitBayes(xtrain, ytrain, 'preproc', pp, ...
+        'prior', 'eb');
+end
+
+figure;
+probs = exp(normalizeLogspace(logev));
+plot(degs, logev ,'ko-', 'linewidth', 2, 'markersize', 24);
+xlabel('degree'); ylabel('log evidence')
+printPmtkFigure('linregPolyVsDegreeLogev')
+
+figure; bar(degs, probs)
+xlabel('degree'); ylabel('probability')
+printPmtkFigure('linregPolyVsDegreeProbModel')
+
+
+
+##### SOURCE END #####
+--></body></html>

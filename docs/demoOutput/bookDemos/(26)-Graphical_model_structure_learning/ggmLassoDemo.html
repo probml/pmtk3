@@ -1,0 +1,138 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Learn GGM structure using graphical lasso on flow cytometry data</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="ggmLassoDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Learn GGM structure using graphical lasso on flow cytometry data</h1><!--introduction--><p>HTF 2e p637</p><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+loadData(<span class="string">'sachsCtsHtf'</span>); <span class="comment">% 7466 x 11</span>
+lambdas = 36; <span class="comment">%[36 27 7 0];</span>
+<span class="comment">%lambdas = [logspace(5,0,5) 0];</span>
+S = cov(X)/1000; <span class="comment">% same as http://www-stat.stanford.edu/~tibs/ElemStatLearn/datasets/sachs.info</span>
+debug = false;
+
+L = length(lambdas);
+nedges = zeros(L, 1);
+precMat = cell(L, 1);
+<span class="keyword">for</span> i=1:L
+    lambda = lambdas(i);
+    [P] = ggmLassoHtf(S, lambda);
+    A = precmatToAdjmat(P, 1e-9);
+    nedges(i) = sum(A(:))/2;
+    ttl=sprintf(<span class="string">'lambda=%3.2f, nedges=%d'</span>, lambda, nedges(i));
+    g = drawNetwork(<span class="string">'-adjMat'</span>, A, <span class="string">'-undirected'</span>, true, <span class="keyword">...</span>
+        <span class="string">'-nodeLabels'</span>, labels, <span class="string">'-layout'</span>, Circlelayout());
+    title(ttl)
+    <span class="comment">%figure; imagesc(P); colorbar; title(ttl);</span>
+    precMat{i} = P;
+    printPmtkFigure(sprintf(<span class="string">'glassoSachs%d.pdf'</span>,lambda));
+
+    <span class="keyword">if</span> debug
+        tol = 1e-2;
+        [PR] = ggmLassoR(S, lambda);
+        assert(max(P(:)- PR(:)) &lt; tol);
+        [PM] = ggmLassoCoordDescQP(S, lambda);
+        assert(max(P(:)- PM(:)) &lt; tol);
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="ggmLassoDemo_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Learn GGM structure using graphical lasso on flow cytometry data
+% HTF 2e p637
+%%
+
+% This file is from pmtk3.googlecode.com
+
+loadData('sachsCtsHtf'); % 7466 x 11
+lambdas = 36; %[36 27 7 0];
+%lambdas = [logspace(5,0,5) 0];
+S = cov(X)/1000; % same as http://www-stat.stanford.edu/~tibs/ElemStatLearn/datasets/sachs.info
+debug = false;
+
+L = length(lambdas);
+nedges = zeros(L, 1);
+precMat = cell(L, 1);
+for i=1:L
+    lambda = lambdas(i);
+    [P] = ggmLassoHtf(S, lambda);
+    A = precmatToAdjmat(P, 1e-9);
+    nedges(i) = sum(A(:))/2;
+    ttl=sprintf('lambda=%3.2f, nedges=%d', lambda, nedges(i));
+    g = drawNetwork('-adjMat', A, '-undirected', true, ...
+        '-nodeLabels', labels, '-layout', Circlelayout());
+    title(ttl)
+    %figure; imagesc(P); colorbar; title(ttl);
+    precMat{i} = P;
+    printPmtkFigure(sprintf('glassoSachs%d.pdf',lambda));
+    
+    if debug
+        tol = 1e-2;
+        [PR] = ggmLassoR(S, lambda);
+        assert(max(P(:)- PR(:)) < tol);
+        [PM] = ggmLassoCoordDescQP(S, lambda);
+        assert(max(P(:)- PM(:)) < tol);
+    end
+end
+
+##### SOURCE END #####
+--></body></html>

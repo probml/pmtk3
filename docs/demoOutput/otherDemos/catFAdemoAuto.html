@@ -1,0 +1,334 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>catFAdemoAuto</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="catFAdemoAuto.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> catFAdemoAuto()
+<span class="comment">% Factor analysis with categorical and continuous data</span>
+<span class="comment">% We reproduce the demo from</span>
+<span class="comment">% http://www.cs.ubc.ca/~emtiyaz/software/mixedDataFA.html</span>
+<span class="comment">% The original source code for this demo is in</span>
+<span class="comment">% demoFAemt; the results are identical since the underlying</span>
+<span class="comment">% code (and initialization) is identical.</span>
+
+<span class="comment">%[data, nClass] = getData('auto',[]);</span>
+<span class="comment">%[data, nClass] = getAutoData;</span>
+load <span class="string">autoData</span>;
+Dz = 2;
+setSeed(3);
+
+
+figure(1); clf
+
+<span class="comment">% First just use cts data</span>
+<span class="comment">% PMTK assumes data are in rows, so we have to transpose everything</span>
+modelC = catFAfit([], data.continuous', Dz, <span class="string">'maxIter'</span>, 3);
+meanC = catFAinferLatent(modelC, [], data.continuous');
+catFAdemoAutoPlot(data, meanC, <span class="string">'cts'</span>, nClass, [1,2]);
+
+
+<span class="comment">% Now use cts and discrete data</span>
+setSeed(3);
+modelCD = catFAfit(data.discrete', data.continuous', Dz, <span class="string">'maxIter'</span>, 10);
+meanCD = catFAinferLatent(modelCD, data.discrete', data.continuous');
+
+figure(1);
+catFAdemoAutoPlot(data, meanCD, <span class="string">'cts+discrete'</span>, nClass, [3,4])
+
+<span class="keyword">end</span>
+
+
+<span class="keyword">function</span> catFAdemoAutoPlot(data, mu, str, nClass, subplots)
+
+[D,N] = size(data.continuous);
+features = [1 3];
+<span class="keyword">for</span> ii = 1:numel(features)
+  i = features(ii);
+  <span class="keyword">if</span> i == 1
+    colors = [0 0 0; 1/4 0 0; 2/4 0 0; 3/4 0 0; 1 0 0];
+    markers = {<span class="string">'x'</span>,<span class="string">'o'</span>,<span class="string">'*'</span>,<span class="string">'d'</span>,<span class="string">'s'</span>};
+  <span class="keyword">elseif</span> i == 3
+    colors = [1 0 1; 0 1 0; 0 0 1];
+    markers = {<span class="string">'o'</span>,<span class="string">'d'</span>,<span class="string">'s'</span>};
+  <span class="keyword">end</span>
+  subplot(2,2,subplots(ii))
+  hold <span class="string">on</span>
+  <span class="keyword">for</span> j = 1:nClass(i)
+    idx = find(data.discrete(i,:) == j);
+    h(j) = plot(mu(1,idx), mu(2,idx),<span class="string">'o'</span>,<span class="string">'color'</span>, colors(j,:),<span class="string">'marker'</span>,markers{j});
+  <span class="keyword">end</span>
+  <span class="keyword">if</span> i == 1
+    legend(<span class="string">'1'</span>,<span class="string">'2'</span>,<span class="string">'3'</span>,<span class="string">'4'</span>,<span class="string">'5'</span>,<span class="string">'location'</span>,<span class="string">'southeast'</span>);
+    ht = title(sprintf(<span class="string">'method %s, color = #Cylinders'</span>, str));
+  <span class="keyword">elseif</span> i == 3
+    legend(<span class="string">'US'</span>,<span class="string">'Europe'</span>,<span class="string">'Japan'</span>,<span class="string">'location'</span>,<span class="string">'southeast'</span>);
+    ht = title(sprintf(<span class="string">'method %s, color = Country'</span>, str));
+  <span class="keyword">end</span>
+  hx = xlabel(<span class="string">'Factor 1'</span>);
+  hy = ylabel(<span class="string">'Factor 2'</span>);
+  <span class="comment">%xlim([-3,3]);</span>
+  <span class="comment">%ylim([-3,3]);</span>
+
+  set(gca,<span class="string">'fontname'</span>,<span class="string">'Helvetica'</span>);
+  set([hx,hy],<span class="string">'fontname'</span>,<span class="string">'avantgarde'</span>,<span class="string">'fontsize'</span>,13,<span class="string">'color'</span>,[.3 .3 .3]);
+  set(ht,<span class="string">'fontname'</span>,<span class="string">'avantgarde'</span>,<span class="string">'fontsize'</span>,13,<span class="string">'fontweight'</span>,<span class="string">'bold'</span>);
+  set(gca,<span class="string">'box'</span>,<span class="string">'off'</span>,<span class="string">'tickdir'</span>,<span class="string">'out'</span>,<span class="string">'ytick'</span>,[-3 0 3],<span class="string">'xtick'</span>,[-3 0 3], <span class="keyword">...</span>
+    <span class="string">'ticklength'</span>,[.02 .02],<span class="string">'xcolor'</span>,[.3 .3 .3],<span class="string">'ycolor'</span>,[.3 .3 .3],<span class="string">'linewidth'</span>,1);
+<span class="keyword">end</span>
+
+<span class="keyword">end</span>
+
+
+<span class="comment">%{
+</span><span class="comment">function [data, nClass] = getAutoData()
+</span><span class="comment">
+</span><span class="comment">%Y = importdata('/global/scratch/emtiyaz/datasets/imputation/auto-mpg.data');
+</span><span class="comment">%Y = importdata([dirName 'imputation/auto-mpg.data']);
+</span><span class="comment">tmp = loadData('autompg');
+</span><span class="comment">Y = tmp.X; % 392 x 8
+</span><span class="comment">idx = find(~sum(isnan(Y),2));
+</span><span class="comment">X = Y(idx,:);
+</span><span class="comment">names = {'mpg','cylinders', 'displacement','horsepower','weight','acceleration','modelYear','origin'};
+</span><span class="comment">
+</span><span class="comment">% recode cyclinder
+</span><span class="comment">val= [3 4 5 6 8];
+</span><span class="comment">X(:,2) = arrayfun(@(v)find(v==val), X(:,2));
+</span><span class="comment">% recode years
+</span><span class="comment">X(:,7) = X(:,7) - 69;
+</span><span class="comment">% standardize continuous
+</span><span class="comment">Y = X(:,[1 3 4 5 6]);
+</span><span class="comment">Y = (Y-repmat(mean(Y),size(Y,1),1))./repmat(std(Y),size(Y,1),1);
+</span><span class="comment">data.continuous = Y';
+</span><span class="comment">data.discrete = X(:,[2 7 8])';
+</span><span class="comment">if 0 % strcmp(name, 'autoSmall')
+</span><span class="comment">  data.continuous = data.continuous(:,1:200);
+</span><span class="comment">  data.discrete = data.discrete(:,1:200);
+</span><span class="comment">end
+</span><span class="comment">nClass = max(data.discrete,[],2);
+</span><span class="comment">%names = {'mpg','displacement','horsepower','weight','acceleration','cylinders','modelYear','origin'};
+</span><span class="comment">data.names = names([1 3 4 5 6 2 7 8]);
+</span><span class="comment">
+</span><span class="comment">%{
+</span><span class="comment">% keep only the dimensions which have more than 1 class
+</span><span class="comment">idx = [];
+</span><span class="comment">for d = 1:size(data.discrete,1)
+</span><span class="comment">  if ~(length(unique(data.discrete(d,:)))==1)
+</span><span class="comment">    idx = [idx; d];
+</span><span class="comment">  end
+</span><span class="comment">end
+</span><span class="comment">idx
+</span><span class="comment">data.discrete = data.discrete(idx,:);
+</span><span class="comment">nClass = max(data.discrete,[],2);
+</span><span class="comment">%if isfield(data, 'names')
+</span><span class="comment">%  data.names = data.names(idx);
+</span><span class="comment">%end
+</span><span class="comment">  %}
+</span><span class="comment">
+</span><span class="comment">end
+</span><span class="comment">%}</span>
+</pre><pre class="codeoutput">Iter 1 Lower bound -8.509632, increase by NaN
+Iter 2 Lower bound -7.119670, increase by 1.389962
+Iter 3 Lower bound -6.112891, increase by 1.006779
+Dm =
+    18
+Nm =
+   392
+Iter 1 Lower bound -16.557683, increase by NaN
+Iter 2 Lower bound -11.412196, increase by 5.145487
+Iter 3 Lower bound -10.092427, increase by 1.319769
+Iter 4 Lower bound -9.713599, increase by 0.378828
+Iter 5 Lower bound -9.580703, increase by 0.132895
+Iter 6 Lower bound -9.509379, increase by 0.071324
+Iter 7 Lower bound -9.462066, increase by 0.047313
+Iter 8 Lower bound -9.427433, increase by 0.034633
+Iter 9 Lower bound -9.400484, increase by 0.026949
+Iter 10 Lower bound -9.378637, increase by 0.021848
+</pre><img vspace="5" hspace="5" src="catFAdemoAuto_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+function catFAdemoAuto()
+% Factor analysis with categorical and continuous data
+% We reproduce the demo from
+% http://www.cs.ubc.ca/~emtiyaz/software/mixedDataFA.html
+% The original source code for this demo is in
+% demoFAemt; the results are identical since the underlying
+% code (and initialization) is identical.
+
+%[data, nClass] = getData('auto',[]);
+%[data, nClass] = getAutoData;
+load autoData;
+Dz = 2;
+setSeed(3);
+
+
+figure(1); clf
+
+% First just use cts data
+% PMTK assumes data are in rows, so we have to transpose everything
+modelC = catFAfit([], data.continuous', Dz, 'maxIter', 3);
+meanC = catFAinferLatent(modelC, [], data.continuous');
+catFAdemoAutoPlot(data, meanC, 'cts', nClass, [1,2]);
+
+
+% Now use cts and discrete data
+setSeed(3);
+modelCD = catFAfit(data.discrete', data.continuous', Dz, 'maxIter', 10);
+meanCD = catFAinferLatent(modelCD, data.discrete', data.continuous');
+
+figure(1);
+catFAdemoAutoPlot(data, meanCD, 'cts+discrete', nClass, [3,4])
+
+end
+
+
+function catFAdemoAutoPlot(data, mu, str, nClass, subplots)
+
+[D,N] = size(data.continuous);
+features = [1 3];
+for ii = 1:numel(features)
+  i = features(ii);
+  if i == 1
+    colors = [0 0 0; 1/4 0 0; 2/4 0 0; 3/4 0 0; 1 0 0];
+    markers = {'x','o','*','d','s'};
+  elseif i == 3
+    colors = [1 0 1; 0 1 0; 0 0 1];
+    markers = {'o','d','s'};
+  end
+  subplot(2,2,subplots(ii))
+  hold on
+  for j = 1:nClass(i)
+    idx = find(data.discrete(i,:) == j);
+    h(j) = plot(mu(1,idx), mu(2,idx),'o','color', colors(j,:),'marker',markers{j});
+  end
+  if i == 1
+    legend('1','2','3','4','5','location','southeast');
+    ht = title(sprintf('method %s, color = #Cylinders', str));
+  elseif i == 3
+    legend('US','Europe','Japan','location','southeast');
+    ht = title(sprintf('method %s, color = Country', str));
+  end
+  hx = xlabel('Factor 1');
+  hy = ylabel('Factor 2');
+  %xlim([-3,3]);
+  %ylim([-3,3]);
+  
+  set(gca,'fontname','Helvetica');
+  set([hx,hy],'fontname','avantgarde','fontsize',13,'color',[.3 .3 .3]);
+  set(ht,'fontname','avantgarde','fontsize',13,'fontweight','bold');
+  set(gca,'box','off','tickdir','out','ytick',[-3 0 3],'xtick',[-3 0 3], ...
+    'ticklength',[.02 .02],'xcolor',[.3 .3 .3],'ycolor',[.3 .3 .3],'linewidth',1);
+end
+
+end
+
+
+%{
+function [data, nClass] = getAutoData()
+
+%Y = importdata('/global/scratch/emtiyaz/datasets/imputation/auto-mpg.data');
+%Y = importdata([dirName 'imputation/auto-mpg.data']);
+tmp = loadData('autompg');
+Y = tmp.X; % 392 x 8
+idx = find(~sum(isnan(Y),2));
+X = Y(idx,:);
+names = {'mpg','cylinders', 'displacement','horsepower','weight','acceleration','modelYear','origin'};
+
+% recode cyclinder
+val= [3 4 5 6 8];
+X(:,2) = arrayfun(@(v)find(v==val), X(:,2));
+% recode years
+X(:,7) = X(:,7) - 69;
+% standardize continuous
+Y = X(:,[1 3 4 5 6]);
+Y = (Y-repmat(mean(Y),size(Y,1),1))./repmat(std(Y),size(Y,1),1);
+data.continuous = Y';
+data.discrete = X(:,[2 7 8])';
+if 0 % strcmp(name, 'autoSmall')
+  data.continuous = data.continuous(:,1:200);
+  data.discrete = data.discrete(:,1:200);
+end
+nClass = max(data.discrete,[],2);
+%names = {'mpg','displacement','horsepower','weight','acceleration','cylinders','modelYear','origin'};
+data.names = names([1 3 4 5 6 2 7 8]);
+
+%{
+% keep only the dimensions which have more than 1 class
+idx = [];
+for d = 1:size(data.discrete,1)
+  if ~(length(unique(data.discrete(d,:)))==1)
+    idx = [idx; d];
+  end
+end
+idx
+data.discrete = data.discrete(idx,:);
+nClass = max(data.discrete,[],2);
+%if isfield(data, 'names')
+%  data.names = data.names(idx);
+%end
+  %}
+
+end
+%}
+
+
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,129 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Illustrate log transform for linear regression</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="linregLogTransformDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Illustrate log transform for linear regression</h1><!--introduction--><p>We plot brain weight vs Body weight for different mammals Data is from <a href="http://seattlecentral.edu/qelp/sets/017/017.html">http://seattlecentral.edu/qelp/sets/017/017.html</a></p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Original values</a></li><li><a href="#3">Log transform</a></li></ul></div><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+loadData(<span class="string">'bodyBrainWeight'</span>);
+<span class="comment">% x = body weight in kg</span>
+<span class="comment">% y = brain weight in g</span>
+</pre><h2>Original values<a name="2"></a></h2><pre class="codeinput">m = linregFit(x, y);
+yhat = linregPredict(m, x);
+figure; hold <span class="string">on</span>
+plot(x, y, <span class="string">'o'</span>, <span class="string">'markersize'</span>, 10);
+plot(x, yhat, <span class="string">'-'</span>, <span class="string">'linewidth'</span>, 2);
+xlabel(<span class="string">'body weight'</span>)
+ylabel(<span class="string">'brain weight'</span>)
+axis <span class="string">tight</span>
+printPmtkFigure(<span class="string">'linregLogTransformRaw'</span>)
+</pre><img vspace="5" hspace="5" src="linregLogTransformDemo_01.png" alt=""> <h2>Log transform<a name="3"></a></h2><pre class="codeinput">x = log(x);
+y = log(y);
+m = linregFit(x, y);
+yhat = linregPredict(m, x);
+figure; hold <span class="string">on</span>
+plot(x, y, <span class="string">'o'</span>, <span class="string">'markersize'</span>, 10);
+plot(x, yhat, <span class="string">'-'</span>, <span class="string">'linewidth'</span>, 2);
+xlabel(<span class="string">'log body weight'</span>)
+ylabel(<span class="string">'log brain weight'</span>)
+axis <span class="string">tight</span>
+printPmtkFigure(<span class="string">'linregLogTransformLog'</span>)
+</pre><img vspace="5" hspace="5" src="linregLogTransformDemo_02.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Illustrate log transform for linear regression
+% We plot brain weight vs Body weight for different mammals
+% Data is from http://seattlecentral.edu/qelp/sets/017/017.html
+%%
+
+% This file is from pmtk3.googlecode.com
+
+loadData('bodyBrainWeight');
+% x = body weight in kg
+% y = brain weight in g
+
+%% Original values
+m = linregFit(x, y);
+yhat = linregPredict(m, x);
+figure; hold on
+plot(x, y, 'o', 'markersize', 10);
+plot(x, yhat, '-', 'linewidth', 2);
+xlabel('body weight')
+ylabel('brain weight')
+axis tight
+printPmtkFigure('linregLogTransformRaw')
+
+%% Log transform
+x = log(x); 
+y = log(y);
+m = linregFit(x, y);
+yhat = linregPredict(m, x);
+figure; hold on
+plot(x, y, 'o', 'markersize', 10);
+plot(x, yhat, '-', 'linewidth', 2);
+xlabel('log body weight')
+ylabel('log brain weight')
+axis tight
+printPmtkFigure('linregLogTransformLog')
+
+##### SOURCE END #####
+--></body></html>

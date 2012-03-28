@@ -1,0 +1,161 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>OLS  on the prostate data set</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="prostateOLS.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>OLS  on the prostate data set</h1><p>Should match  table 3.3 on p63 of "Elements of statistical learning" 2nd edn (The OLS results should be identical  - the fact that they are not suggests something strange is going on - most likely to do with the offset term, which should be unregularized.) Used to debug prostateComparison</p><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+
+data = loadData(<span class="string">'prostate'</span>);
+w=[ones(67,1) data.Xtrain] \ data.ytrain
+
+data = loadData(<span class="string">'prostate'</span>);
+w=[ones(67,1) standardize(data.Xtrain)] \ data.ytrain
+
+data = loadData(<span class="string">'prostateStnd'</span>);
+w=[ones(67,1) data.Xtrain] \ data.ytrain  <span class="comment">% this one is closest</span>
+
+
+pp = preprocessorCreate(<span class="string">'addOnes'</span>, true, <span class="string">'standardizeX'</span>, true);
+model = linregFit(data.Xtrain, data.ytrain, <span class="string">'lambda'</span>, 0, <span class="keyword">...</span>
+  <span class="string">'preproc'</span>, pp);
+model.w
+yhat = linregPredict(model, data.Xtest);
+loss = @(yhat, ytest) mean((yhat - ytest).^2);
+mse = loss(yhat, data.ytest)
+</pre><pre class="codeoutput">w =
+   0.429170132849107
+   0.576543185137798
+   0.614020004322646
+  -0.019001022064641
+   0.144848082120413
+   0.737208644529911
+  -0.206324227211245
+  -0.029502884165042
+   0.009465162191737
+w =
+   2.452345085074626
+   0.711040592256179
+   0.290450291986432
+  -0.141481823489426
+   0.210419510184796
+   0.307300252971857
+  -0.286840749136639
+  -0.020756862036926
+   0.275268425477766
+w =
+   2.479512048523699
+   0.676016344389251
+   0.303365223564814
+  -0.140733744231007
+   0.209060521232093
+   0.303623322498531
+  -0.287001843752144
+  -0.021194934506172
+   0.265576136542602
+ans =
+   2.452345085074627
+   0.716407012479988
+   0.292642400760393
+  -0.142549625985014
+   0.212007604489450
+   0.309619533066820
+  -0.289005615691297
+  -0.020913519821912
+   0.277345952501607
+mse =
+   0.586329170798824
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% OLS  on the prostate data set
+% Should match  table 3.3 on p63 of "Elements of statistical
+% learning" 2nd edn
+% (The OLS results should be identical  - the fact that they are not
+% suggests something strange is going on - most likely to do with
+% the offset term, which should be unregularized.)
+% Used to debug prostateComparison
+
+% This file is from pmtk3.googlecode.com
+
+
+data = loadData('prostate');
+w=[ones(67,1) data.Xtrain] \ data.ytrain
+
+data = loadData('prostate');
+w=[ones(67,1) standardize(data.Xtrain)] \ data.ytrain
+
+data = loadData('prostateStnd');
+w=[ones(67,1) data.Xtrain] \ data.ytrain  % this one is closest
+
+
+pp = preprocessorCreate('addOnes', true, 'standardizeX', true);
+model = linregFit(data.Xtrain, data.ytrain, 'lambda', 0, ...
+  'preproc', pp);
+model.w
+yhat = linregPredict(model, data.Xtest);
+loss = @(yhat, ytest) mean((yhat - ytest).^2); 
+mse = loss(yhat, data.ytest)
+
+
+##### SOURCE END #####
+--></body></html>

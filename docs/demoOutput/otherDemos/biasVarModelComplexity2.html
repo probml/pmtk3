@@ -1,0 +1,220 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Illustration of the bias variance trade off as we vary the L2 regularizer.</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="biasVarModelComplexity2.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Illustration of the bias variance trade off as we vary the L2 regularizer.</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="keyword">function</span> biasVarModelComplexity
+
+setSeed(0);
+n = 25; d = 1;
+lambdas = [exp(6),exp(0.5),exp(-2.5)];
+ndataSets = 100;
+showNsets = 20;
+f = @(x) sin(2*pi*x);
+domain = (0:0.0005:1)';
+fs = 16;
+
+figure; hold <span class="string">on</span>
+nr = 3; nc = 2;
+<span class="keyword">for</span> lam=1:numel(lambdas)
+    yhat = zeros(numel(domain),ndataSets);
+    <span class="keyword">for</span> j=1:ndataSets
+        [X,y] = synthesizeData;
+        [X,s,centers] = basisExpansion(X);
+        W = ridge(X,y,lambdas(lam));
+        yhat(:,j) = basisExpansion(domain,s,centers)*W;
+    <span class="keyword">end</span>
+    subplot2(nr, nc, lam, 1)
+    hold <span class="string">on</span>
+    plot(repmat(domain,1,showNsets),yhat(:,1:showNsets),<span class="string">'-r'</span>);
+    title([<span class="string">'ln(\lambda) = '</span>,num2str(log(lambdas(lam)))], <span class="string">'fontsize'</span>, fs);
+
+    subplot2(nr, nc, lam, 2)
+    hold <span class="string">on</span>
+    plot(domain,f(domain),<span class="string">'-g'</span>,<span class="string">'LineWidth'</span>,2.5);
+    plot(domain,mean(yhat,2),<span class="string">'r:'</span>,<span class="string">'LineWidth'</span>,2.5);
+    title([<span class="string">'ln(\lambda) = '</span>,num2str(log(lambdas(lam)))], <span class="string">'fontsize'</span>, fs);
+    <span class="comment">%legend({'y = sin(2\pix)','y_{avg}'},'Location','NorthEast', 'fontsize', fs);</span>
+    <span class="comment">%printPmtkFigure(sprintf('biasVarModelComplexity%d', lam));</span>
+<span class="keyword">end</span>
+
+
+    <span class="keyword">function</span> [X,y] = synthesizeData
+        sigma = 0.1; mu = 0;
+        X = rand(n,d);
+        model = struct(<span class="string">'mu'</span>, mu, <span class="string">'Sigma'</span>, sigma);
+        y = f(X) + gaussSample(model, n);
+    <span class="keyword">end</span>
+
+
+    <span class="keyword">function</span> W = ridge(X,y,lambda)
+        W = (X'*X + sqrt(lambda)*eye(size(X,2)))\(X'*y);
+    <span class="keyword">end</span>
+
+
+    <span class="keyword">function</span> [Xbasis,s,centers] = basisExpansion(X,s,centers)
+        <span class="keyword">if</span>(nargin &lt; 2),s = std(X)/sqrt(n);<span class="keyword">end</span>
+        <span class="keyword">if</span>(nargin &lt; 3),centers = X(2:end);<span class="keyword">end</span>
+        <span class="comment">%centers = [0,0.045:0.045:1,1];</span>
+        Xbasis = ones(size(X,1),n);
+        <span class="keyword">for</span> i=2:n
+            Xbasis(:,i) = exp((-1/(2*s^2))*(X - centers(i-1)).^2);
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+
+    <span class="keyword">function</span> h = setupFig
+        h = figure;
+        axis([0,1,-1.3,1.3]);
+        xlabel(<span class="string">'x'</span>,<span class="string">'FontSize'</span>,16); ylabel(<span class="string">'y'</span>,<span class="string">'FontSize'</span>,16);
+        set(gca,<span class="string">'XTick'</span>,[0,1],<span class="string">'YTick'</span>,[-1,0,1],<span class="string">'box'</span>,<span class="string">'on'</span>,<span class="string">'LineWidth'</span>,2,<span class="string">'FontSize'</span>,16);
+        <span class="comment">%maximizeFigure;</span>
+        pdfcrop;
+        hold <span class="string">on</span>;
+    <span class="keyword">end</span>
+
+
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="biasVarModelComplexity2_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Illustration of the bias variance trade off as we vary the L2 regularizer.
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+function biasVarModelComplexity
+
+setSeed(0);
+n = 25; d = 1;
+lambdas = [exp(6),exp(0.5),exp(-2.5)];
+ndataSets = 100;
+showNsets = 20;
+f = @(x) sin(2*pi*x);
+domain = (0:0.0005:1)';
+fs = 16;
+
+figure; hold on
+nr = 3; nc = 2;
+for lam=1:numel(lambdas)
+    yhat = zeros(numel(domain),ndataSets);
+    for j=1:ndataSets
+        [X,y] = synthesizeData;
+        [X,s,centers] = basisExpansion(X);
+        W = ridge(X,y,lambdas(lam));
+        yhat(:,j) = basisExpansion(domain,s,centers)*W;
+    end
+    subplot2(nr, nc, lam, 1)
+    hold on
+    plot(repmat(domain,1,showNsets),yhat(:,1:showNsets),'-r');
+    title(['ln(\lambda) = ',num2str(log(lambdas(lam)))], 'fontsize', fs);
+    
+    subplot2(nr, nc, lam, 2)
+    hold on
+    plot(domain,f(domain),'-g','LineWidth',2.5);
+    plot(domain,mean(yhat,2),'r:','LineWidth',2.5);
+    title(['ln(\lambda) = ',num2str(log(lambdas(lam)))], 'fontsize', fs);
+    %legend({'y = sin(2\pix)','y_{avg}'},'Location','NorthEast', 'fontsize', fs);
+    %printPmtkFigure(sprintf('biasVarModelComplexity%d', lam));
+end
+
+
+    function [X,y] = synthesizeData
+        sigma = 0.1; mu = 0;
+        X = rand(n,d);
+        model = struct('mu', mu, 'Sigma', sigma);
+        y = f(X) + gaussSample(model, n);
+    end
+
+
+    function W = ridge(X,y,lambda)
+        W = (X'*X + sqrt(lambda)*eye(size(X,2)))\(X'*y);
+    end
+
+
+    function [Xbasis,s,centers] = basisExpansion(X,s,centers)
+        if(nargin < 2),s = std(X)/sqrt(n);end
+        if(nargin < 3),centers = X(2:end);end
+        %centers = [0,0.045:0.045:1,1];
+        Xbasis = ones(size(X,1),n);
+        for i=2:n
+            Xbasis(:,i) = exp((-1/(2*s^2))*(X - centers(i-1)).^2);
+        end
+    end
+
+    function h = setupFig
+        h = figure;
+        axis([0,1,-1.3,1.3]);
+        xlabel('x','FontSize',16); ylabel('y','FontSize',16);
+        set(gca,'XTick',[0,1],'YTick',[-1,0,1],'box','on','LineWidth',2,'FontSize',16);
+        %maximizeFigure;
+        pdfcrop;
+        hold on;
+    end
+
+
+end
+
+##### SOURCE END #####
+--></body></html>

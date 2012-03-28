@@ -1,0 +1,240 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Naive bayes classifier applied to text data (bag of words)</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="naiveBayesBowDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Naive bayes classifier applied to text data (bag of words)</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Load data</a></li><li><a href="#3">Train and test</a></li><li><a href="#4">Visualize class conditional densities</a></li><li><a href="#5">Compute mutual information between words and class labels</a></li><li><a href="#6">Make latex table</a></li></ul></div><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+</pre><h2>Load data<a name="2"></a></h2><pre class="codeinput"><span class="keyword">if</span> 1
+    loadData(<span class="string">'XwindowsDocData'</span>); <span class="comment">% 900x600, 2 classes Xwindows vs MSwindows</span>
+    Xtrain = xtrain; Xtest = xtest;
+<span class="keyword">else</span>
+    loadData(<span class="string">'20news_w100'</span>) <span class="comment">% 16242x100, 4 classes</span>
+    X = shuffleRows(documents');
+    Xtrain = X(1:60, :);
+    Xtest = X(61:end,:);
+<span class="keyword">end</span>
+</pre><h2>Train and test<a name="3"></a></h2><pre class="codeinput">model = naiveBayesFit(Xtrain, ytrain);
+ypred_train = naiveBayesPredict(model, Xtrain);
+err_train = mean(zeroOneLossFn(ytrain, ypred_train));
+ypred_test = naiveBayesPredict(model, Xtest);
+err_test = mean(zeroOneLossFn(ytest, ypred_test));
+fprintf(<span class="string">'misclassification rates  on train = %5.2f pc, on test = %5.2f pc\n'</span>, <span class="keyword">...</span>
+    err_train*100, err_test*100);
+</pre><pre class="codeoutput">misclassification rates  on train =  8.33 pc, on test = 18.67 pc
+</pre><h2>Visualize class conditional densities<a name="4"></a></h2><pre class="codeinput">C = length(unique(ytrain(:)));
+<span class="keyword">for</span> c=1:C
+    figure;
+    bar(model.theta(c,:));
+    title(sprintf(<span class="string">'p(xj=1|y=%d)'</span>,c))
+    printPmtkFigure(sprintf(<span class="string">'naiveBayesBow%dClassCond'</span>, c));
+<span class="keyword">end</span>
+
+<span class="comment">% We construct a latex table with the  top N words</span>
+N = 5;
+<span class="keyword">for</span> c=1:C
+    [sortedProb, ndx] = sort(model.theta(c,:), <span class="string">'descend'</span>);
+    fprintf(<span class="string">'top %d words for class %d\n'</span>, N, c);
+    <span class="keyword">for</span> w=1:N
+        fprintf(2,<span class="string">'%2d %6.4f %20s\n'</span>, w,  sortedProb(w), vocab{ndx(w)});
+        Mp(w,c) = sortedProb(w);
+        Mw{w,c} = vocab{ndx(w)};
+    <span class="keyword">end</span>
+    fprintf(<span class="string">'\n\n'</span>);
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">top 5 words for class 1
+ 1 0.9978              subject
+ 2 0.6283                 this
+ 3 0.5354                 with
+ 4 0.4712                  but
+ 5 0.4314                  you
+
+
+top 5 words for class 2
+ 1 0.9978              subject
+ 2 0.6394              windows
+ 3 0.5398                 this
+ 4 0.5376                 with
+ 5 0.5177                  but
+
+
+</pre><img vspace="5" hspace="5" src="naiveBayesBowDemo_01.png" alt=""> <img vspace="5" hspace="5" src="naiveBayesBowDemo_02.png" alt=""> <h2>Compute mutual information between words and class labels<a name="5"></a></h2><pre class="codeinput">[mi] = mutualInfoClassFeaturesBinary(Xtrain,ytrain);
+[sortedMI, ndx] = sort(mi, <span class="string">'descend'</span>);
+fprintf(<span class="string">'top %d words sorted by MI\n'</span>, N);
+<span class="keyword">for</span> w=1:N
+    fprintf(2,<span class="string">'%2d %6.4f %20s\n'</span>, w,  sortedMI(w), vocab{ndx(w)});
+    Mi(w) = sortedMI(w);
+    Miw{w} = vocab{ndx(w)};
+<span class="keyword">end</span>
+fprintf(<span class="string">'\n\n'</span>);
+</pre><pre class="codeoutput">top 5 words sorted by MI
+ 1 0.2150              windows
+ 2 0.0955            microsoft
+ 3 0.0921                  dos
+ 4 0.0782                motif
+ 5 0.0673               window
+
+
+</pre><h2>Make latex table<a name="6"></a></h2><pre class="codeinput"><span class="keyword">for</span> i=1:N
+    M{i,1} = Mw{i,1}; M{i,2} = Mp(i,1);
+    M{i,3} = Mw{i,2}; M{i,4} = Mp(i,2);
+    M{i,5} = Miw{i}; M{i,6} = Mi(i);
+<span class="keyword">end</span>
+
+MM = [Mw(:, 1), mat2cellRows(Mp(:, 1)), <span class="keyword">...</span>
+    Mw(:,2),  mat2cellRows(Mp(:, 2)), <span class="keyword">...</span>
+    Miw(:),  mat2cellRows(Mi(:))];
+assert(isequal(M, MM))
+
+colLabels = {<span class="string">'class 1'</span>, <span class="string">'prob'</span>, <span class="string">'class 2'</span>, <span class="string">'prob'</span>, <span class="string">'highest MI'</span>, <span class="string">'MI'</span>};
+latextable(M, <span class="string">'horiz'</span>, colLabels, <span class="string">'Hline'</span>,[1], <span class="string">'format'</span>, <span class="string">'%5.3f'</span>);
+</pre><pre class="codeoutput">\begin{tabular}{cccccc}
+ class 1 &amp; prob &amp; class 2 &amp; prob &amp; highest MI &amp; MI \\
+\hline
+subject &amp;0.998 &amp;subject &amp;0.998 &amp;windows &amp;0.215\\
+this &amp;0.628 &amp;windows &amp;0.639 &amp;microsoft &amp;0.095\\
+with &amp;0.535 &amp;this &amp;0.540 &amp;dos &amp;0.092\\
+but &amp;0.471 &amp;with &amp;0.538 &amp;motif &amp;0.078\\
+you &amp;0.431 &amp;but &amp;0.518 &amp;window &amp;0.067\\
+\end{tabular}
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Naive bayes classifier applied to text data (bag of words)
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+
+%% Load data
+if 1
+    loadData('XwindowsDocData'); % 900x600, 2 classes Xwindows vs MSwindows
+    Xtrain = xtrain; Xtest = xtest;
+else
+    loadData('20news_w100') % 16242x100, 4 classes
+    X = shuffleRows(documents'); 
+    Xtrain = X(1:60, :); 
+    Xtest = X(61:end,:); 
+end
+
+%% Train and test
+model = naiveBayesFit(Xtrain, ytrain);
+ypred_train = naiveBayesPredict(model, Xtrain);
+err_train = mean(zeroOneLossFn(ytrain, ypred_train));
+ypred_test = naiveBayesPredict(model, Xtest);
+err_test = mean(zeroOneLossFn(ytest, ypred_test));
+fprintf('misclassification rates  on train = %5.2f pc, on test = %5.2f pc\n', ...
+    err_train*100, err_test*100);
+
+%% Visualize class conditional densities
+
+C = length(unique(ytrain(:)));
+for c=1:C
+    figure;
+    bar(model.theta(c,:));
+    title(sprintf('p(xj=1|y=%d)',c))
+    printPmtkFigure(sprintf('naiveBayesBow%dClassCond', c));
+end
+
+% We construct a latex table with the  top N words
+N = 5;
+for c=1:C
+    [sortedProb, ndx] = sort(model.theta(c,:), 'descend');
+    fprintf('top %d words for class %d\n', N, c);
+    for w=1:N
+        fprintf(2,'%2d %6.4f %20s\n', w,  sortedProb(w), vocab{ndx(w)});
+        Mp(w,c) = sortedProb(w);
+        Mw{w,c} = vocab{ndx(w)};
+    end
+    fprintf('\n\n');
+end
+
+
+%% Compute mutual information between words and class labels
+[mi] = mutualInfoClassFeaturesBinary(Xtrain,ytrain);
+[sortedMI, ndx] = sort(mi, 'descend');
+fprintf('top %d words sorted by MI\n', N);
+for w=1:N
+    fprintf(2,'%2d %6.4f %20s\n', w,  sortedMI(w), vocab{ndx(w)});
+    Mi(w) = sortedMI(w);
+    Miw{w} = vocab{ndx(w)};
+end
+fprintf('\n\n');
+
+%% Make latex table
+for i=1:N
+    M{i,1} = Mw{i,1}; M{i,2} = Mp(i,1);
+    M{i,3} = Mw{i,2}; M{i,4} = Mp(i,2);
+    M{i,5} = Miw{i}; M{i,6} = Mi(i);
+end
+
+MM = [Mw(:, 1), mat2cellRows(Mp(:, 1)), ...
+    Mw(:,2),  mat2cellRows(Mp(:, 2)), ...
+    Miw(:),  mat2cellRows(Mi(:))];
+assert(isequal(M, MM))
+
+colLabels = {'class 1', 'prob', 'class 2', 'prob', 'highest MI', 'MI'};
+latextable(M, 'horiz', colLabels, 'Hline',[1], 'format', '%5.3f');
+
+
+##### SOURCE END #####
+--></body></html>

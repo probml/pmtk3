@@ -1,0 +1,304 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>lassoPathProstate</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="lassoPathProstate.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Plot the full L1 regularization path for the prostate data set</a></li><li><a href="#2">First use LARS</a></li><li><a href="#3">Now use tau formulation on tau values implied by lars</a></li><li><a href="#4">Now plot vs tau</a></li><li><a href="#5">Now plot vs shrinkage factor</a></li><li><a href="#6">Now plot vs dense tau</a></li><li><a href="#7">Now plot vs dense lambda</a></li><li><a href="#8">Now use path algorithm + CV</a></li></ul></div><h2>Plot the full L1 regularization path for the prostate data set<a name="1"></a></h2><pre class="codeinput"><span class="comment">%PMTKauthor Mark Schmidt, Kevin Murphy</span>
+
+<span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+
+clear <span class="string">all</span>
+load <span class="string">prostateStnd</span>
+[N,D] = size(X); <span class="comment">%#ok</span>
+
+wOLS = X\y;
+tmax = norm(wOLS, 1);
+</pre><h2>First use LARS<a name="2"></a></h2><pre class="codeinput">wLars = lars(X, y, <span class="string">'lasso'</span>);
+<span class="comment">%lambdas = recoverLambdaFromLarsWeights(X, y, wLars);</span>
+figure;
+plot(wLars, <span class="string">'-o'</span>,<span class="string">'LineWidth'</span>, 2);
+legend(names{1:end-1}, <span class="string">'Location'</span>, <span class="string">'NorthWest'</span>);
+xlabel(<span class="string">'lars step'</span>)
+printPmtkFigure(<span class="string">'lassoPathProstateLars'</span>)
+</pre><img vspace="5" hspace="5" src="lassoPathProstate_01.png" alt=""> <h2>Now use tau formulation on tau values implied by lars<a name="3"></a></h2><p>This is identical to lars</p><pre class="codeinput">funObj = @(w)SquaredError(w,X,y);
+wL1 = zeros(D,1);
+options.verbose = 0;
+<span class="keyword">for</span> i = 1:size(wLars,1)
+    tau(i) = sum(abs(wLars(i,:)));
+    funProj = @(w)sign(w).*projectRandom2C(abs(w),tau(i));
+    wL1 =  minConf_PQN(funObj,wL1,funProj,options);
+  weightsTau(i,:) = wL1;
+<span class="keyword">end</span>
+figure;
+plot(1:9, weightsTau, <span class="string">'-o'</span>,<span class="string">'LineWidth'</span>, 2);
+legend(names{1:end-1}, <span class="string">'Location'</span>, <span class="string">'NorthWest'</span>);
+xlabel(<span class="string">'lars step'</span>)
+</pre><img vspace="5" hspace="5" src="lassoPathProstate_02.png" alt=""> <h2>Now plot vs tau<a name="4"></a></h2><p>Piecewise linearity is not so evident</p><pre class="codeinput">figure;
+plot(tau, weightsTau, <span class="string">'-o'</span>,<span class="string">'LineWidth'</span>, 2);
+legend(names{1:end-1}, <span class="string">'Location'</span>, <span class="string">'NorthWest'</span>);
+xlabel(<span class="string">'\tau'</span>)
+printPmtkFigure(<span class="string">'lassoPathProstateTauLars'</span>)
+</pre><img vspace="5" hspace="5" src="lassoPathProstate_03.png" alt=""> <h2>Now plot vs shrinkage factor<a name="5"></a></h2><p>Piecewise linearity is more evident</p><pre class="codeinput">figure;
+plot(tau/tmax, weightsTau, <span class="string">'-o'</span>,<span class="string">'LineWidth'</span>, 2);
+legend(names{1:end-1}, <span class="string">'Location'</span>, <span class="string">'NorthWest'</span>);
+xlabel(<span class="string">'shrinkage factor'</span>)
+set(gca,<span class="string">'xlim'</span>,[0 1])
+printPmtkFigure(<span class="string">'lassoPathProstateSfacLars'</span>)
+</pre><img vspace="5" hspace="5" src="lassoPathProstate_04.png" alt=""> <h2>Now plot vs dense tau<a name="6"></a></h2><p>no longer looks piecewise linear</p><pre class="codeinput">NL = 25;
+taus = linspace(0, tmax, NL);
+wL1 = zeros(D,1);
+funObj = @(w)SquaredError(w,X,y);
+options.verbose = 0;
+<span class="keyword">for</span> i=1:length(taus)
+  tau = taus(i);
+  funProj = @(w)sign(w).*projectRandom2C(abs(w),tau);
+  wL1 =  minConf_PQN(funObj,wL1,funProj,options);
+  wL1(abs(wL1) &lt; 1e-4) = 0;
+  weightsTau(i,:) = wL1;
+<span class="keyword">end</span>
+figure;
+<span class="comment">%sfac = taus/tmax;</span>
+plot(taus, weightsTau, <span class="string">'-o'</span>,<span class="string">'LineWidth'</span>, 2);
+legend(names{1:end-1}, <span class="string">'Location'</span>, <span class="string">'NorthWest'</span>);
+xlabel(<span class="string">'\tau'</span>)
+printPmtkFigure(<span class="string">'lassoPathProstateTau'</span>)
+</pre><img vspace="5" hspace="5" src="lassoPathProstate_05.png" alt=""> <h2>Now plot vs dense lambda<a name="7"></a></h2><p>Looks smooth, not piecewise linear. Axes are reversed.</p><pre class="codeinput">lambdaMax =  lambdaMaxLasso(X, y);
+lambdas  =  logspace(log10(lambdaMax), -2, NL);
+
+<span class="keyword">if</span> 1
+<span class="keyword">for</span> i=1:NL
+  lambda = lambdas(i);
+  model = linregFit(X, y, <span class="string">'lambda'</span>, lambda, <span class="string">'regType'</span>, <span class="string">'L1'</span>, <span class="string">'preproc'</span>, []);
+  weightsLam(i,:) = rowvec(model.w);
+<span class="keyword">end</span>
+figure;
+plot(log(lambdas), weightsLam, <span class="string">'o-'</span>, <span class="string">'linewidth'</span>, 2);
+legend(names{1:end-1}, <span class="string">'Location'</span>, <span class="string">'NorthEast'</span>);
+xlabel(<span class="string">'log(lambda)'</span>);
+printPmtkFigure(<span class="string">'lassoPathProstateLambda'</span>)
+<span class="keyword">end</span>
+
+<span class="keyword">if</span> 0
+<span class="keyword">for</span> i=1:NL
+  lambda = lambdas(i);
+  tol = 1e-3; quiet = true;
+  ww = l1_ls(X, y, lambda, tol, quiet);
+  weightsLam(i,:) = ww(:)';
+  l1norm(i) = norm(ww,1);
+<span class="keyword">end</span>
+figure;
+plot(l1norm, weightsLam, <span class="string">'o-'</span>, <span class="string">'linewidth'</span>, 2);
+xlabel(<span class="string">'L1norm of w'</span>)
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="lassoPathProstate_06.png" alt=""> <h2>Now use path algorithm + CV<a name="8"></a></h2><pre class="codeinput"><span class="keyword">if</span> ~glmnetInstalled, <span class="keyword">return</span>; <span class="keyword">end</span>
+pp = preprocessorCreate();
+options = glmnetSet();
+<span class="comment">%options.lambda = lambdas;</span>
+<span class="comment">%options.standardize = false;</span>
+options.nlambda = 30;
+
+[bestModel, path] = linregFitPathCv(X, y, <span class="string">'regtype'</span>, <span class="string">'l1'</span>,  <span class="string">'preproc'</span>, pp,<span class="keyword">...</span>
+  <span class="string">'options'</span>, options, <span class="string">'nfolds'</span>, 5);
+figure;
+lambdas2 = rowvec(path.lambdas);
+plot(path.w', <span class="string">'-o'</span>, <span class="string">'LineWidth'</span>, 2);
+legend(names{1:size(X, 2)}, <span class="string">'Location'</span>, <span class="string">'NorthEast'</span>);
+hold <span class="string">on</span>
+bestNdx = find(bestModel.lambda==lambdas2);
+verticalLine(bestNdx, <span class="string">'linewidth'</span>, 2, <span class="string">'color'</span>, <span class="string">'r'</span>);
+printPmtkFigure(<span class="string">'lassoPathProstateCv'</span>)
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Plot the full L1 regularization path for the prostate data set
+%PMTKauthor Mark Schmidt, Kevin Murphy
+
+% This file is from pmtk3.googlecode.com
+
+
+clear all
+load prostateStnd
+[N,D] = size(X); %#ok
+
+wOLS = X\y;
+tmax = norm(wOLS, 1);
+
+%% First use LARS
+wLars = lars(X, y, 'lasso');
+%lambdas = recoverLambdaFromLarsWeights(X, y, wLars);
+figure;
+plot(wLars, '-o','LineWidth', 2);
+legend(names{1:end-1}, 'Location', 'NorthWest');
+xlabel('lars step')
+printPmtkFigure('lassoPathProstateLars')
+
+
+%% Now use tau formulation on tau values implied by lars
+% This is identical to lars
+funObj = @(w)SquaredError(w,X,y);
+wL1 = zeros(D,1);
+options.verbose = 0;
+for i = 1:size(wLars,1)
+    tau(i) = sum(abs(wLars(i,:)));
+    funProj = @(w)sign(w).*projectRandom2C(abs(w),tau(i));
+    wL1 =  minConf_PQN(funObj,wL1,funProj,options);
+  weightsTau(i,:) = wL1;
+end
+figure;
+plot(1:9, weightsTau, '-o','LineWidth', 2);
+legend(names{1:end-1}, 'Location', 'NorthWest');
+xlabel('lars step')
+
+%% Now plot vs tau
+% Piecewise linearity is not so evident
+figure;
+plot(tau, weightsTau, '-o','LineWidth', 2);
+legend(names{1:end-1}, 'Location', 'NorthWest');
+xlabel('\tau')
+printPmtkFigure('lassoPathProstateTauLars')
+
+%% Now plot vs shrinkage factor
+% Piecewise linearity is more evident
+figure;
+plot(tau/tmax, weightsTau, '-o','LineWidth', 2);
+legend(names{1:end-1}, 'Location', 'NorthWest');
+xlabel('shrinkage factor')
+set(gca,'xlim',[0 1])
+printPmtkFigure('lassoPathProstateSfacLars')
+
+
+%% Now plot vs dense tau 
+% no longer looks piecewise linear
+NL = 25;
+taus = linspace(0, tmax, NL);
+wL1 = zeros(D,1);
+funObj = @(w)SquaredError(w,X,y);
+options.verbose = 0;
+for i=1:length(taus)
+  tau = taus(i);
+  funProj = @(w)sign(w).*projectRandom2C(abs(w),tau);
+  wL1 =  minConf_PQN(funObj,wL1,funProj,options);
+  wL1(abs(wL1) < 1e-4) = 0;
+  weightsTau(i,:) = wL1;
+end
+figure;
+%sfac = taus/tmax;
+plot(taus, weightsTau, '-o','LineWidth', 2);
+legend(names{1:end-1}, 'Location', 'NorthWest');
+xlabel('\tau')
+printPmtkFigure('lassoPathProstateTau')
+
+
+%% Now plot vs dense lambda
+% Looks smooth, not piecewise linear.
+% Axes are reversed.
+lambdaMax =  lambdaMaxLasso(X, y);
+lambdas  =  logspace(log10(lambdaMax), -2, NL); 
+
+if 1
+for i=1:NL
+  lambda = lambdas(i);
+  model = linregFit(X, y, 'lambda', lambda, 'regType', 'L1', 'preproc', []);
+  weightsLam(i,:) = rowvec(model.w);
+end
+figure;
+plot(log(lambdas), weightsLam, 'o-', 'linewidth', 2);
+legend(names{1:end-1}, 'Location', 'NorthEast');
+xlabel('log(lambda)');
+printPmtkFigure('lassoPathProstateLambda')
+end
+
+if 0
+for i=1:NL
+  lambda = lambdas(i);
+  tol = 1e-3; quiet = true;
+  ww = l1_ls(X, y, lambda, tol, quiet);
+  weightsLam(i,:) = ww(:)';
+  l1norm(i) = norm(ww,1);
+end
+figure;
+plot(l1norm, weightsLam, 'o-', 'linewidth', 2);
+xlabel('L1norm of w')
+end
+
+%% Now use path algorithm + CV
+if ~glmnetInstalled, return; end
+pp = preprocessorCreate();
+options = glmnetSet();
+%options.lambda = lambdas;
+%options.standardize = false;
+options.nlambda = 30;
+
+[bestModel, path] = linregFitPathCv(X, y, 'regtype', 'l1',  'preproc', pp,...
+  'options', options, 'nfolds', 5);
+figure;
+lambdas2 = rowvec(path.lambdas);
+plot(path.w', '-o', 'LineWidth', 2);
+legend(names{1:size(X, 2)}, 'Location', 'NorthEast');
+hold on
+bestNdx = find(bestModel.lambda==lambdas2);
+verticalLine(bestNdx, 'linewidth', 2, 'color', 'r');
+printPmtkFigure('lassoPathProstateCv')
+
+##### SOURCE END #####
+--></body></html>

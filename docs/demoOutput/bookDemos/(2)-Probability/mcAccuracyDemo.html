@@ -1,0 +1,156 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Plot monte carlo approximation to a  distribution</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="mcAccuracyDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Plot monte carlo approximation to a  distribution</h1><p>Based on Peter Hoff's book, fig 4.1, p55 He uses Gamma(68, 45)</p><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+useGam = false;
+setSeed(0);
+xs = 0.5:0.01:2.5;
+S = 1000;
+<span class="keyword">if</span> useGam
+  a = 68; b = 45; <span class="comment">% shape (matlab uses scale)</span>
+  p = gampdf(xs, a, 1/b);
+  samples = gamrnd(a, 1/b, S);
+  name = <span class="string">'gamma'</span>;
+<span class="keyword">else</span>
+  mu = 1.5; sigma = 0.25; sigma2 = sigma^2;
+  <span class="comment">%p = gaussProb(colvec(xs), mu, sigma2);</span>
+  p = normpdf(xs, mu, sigma);
+  samples = normrnd(mu, sigma, 1, S);
+  name = <span class="string">'gauss'</span>;
+<span class="keyword">end</span>
+
+SS = [10 100 1000];
+<span class="keyword">for</span> i=1:length(SS)
+  S = SS(i);
+  figure; plot(xs, p, <span class="string">'LineWidth'</span>, 2.5, <span class="string">'color'</span>, <span class="string">'r'</span>);
+  hold <span class="string">on</span>;
+  [counts, locs] = hist(samples(1:S));
+  delta = locs(2)-locs(1);
+  bar(normalize(counts)/delta);
+  title(sprintf(<span class="string">'%d samples'</span>, S))
+  printPmtkFigure(sprintf(<span class="string">'mcAccuracyDemoHist%s%d'</span>, name, S));
+<span class="keyword">end</span>
+
+
+<span class="keyword">for</span> i=1:length(SS)
+   S = SS(i);
+  figure; plot(xs, p, <span class="string">'LineWidth'</span>, 2.5, <span class="string">'color'</span>, <span class="string">'r'</span>);
+  hold <span class="string">on</span>;
+  [f, xi] = ksdensity(samples(1:S));
+  plot(xi, f, <span class="string">'linewidth'</span>, 3, <span class="string">'linestyle'</span>, <span class="string">':'</span>);
+  title(sprintf(<span class="string">'%d samples'</span>, S))
+  printPmtkFigure(sprintf(<span class="string">'mcAccuracyDemoKsd%s%d'</span>, name, S));
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="mcAccuracyDemo_01.png" alt=""> <img vspace="5" hspace="5" src="mcAccuracyDemo_02.png" alt=""> <img vspace="5" hspace="5" src="mcAccuracyDemo_03.png" alt=""> <img vspace="5" hspace="5" src="mcAccuracyDemo_04.png" alt=""> <img vspace="5" hspace="5" src="mcAccuracyDemo_05.png" alt=""> <img vspace="5" hspace="5" src="mcAccuracyDemo_06.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Plot monte carlo approximation to a  distribution
+% Based on Peter Hoff's book, fig 4.1, p55
+% He uses Gamma(68, 45)
+
+% This file is from pmtk3.googlecode.com
+
+useGam = false;
+setSeed(0);
+xs = 0.5:0.01:2.5;
+S = 1000;
+if useGam
+  a = 68; b = 45; % shape (matlab uses scale)
+  p = gampdf(xs, a, 1/b);
+  samples = gamrnd(a, 1/b, S);
+  name = 'gamma';
+else
+  mu = 1.5; sigma = 0.25; sigma2 = sigma^2;
+  %p = gaussProb(colvec(xs), mu, sigma2);
+  p = normpdf(xs, mu, sigma);
+  samples = normrnd(mu, sigma, 1, S);
+  name = 'gauss';
+end
+
+SS = [10 100 1000];
+for i=1:length(SS)
+  S = SS(i);
+  figure; plot(xs, p, 'LineWidth', 2.5, 'color', 'r');
+  hold on;
+  [counts, locs] = hist(samples(1:S));
+  delta = locs(2)-locs(1);
+  bar(normalize(counts)/delta);
+  title(sprintf('%d samples', S))
+  printPmtkFigure(sprintf('mcAccuracyDemoHist%s%d', name, S));
+end
+
+        
+for i=1:length(SS)
+   S = SS(i);
+  figure; plot(xs, p, 'LineWidth', 2.5, 'color', 'r');
+  hold on;
+  [f, xi] = ksdensity(samples(1:S));
+  plot(xi, f, 'linewidth', 3, 'linestyle', ':');
+  title(sprintf('%d samples', S))
+  printPmtkFigure(sprintf('mcAccuracyDemoKsd%s%d', name, S));
+end
+
+##### SOURCE END #####
+--></body></html>

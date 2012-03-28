@@ -1,0 +1,101 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>A non convex function in 1d: exponentially damped sinuosoid</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="localMinima1d.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>A non convex function in 1d: exponentially damped sinuosoid</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="comment">%xs = 0:0.1:(10*pi);</span>
+
+<span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+xs = 0:0.1:(4*pi);
+f1 = sin(xs);
+f2  = exp(-0.1*xs);
+f3 = f1 .* f2;
+figure;
+plot(xs, f1, <span class="string">'r-'</span>, xs, f2, <span class="string">'g:'</span>, xs, f3, <span class="string">'k-.'</span>, <span class="string">'linewidth'</span>, 3);
+axis <span class="string">tight</span>;
+figure;
+h = plot(xs, f3, <span class="string">'k-'</span>, <span class="string">'linewidth'</span>, 3);
+axis <span class="string">tight</span>;
+</pre><img vspace="5" hspace="5" src="localMinima1d_01.png" alt=""> <img vspace="5" hspace="5" src="localMinima1d_02.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% A non convex function in 1d: exponentially damped sinuosoid
+%
+%%
+%xs = 0:0.1:(10*pi);
+
+% This file is from pmtk3.googlecode.com
+
+xs = 0:0.1:(4*pi);
+f1 = sin(xs);
+f2  = exp(-0.1*xs);
+f3 = f1 .* f2;
+figure;
+plot(xs, f1, 'r-', xs, f2, 'g:', xs, f3, 'k-.', 'linewidth', 3);
+axis tight; 
+figure;
+h = plot(xs, f3, 'k-', 'linewidth', 3);
+axis tight; 
+
+##### SOURCE END #####
+--></body></html>
