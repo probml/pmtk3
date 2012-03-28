@@ -1,0 +1,172 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Forwards Backwards Algorithm Demo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="fwdBackDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Forwards Backwards Algorithm Demo</h1><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+K = 3;
+<span class="comment">%initDist= [1 0 0]'; % start in state 1</span>
+initDist= normalize(ones(3,1)); <span class="comment">% could start anywhere</span>
+
+<span class="comment">% Left to right HMM 1-&gt;2-&gt;3 where 3 has a self-loop with prob 1</span>
+<span class="comment">% So stationary distribution of the unobserved chain is [0 0 1]</span>
+p = 0.9; q=1-p;
+transmat = [q p 0;
+	    0 q p;
+	    0 0 1];
+T = 7;
+<span class="comment">%obslik = ones(K, T); % non-informative observations</span>
+softev = repmat([0.5 0.3 0.2]', 1, T); <span class="comment">% noisy obs</span>
+nsamples = 1000;
+
+<span class="comment">% check that samples converge to true marginals</span>
+model.pi = initDist;
+model.A = transmat;
+
+samples = hmmSamplePost(model, [], nsamples, <span class="string">'softev'</span>, softev);
+[gamma, j, j, j] = hmmFwdBack(initDist, transmat, softev);
+[path, j, j] = hmmViterbiC(log(initDist), log(transmat), log(softev))
+
+<span class="keyword">for</span> t=1:T
+  belApprox(:,t) = normalize(hist(samples(t,:),1:K));
+<span class="keyword">end</span>
+gamma
+belApprox
+</pre><pre class="codeoutput">path =
+     1     2     3     3     3     3     3
+j =
+     []
+j =
+     []
+gamma =
+  Columns 1 through 2
+   0.647951492561009   0.161886381069761
+   0.216029713110094   0.518469452257331
+   0.136018794328897   0.319644166672908
+  Columns 3 through 4
+   0.040373008207723   0.009999506676835
+   0.199281931493743   0.060261027037280
+   0.760345060298534   0.929739466285884
+  Columns 5 through 6
+   0.002414200768484   0.000531323415347
+   0.016614854061653   0.004357430085723
+   0.980970945169863   0.995111246498929
+  Column 7
+   0.000083019283648
+   0.001070794143945
+   0.998846186572407
+belApprox =
+  Columns 1 through 2
+   0.676000000000000   0.160000000000000
+   0.212000000000000   0.546000000000000
+   0.112000000000000   0.294000000000000
+  Columns 3 through 4
+   0.044000000000000   0.009000000000000
+   0.209000000000000   0.069000000000000
+   0.747000000000000   0.922000000000000
+  Columns 5 through 6
+   0.002000000000000   0.001000000000000
+   0.016000000000000   0.002000000000000
+   0.982000000000000   0.997000000000000
+  Column 7
+   0.001000000000000
+   0.001000000000000
+   0.998000000000000
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Forwards Backwards Algorithm Demo
+
+% This file is from pmtk3.googlecode.com
+
+K = 3;
+%initDist= [1 0 0]'; % start in state 1
+initDist= normalize(ones(3,1)); % could start anywhere
+
+% Left to right HMM 1->2->3 where 3 has a self-loop with prob 1
+% So stationary distribution of the unobserved chain is [0 0 1]
+p = 0.9; q=1-p;
+transmat = [q p 0;
+	    0 q p;
+	    0 0 1];
+T = 7;
+%obslik = ones(K, T); % non-informative observations
+softev = repmat([0.5 0.3 0.2]', 1, T); % noisy obs
+nsamples = 1000;
+
+% check that samples converge to true marginals
+model.pi = initDist;
+model.A = transmat;
+
+samples = hmmSamplePost(model, [], nsamples, 'softev', softev);
+[gamma, j, j, j] = hmmFwdBack(initDist, transmat, softev);
+[path, j, j] = hmmViterbiC(log(initDist), log(transmat), log(softev))
+
+for t=1:T
+  belApprox(:,t) = normalize(hist(samples(t,:),1:K));
+end
+gamma
+belApprox
+
+##### SOURCE END #####
+--></body></html>

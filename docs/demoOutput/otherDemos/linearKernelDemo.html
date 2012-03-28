@@ -1,0 +1,497 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>linearKernelDemo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="linearKernelDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Compare different linear kernel classifiers on several datasets</a></li><li><a href="#2">Data</a></li><li><a href="#3">Models</a></li><li><a href="#4">Main</a></li></ul></div><h2>Compare different linear kernel classifiers on several datasets<a name="1"></a></h2><p>We need to use CV/ARD to pick lambda/C but at least the kernel has no hyper-params to tune...</p><pre class="codeinput"><span class="comment">%PMTKslow</span>
+
+<span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+
+<span class="comment">% See also classificationShootout and classificationShootoutCvLambdaOnly</span>
+
+clear <span class="string">all</span>
+setSeed(0);
+</pre><pre class="codeoutput">Warning: Using 'state' to set RANDN's
+internal state causes RAND, RANDI, and RANDN
+to use legacy random number generators. 
+</pre><h2>Data<a name="2"></a></h2><pre class="codeinput">split = 0.7;
+d = 1;
+
+<span class="keyword">if</span> 1
+loadData(<span class="string">'soy'</span>) <span class="comment">% 3 classes, X is 307*35</span>
+dataSets(d).X = X;
+dataSets(d).y = Y;
+dataSets(d).name = <span class="string">'soy'</span>;
+d=d+1;
+<span class="keyword">end</span>
+
+<span class="keyword">if</span> 1
+loadData(<span class="string">'fglass'</span>); <span class="comment">% 6 classes, X is 214*9</span>
+X = [Xtrain; Xtest];
+y = canonizeLabels([ytrain; ytest]); <span class="comment">% class 4 is missing, so relabel 1:6</span>
+dataSets(d).X = X;
+dataSets(d).y = y;
+dataSets(d).name = <span class="string">'fglass'</span>;
+d=d+1;
+<span class="keyword">end</span>
+
+<span class="keyword">if</span> 1
+loadData(<span class="string">'colon'</span>) <span class="comment">% 2 class, X is 62*2000</span>
+dataSets(d).X = X;
+dataSets(d).y = y;
+dataSets(d).name = <span class="string">'colon'</span>;
+d=d+1;
+<span class="keyword">end</span>
+
+<span class="keyword">if</span> 1
+loadData(<span class="string">'amlAll'</span>); <span class="comment">% 2 class, X is 72*7129</span>
+X = [Xtrain; Xtest];
+y = [ytrain; ytest];
+dataSets(d).X = X;
+dataSets(d).y = y;
+dataSets(d).name = <span class="string">'amlAll'</span>;
+d=d+1;
+<span class="keyword">end</span>
+
+dataNames = {dataSets.name};
+nDataSets = numel(dataSets);
+
+<span class="keyword">for</span> d=1:nDataSets
+  nClasses(d) = nunique(dataSets(d).y);
+  X = dataSets(d).X;
+  [nCases(d), nFeatures(d)] = size(X);
+<span class="keyword">end</span>
+attrNames = {<span class="string">'nClasses'</span>, <span class="string">'nFeatures'</span>, <span class="string">'nCases'</span>};
+
+<span class="comment">%folder = fullfile(pmtk3Root(), 'data');</span>
+folder = pmtk3Root();
+htmlTableSimple(<span class="string">'data'</span>, [nClasses(:) nFeatures(:) nCases(:)], <span class="keyword">...</span>
+  <span class="string">'colNames'</span>, attrNames, <span class="string">'rowNames'</span>, dataNames, <span class="keyword">...</span>
+  <span class="string">'format'</span>, <span class="string">'int'</span>, <span class="string">'fname'</span>, fullfile(folder, <span class="string">'infoOnDataSets.html'</span>) );
+</pre><h2>Models<a name="3"></a></h2><p>(For some reason, the path versions of SMLR and RMLR give worse results than the versions that search over a discrete grid of lambdas.)</p><pre class="codeinput"><span class="comment">%methods = {'SVM', ' RVM', 'SMLR', 'RMLR', 'SMLRpath', 'RMLRpath', 'logregL2', 'logregL1'};</span>
+methods = {<span class="string">'SVM'</span>, <span class="string">'RVM'</span>, <span class="string">'SKLR'</span>, <span class="string">'RKLR'</span>, <span class="string">'L1'</span> };
+
+
+nMethods = numel(methods);
+</pre><h2>Main<a name="4"></a></h2><pre class="codeinput">seeds = [0,1,2];
+<span class="keyword">for</span> d=1:nDataSets
+  X = dataSets(d).X;
+  y = dataSets(d).y;
+
+  <span class="keyword">for</span> s=1:numel(seeds);
+    setSeed(seeds(s));
+  [X, y] = shuffleRows(X, y);
+  X      = rescaleData(standardizeCols(X));
+  N      = size(X, 1);
+  nTrain = floor(split*N);
+  nTest  = N - nTrain;
+  Xtrain = X(1:nTrain, :);
+  Xtest  = X(nTrain+1:end, :);
+  ytrain = y(1:nTrain);
+  ytest  = y(nTrain+1:end);
+
+  <span class="keyword">for</span> m=1:nMethods
+    method = methods{m};
+    tic;
+
+    <span class="keyword">switch</span> lower(method)
+      <span class="keyword">case</span> <span class="string">'svm'</span>
+        Crange = logspace(-6, 1, 20); <span class="comment">% if too small, libsvm crashes!</span>
+        model = svmFit(Xtrain, ytrain, <span class="string">'C'</span>, Crange,  <span class="string">'kernel'</span>, <span class="string">'linear'</span>);
+        predFn = @(m,X) svmPredict(m,X);
+        chosenC(d,m,s) = model.C;
+
+      <span class="keyword">case</span> <span class="string">'rvm'</span>
+        model = rvmFit(Xtrain, ytrain, <span class="string">'kernelFn'</span>, @kernelLinear);
+        <span class="comment">%model =  rvmFit(X,y, 'kernelFn', @(X1, X2)kernelRbfGamma(X1, X2, 1));</span>
+        predFn = @(m,X) rvmPredict(m,X);
+
+      <span class="keyword">case</span> <span class="string">'smlrpath'</span>
+        model = smlrFit(Xtrain, ytrain, <span class="string">'kernelFn'</span>, @kernelLinear, <span class="keyword">...</span>
+          <span class="string">'regType'</span>, <span class="string">'L1'</span>, <span class="string">'usePath'</span>, true);
+        predFn = @(m,X) smlrPredict(m,X);
+
+      <span class="keyword">case</span> {<span class="string">'smlrnopath'</span>, <span class="string">'smlr'</span>, <span class="string">'sklr'</span>}
+        model = smlrFit(Xtrain, ytrain,  <span class="string">'kernelFn'</span>, @kernelLinear, <span class="keyword">...</span>
+          <span class="string">'regType'</span>, <span class="string">'L1'</span>, <span class="string">'usePath'</span>, false);
+        predFn = @(m,X) smlrPredict(m,X);
+
+      <span class="keyword">case</span> <span class="string">'rmlrpath'</span>
+        model = smlrFit(Xtrain, ytrain, <span class="string">'kernelFn'</span>, @kernelLinear, <span class="keyword">...</span>
+          <span class="string">'regtype'</span>, <span class="string">'L2'</span>, <span class="string">'usePath'</span>, true);
+        predFn = @(m,X) smlrPredict(m,X);
+
+      <span class="keyword">case</span> {<span class="string">'rmlrnopath'</span>, <span class="string">'rmlr'</span>, <span class="string">'rklr'</span>}
+        model = smlrFit(Xtrain, ytrain, <span class="string">'kernelFn'</span>, @kernelLinear, <span class="keyword">...</span>
+          <span class="string">'regtype'</span>, <span class="string">'L2'</span>, <span class="string">'usePath'</span>, false);
+        predFn = @(m,X) smlrPredict(m,X);
+
+
+      <span class="keyword">case</span> {<span class="string">'l2'</span>, <span class="string">'logregl2'</span>}
+        model = logregFitPathCv(Xtrain, ytrain, <span class="string">'regtype'</span>, <span class="string">'L2'</span>);
+        predFn = @(m,X) logregPredict(m,X);
+
+      <span class="keyword">case</span> {<span class="string">'l1'</span>, <span class="string">'logregl1'</span>}
+        model = logregFitPathCv(Xtrain, ytrain, <span class="string">'regtype'</span>, <span class="string">'L1'</span>);
+        predFn = @(m,X) logregPredict(m,X);
+    <span class="keyword">end</span>
+    trainingTime(d,m,s) = toc;
+    saveModel{d,m,s} = model;
+
+    tic
+    yHat   = predFn(model, Xtest);
+    testingTime(d,m,s) = toc;
+
+    nerrs  = sum(yHat ~= ytest);
+    testErrRate(d,m,s) = nerrs/nTest;
+    numErrors(d,m,s) = nerrs;
+    maxNumErrors(d) = nTest;
+  <span class="keyword">end</span>
+<span class="keyword">end</span>
+<span class="keyword">end</span>
+
+fprintf(<span class="string">'test err\n'</span>);
+numErrors
+
+folder = fullfile(pmtk3Root(), <span class="string">'data'</span>);
+htmlTableSimple(<span class="string">'data'</span>, median(testErrRate,3), <span class="string">'colNames'</span>, methods, <span class="string">'rowNames'</span>, dataNames, <span class="keyword">...</span>
+  <span class="string">'format'</span>, <span class="string">'float'</span>,  <span class="string">'fname'</span>, fullfile(folder, <span class="string">'err.html'</span>), <span class="keyword">...</span>
+  <span class="string">'title'</span>, sprintf(<span class="string">'test error rate (median over %d trials)'</span>, numel(seeds)));
+
+fprintf(<span class="string">'training time\n'</span>);
+trainingTime
+htmlTableSimple(<span class="string">'data'</span>, median(trainingTime,3), <span class="string">'rowNames'</span>, dataNames, <span class="string">'colNames'</span>, methods, <span class="keyword">...</span>
+  <span class="string">'format'</span>, <span class="string">'float'</span>,  <span class="string">'fname'</span>, fullfile(folder, <span class="string">'time.html'</span>), <span class="keyword">...</span>
+  <span class="string">'title'</span>, sprintf(<span class="string">'training time in seconds (median over %d trials)'</span>, numel(seeds)));
+
+<span class="keyword">for</span> d=1:nDataSets
+  <span class="keyword">for</span> m=1:nMethods
+    fprintf(<span class="string">'(%5.3f, %5.3f, %5.3f), '</span>, testErrRate(d,m,:));
+  <span class="keyword">end</span>
+  fprintf(<span class="string">'\n'</span>);
+<span class="keyword">end</span>
+
+
+folder = <span class="string">'C:\kmurphy\GoogleCode\pmtk3\docs\tutorial\extraFigures'</span>;
+<span class="comment">%figure;</span>
+<span class="keyword">for</span> d=1:nDataSets
+  figure;
+  <span class="comment">%subplot(2,2,d);</span>
+  M = squeeze(testErrRate(d,:,:));
+  boxplot(M', <span class="string">'labels'</span>, methods)
+  title(sprintf(<span class="string">'%s'</span>, dataNames{d}))
+  printPmtkFigure(sprintf(<span class="string">'linearKernelBoxplot-%s'</span>, dataNames{d}));
+  <span class="comment">%print(gcf, '-dpng', fullfile(folder, sprintf('linearKernelBoxplot-%s.png', dataNames{d})))</span>
+  ylabel(<span class="string">'test misclassification rate'</span>)
+<span class="keyword">end</span>
+<span class="comment">%print(gcf, '-dpng', fullfile(folder, 'linearKernelBoxplotErr.png'))</span>
+
+
+<span class="comment">%figure</span>
+<span class="keyword">for</span> d=1:nDataSets
+  figure;
+  <span class="comment">%subplot(2,2,d);</span>
+  M = squeeze(trainingTime(d,:,:));
+  boxplot(M', <span class="string">'labels'</span>, methods)
+  title(sprintf(<span class="string">'%s'</span>, dataNames{d}))
+  printPmtkFigure(sprintf(<span class="string">'linearKernelBoxplotTime-%s'</span>, dataNames{d}));
+  <span class="comment">%print(gcf, '-dpng', fullfile(folder, sprintf('linearKernelBoxplotTime-%s.png', dataNames{d})))</span>
+  ylabel(<span class="string">'total training time (seconds)'</span>)
+<span class="keyword">end</span>
+<span class="comment">%print(gcf, '-dpng', fullfile(folder, 'linearKernelBoxplotTime.png'))</span>
+</pre><pre class="codeoutput">Undefined function or method 'libLinearTrain' for input arguments of type 'double'.
+
+Error in ==&gt; svmlibLinearFit at 20
+model = libLinearTrain(y, sparse(X), options); % requires sparse matrix
+
+Error in ==&gt; svmFit&gt;@(X,y,p)fitFn(X,y,p(1),p(2),kernel,fitOptions{:}) at 140
+    fitcore = @(X, y, p)fitFn(X, y, p(1), p(2), kernel, fitOptions{:});
+
+Error in ==&gt; fitCv&gt;@(X,y)fitFn(X,y,param) at 68
+    [mu(m), se(m)] =  cvEstimate(@(X, y) fitFn(X, y, param), predictFn, lossFn, X, y,  Nfolds, 'testFolds', testFolds);
+
+Error in ==&gt; cvEstimate at 34
+   model = fitFn(Xtrain, ytrain);
+
+Error in ==&gt; fitCv at 68
+    [mu(m), se(m)] =  cvEstimate(@(X, y) fitFn(X, y, param), predictFn, lossFn, X, y,  Nfolds, 'testFolds', testFolds);
+
+Error in ==&gt; svmFit at 141
+    [model, varargout{1}, varargout{2}, varargout{3}] = ...
+
+Error in ==&gt; linearKernelDemo at 106
+        model = svmFit(Xtrain, ytrain, 'C', Crange,  'kernel', 'linear');
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Compare different linear kernel classifiers on several datasets
+% We need to use CV/ARD to pick lambda/C
+% but at least the kernel has no hyper-params to tune...
+%PMTKslow
+
+% This file is from pmtk3.googlecode.com
+
+
+% See also classificationShootout and classificationShootoutCvLambdaOnly
+
+clear all
+setSeed(0);
+
+%% Data
+split = 0.7;
+d = 1;
+
+if 1
+loadData('soy') % 3 classes, X is 307*35
+dataSets(d).X = X; 
+dataSets(d).y = Y; 
+dataSets(d).name = 'soy';
+d=d+1;
+end
+
+if 1
+loadData('fglass'); % 6 classes, X is 214*9
+X = [Xtrain; Xtest];
+y = canonizeLabels([ytrain; ytest]); % class 4 is missing, so relabel 1:6
+dataSets(d).X = X; 
+dataSets(d).y = y; 
+dataSets(d).name = 'fglass';
+d=d+1;
+end
+
+if 1
+loadData('colon') % 2 class, X is 62*2000
+dataSets(d).X = X;
+dataSets(d).y = y;
+dataSets(d).name = 'colon';
+d=d+1;
+end
+
+if 1
+loadData('amlAll'); % 2 class, X is 72*7129
+X = [Xtrain; Xtest];
+y = [ytrain; ytest]; 
+dataSets(d).X = X;
+dataSets(d).y = y;
+dataSets(d).name = 'amlAll';
+d=d+1;
+end
+
+dataNames = {dataSets.name};
+nDataSets = numel(dataSets);
+
+for d=1:nDataSets
+  nClasses(d) = nunique(dataSets(d).y);
+  X = dataSets(d).X;
+  [nCases(d), nFeatures(d)] = size(X);
+end
+attrNames = {'nClasses', 'nFeatures', 'nCases'};
+
+%folder = fullfile(pmtk3Root(), 'data');
+folder = pmtk3Root();
+htmlTableSimple('data', [nClasses(:) nFeatures(:) nCases(:)], ...
+  'colNames', attrNames, 'rowNames', dataNames, ...
+  'format', 'int', 'fname', fullfile(folder, 'infoOnDataSets.html') );
+
+
+%% Models
+% (For some reason, the path versions of SMLR and RMLR
+% give worse results than the versions that search over
+% a discrete grid of lambdas.)
+%methods = {'SVM', ' RVM', 'SMLR', 'RMLR', 'SMLRpath', 'RMLRpath', 'logregL2', 'logregL1'};
+methods = {'SVM', 'RVM', 'SKLR', 'RKLR', 'L1' };
+
+
+nMethods = numel(methods);
+
+%% Main
+seeds = [0,1,2];
+for d=1:nDataSets
+  X = dataSets(d).X;
+  y = dataSets(d).y;
+  
+  for s=1:numel(seeds);
+    setSeed(seeds(s));
+  [X, y] = shuffleRows(X, y);
+  X      = rescaleData(standardizeCols(X));
+  N      = size(X, 1);
+  nTrain = floor(split*N);
+  nTest  = N - nTrain;
+  Xtrain = X(1:nTrain, :);
+  Xtest  = X(nTrain+1:end, :);
+  ytrain = y(1:nTrain);
+  ytest  = y(nTrain+1:end);
+  
+  for m=1:nMethods
+    method = methods{m};
+    tic;
+    
+    switch lower(method)
+      case 'svm'
+        Crange = logspace(-6, 1, 20); % if too small, libsvm crashes!
+        model = svmFit(Xtrain, ytrain, 'C', Crange,  'kernel', 'linear');
+        predFn = @(m,X) svmPredict(m,X);
+        chosenC(d,m,s) = model.C;
+        
+      case 'rvm'
+        model = rvmFit(Xtrain, ytrain, 'kernelFn', @kernelLinear);
+        %model =  rvmFit(X,y, 'kernelFn', @(X1, X2)kernelRbfGamma(X1, X2, 1));
+        predFn = @(m,X) rvmPredict(m,X);
+        
+      case 'smlrpath'
+        model = smlrFit(Xtrain, ytrain, 'kernelFn', @kernelLinear, ...
+          'regType', 'L1', 'usePath', true);
+        predFn = @(m,X) smlrPredict(m,X);
+        
+      case {'smlrnopath', 'smlr', 'sklr'}
+        model = smlrFit(Xtrain, ytrain,  'kernelFn', @kernelLinear, ...
+          'regType', 'L1', 'usePath', false);
+        predFn = @(m,X) smlrPredict(m,X);
+  
+      case 'rmlrpath'
+        model = smlrFit(Xtrain, ytrain, 'kernelFn', @kernelLinear, ...
+          'regtype', 'L2', 'usePath', true);
+        predFn = @(m,X) smlrPredict(m,X);
+        
+      case {'rmlrnopath', 'rmlr', 'rklr'}
+        model = smlrFit(Xtrain, ytrain, 'kernelFn', @kernelLinear, ...
+          'regtype', 'L2', 'usePath', false);
+        predFn = @(m,X) smlrPredict(m,X);
+        
+ 
+      case {'l2', 'logregl2'}
+        model = logregFitPathCv(Xtrain, ytrain, 'regtype', 'L2');
+        predFn = @(m,X) logregPredict(m,X);
+        
+      case {'l1', 'logregl1'}
+        model = logregFitPathCv(Xtrain, ytrain, 'regtype', 'L1');
+        predFn = @(m,X) logregPredict(m,X);
+    end
+    trainingTime(d,m,s) = toc;
+    saveModel{d,m,s} = model;
+    
+    tic
+    yHat   = predFn(model, Xtest);
+    testingTime(d,m,s) = toc;
+    
+    nerrs  = sum(yHat ~= ytest);
+    testErrRate(d,m,s) = nerrs/nTest;
+    numErrors(d,m,s) = nerrs;
+    maxNumErrors(d) = nTest;
+  end
+end
+end
+
+fprintf('test err\n');
+numErrors
+
+folder = fullfile(pmtk3Root(), 'data');
+htmlTableSimple('data', median(testErrRate,3), 'colNames', methods, 'rowNames', dataNames, ...
+  'format', 'float',  'fname', fullfile(folder, 'err.html'), ...
+  'title', sprintf('test error rate (median over %d trials)', numel(seeds)));
+
+fprintf('training time\n');
+trainingTime
+htmlTableSimple('data', median(trainingTime,3), 'rowNames', dataNames, 'colNames', methods, ...
+  'format', 'float',  'fname', fullfile(folder, 'time.html'), ...
+  'title', sprintf('training time in seconds (median over %d trials)', numel(seeds)));
+
+for d=1:nDataSets
+  for m=1:nMethods
+    fprintf('(%5.3f, %5.3f, %5.3f), ', testErrRate(d,m,:));
+  end
+  fprintf('\n');
+end
+
+
+folder = 'C:\kmurphy\GoogleCode\pmtk3\docs\tutorial\extraFigures';
+%figure;
+for d=1:nDataSets
+  figure; 
+  %subplot(2,2,d);
+  M = squeeze(testErrRate(d,:,:));
+  boxplot(M', 'labels', methods)
+  title(sprintf('%s', dataNames{d}))
+  printPmtkFigure(sprintf('linearKernelBoxplot-%s', dataNames{d}));
+  %print(gcf, '-dpng', fullfile(folder, sprintf('linearKernelBoxplot-%s.png', dataNames{d})))
+  ylabel('test misclassification rate')
+end
+%print(gcf, '-dpng', fullfile(folder, 'linearKernelBoxplotErr.png'))
+
+
+%figure
+for d=1:nDataSets
+  figure; 
+  %subplot(2,2,d);
+  M = squeeze(trainingTime(d,:,:));
+  boxplot(M', 'labels', methods)
+  title(sprintf('%s', dataNames{d}))
+  printPmtkFigure(sprintf('linearKernelBoxplotTime-%s', dataNames{d}));
+  %print(gcf, '-dpng', fullfile(folder, sprintf('linearKernelBoxplotTime-%s.png', dataNames{d})))
+  ylabel('total training time (seconds)')
+end
+%print(gcf, '-dpng', fullfile(folder, 'linearKernelBoxplotTime.png'))
+
+
+##### SOURCE END #####
+--></body></html>

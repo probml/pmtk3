@@ -1,0 +1,202 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>Find the mode of a mixture of 2, 1D Gaussians using Simulated Annealing</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="saDemoMOG"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Find the mode of a mixture of 2, 1D Gaussians using Simulated Annealing</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="keyword">function</span> saDemoMOG()
+
+
+sigma_prop = 10;                 <span class="comment">% Standard deviation of the Gaussian proposal.</span>
+
+seed = 1; randn(<span class="string">'state'</span>, seed); rand(<span class="string">'state'</span>, seed);
+xinit = 20*rand(1,1); <span class="comment">% initial state</span>
+Nsamples  = 5000;
+opts = struct(<span class="keyword">...</span>
+    <span class="string">'proposal'</span>, @(x) (x+sigma_prop*randn(1,1)), <span class="keyword">...</span>
+    <span class="string">'maxIter'</span>, Nsamples, <span class="keyword">...</span>
+    <span class="string">'minIter'</span>, Nsamples, <span class="keyword">...</span>
+    <span class="string">'temp'</span>, @(T,iter) (0.995*T), <span class="keyword">...</span>
+    <span class="string">'verbose'</span>, 0);
+
+[xopt, fval, samples, energies, acceptRate] =  simAnneal(@target, xinit, opts);
+xopt
+fval
+
+<span class="comment">% plot the histogram of samples</span>
+N_bins = 50;
+Nsamples = size(samples, 1)
+Ns = round(linspace(100, Nsamples, 4));
+figure;
+<span class="keyword">for</span> i=1:4
+  subplot(2,2,i)
+  x_t = linspace(-10,20,1000);
+  y_t = exp(-feval(@target, x_t)); <span class="comment">% prob = exp(-energy)</span>
+  [b,a] = hist(samples(1:Ns(i)), N_bins);
+  measure = a(2)-a(1); <span class="comment">% bin width.</span>
+  area = sum(b*measure);
+  bar(a,b/(area),<span class="string">'y'</span>)
+  hold <span class="string">on</span>;
+  plot(x_t,y_t,<span class="string">'k'</span>,<span class="string">'linewidth'</span>,2)
+  axis([-10 20 0 .15])
+  <span class="comment">%text(14,.1,sprintf('iter %d', Ns(i)))</span>
+  title(sprintf(<span class="string">'iter %d'</span>, Ns(i)))
+<span class="keyword">end</span>
+<span class="keyword">end</span>
+<span class="comment">%%%%%%%%%%</span>
+
+<span class="keyword">function</span> p = mogProb(x)
+
+mixWeights = [0.3 0.7];
+mu = [0 10];
+sigma = [2 2];
+
+<span class="comment">% p(n) = sum_k w(k) N(x(n)|mu(k), sigma(k))</span>
+K = length(mixWeights);
+N = length(x);
+p = zeros(N,1);
+<span class="keyword">for</span> k=1:K
+  p = p + mixWeights(k)*gaussProb(x(:), mu(k), sigma(k));
+<span class="keyword">end</span>
+
+<span class="keyword">end</span>
+
+<span class="keyword">function</span>  E = target(x)
+p = mogProb(x);
+E = -log(p+eps); <span class="comment">% energy = -ve log posterior</span>
+
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">xopt =
+  10.000289568587938
+fval =
+   1.622187088379925
+Nsamples =
+        5000
+</pre><img vspace="5" hspace="5" src="saDemoMOG_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Find the mode of a mixture of 2, 1D Gaussians using Simulated Annealing
+%
+%%
+function saDemoMOG()
+
+
+sigma_prop = 10;                 % Standard deviation of the Gaussian proposal.
+
+seed = 1; randn('state', seed); rand('state', seed);
+xinit = 20*rand(1,1); % initial state
+Nsamples  = 5000;
+opts = struct(...
+    'proposal', @(x) (x+sigma_prop*randn(1,1)), ...
+    'maxIter', Nsamples, ...
+    'minIter', Nsamples, ...
+    'temp', @(T,iter) (0.995*T), ...
+    'verbose', 0);
+
+[xopt, fval, samples, energies, acceptRate] =  simAnneal(@target, xinit, opts);
+xopt
+fval
+
+% plot the histogram of samples
+N_bins = 50; 
+Nsamples = size(samples, 1)
+Ns = round(linspace(100, Nsamples, 4));
+figure;
+for i=1:4
+  subplot(2,2,i)
+  x_t = linspace(-10,20,1000);
+  y_t = exp(-feval(@target, x_t)); % prob = exp(-energy)
+  [b,a] = hist(samples(1:Ns(i)), N_bins);
+  measure = a(2)-a(1); % bin width.
+  area = sum(b*measure);
+  bar(a,b/(area),'y')
+  hold on;
+  plot(x_t,y_t,'k','linewidth',2)
+  axis([-10 20 0 .15])
+  %text(14,.1,sprintf('iter %d', Ns(i)))
+  title(sprintf('iter %d', Ns(i)))
+end
+end
+%%%%%%%%%%
+
+function p = mogProb(x)
+
+mixWeights = [0.3 0.7];
+mu = [0 10];
+sigma = [2 2];
+
+% p(n) = sum_k w(k) N(x(n)|mu(k), sigma(k))
+K = length(mixWeights);
+N = length(x);
+p = zeros(N,1);
+for k=1:K
+  p = p + mixWeights(k)*gaussProb(x(:), mu(k), sigma(k));
+end
+
+end
+
+function  E = target(x)
+p = mogProb(x);
+E = -log(p+eps); % energy = -ve log posterior
+
+end
+##### SOURCE END #####
+--></body></html>

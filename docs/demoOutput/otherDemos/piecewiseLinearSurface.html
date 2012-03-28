@@ -1,0 +1,122 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Illustration of a piecewise linear surface</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="piecewiseLinearSurface.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Illustration of a piecewise linear surface</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+setSeed(10);
+figure(); hold <span class="string">on</span>;
+nsurfaces = 3;
+<span class="keyword">for</span> i=1:nsurfaces
+    x = randn(10, 1);
+    y = randn(10, 1);
+    z = randn(10, 1);
+    P = [mean(x), mean(y), mean(z)];
+    [U, S, V] = svd([x-P(1), y-P(2), z-P(3)], 0);
+    N = -1/V(end, end)*V(:, end);
+    W(1)=N(1); W(2)=N(2); W(3)=-P*N;
+    xs = linspace(0, 40, 15)';
+    ys = linspace(0, 40, 15)';
+    [Xs, Ys] = meshgrid(xs, ys);
+    Z = (W(3) + W(2)*Xs + W(3)*Ys + 50*randn)/10;
+    surf(xs, ys, Z);
+<span class="keyword">end</span>
+grid <span class="string">on</span>;
+axis <span class="string">square</span>;
+set(gca, <span class="string">'xdir'</span>, <span class="string">'reverse'</span>);
+view([48, 20]);
+printPmtkFigure(<span class="string">'piecewiseLinearSurface'</span>);
+</pre><img vspace="5" hspace="5" src="piecewiseLinearSurface_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Illustration of a piecewise linear surface
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+setSeed(10);
+figure(); hold on;
+nsurfaces = 3; 
+for i=1:nsurfaces
+    x = randn(10, 1);
+    y = randn(10, 1);
+    z = randn(10, 1);
+    P = [mean(x), mean(y), mean(z)];
+    [U, S, V] = svd([x-P(1), y-P(2), z-P(3)], 0);
+    N = -1/V(end, end)*V(:, end);
+    W(1)=N(1); W(2)=N(2); W(3)=-P*N;
+    xs = linspace(0, 40, 15)';
+    ys = linspace(0, 40, 15)';
+    [Xs, Ys] = meshgrid(xs, ys);
+    Z = (W(3) + W(2)*Xs + W(3)*Ys + 50*randn)/10;
+    surf(xs, ys, Z);
+end
+grid on;
+axis square;
+set(gca, 'xdir', 'reverse'); 
+view([48, 20]);
+printPmtkFigure('piecewiseLinearSurface'); 
+
+##### SOURCE END #####
+--></body></html>

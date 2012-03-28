@@ -1,0 +1,134 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Linreg frequentist caterpillar demo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="linregFreqCaterpillar.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Linreg frequentist caterpillar demo</h1><pre class="codeinput"><span class="comment">%PMTKneedsStatsToolbox regress</span>
+</pre><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+requireStatsToolbox
+X = loadData(<span class="string">'caterpillar'</span>); <span class="comment">% from http://www.ceremade.dauphine.fr/~xian/BCS/caterpillar</span>
+y = log(X(:,11)); <span class="comment">% log numner of nests</span>
+X = X(:,1:10);
+
+[w, stderr, pval, R2, sigma2, confint, Zs] = <span class="keyword">...</span>
+  linregFrequentistSummary(y, X, [], true);
+
+<span class="comment">% use stats toolbox</span>
+[n d] = size(X);
+XX = [ones(n,1) X];
+[b, bint, r, rint, stats] = regress(y, XX);
+<span class="comment">% b(j) is coefficient j, bint(j,:) = lower and upper 95% conf interval</span>
+<span class="comment">% r(i) = residual for case i, rint(i,:)  = lower and upper 95% conf interval</span>
+<span class="comment">% stats = [Rsquared, Fstat, pval for Fstat, error variance]</span>
+assert(approxeq(b, w))
+assert(approxeq(bint, confint))
+assert(approxeq(stats(1), R2))
+assert(approxeq(stats(4), sigma2))
+</pre><pre class="codeoutput">
+linear regression n=33, d=10, R-squared=   0.69494
+
+             estimate    std err    t value    p(&gt;|t|)      
+ intercept &amp;   10.99841 &amp;    3.06027 &amp;    3.59393 &amp;    0.00161 **\\
+      x1:  &amp;   -0.00443 &amp;    0.00156 &amp;   -2.84635 &amp;    0.00939 **\\
+      x2:  &amp;   -0.05383 &amp;    0.02190 &amp;   -2.45801 &amp;    0.02232 *\\
+      x3:  &amp;    0.06794 &amp;    0.09947 &amp;    0.68300 &amp;    0.50174 \\
+      x4:  &amp;   -1.29364 &amp;    0.56381 &amp;   -2.29445 &amp;    0.03168 *\\
+      x5:  &amp;    0.23164 &amp;    0.10438 &amp;    2.21921 &amp;    0.03709 *\\
+      x6:  &amp;   -0.35680 &amp;    1.56646 &amp;   -0.22777 &amp;    0.82193 \\
+      x7:  &amp;   -0.23747 &amp;    1.00601 &amp;   -0.23605 &amp;    0.81558 \\
+      x8:  &amp;    0.18106 &amp;    0.23672 &amp;    0.76486 &amp;    0.45248 \\
+      x9:  &amp;   -1.28532 &amp;    0.86485 &amp;   -1.48618 &amp;    0.15142 \\
+     x10:  &amp;   -0.43311 &amp;    0.73487 &amp;   -0.58936 &amp;    0.56162 \\
+
+Signif. codes: *** [0,0.001), ** [0.001, 0.01), * [0.01,0.05) . [0.05,1)
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Linreg frequentist caterpillar demo
+%PMTKneedsStatsToolbox regress
+%%
+
+% This file is from pmtk3.googlecode.com
+
+requireStatsToolbox
+X = loadData('caterpillar'); % from http://www.ceremade.dauphine.fr/~xian/BCS/caterpillar
+y = log(X(:,11)); % log numner of nests
+X = X(:,1:10);
+
+[w, stderr, pval, R2, sigma2, confint, Zs] = ...
+  linregFrequentistSummary(y, X, [], true);
+
+% use stats toolbox
+[n d] = size(X);
+XX = [ones(n,1) X];
+[b, bint, r, rint, stats] = regress(y, XX);
+% b(j) is coefficient j, bint(j,:) = lower and upper 95% conf interval
+% r(i) = residual for case i, rint(i,:)  = lower and upper 95% conf interval
+% stats = [Rsquared, Fstat, pval for Fstat, error variance]
+assert(approxeq(b, w))
+assert(approxeq(bint, confint))
+assert(approxeq(stats(1), R2))
+assert(approxeq(stats(4), sigma2))
+
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,133 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>Compare EM to matlab stats toolbox</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="studentFitDemo"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Compare EM to matlab stats toolbox</h1><!--introduction--><p>PMTKneedsStatsToolbox mle</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">same data as gaussVsStudentOutlierDemo</a></li></ul></div><pre class="codeinput">requireStatsToolbox
+</pre><h2>same data as gaussVsStudentOutlierDemo<a name="2"></a></h2><pre class="codeinput">n = 30;
+setSeed(8);
+data = randn(n,1);
+outliers = [8 ; 8.75 ; 9.5];
+X = [data; outliers];
+MLEs = mle(X,<span class="string">'distribution'</span>,<span class="string">'tlocationscale'</span>);
+mu1d = MLEs(1); sigma1d = MLEs(2); dof1d = MLEs(3);
+
+opts.dof =[];
+<span class="comment">%opts.dof = dof1d;</span>
+opts.useSpeedup =false; <span class="comment">% seems to have no affect</span>
+opts.verbose = false;
+
+opts.useECME = false;
+[model, niter1d] = studentFitEm(X, opts);
+muHat1d = model.mu; SigmaHat1d = model.Sigma; dofHat1d = model.dof;
+
+opts.useECME = true;
+[model, niter1dECME] = studentFitEm(X, opts);
+muHat1dECME = model.mu; SigmaHat1dECME = model.Sigma; dofHat1dECME = model.dof;
+
+fprintf(<span class="string">'dof  : matlab %5.3f, em %5.3f, ecme %5.3f\n'</span>, <span class="keyword">...</span>
+  dof1d, dofHat1d, dofHat1dECME);
+fprintf(<span class="string">'mu   : matlab %5.3f, em %5.3f, ecme %5.3f\n'</span>, <span class="keyword">...</span>
+  mu1d, muHat1d, muHat1dECME);
+fprintf(<span class="string">'sigma: matlab %5.3f, em %5.3f, ecme %5.3f\n'</span>, <span class="keyword">...</span>
+  sigma1d, sqrt(SigmaHat1d), sqrt(SigmaHat1dECME));
+</pre><pre class="codeoutput">dof  : matlab 1.318, em 1.362, ecme 1.349
+mu   : matlab 0.052, em 0.058, ecme 0.058
+sigma: matlab 0.777, em 0.804, ecme 0.801
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Compare EM to matlab stats toolbox
+% PMTKneedsStatsToolbox mle
+%%
+requireStatsToolbox
+%% same data as gaussVsStudentOutlierDemo
+n = 30;
+setSeed(8);
+data = randn(n,1);
+outliers = [8 ; 8.75 ; 9.5];
+X = [data; outliers];
+MLEs = mle(X,'distribution','tlocationscale');
+mu1d = MLEs(1); sigma1d = MLEs(2); dof1d = MLEs(3);
+
+opts.dof =[];
+%opts.dof = dof1d;
+opts.useSpeedup =false; % seems to have no affect
+opts.verbose = false;
+
+opts.useECME = false;
+[model, niter1d] = studentFitEm(X, opts);
+muHat1d = model.mu; SigmaHat1d = model.Sigma; dofHat1d = model.dof;
+
+opts.useECME = true;
+[model, niter1dECME] = studentFitEm(X, opts);
+muHat1dECME = model.mu; SigmaHat1dECME = model.Sigma; dofHat1dECME = model.dof;
+
+fprintf('dof  : matlab %5.3f, em %5.3f, ecme %5.3f\n', ...
+  dof1d, dofHat1d, dofHat1dECME);
+fprintf('mu   : matlab %5.3f, em %5.3f, ecme %5.3f\n', ...
+  mu1d, muHat1d, muHat1dECME);
+fprintf('sigma: matlab %5.3f, em %5.3f, ecme %5.3f\n', ...
+  sigma1d, sqrt(SigmaHat1d), sqrt(SigmaHat1dECME));
+
+##### SOURCE END #####
+--></body></html>

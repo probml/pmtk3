@@ -1,0 +1,268 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>Metropolis Hastings Logistic Regression Demo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="logregSatMhDemo"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Metropolis Hastings Logistic Regression Demo</h1><!--introduction--><p>Example from Johnson and Albert p87</p><!--/introduction--><pre class="codeinput"><span class="keyword">function</span> [X, y, ws, perm] = logregGradeMH()
+
+[X,y] = satDataLoad;
+model = logregBinaryFitL2IRLS(X, y, 1e-8, false);
+w = model.w;
+C = model.C;
+
+
+<span class="comment">% MH</span>
+setSeed(1);
+xinit = w;
+Nsamples = 5000;
+lambda = 0;
+targetArgs = {X,y,lambda};
+sigmaMH = 1.5;
+proposalArgs = {sigmaMH*C};
+
+[ws, naccept] = metropolisHastings(@logpost, @proposal, xinit,<span class="keyword">...</span>
+    Nsamples, targetArgs, proposalArgs);
+
+<span class="comment">% trace plots</span>
+figure
+<span class="keyword">for</span> i=1:2
+    subplot(2,2,i)
+    plot(ws(:,i))
+<span class="keyword">end</span>
+
+<span class="comment">% samples</span>
+figure
+subplot(2,2,1)
+hist(ws(:,2))
+title(<span class="string">'w1 slope'</span>)
+subplot(2,2,2)
+plot(ws(:,1), ws(:,2), <span class="string">'.'</span>)
+xlabel(<span class="string">'w0'</span>); ylabel(<span class="string">'w1'</span>)
+subplot(2,2,4)
+hist(ws(:,1))
+title(<span class="string">'w0 intercept'</span>)
+
+MLE =  xinit
+postMean  = mean(ws,1)
+postMedian = median(ws,1)
+
+<span class="comment">% visualize model fit for each training point</span>
+figure
+perm = sortidx(X(:, 2), <span class="string">'ascend'</span>);
+N = length(perm);
+<span class="keyword">for</span> ii=1:N
+    i = perm(ii);
+    ps = 1 ./ (1+exp(-X(i,:)*ws')); <span class="comment">% ps(s) = p(y=1|x(i,:), bs(s,:)) row vec</span>
+
+    plot(X(i,2), median(ps), <span class="string">'o'</span>);
+    hold <span class="string">on</span>
+    h=plot(X(i,2), y(i), <span class="string">'ko'</span>);
+    set(h,<span class="string">'markerfacecolor'</span>, <span class="string">'k'</span>);
+
+    <span class="comment">% prediction interval</span>
+    tmp = sort(ps, <span class="string">'ascend'</span>);
+    Q5 = tmp(floor(0.05*Nsamples));
+    Q95 = tmp(floor(0.95*Nsamples));
+    line([X(i,2) X(i,2)], [Q5 Q95]);
+<span class="keyword">end</span>
+
+logregSATdemo
+
+<span class="keyword">end</span>
+
+<span class="comment">%%%%%%%%%</span>
+<span class="keyword">function</span> bnew = proposal(w, Sigma)
+    model.mu = zeros(1, length(w));
+    model.Sigma = Sigma;
+    bnew = w + gaussSample(model);
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> p = logpost(w, X, y, lambda)
+    mu = 1 ./ (1 + exp(-X*w(:)));
+    p = sum( (y.*log(mu) + (1-y).*log(1-mu))) + lambda/2*sum(w.^2);
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">MLE =
+ -31.114577531965772
+   0.057849374443508
+postMean =
+ -37.726703055546750   0.069894755228971
+postMedian =
+ -36.159511818465518   0.067114270542568
+ans =
+   525
+   533
+   545
+   582
+   581
+   576
+   572
+   609
+   559
+   543
+   576
+   525
+   574
+   582
+   574
+   471
+   595
+   557
+   557
+   584
+   599
+   517
+   649
+   584
+   463
+   591
+   488
+   563
+   553
+   549
+</pre><img vspace="5" hspace="5" src="logregSatMhDemo_01.png" alt=""> <img vspace="5" hspace="5" src="logregSatMhDemo_02.png" alt=""> <img vspace="5" hspace="5" src="logregSatMhDemo_03.png" alt=""> <img vspace="5" hspace="5" src="logregSatMhDemo_04.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Metropolis Hastings Logistic Regression Demo
+% Example from Johnson and Albert p87
+%
+%%
+function [X, y, ws, perm] = logregGradeMH()
+
+[X,y] = satDataLoad;
+model = logregBinaryFitL2IRLS(X, y, 1e-8, false);
+w = model.w;
+C = model.C;
+
+
+% MH
+setSeed(1);
+xinit = w;
+Nsamples = 5000;
+lambda = 0;
+targetArgs = {X,y,lambda};
+sigmaMH = 1.5;
+proposalArgs = {sigmaMH*C};
+
+[ws, naccept] = metropolisHastings(@logpost, @proposal, xinit,...
+    Nsamples, targetArgs, proposalArgs);
+
+% trace plots
+figure
+for i=1:2
+    subplot(2,2,i)
+    plot(ws(:,i))
+end
+
+% samples
+figure
+subplot(2,2,1)
+hist(ws(:,2))
+title('w1 slope')
+subplot(2,2,2)
+plot(ws(:,1), ws(:,2), '.')
+xlabel('w0'); ylabel('w1')
+subplot(2,2,4)
+hist(ws(:,1))
+title('w0 intercept')
+
+MLE =  xinit
+postMean  = mean(ws,1)
+postMedian = median(ws,1)
+
+% visualize model fit for each training point
+figure
+perm = sortidx(X(:, 2), 'ascend');
+N = length(perm);
+for ii=1:N
+    i = perm(ii);
+    ps = 1 ./ (1+exp(-X(i,:)*ws')); % ps(s) = p(y=1|x(i,:), bs(s,:)) row vec
+    
+    plot(X(i,2), median(ps), 'o');
+    hold on
+    h=plot(X(i,2), y(i), 'ko');
+    set(h,'markerfacecolor', 'k');
+    
+    % prediction interval
+    tmp = sort(ps, 'ascend');
+    Q5 = tmp(floor(0.05*Nsamples));
+    Q95 = tmp(floor(0.95*Nsamples));
+    line([X(i,2) X(i,2)], [Q5 Q95]);
+end
+
+logregSATdemo
+
+end
+
+%%%%%%%%%
+function bnew = proposal(w, Sigma)
+    model.mu = zeros(1, length(w));
+    model.Sigma = Sigma; 
+    bnew = w + gaussSample(model); 
+end    
+
+function p = logpost(w, X, y, lambda)
+    mu = 1 ./ (1 + exp(-X*w(:))); 
+    p = sum( (y.*log(mu) + (1-y).*log(1-mu))) + lambda/2*sum(w.^2);
+end
+
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,307 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Fit the local CPDs of a lattice mrf given a noisy image and its underlying</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="mrfFitImgSemiObsDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Fit the local CPDs of a lattice mrf given a noisy image and its underlying</h1><!--introduction--><p>discrete labels</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#3">Make data</a></li><li><a href="#4">Experiment</a></li></ul></div><pre>The model has the following form
+y1&lt;-  h1 - h2  -&gt; y2
+       |    |
+y3 &lt;-  h3 - h4 -&gt; y4</pre><p>where there are undirected edges between the hidden labels, arranged in a 2d grid, and each hidden node has a directed local evidence. Currently we fit the p(yi|hi) CPDs (which are conditional Gaussian), but not the hi-hj edge potentials. We allow for a certain fraction of the h nodes to be hidden, and fit the model using EM from a single image (with tied params) For the E step, we use TRWBP.</p><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+
+<span class="comment">%PMTKslow</span>
+</pre><h2>Make data<a name="3"></a></h2><pre class="codeinput">setSeed(2);
+
+cmap = <span class="string">'bone'</span>;
+imgs = loadData(<span class="string">'tinyImages'</span>);
+img = double(imgs.matlabIconGray);
+[M, N] = size(img);
+ns = 5; <span class="comment">% 32;</span>
+img = reshape(quantizePMTK(img(:), <span class="string">'levels'</span>, ns), M, N);
+img = canonizeLabels(img);
+nstates = max(img(:));
+figure;
+imagesc(img);
+colormap(cmap);
+title(<span class="string">'original image'</span>);
+
+sigma = 0.1;
+yTrain = img./nstates + sigma*randn(M, N);
+yTest  = img./nstates + sigma*randn(M, N);
+figure; imagesc(yTrain);
+colormap(cmap);
+title(<span class="string">'noisy copy (yTrain)'</span>);
+<span class="comment">%{
+</span><span class="comment">figure; imagesc(yTest);
+</span><span class="comment">colormap(cmap);
+</span><span class="comment">title('noisy copy (yTest)');
+</span><span class="comment">%}</span>
+</pre><img vspace="5" hspace="5" src="mrfFitImgSemiObsDemo_01.png" alt=""> <img vspace="5" hspace="5" src="mrfFitImgSemiObsDemo_02.png" alt=""> <h2>Experiment<a name="4"></a></h2><p>hide every H labels (0=fully obs, 1=fully hidden, 4=1/4 hidden)</p><pre class="codeinput">hideStep = [0, 2];
+
+<span class="comment">% informativeEdgePot=1 encourages nearby labels to be similar</span>
+<span class="comment">% since thet represent discretizations of the underling signal</span>
+<span class="comment">% informativeEdgePot=0 is disconnected graph</span>
+
+<span class="comment">% local CPD is p(y | q=k)= gauss(mu(k), sigma(k))</span>
+<span class="comment">% We initialize mu(k)=1, sigma(k)=1</span>
+<span class="comment">% We will learn the mean and variance of pixel itnensities</span>
+<span class="comment">% corresponding to each hidden state k.</span>
+localCPD  = condGaussCpdCreate( nstates*ones(1, nstates), ones(1, 1, nstates));
+
+
+<span class="keyword">for</span> hi=1:numel(hideStep)
+  H = hideStep(hi);
+
+  labeledData = rowvec(img); <span class="comment">% 1-by-npixels</span>
+  labeledData(1:H:end) = 0;  <span class="comment">% a certain fraction H are missing</span>
+
+  obsPattern = ones(size(img));
+  obsPattern(1:H:end) = 0;
+  figure; imagesc(obsPattern); colormap(gray); colorbar
+  title(sprintf(<span class="string">'observed pixels, H=%d'</span>, H))
+
+  <span class="keyword">for</span> useInformativeEdgePot=[0 1]
+
+
+    <span class="comment">%localCPD = localCPD.fitFn(localCPD, img(:), yTrain(:));</span>
+    <span class="comment">% Note, with fully observed data, we can always just fit the localCPD</span>
+    <span class="comment">% directly, but we are testing mrfTrainEm</span>
+
+    <span class="keyword">if</span> useInformativeEdgePot
+      edgePot = exp(bsxfun(@(a, b)-abs(a-b), 1:nstates, (1:nstates)')./2);
+    <span class="keyword">else</span>
+      edgePot = ones(nstates, nstates);
+    <span class="keyword">end</span>
+    <span class="comment">%figure; imagesc(edgePot); colormap('default'); title('tied edge potential');</span>
+
+    nodePot = ones(1, nstates); <span class="comment">%not needed</span>
+    G         = mkGrid(M, N);
+    infEngine = <span class="string">'libdai'</span>;
+    opts = {<span class="string">'TRWBP'</span>, <span class="string">'[updates=SEQFIX,tol=1e-9,maxiter=10000,logdomain=0,nrtrees=0]'</span>};
+
+    mrf     = mrfCreate(G, <span class="string">'nodePots'</span>, nodePot, <span class="string">'edgePots'</span>, edgePot,<span class="keyword">...</span>
+      <span class="string">'localCPDs'</span>, localCPD, <span class="string">'infEngine'</span>, infEngine, <span class="string">'infEngArgs'</span>, opts);
+
+<span class="comment">    %{
+</span><span class="comment">nodes = mrfInferNodes(mrf, 'localev', rowvec(yTest));
+</span><span class="comment">maxMarginals = maxidx(tfMarg2Mat(nodes), [], 1);
+</span><span class="comment">figure; imagesc(reshape(maxMarginals, M, N)); colormap(cmap);
+</span><span class="comment">title(sprintf('initial params, H=%d, informativeEdgePot = %d', H, useInformativeEdgePot));
+</span><span class="comment">      %}
+</span>
+      mrf = mrfTrainEm(mrf, labeledData, <span class="string">'localev'</span>, rowvec(yTrain), <span class="string">'verbose'</span>, true);
+
+      nodes = mrfInferNodes(mrf, <span class="string">'localev'</span>, rowvec(yTest));
+      maxMarginals = maxidx(tfMarg2Mat(nodes), [], 1);
+      figure; imagesc(reshape(maxMarginals, M, N)); colormap(cmap);
+      title(sprintf(<span class="string">'learned params, H=%d, informativeEdgePot = %d'</span>, H, useInformativeEdgePot));
+
+  <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+placeFigures;
+</pre><pre class="codeoutput">initializing model for EM
+</pre><pre class="codeoutput">Error using ==&gt; libdaiInfer at 23
+could not find dai.mexmaci64 - need to install libdai
+
+Error in ==&gt; mrfInferQuery at 96
+            [logZ, nodeBels, cliques, cliqueLookup] = libdaiInfer(factors, args{:});
+
+Error in ==&gt; mrfInferNodes at 22
+[bels, logZ] = mrfInferQuery(mrf, query, 'doSlice', doSlice, varargin{:});
+
+Error in ==&gt; mrfTrainEm&gt;estep at 59
+    [pmarg, llobs] = mrfInferNodes(mrf, args{:}); 
+
+Error in ==&gt; mrfTrainEm&gt;@(mrf,data)estep(mrf,data,localEv) at 18
+estepFn           = @(mrf, data)estep(mrf, data, localEv);
+
+Error in ==&gt; emAlgo at 62
+    [ess, ll] = estep(model, data);
+
+Error in ==&gt; mrfTrainEm at 19
+[mrf, loglikHist] = emAlgo(mrf, data, @init, estepFn, @mstep, EMargs{:});
+
+Error in ==&gt; mrfFitImgSemiObsDemo at 105
+      mrf = mrfTrainEm(mrf, labeledData, 'localev', rowvec(yTrain), 'verbose', true);
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Fit the local CPDs of a lattice mrf given a noisy image and its underlying
+% discrete labels
+%%
+%  The model has the following form
+%  y1<-  h1 - h2  -> y2
+%         |    |
+%  y3 <-  h3 - h4 -> y4
+%%
+% where there are undirected edges between the hidden labels,
+% arranged in a 2d grid, and each hidden node has a directed local
+% evidence.
+% Currently we fit the p(yi|hi) CPDs (which are conditional Gaussian),
+% but not the hi-hj edge potentials.
+% We allow for a certain fraction of the h nodes to be hidden,
+% and fit the model using EM from a single image (with tied params)
+% For the E step, we use TRWBP.
+
+% This file is from pmtk3.googlecode.com
+
+
+%PMTKslow
+%% Make data
+setSeed(2); 
+
+cmap = 'bone';
+imgs = loadData('tinyImages'); 
+img = double(imgs.matlabIconGray);
+[M, N] = size(img); 
+ns = 5; % 32; 
+img = reshape(quantizePMTK(img(:), 'levels', ns), M, N);
+img = canonizeLabels(img); 
+nstates = max(img(:)); 
+figure;
+imagesc(img); 
+colormap(cmap); 
+title('original image');
+
+sigma = 0.1; 
+yTrain = img./nstates + sigma*randn(M, N);
+yTest  = img./nstates + sigma*randn(M, N);
+figure; imagesc(yTrain);
+colormap(cmap); 
+title('noisy copy (yTrain)');
+%{
+figure; imagesc(yTest); 
+colormap(cmap); 
+title('noisy copy (yTest)');
+%}
+
+%% Experiment
+% hide every H labels (0=fully obs, 1=fully hidden, 4=1/4 hidden)
+hideStep = [0, 2]; 
+
+% informativeEdgePot=1 encourages nearby labels to be similar
+% since thet represent discretizations of the underling signal
+% informativeEdgePot=0 is disconnected graph
+
+% local CPD is p(y | q=k)= gauss(mu(k), sigma(k))
+% We initialize mu(k)=1, sigma(k)=1
+% We will learn the mean and variance of pixel itnensities
+% corresponding to each hidden state k.
+localCPD  = condGaussCpdCreate( nstates*ones(1, nstates), ones(1, 1, nstates));
+
+    
+for hi=1:numel(hideStep)
+  H = hideStep(hi);
+  
+  labeledData = rowvec(img); % 1-by-npixels
+  labeledData(1:H:end) = 0;  % a certain fraction H are missing
+  
+  obsPattern = ones(size(img));
+  obsPattern(1:H:end) = 0;
+  figure; imagesc(obsPattern); colormap(gray); colorbar
+  title(sprintf('observed pixels, H=%d', H))
+  
+  for useInformativeEdgePot=[0 1]
+    
+   
+    %localCPD = localCPD.fitFn(localCPD, img(:), yTrain(:));
+    % Note, with fully observed data, we can always just fit the localCPD
+    % directly, but we are testing mrfTrainEm
+    
+    if useInformativeEdgePot
+      edgePot = exp(bsxfun(@(a, b)-abs(a-b), 1:nstates, (1:nstates)')./2);
+    else
+      edgePot = ones(nstates, nstates);
+    end
+    %figure; imagesc(edgePot); colormap('default'); title('tied edge potential');
+    
+    nodePot = ones(1, nstates); %not needed
+    G         = mkGrid(M, N);
+    infEngine = 'libdai';
+    opts = {'TRWBP', '[updates=SEQFIX,tol=1e-9,maxiter=10000,logdomain=0,nrtrees=0]'};
+    
+    mrf     = mrfCreate(G, 'nodePots', nodePot, 'edgePots', edgePot,...
+      'localCPDs', localCPD, 'infEngine', infEngine, 'infEngArgs', opts);
+    
+    %{
+nodes = mrfInferNodes(mrf, 'localev', rowvec(yTest));
+maxMarginals = maxidx(tfMarg2Mat(nodes), [], 1);
+figure; imagesc(reshape(maxMarginals, M, N)); colormap(cmap);
+title(sprintf('initial params, H=%d, informativeEdgePot = %d', H, useInformativeEdgePot));
+      %}
+      
+      mrf = mrfTrainEm(mrf, labeledData, 'localev', rowvec(yTrain), 'verbose', true);
+      
+      nodes = mrfInferNodes(mrf, 'localev', rowvec(yTest));
+      maxMarginals = maxidx(tfMarg2Mat(nodes), [], 1);
+      figure; imagesc(reshape(maxMarginals, M, N)); colormap(cmap);
+      title(sprintf('learned params, H=%d, informativeEdgePot = %d', H, useInformativeEdgePot));
+      
+  end
+end
+
+placeFigures;
+
+
+##### SOURCE END #####
+--></body></html>

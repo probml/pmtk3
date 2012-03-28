@@ -1,0 +1,231 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>An illustration of density estimation with k-nearest neighbours.</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="knnDensityEstimationDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>An illustration of density estimation with k-nearest neighbours.</h1><!--introduction--><p>Contrast this with parzenWindowDemo(), where rather than fixing the number of points, K, as we do here, we fix the window size.</p><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="keyword">function</span> knnDensityEstimationDemo()
+
+setSeed(0);
+mix = [0.35,0.65];
+sigma = [0.015,0.01];
+mu = [0.25,0.75];
+n = 50;                 <span class="comment">% number of training points</span>
+
+<span class="comment">%The true function, we are trying to recover</span>
+f = @(x)mix(1)*gaussProb(x,mu(1),sigma(1)) + mix(2)*gaussProb(x,mu(2),sigma(2));
+
+data = generateData;
+domain = 0:0.001:1;  <span class="comment">% also the test points</span>
+kvals = [1 5 30];
+
+<span class="keyword">for</span> i=1:numel(kvals)
+    setupFig(kvals(i));
+    plot(domain,f(domain'),<span class="string">'-g'</span>,<span class="string">'LineWidth'</span>,2.5);
+    plot(data, 0.1*ones(1,n), <span class="string">'.k'</span>,<span class="string">'MarkerSize'</span>,14);
+    window = growWindow(data,domain,kvals(i));
+    <span class="comment">% estimate of the unconditional density p(x) = K/(nV) where the</span>
+    <span class="comment">% volume V, in this 1D case, is just the window size.</span>
+    densityEst = kvals(i)./(window*n);
+    plot(domain,densityEst,<span class="string">'-b'</span>,<span class="string">'LineWidth'</span>,2.5);
+    printPmtkFigure(sprintf(<span class="string">'knnDensityEstimationDemoK%d'</span>, kvals(i)));
+<span class="keyword">end</span>
+<span class="keyword">try</span>
+    placeFigures(<span class="string">'nrows'</span>,numel(kvals),<span class="string">'ncols'</span>,1,<span class="string">'square'</span>,false)
+<span class="keyword">catch</span>  <span class="comment">%#ok If there are too many to fit on the screen with this</span>
+    <span class="comment">% configuration, let placeFigures determine the best layout</span>
+    <span class="comment">% automatically.</span>
+    placeFigures();
+<span class="keyword">end</span>
+
+    <span class="keyword">function</span> data = generateData()
+        <span class="comment">%Generate data from a mixture of gaussians.</span>
+        pdf1 = @(n)gaussSample(struct(<span class="string">'mu'</span>, mu(1), <span class="string">'Sigma'</span>, sigma(1)), n);
+        pdf2 = @(n)gaussSample(struct(<span class="string">'mu'</span>, mu(2), <span class="string">'Sigma'</span>, sigma(2)), n);
+        data = rand(n,1);
+        nmix1 = data &lt;= mix(1);
+        data(nmix1) = pdf1(sum(nmix1));
+        data(~nmix1) = pdf2(sum(~nmix1));
+    <span class="keyword">end</span>
+
+    <span class="keyword">function</span> window = growWindow(trainingPoints,testPoints,K)
+        <span class="comment">% For every point in testPoints, determine the minimum window</span>
+        <span class="comment">% centered on the test point, containing exactly K trainingPoints. Here</span>
+        <span class="comment">% a window is just a contiguous region on the x-axis.</span>
+
+        <span class="comment">% for every point in trainingData, calculate the euclidean distance</span>
+        <span class="comment">% to every point in testPoints resulting in a matrix of size</span>
+        <span class="comment">% numel(trainingPoints)-by-numel(testPoints).</span>
+        euclidDist = @(a,b)sqrt(sum((a-b).^2,2));
+        dist =  bsxfun(euclidDist,trainingPoints,testPoints);
+
+        <span class="comment">% find the nearest K training points to each test point.</span>
+        sorted = sort(dist,1);
+        nearestK = sorted(1:K,:);
+        window = 2*max(nearestK,[],1);
+    <span class="keyword">end</span>
+
+    <span class="keyword">function</span> setupFig(k)
+        figure;
+        hold <span class="string">on</span>;
+        axis([0,1,0,5]);
+        set(gca,<span class="string">'XTick'</span>,0:0.5:1,<span class="string">'YTick'</span>,[0,5],<span class="string">'box'</span>,<span class="string">'on'</span>,<span class="string">'FontSize'</span>,16);
+        title([<span class="string">'K = '</span>,num2str(k)]);
+        scrsz = get(0,<span class="string">'ScreenSize'</span>);
+        left =  20;   right = 20;
+        lower = 50;   upper = 125;
+        width = scrsz(3)-left-right;
+        height = (scrsz(4)-lower-upper)/3;
+        set(gcf,<span class="string">'Position'</span>,[left,scrsz(4)/2,width, height]);
+    <span class="keyword">end</span>
+
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="knnDensityEstimationDemo_01.png" alt=""> <img vspace="5" hspace="5" src="knnDensityEstimationDemo_02.png" alt=""> <img vspace="5" hspace="5" src="knnDensityEstimationDemo_03.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% An illustration of density estimation with k-nearest neighbours.
+% Contrast this with parzenWindowDemo(), where rather than fixing the
+% number of points, K, as we do here, we fix the window size.
+%%
+
+% This file is from pmtk3.googlecode.com
+
+function knnDensityEstimationDemo()
+
+setSeed(0);
+mix = [0.35,0.65];
+sigma = [0.015,0.01];
+mu = [0.25,0.75];
+n = 50;                 % number of training points
+
+%The true function, we are trying to recover
+f = @(x)mix(1)*gaussProb(x,mu(1),sigma(1)) + mix(2)*gaussProb(x,mu(2),sigma(2));
+
+data = generateData;
+domain = 0:0.001:1;  % also the test points
+kvals = [1 5 30];
+
+for i=1:numel(kvals)
+    setupFig(kvals(i));
+    plot(domain,f(domain'),'-g','LineWidth',2.5);
+    plot(data, 0.1*ones(1,n), '.k','MarkerSize',14);
+    window = growWindow(data,domain,kvals(i));
+    % estimate of the unconditional density p(x) = K/(nV) where the
+    % volume V, in this 1D case, is just the window size.
+    densityEst = kvals(i)./(window*n);
+    plot(domain,densityEst,'-b','LineWidth',2.5);
+    printPmtkFigure(sprintf('knnDensityEstimationDemoK%d', kvals(i)));
+end
+try
+    placeFigures('nrows',numel(kvals),'ncols',1,'square',false)
+catch  %#ok If there are too many to fit on the screen with this
+    % configuration, let placeFigures determine the best layout
+    % automatically.
+    placeFigures();
+end
+
+    function data = generateData()
+        %Generate data from a mixture of gaussians.
+        pdf1 = @(n)gaussSample(struct('mu', mu(1), 'Sigma', sigma(1)), n);
+        pdf2 = @(n)gaussSample(struct('mu', mu(2), 'Sigma', sigma(2)), n);
+        data = rand(n,1);
+        nmix1 = data <= mix(1);
+        data(nmix1) = pdf1(sum(nmix1));
+        data(~nmix1) = pdf2(sum(~nmix1));
+    end
+
+    function window = growWindow(trainingPoints,testPoints,K)
+        % For every point in testPoints, determine the minimum window
+        % centered on the test point, containing exactly K trainingPoints. Here
+        % a window is just a contiguous region on the x-axis.
+        
+        % for every point in trainingData, calculate the euclidean distance
+        % to every point in testPoints resulting in a matrix of size
+        % numel(trainingPoints)-by-numel(testPoints).
+        euclidDist = @(a,b)sqrt(sum((a-b).^2,2));
+        dist =  bsxfun(euclidDist,trainingPoints,testPoints);
+        
+        % find the nearest K training points to each test point.
+        sorted = sort(dist,1);
+        nearestK = sorted(1:K,:);
+        window = 2*max(nearestK,[],1);
+    end
+
+    function setupFig(k)
+        figure;
+        hold on;
+        axis([0,1,0,5]);
+        set(gca,'XTick',0:0.5:1,'YTick',[0,5],'box','on','FontSize',16);
+        title(['K = ',num2str(k)]);
+        scrsz = get(0,'ScreenSize');
+        left =  20;   right = 20;
+        lower = 50;   upper = 125;
+        width = scrsz(3)-left-right;
+        height = (scrsz(4)-lower-upper)/3;
+        set(gcf,'Position',[left,scrsz(4)/2,width, height]);
+    end
+
+end
+
+##### SOURCE END #####
+--></body></html>

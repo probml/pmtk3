@@ -1,0 +1,192 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Plot a 2D Gaussian and its decorrelated and whitened transformations</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="gaussPlot2dDemo2.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Plot a 2D Gaussian and its decorrelated and whitened transformations</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#3">U = eigenvectors, D = diagonal matrix of eigenvalues.</a></li><li><a href="#4">Decorrelate</a></li><li><a href="#5">Compute whitening transform:</a></li><li><a href="#9">U = eigenvectors, D= diagonal matrix of eigenvalues.</a></li><li><a href="#10">Evaluate p(x) on a grid.</a></li><li><a href="#11">data(k,:) = [x(k) y(k)] for pixel k</a></li><li><a href="#12">scale density so it sums to 1</a></li><li><a href="#13">3D plot</a></li><li><a href="#14">Plot contours</a></li><li><a href="#15">Plot first eigenvector</a></li><li><a href="#16">Plot second eigenvector</a></li></ul></div><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="keyword">function</span> gaussPlot2dDemo2()
+</pre><pre class="codeinput">setSeed(0);
+mu = [1 0]';           <span class="comment">% mean (must be row vector for mvnpdf)</span>
+S  = [2 1.5; 1.5 4];   <span class="comment">% covariance</span>
+plotSurf(mu, S, <span class="string">'Full'</span>)
+</pre><h2>U = eigenvectors, D = diagonal matrix of eigenvalues.<a name="3"></a></h2><pre class="codeinput">[U,D] = eig(S);
+</pre><h2>Decorrelate<a name="4"></a></h2><pre class="codeinput">S1 = U'*S*U;
+plotSurf(mu, S1, <span class="string">'Diagonal'</span>)
+</pre><h2>Compute whitening transform:<a name="5"></a></h2><pre class="codeinput">A = sqrt(inv(D))*U';
+mu2 = A*mu;
+S2  = A*S*A'; <span class="comment">% might not be numerically equal to I</span>
+assert(approxeq(S2, eye(2)));
+S2 = eye(2);  <span class="comment">% to ensure picture is pretty</span>
+plotSurf(mu2, S2, <span class="string">'Spherical'</span>)
+placeFigures();
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">function</span> plotSurf(mu, S, ttl)
+</pre><pre class="codeinput"><span class="comment">% Gaussian surface plot</span>
+</pre><h2>U = eigenvectors, D= diagonal matrix of eigenvalues.<a name="9"></a></h2><pre class="codeinput">[U, D] = eig(S);
+</pre><h2>Evaluate p(x) on a grid.<a name="10"></a></h2><pre class="codeinput">stepSize = 0.5; <span class="comment">% 0.1 is better for contours, 0.1 for surfc</span>
+[x, y] = meshgrid(-5:stepSize:5, -5:stepSize:5); <span class="comment">% Create grid.</span>
+[r, c]=size(x);
+</pre><h2>data(k,:) = [x(k) y(k)] for pixel k<a name="11"></a></h2><pre class="codeinput">data = [x(:) y(:)];
+p = gaussProb(data, mu', S);
+p = reshape(p, r, c);
+</pre><h2>scale density so it sums to 1<a name="12"></a></h2><p>p2(x,y)  defeq  p(x: x+dx, y: y+ dy) approx p(x,y) dx dy</p><pre class="codeinput">p = p*stepSize^2;
+assert(approxeq(sum(p(:)), 1, 1e-1))
+</pre><h2>3D plot<a name="13"></a></h2><pre class="codeinput">figure();
+surfc(x,y,p);
+xlabel(<span class="string">'x'</span>, <span class="string">'fontsize'</span>, 10);
+ylabel(<span class="string">'y'</span>, <span class="string">'fontsize'</span>, 10);
+zlabel(<span class="string">'p(x,y)'</span>, <span class="string">'fontsize'</span>, 10);
+rho = S(1,2)/sqrt(S(1,1)*S(2,2));
+title(sprintf(<span class="string">'%s, S=[%3.1f %3.1f ; %3.1f  %3.1f], %s=%3.2f'</span>, <span class="keyword">...</span>
+    ttl, S(1,1), S(1,2), S(2,1), S(2,2), <span class="string">'\rho'</span>, rho))
+
+printPmtkFigure(sprintf(<span class="string">'gaussPlot2dDemoSurfCoarse%s'</span>, ttl));
+</pre><img vspace="5" hspace="5" src="gaussPlot2dDemo2_01.png" alt=""> <img vspace="5" hspace="5" src="gaussPlot2dDemo2_05.png" alt=""> <img vspace="5" hspace="5" src="gaussPlot2dDemo2_09.png" alt=""> <h2>Plot contours<a name="14"></a></h2><pre class="codeinput">figure();
+contour(x, y, p);
+axis(<span class="string">'square'</span>);
+xlabel(<span class="string">'x'</span>, <span class="string">'fontsize'</span>, 10);
+ylabel(<span class="string">'y'</span>, <span class="string">'fontsize'</span>, 10);
+</pre><img vspace="5" hspace="5" src="gaussPlot2dDemo2_02.png" alt=""> <img vspace="5" hspace="5" src="gaussPlot2dDemo2_06.png" alt=""> <img vspace="5" hspace="5" src="gaussPlot2dDemo2_10.png" alt=""> <h2>Plot first eigenvector<a name="15"></a></h2><pre class="codeinput">line([mu(1) mu(1)+sqrt(D(1,1))*U(1,1)], <span class="keyword">...</span>
+    [mu(2) mu(2)+sqrt(D(1,1))*U(2,1)], <span class="string">'linewidth'</span>, 3)
+</pre><img vspace="5" hspace="5" src="gaussPlot2dDemo2_03.png" alt=""> <img vspace="5" hspace="5" src="gaussPlot2dDemo2_07.png" alt=""> <img vspace="5" hspace="5" src="gaussPlot2dDemo2_11.png" alt=""> <h2>Plot second eigenvector<a name="16"></a></h2><pre class="codeinput">line([mu(1) mu(1)+sqrt(D(2,2))*U(1,2)], <span class="keyword">...</span>
+    [mu(2) mu(2)+sqrt(D(2,2))*U(2,2)], <span class="string">'linewidth'</span>, 3)
+title(sprintf(<span class="string">'%s, S=[%3.1f %3.1f ; %3.1f  %3.1f]'</span>,<span class="keyword">...</span>
+    ttl, S(1,1), S(1,2), S(2,1), S(2,2)));
+printPmtkFigure(sprintf(<span class="string">'gaussPlot2dDemoContour%s'</span>, ttl));
+</pre><img vspace="5" hspace="5" src="gaussPlot2dDemo2_04.png" alt=""> <img vspace="5" hspace="5" src="gaussPlot2dDemo2_08.png" alt=""> <img vspace="5" hspace="5" src="gaussPlot2dDemo2_12.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Plot a 2D Gaussian and its decorrelated and whitened transformations
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+function gaussPlot2dDemo2()
+
+setSeed(0);
+mu = [1 0]';           % mean (must be row vector for mvnpdf)
+S  = [2 1.5; 1.5 4];   % covariance
+plotSurf(mu, S, 'Full')
+%% U = eigenvectors, D = diagonal matrix of eigenvalues.
+[U,D] = eig(S);
+%% Decorrelate
+S1 = U'*S*U;
+plotSurf(mu, S1, 'Diagonal')
+%% Compute whitening transform:
+A = sqrt(inv(D))*U';
+mu2 = A*mu;
+S2  = A*S*A'; % might not be numerically equal to I
+assert(approxeq(S2, eye(2)));
+S2 = eye(2);  % to ensure picture is pretty
+plotSurf(mu2, S2, 'Spherical')
+placeFigures();
+end
+%%
+function plotSurf(mu, S, ttl)
+% Gaussian surface plot
+%% U = eigenvectors, D= diagonal matrix of eigenvalues.
+[U, D] = eig(S);
+%% Evaluate p(x) on a grid.
+stepSize = 0.5; % 0.1 is better for contours, 0.1 for surfc
+[x, y] = meshgrid(-5:stepSize:5, -5:stepSize:5); % Create grid.
+[r, c]=size(x);
+%% data(k,:) = [x(k) y(k)] for pixel k
+data = [x(:) y(:)];
+p = gaussProb(data, mu', S);
+p = reshape(p, r, c);
+%% scale density so it sums to 1
+% p2(x,y)  defeq  p(x: x+dx, y: y+ dy) approx p(x,y) dx dy
+p = p*stepSize^2; 
+assert(approxeq(sum(p(:)), 1, 1e-1))
+%% 3D plot
+figure();
+surfc(x,y,p);
+xlabel('x', 'fontsize', 10);
+ylabel('y', 'fontsize', 10);
+zlabel('p(x,y)', 'fontsize', 10);
+rho = S(1,2)/sqrt(S(1,1)*S(2,2));
+title(sprintf('%s, S=[%3.1f %3.1f ; %3.1f  %3.1f], %s=%3.2f', ...
+    ttl, S(1,1), S(1,2), S(2,1), S(2,2), '\rho', rho))
+
+printPmtkFigure(sprintf('gaussPlot2dDemoSurfCoarse%s', ttl));
+%% Plot contours
+figure();
+contour(x, y, p);           
+axis('square');
+xlabel('x', 'fontsize', 10);
+ylabel('y', 'fontsize', 10);
+%% Plot first eigenvector
+line([mu(1) mu(1)+sqrt(D(1,1))*U(1,1)], ...
+    [mu(2) mu(2)+sqrt(D(1,1))*U(2,1)], 'linewidth', 3)
+%% Plot second eigenvector
+line([mu(1) mu(1)+sqrt(D(2,2))*U(1,2)], ...
+    [mu(2) mu(2)+sqrt(D(2,2))*U(2,2)], 'linewidth', 3)
+title(sprintf('%s, S=[%3.1f %3.1f ; %3.1f  %3.1f]',...
+    ttl, S(1,1), S(1,2), S(2,1), S(2,2)));
+printPmtkFigure(sprintf('gaussPlot2dDemoContour%s', ttl));
+end
+
+##### SOURCE END #####
+--></body></html>

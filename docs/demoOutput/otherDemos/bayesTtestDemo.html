@@ -1,0 +1,121 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Bayesian T test demo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="bayesTtestDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Bayesian T test demo</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Paired test</a></li><li><a href="#2">Compare to web program (slightly different prior)</a></li><li><a href="#3">Unpaired (pooled) test</a></li></ul></div><h2>Paired test<a name="1"></a></h2><p>Data from <a href="http://en.wikipedia.org/wiki/Student's_t-test">http://en.wikipedia.org/wiki/Student's_t-test</a></p><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+z = [ 30.02, 29.99, 30.11, 29.97, 30.01, 29.99];
+y = [ 29.89, 29.93, 29.72, 29.98, 30.02, 29.98];
+
+[BF01, probH0] = bayesTtestOneSample(y-z)
+</pre><pre class="codeoutput">BF01 =
+    1.0358
+probH0 =
+    0.5088
+</pre><h2>Compare to web program (slightly different prior)<a name="2"></a></h2><p><a href="http://pcl.missouri.edu/sites/default/bf/one-sample.php">http://pcl.missouri.edu/sites/default/bf/one-sample.php</a></p><h2>Unpaired (pooled) test<a name="3"></a></h2><p>Data from Gonen et al 2005 sec 4</p><pre class="codeinput">xbar         = 5;
+ybar         = -0.2727;
+Nx           = 10;
+Ny           = 11;
+sx           = 8.7433;
+sy           = 5.9007;
+
+<span class="comment">%[BF01, probH0] = bayesTtestTwoSample(x,y)</span>
+[BF01, probH0] = bayesTtestTwoSample([],[],xbar,ybar,Nx,Ny,sx,sy)
+</pre><pre class="codeoutput">BF01 =
+    0.8379
+probH0 =
+    0.4559
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Bayesian T test demo
+%
+%% Paired test
+% Data from http://en.wikipedia.org/wiki/Student's_t-test
+
+% This file is from pmtk3.googlecode.com
+
+z = [ 30.02, 29.99, 30.11, 29.97, 30.01, 29.99];
+y = [ 29.89, 29.93, 29.72, 29.98, 30.02, 29.98];
+
+[BF01, probH0] = bayesTtestOneSample(y-z)
+%% Compare to web program (slightly different prior)
+% http://pcl.missouri.edu/sites/default/bf/one-sample.php
+
+
+%% Unpaired (pooled) test
+% Data from Gonen et al 2005 sec 4
+xbar         = 5; 
+ybar         = -0.2727;
+Nx           = 10; 
+Ny           = 11;
+sx           = 8.7433; 
+sy           = 5.9007;
+
+%[BF01, probH0] = bayesTtestTwoSample(x,y)
+[BF01, probH0] = bayesTtestTwoSample([],[],xbar,ybar,Nx,Ny,sx,sy)
+
+
+
+##### SOURCE END #####
+--></body></html>

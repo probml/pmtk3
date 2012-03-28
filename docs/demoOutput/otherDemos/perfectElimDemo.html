@@ -1,0 +1,141 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Demonstrate perfect elimination ordering</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="perfectElimDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Demonstrate perfect elimination ordering</h1><!--introduction--><p>Based on Lauritzen's Saint-Flour notes 2006</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Non-chordal Example from Fig 3.6</a></li><li><a href="#2">Chordal Example  from fig 3.7</a></li></ul></div><h2>Non-chordal Example from Fig 3.6<a name="1"></a></h2><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+G = zeros(7,7);
+G(1,[2 3 4])=1;
+G(2,[1 3 6])=1;
+G(3,[1 2 4 5 7])=1;
+G(4,[1 3 5])=1;
+G(5,[3 4])=1;
+G(6,[2 7])=1;
+G(7,[6 3])=1;
+assert(isequal(G,G'));
+<span class="comment">%drawNetwork(G)</span>
+
+[order, chordal] = perfectElimOrder(G);
+assert(~chordal)
+</pre><h2>Chordal Example  from fig 3.7<a name="2"></a></h2><pre class="codeinput">G2 = G;
+G2(3,7)=0; G2(7,3)=0; <span class="comment">% remove edge</span>
+G2(1,3)=1; G2(3,1)=1; <span class="comment">% add edge</span>
+[order, chordal, cliques, numpa] = perfectElimOrder(G2)
+assert(chordal)
+<span class="comment">%[re_index_cliques, cliques]= chordal2RipCliques(G2, order)</span>
+
+ jtree = mcsCliques2Jtree(cliques)
+</pre><pre class="codeoutput">order =
+     1     2     3     4     5     6     7
+chordal =
+     1
+cliques = 
+  Columns 1 through 2
+    [1x3 double]    [1x3 double]
+  Columns 3 through 4
+    [1x3 double]    [1x2 double]
+  Column 5
+    [1x2 double]
+numpa =
+     0     1     2     2     2     1     1
+jtree =
+     0     1     0     1     0
+     1     0     1     0     0
+     0     1     0     0     0
+     1     0     0     0     1
+     0     0     0     1     0
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Demonstrate perfect elimination ordering
+% Based on Lauritzen's Saint-Flour notes 2006
+%% Non-chordal Example from Fig 3.6 
+
+% This file is from pmtk3.googlecode.com
+
+G = zeros(7,7);
+G(1,[2 3 4])=1;
+G(2,[1 3 6])=1;
+G(3,[1 2 4 5 7])=1;
+G(4,[1 3 5])=1;
+G(5,[3 4])=1;
+G(6,[2 7])=1;
+G(7,[6 3])=1;
+assert(isequal(G,G'));
+%drawNetwork(G)
+
+[order, chordal] = perfectElimOrder(G);
+assert(~chordal)
+
+%% Chordal Example  from fig 3.7
+G2 = G;
+G2(3,7)=0; G2(7,3)=0; % remove edge
+G2(1,3)=1; G2(3,1)=1; % add edge
+[order, chordal, cliques, numpa] = perfectElimOrder(G2)
+assert(chordal)
+%[re_index_cliques, cliques]= chordal2RipCliques(G2, order)
+
+ jtree = mcsCliques2Jtree(cliques)
+
+##### SOURCE END #####
+--></body></html>

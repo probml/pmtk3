@@ -1,0 +1,221 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>Compare the class separations induced by PCA and Fisher LDA respectively.</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="fisherLDAdemo"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Compare the class separations induced by PCA and Fisher LDA respectively.</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#3">Generate data</a></li><li><a href="#5">Plot data</a></li><li><a href="#6">Plot means</a></li><li><a href="#7">Calculate projections</a></li><li><a href="#8">Plot a line between the means</a></li><li><a href="#9">Plot the LDA projection</a></li><li><a href="#10">Plot the PCA projection</a></li><li><a href="#12">Project the data</a></li><li><a href="#13">Show histograms of the projected data</a></li><li><a href="#15">Subfunction to plot histograms of the projected data</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> fisherLDAdemo()
+</pre><pre class="codeinput"><span class="comment">%</span>
+</pre><h2>Generate data<a name="3"></a></h2><pre class="codeinput">setSeed(0);
+mu = [1 3; 3 1];
+Sigma = repmat([4 0.01; 0.01 0.1], [1, 1, 3]);
+mixweight = [0.5 0.5];
+nsamples = 200;
+[X, Y] = mixGaussSample(mu, Sigma, mixweight, nsamples);
+</pre><pre class="codeinput">maleNdx = (Y == 1);
+femaleNdx = (Y == 2);
+</pre><h2>Plot data<a name="5"></a></h2><pre class="codeinput">figure;
+plot(X(maleNdx, 1), X(maleNdx, 2), <span class="keyword">...</span>
+    <span class="string">'b+'</span>, <span class="string">'MarkerSize'</span>, 8, <span class="string">'linewidth'</span>, 1.5);
+hold <span class="string">on</span>
+plot(X(femaleNdx, 1), X(femaleNdx, 2), <span class="keyword">...</span>
+    <span class="string">'ro'</span>, <span class="string">'MarkerSize'</span>, 8, <span class="string">'linewidth'</span>, 1.5);
+axis <span class="string">equal</span>
+</pre><img vspace="5" hspace="5" src="fisherLDAdemo_01.png" alt=""> <h2>Plot means<a name="6"></a></h2><pre class="codeinput">muMale = mean(X(maleNdx, :));
+muFemale = mean(X(femaleNdx, :));
+plot(muMale(1)  , muMale(2)  , <span class="string">'k+'</span>, <span class="string">'markerSize'</span>, 15, <span class="string">'linewidth'</span>, 3)
+plot(muFemale(1), muFemale(2), <span class="string">'ko'</span>, <span class="string">'markerSize'</span>, 15, <span class="string">'linewidth'</span>, 3)
+mu = mean(X);
+plot(mu(1), mu(2), <span class="string">'k*'</span>, <span class="string">'markerSize'</span>, 15, <span class="string">'linewidth'</span>, 3)
+</pre><img vspace="5" hspace="5" src="fisherLDAdemo_02.png" alt=""> <h2>Calculate projections<a name="7"></a></h2><pre class="codeinput">wMean = (muMale - muFemale)';
+wFisher = fisherLdaFit(X,Y);
+[wPCA] = pcaPmtk(X, 1);
+</pre><h2>Plot a line between the means<a name="8"></a></h2><pre class="codeinput">h1 = line([muMale(1) muFemale(1)], [muMale(2) muFemale(2)]);
+set(h1,<span class="string">'linewidth'</span>,3, <span class="string">'color'</span>, <span class="string">'k'</span>);
+</pre><img vspace="5" hspace="5" src="fisherLDAdemo_03.png" alt=""> <h2>Plot the LDA projection<a name="9"></a></h2><pre class="codeinput">s = 50;
+h2=line([mu(1)-s*wFisher(1) mu(1)+s*wFisher(1)], <span class="keyword">...</span>
+        [mu(2)-s*wFisher(2) mu(2)+s*wFisher(2)]);
+set(h2, <span class="string">'color'</span>, <span class="string">'r'</span>, <span class="string">'linewidth'</span>, 3, <span class="string">'linestyle'</span>, <span class="string">':'</span>,<span class="keyword">...</span>
+        <span class="string">'YLimInclude'</span>, <span class="string">'off'</span>, <span class="string">'XLimInclude'</span>, <span class="string">'off'</span>)
+</pre><img vspace="5" hspace="5" src="fisherLDAdemo_04.png" alt=""> <h2>Plot the PCA projection<a name="10"></a></h2><pre class="codeinput">s  = 50;
+h3=line([mu(1)-s*wPCA(1) mu(1)+s*wPCA(1)],<span class="keyword">...</span>
+        [mu(2)-s*wPCA(2) mu(2)+s*wPCA(2)]);
+set(h3, <span class="string">'color'</span>, <span class="string">'g'</span>, <span class="string">'linewidth'</span>, 3, <span class="string">'linestyle'</span>, <span class="string">'--'</span>,<span class="keyword">...</span>
+    <span class="string">'YLimInclude'</span>, <span class="string">'off'</span>, <span class="string">'XLimInclude'</span>, <span class="string">'off'</span>)
+</pre><img vspace="5" hspace="5" src="fisherLDAdemo_05.png" alt=""> <pre class="codeinput">uistack(h1, <span class="string">'bottom'</span>);
+uistack(h2, <span class="string">'bottom'</span>);
+uistack(h3, <span class="string">'bottom'</span>);
+str = {<span class="string">'means'</span>, <span class="string">'fisher'</span>, <span class="string">'pca'</span>};
+legend([h1 h2 h3],str, <span class="string">'location'</span>, <span class="string">'northwest'</span>)
+printPmtkFigure <span class="string">fisherLDAdemoData</span>;
+</pre><img vspace="5" hspace="5" src="fisherLDAdemo_06.png" alt=""> <h2>Project the data<a name="12"></a></h2><pre class="codeinput">XprojMean = X*wMean;
+XprojFisher = X*wFisher;
+XprojPCA = X*wPCA;
+</pre><h2>Show histograms of the projected data<a name="13"></a></h2><pre class="codeinput">figure;
+plotData(XprojMean, maleNdx, femaleNdx, str{1});
+printPmtkFigure <span class="string">fisherLDAdemoProjMean</span>;
+
+figure;
+plotData(XprojFisher, maleNdx, femaleNdx, str{2});
+printPmtkFigure <span class="string">fisherLDAdemoProjFisher</span>;
+
+figure
+plotData(XprojPCA, maleNdx, femaleNdx, str{3});
+printPmtkFigure <span class="string">fisherLDAdemoProjPCA</span>;
+</pre><pre class="codeinput"><span class="keyword">end</span>
+
+<span class="keyword">function</span> plotData(Xproj, maleNdx, femaleNdx, ttl)
+</pre><h2>Subfunction to plot histograms of the projected data<a name="15"></a></h2><pre class="codeinput">[nMale, xMale]  = hist(Xproj(maleNdx));
+bar(xMale, nMale, <span class="string">'b'</span>)
+[nFemale, xFemale] = hist(Xproj(femaleNdx));
+hold <span class="string">on</span>
+bar(xFemale, nFemale, <span class="string">'r'</span>)
+title(ttl)
+</pre><img vspace="5" hspace="5" src="fisherLDAdemo_07.png" alt=""> <img vspace="5" hspace="5" src="fisherLDAdemo_08.png" alt=""> <img vspace="5" hspace="5" src="fisherLDAdemo_09.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Compare the class separations induced by PCA and Fisher LDA respectively.
+%
+%%
+function fisherLDAdemo()
+
+%
+%% Generate data
+setSeed(0);
+mu = [1 3; 3 1];
+Sigma = repmat([4 0.01; 0.01 0.1], [1, 1, 3]);
+mixweight = [0.5 0.5];
+nsamples = 200;
+[X, Y] = mixGaussSample(mu, Sigma, mixweight, nsamples); 
+%%
+maleNdx = (Y == 1);
+femaleNdx = (Y == 2);
+%% Plot data
+figure;
+plot(X(maleNdx, 1), X(maleNdx, 2), ...
+    'b+', 'MarkerSize', 8, 'linewidth', 1.5);
+hold on
+plot(X(femaleNdx, 1), X(femaleNdx, 2), ...
+    'ro', 'MarkerSize', 8, 'linewidth', 1.5);
+axis equal
+%% Plot means
+muMale = mean(X(maleNdx, :));
+muFemale = mean(X(femaleNdx, :));
+plot(muMale(1)  , muMale(2)  , 'k+', 'markerSize', 15, 'linewidth', 3)
+plot(muFemale(1), muFemale(2), 'ko', 'markerSize', 15, 'linewidth', 3)
+mu = mean(X);
+plot(mu(1), mu(2), 'k*', 'markerSize', 15, 'linewidth', 3)
+%% Calculate projections
+wMean = (muMale - muFemale)';
+wFisher = fisherLdaFit(X,Y);
+[wPCA] = pcaPmtk(X, 1);
+%% Plot a line between the means
+h1 = line([muMale(1) muFemale(1)], [muMale(2) muFemale(2)]);
+set(h1,'linewidth',3, 'color', 'k');
+%% Plot the LDA projection
+s = 50;
+h2=line([mu(1)-s*wFisher(1) mu(1)+s*wFisher(1)], ...
+        [mu(2)-s*wFisher(2) mu(2)+s*wFisher(2)]);
+set(h2, 'color', 'r', 'linewidth', 3, 'linestyle', ':',...
+        'YLimInclude', 'off', 'XLimInclude', 'off')
+%% Plot the PCA projection
+s  = 50;
+h3=line([mu(1)-s*wPCA(1) mu(1)+s*wPCA(1)],...
+        [mu(2)-s*wPCA(2) mu(2)+s*wPCA(2)]);
+set(h3, 'color', 'g', 'linewidth', 3, 'linestyle', 'REPLACE_WITH_DASH_DASH',...
+    'YLimInclude', 'off', 'XLimInclude', 'off')
+%%
+uistack(h1, 'bottom');
+uistack(h2, 'bottom');
+uistack(h3, 'bottom');
+str = {'means', 'fisher', 'pca'};
+legend([h1 h2 h3],str, 'location', 'northwest')
+printPmtkFigure fisherLDAdemoData;
+%% Project the data
+XprojMean = X*wMean;
+XprojFisher = X*wFisher;
+XprojPCA = X*wPCA;
+%% Show histograms of the projected data
+figure;
+plotData(XprojMean, maleNdx, femaleNdx, str{1});
+printPmtkFigure fisherLDAdemoProjMean;
+
+figure;
+plotData(XprojFisher, maleNdx, femaleNdx, str{2});
+printPmtkFigure fisherLDAdemoProjFisher;
+
+figure
+plotData(XprojPCA, maleNdx, femaleNdx, str{3});
+printPmtkFigure fisherLDAdemoProjPCA;
+end
+
+function plotData(Xproj, maleNdx, femaleNdx, ttl)
+%% Subfunction to plot histograms of the projected data
+[nMale, xMale]  = hist(Xproj(maleNdx));
+bar(xMale, nMale, 'b')
+[nFemale, xFemale] = hist(Xproj(femaleNdx));
+hold on
+bar(xFemale, nFemale, 'r')
+title(ttl)
+end
+##### SOURCE END #####
+--></body></html>

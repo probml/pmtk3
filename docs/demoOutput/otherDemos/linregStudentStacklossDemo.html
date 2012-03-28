@@ -1,0 +1,279 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Reproduce table 1 from "Robust statistical modeling using the T distribution</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="linregStudentStacklossDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Reproduce table 1 from "Robust statistical modeling using the T distribution</h1><!--introduction--><p>Lange et al, JASA 1989 The estimated coefficients are similar However, this does <b>not</b> reproduce the log likelihoods correctly The reason for this is not clear - is Lange evaluating the expected complete data loglik instead?</p><p>PMTKauthor Hannes Bretschneider</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">fit model</a></li><li><a href="#3">format output</a></li></ul></div><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+saveLatex = false;
+loadData(<span class="string">'stackloss'</span>);
+n = size(X,1);
+X1 = [ones(n,1) X];
+</pre><h2>fit model<a name="2"></a></h2><p>dof=0 means estimate from data dof=100 means effectively use Gaussian model</p><pre class="codeinput">dofs = [100, 8, 4, 3, 2, 1.1, 1, 0.5, 0];
+modelEM = cell(1,length(dofs));
+loglikEM  = zeros(1, length(dofs));
+<span class="keyword">for</span> i = 1:length(dofs)
+    dof = dofs(i);
+    modelEM{i} = linregRobustStudentFitEm(X, y, dof);
+    loglikEM(i) = sum(linregLogprob(modelEM{i}, X, y));
+
+    <span class="comment">% debug - use objective fn from linregRobustStudentFitConstr</span>
+    sigma2 = modelEM{i}.sigma2; w = [modelEM{i}.w0; modelEM{i}.w];
+    sigma = sqrt(sigma2);
+    theta = y - X1*w;
+    nll = sum(1/2*log(dof*pi) + log(gamma(dof/2)) - log(gamma((dof+1)/2)) + <span class="keyword">...</span>
+        log(sigma) + (dof+1)/2*log(1+theta.^2 / (sigma2*dof)));
+    <span class="comment">%assert(approxeq(nll, -loglikEM(i))) % FAILS!</span>
+
+    <span class="keyword">if</span> optimToolboxInstalled
+      modelConstr{i} = linregRobustStudentFitConstr(X, y, dof);
+      loglikConstr(i) = sum(linregLogprob(modelConstr{i}, X, y));
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><h2>format output<a name="3"></a></h2><pre class="codeinput">fprintf(<span class="string">'estimated dof using EM %5.3f\n'</span>, <span class="keyword">...</span>
+    modelEM{end}.dof);
+ndof = length(dofs);
+table = NaN(ndof,6);
+table(:,1) = dofs';
+table(:,2) = loglikEM';
+<span class="keyword">for</span> i = 1:ndof
+    table(i,3:6) = [modelEM{i}.w0, rowvec(modelEM{i}.w)];
+<span class="keyword">end</span>
+
+
+
+
+labels = {<span class="string">'dof'</span>, <span class="string">'loglik'</span>, <span class="string">'w0'</span>, <span class="string">'w1'</span>, <span class="string">'w2'</span>, <span class="string">'w3'</span>};
+<span class="keyword">if</span> saveLatex
+    latextable(table, <span class="string">'Format'</span>, <span class="string">'%5.3f'</span>, <span class="string">'horiz'</span>, labels, <span class="string">'hline'</span>, 1, <span class="keyword">...</span>
+        <span class="string">'name'</span>, <span class="string">'stacklossOutputEm'</span>);
+<span class="keyword">end</span>
+table
+
+
+<span class="keyword">if</span> optimToolboxInstalled
+  fprintf(<span class="string">'estimated dof, EM %5.3f, constr %5.3f\n'</span>, <span class="keyword">...</span>
+    modelEM{end}.dof, modelConstr{end}.dof);
+  table = NaN(ndof,6);
+  table(:,1) = dofs';
+  table(:,2) = loglikConstr';
+  <span class="keyword">for</span> i = 1:ndof
+    table(i,3:6) = [modelConstr{i}.w0, rowvec(modelConstr{i}.w)];
+  <span class="keyword">end</span>
+  <span class="keyword">if</span> saveLatex
+    latextable(table, <span class="string">'Format'</span>, <span class="string">'%5.3f'</span>, <span class="string">'horiz'</span>, labels, <span class="string">'hline'</span>, 1, <span class="keyword">...</span>
+      <span class="string">'name'</span>, <span class="string">'stacklossOutputConstr'</span>);
+  <span class="keyword">end</span>
+  table
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">estimated dof using EM 100.000
+table =
+   1.0e+03 *
+  Columns 1 through 2
+   0.100000000000000  -0.216429672988479
+   0.008000000000000  -0.235279889677488
+   0.004000000000000  -0.253023639433307
+   0.003000000000000  -0.264942954323402
+   0.002000000000000  -0.290457643927778
+   0.001100000000000  -0.412752563701974
+   0.001000000000000  -0.457864681146657
+   0.000500000000000  -1.203491594706956
+                   0  -0.216431004020065
+  Columns 3 through 4
+   0.017304989998119   0.000850405221885
+   0.017183216514702   0.000839960719661
+   0.017114679365351   0.000839569908071
+   0.017083620044469   0.000843653776054
+   0.017047146714152   0.000859066620858
+   0.017135267609926   0.000946040101198
+   0.017193926049080   0.000965656191334
+   0.017512168515629   0.001041136651438
+   0.017304974473866   0.000850403592453
+  Columns 5 through 6
+   0.000947126231764  -0.000824061153958
+   0.000946038879099  -0.000815070024625
+   0.000902764948779  -0.000803446240273
+   0.000857142764981  -0.000794817751031
+   0.000744312077470  -0.000777666424452
+   0.000354208622058  -0.000744440242372
+   0.000279644876290  -0.000740669530438
+   0.000018513171085  -0.000733521396867
+   0.000947129899668  -0.000824060727609
+estimated dof, EM 100.000, constr 1.142
+table =
+   1.0e+04 *
+  Columns 1 through 2
+   0.010000000000000  -0.198711051832528
+   0.000800000000000  -0.280077103162941
+   0.000400000000000  -0.408056727351677
+   0.000300000000000  -0.522338222104107
+   0.000200000000000  -0.833144753935143
+   0.000110000000000  -1.690486577246523
+   0.000100000000000  -1.899632449439419
+   0.000050000000000  -9.411624309756947
+                   0  -1.607390207968336
+  Columns 3 through 4
+  -0.004001683972283   0.000073794020194
+  -0.004008405051481   0.000083198109696
+  -0.004007557491014   0.000087366892584
+  -0.003986107147885   0.000086941163542
+  -0.003898354556639   0.000085861492942
+  -0.003920143645188   0.000085805702608
+  -0.003927835467681   0.000085746157836
+  -0.004037727907743   0.000083908518191
+  -0.003900328344566   0.000085831425364
+  Columns 5 through 6
+   0.000119722776510  -0.000014189431798
+   0.000088718595065  -0.000013062670057
+   0.000068563846425  -0.000011147888770
+   0.000060898210517  -0.000009360117405
+   0.000051941016323  -0.000007601820183
+   0.000046452620483  -0.000005988223517
+   0.000046469435375  -0.000005854282047
+   0.000053881621831  -0.000004969701642
+   0.000046439844677  -0.000006239622294
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Reproduce table 1 from "Robust statistical modeling using the T distribution
+% Lange et al, JASA 1989
+% The estimated coefficients are similar
+% However, this does *not* reproduce the log likelihoods correctly
+% The reason for this is not clear - is Lange evaluating the expected
+% complete data loglik instead?
+%
+% PMTKauthor Hannes Bretschneider
+%%
+
+% This file is from pmtk3.googlecode.com
+
+saveLatex = false;
+loadData('stackloss');
+n = size(X,1);
+X1 = [ones(n,1) X];
+%% fit model
+% dof=0 means estimate from data
+% dof=100 means effectively use Gaussian model
+dofs = [100, 8, 4, 3, 2, 1.1, 1, 0.5, 0];
+modelEM = cell(1,length(dofs));
+loglikEM  = zeros(1, length(dofs));
+for i = 1:length(dofs)
+    dof = dofs(i);
+    modelEM{i} = linregRobustStudentFitEm(X, y, dof);
+    loglikEM(i) = sum(linregLogprob(modelEM{i}, X, y));
+    
+    % debug - use objective fn from linregRobustStudentFitConstr
+    sigma2 = modelEM{i}.sigma2; w = [modelEM{i}.w0; modelEM{i}.w];
+    sigma = sqrt(sigma2);
+    theta = y - X1*w;
+    nll = sum(1/2*log(dof*pi) + log(gamma(dof/2)) - log(gamma((dof+1)/2)) + ...
+        log(sigma) + (dof+1)/2*log(1+theta.^2 / (sigma2*dof)));
+    %assert(approxeq(nll, -loglikEM(i))) % FAILS!
+    
+    if optimToolboxInstalled
+      modelConstr{i} = linregRobustStudentFitConstr(X, y, dof);
+      loglikConstr(i) = sum(linregLogprob(modelConstr{i}, X, y));
+    end
+end
+
+%% format output
+
+fprintf('estimated dof using EM %5.3f\n', ...
+    modelEM{end}.dof);
+ndof = length(dofs);
+table = NaN(ndof,6);
+table(:,1) = dofs';
+table(:,2) = loglikEM';
+for i = 1:ndof
+    table(i,3:6) = [modelEM{i}.w0, rowvec(modelEM{i}.w)];
+end
+
+
+
+
+labels = {'dof', 'loglik', 'w0', 'w1', 'w2', 'w3'};
+if saveLatex
+    latextable(table, 'Format', '%5.3f', 'horiz', labels, 'hline', 1, ...
+        'name', 'stacklossOutputEm');
+end
+table
+
+
+if optimToolboxInstalled
+  fprintf('estimated dof, EM %5.3f, constr %5.3f\n', ...
+    modelEM{end}.dof, modelConstr{end}.dof);
+  table = NaN(ndof,6);
+  table(:,1) = dofs';
+  table(:,2) = loglikConstr';
+  for i = 1:ndof
+    table(i,3:6) = [modelConstr{i}.w0, rowvec(modelConstr{i}.w)];
+  end
+  if saveLatex
+    latextable(table, 'Format', '%5.3f', 'horiz', labels, 'hline', 1, ...
+      'name', 'stacklossOutputConstr');
+  end
+  table
+end
+
+
+##### SOURCE END #####
+--></body></html>

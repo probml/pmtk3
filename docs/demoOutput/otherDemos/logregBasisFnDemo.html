@@ -1,0 +1,171 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Logistic Regression with RBF Basis</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="logregBasisFnDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Logistic Regression with RBF Basis</h1><!--introduction--><pre>based on Bishop fig 4.12</pre><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Parameters</a></li><li><a href="#2">Generate some data from a mixture of 3 2d spherical Gaussians</a></li><li><a href="#3">Try fitting simple  model in original feature space</a></li><li><a href="#4">Try fitting simple polynomial model</a></li><li><a href="#5">Map to RBF basis</a></li><li><a href="#6">Plot in the original space</a></li><li><a href="#7">Plot in the transformed space</a></li></ul></div><h2>Parameters<a name="1"></a></h2><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+mus      = [0 0; -1 -1; 1 1];
+sigma    = 0.05;
+N        = 100;
+pi       = normalize(ones(1, 3));
+centres  = [-1 -1; 0 0];
+sigmaRbf = 1;
+lambda   = 0;
+addOnes  = true;
+</pre><h2>Generate some data from a mixture of 3 2d spherical Gaussians<a name="2"></a></h2><pre class="codeinput">setSeed(0);
+X = zeros(N, 2);
+z = sampleDiscrete(pi, 1, N);
+<span class="keyword">for</span> c=1:3
+    model.mu = mus(c, :);
+    model.Sigma = sigma*eye(2);
+    X(z==c, :) = gaussSample(model, sum(z==c));
+<span class="keyword">end</span>
+labels = z;
+labels(labels==3) = 2; <span class="comment">% merge 2 and 3</span>
+y = labels';
+</pre><h2>Try fitting simple  model in original feature space<a name="3"></a></h2><pre class="codeinput">model = logregFit(X, y);
+plotDecisionBoundary(X, y, @(Xtest)logregPredict(model, Xtest));
+hold <span class="string">on</span>
+plot(centres(:, 1), centres(:, 2), <span class="string">'k+'</span>, <span class="string">'MarkerSize'</span>, 12, <span class="string">'LineWidth'</span>, 3);
+printPmtkFigure <span class="string">logregBasisFnOriginal</span>
+</pre><img vspace="5" hspace="5" src="logregBasisFnDemo_01.png" alt=""> <h2>Try fitting simple polynomial model<a name="4"></a></h2><pre class="codeinput"><span class="comment">%pp =  preprocessorCreate('poly', 2, 'rescaleX', true, 'addOnes', true);</span>
+pp =  preprocessorCreate(<span class="string">'poly'</span>, 2, <span class="string">'rescaleX'</span>, false, <span class="string">'addOnes'</span>, true);
+model = logregFit(X, y, <span class="string">'lambda'</span>, 1e-3, <span class="string">'preproc'</span>, pp);
+plotDecisionBoundary(X, y, @(Xtest)logregPredict(model, Xtest));
+printPmtkFigure <span class="string">logregBasisFnPoly</span>
+</pre><img vspace="5" hspace="5" src="logregBasisFnDemo_02.png" alt=""> <h2>Map to RBF basis<a name="5"></a></h2><pre class="codeinput">Gtrain = kernelRbfSigma(X, centres, sigmaRbf); <span class="comment">% gram matrix</span>
+model = logregFit(Gtrain, y, <span class="string">'lambda'</span>,  lambda);
+</pre><h2>Plot in the original space<a name="6"></a></h2><pre class="codeinput">plotDecisionBoundary(X, y, @(Xtest)logregPredict(model, kernelRbfSigma(Xtest, centres, sigmaRbf)));
+hold <span class="string">on</span>; axis <span class="string">square</span>
+plot(centres(:, 1), centres(:, 2), <span class="string">'k+'</span>, <span class="string">'MarkerSize'</span>, 12, <span class="string">'LineWidth'</span>, 3);
+set(gca, <span class="string">'XTick'</span>, -1:1, <span class="string">'YTick'</span>, -1:1);
+printPmtkFigure <span class="string">basisFnOriginal</span>
+</pre><img vspace="5" hspace="5" src="logregBasisFnDemo_03.png" alt=""> <h2>Plot in the transformed space<a name="7"></a></h2><pre class="codeinput">plotDecisionBoundary(Gtrain, y, @(Xtest)logregPredict(model, Xtest));
+axis <span class="string">square</span>
+set(gca, <span class="string">'XTick'</span>, 0:0.1:0.4, <span class="string">'YTick'</span>, 0:0.1:0.4);
+printPmtkFigure <span class="string">basisFnTransformed</span>
+</pre><img vspace="5" hspace="5" src="logregBasisFnDemo_04.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Logistic Regression with RBF Basis
+%  based on Bishop fig 4.12
+%
+%% Parameters
+
+% This file is from pmtk3.googlecode.com
+
+mus      = [0 0; -1 -1; 1 1];
+sigma    = 0.05;
+N        = 100;
+pi       = normalize(ones(1, 3));
+centres  = [-1 -1; 0 0]; 
+sigmaRbf = 1;
+lambda   = 0;
+addOnes  = true;
+%% Generate some data from a mixture of 3 2d spherical Gaussians
+setSeed(0);
+X = zeros(N, 2);
+z = sampleDiscrete(pi, 1, N);
+for c=1:3
+    model.mu = mus(c, :); 
+    model.Sigma = sigma*eye(2); 
+    X(z==c, :) = gaussSample(model, sum(z==c));
+end
+labels = z;
+labels(labels==3) = 2; % merge 2 and 3
+y = labels'; 
+
+%% Try fitting simple  model in original feature space
+model = logregFit(X, y);
+plotDecisionBoundary(X, y, @(Xtest)logregPredict(model, Xtest));
+hold on
+plot(centres(:, 1), centres(:, 2), 'k+', 'MarkerSize', 12, 'LineWidth', 3);
+printPmtkFigure logregBasisFnOriginal
+
+%% Try fitting simple polynomial model
+%pp =  preprocessorCreate('poly', 2, 'rescaleX', true, 'addOnes', true);
+pp =  preprocessorCreate('poly', 2, 'rescaleX', false, 'addOnes', true);
+model = logregFit(X, y, 'lambda', 1e-3, 'preproc', pp);
+plotDecisionBoundary(X, y, @(Xtest)logregPredict(model, Xtest));
+printPmtkFigure logregBasisFnPoly
+
+%% Map to RBF basis
+Gtrain = kernelRbfSigma(X, centres, sigmaRbf); % gram matrix
+model = logregFit(Gtrain, y, 'lambda',  lambda);
+
+%% Plot in the original space
+plotDecisionBoundary(X, y, @(Xtest)logregPredict(model, kernelRbfSigma(Xtest, centres, sigmaRbf)));
+hold on; axis square
+plot(centres(:, 1), centres(:, 2), 'k+', 'MarkerSize', 12, 'LineWidth', 3);
+set(gca, 'XTick', -1:1, 'YTick', -1:1);
+printPmtkFigure basisFnOriginal
+
+%% Plot in the transformed space
+plotDecisionBoundary(Gtrain, y, @(Xtest)logregPredict(model, Xtest));
+axis square
+set(gca, 'XTick', 0:0.1:0.4, 'YTick', 0:0.1:0.4);
+printPmtkFigure basisFnTransformed
+
+
+##### SOURCE END #####
+--></body></html>

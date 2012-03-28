@@ -1,0 +1,169 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Fit a rbf kernelized logistic regression model</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="logregKernelDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Fit a rbf kernelized logistic regression model</h1><p>We follow the same train/test split as linearKernelDemo so that results are comparable</p><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+
+<span class="comment">%loadData('crabs');</span>
+
+loadData(<span class="string">'fglass'</span>); <span class="comment">% 6 classes, X is 214*9</span>
+X = [Xtrain; Xtest];
+y = canonizeLabels([ytrain; ytest]); <span class="comment">% class 4 is missing, so relabel 1:6</span>
+setSeed(0);
+split = 0.7;
+[X, y] = shuffleRows(X, y);
+X      = rescaleData(standardizeCols(X));
+N      = size(X, 1);
+nTrain = floor(split*N);
+nTest  = N - nTrain;
+Xtrain = X(1:nTrain, :);
+Xtest  = X(nTrain+1:end, :);
+ytrain = y(1:nTrain);
+ytest  = y(nTrain+1:end);
+
+<span class="comment">% 2D CV</span>
+lambdaRange     = logspace(-6, 1, 3);
+gammaRange      = logspace(-4, 4, 3);
+paramRange = crossProduct(lambdaRange, gammaRange);
+regtypes = {<span class="string">'L2'</span>}; <span class="comment">%L1 is a bit better but a bit slower</span>
+<span class="keyword">for</span> r=1:length(regtypes)
+  regtype = regtypes{r};
+  fitFn = @(X, y, param)<span class="keyword">...</span>
+    logregFit(X, y, <span class="string">'lambda'</span>, param(1), <span class="string">'regType'</span>, regtype, <span class="string">'preproc'</span>, <span class="keyword">...</span>
+    preprocessorCreate(<span class="string">'kernelFn'</span>, @(X1, X2)kernelRbfGamma(X1, X2, param(2))));
+  predictFn = @logregPredict;
+  lossFn = @(ytest, yhat)mean(yhat ~= ytest);
+  nfolds = 2; <span class="comment">% better to use 5;</span>
+  useSErule = true;
+  plotCv = true;
+  tic;
+  [LRmodel, bestParam, LRmu, LRse] = <span class="keyword">...</span>
+    fitCv(paramRange, fitFn, predictFn, lossFn, Xtrain, ytrain, nfolds, <span class="keyword">...</span>
+    <span class="string">'useSErule'</span>, useSErule, <span class="string">'doPlot'</span>, plotCv, <span class="string">'params1'</span>, lambdaRange, <span class="string">'params2'</span>, gammaRange);
+  time(r) = toc
+  yhat = logregPredict(LRmodel, Xtest);
+  nerrors(r) = sum(yhat ~= ytest);
+<span class="keyword">end</span>
+errRate = nerrors/nTest
+</pre><pre class="codeoutput">time =
+   5.170523989000000
+errRate =
+   0.400000000000000
+</pre><img vspace="5" hspace="5" src="logregKernelDemo_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Fit a rbf kernelized logistic regression model
+% We follow the same train/test split as linearKernelDemo
+% so that results are comparable
+
+% This file is from pmtk3.googlecode.com
+
+
+%loadData('crabs');
+
+loadData('fglass'); % 6 classes, X is 214*9
+X = [Xtrain; Xtest];
+y = canonizeLabels([ytrain; ytest]); % class 4 is missing, so relabel 1:6
+setSeed(0);
+split = 0.7;
+[X, y] = shuffleRows(X, y);
+X      = rescaleData(standardizeCols(X));
+N      = size(X, 1);
+nTrain = floor(split*N);
+nTest  = N - nTrain;
+Xtrain = X(1:nTrain, :);
+Xtest  = X(nTrain+1:end, :);
+ytrain = y(1:nTrain);
+ytest  = y(nTrain+1:end);
+  
+% 2D CV
+lambdaRange     = logspace(-6, 1, 3);  
+gammaRange      = logspace(-4, 4, 3);
+paramRange = crossProduct(lambdaRange, gammaRange); 
+regtypes = {'L2'}; %L1 is a bit better but a bit slower
+for r=1:length(regtypes)
+  regtype = regtypes{r};
+  fitFn = @(X, y, param)...
+    logregFit(X, y, 'lambda', param(1), 'regType', regtype, 'preproc', ...
+    preprocessorCreate('kernelFn', @(X1, X2)kernelRbfGamma(X1, X2, param(2))));
+  predictFn = @logregPredict;
+  lossFn = @(ytest, yhat)mean(yhat ~= ytest);
+  nfolds = 2; % better to use 5;
+  useSErule = true;
+  plotCv = true;
+  tic;
+  [LRmodel, bestParam, LRmu, LRse] = ...
+    fitCv(paramRange, fitFn, predictFn, lossFn, Xtrain, ytrain, nfolds, ...
+    'useSErule', useSErule, 'doPlot', plotCv, 'params1', lambdaRange, 'params2', gammaRange);
+  time(r) = toc
+  yhat = logregPredict(LRmodel, Xtest);
+  nerrors(r) = sum(yhat ~= ytest);
+end
+errRate = nerrors/nTest
+
+
+
+
+##### SOURCE END #####
+--></body></html>

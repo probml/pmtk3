@@ -1,0 +1,242 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>Test inference on the Alarm Network</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="alarmDgmTimingComparision"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Test inference on the Alarm Network</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">create random evidence</a></li><li><a href="#5">To run the code below, unload PMTK and load BNT</a></li></ul></div><pre class="codeinput">ntrials = 50;
+setSeed(1);
+loadData(<span class="string">'alarmNetwork'</span>);
+G = alarmNetwork.G;
+CPT = alarmNetwork.CPT;
+nstates = alarmNetwork.nodeSizes;
+nnodes = 37;
+
+engines = {<span class="string">'jtree'</span>, <span class="string">'libdaiJtree'</span>};
+time = zeros(ntrials, numel(engines));
+<span class="keyword">for</span> i=1:ntrials + 1 <span class="comment">% we throw away the first trial</span>
+</pre><h2>create random evidence<a name="2"></a></h2><pre class="codeinput">    <span class="comment">%lambda = 7;</span>
+    <span class="comment">%nobs = poissonSample(lambda);</span>
+    <span class="comment">%if nobs &gt;= nnodes, nobs = 0; end</span>
+    nobs = 5;
+    perm = randperm(nnodes);
+    visVars = perm(1:nobs);
+    visVals = zeros(1, nobs);
+    <span class="keyword">for</span> j = 1:nobs
+        ns = nstates(visVars(j));
+        visVals(j) = unidrndPMTK(ns);
+    <span class="keyword">end</span>
+    clamped = sparsevec(visVars, visVals, nnodes);
+</pre><pre class="codeinput">    nodeBels = cell(numel(engines), 1);
+    <span class="keyword">for</span> e=1:numel(engines)
+        tic;
+        dgm = dgmCreate(G, CPT, <span class="string">'infEngine'</span>, engines{e});
+        nodeBels{e} = dgmInferNodes(dgm, <span class="string">'clamped'</span>, clamped);
+        t = toc;
+        time(i, e) = t;
+    <span class="keyword">end</span>
+    <span class="keyword">if</span> numel(engines) &gt; 1
+        assert(tfequal(nodeBels{:}));
+    <span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+
+start = 2;
+meanTimes = mean(time(start:end, :), 1);
+fprintf(<span class="string">'MEAN TIMES in second(s)\n'</span>);
+maxStrLen = max(cellfun(<span class="string">'length'</span>, engines));
+<span class="keyword">for</span> e=1:numel(engines)
+    fprintf(<span class="string">'%s%s%g\n'</span>, engines{e}, dots(maxStrLen+3-length(engines{e})), meanTimes(e));
+<span class="keyword">end</span>
+maxTimes = max(time(start:end, :), [], 1);
+fprintf(<span class="string">'\nMAX TIMES in second(s)\n'</span>);
+maxStrLen = max(cellfun(<span class="string">'length'</span>, engines));
+<span class="keyword">for</span> e=1:numel(engines)
+    fprintf(<span class="string">'%s%s%g\n'</span>, engines{e}, dots(maxStrLen+3-length(engines{e})), maxTimes(e));
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">MEAN TIMES in second(s)
+jtree.........0.24981
+libdaiJtree...0.14404
+
+MAX TIMES in second(s)
+jtree.........0.290948
+libdaiJtree...0.162493
+</pre><h2>To run the code below, unload PMTK and load BNT<a name="5"></a></h2><pre class="codeinput"><span class="keyword">if</span> 0
+    ntrials = 50;
+    tBNT = zeros(ntrials, 1);
+    nnodes = 37;
+    bnet = mk_alarm_bnet();
+    nobs = 5;
+    <span class="keyword">for</span> i=1:ntrials
+        E = sample_bnet(bnet);
+        perm = randperm(nnodes);
+        obs = perm(1:nobs);
+        evidence = cell(1, nnodes);
+        evidence(obs) = E(obs);
+        tic;
+        engine = jtree_inf_engine(bnet);
+        [engine, ll] = enter_evidence(engine, evidence);
+        margBNT = cell(nnodes, 1);
+        <span class="keyword">for</span> j=1:numel(nnodes);
+            margBNT{j} = marginal_nodes(engine, j);
+        <span class="keyword">end</span>
+        tBNT(i) = toc;
+    <span class="keyword">end</span>
+    meanTime = mean(tBNT);
+<span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Test inference on the Alarm Network
+%
+%%
+
+ntrials = 50;
+setSeed(1);
+loadData('alarmNetwork');
+G = alarmNetwork.G;
+CPT = alarmNetwork.CPT;
+nstates = alarmNetwork.nodeSizes;
+nnodes = 37;
+
+engines = {'jtree', 'libdaiJtree'};
+time = zeros(ntrials, numel(engines));
+for i=1:ntrials + 1 % we throw away the first trial
+    %% create random evidence 
+    %lambda = 7;
+    %nobs = poissonSample(lambda);
+    %if nobs >= nnodes, nobs = 0; end
+    nobs = 5; 
+    perm = randperm(nnodes);
+    visVars = perm(1:nobs);
+    visVals = zeros(1, nobs);
+    for j = 1:nobs
+        ns = nstates(visVars(j));
+        visVals(j) = unidrndPMTK(ns);
+    end
+    clamped = sparsevec(visVars, visVals, nnodes);
+    %%
+    nodeBels = cell(numel(engines), 1);
+    for e=1:numel(engines)
+        tic;
+        dgm = dgmCreate(G, CPT, 'infEngine', engines{e});
+        nodeBels{e} = dgmInferNodes(dgm, 'clamped', clamped);
+        t = toc;
+        time(i, e) = t;
+    end
+    if numel(engines) > 1
+        assert(tfequal(nodeBels{:}));
+    end
+end
+
+start = 2;
+meanTimes = mean(time(start:end, :), 1);
+fprintf('MEAN TIMES in second(s)\n');
+maxStrLen = max(cellfun('length', engines));
+for e=1:numel(engines)
+    fprintf('%s%s%g\n', engines{e}, dots(maxStrLen+3-length(engines{e})), meanTimes(e));
+end
+maxTimes = max(time(start:end, :), [], 1);
+fprintf('\nMAX TIMES in second(s)\n');
+maxStrLen = max(cellfun('length', engines));
+for e=1:numel(engines)
+    fprintf('%s%s%g\n', engines{e}, dots(maxStrLen+3-length(engines{e})), maxTimes(e));
+end
+
+%% To run the code below, unload PMTK and load BNT 
+if 0
+    ntrials = 50;
+    tBNT = zeros(ntrials, 1);
+    nnodes = 37;
+    bnet = mk_alarm_bnet();
+    nobs = 5;
+    for i=1:ntrials
+        E = sample_bnet(bnet);
+        perm = randperm(nnodes);
+        obs = perm(1:nobs);
+        evidence = cell(1, nnodes);
+        evidence(obs) = E(obs);
+        tic;
+        engine = jtree_inf_engine(bnet);
+        [engine, ll] = enter_evidence(engine, evidence);
+        margBNT = cell(nnodes, 1);
+        for j=1:numel(nnodes);
+            margBNT{j} = marginal_nodes(engine, j);
+        end
+        tBNT(i) = toc;
+    end
+    meanTime = mean(tBNT);
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+##### SOURCE END #####
+--></body></html>

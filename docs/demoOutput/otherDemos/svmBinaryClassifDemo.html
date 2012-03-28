@@ -1,0 +1,178 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>Compare SVM and kernelized logreg on synthetic 2 class data in 2d</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="svmBinaryClassifDemo"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Compare SVM and kernelized logreg on synthetic 2 class data in 2d</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Load  Data</a></li><li><a href="#2">Train and test</a></li></ul></div><h2>Load  Data<a name="1"></a></h2><p>Load synthetic data generated from a mixture of 2 Gaussians. Source: <a href="http://research.microsoft.com/~cmbishop/PRML/webdatasets/datasets.htm">http://research.microsoft.com/~cmbishop/PRML/webdatasets/datasets.htm</a></p><pre class="codeinput">loadData(<span class="string">'bishop2class'</span>);
+y = Y(:);
+
+<span class="comment">% Choose kernel params using CV on an SVM</span>
+<span class="comment">% kernel param is gamma = 1/(2*rbfScale^2)</span>
+model = svmFit(X, y, <span class="string">'kernel'</span>, <span class="string">'rbf'</span>, <span class="string">'kernelParam'</span>, [0.1, 0.5, 1, 5], <span class="string">'C'</span>, logspace(-1,1,10));
+gamma = model.kernelParam <span class="comment">% does not work</span>
+C = model.C;
+rbfScale = sqrt(1/(2*gamma));
+lambda = 1/C;
+
+kernelFn = @kernelRbfSigma;
+Ktrain =  kernelFn(X, X, rbfScale);
+
+logregArgs.lambda = lambda;
+logregArgs.regType = <span class="string">'L2'</span>;
+logregArgs.preproc.kernelFn = @(X1, X2)kernelRbfSigma(X1, X2, rbfScale);
+</pre><pre class="codeoutput">gamma =
+     1
+</pre><h2>Train and test<a name="2"></a></h2><pre class="codeinput"><span class="keyword">for</span> method=1:3
+  <span class="keyword">switch</span> method
+    <span class="keyword">case</span> 1,
+      model = logregFit(X, y, logregArgs);
+      fname = <span class="string">'logregL2'</span>;
+      predictFn = @(Xtest) logregPredict(model, Xtest);
+    <span class="keyword">case</span> 2,
+      logregArgs.regType = <span class="string">'L1'</span>;
+      model = logregFit(X, y, logregArgs);
+      SV = (abs(model.w) &gt; 1e-5);
+      fname = <span class="string">'logregL1'</span>;
+      predictFn = @(Xtest) logregPredict(model, Xtest);
+    <span class="keyword">case</span> 3
+      C = 1/lambda;
+      model = svmFit(X, y,<span class="string">'kernel'</span>, kernelFn,<span class="string">'C'</span>, C, <span class="string">'kernelParam'</span>, rbfScale);
+      fname = <span class="string">'SVM'</span>;
+      predictFn = @(Xtest) svmPredict(model, Xtest);
+      SV = model.svi;
+  <span class="keyword">end</span>
+  yhat = predictFn(X);
+  nerr = sum(yhat ~= y);
+  <span class="comment">% Plot results</span>
+  plotDecisionBoundary(X, y, predictFn, <span class="string">'symbols'</span>, <span class="string">'+x'</span>, <span class="string">'resolution'</span>, 200);
+  <span class="keyword">if</span> method &gt; 1
+    plot(X(SV,1), X(SV,2), <span class="string">'ok'</span>, <span class="string">'linewidth'</span>, 1.5, <span class="string">'markersize'</span>, 12);
+  <span class="keyword">end</span>
+  title(sprintf(<span class="string">'%s, nerr=%d'</span>, fname, nerr))
+  printPmtkFigure(sprintf(<span class="string">'svmBinaryClassifDemo%s'</span>, fname))
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="svmBinaryClassifDemo_01.png" alt=""> <img vspace="5" hspace="5" src="svmBinaryClassifDemo_02.png" alt=""> <img vspace="5" hspace="5" src="svmBinaryClassifDemo_03.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Compare SVM and kernelized logreg on synthetic 2 class data in 2d
+
+
+%% Load  Data
+% Load synthetic data generated from a mixture of 2 Gaussians. Source:
+% http://research.microsoft.com/~cmbishop/PRML/webdatasets/datasets.htm
+%
+
+loadData('bishop2class');
+y = Y(:);
+
+% Choose kernel params using CV on an SVM
+% kernel param is gamma = 1/(2*rbfScale^2)
+model = svmFit(X, y, 'kernel', 'rbf', 'kernelParam', [0.1, 0.5, 1, 5], 'C', logspace(-1,1,10));
+gamma = model.kernelParam % does not work 
+C = model.C;
+rbfScale = sqrt(1/(2*gamma));
+lambda = 1/C;
+
+kernelFn = @kernelRbfSigma;
+Ktrain =  kernelFn(X, X, rbfScale);
+
+logregArgs.lambda = lambda;
+logregArgs.regType = 'L2';
+logregArgs.preproc.kernelFn = @(X1, X2)kernelRbfSigma(X1, X2, rbfScale);
+
+%% Train and test
+for method=1:3
+  switch method
+    case 1,
+      model = logregFit(X, y, logregArgs);
+      fname = 'logregL2';
+      predictFn = @(Xtest) logregPredict(model, Xtest);
+    case 2,
+      logregArgs.regType = 'L1';
+      model = logregFit(X, y, logregArgs);
+      SV = (abs(model.w) > 1e-5);
+      fname = 'logregL1';
+      predictFn = @(Xtest) logregPredict(model, Xtest);
+    case 3
+      C = 1/lambda;
+      model = svmFit(X, y,'kernel', kernelFn,'C', C, 'kernelParam', rbfScale);
+      fname = 'SVM';
+      predictFn = @(Xtest) svmPredict(model, Xtest);
+      SV = model.svi;
+  end
+  yhat = predictFn(X);
+  nerr = sum(yhat ~= y);
+  % Plot results
+  plotDecisionBoundary(X, y, predictFn, 'symbols', '+x', 'resolution', 200);
+  if method > 1
+    plot(X(SV,1), X(SV,2), 'ok', 'linewidth', 1.5, 'markersize', 12);
+  end
+  title(sprintf('%s, nerr=%d', fname, nerr))
+  printPmtkFigure(sprintf('svmBinaryClassifDemo%s', fname))
+end
+
+
+
+
+
+##### SOURCE END #####
+--></body></html>

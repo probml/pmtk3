@@ -1,0 +1,435 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Reproduce figure 3 of Zou and Hastie JRSSB 2005</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="elasticNetDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Reproduce figure 3 of Zou and Hastie JRSSB 2005</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+
+
+loadData(<span class="string">'prostate'</span>);
+ndx = find(istrain);
+y = y(ndx); X = X(ndx,:);
+X = centerCols(X);
+X = mkUnitNorm(X);
+y = centerCols(y);
+[n p] = size(X);
+
+lambda2 = 1000;
+w0 = larsen(X, y, lambda2, 0, 1);
+wLS = X\y; denom = sum(abs(wLS'));
+<span class="comment">%s0 = sum(abs(w0),2)/max(sum(abs(w0), 2));</span>
+s0 = sum(abs(w0),2)/denom;
+figure(1);clf
+plot(s0, w0, <span class="string">'-o'</span>);
+title(<span class="string">'Elastic net on prostate data'</span>)
+legend(names(1:8), <span class="string">'location'</span>, <span class="string">'northwest'</span>)
+set(gca,<span class="string">'ylim'</span>,[-1 8])
+xlabel(sprintf(<span class="string">'shrinkage factor s(%s)'</span>, <span class="string">'\lambda_1'</span>))
+printPmtkFigure <span class="string">elasticNetProstate</span>
+
+
+lambda1s = [logspace(3, 0, 50) 0];
+lambda2s = lambda2*ones(1,length(lambda1s));
+ww = elasticNetPath(X, y, [], [], lambda1s, lambda2s); <span class="comment">% ww(var,iter)</span>
+w1 = ww(2:end,:)'; <span class="comment">% skip offset , w1(iter, var)</span>
+<span class="comment">%s1 = sum(abs(w1),2)/max(sum(abs(w1), 2));</span>
+s1 = sum(abs(w1),2)/denom;
+figure(2);clf
+plot(s1, w1, <span class="string">'-o'</span>);
+<span class="comment">%plot(log(lambda1s), w1, '-o');</span>
+title(<span class="string">'Elastic net on prostate data'</span>)
+legend(names(1:8), <span class="string">'location'</span>, <span class="string">'northwest'</span>)
+set(gca,<span class="string">'ylim'</span>,[-1 8])
+xlabel(sprintf(<span class="string">'shrinkage factor s(%s)'</span>, <span class="string">'\lambda_1'</span>))
+</pre><pre class="codeoutput">Step	Added	Dropped		Active set size
+1		1					1
+2		5					2
+3		6					3
+4		2					4
+5		8					5
+6		7					6
+7		4					7
+8		3					8
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      0.0000e+00      3.3720e-02      9.6281e+01
+         2         16      0.0000e+00      0.0000e+00      9.6281e+01
+Number of iterations: 2
+Total Shoots: 16
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      0.0000e+00      3.8646e-02      9.6281e+01
+         2         16      0.0000e+00      0.0000e+00      9.6281e+01
+Number of iterations: 2
+Total Shoots: 16
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      0.0000e+00      4.4260e-02      9.6281e+01
+         2         16      0.0000e+00      0.0000e+00      9.6281e+01
+Number of iterations: 2
+Total Shoots: 16
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      0.0000e+00      5.0652e-02      9.6281e+01
+         2         16      0.0000e+00      0.0000e+00      9.6281e+01
+Number of iterations: 2
+Total Shoots: 16
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      0.0000e+00      5.7916e-02      9.6281e+01
+         2         16      0.0000e+00      0.0000e+00      9.6281e+01
+Number of iterations: 2
+Total Shoots: 16
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      0.0000e+00      6.6155e-02      9.6281e+01
+         2         16      0.0000e+00      0.0000e+00      9.6281e+01
+Number of iterations: 2
+Total Shoots: 16
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      0.0000e+00      7.5482e-02      9.6281e+01
+         2         16      0.0000e+00      0.0000e+00      9.6281e+01
+Number of iterations: 2
+Total Shoots: 16
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      0.0000e+00      8.6013e-02      9.6281e+01
+         2         16      0.0000e+00      0.0000e+00      9.6281e+01
+Number of iterations: 2
+Total Shoots: 16
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      0.0000e+00      9.7874e-02      9.6281e+01
+         2         16      0.0000e+00      0.0000e+00      9.6281e+01
+Number of iterations: 2
+Total Shoots: 16
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      0.0000e+00      1.1119e-01      9.6281e+01
+         2         16      0.0000e+00      0.0000e+00      9.6281e+01
+Number of iterations: 2
+Total Shoots: 16
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      0.0000e+00      1.2609e-01      9.6281e+01
+         2         16      0.0000e+00      0.0000e+00      9.6281e+01
+Number of iterations: 2
+Total Shoots: 16
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      0.0000e+00      1.4269e-01      9.6281e+01
+         2         16      0.0000e+00      0.0000e+00      9.6281e+01
+Number of iterations: 2
+Total Shoots: 16
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      0.0000e+00      1.6113e-01      9.6281e+01
+         2         16      0.0000e+00      0.0000e+00      9.6281e+01
+Number of iterations: 2
+Total Shoots: 16
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      0.0000e+00      1.8148e-01      9.6281e+01
+         2         16      0.0000e+00      0.0000e+00      9.6281e+01
+Number of iterations: 2
+Total Shoots: 16
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      0.0000e+00      2.0385e-01      9.6281e+01
+         2         16      0.0000e+00      0.0000e+00      9.6281e+01
+Number of iterations: 2
+Total Shoots: 16
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      0.0000e+00      2.2830e-01      9.6281e+01
+         2         16      0.0000e+00      0.0000e+00      9.6281e+01
+Number of iterations: 2
+Total Shoots: 16
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      0.0000e+00      2.5483e-01      9.6281e+01
+         2         16      0.0000e+00      0.0000e+00      9.6281e+01
+Number of iterations: 2
+Total Shoots: 16
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      0.0000e+00      2.8344e-01      9.6281e+01
+         2         16      0.0000e+00      0.0000e+00      9.6281e+01
+Number of iterations: 2
+Total Shoots: 16
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      0.0000e+00      3.1407e-01      9.6281e+01
+         2         16      0.0000e+00      0.0000e+00      9.6281e+01
+Number of iterations: 2
+Total Shoots: 16
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      0.0000e+00      3.4660e-01      9.6281e+01
+         2         16      0.0000e+00      0.0000e+00      9.6281e+01
+Number of iterations: 2
+Total Shoots: 16
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      0.0000e+00      3.8086e-01      9.6281e+01
+         2         16      0.0000e+00      0.0000e+00      9.6281e+01
+Number of iterations: 2
+Total Shoots: 16
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      0.0000e+00      4.1662e-01      9.6281e+01
+         2         16      0.0000e+00      0.0000e+00      9.6281e+01
+Number of iterations: 2
+Total Shoots: 16
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      0.0000e+00      4.5362e-01      9.6281e+01
+         2         16      0.0000e+00      0.0000e+00      9.6281e+01
+Number of iterations: 2
+Total Shoots: 16
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      0.0000e+00      4.9152e-01      9.6281e+01
+         2         16      0.0000e+00      0.0000e+00      9.6281e+01
+Number of iterations: 2
+Total Shoots: 16
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      0.0000e+00      5.2999e-01      9.6281e+01
+         2         16      0.0000e+00      0.0000e+00      9.6281e+01
+Number of iterations: 2
+Total Shoots: 16
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      0.0000e+00      5.6864e-01      9.6281e+01
+         2         16      0.0000e+00      0.0000e+00      9.6281e+01
+Number of iterations: 2
+Total Shoots: 16
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      0.0000e+00      6.0709e-01      9.6281e+01
+         2         16      0.0000e+00      0.0000e+00      9.6281e+01
+Number of iterations: 2
+Total Shoots: 16
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      0.0000e+00      6.4497e-01      9.6281e+01
+         2         16      0.0000e+00      0.0000e+00      9.6281e+01
+Number of iterations: 2
+Total Shoots: 16
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      0.0000e+00      6.8193e-01      9.6281e+01
+         2         16      0.0000e+00      0.0000e+00      9.6281e+01
+Number of iterations: 2
+Total Shoots: 16
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      0.0000e+00      7.1764e-01      9.6281e+01
+         2         16      0.0000e+00      0.0000e+00      9.6281e+01
+Number of iterations: 2
+Total Shoots: 16
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      0.0000e+00      7.5183e-01      9.6281e+01
+         2         16      0.0000e+00      0.0000e+00      9.6281e+01
+Number of iterations: 2
+Total Shoots: 16
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      2.7210e-02      7.5708e-01      9.6281e+01
+         2         16      2.7488e-02      2.7809e-04      9.6281e+01
+         3         24      2.7488e-02      0.0000e+00      9.6281e+01
+Number of iterations: 3
+Total Shoots: 24
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      5.3482e-02      7.6136e-01      9.6279e+01
+         2         16      5.3771e-02      2.8892e-04      9.6279e+01
+         3         24      5.3771e-02      0.0000e+00      9.6279e+01
+Number of iterations: 3
+Total Shoots: 24
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      9.8794e-02      7.4458e-01      9.6275e+01
+         2         16      9.9342e-02      5.4806e-04      9.6275e+01
+         3         24      9.9342e-02      2.3935e-07      9.6275e+01
+Number of iterations: 3
+Total Shoots: 24
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      1.8553e-01      6.8430e-01      9.6270e+01
+         2         16      1.8613e-01      5.9667e-04      9.6270e+01
+         3         24      1.8613e-01      2.9835e-07      9.6270e+01
+Number of iterations: 3
+Total Shoots: 24
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      2.7153e-01      6.2265e-01      9.6262e+01
+         2         16      2.7207e-01      5.4194e-04      9.6262e+01
+         3         24      2.7207e-01      2.7277e-07      9.6262e+01
+Number of iterations: 3
+Total Shoots: 24
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      3.5345e-01      5.6303e-01      9.6252e+01
+         2         16      3.5399e-01      5.4354e-04      9.6252e+01
+         3         24      3.5399e-01      3.1398e-07      9.6252e+01
+Number of iterations: 3
+Total Shoots: 24
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      4.3128e-01      5.0548e-01      9.6242e+01
+         2         16      4.3176e-01      4.7994e-04      9.6242e+01
+         3         24      4.3176e-01      2.7326e-07      9.6242e+01
+Number of iterations: 3
+Total Shoots: 24
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      5.0590e-01      4.4921e-01      9.6232e+01
+         2         16      5.0631e-01      4.3368e-04      9.6232e+01
+         3         24      5.0631e-01      2.4732e-07      9.6232e+01
+Number of iterations: 3
+Total Shoots: 24
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      5.8008e-01      3.9157e-01      9.6221e+01
+         2         16      5.8050e-01      4.3924e-04      9.6221e+01
+         3         24      5.8050e-01      2.8097e-07      9.6221e+01
+Number of iterations: 3
+Total Shoots: 24
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      6.4807e-01      3.3842e-01      9.6211e+01
+         2         16      6.4843e-01      3.7975e-04      9.6211e+01
+         3         24      6.4843e-01      2.4293e-07      9.6211e+01
+Number of iterations: 3
+Total Shoots: 24
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      7.0712e-01      2.9263e-01      9.6200e+01
+         2         16      7.0743e-01      3.2846e-04      9.6200e+01
+         3         24      7.0743e-01      2.1014e-07      9.6200e+01
+Number of iterations: 3
+Total Shoots: 24
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      7.5840e-01      2.5315e-01      9.6191e+01
+         2         16      7.5867e-01      2.8423e-04      9.6191e+01
+         3         24      7.5867e-01      1.8186e-07      9.6191e+01
+Number of iterations: 3
+Total Shoots: 24
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      8.0294e-01      2.1909e-01      9.6182e+01
+         2         16      8.0318e-01      2.4605e-04      9.6182e+01
+         3         24      8.0318e-01      1.5744e-07      9.6182e+01
+Number of iterations: 3
+Total Shoots: 24
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      8.4162e-01      1.8969e-01      9.6174e+01
+         2         16      8.4183e-01      2.1308e-04      9.6174e+01
+         3         24      8.4183e-01      1.3635e-07      9.6174e+01
+Number of iterations: 3
+Total Shoots: 24
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      8.7522e-01      1.6429e-01      9.6167e+01
+         2         16      8.7540e-01      1.8459e-04      9.6167e+01
+         3         24      8.7540e-01      1.1812e-07      9.6167e+01
+Number of iterations: 3
+Total Shoots: 24
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      9.0440e-01      1.4234e-01      9.6161e+01
+         2         16      9.0455e-01      1.5995e-04      9.6161e+01
+         3         24      9.0455e-01      1.0236e-07      9.6161e+01
+Number of iterations: 3
+Total Shoots: 24
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      9.2974e-01      1.2336e-01      9.6155e+01
+         2         16      9.2987e-01      1.3864e-04      9.6155e+01
+         3         24      9.2987e-01      8.8730e-08      9.6155e+01
+Number of iterations: 3
+Total Shoots: 24
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      9.5175e-01      1.0694e-01      9.6150e+01
+         2         16      9.5187e-01      1.2020e-04      9.6150e+01
+         3         24      9.5187e-01      7.6930e-08      9.6150e+01
+Number of iterations: 3
+Total Shoots: 24
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      9.7087e-01      9.2721e-02      9.6145e+01
+         2         16      9.7097e-01      1.0423e-04      9.6145e+01
+         3         24      9.7097e-01      6.6713e-08      9.6145e+01
+Number of iterations: 3
+Total Shoots: 24
+      iter     shoots            n(w)         n(step)            f(w)
+         1          8      1.0971e+00      1.6653e-16      9.6112e+01
+Number of iterations: 1
+Total Shoots: 8
+</pre><img vspace="5" hspace="5" src="elasticNetDemo_01.png" alt=""> <img vspace="5" hspace="5" src="elasticNetDemo_02.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Reproduce figure 3 of Zou and Hastie JRSSB 2005
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+
+
+loadData('prostate');
+ndx = find(istrain);
+y = y(ndx); X = X(ndx,:);
+X = centerCols(X);
+X = mkUnitNorm(X);
+y = centerCols(y);
+[n p] = size(X);
+
+lambda2 = 1000;
+w0 = larsen(X, y, lambda2, 0, 1);
+wLS = X\y; denom = sum(abs(wLS'));
+%s0 = sum(abs(w0),2)/max(sum(abs(w0), 2));
+s0 = sum(abs(w0),2)/denom;
+figure(1);clf
+plot(s0, w0, '-o');
+title('Elastic net on prostate data')
+legend(names(1:8), 'location', 'northwest')
+set(gca,'ylim',[-1 8])
+xlabel(sprintf('shrinkage factor s(%s)', '\lambda_1'))
+printPmtkFigure elasticNetProstate
+
+
+lambda1s = [logspace(3, 0, 50) 0];
+lambda2s = lambda2*ones(1,length(lambda1s));
+ww = elasticNetPath(X, y, [], [], lambda1s, lambda2s); % ww(var,iter)
+w1 = ww(2:end,:)'; % skip offset , w1(iter, var)
+%s1 = sum(abs(w1),2)/max(sum(abs(w1), 2));
+s1 = sum(abs(w1),2)/denom;
+figure(2);clf
+plot(s1, w1, '-o');
+%plot(log(lambda1s), w1, '-o');
+title('Elastic net on prostate data')
+legend(names(1:8), 'location', 'northwest')
+set(gca,'ylim',[-1 8])
+xlabel(sprintf('shrinkage factor s(%s)', '\lambda_1'))
+
+
+##### SOURCE END #####
+--></body></html>

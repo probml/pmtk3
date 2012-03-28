@@ -1,0 +1,176 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>PCA digit visualization demo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="pcaDigitsVis10classes.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>PCA digit visualization demo</h1><!--introduction--><p>Based on code by Nando de Freitas.</p><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+loadData(<span class="string">'uspsAll'</span>); <span class="comment">% data(1:256, 1:1100, 1:10)</span>
+
+figure;
+i = 1;
+<span class="keyword">for</span> c=1:10
+  <span class="keyword">for</span> j=1:2
+    subplot(4,5,i)
+    imagesc(reshape(data(:,j,c),[16 16]));
+    axis <span class="string">off</span>
+    colormap(gray)
+    i=i+1;
+  <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+nc = 5;  <span class="comment">% number of examples of each class</span>
+X  = double(reshape(data(:,1:nc,:), [256 nc*10]))';
+[B, Z] = pcaPmtk(X, 2);
+
+color = hsvrand(10);
+figure(1);clf
+n = size(X,1);
+ndx = 1:nc;
+<span class="keyword">for</span> c=1:10
+  <span class="keyword">if</span> c==10, cname=<span class="string">'0'</span>; <span class="keyword">else</span> cname = sprintf(<span class="string">'%d'</span>, c); <span class="keyword">end</span>
+  h=plot(Z(ndx,1), Z(ndx, 2), <span class="string">'.'</span>);
+  hold <span class="string">on</span>
+  set(h,<span class="string">'color'</span>,color(c,:));
+  <span class="keyword">for</span> i=1:length(ndx)
+    text(Z(ndx(i),1), Z(ndx(i),2), cname);
+  <span class="keyword">end</span>
+  ndx = ndx+nc;
+<span class="keyword">end</span>
+axis <span class="string">ij</span>
+
+<span class="comment">% scale the PCs to be in 0:1</span>
+pc = Z;
+pc = pc + abs(min(pc(:)));
+pc = pc ./ abs(max(pc(:)));
+<span class="comment">% scale the PCs to be integer coordinates within the image</span>
+S =200;
+pc(:,1) = max(1,round(pc(:,1) * S));
+pc(:,2) = max(1,round(pc(:,2) * S));
+img = zeros(S,S);  <span class="comment">% Background image on which small images are placed.</span>
+[r,c] = size(pc);
+<span class="keyword">for</span> i=1:1:size(X,1)
+  img(pc(i,2):pc(i,2)+15, pc(i,1):pc(i,1)+15) = reshape(X(i,:),16,16);
+<span class="keyword">end</span>;
+figure(2);clf
+imagesc(img); colormap(<span class="string">'gray'</span>); axis <span class="string">ij</span>
+</pre><img vspace="5" hspace="5" src="pcaDigitsVis10classes_01.png" alt=""> <img vspace="5" hspace="5" src="pcaDigitsVis10classes_02.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% PCA digit visualization demo
+% Based on code by Nando de Freitas.
+%%
+
+% This file is from pmtk3.googlecode.com
+
+loadData('uspsAll'); % data(1:256, 1:1100, 1:10) 
+
+figure;
+i = 1;
+for c=1:10
+  for j=1:2
+    subplot(4,5,i)
+    imagesc(reshape(data(:,j,c),[16 16]));
+    axis off
+    colormap(gray)
+    i=i+1;
+  end
+end
+
+nc = 5;  % number of examples of each class
+X  = double(reshape(data(:,1:nc,:), [256 nc*10]))';
+[B, Z] = pcaPmtk(X, 2);
+
+color = hsvrand(10);
+figure(1);clf
+n = size(X,1);
+ndx = 1:nc; 
+for c=1:10
+  if c==10, cname='0'; else cname = sprintf('%d', c); end
+  h=plot(Z(ndx,1), Z(ndx, 2), '.');
+  hold on
+  set(h,'color',color(c,:));
+  for i=1:length(ndx)
+    text(Z(ndx(i),1), Z(ndx(i),2), cname);
+  end
+  ndx = ndx+nc;
+end
+axis ij
+
+% scale the PCs to be in 0:1
+pc = Z;
+pc = pc + abs(min(pc(:)));
+pc = pc ./ abs(max(pc(:)));
+% scale the PCs to be integer coordinates within the image
+S =200;
+pc(:,1) = max(1,round(pc(:,1) * S));
+pc(:,2) = max(1,round(pc(:,2) * S));
+img = zeros(S,S);  % Background image on which small images are placed.
+[r,c] = size(pc);
+for i=1:1:size(X,1)
+  img(pc(i,2):pc(i,2)+15, pc(i,1):pc(i,1)+15) = reshape(X(i,:),16,16);
+end;
+figure(2);clf
+imagesc(img); colormap('gray'); axis ij
+
+##### SOURCE END #####
+--></body></html>

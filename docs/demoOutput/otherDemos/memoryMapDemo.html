@@ -1,0 +1,189 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>This is a simple demo of Matlab's memmapfile class</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="memoryMapDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>This is a simple demo of Matlab's memmapfile class</h1><!--introduction--><p>Here we memory map the MNIST digit data.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#3">load the mnist data</a></li><li><a href="#4">Save the data to a binary file using fwrite</a></li><li><a href="#5">Create the memory map</a></li><li><a href="#6">random access to data</a></li><li><a href="#8">Cast data</a></li><li><a href="#9">Set data</a></li><li><a href="#10">Permform usual matlab operations on data</a></li><li><a href="#11">Clean up</a></li></ul></div><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="keyword">function</span> memoryMapDemo()
+</pre><pre class="codeinput"><span class="keyword">if</span> isOctave()
+    fprintf(<span class="string">'Sorry this demo will only work in Matlab\n'</span>);
+    <span class="keyword">return</span>
+<span class="keyword">end</span>
+</pre><h2>load the mnist data<a name="3"></a></h2><pre class="codeinput">[Xtrain, ytrain, Xtest, ytest] = setupMnist(<span class="string">'keepSparse'</span>, false);
+whos
+</pre><pre class="codeoutput">  Name            Size                 Bytes  Class     Attributes
+
+  Xtest       10000x784             62720000  double              
+  Xtrain      60000x784            376320000  double              
+  ytest       10000x1                  80000  double              
+  ytrain      60000x1                 480000  double              
+
+</pre><h2>Save the data to a binary file using fwrite<a name="4"></a></h2><p>Here we save the data as int16 and int8, but double works as well if the data is not integer typed. Note, however, that double access can be considerably slower and take up much more memory.</p><pre class="codeinput">fname = fullfile(tempdir(), <span class="string">'mnist.dat'</span>);
+fid = fopen(fname, <span class="string">'w'</span>);
+fwrite(fid, Xtrain, <span class="string">'int16'</span>);
+fwrite(fid, ytrain, <span class="string">'int8'</span>);
+fwrite(fid, Xtest,  <span class="string">'int16'</span>); <span class="comment">% max int16 value is 32767</span>
+fwrite(fid, ytest,  <span class="string">'int8'</span>);  <span class="comment">% max int8 value is 127</span>
+fclose(fid);
+</pre><h2>Create the memory map<a name="5"></a></h2><p>For each section of the data, we specify the data type, size, and a name.</p><pre class="codeinput">mmap = memmapfile(fname, <span class="string">'Writable'</span>, true, <span class="string">'Format'</span>, <span class="keyword">...</span>
+    {<span class="string">'int16'</span>, size(Xtrain), <span class="string">'Xtrain'</span>;
+    <span class="string">'int8'</span>,  size(ytrain), <span class="string">'ytrain'</span>;
+    <span class="string">'int16'</span>, size(Xtest),  <span class="string">'Xtest'</span>;
+    <span class="string">'int8'</span>,  size(ytest),  <span class="string">'ytest'</span>;
+    });
+</pre><h2>random access to data<a name="6"></a></h2><p>Access works just like a regular matlab struct. Our data is stored under the 'Data' field. The first time a region is requested, access can be slow,</p><pre class="codeinput">tic
+X4000 = mmap.Data.Xtrain(4000, :); <span class="comment">% 1x784</span>
+y4000 = mmap.Data.ytrain(4000);
+toc
+</pre><pre class="codeoutput">Elapsed time is 0.083328 seconds.
+</pre><p>but once the region is cached, access is usually faster.</p><pre class="codeinput">tic
+X4000 = mmap.Data.Xtrain(4000, :);
+y4000 = mmap.Data.ytrain(4000);
+toc
+</pre><pre class="codeoutput">Elapsed time is 0.001231 seconds.
+</pre><h2>Cast data<a name="8"></a></h2><p>If we want the data returned to be of type double, as required by many functions, we can simply cast it.</p><pre class="codeinput">class(X4000)
+X4000 = double(X4000);
+class(X4000)
+</pre><pre class="codeoutput">ans =
+int16
+ans =
+double
+</pre><h2>Set data<a name="9"></a></h2><p>Since we specified that the map was writable, we can set values too.</p><pre class="codeinput">mmap.Data.Xtrain(1, 30:35) = 255;
+mmap.Data.Xtrain(1, 30:35)
+</pre><pre class="codeoutput">ans =
+    255    255    255    255    255    255
+</pre><h2>Permform usual matlab operations on data<a name="10"></a></h2><p>However, if Xtest is too big to fit all at once, you will have to caluculate the mean 'online' and load it in chunks.</p><pre class="codeinput">xbar = mean(mmap.Data.Xtest, 2);
+</pre><h2>Clean up<a name="11"></a></h2><pre class="codeinput">clear <span class="string">mmap</span>
+delete(fname);
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% This is a simple demo of Matlab's memmapfile class
+% Here we memory map the MNIST digit data.
+%%
+
+% This file is from pmtk3.googlecode.com
+
+function memoryMapDemo()
+if isOctave()
+    fprintf('Sorry this demo will only work in Matlab\n');
+    return
+end
+%% load the mnist data
+[Xtrain, ytrain, Xtest, ytest] = setupMnist('keepSparse', false);
+whos
+%% Save the data to a binary file using fwrite
+% Here we save the data as int16 and int8, but double works as well if the
+% data is not integer typed. Note, however, that double access can be
+% considerably slower and take up much more memory.
+fname = fullfile(tempdir(), 'mnist.dat');
+fid = fopen(fname, 'w');
+fwrite(fid, Xtrain, 'int16');
+fwrite(fid, ytrain, 'int8');
+fwrite(fid, Xtest,  'int16'); % max int16 value is 32767
+fwrite(fid, ytest,  'int8');  % max int8 value is 127
+fclose(fid);
+%% Create the memory map
+% For each section of the data, we specify the data type, size, and a name.
+mmap = memmapfile(fname, 'Writable', true, 'Format', ...
+    {'int16', size(Xtrain), 'Xtrain';
+    'int8',  size(ytrain), 'ytrain';
+    'int16', size(Xtest),  'Xtest';
+    'int8',  size(ytest),  'ytest';
+    });
+%% random access to data
+% Access works just like a regular matlab struct. Our data is stored
+% under the 'Data' field.
+% The first time a region is requested, access can be slow,
+tic
+X4000 = mmap.Data.Xtrain(4000, :); % 1x784
+y4000 = mmap.Data.ytrain(4000);
+toc
+%%
+% but once the region is cached, access is usually faster.
+tic
+X4000 = mmap.Data.Xtrain(4000, :);
+y4000 = mmap.Data.ytrain(4000);
+toc
+%% Cast data
+% If we want the data returned to be of type double, as required by many
+% functions, we can simply cast it.
+class(X4000)
+X4000 = double(X4000);
+class(X4000)
+%% Set data
+% Since we specified that the map was writable, we can set values too.
+mmap.Data.Xtrain(1, 30:35) = 255;
+mmap.Data.Xtrain(1, 30:35)
+%% Permform usual matlab operations on data
+% However, if Xtest is too big to fit all at once, you will have to
+% caluculate the mean 'online' and load it in chunks.
+xbar = mean(mmap.Data.Xtest, 2);
+%% Clean up
+clear mmap
+delete(fname);
+end
+
+##### SOURCE END #####
+--></body></html>

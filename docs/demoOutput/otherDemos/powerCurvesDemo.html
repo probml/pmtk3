@@ -1,0 +1,233 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>powerCurvesDemo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="powerCurvesDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Power vs sample size for excluding a null value from binary trials</a></li><li><a href="#5">Power vs sample size for excluding a null value from binary trials</a></li></ul></div><h2>Power vs sample size for excluding a null value from binary trials<a name="1"></a></h2><pre class="codeinput"><span class="keyword">function</span> powerCurvesDemo()
+</pre><pre class="codeinput">Ns=1:5:100;
+nullValue = [];
+maxWidth = 0.2;
+priorMeans = [0.6 0.7 0.8];
+priorNs = [5 10 100];
+[styles, colors, symbols, str] =  plotColors();
+<span class="keyword">for</span> i=1:numel(priorMeans)
+  figure; hold <span class="string">on</span>
+  <span class="keyword">for</span> j=1:numel(priorNs)
+    priorMean = priorMeans(i);
+    priorN = priorNs(j);
+    power = powerCurves(priorMean, priorN, nullValue, maxWidth, Ns);
+    plot(Ns, power, sprintf(<span class="string">'%s%s'</span>, styles{j}, colors(j)), <span class="string">'linewidth'</span>, 3);
+    legendStr{j}= sprintf(<span class="string">'priorN = %d'</span>, priorN);
+  <span class="keyword">end</span>
+  legend(legendStr ,<span class="string">'location'</span>, <span class="string">'southeast'</span>);
+  xlabel(<span class="string">'N'</span>); ylabel(<span class="string">'power'</span>)
+  title(sprintf(<span class="string">'prior mean = %5.3f'</span>, priorMean))
+  set(gca,<span class="string">'ylim'</span>,[0 1]);grid <span class="string">on</span>
+  drawnow
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="powerCurvesDemo_02.png" alt=""> <img vspace="5" hspace="5" src="powerCurvesDemo_03.png" alt=""> <img vspace="5" hspace="5" src="powerCurvesDemo_04.png" alt=""> <pre class="codeinput">Ns=1:5:100;
+nullValue = [];
+priorMeans = [0.6 0.7 0.8];
+priorN = 10;
+widths = [0.25 0.2 0.15];
+[styles, colors, symbols, str] =  plotColors();
+<span class="keyword">for</span> i=1:numel(widths)
+  maxWidth = widths(i);
+  figure; hold <span class="string">on</span>
+  <span class="keyword">for</span> j=1:numel(priorMeans)
+    priorMean = priorMeans(j);
+    power = powerCurves(priorMean, priorN, nullValue, maxWidth, Ns);
+    plot(Ns, power, sprintf(<span class="string">'%s%s'</span>, styles{j}, colors(j)), <span class="string">'linewidth'</span>, 3);
+    legendStr{j}= sprintf(<span class="string">'priorMean = %5.3f'</span>, priorMean);
+  <span class="keyword">end</span>
+  legend(legendStr ,<span class="string">'location'</span>, <span class="string">'northwest'</span>);
+  xlabel(<span class="string">'N'</span>); ylabel(<span class="string">'power'</span>)
+  title(sprintf(<span class="string">'desired width = %5.3f'</span>, maxWidth))
+  set(gca,<span class="string">'ylim'</span>,[0 1]);grid <span class="string">off</span>
+  drawnow
+  printPmtkFigure(sprintf(<span class="string">'powerCurvesDemo2-width%d'</span>, i));
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="powerCurvesDemo_05.png" alt=""> <img vspace="5" hspace="5" src="powerCurvesDemo_06.png" alt=""> <img vspace="5" hspace="5" src="powerCurvesDemo_07.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="powerCurvesDemo_01.png" alt=""> <h2>Power vs sample size for excluding a null value from binary trials<a name="5"></a></h2><p>Based on p337 of "Doing Bayesian Data Analysis" Kruschke 2010</p><pre class="codeinput"><span class="keyword">function</span> power = powerCurves(priorMean, priorN, nullValue, maxWidth, Ns)
+
+<span class="keyword">if</span> nargin &lt; 3, nullValue = []; <span class="keyword">end</span>
+<span class="keyword">if</span> nargin &lt; 4, maxWidth = []; <span class="keyword">end</span>
+<span class="keyword">if</span> nargin &lt; 5, Ns = 1:5:100; <span class="keyword">end</span>
+
+prior.a = priorMean*priorN;
+prior.b = (1-priorMean)*priorN;
+uniformPrior.a = 1;
+uniformPrior.b = 1;
+<span class="keyword">for</span> Ni=1:numel(Ns)
+  N = Ns(Ni);
+  xs = 0:N;
+  <span class="keyword">for</span> i=1:numel(xs)
+    x = xs(i);
+    px(i) = exp(nchoosekln(N,x) + betaln(x+prior.a, N-x+prior.b) <span class="keyword">...</span>
+      - betaln(prior.a, prior.b));
+    postA = uniformPrior.a + x;
+    postB = uniformPrior.b + N-x;
+    icdf = @(p) betainv(p, postA, postB);
+    H = hdiFromIcdf(icdf);
+    <span class="keyword">if</span> ~isempty(nullValue)
+      goal(i) = (H(1) &gt; nullValue) || (H(2) &lt; nullValue);
+    <span class="keyword">end</span>
+    <span class="keyword">if</span> ~isempty(maxWidth)
+      goal(i) = H(2)-H(1) &lt;= maxWidth;
+    <span class="keyword">end</span>
+  <span class="keyword">end</span>
+  power(Ni) = sum(px .* goal);
+<span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Power vs sample size for excluding a null value from binary trials
+
+function powerCurvesDemo()
+
+Ns=1:5:100;
+nullValue = [];
+maxWidth = 0.2;
+priorMeans = [0.6 0.7 0.8];
+priorNs = [5 10 100];
+[styles, colors, symbols, str] =  plotColors();
+for i=1:numel(priorMeans)
+  figure; hold on
+  for j=1:numel(priorNs)
+    priorMean = priorMeans(i);
+    priorN = priorNs(j);
+    power = powerCurves(priorMean, priorN, nullValue, maxWidth, Ns);
+    plot(Ns, power, sprintf('%s%s', styles{j}, colors(j)), 'linewidth', 3);
+    legendStr{j}= sprintf('priorN = %d', priorN);
+  end
+  legend(legendStr ,'location', 'southeast');
+  xlabel('N'); ylabel('power')
+  title(sprintf('prior mean = %5.3f', priorMean))
+  set(gca,'ylim',[0 1]);grid on
+  drawnow
+end
+
+
+%%
+Ns=1:5:100;
+nullValue = [];
+priorMeans = [0.6 0.7 0.8];
+priorN = 10;
+widths = [0.25 0.2 0.15];
+[styles, colors, symbols, str] =  plotColors();
+for i=1:numel(widths)
+  maxWidth = widths(i);
+  figure; hold on
+  for j=1:numel(priorMeans)
+    priorMean = priorMeans(j);
+    power = powerCurves(priorMean, priorN, nullValue, maxWidth, Ns);
+    plot(Ns, power, sprintf('%s%s', styles{j}, colors(j)), 'linewidth', 3);
+    legendStr{j}= sprintf('priorMean = %5.3f', priorMean);
+  end
+  legend(legendStr ,'location', 'northwest');
+  xlabel('N'); ylabel('power')
+  title(sprintf('desired width = %5.3f', maxWidth))
+  set(gca,'ylim',[0 1]);grid off
+  drawnow
+  printPmtkFigure(sprintf('powerCurvesDemo2-width%d', i));
+end
+
+end
+
+%% Power vs sample size for excluding a null value from binary trials
+% Based on p337 of "Doing Bayesian Data Analysis" Kruschke 2010
+
+function power = powerCurves(priorMean, priorN, nullValue, maxWidth, Ns)
+
+if nargin < 3, nullValue = []; end
+if nargin < 4, maxWidth = []; end
+if nargin < 5, Ns = 1:5:100; end
+
+prior.a = priorMean*priorN;
+prior.b = (1-priorMean)*priorN;
+uniformPrior.a = 1;
+uniformPrior.b = 1;
+for Ni=1:numel(Ns)
+  N = Ns(Ni);
+  xs = 0:N;
+  for i=1:numel(xs)
+    x = xs(i);
+    px(i) = exp(nchoosekln(N,x) + betaln(x+prior.a, N-x+prior.b) ...
+      - betaln(prior.a, prior.b));
+    postA = uniformPrior.a + x; 
+    postB = uniformPrior.b + N-x;
+    icdf = @(p) betainv(p, postA, postB);
+    H = hdiFromIcdf(icdf);
+    if ~isempty(nullValue)
+      goal(i) = (H(1) > nullValue) || (H(2) < nullValue);
+    end
+    if ~isempty(maxWidth)
+      goal(i) = H(2)-H(1) <= maxWidth;
+    end
+  end
+  power(Ni) = sum(px .* goal);
+end
+end
+
+##### SOURCE END #####
+--></body></html>

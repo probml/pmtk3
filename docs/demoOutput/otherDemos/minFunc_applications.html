@@ -1,0 +1,1405 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Minfunc demo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="minFunc_applications.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Minfunc demo</h1><!--introduction--><p>PMTKinteractive PMTKslow</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Huber robust regression</a></li><li><a href="#3">Probit regression</a></li><li><a href="#4">Logistic regression and L2-regularized logistic regression</a></li><li><a href="#5">Kernel logistic regression</a></li><li><a href="#6">Multinomial logistic regression with L2-regularization</a></li><li><a href="#7">Kernel multinomial logistic regression</a></li><li><a href="#8">Regression with neural networks</a></li><li><a href="#9">Classification with Neural Network with multiple hidden layers</a></li><li><a href="#10">Smooth support vector machine</a></li><li><a href="#11">Smooth support vector regression</a></li><li><a href="#12">Kernel smooth support vector machine</a></li><li><a href="#13">Multi-class smooth support vector machine</a></li><li><a href="#14">Sparse Gaussian graphical model precision matrix estimation</a></li><li><a href="#15">Chain-structured conditional random field</a></li><li><a href="#16">Tree-structured Markov random field with exp(linear) potentials</a></li><li><a href="#17">Lattice-structured conditional random field</a></li></ul></div><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+f = 1;
+
+options.Display = <span class="string">'none'</span>;
+</pre><h2>Huber robust regression<a name="2"></a></h2><pre class="codeinput"><span class="comment">% Generate linear regression data set with outliers</span>
+nInstances = 400;
+nVars = 1;
+[X,y] = makeData(<span class="string">'regressionOutliers'</span>,nInstances,nVars);
+
+<span class="comment">% Least squares solution</span>
+wLS = X\y;
+
+<span class="comment">% Huber loss</span>
+changePoint = .2;
+fprintf(<span class="string">'Training robust regression model...\n'</span>);
+wHuber = minFunc(@HuberLoss,wLS,options,X,y,changePoint);
+
+<span class="comment">% Plot results</span>
+figure(f);hold <span class="string">on</span>;f=f+1;
+plot(X,y,<span class="string">'.'</span>);
+xl = xlim;
+h1=plot(xl,xl*wLS,<span class="string">'r'</span>);
+h2=plot(xl,xl*wHuber,<span class="string">'g'</span>);
+set(h1,<span class="string">'LineWidth'</span>,3);
+set(h2,<span class="string">'LineWidth'</span>,3);
+legend([h1 h2],{<span class="string">'Least Squares'</span>,<span class="string">'Huber Loss'</span>});
+pause;
+</pre><h2>Probit regression<a name="3"></a></h2><pre class="codeinput"><span class="comment">% Generate linear classification data set with some variables flipped</span>
+nVars = 2;
+[X,y] = makeData(<span class="string">'classificationFlip'</span>,nInstances,nVars);
+
+<span class="comment">% Add bias</span>
+X = [ones(nInstances,1) X];
+
+fprintf(<span class="string">'Training probit regression model...\n'</span>);
+wProbit = minFunc(@ProbitLoss,zeros(nVars+1,1),options,X,y);
+
+trainErr = sum(y ~= sign(X*wProbit))/length(y)
+
+<span class="comment">% Plot the result</span>
+figure(f);f=f+1;
+
+plotClassifier(X,y,wProbit,<span class="string">'Probit Regression'</span>);
+pause;
+</pre><h2>Logistic regression and L2-regularized logistic regression<a name="4"></a></h2><pre class="codeinput"><span class="comment">% Make a separable data set</span>
+[X,y] = makeData(<span class="string">'classification'</span>,nInstances,nVars);
+
+<span class="comment">% Add bias</span>
+X = [ones(nInstances,1) X];
+
+<span class="comment">% Find maximum likelihood logistic</span>
+fprintf(<span class="string">'Training MLE logistic regression model...\n'</span>);
+wMLE = minFunc(@LogisticLoss,zeros(nVars+1,1),options,X,y);
+
+
+<span class="comment">% Find L2-regularized logistic</span>
+funObj = @(w)LogisticLoss(w,X,y);
+lambda = 1e-2*ones(nVars+1,1);
+lambda(1) = 0; <span class="comment">% Don't penalize bias</span>
+fprintf(<span class="string">'Training MAP logistic regression model...\n'</span>);
+wMAP = minFunc(@penalizedL2,zeros(nVars+1,1),options,funObj,lambda);
+
+trainErr_MLE = sum(y ~= sign(X*wMLE))/length(y)
+trainErr_MAP = sum(y ~= sign(X*wMAP))/length(y)
+
+<span class="comment">% Plot the result</span>
+figure(f);f=f+1;
+subplot(1,2,1);
+plotClassifier(X,y,wMLE,<span class="string">'MLE Logistic'</span>);
+subplot(1,2,2);
+plotClassifier(X,y,wMAP,<span class="string">'MAP Logistic'</span>);
+fprintf(<span class="string">'Comparison of norms of parameters for MLE and MAP:\n'</span>);
+norm_wMLE = norm(wMLE)
+norm_wMAP = norm(wMAP)
+pause;
+</pre><h2>Kernel logistic regression<a name="5"></a></h2><pre class="codeinput"><span class="comment">% Generate non-linear data set</span>
+[X,y] = makeData(<span class="string">'classificationNonlinear'</span>,nInstances,nVars);
+
+lambda = 1e-2;
+
+<span class="comment">% First fit a regular linear model</span>
+funObj = @(w)LogisticLoss(w,X,y);
+fprintf(<span class="string">'Training linear logistic regression model...\n'</span>);
+wLinear = minFunc(@penalizedL2,zeros(nVars,1),options,funObj,lambda);
+
+<span class="comment">% Now fit the same model with the kernel representation</span>
+K = kernelLinear(X,X);
+funObj = @(u)LogisticLoss(u,K,y);
+fprintf(<span class="string">'Training kernel(linear) logistic regression model...\n'</span>);
+uLinear = minFunc(@penalizedKernelL2,zeros(nInstances,1),options,K,funObj,lambda);
+
+<span class="comment">% Now try a degree-2 polynomial kernel expansion</span>
+polyOrder = 2;
+Kpoly = kernelPoly(X,X,polyOrder);
+funObj = @(u)LogisticLoss(u,Kpoly,y);
+fprintf(<span class="string">'Training kernel(poly) logistic regression model...\n'</span>);
+uPoly = minFunc(@penalizedKernelL2,zeros(nInstances,1),options,Kpoly,funObj,lambda);
+
+<span class="comment">% Squared exponential radial basis function kernel expansion</span>
+rbfScale = 1;
+Krbf = kernelRBF(X,X,rbfScale);
+funObj = @(u)LogisticLoss(u,Krbf,y);
+fprintf(<span class="string">'Training kernel(rbf) logistic regression model...\n'</span>);
+uRBF = minFunc(@penalizedKernelL2,zeros(nInstances,1),options,Krbf,funObj,lambda);
+
+<span class="comment">% Check that wLinear and uLinear represent the same model:</span>
+fprintf(<span class="string">'Parameters estimated from linear and kernel(linear) model:\n'</span>);
+[wLinear X'*uLinear]
+
+trainErr_linear = sum(y ~= sign(X*wLinear))/length(y)
+trainErr_poly = sum(y ~= sign(Kpoly*uPoly))/length(y)
+trainErr_rbf = sum(y ~= sign(Krbf*uRBF))/length(y)
+
+fprintf(<span class="string">'Making linear plots...\n'</span>);
+figure(f);f=f+1;
+subplot(1,2,1);
+plotClassifier(X,y,wLinear,<span class="string">'Linear Logistic Regression'</span>);
+subplot(1,2,2);
+plotClassifier(X,y,uLinear,<span class="string">'Kernel-Linear Logistic Regression'</span>,@kernelLinear,[]);
+fprintf(<span class="string">'Making kernel plots...\n'</span>);
+figure(f);f=f+1;
+subplot(1,2,1);
+plotClassifier(X,y,uPoly,<span class="string">'Kernel-Poly Logistic Regression'</span>,@kernelPoly,polyOrder);
+subplot(1,2,2);
+plotClassifier(X,y,uRBF,<span class="string">'Kernel-RBF Logistic Regression'</span>,@kernelRBF,rbfScale);
+pause;
+</pre><h2>Multinomial logistic regression with L2-regularization<a name="6"></a></h2><pre class="codeinput">nClasses = 5;
+[X,y] = makeData(<span class="string">'multinomial'</span>,nInstances,nVars,nClasses);
+
+<span class="comment">% Add bias</span>
+X = [ones(nInstances,1) X];
+
+funObj = @(W)SoftmaxLoss2(W,X,y,nClasses);
+lambda = 1e-4*ones(nVars+1,nClasses-1);
+lambda(1,:) = 0; <span class="comment">% Don't penalize biases</span>
+fprintf(<span class="string">'Training multinomial logistic regression model...\n'</span>);
+wSoftmax = minFunc(@penalizedL2,zeros((nVars+1)*(nClasses-1),1),options,funObj,lambda(:));
+wSoftmax = reshape(wSoftmax,[nVars+1 nClasses-1]);
+wSoftmax = [wSoftmax zeros(nVars+1,1)];
+
+[junk yhat] = max(X*wSoftmax,[],2);
+trainErr = sum(yhat~=y)/length(y)
+
+<span class="comment">% Plot the result</span>
+figure(f);f=f+1;
+plotClassifier(X,y,wSoftmax,<span class="string">'Multinomial Logistic Regression'</span>);
+pause;
+</pre><h2>Kernel multinomial logistic regression<a name="7"></a></h2><pre class="codeinput"><span class="comment">% Generate Data</span>
+[X,y] = makeData(<span class="string">'multinomialNonlinear'</span>,nInstances,nVars,nClasses);
+
+lambda = 1e-2;
+
+<span class="comment">% Linear</span>
+funObj = @(w)SoftmaxLoss2(w,X,y,nClasses);
+fprintf(<span class="string">'Training linear multinomial logistic regression model...\n'</span>);
+wLinear = minFunc(@penalizedL2,zeros(nVars*(nClasses-1),1),options,funObj,lambda);
+wLinear = reshape(wLinear,[nVars nClasses-1]);
+wLinear = [wLinear zeros(nVars,1)];
+
+<span class="comment">% Polynomial</span>
+polyOrder = 2;
+Kpoly = kernelPoly(X,X,polyOrder);
+funObj = @(u)SoftmaxLoss2(u,Kpoly,y,nClasses);
+fprintf(<span class="string">'Training kernel(poly) multinomial logistic regression model...\n'</span>);
+uPoly = minFunc(@penalizedKernelL2_matrix,randn(nInstances*(nClasses-1),1),options,Kpoly,nClasses-1,funObj,lambda);
+uPoly = reshape(uPoly,[nInstances nClasses-1]);
+uPoly = [uPoly zeros(nInstances,1)];
+
+<span class="comment">% RBF</span>
+rbfScale = 1;
+Krbf = kernelRBF(X,X,rbfScale);
+funObj = @(u)SoftmaxLoss2(u,Krbf,y,nClasses);
+fprintf(<span class="string">'Training kernel(rbf) multinomial logistic regression model...\n'</span>);
+uRBF = minFunc(@penalizedKernelL2_matrix,randn(nInstances*(nClasses-1),1),options,Krbf,nClasses-1,funObj,lambda);
+uRBF = reshape(uRBF,[nInstances nClasses-1]);
+uRBF = [uRBF zeros(nInstances,1)];
+
+<span class="comment">% Compute training errors</span>
+[junk yhat] = max(X*wLinear,[],2);
+trainErr_linear = sum(y~=yhat)/length(y)
+[junk yhat] = max(Kpoly*uPoly,[],2);
+trainErr_poly = sum(y~=yhat)/length(y)
+[junk yhat] = max(Krbf*uRBF,[],2);
+trainErr_rbf = sum(y~=yhat)/length(y)
+
+fprintf(<span class="string">'Making linear plot...\n'</span>);
+figure(f);f=f+1;
+plotClassifier(X,y,wLinear,<span class="string">'Linear Multinomial Logistic Regression'</span>);
+fprintf(<span class="string">'Making kernel plots...\n'</span>);
+figure(f);f=f+1;
+subplot(1,2,1);
+plotClassifier(X,y,uPoly,<span class="string">'Kernel-Poly Multinomial Logistic Regression'</span>,@kernelPoly,polyOrder);
+subplot(1,2,2);
+plotClassifier(X,y,uRBF,<span class="string">'Kernel-RBF Multinomial Logistic Regression'</span>,@kernelRBF,rbfScale);
+pause;
+</pre><h2>Regression with neural networks<a name="8"></a></h2><pre class="codeinput"><span class="comment">% Generate non-linear regression data set</span>
+nVars = 1;
+[X,y] = makeData(<span class="string">'regressionNonlinear'</span>,nInstances,nVars);
+
+X = [ones(nInstances,1) X];
+nVars = nVars+1;
+
+<span class="comment">% Train neural network</span>
+nHidden = [10];
+nParams = nVars*nHidden(1);
+<span class="keyword">for</span> h = 2:length(nHidden);
+    nParams = nParams+nHidden(h-1)*nHidden(h);
+<span class="keyword">end</span>
+nParams = nParams+nHidden(end);
+
+funObj = @(weights)MLPregressionLoss(weights,X,y,nHidden);
+lambda = 1e-2;
+fprintf(<span class="string">'Training neural network for regression...\n'</span>);
+wMLP = minFunc(@penalizedL2,randn(nParams,1),options,funObj,lambda);
+
+<span class="comment">% Plot results</span>
+figure(f);hold <span class="string">on</span>;f=f+1;
+Xtest = [-5:.05:5]';
+Xtest = [ones(size(Xtest,1),1) Xtest];
+yhat = MLPregressionPredict(wMLP,Xtest,nHidden);
+plot(X(:,2),y,<span class="string">'.'</span>);
+h=plot(Xtest(:,2),yhat,<span class="string">'g-'</span>);
+set(h,<span class="string">'LineWidth'</span>,3);
+legend({<span class="string">'Data'</span>,<span class="string">'Neural Net'</span>});
+pause;
+</pre><h2>Classification with Neural Network with multiple hidden layers<a name="9"></a></h2><pre class="codeinput">nVars = 2;
+[X,y] = makeData(<span class="string">'classificationNonlinear'</span>,nInstances,nVars);
+
+X = [ones(nInstances,1) X];
+nVars = nVars+1;
+
+<span class="comment">% Train neural network w/ multiple hiden layers</span>
+nHidden = [10 10];
+nParams = nVars*nHidden(1);
+<span class="keyword">for</span> h = 2:length(nHidden);
+    nParams = nParams+nHidden(h-1)*nHidden(h);
+<span class="keyword">end</span>
+nParams = nParams+nHidden(end);
+
+funObj = @(weights)MLPbinaryLoss(weights,X,y,nHidden);
+lambda = 1;
+fprintf(<span class="string">'Training neural network with multiple hidden layers for classification\n'</span>);
+wMLP = minFunc(@penalizedL2,randn(nParams,1),options,funObj,lambda);
+
+yhat = MLPregressionPredict(wMLP,X,nHidden);
+trainErr = sum(sign(yhat(:)) ~= y)/length(y)
+
+fprintf(<span class="string">'Making plot...\n'</span>);
+figure(f);f=f+1;
+plotClassifier(X,y,wMLP,<span class="string">'Neural Net (multiple hidden layers)'</span>,nHidden);
+pause;
+</pre><h2>Smooth support vector machine<a name="10"></a></h2><pre class="codeinput">nVars = 2;
+[X,y] = makeData(<span class="string">'classification'</span>,nInstances,nVars);
+
+<span class="comment">% Add bias</span>
+X = [ones(nInstances,1) X];
+
+fprintf(<span class="string">'Training smooth vector machine model...\n'</span>);
+funObj = @(w)SSVMLoss(w,X,y);
+lambda = 1e-2*ones(nVars+1,1);
+lambda(1) = 0;
+wSSVM = minFunc(@penalizedL2,zeros(nVars+1,1),options,funObj,lambda);
+
+trainErr = sum(y ~= sign(X*wSSVM))/length(y)
+
+<span class="comment">% Plot the result</span>
+figure(f);f=f+1;
+plotClassifier(X,y,wSSVM,<span class="string">'Smooth support vector machine'</span>);
+SV = 1-y.*(X*wSSVM) &gt;= 0;
+h=plot(X(SV,2),X(SV,3),<span class="string">'o'</span>,<span class="string">'color'</span>,<span class="string">'r'</span>);
+legend(h,<span class="string">'Support Vectors'</span>);
+pause;
+</pre><h2>Smooth support vector regression<a name="11"></a></h2><pre class="codeinput">nVars = 1;
+[X,y] = makeData(<span class="string">'regressionNonlinear'</span>,nInstances,nVars);
+
+X = [ones(nInstances,1) X];
+nVars = nVars+1;
+
+lambda = 1e-2;
+
+<span class="comment">% Train smooth support vector regression machine</span>
+changePoint = .2;
+rbfScale = 1;
+Krbf = kernelRBF(X,X,rbfScale);
+funObj = @(u)SSVRLoss(u,Krbf,y,changePoint);
+fprintf(<span class="string">'Training kernel(rbf) support vector regression machine...\n'</span>);
+uRBF = minFunc(@penalizedKernelL2,zeros(nInstances,1),options,Krbf,funObj,lambda);
+
+
+<span class="comment">% Plot results</span>
+figure(f);hold <span class="string">on</span>;f=f+1;
+Xtest = [-5:.05:5]';
+Xtest = [ones(size(Xtest,1),1) Xtest];
+yhat = kernelRBF(Xtest,X,rbfScale)*uRBF;
+plot(X(:,2),y,<span class="string">'.'</span>);
+h=plot(Xtest(:,2),yhat,<span class="string">'g-'</span>);
+set(h,<span class="string">'LineWidth'</span>,3);
+SV = abs(Krbf*uRBF - y) &gt;= changePoint;
+plot(X(SV,2),y(SV),<span class="string">'o'</span>,<span class="string">'color'</span>,<span class="string">'r'</span>);
+plot(Xtest(:,2),yhat+changePoint,<span class="string">'c--'</span>);
+plot(Xtest(:,2),yhat-changePoint,<span class="string">'c--'</span>);
+legend({<span class="string">'Data'</span>,<span class="string">'Smooth SVR'</span>,<span class="string">'Support Vectors'</span>,<span class="string">'Eps-Tube'</span>});
+pause;
+</pre><h2>Kernel smooth support vector machine<a name="12"></a></h2><pre class="codeinput"><span class="comment">% Generate non-linear data set</span>
+nVars = 2;
+[X,y] = makeData(<span class="string">'classificationNonlinear'</span>,nInstances,nVars);
+
+lambda = 1e-2;
+
+<span class="comment">% Squared exponential radial basis function kernel expansion</span>
+rbfScale = 1;
+Krbf = kernelRBF(X,X,rbfScale);
+funObj = @(u)SSVMLoss(u,Krbf,y);
+fprintf(<span class="string">'Training kernel(rbf) support vector machine...\n'</span>);
+uRBF = minFunc(@penalizedKernelL2,zeros(nInstances,1),options,Krbf,funObj,lambda);
+
+trainErr = sum(y ~= sign(Krbf*uRBF))/length(y)
+
+fprintf(<span class="string">'Making plot...\n'</span>);
+figure(f);f=f+1;
+plotClassifier(X,y,uRBF,<span class="string">'Kernel-RBF Smooth Support Vector Machine'</span>,@kernelRBF,rbfScale);
+SV = 1-y.*(Krbf*uRBF) &gt;= 0;
+h=plot(X(SV,1),X(SV,2),<span class="string">'o'</span>,<span class="string">'color'</span>,<span class="string">'r'</span>);
+legend(h,<span class="string">'Support Vectors'</span>);
+pause;
+</pre><h2>Multi-class smooth support vector machine<a name="13"></a></h2><pre class="codeinput"><span class="comment">% Generate Data</span>
+nVars = 2;
+nClasses = 5;
+[X,y] = makeData(<span class="string">'multinomialNonlinear'</span>,nInstances,nVars,nClasses);
+
+lambda = 1e-2;
+
+<span class="comment">% Linear</span>
+funObj = @(w)SSVMMultiLoss(w,X,y,nClasses);
+fprintf(<span class="string">'Training linear multi-class SVM...\n'</span>);
+wLinear = minFunc(@penalizedL2,zeros(nVars*nClasses,1),options,funObj,lambda);
+wLinear = reshape(wLinear,[nVars nClasses]);
+
+<span class="comment">% Polynomial</span>
+polyOrder = 2;
+Kpoly = kernelPoly(X,X,polyOrder);
+funObj = @(u)SSVMMultiLoss(u,Kpoly,y,nClasses);
+fprintf(<span class="string">'Training kernel(poly) multi-class SVM...\n'</span>);
+uPoly = minFunc(@penalizedKernelL2_matrix,randn(nInstances*nClasses,1),options,Kpoly,nClasses,funObj,lambda);
+uPoly = reshape(uPoly,[nInstances nClasses]);
+
+<span class="comment">% RBF</span>
+rbfScale = 1;
+Krbf = kernelRBF(X,X,rbfScale);
+funObj = @(u)SSVMMultiLoss(u,Krbf,y,nClasses);
+fprintf(<span class="string">'Training kernel(rbf) multi-class SVM...\n'</span>);
+uRBF = minFunc(@penalizedKernelL2_matrix,randn(nInstances*nClasses,1),options,Krbf,nClasses,funObj,lambda);
+uRBF = reshape(uRBF,[nInstances nClasses]);
+
+<span class="comment">% Compute training errors</span>
+[junk yhat] = max(X*wLinear,[],2);
+trainErr_linear = sum(y~=yhat)/length(y)
+[junk yhat] = max(Kpoly*uPoly,[],2);
+trainErr_poly = sum(y~=yhat)/length(y)
+[junk yhat] = max(Krbf*uRBF,[],2);
+trainErr_rbf = sum(y~=yhat)/length(y)
+
+fprintf(<span class="string">'Making linear plot...\n'</span>);
+figure(f);f=f+1;
+plotClassifier(X,y,wLinear,<span class="string">'Linear Multi-Class Smooth SVM'</span>);
+fprintf(<span class="string">'Making kernel plots...\n'</span>);
+figure(f);f=f+1;
+subplot(1,2,1);
+plotClassifier(X,y,uPoly,<span class="string">'Kernel-Poly Multi-Class Smooth SVM'</span>,@kernelPoly,polyOrder);
+subplot(1,2,2);
+plotClassifier(X,y,uRBF,<span class="string">'Kernel-RBF Multi-Class Smooth SVM'</span>,@kernelRBF,rbfScale);
+pause;
+</pre><h2>Sparse Gaussian graphical model precision matrix estimation<a name="14"></a></h2><pre class="codeinput"><span class="comment">% Generate a sparse positive-definite precision matrix</span>
+nNodes = 10;
+adj = triu(rand(nNodes) &gt; .75,1);
+adj = setdiag(adj+adj',1);
+P = randn(nNodes).*adj;
+P = (P+P')/2;
+tau = 1;
+X = P + tau*eye(nNodes);
+<span class="keyword">while</span> ~ispd(X)
+    tau = tau*2;
+    X = P + tau*eye(nNodes);
+<span class="keyword">end</span>
+mu = randn(nNodes,1);
+
+<span class="comment">% Sample from the GGM</span>
+C = inv(X);
+R = chol(C)';
+X = zeros(nInstances,nNodes);
+<span class="keyword">for</span> i = 1:nInstances
+    X(i,:) = (mu + R*randn(nNodes,1))';
+<span class="keyword">end</span>
+
+<span class="comment">% Center and Standardize</span>
+X = standardizeCols(X);
+
+<span class="comment">% Train Full GGM</span>
+sigma_emp = cov(X);
+nonZero = find(ones(nNodes));
+funObj = @(x)sparsePrecisionObj(x,nNodes,nonZero,sigma_emp);
+Kfull = eye(nNodes);
+fprintf(<span class="string">'Fitting full Gaussian graphical model\n'</span>);
+Kfull(nonZero) = minFunc(funObj,Kfull(nonZero),options);
+
+<span class="comment">% Train GGM with sparsity pattern given by 'adj'</span>
+nonZero = find(adj);
+funObj = @(x)sparsePrecisionObj(x,nNodes,nonZero,sigma_emp);
+Ksparse = eye(nNodes);
+fprintf(<span class="string">'Fitting sparse Gaussian graphical model\n'</span>);
+Ksparse(nonZero) = minFunc(funObj,Ksparse(nonZero),options);
+
+<span class="comment">% Covariance matrix corresponding to sparse precision should agree with</span>
+<span class="comment">% empirical covariance at all non-zero values</span>
+fprintf(<span class="string">'Norm of difference between empirical and estimate covariance\nmatrix at values where the precision matrix was set to 0:\n'</span>);
+Csparse = inv(Ksparse);
+norm(sigma_emp(nonZero)-Csparse(nonZero))
+
+figure(f);f=f+1;
+subplot(1,2,1);
+imagesc(sigma_emp);
+title(<span class="string">'Empirical Covariance'</span>);
+subplot(1,2,2);
+imagesc(Csparse);
+title(<span class="string">'Inverse of Estimated Sparse Precision'</span>);
+figure(f);f=f+1;
+subplot(1,2,1);
+imagesc(Kfull);
+title(<span class="string">'Estimated Full Precision Matrix'</span>);
+subplot(1,2,2);
+imagesc(Ksparse);
+title(<span class="string">'Estimated Sparse Precision Matrix'</span>);
+pause;
+</pre><h2>Chain-structured conditional random field<a name="15"></a></h2><pre class="codeinput"><span class="comment">% Generate Data</span>
+nWords = 1000;
+nStates = 4;
+nFeatures = [2 3 4 5]; <span class="comment">% When inputting a data set, this can be set to maximum values in columns of X</span>
+
+<span class="comment">% Generate Features (0 means no feature)</span>
+clear <span class="string">X</span>
+<span class="keyword">for</span> feat = 1:length(nFeatures)
+    X(:,feat) = floor(rand(nWords,1)*(nFeatures(feat)+1));
+<span class="keyword">end</span>
+
+<span class="comment">% Generate Labels (0 means position between sentences)</span>
+y = floor(rand*(nStates+1));
+<span class="keyword">for</span> w = 2:nWords
+    pot = zeros(5,1);
+
+    <span class="comment">% Features increase the probability of transitioning to their state</span>
+    pot(2) = sum(X(w,:)==1);
+    pot(3) = 10*sum(X(w,:)==2);
+    pot(4) = 100*sum(X(w,:)==3);
+    pot(5) = 1000*sum(X(w,:)==4);
+
+    <span class="comment">% We have at least a 10% chance of staying in the same state</span>
+    pot(y(w-1,1)+1) = max(pot(y(w-1,1)+1),max(pot)/10);
+
+    <span class="comment">% We have a 10% chance of ending the sentence if last state was 1-3, 50% if</span>
+    <span class="comment">% last state was 4</span>
+    <span class="keyword">if</span> y(w-1) == 0
+        pot(1) = 0;
+    <span class="keyword">elseif</span> y(w-1) == 4
+        pot(1) = max(pot)/2;
+    <span class="keyword">else</span>
+        pot(1) = max(pot)/10;
+    <span class="keyword">end</span>
+
+    pot = pot/sum(pot);
+    y(w,1) = sampleDiscrete(pot)-1;
+<span class="keyword">end</span>
+
+<span class="comment">% Initialize</span>
+[w,v_start,v_end,v] = crfChain_initWeights(nFeatures,nStates,<span class="string">'zeros'</span>);
+featureStart = cumsum([1 nFeatures(1:end)]); <span class="comment">% data structure which relates high-level 'features' to elements of w</span>
+sentences = crfChain_initSentences(y);
+nSentences = size(sentences,1);
+maxSentenceLength = 1+max(sentences(:,2)-sentences(:,1));
+
+fprintf(<span class="string">'Training chain-structured CRF\n'</span>);
+[wv] = minFunc(@crfChain_loss,[w(:);v_start;v_end;v(:)],options,X,y,nStates,nFeatures,featureStart,sentences);
+
+<span class="comment">% Split up weights</span>
+[w,v_start,v_end,v] = crfChain_splitWeights(wv,featureStart,nStates);
+
+<span class="comment">% Measure error</span>
+trainErr = 0;
+trainZ = 0;
+yhat = zeros(size(y));
+<span class="keyword">for</span> s = 1:nSentences
+    y_s = y(sentences(s,1):sentences(s,2));
+    [nodePot,edgePot]=crfChain_makePotentials(X,w,v_start,v_end,v,nFeatures,featureStart,sentences,s);
+    [nodeBel,edgeBel,logZ] = crfChain_infer(nodePot,edgePot);
+    [junk yhat(sentences(s,1):sentences(s,2))] = max(nodeBel,[],2);
+<span class="keyword">end</span>
+trainErrRate = sum(y~=yhat)/length(y)
+
+figure(f);f=f+1;
+imagesc([y yhat]);
+colormap <span class="string">gray</span>
+title(<span class="string">'True sequence (left), sequence of marginally most likely states (right)'</span>);
+pause;
+</pre><h2>Tree-structured Markov random field with exp(linear) potentials<a name="16"></a></h2><pre class="codeinput">nInstances = 500;
+nNodes = 18;
+nStates = 3;
+
+<span class="comment">% Make tree-structured adjacency matrix</span>
+adj = zeros(nNodes);
+adj(1,2) = 1;
+adj(1,3) = 1;
+adj(1,4) = 1;
+adj(2,5) = 1;
+adj(2,6) = 1;
+adj(2,7) = 1;
+adj(3,8) = 1;
+adj(7,9) = 1;
+adj(7,10) = 1;
+adj(8,11) = 1;
+adj(8,12) = 1;
+adj(8,13) = 1;
+adj(8,14) = 1;
+adj(9,15) = 1;
+adj(9,16) = 1;
+adj(9,17) = 1;
+adj(13,18) = 1;
+adj = adj+adj';
+
+<span class="comment">% Make edgeStruct</span>
+useMex = 1;
+edgeStruct = UGM_makeEdgeStruct(adj,nStates,useMex,nInstances);
+nEdges = edgeStruct.nEdges;
+
+<span class="comment">% Make potentials and sample from MRF</span>
+nodePot = rand(nNodes,nStates);
+edgePot = rand(nStates,nStates,nEdges);
+y = UGM_Sample_Tree(nodePot,edgePot,edgeStruct)';
+
+<span class="comment">% Now fit MRF with exp(linear) parameters to data</span>
+Xnode = ones(nInstances,1,nNodes); <span class="comment">% Nodes just have a bias</span>
+Xedge = ones(nInstances,1,nEdges); <span class="comment">% Edges just have a bias</span>
+ising = 0;
+tied = 0;
+infoStruct = UGM_makeCRFInfoStruct(Xnode,Xedge,edgeStruct,ising,tied);
+[w,v] = UGM_initWeights(infoStruct);
+funObj = @(wv)UGM_MRFLoss(wv,Xnode,Xedge,y,edgeStruct,infoStruct,@UGM_Infer_Tree);
+fprintf(<span class="string">'Training tree-structured Markov random field\n'</span>);
+[wv] = minFunc(funObj,[w(:);v(:)],options);
+[w,v] = UGM_splitWeights(wv,infoStruct);
+
+<span class="comment">% Generate Samples from model</span>
+nodePot = UGM_makeNodePotentials(Xnode(1,:,:),w,edgeStruct,infoStruct);
+edgePot = UGM_makeEdgePotentials(Xedge(1,:,:),v,edgeStruct,infoStruct);
+ySimulated = UGM_Sample_Tree(nodePot,edgePot,edgeStruct)';
+
+<span class="comment">% Plot real vs. simulated data</span>
+figure(f);f=f+1;
+subplot(1,2,1);
+imagesc(y);
+title(<span class="string">'Training examples'</span>);
+colormap <span class="string">gray</span>
+subplot(1,2,2);
+imagesc(ySimulated);
+colormap <span class="string">gray</span>
+title(<span class="string">'Samples from learned MRF'</span>);
+pause;
+</pre><h2>Lattice-structured conditional random field<a name="17"></a></h2><pre class="codeinput">nInstances = 1;
+ising = 1;
+tied = 1;
+
+<span class="comment">% Load image/label data</span>
+label = sign(double(imread(<span class="string">'misc/X.png'</span>))-1);
+label  = label(:,:,1);
+[nRows nCols] = size(label);
+noisy = label+randn(nRows,nCols);
+
+<span class="comment">% Convert to UGM feature/label format</span>
+nNodes = nRows*nCols;
+X = reshape(noisy,[nInstances 1 nNodes]);
+y = reshape(label,[nInstances nNodes]);
+
+<span class="comment">% Standardize Features</span>
+X = UGM_standardizeCols(X,tied);
+
+<span class="comment">% Convert from {-1,1} to {1,2} label representation</span>
+y(y==1) = 2;
+y(y==-1) = 1;
+
+<span class="comment">% Make adjacency matrix</span>
+adjMatrix = fixed_Lattice(nRows,nCols);
+
+<span class="comment">% Make edges from adjacency matrix</span>
+useMex = 1;
+edgeStruct=UGM_makeEdgeStruct(adjMatrix,2,useMex);
+
+<span class="comment">% Make edge features</span>
+Xedge = UGM_makeEdgeFeatures(X,edgeStruct.edgeEnds);
+nEdges = edgeStruct.nEdges;
+
+<span class="comment">% Add bias to each node and edge</span>
+X = [ones(nInstances,1,nNodes) X];
+Xedge = [ones(nInstances,1,nEdges) Xedge];
+
+<span class="comment">% Make Infostruct</span>
+infoStruct = UGM_makeInfoStruct(X,Xedge,edgeStruct,ising,tied);
+
+<span class="comment">% Initialize weights</span>
+[w,v] = UGM_initWeights(infoStruct);
+
+fprintf(<span class="string">'Training with pseudo-likelihood\n'</span>);
+wv = minFunc(@UGM_PseudoLoss,[w;v],options,X,Xedge,y,edgeStruct,infoStruct);
+[w,v] = UGM_splitWeights(wv,infoStruct);
+nodePot = UGM_makeNodePotentials(X(1,:,:),w,edgeStruct,infoStruct);
+edgePot = UGM_makeEdgePotentials(Xedge(1,:,:),v,edgeStruct,infoStruct);
+y_ICM = UGM_Decode_ICM(nodePot,edgePot,edgeStruct);
+
+fprintf(<span class="string">'Training with loopy belief propagation\n'</span>);
+wv2= minFunc(@UGM_CRFLoss,[w;v],options,X,Xedge,y,edgeStruct,infoStruct,@UGM_Infer_LBP);
+[w2,v2] = UGM_splitWeights(wv2,infoStruct);
+nodePot = UGM_makeNodePotentials(X(1,:,:),w2,edgeStruct,infoStruct);
+edgePot = UGM_makeEdgePotentials(Xedge(1,:,:),v2,edgeStruct,infoStruct);
+nodeBel = UGM_Infer_LBP(nodePot,edgePot,edgeStruct);
+[junk y_LBP] = max(nodeBel,[],2);
+
+figure(f);f=f+1;
+subplot(2,2,1);
+imagesc(label);
+colormap <span class="string">gray</span>
+title(<span class="string">'Image Label'</span>);
+subplot(2,2,2);
+imagesc(noisy);
+colormap <span class="string">gray</span>
+title(<span class="string">'Observed Image'</span>);
+subplot(2,2,3);
+imagesc(reshape(y_ICM,[nRows nCols]));
+colormap <span class="string">gray</span>
+title(<span class="string">'Pseudolikelihood train/ICM decode'</span>);
+subplot(2,2,4);
+imagesc(reshape(y_LBP,[nRows nCols]));
+colormap <span class="string">gray</span>
+title(<span class="string">'Loopy train/decode'</span>);
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Minfunc demo
+% PMTKinteractive
+% PMTKslow
+%%
+
+% This file is from pmtk3.googlecode.com
+
+f = 1;
+
+options.Display = 'none';
+
+%% Huber robust regression
+
+% Generate linear regression data set with outliers
+nInstances = 400;
+nVars = 1;
+[X,y] = makeData('regressionOutliers',nInstances,nVars);
+
+% Least squares solution
+wLS = X\y;
+
+% Huber loss
+changePoint = .2;
+fprintf('Training robust regression model...\n');
+wHuber = minFunc(@HuberLoss,wLS,options,X,y,changePoint);
+
+% Plot results
+figure(f);hold on;f=f+1;
+plot(X,y,'.');
+xl = xlim;
+h1=plot(xl,xl*wLS,'r');
+h2=plot(xl,xl*wHuber,'g');
+set(h1,'LineWidth',3);
+set(h2,'LineWidth',3);
+legend([h1 h2],{'Least Squares','Huber Loss'});
+pause;
+
+%% Probit regression
+
+% Generate linear classification data set with some variables flipped
+nVars = 2;
+[X,y] = makeData('classificationFlip',nInstances,nVars);
+
+% Add bias
+X = [ones(nInstances,1) X];
+
+fprintf('Training probit regression model...\n');
+wProbit = minFunc(@ProbitLoss,zeros(nVars+1,1),options,X,y);
+
+trainErr = sum(y ~= sign(X*wProbit))/length(y)
+
+% Plot the result
+figure(f);f=f+1;
+
+plotClassifier(X,y,wProbit,'Probit Regression');
+pause;
+
+%% Logistic regression and L2-regularized logistic regression
+
+% Make a separable data set
+[X,y] = makeData('classification',nInstances,nVars);
+
+% Add bias
+X = [ones(nInstances,1) X];
+
+% Find maximum likelihood logistic
+fprintf('Training MLE logistic regression model...\n');
+wMLE = minFunc(@LogisticLoss,zeros(nVars+1,1),options,X,y);
+
+
+% Find L2-regularized logistic
+funObj = @(w)LogisticLoss(w,X,y);
+lambda = 1e-2*ones(nVars+1,1);
+lambda(1) = 0; % Don't penalize bias
+fprintf('Training MAP logistic regression model...\n');
+wMAP = minFunc(@penalizedL2,zeros(nVars+1,1),options,funObj,lambda);
+
+trainErr_MLE = sum(y ~= sign(X*wMLE))/length(y)
+trainErr_MAP = sum(y ~= sign(X*wMAP))/length(y)
+
+% Plot the result
+figure(f);f=f+1;
+subplot(1,2,1);
+plotClassifier(X,y,wMLE,'MLE Logistic');
+subplot(1,2,2);
+plotClassifier(X,y,wMAP,'MAP Logistic');
+fprintf('Comparison of norms of parameters for MLE and MAP:\n');
+norm_wMLE = norm(wMLE)
+norm_wMAP = norm(wMAP)
+pause;
+
+%% Kernel logistic regression
+
+% Generate non-linear data set
+[X,y] = makeData('classificationNonlinear',nInstances,nVars);
+
+lambda = 1e-2;
+
+% First fit a regular linear model
+funObj = @(w)LogisticLoss(w,X,y);
+fprintf('Training linear logistic regression model...\n');
+wLinear = minFunc(@penalizedL2,zeros(nVars,1),options,funObj,lambda);
+
+% Now fit the same model with the kernel representation
+K = kernelLinear(X,X);
+funObj = @(u)LogisticLoss(u,K,y);
+fprintf('Training kernel(linear) logistic regression model...\n');
+uLinear = minFunc(@penalizedKernelL2,zeros(nInstances,1),options,K,funObj,lambda);
+
+% Now try a degree-2 polynomial kernel expansion
+polyOrder = 2;
+Kpoly = kernelPoly(X,X,polyOrder);
+funObj = @(u)LogisticLoss(u,Kpoly,y);
+fprintf('Training kernel(poly) logistic regression model...\n');
+uPoly = minFunc(@penalizedKernelL2,zeros(nInstances,1),options,Kpoly,funObj,lambda);
+
+% Squared exponential radial basis function kernel expansion
+rbfScale = 1;
+Krbf = kernelRBF(X,X,rbfScale);
+funObj = @(u)LogisticLoss(u,Krbf,y);
+fprintf('Training kernel(rbf) logistic regression model...\n');
+uRBF = minFunc(@penalizedKernelL2,zeros(nInstances,1),options,Krbf,funObj,lambda);
+
+% Check that wLinear and uLinear represent the same model:
+fprintf('Parameters estimated from linear and kernel(linear) model:\n');
+[wLinear X'*uLinear]
+
+trainErr_linear = sum(y ~= sign(X*wLinear))/length(y)
+trainErr_poly = sum(y ~= sign(Kpoly*uPoly))/length(y)
+trainErr_rbf = sum(y ~= sign(Krbf*uRBF))/length(y)
+
+fprintf('Making linear plots...\n');
+figure(f);f=f+1;
+subplot(1,2,1);
+plotClassifier(X,y,wLinear,'Linear Logistic Regression');
+subplot(1,2,2);
+plotClassifier(X,y,uLinear,'Kernel-Linear Logistic Regression',@kernelLinear,[]);
+fprintf('Making kernel plots...\n');
+figure(f);f=f+1;
+subplot(1,2,1);
+plotClassifier(X,y,uPoly,'Kernel-Poly Logistic Regression',@kernelPoly,polyOrder);
+subplot(1,2,2);
+plotClassifier(X,y,uRBF,'Kernel-RBF Logistic Regression',@kernelRBF,rbfScale);
+pause;
+
+%% Multinomial logistic regression with L2-regularization
+
+nClasses = 5;
+[X,y] = makeData('multinomial',nInstances,nVars,nClasses);
+
+% Add bias
+X = [ones(nInstances,1) X];
+
+funObj = @(W)SoftmaxLoss2(W,X,y,nClasses);
+lambda = 1e-4*ones(nVars+1,nClasses-1);
+lambda(1,:) = 0; % Don't penalize biases
+fprintf('Training multinomial logistic regression model...\n');
+wSoftmax = minFunc(@penalizedL2,zeros((nVars+1)*(nClasses-1),1),options,funObj,lambda(:));
+wSoftmax = reshape(wSoftmax,[nVars+1 nClasses-1]);
+wSoftmax = [wSoftmax zeros(nVars+1,1)];
+
+[junk yhat] = max(X*wSoftmax,[],2);
+trainErr = sum(yhat~=y)/length(y)
+
+% Plot the result
+figure(f);f=f+1;
+plotClassifier(X,y,wSoftmax,'Multinomial Logistic Regression');
+pause;
+
+%% Kernel multinomial logistic regression
+
+% Generate Data
+[X,y] = makeData('multinomialNonlinear',nInstances,nVars,nClasses);
+
+lambda = 1e-2;
+
+% Linear
+funObj = @(w)SoftmaxLoss2(w,X,y,nClasses);
+fprintf('Training linear multinomial logistic regression model...\n');
+wLinear = minFunc(@penalizedL2,zeros(nVars*(nClasses-1),1),options,funObj,lambda);
+wLinear = reshape(wLinear,[nVars nClasses-1]);
+wLinear = [wLinear zeros(nVars,1)];
+
+% Polynomial
+polyOrder = 2;
+Kpoly = kernelPoly(X,X,polyOrder);
+funObj = @(u)SoftmaxLoss2(u,Kpoly,y,nClasses);
+fprintf('Training kernel(poly) multinomial logistic regression model...\n');
+uPoly = minFunc(@penalizedKernelL2_matrix,randn(nInstances*(nClasses-1),1),options,Kpoly,nClasses-1,funObj,lambda);
+uPoly = reshape(uPoly,[nInstances nClasses-1]);
+uPoly = [uPoly zeros(nInstances,1)];
+
+% RBF
+rbfScale = 1;
+Krbf = kernelRBF(X,X,rbfScale);
+funObj = @(u)SoftmaxLoss2(u,Krbf,y,nClasses);
+fprintf('Training kernel(rbf) multinomial logistic regression model...\n');
+uRBF = minFunc(@penalizedKernelL2_matrix,randn(nInstances*(nClasses-1),1),options,Krbf,nClasses-1,funObj,lambda);
+uRBF = reshape(uRBF,[nInstances nClasses-1]);
+uRBF = [uRBF zeros(nInstances,1)];
+
+% Compute training errors
+[junk yhat] = max(X*wLinear,[],2);
+trainErr_linear = sum(y~=yhat)/length(y)
+[junk yhat] = max(Kpoly*uPoly,[],2);
+trainErr_poly = sum(y~=yhat)/length(y)
+[junk yhat] = max(Krbf*uRBF,[],2);
+trainErr_rbf = sum(y~=yhat)/length(y)
+
+fprintf('Making linear plot...\n');
+figure(f);f=f+1;
+plotClassifier(X,y,wLinear,'Linear Multinomial Logistic Regression');
+fprintf('Making kernel plots...\n');
+figure(f);f=f+1;
+subplot(1,2,1);
+plotClassifier(X,y,uPoly,'Kernel-Poly Multinomial Logistic Regression',@kernelPoly,polyOrder);
+subplot(1,2,2);
+plotClassifier(X,y,uRBF,'Kernel-RBF Multinomial Logistic Regression',@kernelRBF,rbfScale);
+pause;
+
+%% Regression with neural networks
+
+% Generate non-linear regression data set
+nVars = 1;
+[X,y] = makeData('regressionNonlinear',nInstances,nVars);
+
+X = [ones(nInstances,1) X];
+nVars = nVars+1;
+
+% Train neural network
+nHidden = [10];
+nParams = nVars*nHidden(1);
+for h = 2:length(nHidden);
+    nParams = nParams+nHidden(h-1)*nHidden(h);
+end
+nParams = nParams+nHidden(end);
+
+funObj = @(weights)MLPregressionLoss(weights,X,y,nHidden);
+lambda = 1e-2;
+fprintf('Training neural network for regression...\n');
+wMLP = minFunc(@penalizedL2,randn(nParams,1),options,funObj,lambda);
+
+% Plot results
+figure(f);hold on;f=f+1;
+Xtest = [-5:.05:5]';
+Xtest = [ones(size(Xtest,1),1) Xtest];
+yhat = MLPregressionPredict(wMLP,Xtest,nHidden);
+plot(X(:,2),y,'.');
+h=plot(Xtest(:,2),yhat,'g-');
+set(h,'LineWidth',3);
+legend({'Data','Neural Net'});
+pause;
+
+%% Classification with Neural Network with multiple hidden layers
+
+nVars = 2;
+[X,y] = makeData('classificationNonlinear',nInstances,nVars);
+
+X = [ones(nInstances,1) X];
+nVars = nVars+1;
+
+% Train neural network w/ multiple hiden layers
+nHidden = [10 10];
+nParams = nVars*nHidden(1);
+for h = 2:length(nHidden);
+    nParams = nParams+nHidden(h-1)*nHidden(h);
+end
+nParams = nParams+nHidden(end);
+
+funObj = @(weights)MLPbinaryLoss(weights,X,y,nHidden);
+lambda = 1;
+fprintf('Training neural network with multiple hidden layers for classification\n');
+wMLP = minFunc(@penalizedL2,randn(nParams,1),options,funObj,lambda);
+
+yhat = MLPregressionPredict(wMLP,X,nHidden);
+trainErr = sum(sign(yhat(:)) ~= y)/length(y)
+
+fprintf('Making plot...\n');
+figure(f);f=f+1;
+plotClassifier(X,y,wMLP,'Neural Net (multiple hidden layers)',nHidden);
+pause;
+
+%% Smooth support vector machine
+
+nVars = 2;
+[X,y] = makeData('classification',nInstances,nVars);
+
+% Add bias
+X = [ones(nInstances,1) X];
+
+fprintf('Training smooth vector machine model...\n');
+funObj = @(w)SSVMLoss(w,X,y);
+lambda = 1e-2*ones(nVars+1,1);
+lambda(1) = 0;
+wSSVM = minFunc(@penalizedL2,zeros(nVars+1,1),options,funObj,lambda);
+
+trainErr = sum(y ~= sign(X*wSSVM))/length(y)
+
+% Plot the result
+figure(f);f=f+1;
+plotClassifier(X,y,wSSVM,'Smooth support vector machine');
+SV = 1-y.*(X*wSSVM) >= 0;
+h=plot(X(SV,2),X(SV,3),'o','color','r');
+legend(h,'Support Vectors');
+pause;
+
+%% Smooth support vector regression
+
+nVars = 1;
+[X,y] = makeData('regressionNonlinear',nInstances,nVars);
+
+X = [ones(nInstances,1) X];
+nVars = nVars+1;
+
+lambda = 1e-2;
+
+% Train smooth support vector regression machine
+changePoint = .2;
+rbfScale = 1;
+Krbf = kernelRBF(X,X,rbfScale);
+funObj = @(u)SSVRLoss(u,Krbf,y,changePoint);
+fprintf('Training kernel(rbf) support vector regression machine...\n');
+uRBF = minFunc(@penalizedKernelL2,zeros(nInstances,1),options,Krbf,funObj,lambda);
+
+
+% Plot results
+figure(f);hold on;f=f+1;
+Xtest = [-5:.05:5]';
+Xtest = [ones(size(Xtest,1),1) Xtest];
+yhat = kernelRBF(Xtest,X,rbfScale)*uRBF;
+plot(X(:,2),y,'.');
+h=plot(Xtest(:,2),yhat,'g-');
+set(h,'LineWidth',3);
+SV = abs(Krbf*uRBF - y) >= changePoint;
+plot(X(SV,2),y(SV),'o','color','r');
+plot(Xtest(:,2),yhat+changePoint,'cREPLACE_WITH_DASH_DASH');
+plot(Xtest(:,2),yhat-changePoint,'cREPLACE_WITH_DASH_DASH');
+legend({'Data','Smooth SVR','Support Vectors','Eps-Tube'});
+pause;
+
+%% Kernel smooth support vector machine
+
+% Generate non-linear data set
+nVars = 2;
+[X,y] = makeData('classificationNonlinear',nInstances,nVars);
+
+lambda = 1e-2;
+
+% Squared exponential radial basis function kernel expansion
+rbfScale = 1;
+Krbf = kernelRBF(X,X,rbfScale);
+funObj = @(u)SSVMLoss(u,Krbf,y);
+fprintf('Training kernel(rbf) support vector machine...\n');
+uRBF = minFunc(@penalizedKernelL2,zeros(nInstances,1),options,Krbf,funObj,lambda);
+
+trainErr = sum(y ~= sign(Krbf*uRBF))/length(y)
+
+fprintf('Making plot...\n');
+figure(f);f=f+1;
+plotClassifier(X,y,uRBF,'Kernel-RBF Smooth Support Vector Machine',@kernelRBF,rbfScale);
+SV = 1-y.*(Krbf*uRBF) >= 0;
+h=plot(X(SV,1),X(SV,2),'o','color','r');
+legend(h,'Support Vectors');
+pause;
+
+%% Multi-class smooth support vector machine
+
+% Generate Data
+nVars = 2;
+nClasses = 5;
+[X,y] = makeData('multinomialNonlinear',nInstances,nVars,nClasses);
+
+lambda = 1e-2;
+
+% Linear
+funObj = @(w)SSVMMultiLoss(w,X,y,nClasses);
+fprintf('Training linear multi-class SVM...\n');
+wLinear = minFunc(@penalizedL2,zeros(nVars*nClasses,1),options,funObj,lambda);
+wLinear = reshape(wLinear,[nVars nClasses]);
+
+% Polynomial
+polyOrder = 2;
+Kpoly = kernelPoly(X,X,polyOrder);
+funObj = @(u)SSVMMultiLoss(u,Kpoly,y,nClasses);
+fprintf('Training kernel(poly) multi-class SVM...\n');
+uPoly = minFunc(@penalizedKernelL2_matrix,randn(nInstances*nClasses,1),options,Kpoly,nClasses,funObj,lambda);
+uPoly = reshape(uPoly,[nInstances nClasses]);
+
+% RBF
+rbfScale = 1;
+Krbf = kernelRBF(X,X,rbfScale);
+funObj = @(u)SSVMMultiLoss(u,Krbf,y,nClasses);
+fprintf('Training kernel(rbf) multi-class SVM...\n');
+uRBF = minFunc(@penalizedKernelL2_matrix,randn(nInstances*nClasses,1),options,Krbf,nClasses,funObj,lambda);
+uRBF = reshape(uRBF,[nInstances nClasses]);
+
+% Compute training errors
+[junk yhat] = max(X*wLinear,[],2);
+trainErr_linear = sum(y~=yhat)/length(y)
+[junk yhat] = max(Kpoly*uPoly,[],2);
+trainErr_poly = sum(y~=yhat)/length(y)
+[junk yhat] = max(Krbf*uRBF,[],2);
+trainErr_rbf = sum(y~=yhat)/length(y)
+
+fprintf('Making linear plot...\n');
+figure(f);f=f+1;
+plotClassifier(X,y,wLinear,'Linear Multi-Class Smooth SVM');
+fprintf('Making kernel plots...\n');
+figure(f);f=f+1;
+subplot(1,2,1);
+plotClassifier(X,y,uPoly,'Kernel-Poly Multi-Class Smooth SVM',@kernelPoly,polyOrder);
+subplot(1,2,2);
+plotClassifier(X,y,uRBF,'Kernel-RBF Multi-Class Smooth SVM',@kernelRBF,rbfScale);
+pause;
+
+%% Sparse Gaussian graphical model precision matrix estimation
+
+% Generate a sparse positive-definite precision matrix
+nNodes = 10;
+adj = triu(rand(nNodes) > .75,1);
+adj = setdiag(adj+adj',1);
+P = randn(nNodes).*adj;
+P = (P+P')/2;
+tau = 1;
+X = P + tau*eye(nNodes);
+while ~ispd(X)
+    tau = tau*2;
+    X = P + tau*eye(nNodes);
+end
+mu = randn(nNodes,1);
+
+% Sample from the GGM
+C = inv(X);
+R = chol(C)';
+X = zeros(nInstances,nNodes);
+for i = 1:nInstances
+    X(i,:) = (mu + R*randn(nNodes,1))';
+end
+
+% Center and Standardize
+X = standardizeCols(X);
+
+% Train Full GGM
+sigma_emp = cov(X);
+nonZero = find(ones(nNodes));
+funObj = @(x)sparsePrecisionObj(x,nNodes,nonZero,sigma_emp);
+Kfull = eye(nNodes);
+fprintf('Fitting full Gaussian graphical model\n');
+Kfull(nonZero) = minFunc(funObj,Kfull(nonZero),options);
+
+% Train GGM with sparsity pattern given by 'adj'
+nonZero = find(adj);
+funObj = @(x)sparsePrecisionObj(x,nNodes,nonZero,sigma_emp);
+Ksparse = eye(nNodes);
+fprintf('Fitting sparse Gaussian graphical model\n');
+Ksparse(nonZero) = minFunc(funObj,Ksparse(nonZero),options);
+
+% Covariance matrix corresponding to sparse precision should agree with
+% empirical covariance at all non-zero values
+fprintf('Norm of difference between empirical and estimate covariance\nmatrix at values where the precision matrix was set to 0:\n');
+Csparse = inv(Ksparse);
+norm(sigma_emp(nonZero)-Csparse(nonZero))
+
+figure(f);f=f+1;
+subplot(1,2,1);
+imagesc(sigma_emp);
+title('Empirical Covariance');
+subplot(1,2,2);
+imagesc(Csparse);
+title('Inverse of Estimated Sparse Precision');
+figure(f);f=f+1;
+subplot(1,2,1);
+imagesc(Kfull);
+title('Estimated Full Precision Matrix');
+subplot(1,2,2);
+imagesc(Ksparse);
+title('Estimated Sparse Precision Matrix');
+pause;
+
+%% Chain-structured conditional random field
+
+% Generate Data
+nWords = 1000;
+nStates = 4;
+nFeatures = [2 3 4 5]; % When inputting a data set, this can be set to maximum values in columns of X
+
+% Generate Features (0 means no feature)
+clear X
+for feat = 1:length(nFeatures)
+    X(:,feat) = floor(rand(nWords,1)*(nFeatures(feat)+1));
+end
+
+% Generate Labels (0 means position between sentences)
+y = floor(rand*(nStates+1));
+for w = 2:nWords
+    pot = zeros(5,1);
+
+    % Features increase the probability of transitioning to their state
+    pot(2) = sum(X(w,:)==1);
+    pot(3) = 10*sum(X(w,:)==2);
+    pot(4) = 100*sum(X(w,:)==3);
+    pot(5) = 1000*sum(X(w,:)==4);
+    
+    % We have at least a 10% chance of staying in the same state
+    pot(y(w-1,1)+1) = max(pot(y(w-1,1)+1),max(pot)/10);
+
+    % We have a 10% chance of ending the sentence if last state was 1-3, 50% if
+    % last state was 4
+    if y(w-1) == 0
+        pot(1) = 0;
+    elseif y(w-1) == 4
+        pot(1) = max(pot)/2;
+    else
+        pot(1) = max(pot)/10;
+    end
+
+    pot = pot/sum(pot);
+    y(w,1) = sampleDiscrete(pot)-1;
+end
+
+% Initialize
+[w,v_start,v_end,v] = crfChain_initWeights(nFeatures,nStates,'zeros');
+featureStart = cumsum([1 nFeatures(1:end)]); % data structure which relates high-level 'features' to elements of w
+sentences = crfChain_initSentences(y);
+nSentences = size(sentences,1);
+maxSentenceLength = 1+max(sentences(:,2)-sentences(:,1));
+
+fprintf('Training chain-structured CRF\n');
+[wv] = minFunc(@crfChain_loss,[w(:);v_start;v_end;v(:)],options,X,y,nStates,nFeatures,featureStart,sentences);
+
+% Split up weights
+[w,v_start,v_end,v] = crfChain_splitWeights(wv,featureStart,nStates);
+
+% Measure error
+trainErr = 0;
+trainZ = 0;
+yhat = zeros(size(y));
+for s = 1:nSentences
+    y_s = y(sentences(s,1):sentences(s,2));
+    [nodePot,edgePot]=crfChain_makePotentials(X,w,v_start,v_end,v,nFeatures,featureStart,sentences,s);
+    [nodeBel,edgeBel,logZ] = crfChain_infer(nodePot,edgePot);
+    [junk yhat(sentences(s,1):sentences(s,2))] = max(nodeBel,[],2);
+end
+trainErrRate = sum(y~=yhat)/length(y)
+
+figure(f);f=f+1;
+imagesc([y yhat]);
+colormap gray
+title('True sequence (left), sequence of marginally most likely states (right)');
+pause;
+
+%% Tree-structured Markov random field with exp(linear) potentials
+
+nInstances = 500;
+nNodes = 18;
+nStates = 3;
+
+% Make tree-structured adjacency matrix 
+adj = zeros(nNodes);
+adj(1,2) = 1;
+adj(1,3) = 1;
+adj(1,4) = 1;
+adj(2,5) = 1;
+adj(2,6) = 1;
+adj(2,7) = 1;
+adj(3,8) = 1;
+adj(7,9) = 1;
+adj(7,10) = 1;
+adj(8,11) = 1;
+adj(8,12) = 1;
+adj(8,13) = 1;
+adj(8,14) = 1;
+adj(9,15) = 1;
+adj(9,16) = 1;
+adj(9,17) = 1;
+adj(13,18) = 1;
+adj = adj+adj';
+
+% Make edgeStruct
+useMex = 1;
+edgeStruct = UGM_makeEdgeStruct(adj,nStates,useMex,nInstances);
+nEdges = edgeStruct.nEdges;
+
+% Make potentials and sample from MRF
+nodePot = rand(nNodes,nStates);
+edgePot = rand(nStates,nStates,nEdges);
+y = UGM_Sample_Tree(nodePot,edgePot,edgeStruct)';
+
+% Now fit MRF with exp(linear) parameters to data
+Xnode = ones(nInstances,1,nNodes); % Nodes just have a bias
+Xedge = ones(nInstances,1,nEdges); % Edges just have a bias
+ising = 0;
+tied = 0;
+infoStruct = UGM_makeCRFInfoStruct(Xnode,Xedge,edgeStruct,ising,tied);
+[w,v] = UGM_initWeights(infoStruct);
+funObj = @(wv)UGM_MRFLoss(wv,Xnode,Xedge,y,edgeStruct,infoStruct,@UGM_Infer_Tree);
+fprintf('Training tree-structured Markov random field\n');
+[wv] = minFunc(funObj,[w(:);v(:)],options);
+[w,v] = UGM_splitWeights(wv,infoStruct);
+
+% Generate Samples from model
+nodePot = UGM_makeNodePotentials(Xnode(1,:,:),w,edgeStruct,infoStruct);
+edgePot = UGM_makeEdgePotentials(Xedge(1,:,:),v,edgeStruct,infoStruct);
+ySimulated = UGM_Sample_Tree(nodePot,edgePot,edgeStruct)';
+
+% Plot real vs. simulated data
+figure(f);f=f+1;
+subplot(1,2,1);
+imagesc(y);
+title('Training examples');
+colormap gray
+subplot(1,2,2);
+imagesc(ySimulated);
+colormap gray
+title('Samples from learned MRF');
+pause;
+
+%% Lattice-structured conditional random field
+
+nInstances = 1;
+ising = 1;
+tied = 1;
+
+% Load image/label data
+label = sign(double(imread('misc/X.png'))-1);
+label  = label(:,:,1);
+[nRows nCols] = size(label);
+noisy = label+randn(nRows,nCols);
+
+% Convert to UGM feature/label format
+nNodes = nRows*nCols;
+X = reshape(noisy,[nInstances 1 nNodes]);
+y = reshape(label,[nInstances nNodes]);
+
+% Standardize Features
+X = UGM_standardizeCols(X,tied);
+
+% Convert from {-1,1} to {1,2} label representation
+y(y==1) = 2;
+y(y==-1) = 1;
+
+% Make adjacency matrix
+adjMatrix = fixed_Lattice(nRows,nCols);
+
+% Make edges from adjacency matrix
+useMex = 1;
+edgeStruct=UGM_makeEdgeStruct(adjMatrix,2,useMex);
+
+% Make edge features
+Xedge = UGM_makeEdgeFeatures(X,edgeStruct.edgeEnds);
+nEdges = edgeStruct.nEdges;
+
+% Add bias to each node and edge
+X = [ones(nInstances,1,nNodes) X];
+Xedge = [ones(nInstances,1,nEdges) Xedge];
+
+% Make Infostruct
+infoStruct = UGM_makeInfoStruct(X,Xedge,edgeStruct,ising,tied);
+
+% Initialize weights
+[w,v] = UGM_initWeights(infoStruct);
+
+fprintf('Training with pseudo-likelihood\n');
+wv = minFunc(@UGM_PseudoLoss,[w;v],options,X,Xedge,y,edgeStruct,infoStruct);
+[w,v] = UGM_splitWeights(wv,infoStruct);
+nodePot = UGM_makeNodePotentials(X(1,:,:),w,edgeStruct,infoStruct);
+edgePot = UGM_makeEdgePotentials(Xedge(1,:,:),v,edgeStruct,infoStruct);
+y_ICM = UGM_Decode_ICM(nodePot,edgePot,edgeStruct);
+
+fprintf('Training with loopy belief propagation\n');
+wv2= minFunc(@UGM_CRFLoss,[w;v],options,X,Xedge,y,edgeStruct,infoStruct,@UGM_Infer_LBP);
+[w2,v2] = UGM_splitWeights(wv2,infoStruct);
+nodePot = UGM_makeNodePotentials(X(1,:,:),w2,edgeStruct,infoStruct);
+edgePot = UGM_makeEdgePotentials(Xedge(1,:,:),v2,edgeStruct,infoStruct);
+nodeBel = UGM_Infer_LBP(nodePot,edgePot,edgeStruct);
+[junk y_LBP] = max(nodeBel,[],2);
+
+figure(f);f=f+1;
+subplot(2,2,1);
+imagesc(label);
+colormap gray
+title('Image Label');
+subplot(2,2,2);
+imagesc(noisy);
+colormap gray
+title('Observed Image');
+subplot(2,2,3);
+imagesc(reshape(y_ICM,[nRows nCols]));
+colormap gray
+title('Pseudolikelihood train/ICM decode');
+subplot(2,2,4);
+imagesc(reshape(y_LBP,[nRows nCols]));
+colormap gray
+title('Loopy train/decode');
+
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,209 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Test to see if Newcomb's speed of light data is Gaussian</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="newcombPlugin.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Test to see if Newcomb's speed of light data is Gaussian</h1><!--introduction--><p>Similar to Gelman04 p77, except we use a plug-in approximation See newcomb.m for the Bayesian version</p><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+setSeed(0);
+
+<span class="comment">% Data from http://www.stat.columbia.edu/~gelman/book/data/light.asc</span>
+D = [28 26 33 24 34 -44 27 16 40 -2  29 22 24 21 25 30 23 29 31 19 <span class="keyword">...</span>
+     24 20 36 32 36 28 25 21 28 29  37 25 28 26 30 32 36 26 30 22 <span class="keyword">...</span>
+     36 23 27 27 28 27 31 27 26 33  26 32 32 24 39 28 24 25 32 25 <span class="keyword">...</span>
+      29 27 28 29 16 23];
+n  = length(D);
+
+<span class="comment">% MLE</span>
+mu = mean(D); sigma = std(D);
+
+<span class="comment">% generate posterior samples</span>
+S = 1000;
+rep = normrnd(mu, sigma, S, n);
+
+<span class="comment">% Plot data</span>
+figure(1); clf
+hist(D,20); title(<span class="string">'Newcombs speed of light data'</span>)
+printPmtkFigure(<span class="string">'newcombTruth2'</span>);
+
+<span class="comment">% Plot sampled data</span>
+figure(2); clf
+<span class="keyword">for</span> i=1:9
+  subplot(3,3,i)
+  hist(rep(i,:))
+  <span class="comment">%set(gca,'xlim',[0 50])</span>
+  <span class="comment">%title(sprintf('synth %d', i))</span>
+<span class="keyword">end</span>
+suplabel(<span class="string">'posterior samples from Gaussian model'</span>, <span class="string">'t'</span>)
+printPmtkFigure(<span class="string">'newcombSynth2'</span>);
+
+<span class="comment">% compute distribution of test statistic</span>
+test = @(x) min(x);
+<span class="keyword">for</span> s=1:S
+  testVal(s) = test(rep(s,:));
+<span class="keyword">end</span>
+testValTrue = test(D);
+figure(3);clf
+hist(testVal);
+title(sprintf(<span class="string">'posterior of min(%s), true min=%d'</span>, <span class="string">'x'</span>, testValTrue))
+hold <span class="string">on</span>
+line([testValTrue, testValTrue], get(gca,<span class="string">'ylim'</span>), <span class="string">'color'</span>, <span class="string">'r'</span>, <span class="string">'linewidth'</span>, 3)
+pvalBayes = mean(testVal &gt;= testValTrue)
+printPmtkFigure(<span class="string">'newcombTestStat2'</span>);
+
+
+
+<span class="comment">% Make the test statistic be hte sample variance</span>
+<span class="comment">%test=inline('var(x)','x');</span>
+test = @(x) var(x);
+<span class="keyword">for</span> s=1:S
+  testVal(s) = test(rep(s,:));
+<span class="keyword">end</span>
+testValTrue = test(D);
+figure(4);clf
+hist(testVal);
+title(sprintf(<span class="string">'posterior of var(%s), true var=%3.2f'</span>, <span class="string">'x'</span>, testValTrue))
+hold <span class="string">on</span>
+line([testValTrue, testValTrue], get(gca,<span class="string">'ylim'</span>), <span class="string">'color'</span>, <span class="string">'r'</span>, <span class="string">'linewidth'</span>, 3)
+pvalBayes = mean(testVal &gt;= testValTrue)
+printPmtkFigure(<span class="string">'newcombHistoVar'</span>);
+</pre><pre class="codeoutput">ans =
+     5.411159667968750e+02
+pvalBayes =
+     1
+pvalBayes =
+   0.485000000000000
+</pre><img vspace="5" hspace="5" src="newcombPlugin_01.png" alt=""> <img vspace="5" hspace="5" src="newcombPlugin_02.png" alt=""> <img vspace="5" hspace="5" src="newcombPlugin_03.png" alt=""> <img vspace="5" hspace="5" src="newcombPlugin_04.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Test to see if Newcomb's speed of light data is Gaussian
+% Similar to Gelman04 p77, except we use a plug-in approximation
+% See newcomb.m for the Bayesian version
+%%
+
+% This file is from pmtk3.googlecode.com
+
+setSeed(0);
+
+% Data from http://www.stat.columbia.edu/~gelman/book/data/light.asc
+D = [28 26 33 24 34 -44 27 16 40 -2  29 22 24 21 25 30 23 29 31 19 ...
+     24 20 36 32 36 28 25 21 28 29  37 25 28 26 30 32 36 26 30 22 ...
+     36 23 27 27 28 27 31 27 26 33  26 32 32 24 39 28 24 25 32 25 ...
+      29 27 28 29 16 23];
+n  = length(D);
+
+% MLE
+mu = mean(D); sigma = std(D);
+
+% generate posterior samples
+S = 1000;
+rep = normrnd(mu, sigma, S, n);
+
+% Plot data
+figure(1); clf
+hist(D,20); title('Newcombs speed of light data')
+printPmtkFigure('newcombTruth2'); 
+
+% Plot sampled data
+figure(2); clf
+for i=1:9
+  subplot(3,3,i)
+  hist(rep(i,:))
+  %set(gca,'xlim',[0 50])
+  %title(sprintf('synth %d', i))
+end
+suplabel('posterior samples from Gaussian model', 't')
+printPmtkFigure('newcombSynth2');
+
+% compute distribution of test statistic
+test = @(x) min(x);
+for s=1:S
+  testVal(s) = test(rep(s,:));
+end
+testValTrue = test(D);
+figure(3);clf
+hist(testVal);
+title(sprintf('posterior of min(%s), true min=%d', 'x', testValTrue))
+hold on
+line([testValTrue, testValTrue], get(gca,'ylim'), 'color', 'r', 'linewidth', 3)
+pvalBayes = mean(testVal >= testValTrue)
+printPmtkFigure('newcombTestStat2');
+
+
+
+% Make the test statistic be hte sample variance
+%test=inline('var(x)','x');
+test = @(x) var(x);
+for s=1:S
+  testVal(s) = test(rep(s,:));
+end
+testValTrue = test(D);
+figure(4);clf
+hist(testVal);
+title(sprintf('posterior of var(%s), true var=%3.2f', 'x', testValTrue))
+hold on
+line([testValTrue, testValTrue], get(gca,'ylim'), 'color', 'r', 'linewidth', 3)
+pvalBayes = mean(testVal >= testValTrue)
+printPmtkFigure('newcombHistoVar'); 
+
+##### SOURCE END #####
+--></body></html>

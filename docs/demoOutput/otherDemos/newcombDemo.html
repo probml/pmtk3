@@ -1,0 +1,179 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Determine if Newcomb's speed of light data is Gaussian</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="newcombDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Determine if Newcomb's speed of light data is Gaussian</h1><!--introduction--><p>Example from Gelman04 p77</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Data from http://www.stat.columbia.edu/~gelman/book/data/light.asc</a></li><li><a href="#3">uninformative prior</a></li><li><a href="#4">suff stat</a></li><li><a href="#5">posterior</a></li><li><a href="#6">credible interval for mu</a></li><li><a href="#7">generate posterior samples</a></li><li><a href="#8">compute distribution of test statistic</a></li></ul></div><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+setSeed();
+</pre><h2>Data from http://www.stat.columbia.edu/~gelman/book/data/light.asc<a name="2"></a></h2><pre class="codeinput">D = [28 26 33 24 34 -44 27 16 40 -2  29 22 24 21 25 30 23 29 31 19 <span class="keyword">...</span>
+    24 20 36 32 36 28 25 21 28 29  37 25 28 26 30 32 36 26 30 22 <span class="keyword">...</span>
+    36 23 27 27 28 27 31 27 26 33  26 32 32 24 39 28 24 25 32 25 <span class="keyword">...</span>
+    29 27 28 29 16 23];
+</pre><h2>uninformative prior<a name="3"></a></h2><pre class="codeinput">k0 = 0;
+v0 = -1;
+s0 = 0;
+mu0 =0;
+</pre><h2>suff stat<a name="4"></a></h2><pre class="codeinput">xbar = mean(D);
+n = length(D);
+s2 = mean( (D-xbar).^2);
+</pre><h2>posterior<a name="5"></a></h2><pre class="codeinput">kn = k0+n;
+mun = (k0*mu0+n*xbar)/kn;
+vn = v0+n;
+s2n = (v0*s0 + n*s2 + k0*mu0^2 + n*xbar^2 -kn*mun^2)/vn;
+</pre><h2>credible interval for mu<a name="6"></a></h2><pre class="codeinput">low = mun + tinvPMTK(0.025, vn)*sqrt(s2n/kn) <span class="comment">%23.5706</span>
+high = mun + tinvPMTK(1-0.025, vn)*sqrt(s2n/kn) <span class="comment">%28.8537</span>
+</pre><pre class="codeoutput">low =
+  23.570590683773936
+high =
+  28.853651740468486
+</pre><h2>generate posterior samples<a name="7"></a></h2><pre class="codeinput">S = 1000;
+sigma2 =  (1+kn)*s2n/kn;
+rep = randraw(<span class="string">'t'</span>, vn, [S, n])*sqrt(sigma2) + mun;
+figure()
+hist(D);
+title(<span class="string">'Newcombs speed of light data'</span>)
+figure();
+<span class="keyword">for</span> i=1:20
+    subplot(5,4,i)
+    hist(rep(i,:))
+    set(gca,<span class="string">'xlim'</span>,[0 50])
+    <span class="comment">%title(sprintf('synth %d', i))</span>
+<span class="keyword">end</span>
+<span class="keyword">if</span> ~isOctave
+    suplabel(<span class="string">'posterior samples'</span>, <span class="string">'t'</span>)
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">ans =
+     5.631153564453125e+02
+</pre><img vspace="5" hspace="5" src="newcombDemo_01.png" alt=""> <img vspace="5" hspace="5" src="newcombDemo_02.png" alt=""> <h2>compute distribution of test statistic<a name="8"></a></h2><pre class="codeinput">testVal = zeros(1, S);
+<span class="keyword">for</span> s=1:S
+    testVal(s) = min(rep(s,:));
+<span class="keyword">end</span>
+testValTrue = min(D);
+figure()
+hist(testVal);
+title(sprintf(<span class="string">'posterior of min(%s), true min=%d'</span>, <span class="string">'x'</span>, testValTrue))
+hold <span class="string">on</span>
+line([testValTrue, testValTrue], get(gca,<span class="string">'ylim'</span>))
+</pre><img vspace="5" hspace="5" src="newcombDemo_03.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Determine if Newcomb's speed of light data is Gaussian
+% Example from Gelman04 p77
+%%
+
+% This file is from pmtk3.googlecode.com
+
+setSeed();
+%% Data from http://www.stat.columbia.edu/~gelman/book/data/light.asc
+D = [28 26 33 24 34 -44 27 16 40 -2  29 22 24 21 25 30 23 29 31 19 ...
+    24 20 36 32 36 28 25 21 28 29  37 25 28 26 30 32 36 26 30 22 ...
+    36 23 27 27 28 27 31 27 26 33  26 32 32 24 39 28 24 25 32 25 ...
+    29 27 28 29 16 23];
+%% uninformative prior
+k0 = 0;
+v0 = -1;
+s0 = 0;
+mu0 =0;
+%% suff stat
+xbar = mean(D);
+n = length(D);
+s2 = mean( (D-xbar).^2);
+%% posterior
+kn = k0+n;
+mun = (k0*mu0+n*xbar)/kn;
+vn = v0+n;
+s2n = (v0*s0 + n*s2 + k0*mu0^2 + n*xbar^2 -kn*mun^2)/vn;
+%% credible interval for mu
+low = mun + tinvPMTK(0.025, vn)*sqrt(s2n/kn) %23.5706
+high = mun + tinvPMTK(1-0.025, vn)*sqrt(s2n/kn) %28.8537
+%% generate posterior samples
+S = 1000;
+sigma2 =  (1+kn)*s2n/kn;
+rep = randraw('t', vn, [S, n])*sqrt(sigma2) + mun; 
+figure()
+hist(D);
+title('Newcombs speed of light data')
+figure();
+for i=1:20
+    subplot(5,4,i)
+    hist(rep(i,:))
+    set(gca,'xlim',[0 50])
+    %title(sprintf('synth %d', i))
+end
+if ~isOctave
+    suplabel('posterior samples', 't')
+end
+%% compute distribution of test statistic
+testVal = zeros(1, S);
+for s=1:S
+    testVal(s) = min(rep(s,:));
+end
+testValTrue = min(D);
+figure()
+hist(testVal);
+title(sprintf('posterior of min(%s), true min=%d', 'x', testValTrue))
+hold on
+line([testValTrue, testValTrue], get(gca,'ylim'))
+
+##### SOURCE END #####
+--></body></html>

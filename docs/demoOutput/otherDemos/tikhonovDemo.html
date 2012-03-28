@@ -1,0 +1,136 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>Tikhonov regularization for a piecewise smooth function</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="tikhonovDemo"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Tikhonov regularization for a piecewise smooth function</h1><!--introduction--><p>Based on code by Uri Ascher</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#3">Generate data</a></li><li><a href="#4">Form a band diagonal difference matrix</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span>  tikhonovDemo()
+setSeed(0);
+lambdas = [0.1 2 10];
+<span class="keyword">for</span> j = 1:numel(lambdas);
+</pre><pre class="codeinput">    lambda = lambdas(j);
+</pre><h2>Generate data<a name="3"></a></h2><pre class="codeinput">    N = 50;
+    noise = 0.5;
+    x = ((1:N)-0.5)./N;
+    y = fun(x) + randn(N, 1)*noise;
+</pre><h2>Form a band diagonal difference matrix<a name="4"></a></h2><p>(see also spdiags)</p><pre class="codeinput">    D = diag(-ones(N, 1)) + diag(ones(N-1, 1), 1);
+    D(end, :) = [];
+    A = [eye(N); sqrt(lambda)*D];
+    b = [y; zeros(N-1, 1)];
+    w = A \ b;
+</pre><pre class="codeinput">    figure(); hold <span class="string">on</span>;
+    plot(x, y', <span class="string">'bo'</span>, <span class="string">'linewidth'</span>, 2, <span class="string">'markersize'</span>, 8);
+    plot(x, w', <span class="string">'rx-'</span>, <span class="string">'linewidth'</span>, 2);
+    set(gca, <span class="string">'ytick'</span>, 0:5, <span class="string">'xtick'</span>, 0:0.5:1);
+    box <span class="string">on</span>;
+    title(sprintf(<span class="string">'noise=%g, %s=%g'</span>, noise, <span class="string">'\lambda'</span>, lambda));
+    printPmtkFigure(sprintf(<span class="string">'tikhonov%d'</span>, lambda));
+</pre><img vspace="5" hspace="5" src="tikhonovDemo_01.png" alt=""> <img vspace="5" hspace="5" src="tikhonovDemo_02.png" alt=""> <img vspace="5" hspace="5" src="tikhonovDemo_03.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> u = fun(z)
+u           = 4*ones(length(z), 1);
+u(z &lt; 0.7)  = 2 - 100.*(z(z&lt;0.7) - 0.5) .* (0.7 - z(z&lt;0.7));
+u(z &lt; 0.5)  = 2;
+u(z &lt; 0.25) = 1;
+<span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Tikhonov regularization for a piecewise smooth function
+% Based on code by Uri Ascher
+%%
+function  tikhonovDemo()
+setSeed(0);
+lambdas = [0.1 2 10];
+for j = 1:numel(lambdas);
+    lambda = lambdas(j);
+    %% Generate data
+    N = 50;
+    noise = 0.5;
+    x = ((1:N)-0.5)./N;
+    y = fun(x) + randn(N, 1)*noise;
+    %% Form a band diagonal difference matrix
+    % (see also spdiags)
+    D = diag(-ones(N, 1)) + diag(ones(N-1, 1), 1);
+    D(end, :) = [];
+    A = [eye(N); sqrt(lambda)*D];
+    b = [y; zeros(N-1, 1)];
+    w = A \ b;
+    %%
+    figure(); hold on;
+    plot(x, y', 'bo', 'linewidth', 2, 'markersize', 8);
+    plot(x, w', 'rx-', 'linewidth', 2);
+    set(gca, 'ytick', 0:5, 'xtick', 0:0.5:1);
+    box on;
+    title(sprintf('noise=%g, %s=%g', noise, '\lambda', lambda));
+    printPmtkFigure(sprintf('tikhonov%d', lambda));
+end
+end
+
+function u = fun(z)
+u           = 4*ones(length(z), 1);
+u(z < 0.7)  = 2 - 100.*(z(z<0.7) - 0.5) .* (0.7 - z(z<0.7));
+u(z < 0.5)  = 2;
+u(z < 0.25) = 1;
+end
+##### SOURCE END #####
+--></body></html>

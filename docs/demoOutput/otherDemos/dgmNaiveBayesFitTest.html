@@ -1,0 +1,131 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Compare dgmTrain and naiveBayesFit</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="dgmNaiveBayesFitTest.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Compare dgmTrain and naiveBayesFit</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#3">generate some data</a></li><li><a href="#4">fit using naive Bayes</a></li><li><a href="#5">create an equivalent dgm</a></li><li><a href="#6">fit the dgm</a></li><li><a href="#7">compare the results</a></li></ul></div><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="keyword">function</span> dgmNaiveBayesFitTest
+</pre><pre class="codeinput">C = 5;  <span class="comment">% 5 classes</span>
+d = 20; <span class="comment">% each data case will be 20 dimensional</span>
+K = 2;  <span class="comment">% binary data</span>
+ncases = 100;
+</pre><h2>generate some data<a name="3"></a></h2><pre class="codeinput">X = randi(K, [ncases, d]);
+y = randi(C, [ncases, 1]);
+</pre><h2>fit using naive Bayes<a name="4"></a></h2><pre class="codeinput">pseudoCounts = 1;
+nb = naiveBayesFit(X-1, y, pseudoCounts);
+</pre><h2>create an equivalent dgm<a name="5"></a></h2><pre class="codeinput">G = zeros(d+1, d+1);
+<span class="keyword">for</span> i=1:d
+    G(1, i+1) = 1;
+<span class="keyword">end</span>
+nstates(1) = C;
+nstates(2:d+1) = K;
+CPDs = mkRndTabularCpds(G, nstates, <span class="string">'prior'</span>, pseudoCounts);
+CPDs{1}.prior = 0; <span class="comment">% 1</span>
+dgm = dgmCreate(G, CPDs);
+</pre><h2>fit the dgm<a name="6"></a></h2><pre class="codeinput">dgm = dgmTrainFullyObs(dgm, [y, X]);
+</pre><h2>compare the results<a name="7"></a></h2><pre class="codeinput">assert(approxeq(nb.classPrior(:), dgm.CPDs{1}.T(:)));
+<span class="keyword">for</span> i=1:d
+   assert(approxeq(nb.theta(:, i), dgm.CPDs{i+1}.T(:, 2)));
+<span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Compare dgmTrain and naiveBayesFit
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+function dgmNaiveBayesFitTest
+C = 5;  % 5 classes
+d = 20; % each data case will be 20 dimensional 
+K = 2;  % binary data
+ncases = 100; 
+%% generate some data
+X = randi(K, [ncases, d]); 
+y = randi(C, [ncases, 1]); 
+%% fit using naive Bayes
+pseudoCounts = 1; 
+nb = naiveBayesFit(X-1, y, pseudoCounts); 
+%% create an equivalent dgm
+G = zeros(d+1, d+1);
+for i=1:d
+    G(1, i+1) = 1;
+end
+nstates(1) = C; 
+nstates(2:d+1) = K; 
+CPDs = mkRndTabularCpds(G, nstates, 'prior', pseudoCounts); 
+CPDs{1}.prior = 0; % 1
+dgm = dgmCreate(G, CPDs); 
+%% fit the dgm
+dgm = dgmTrainFullyObs(dgm, [y, X]); 
+%% compare the results
+assert(approxeq(nb.classPrior(:), dgm.CPDs{1}.T(:))); 
+for i=1:d
+   assert(approxeq(nb.theta(:, i), dgm.CPDs{i+1}.T(:, 2)));  
+end
+end
+
+##### SOURCE END #####
+--></body></html>

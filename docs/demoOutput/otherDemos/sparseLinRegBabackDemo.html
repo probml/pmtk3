@@ -1,0 +1,374 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>Demo of what constitutes plausible sparsity prior for linear regression</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="sparseLinRegBabackDemo"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Demo of what constitutes plausible sparsity prior for linear regression</h1><p>MODEL: y = Ax + noise; s.t.  card(x) = k</p><p>=============================================================================</p><p>MODEL:     y = Ax + noise;    s.t.  card(x) = k</p><p>QUESTION:  what constitutes a "plausible" sparsity-inducing prior for            any given problem (here the sparse linear model above)?            For example, should p(x) really be a Laplacian !?</p><p>ANSWER:  the most plausible p(x) should resemble the ensemble average          of all possible posteriors found using a Reference Analysis          (with a suitably flat prior for the given model).          This expectation  <a href="p(x|y)">p(x|y)</a>  should be taken w.r.t. all future          datasets {A,y} as well as different noise settings, etc.</p><p>METHOD:  create a Monte Carlo ensemble of test cases according to the model,          map out all posterior modes in each case (by exhaustive enumeration)          and form a (weighted) histogram of all such posterior modes.          Since {x_i} are deemed exchangeable the elements of x can be pooled          to give a single marginal prior p(x_i) that is the same for all i.          This expected marginal posterior is here plotted &amp; visualized as          the empirical proxy for the "right" sparsity prior for the model.</p><p>------------------------------------------------------------------------- THINGS TO NOTE:</p><p>o) the expected posterior is always a point-mass mixture ("spike-n-slab") with the atomic component at 0 having probability mass = (n-k)/n</p><p>o) so the question becomes what should the <b>continuous</b> component of this mixture look like?  For example, does <b>it</b> look like a Laplacian?</p><p>o) since all n-choose-k posterior modes are being found (using subsets1.m) beware of combinatorial explosion with large n (or just keep k very small)</p><p>------------------------------------------------------------------------- THINGS TO TRY:</p><p>o) run the script as is with the default case of {n=12, k0=12, k=4} This represents a "dense" true x0 (k0=12) representing a non-sparse problem that is forced to be sparse (k=4) perhaps for budget reasons</p><p>o) set k0=4 (with k=4); this is now a sparse recovery problem where you happen to know the true sparsity (k0) beforehand (not very realistic though)</p><p>o) increase the noise by setting noise=1.0  to see how the # of significant posterior modes in each MC test case increases</p><p>o) try setting k0 &lt; k,  so the problem is actually sparser than you think! note the increase in the # of significant posterior modes as a result.</p><p>o) try varying the aspect ratio of design matrix A by changing m (# of obs) and note how the # of significant posterior modes changes with m</p><p>o) A, x, y and noise can be sampled as Uniform, Gaussian or even Binary see the commented-out portions in the code below, try changing these.</p><p>o) you can explore the prior for all k (i.e., all 2^n sparsities) thus not commiting to any one k as being the "right" sparsity. If you assume each k to be equally likely a priori, then just pool over MC runs for each k=1:n-1. This can be done by setting k=0 (as a special flag for this case)</p><p>------------------------------------------------------------------------- Baback Moghaddam          <a href="mailto:baback@jpl.nasa.gov">baback@jpl.nasa.gov</a>         02/11/08 ------------------------------------------------------------------------- NOTE: this script needs Raanan Yehezkel's "subsets1.m" function</p><pre class="codeinput"><span class="comment">%PMTKauthor Baback Moghaddam</span>
+<span class="comment">%PMTKdate 11 feb 2008</span>
+
+
+<span class="keyword">if</span> ~exist(<span class="string">'n'</span>,<span class="string">'var'</span>), n=12; <span class="keyword">end</span>                 <span class="comment">% n = dimension of x (#cols of A)</span>
+<span class="keyword">if</span> ~exist(<span class="string">'m'</span>,<span class="string">'var'</span>), m=10*n; <span class="keyword">end</span>               <span class="comment">% m = dimension of y (#rows of A)</span>
+<span class="keyword">if</span> ~exist(<span class="string">'k0'</span>,<span class="string">'var'</span>), k0=n; <span class="keyword">end</span>                <span class="comment">% k0 = true sparsity (generative)</span>
+<span class="keyword">if</span> ~exist(<span class="string">'k'</span>,<span class="string">'var'</span>), k=max([2 fix(n/3)]); <span class="keyword">end</span>  <span class="comment">% k = desired sparsity (recovered)</span>
+<span class="keyword">if</span> ~exist(<span class="string">'noise'</span>,<span class="string">'var'</span>), noise = 0.1; <span class="keyword">end</span>      <span class="comment">% noise = std dev of additive noise</span>
+<span class="keyword">if</span> ~exist(<span class="string">'nCases'</span>,<span class="string">'var'</span>), nCases = 20; <span class="keyword">end</span>    <span class="comment">% nCases = no. of MC trials</span>
+<span class="keyword">if</span> ~exist(<span class="string">'newA'</span>,<span class="string">'var'</span>), newA = 0; <span class="keyword">end</span>          <span class="comment">% newA = mix new &amp; old A matrices</span>
+
+figure
+xr = [-6.5:0.1:6.5];  <span class="comment">% discretized x range</span>
+x = zeros(n,1);
+Px = zeros(1,length(xr));
+
+<span class="comment">% base design matrix</span>
+A0 = randn(m,n); <span class="comment">% Gaussian A</span>
+<span class="comment">%A0 = rand(m,n);  % Uniform A</span>
+<span class="comment">%A0 = sign(randn(m,n));  % Binary A</span>
+
+<span class="keyword">if</span> noise==0, noise = 1e-6; <span class="keyword">end</span>  <span class="comment">% need finite noise</span>
+<span class="keyword">if</span> k0==0, k0 = fix(n/2); <span class="keyword">end</span>;   <span class="comment">% k0 can not be 0</span>
+k0 = min([k0 n]);               <span class="comment">% k0 must be &lt;= n</span>
+
+<span class="comment">% single-k  (n-choose-k)  or  all-k  (2^n - 2 patterns)</span>
+<span class="keyword">if</span> k &gt; 0, kset = k; <span class="keyword">else</span>, kset = 1:n-1; <span class="keyword">end</span>
+
+<span class="keyword">for</span> kk = kset
+
+   sets = subsets1(1:n,kk);
+   Ns = length(sets);
+   Xmode = zeros(Ns,n);
+   Emode = zeros(Ns,1);
+
+   <span class="keyword">for</span> c = 1:nCases   <span class="comment">% ------------------------------------- MC loop</span>
+
+       <span class="comment">% sample a (blend of new &amp; old) design matrix</span>
+       A = (1-newA)*A0 + newA*(randn(m,n));  <span class="comment">% Gaussian update</span>
+       <span class="comment">%A = (1-newA)*A0 + newA*(rand(m,n));  % Uniform update</span>
+
+       <span class="comment">% sample a new x0</span>
+       x0 = randn(n,1);         <span class="comment">% Gaussian x</span>
+       <span class="comment">%x0 = 3*(2*rand(n,1)-1);  % Uniform x</span>
+       <span class="comment">%x0 = sign(randn(n,1));   % Binary x</span>
+
+       <span class="comment">% true x0 is k0-sparse  (recovered x will be k-sparse)</span>
+       idx = randperm(n);
+       x0(idx(1:n-k0)) = 0;
+
+       trueWeights(:,c) = x0;
+
+       <span class="comment">% resulting y for linear model</span>
+       <span class="comment">%y = A*x0 + noise*(2*rand(m,1)-1);  %  Uniform noise</span>
+       y = A*x0 + noise*randn(m,1);       <span class="comment">%  Gaussian noise</span>
+
+       <span class="comment">% add some non-linearity?</span>
+       <span class="comment">%y = 7*tanh(3*y/max(abs(y)));</span>
+
+       <span class="comment">% find all posterior modes (MAP sols under a flat prior)</span>
+       <span class="keyword">for</span> i = 1:Ns
+           x(:) = 0;
+           idx = sets{i};
+           x(idx) = A(:,idx) \ y;
+           Xmode(i,:) = x';
+           Emode(i) = norm(A*x-y)^2;  <span class="comment">% SSD</span>
+       <span class="keyword">end</span>
+
+       <span class="comment">% weigh each mode by its probability (via its residual)</span>
+       logprob = Emode/(2*noise^2);
+       logprob = logprob - min(logprob);
+       Pmode = exp(-logprob)/sum(exp(-logprob));
+
+       <span class="comment">% viz all posterior modes</span>
+       bar(1:Ns,Pmode);
+       title([<span class="string">'case '</span> num2str(c) <span class="string">'   k = '</span> num2str(kk) <span class="string">'  :  posterior mass on all C(n,k) modes'</span>],<span class="string">'fontsize'</span>,14)
+       xlabel(<span class="string">'mode #'</span>), axis([0.5 Ns+.5 0 1]); drawnow
+
+       <span class="comment">% what if you had equal-weighting?</span>
+       <span class="comment">%Pmode = ones(Ns,1)/Ns;   % but this is very unrealistic!</span>
+
+       <span class="comment">% accumulate marginal histogram (x_i are exchangeable)</span>
+       <span class="keyword">for</span> i = 1:Ns
+           h = hist(Xmode(i,:),xr);
+           Px = Px + h*Pmode(i);
+       <span class="keyword">end</span>
+
+   <span class="keyword">end</span>  <span class="comment">% ---------------------------------------------- end MC loop</span>
+
+<span class="keyword">end</span> <span class="comment">% k loop</span>
+
+
+<span class="comment">% normalize marginal posterior</span>
+Px = Px/sum(Px);
+
+<span class="comment">% viz posterior histogram</span>
+figure
+subplot(211)
+h=bar(xr,Px); set(h,<span class="string">'facecolor'</span>,[1 0 0])
+axis([min(xr) max(xr) 0 max(Px)*1.05])
+title(<span class="string">'expected (marginal) posterior for (elements of) x'</span>,<span class="string">'fontsize'</span>,14)
+<span class="comment">% do a histogram closeup</span>
+subplot(212)
+h=bar(xr,Px); grid <span class="string">on</span>; set(h,<span class="string">'facecolor'</span>,[1 0 0])
+axis([min(xr) max(xr) 0 2*max(Px(1:fix(length(xr)*.49)))])
+
+Pw = zeros(1,length(xr));
+<span class="keyword">for</span> i = 1:nCases
+   h = hist(trueWeights(:,i),xr);
+   Pw = Pw + h/nCases;
+<span class="keyword">end</span>
+figure;
+subplot(2,1,1); bar(xr, Pw);
+subplot(2,1,2); bar(xr, Pw);
+ylim = get(gca, <span class="string">'ylim'</span>);
+axis([min(xr) max(xr) 0 ylim(2)*0.1])
+</pre><img vspace="5" hspace="5" src="sparseLinRegBabackDemo_01.png" alt=""> <img vspace="5" hspace="5" src="sparseLinRegBabackDemo_02.png" alt=""> <img vspace="5" hspace="5" src="sparseLinRegBabackDemo_03.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Demo of what constitutes plausible sparsity prior for linear regression
+% MODEL: y = Ax + noise; s.t.  card(x) = k
+%
+% =============================================================================
+%
+% MODEL:     y = Ax + noise;    s.t.  card(x) = k
+%
+% QUESTION:  what constitutes a "plausible" sparsity-inducing prior for
+%            any given problem (here the sparse linear model above)?
+%            For example, should p(x) really be a Laplacian !?
+%
+% ANSWER:  the most plausible p(x) should resemble the ensemble average
+%          of all possible posteriors found using a Reference Analysis
+%          (with a suitably flat prior for the given model).
+%          This expectation  <p(x|y)>  should be taken w.r.t. all future
+%          datasets {A,y} as well as different noise settings, etc.
+%
+% METHOD:  create a Monte Carlo ensemble of test cases according to the model,
+%          map out all posterior modes in each case (by exhaustive enumeration)
+%          and form a (weighted) histogram of all such posterior modes.
+%          Since {x_i} are deemed exchangeable the elements of x can be pooled
+%          to give a single marginal prior p(x_i) that is the same for all i.
+%          This expected marginal posterior is here plotted & visualized as
+%          the empirical proxy for the "right" sparsity prior for the model.
+%
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% THINGS TO NOTE:
+%
+% o) the expected posterior is always a point-mass mixture ("spike-n-slab")
+% with the atomic component at 0 having probability mass = (n-k)/n
+%
+% o) so the question becomes what should the *continuous* component of this
+% mixture look like?  For example, does *it* look like a Laplacian?
+%
+% o) since all n-choose-k posterior modes are being found (using subsets1.m)
+% beware of combinatorial explosion with large n (or just keep k very small)
+%
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% THINGS TO TRY:
+%
+% o) run the script as is with the default case of {n=12, k0=12, k=4}
+% This represents a "dense" true x0 (k0=12) representing a non-sparse problem
+% that is forced to be sparse (k=4) perhaps for budget reasons
+%
+% o) set k0=4 (with k=4); this is now a sparse recovery problem where you
+% happen to know the true sparsity (k0) beforehand (not very realistic though)
+%
+% o) increase the noise by setting noise=1.0  to see how the # of significant
+% posterior modes in each MC test case increases
+%
+% o) try setting k0 < k,  so the problem is actually sparser than you think!
+% note the increase in the # of significant posterior modes as a result.
+%
+% o) try varying the aspect ratio of design matrix A by changing m (# of obs)
+% and note how the # of significant posterior modes changes with m
+%
+% o) A, x, y and noise can be sampled as Uniform, Gaussian or even Binary
+% see the commented-out portions in the code below, try changing these.
+%
+% o) you can explore the prior for all k (i.e., all 2^n sparsities) thus
+% not commiting to any one k as being the "right" sparsity. If you assume
+% each k to be equally likely a priori, then just pool over MC runs for each
+% k=1:n-1. This can be done by setting k=0 (as a special flag for this case)
+%
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% Baback Moghaddam          baback@jpl.nasa.gov         02/11/08
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% NOTE: this script needs Raanan Yehezkel's "subsets1.m" function
+
+%PMTKauthor Baback Moghaddam
+%PMTKdate 11 feb 2008
+
+
+if ~exist('n','var'), n=12; end                 % n = dimension of x (#cols of A)
+if ~exist('m','var'), m=10*n; end               % m = dimension of y (#rows of A)
+if ~exist('k0','var'), k0=n; end                % k0 = true sparsity (generative)
+if ~exist('k','var'), k=max([2 fix(n/3)]); end  % k = desired sparsity (recovered)
+if ~exist('noise','var'), noise = 0.1; end      % noise = std dev of additive noise
+if ~exist('nCases','var'), nCases = 20; end    % nCases = no. of MC trials
+if ~exist('newA','var'), newA = 0; end          % newA = mix new & old A matrices
+
+figure
+xr = [-6.5:0.1:6.5];  % discretized x range
+x = zeros(n,1);
+Px = zeros(1,length(xr));
+
+% base design matrix
+A0 = randn(m,n); % Gaussian A
+%A0 = rand(m,n);  % Uniform A
+%A0 = sign(randn(m,n));  % Binary A
+
+if noise==0, noise = 1e-6; end  % need finite noise
+if k0==0, k0 = fix(n/2); end;   % k0 can not be 0
+k0 = min([k0 n]);               % k0 must be <= n
+
+% single-k  (n-choose-k)  or  all-k  (2^n - 2 patterns)
+if k > 0, kset = k; else, kset = 1:n-1; end
+
+for kk = kset
+
+   sets = subsets1(1:n,kk);
+   Ns = length(sets);
+   Xmode = zeros(Ns,n);
+   Emode = zeros(Ns,1);
+
+   for c = 1:nCases   % REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH- MC loop
+
+       % sample a (blend of new & old) design matrix
+       A = (1-newA)*A0 + newA*(randn(m,n));  % Gaussian update
+       %A = (1-newA)*A0 + newA*(rand(m,n));  % Uniform update
+
+       % sample a new x0
+       x0 = randn(n,1);         % Gaussian x
+       %x0 = 3*(2*rand(n,1)-1);  % Uniform x
+       %x0 = sign(randn(n,1));   % Binary x
+
+       % true x0 is k0-sparse  (recovered x will be k-sparse)
+       idx = randperm(n);
+       x0(idx(1:n-k0)) = 0;
+       
+       trueWeights(:,c) = x0;
+
+       % resulting y for linear model
+       %y = A*x0 + noise*(2*rand(m,1)-1);  %  Uniform noise
+       y = A*x0 + noise*randn(m,1);       %  Gaussian noise
+
+       % add some non-linearity?
+       %y = 7*tanh(3*y/max(abs(y)));
+
+       % find all posterior modes (MAP sols under a flat prior)
+       for i = 1:Ns
+           x(:) = 0;
+           idx = sets{i};
+           x(idx) = A(:,idx) \ y;
+           Xmode(i,:) = x';
+           Emode(i) = norm(A*x-y)^2;  % SSD
+       end
+
+       % weigh each mode by its probability (via its residual)
+       logprob = Emode/(2*noise^2);
+       logprob = logprob - min(logprob);
+       Pmode = exp(-logprob)/sum(exp(-logprob));
+
+       % viz all posterior modes
+       bar(1:Ns,Pmode);
+       title(['case ' num2str(c) '   k = ' num2str(kk) '  :  posterior mass on all C(n,k) modes'],'fontsize',14)
+       xlabel('mode #'), axis([0.5 Ns+.5 0 1]); drawnow
+
+       % what if you had equal-weighting?
+       %Pmode = ones(Ns,1)/Ns;   % but this is very unrealistic!
+
+       % accumulate marginal histogram (x_i are exchangeable)
+       for i = 1:Ns
+           h = hist(Xmode(i,:),xr);
+           Px = Px + h*Pmode(i);
+       end
+
+   end  % REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH end MC loop
+
+end % k loop
+
+
+% normalize marginal posterior
+Px = Px/sum(Px);
+
+% viz posterior histogram
+figure
+subplot(211)
+h=bar(xr,Px); set(h,'facecolor',[1 0 0])
+axis([min(xr) max(xr) 0 max(Px)*1.05])
+title('expected (marginal) posterior for (elements of) x','fontsize',14)
+% do a histogram closeup
+subplot(212)
+h=bar(xr,Px); grid on; set(h,'facecolor',[1 0 0])
+axis([min(xr) max(xr) 0 2*max(Px(1:fix(length(xr)*.49)))])
+
+Pw = zeros(1,length(xr));
+for i = 1:nCases
+   h = hist(trueWeights(:,i),xr);
+   Pw = Pw + h/nCases;
+end
+figure; 
+subplot(2,1,1); bar(xr, Pw);
+subplot(2,1,2); bar(xr, Pw);
+ylim = get(gca, 'ylim');
+axis([min(xr) max(xr) 0 ylim(2)*0.1])
+
+
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,333 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Demo of group lasso compared to vanilla lasso</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="linregGroupLassoDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Demo of group lasso compared to vanilla lasso</h1><!--introduction--><p>PMTKauthor Mark Schmidt</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#3">Make data</a></li><li><a href="#4">Set up groups</a></li><li><a href="#5">setup CV</a></li><li><a href="#6">Fit</a></li><li><a href="#7">Plot</a></li></ul></div><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="keyword">function</span> linregGroupLassoDemo()
+</pre><pre class="codeinput">setSeed(1);
+</pre><h2>Make data<a name="3"></a></h2><p>Generate categorical features</p><pre class="codeinput">nInstances = 200;
+<span class="comment">%nStates = [10 5 10 5 20 5 10 5 20 5 10 20 10];</span>
+nStates = [10 5 10 20 10 20 10];
+<span class="comment">% Number of discrete states for each categorical feature</span>
+X = zeros(nInstances,length(nStates));
+offset = 0;
+<span class="keyword">for</span> i = 1:nInstances
+    <span class="keyword">for</span> s = 1:length(nStates)
+        prob_s = rand(nStates(s),1);
+        prob_s = prob_s/sum(prob_s);
+        X(i,s) = sampleDiscrete(prob_s);
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">% Now convert categorical matrix to binary (1ofK) encoding</span>
+X_ind = dummyEncoding(X, nStates);
+
+
+<span class="comment">% Now make sparse weight vector, where sparsity is in groups</span>
+offset = 0;
+nVars = sum(nStates);
+wTrue = zeros(nVars, 1);
+<span class="keyword">for</span> s = 1:length(nStates)
+    wTrue(offset+1:offset+nStates(s),1) = (rand &gt; .75)*randn(nStates(s),1);
+    offset = offset+nStates(s);
+<span class="keyword">end</span>
+
+<span class="comment">% Make data</span>
+y = X_ind*wTrue + 1*randn(nInstances,1);
+Xtrain = X_ind;
+ytrain = y;
+
+<span class="comment">%[Xtrain, mu, s] = standardizeCols(Xtrain);</span>
+<span class="comment">%ytrain = centerCols(ytrain);</span>
+
+<span class="keyword">if</span> 0
+Xtrain = X_ind(1:floor(nInstances/2),:);
+ytrain = y(1:floor(nInstances/2));
+Xtest = X_ind(floor(nInstances/2)+1:end,:);
+ytest = y(floor(nInstances/2)+1:end);
+<span class="keyword">end</span>
+</pre><h2>Set up groups<a name="4"></a></h2><pre class="codeinput">offset = 0;
+groups = zeros(nVars, 1);
+<span class="keyword">for</span> s = 1:length(nStates)
+    groups(offset+1:offset+nStates(s),1) = s;
+    offset = offset+nStates(s);
+<span class="keyword">end</span>
+nGroups = max(groups);
+</pre><h2>setup CV<a name="5"></a></h2><pre class="codeinput">predictFn = @(w, X) X*w;
+lossFn = @(yhat, y)  sum((yhat-y).^2);
+useSErule = true;
+Nfolds = 10;
+
+maxLambda = lassoMaxLambda(Xtrain, ytrain);
+lambdasL1 = linspace(maxLambda, eps, 30);
+
+maxLambda = groupLassoMaxLambda(groups, Xtrain, ytrain);
+lambdasGL1 = linspace(maxLambda, eps, 30);
+</pre><h2>Fit<a name="6"></a></h2><pre class="codeinput"><span class="comment">%fitFn = @(X,y,lambda) linregFitLassoEm(X,y,  lambda);</span>
+fitFn = @(X,y,lambda)  linregFitSparseEm(X, y, <span class="string">'laplace'</span>, <span class="string">'lambda'</span>, lambda);
+<span class="comment">%fitFn = @(X,y,lambda) l1_ls(X,y,  lambda, 1e-3, true); % slow</span>
+[wHatLasso] = fitCv(lambdasL1, fitFn, predictFn, lossFn, Xtrain, ytrain,  Nfolds, <span class="string">'useSErule'</span>, useSErule);
+
+fitFn = @(X,y,lambda) linregFitGroupLasso(X,y, groups, lambda);
+[wHatGroup] = fitCv(lambdasGL1, fitFn, predictFn, lossFn, Xtrain, ytrain,  Nfolds, <span class="string">'useSErule'</span>, useSErule);
+</pre><h2>Plot<a name="7"></a></h2><pre class="codeinput">figure;
+stem(wTrue); title(<span class="string">'truth'</span>);  drawGroups(nStates, wTrue);
+printPmtkFigure(<span class="string">'groupLassoTruth'</span>)
+
+figure;
+stem(wHatGroup); title(<span class="string">'group lasso'</span>); drawGroups(nStates, wTrue);
+printPmtkFigure(<span class="string">'groupLassoGroup'</span>)
+
+figure;
+stem(wHatLasso); title(<span class="string">'lasso'</span>); drawGroups(nStates, wTrue);
+printPmtkFigure(<span class="string">'groupLassoVanilla'</span>)
+
+<span class="comment">% Add debiasing</span>
+<span class="comment">% Note that if we standardize the data, we would need to scale</span>
+<span class="comment">% up the coefficients in order to recover the true (generating) values</span>
+wHatGroup = debias(wHatGroup, Xtrain, ytrain);
+wHatLasso = debias(wHatLasso, Xtrain, ytrain);
+figure;
+stem(wTrue); title(<span class="string">'truth'</span>);  drawGroups(nStates, wTrue);
+<span class="comment">%printPmtkFigure('groupLassoTruth')</span>
+
+figure;
+stem(wHatGroup); title(<span class="string">'group lasso'</span>); drawGroups(nStates, wTrue);
+printPmtkFigure(<span class="string">'groupLassoGroupDeb'</span>)
+
+figure;
+stem(wHatLasso); title(<span class="string">'lasso'</span>); drawGroups(nStates, wTrue);
+printPmtkFigure(<span class="string">'groupLassoVanillaDeb'</span>)
+</pre><img vspace="5" hspace="5" src="linregGroupLassoDemo_01.png" alt=""> <img vspace="5" hspace="5" src="linregGroupLassoDemo_02.png" alt=""> <img vspace="5" hspace="5" src="linregGroupLassoDemo_03.png" alt=""> <img vspace="5" hspace="5" src="linregGroupLassoDemo_04.png" alt=""> <img vspace="5" hspace="5" src="linregGroupLassoDemo_05.png" alt=""> <img vspace="5" hspace="5" src="linregGroupLassoDemo_06.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
+
+<span class="keyword">function</span> wdebiased = debias(w, X, y)
+aw = abs(w);
+zz = find(abs(w) &lt;= 0.01*max(aw));
+n = numel(w);
+ndx = setdiff(1:n, zz);
+wdebiased = zeros(n,1);
+wdebiased(ndx) = pinv(X(:,ndx))*y;
+<span class="keyword">end</span>
+
+
+
+
+<span class="keyword">function</span> drawGroups(nStates, wTrue)
+hold <span class="string">on</span>
+<span class="keyword">for</span> i=1:length(nStates)
+  j = sum(nStates(1:i));
+  h=line([j j], [min(wTrue(:)) max(wTrue(:))]);
+  set(h,<span class="string">'color'</span>,<span class="string">'r'</span>,<span class="string">'linewidth'</span>,1);
+<span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Demo of group lasso compared to vanilla lasso
+% PMTKauthor Mark Schmidt
+%%
+
+
+
+% This file is from pmtk3.googlecode.com
+
+function linregGroupLassoDemo()
+
+
+setSeed(1);
+
+%% Make data
+% Generate categorical features
+nInstances = 200;
+%nStates = [10 5 10 5 20 5 10 5 20 5 10 20 10];
+nStates = [10 5 10 20 10 20 10];
+% Number of discrete states for each categorical feature
+X = zeros(nInstances,length(nStates));
+offset = 0;
+for i = 1:nInstances
+    for s = 1:length(nStates)
+        prob_s = rand(nStates(s),1);
+        prob_s = prob_s/sum(prob_s);
+        X(i,s) = sampleDiscrete(prob_s);
+    end
+end
+
+% Now convert categorical matrix to binary (1ofK) encoding
+X_ind = dummyEncoding(X, nStates);
+
+ 
+% Now make sparse weight vector, where sparsity is in groups
+offset = 0;
+nVars = sum(nStates);
+wTrue = zeros(nVars, 1);
+for s = 1:length(nStates)
+    wTrue(offset+1:offset+nStates(s),1) = (rand > .75)*randn(nStates(s),1);
+    offset = offset+nStates(s);
+end
+
+% Make data
+y = X_ind*wTrue + 1*randn(nInstances,1);
+Xtrain = X_ind;
+ytrain = y;
+
+%[Xtrain, mu, s] = standardizeCols(Xtrain);
+%ytrain = centerCols(ytrain);
+
+if 0
+Xtrain = X_ind(1:floor(nInstances/2),:);
+ytrain = y(1:floor(nInstances/2));
+Xtest = X_ind(floor(nInstances/2)+1:end,:);
+ytest = y(floor(nInstances/2)+1:end);
+end
+
+%% Set up groups
+offset = 0;
+groups = zeros(nVars, 1);
+for s = 1:length(nStates)
+    groups(offset+1:offset+nStates(s),1) = s;
+    offset = offset+nStates(s);
+end
+nGroups = max(groups);
+
+%% setup CV
+predictFn = @(w, X) X*w;
+lossFn = @(yhat, y)  sum((yhat-y).^2);
+useSErule = true;
+Nfolds = 10;
+
+maxLambda = lassoMaxLambda(Xtrain, ytrain);
+lambdasL1 = linspace(maxLambda, eps, 30);
+
+maxLambda = groupLassoMaxLambda(groups, Xtrain, ytrain);
+lambdasGL1 = linspace(maxLambda, eps, 30);
+
+
+%% Fit 
+%fitFn = @(X,y,lambda) linregFitLassoEm(X,y,  lambda); 
+fitFn = @(X,y,lambda)  linregFitSparseEm(X, y, 'laplace', 'lambda', lambda);
+%fitFn = @(X,y,lambda) l1_ls(X,y,  lambda, 1e-3, true); % slow
+[wHatLasso] = fitCv(lambdasL1, fitFn, predictFn, lossFn, Xtrain, ytrain,  Nfolds, 'useSErule', useSErule);
+
+fitFn = @(X,y,lambda) linregFitGroupLasso(X,y, groups, lambda);
+[wHatGroup] = fitCv(lambdasGL1, fitFn, predictFn, lossFn, Xtrain, ytrain,  Nfolds, 'useSErule', useSErule);
+
+
+%% Plot
+figure;
+stem(wTrue); title('truth');  drawGroups(nStates, wTrue);
+printPmtkFigure('groupLassoTruth')
+
+figure;
+stem(wHatGroup); title('group lasso'); drawGroups(nStates, wTrue);
+printPmtkFigure('groupLassoGroup')
+
+figure;
+stem(wHatLasso); title('lasso'); drawGroups(nStates, wTrue);
+printPmtkFigure('groupLassoVanilla')
+
+% Add debiasing
+% Note that if we standardize the data, we would need to scale
+% up the coefficients in order to recover the true (generating) values
+wHatGroup = debias(wHatGroup, Xtrain, ytrain);
+wHatLasso = debias(wHatLasso, Xtrain, ytrain);
+figure;
+stem(wTrue); title('truth');  drawGroups(nStates, wTrue);
+%printPmtkFigure('groupLassoTruth')
+
+figure;
+stem(wHatGroup); title('group lasso'); drawGroups(nStates, wTrue);
+printPmtkFigure('groupLassoGroupDeb')
+
+figure;
+stem(wHatLasso); title('lasso'); drawGroups(nStates, wTrue);
+printPmtkFigure('groupLassoVanillaDeb')
+
+
+end
+
+function wdebiased = debias(w, X, y)
+aw = abs(w);
+zz = find(abs(w) <= 0.01*max(aw));
+n = numel(w);
+ndx = setdiff(1:n, zz);
+wdebiased = zeros(n,1);
+wdebiased(ndx) = pinv(X(:,ndx))*y;
+end
+
+
+
+
+function drawGroups(nStates, wTrue)
+hold on
+for i=1:length(nStates)
+  j = sum(nStates(1:i));
+  h=line([j j], [min(wTrue(:)) max(wTrue(:))]);
+  set(h,'color','r','linewidth',1);
+end
+end
+
+
+
+##### SOURCE END #####
+--></body></html>

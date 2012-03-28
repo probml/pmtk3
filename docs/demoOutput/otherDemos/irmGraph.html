@@ -1,0 +1,197 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>irmGraph</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="irmGraph.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% make graph for figure 1 of IRM paper by Kemp et al</span>
+
+<span class="comment">%{
+</span><span class="comment">% from TR 2004
+</span><span class="comment">G = zeros(9,9);
+</span><span class="comment">G(1,[3 5 7 8 9])=1;
+</span><span class="comment">G(2, 9) = 1;
+</span><span class="comment">G(3, [7 8 9])=1;
+</span><span class="comment">G(4, [2 3 7 8 9])=1;
+</span><span class="comment">G(5, [7 9])=1;
+</span><span class="comment">G(6, [2 3 5 7 8 9])=1;
+</span><span class="comment">G(7, 4)=1;
+</span><span class="comment">G(8, [6 7 9])=1
+</span><span class="comment">%}
+</span>
+<span class="comment">% FROM AAAI'06</span>
+G = zeros(9,9);
+G(1, [3 5 8])=1;
+G(2, [7 9]) = 1;
+G(3, [3 7  9])=1;
+G(4, [2 3  8 ])=1;
+G(5, [7 9])=1;
+G(6, [2 3 5 8 ])=1;
+G(7, [1 6])=1;
+G(8, [6 7 9])=1;
+G(9, [1 4 6]) = 1;
+
+figure
+Gtmp = G; Gtmp(G==0)=1; Gtmp(G==1)=0;
+imagesc(Gtmp);
+colormap(gray)
+printPmtkFigure(<span class="string">'irmGraphInput'</span>)
+
+
+<span class="comment">%graphviz(G)</span>
+
+<span class="comment">%{
+</span><span class="comment">labels = cell(1,9);
+</span><span class="comment">g{1} = [1 6 4];
+</span><span class="comment">g{2} = [8 2 3 5];
+</span><span class="comment">g{3} = [9 7];
+</span><span class="comment">for i=1:3
+</span><span class="comment">  for j=1:numel(g{i})
+</span><span class="comment">    k = g{i}(j);
+</span><span class="comment">    labels{k} = sprintf('g%d', i);
+</span><span class="comment">  end
+</span><span class="comment">end
+</span><span class="comment">graphviz(G, 'labels', labels)
+</span><span class="comment">%}
+</span>
+perm = [1 6 4 8 2 3 5 9 7];
+GG = size(G);
+<span class="keyword">for</span> i=1:9
+  <span class="keyword">for</span> j=1:9
+    GG(i,j)=G(perm(i), perm(j));
+  <span class="keyword">end</span>
+<span class="keyword">end</span>
+<span class="comment">%graphviz(GG)</span>
+figure
+Gtmp = GG; Gtmp(GG==0)=1; Gtmp(GG==1)=0;
+imagesc(Gtmp);
+colormap(gray)
+printPmtkFigure(<span class="string">'irmGraphOutput'</span>)
+</pre><img vspace="5" hspace="5" src="irmGraph_01.png" alt=""> <img vspace="5" hspace="5" src="irmGraph_02.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+% make graph for figure 1 of IRM paper by Kemp et al
+
+%{
+% from TR 2004
+G = zeros(9,9);
+G(1,[3 5 7 8 9])=1;
+G(2, 9) = 1;
+G(3, [7 8 9])=1;
+G(4, [2 3 7 8 9])=1;
+G(5, [7 9])=1;
+G(6, [2 3 5 7 8 9])=1;
+G(7, 4)=1;
+G(8, [6 7 9])=1
+%}
+
+% FROM AAAI'06
+G = zeros(9,9);
+G(1, [3 5 8])=1;
+G(2, [7 9]) = 1;
+G(3, [3 7  9])=1;
+G(4, [2 3  8 ])=1;
+G(5, [7 9])=1;
+G(6, [2 3 5 8 ])=1;
+G(7, [1 6])=1;
+G(8, [6 7 9])=1;
+G(9, [1 4 6]) = 1;
+
+figure
+Gtmp = G; Gtmp(G==0)=1; Gtmp(G==1)=0;
+imagesc(Gtmp);
+colormap(gray)
+printPmtkFigure('irmGraphInput')
+
+
+%graphviz(G)
+
+%{
+labels = cell(1,9);
+g{1} = [1 6 4];
+g{2} = [8 2 3 5];
+g{3} = [9 7];
+for i=1:3
+  for j=1:numel(g{i})
+    k = g{i}(j);
+    labels{k} = sprintf('g%d', i);
+  end
+end
+graphviz(G, 'labels', labels)
+%}
+
+perm = [1 6 4 8 2 3 5 9 7];
+GG = size(G);
+for i=1:9
+  for j=1:9
+    GG(i,j)=G(perm(i), perm(j));
+  end
+end
+%graphviz(GG)
+figure
+Gtmp = GG; Gtmp(GG==0)=1; Gtmp(GG==1)=0;
+imagesc(Gtmp);
+colormap(gray)
+printPmtkFigure('irmGraphOutput')
+
+
+##### SOURCE END #####
+--></body></html>

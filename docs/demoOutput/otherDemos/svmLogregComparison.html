@@ -1,0 +1,126 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>Compare kernalized L1 logistic regession to an svm.</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="svmLogregComparison"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Compare kernalized L1 logistic regession to an svm.</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">SVM</a></li><li><a href="#3">LR L1</a></li><li><a href="#4">LR L2 (no kernel)</a></li></ul></div><pre class="codeinput">loadData(<span class="string">'crabs'</span>);
+</pre><h2>SVM<a name="2"></a></h2><pre class="codeinput">gammas = logspace(-2, 2, 30);
+Cvals  = logspace(-1, 3.5, 30);
+SVMmodel = svmFit(Xtrain, ytrain, <span class="string">'kernel'</span>, <span class="string">'rbf'</span>, <span class="keyword">...</span>
+    <span class="string">'C'</span>, Cvals, <span class="string">'kernelParam'</span>, gammas);
+yhat = svmPredict(SVMmodel, Xtest);
+svmNerrors = sum(yhat ~= ytest) <span class="comment">%0</span>
+</pre><pre class="codeoutput">svmNerrors =
+     0
+</pre><h2>LR L1<a name="3"></a></h2><pre class="codeinput">lambdaL1 = 1e-3; SigmaL1 = 0.5;
+args.lambda = lambdaL1;
+args.preproc.kernelFn = @(X1, X2)kernelRbfSigma(X1, X2, SigmaL1);
+args.preproc.rescaleX = true;
+args.regType = <span class="string">'L1'</span>;
+LRL1model = logregFit(Xtrain, ytrain, args);
+yhat = logregPredict(LRL1model, Xtest);
+lrL1Nerrors = sum(yhat ~= ytest)
+</pre><pre class="codeoutput">lrL1Nerrors =
+     4
+</pre><h2>LR L2 (no kernel)<a name="4"></a></h2><pre class="codeinput">lambdas = logspace(-5,0,50);
+LRL2model = fitCv(lambdas, @(X, y, l)logregFit(X, y, <span class="string">'lambda'</span>, l, <span class="string">'regType'</span>, <span class="string">'L2'</span>), <span class="keyword">...</span>
+    @logregPredict, @zeroOneLossFn, Xtrain, ytrain);
+
+
+yhat = logregPredict(LRL2model, Xtest);
+lrL2Nerrors = sum(yhat ~= ytest)
+</pre><pre class="codeoutput">lrL2Nerrors =
+     5
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Compare kernalized L1 logistic regession to an svm. 
+%
+%%
+loadData('crabs');
+%% SVM
+gammas = logspace(-2, 2, 30);
+Cvals  = logspace(-1, 3.5, 30);
+SVMmodel = svmFit(Xtrain, ytrain, 'kernel', 'rbf', ...
+    'C', Cvals, 'kernelParam', gammas);
+yhat = svmPredict(SVMmodel, Xtest);
+svmNerrors = sum(yhat ~= ytest) %0
+%% LR L1
+lambdaL1 = 1e-3; SigmaL1 = 0.5;
+args.lambda = lambdaL1;
+args.preproc.kernelFn = @(X1, X2)kernelRbfSigma(X1, X2, SigmaL1);
+args.preproc.rescaleX = true;
+args.regType = 'L1';
+LRL1model = logregFit(Xtrain, ytrain, args);
+yhat = logregPredict(LRL1model, Xtest);
+lrL1Nerrors = sum(yhat ~= ytest)
+%% LR L2 (no kernel)
+lambdas = logspace(-5,0,50);
+LRL2model = fitCv(lambdas, @(X, y, l)logregFit(X, y, 'lambda', l, 'regType', 'L2'), ...
+    @logregPredict, @zeroOneLossFn, Xtrain, ytrain); 
+
+
+yhat = logregPredict(LRL2model, Xtest);
+lrL2Nerrors = sum(yhat ~= ytest)
+
+##### SOURCE END #####
+--></body></html>

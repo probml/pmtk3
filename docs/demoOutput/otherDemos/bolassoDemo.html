@@ -1,0 +1,312 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>Reproduce figures 1,2,3 from Bolasso: Model Consistent Lasso Estimation</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="bolassoDemo"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Reproduce figures 1,2,3 from Bolasso: Model Consistent Lasso Estimation</h1><!--introduction--><p>throught the Bootstrap, by Francis R. Bach.</p><!--/introduction--><pre class="codeinput"><span class="comment">%PMTKreallySlow</span>
+seed = 2008;
+rand(<span class="string">'twister'</span>,seed);randn(<span class="string">'state'</span>,seed);
+<span class="keyword">if</span>(exist(<span class="string">'bolassoDemoResults.mat'</span>,<span class="string">'file'</span>))
+    fprintf(<span class="string">'loading data from file...\n'</span>);
+    load <span class="string">bolassoDemoResults.mat</span>;
+<span class="keyword">else</span>
+
+fprintf(<span class="string">'generating new data, this might take a while...\n'</span>);
+n = 1000;        <span class="comment">%number of data points</span>
+d = 16;          <span class="comment">%number of features</span>
+r = 8;           <span class="comment">%number of relevant features</span>
+nexpReps = 256;  <span class="comment">%number of experiment replications.</span>
+
+<span class="comment">%values for the number of bootstrap replications. 0 indicates Lasso.</span>
+nbootstraps = [0,2,4,8,16,32,64,128,256];
+ct = 1;  <span class="comment">%consensusThreshold</span>
+lassoNDX = 1;
+boot128NDX = 8;
+
+
+lambda = exp(-15:0.2:0);
+
+[Xc,yc,WloadingC] = bolassoMakeData(n,d,r,nexpReps,true);       <span class="comment">%Lasso path consistent</span>
+[Xnc,ync,WloadingNC] = bolassoMakeData(n,d,r,nexpReps,false);    <span class="comment">%Lasso path inconsistent</span>
+
+
+
+resultsC = false(nexpReps,numel(lambda),d,numel(nbootstraps));
+resultsNC = false(nexpReps,numel(lambda),d,numel(nbootstraps));
+
+<span class="keyword">for</span> i=1:nexpReps
+
+    resultsC(i,:,:,:) = bolasso(Xc{i},yc{i},<span class="string">'nbootstraps'</span>,nbootstraps,<span class="string">'lambda'</span>,lambda,<span class="string">'returnType'</span>,<span class="string">'all'</span>,<span class="string">'consensusThreshold'</span>,ct,<span class="string">'plotResults'</span>,false);
+    resultsNC(i,:,:,:) = bolasso(Xnc{i},ync{i},<span class="string">'nbootstraps'</span>,nbootstraps,<span class="string">'lambda'</span>,lambda,<span class="string">'returnType'</span>,<span class="string">'all'</span>,<span class="string">'consensusThreshold'</span>,ct,<span class="string">'plotResults'</span>,false);
+    fprintf([<span class="string">'Rep: '</span>,num2str(i),<span class="string">'\n'</span>]);
+
+<span class="keyword">end</span>
+
+
+
+<span class="comment">%Take the average of all of the experiments for nbootstraps = [0,128]</span>
+meanResultsC = squeeze(mean(resultsC(:,:,:,[lassoNDX,boot128NDX]),1));
+meanResultsNC = squeeze(mean(resultsNC(:,:,:,[lassoNDX,boot128NDX]),1));
+
+correctSupport = [true(1,8),false(1,8)]';
+correctC = zeros(numel(lambda),numel(nbootstraps));
+correctNC = zeros(numel(lambda),numel(nbootstraps));
+<span class="keyword">for</span> boot=1:numel(nbootstraps)
+    correctCtmp =  zeros(nexpReps,numel(lambda));
+    correctNCtmp = zeros(nexpReps,numel(lambda));
+    <span class="keyword">for</span> ex=1:nexpReps
+      <span class="keyword">for</span> lam=1:numel(lambda)
+          <span class="keyword">if</span>(isequal(squeeze(resultsC(ex,lam,:,boot)) ,correctSupport))
+              correctCtmp(ex,lam) = correctCtmp(ex,lam) + 1;
+          <span class="keyword">end</span>
+          <span class="keyword">if</span>(isequal(squeeze(resultsNC(ex,lam,:,boot)) ,correctSupport))
+              correctNCtmp(ex,lam) = correctNCtmp(ex,lam) + 1;
+          <span class="keyword">end</span>
+      <span class="keyword">end</span>
+    <span class="keyword">end</span>
+    correctC(:,boot) = mean(correctCtmp,1);
+    correctNC(:,boot) = mean(correctNCtmp,1);
+<span class="keyword">end</span>
+
+save <span class="string">bolassoDemo1Results</span>;
+
+<span class="keyword">end</span>
+
+
+<span class="comment">%plot figure 1</span>
+f1 = figure;
+image(-log(lambda),1:d,meanResultsC(:,:,1)',<span class="string">'CDataMapping'</span>,<span class="string">'scaled'</span>);
+title(<span class="string">'lasso on sign consistent data'</span>);
+f2 = figure;
+image(-log(lambda),1:d,meanResultsNC(:,:,1)',<span class="string">'CDataMapping'</span>,<span class="string">'scaled'</span>);
+title(<span class="string">'lasso on sign inconsistent data'</span>);
+<span class="comment">%plot figure 2</span>
+f3 = figure;
+image(-log(lambda),1:d,meanResultsC(:,:,2)',<span class="string">'CDataMapping'</span>,<span class="string">'scaled'</span>);
+title({<span class="string">'bolasso on sign consistent data'</span>;<span class="string">'128 bootstraps'</span>});
+f4 = figure;
+image(-log(lambda),1:d,meanResultsNC(:,:,2)',<span class="string">'CDataMapping'</span>,<span class="string">'scaled'</span>);
+title({<span class="string">'bolasso on sign inconsistent data'</span>;<span class="string">'128 bootstraps'</span>});
+
+
+figs = [f1,f2,f3,f4];
+<span class="keyword">for</span> i=1:numel(figs)
+   figure(figs(i));
+   colormap <span class="string">gray</span>;
+   colorbar;
+   xlabel(<span class="string">'-log(\lambda)'</span>,<span class="string">'FontSize'</span>,14);
+   ylabel(<span class="string">'variable index'</span>,<span class="string">'FontSize'</span>,14);
+   set(gca,<span class="string">'FontSize'</span>,12);
+   pdfcrop;
+<span class="keyword">end</span>
+
+<span class="comment">%plot figure 3</span>
+f5 = figure;
+lasso = plot(-log(lambda),correctC(:,lassoNDX),<span class="string">'-k'</span>,<span class="string">'LineWidth'</span>,2.5); hold <span class="string">on</span>;
+bolasso = plot(-log(lambda),correctC(:,2:end),<span class="string">'--r'</span>,<span class="string">'LineWidth'</span>,2.5);
+
+title({<span class="string">'lasso vs bolasso on sign consistent data'</span>; <span class="string">'nbootstraps = [0,2,4,8,16,32,64,128,256]'</span>});
+f6 = figure;
+lasso = plot(-log(lambda),correctNC(:,lassoNDX),<span class="string">'-k'</span>,<span class="string">'LineWidth'</span>,2.5); hold <span class="string">on</span>;
+bolasso = plot(-log(lambda),correctNC(:,2:end),<span class="string">'--r'</span>,<span class="string">'LineWidth'</span>,2.5);
+
+title({<span class="string">'lasso vs bolasso on sign inconsistent data'</span>; <span class="string">'nbootstraps = [0,2,4,8,16,32,64,128,256]'</span>});
+
+figs2 = [f5,f6];
+<span class="keyword">for</span> i=1:numel(figs2)
+    figure(figs2(i));
+    xlabel(<span class="string">'-log(\lambda)'</span>,<span class="string">'FontSize'</span>,14);
+    ylabel(<span class="string">'P(correct support)'</span>,<span class="string">'FontSize'</span>,14);
+    axis([0,15,0,1]);
+    set(gca,<span class="string">'YTick'</span>,0:0.5:1,<span class="string">'FontSize'</span>,12);
+    legend(gca,[lasso,bolasso(1)],{<span class="string">'lasso'</span>,<span class="string">'bolasso'</span>},<span class="string">'Location'</span>,<span class="string">'NorthEast'</span>);
+    pdfcrop;
+<span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Reproduce figures 1,2,3 from Bolasso: Model Consistent Lasso Estimation
+% throught the Bootstrap, by Francis R. Bach.
+%%
+%PMTKreallySlow
+seed = 2008;
+rand('twister',seed);randn('state',seed);
+if(exist('bolassoDemoResults.mat','file'))
+    fprintf('loading data from file...\n');
+    load bolassoDemoResults.mat;
+else
+
+fprintf('generating new data, this might take a while...\n');
+n = 1000;        %number of data points
+d = 16;          %number of features
+r = 8;           %number of relevant features 
+nexpReps = 256;  %number of experiment replications. 
+
+%values for the number of bootstrap replications. 0 indicates Lasso.
+nbootstraps = [0,2,4,8,16,32,64,128,256]; 
+ct = 1;  %consensusThreshold
+lassoNDX = 1;
+boot128NDX = 8;
+
+
+lambda = exp(-15:0.2:0);
+
+[Xc,yc,WloadingC] = bolassoMakeData(n,d,r,nexpReps,true);       %Lasso path consistent
+[Xnc,ync,WloadingNC] = bolassoMakeData(n,d,r,nexpReps,false);    %Lasso path inconsistent
+
+
+
+resultsC = false(nexpReps,numel(lambda),d,numel(nbootstraps));
+resultsNC = false(nexpReps,numel(lambda),d,numel(nbootstraps));
+
+for i=1:nexpReps
+ 
+    resultsC(i,:,:,:) = bolasso(Xc{i},yc{i},'nbootstraps',nbootstraps,'lambda',lambda,'returnType','all','consensusThreshold',ct,'plotResults',false);
+    resultsNC(i,:,:,:) = bolasso(Xnc{i},ync{i},'nbootstraps',nbootstraps,'lambda',lambda,'returnType','all','consensusThreshold',ct,'plotResults',false);
+    fprintf(['Rep: ',num2str(i),'\n']);
+ 
+end
+
+
+
+%Take the average of all of the experiments for nbootstraps = [0,128]
+meanResultsC = squeeze(mean(resultsC(:,:,:,[lassoNDX,boot128NDX]),1));
+meanResultsNC = squeeze(mean(resultsNC(:,:,:,[lassoNDX,boot128NDX]),1));
+
+correctSupport = [true(1,8),false(1,8)]';
+correctC = zeros(numel(lambda),numel(nbootstraps));
+correctNC = zeros(numel(lambda),numel(nbootstraps));
+for boot=1:numel(nbootstraps)
+    correctCtmp =  zeros(nexpReps,numel(lambda));
+    correctNCtmp = zeros(nexpReps,numel(lambda)); 
+    for ex=1:nexpReps
+      for lam=1:numel(lambda)
+          if(isequal(squeeze(resultsC(ex,lam,:,boot)) ,correctSupport))
+              correctCtmp(ex,lam) = correctCtmp(ex,lam) + 1;
+          end
+          if(isequal(squeeze(resultsNC(ex,lam,:,boot)) ,correctSupport))
+              correctNCtmp(ex,lam) = correctNCtmp(ex,lam) + 1;
+          end
+      end
+    end
+    correctC(:,boot) = mean(correctCtmp,1);
+    correctNC(:,boot) = mean(correctNCtmp,1);
+end
+
+save bolassoDemo1Results;
+
+end
+
+
+%plot figure 1
+f1 = figure;
+image(-log(lambda),1:d,meanResultsC(:,:,1)','CDataMapping','scaled');
+title('lasso on sign consistent data');
+f2 = figure;
+image(-log(lambda),1:d,meanResultsNC(:,:,1)','CDataMapping','scaled');
+title('lasso on sign inconsistent data');
+%plot figure 2
+f3 = figure;
+image(-log(lambda),1:d,meanResultsC(:,:,2)','CDataMapping','scaled');
+title({'bolasso on sign consistent data';'128 bootstraps'});
+f4 = figure;
+image(-log(lambda),1:d,meanResultsNC(:,:,2)','CDataMapping','scaled');
+title({'bolasso on sign inconsistent data';'128 bootstraps'});
+
+
+figs = [f1,f2,f3,f4];
+for i=1:numel(figs)
+   figure(figs(i));
+   colormap gray;
+   colorbar;
+   xlabel('-log(\lambda)','FontSize',14);
+   ylabel('variable index','FontSize',14);
+   set(gca,'FontSize',12);
+   pdfcrop;
+end
+
+%plot figure 3
+f5 = figure;
+lasso = plot(-log(lambda),correctC(:,lassoNDX),'-k','LineWidth',2.5); hold on;
+bolasso = plot(-log(lambda),correctC(:,2:end),'REPLACE_WITH_DASH_DASHr','LineWidth',2.5);
+
+title({'lasso vs bolasso on sign consistent data'; 'nbootstraps = [0,2,4,8,16,32,64,128,256]'});
+f6 = figure;
+lasso = plot(-log(lambda),correctNC(:,lassoNDX),'-k','LineWidth',2.5); hold on;
+bolasso = plot(-log(lambda),correctNC(:,2:end),'REPLACE_WITH_DASH_DASHr','LineWidth',2.5);
+
+title({'lasso vs bolasso on sign inconsistent data'; 'nbootstraps = [0,2,4,8,16,32,64,128,256]'});
+
+figs2 = [f5,f6];
+for i=1:numel(figs2)
+    figure(figs2(i));
+    xlabel('-log(\lambda)','FontSize',14);
+    ylabel('P(correct support)','FontSize',14);
+    axis([0,15,0,1]);
+    set(gca,'YTick',0:0.5:1,'FontSize',12);
+    legend(gca,[lasso,bolasso(1)],{'lasso','bolasso'},'Location','NorthEast');
+    pdfcrop;
+end
+    
+    
+##### SOURCE END #####
+--></body></html>

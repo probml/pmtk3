@@ -1,0 +1,140 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>MLP Classification Demo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="mlpClassifDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>MLP Classification Demo</h1><!--introduction--><p>Based on Mark Schmidt's Demo from <a href="http://people.cs.ubc.ca/~schmidtm/Software/minFunc/minFunc.html#9">http://people.cs.ubc.ca/~schmidtm/Software/minFunc/minFunc.html#9</a></p><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+H = [3, 6, 9];
+<span class="keyword">for</span> hi=1:length(H)
+  nhidden = H(hi);
+setSeed(0);
+nVars = 2;
+nInstances = 400;
+options.Display = <span class="string">'none'</span>;
+options.MaxIter = 100;
+[X,y] = makeData(<span class="string">'classificationNonlinear'</span>,nInstances,nVars);
+[N,D] = size(X);
+X1 = [ones(N,1) X];
+lambda = 1e-2;
+
+model = mlpFit(X, y, <span class="string">'nhidden'</span>, nhidden, <span class="string">'lambda'</span>, lambda, <span class="keyword">...</span>
+  <span class="string">'fitOptions'</span>, options, <span class="string">'method'</span>, <span class="string">'schmidt'</span>);
+[yhat, py] = mlpPredict(model, X);
+
+model1 = mlpFit(X, y, <span class="string">'nhidden'</span>, nhidden, <span class="string">'lambda'</span>, lambda, <span class="keyword">...</span>
+  <span class="string">'fitOptions'</span>, options, <span class="string">'method'</span>, <span class="string">'netlab'</span>);
+[yhat1, py1] = mlpPredict(model, X);
+
+assert(approxeq(py, py1))
+
+nerr = sum(yhat ~= y);
+
+str = sprintf(<span class="string">'mlp with %d hidden units, nerr = %d'</span>, model.nHidden, nerr);
+plotDecisionBoundary(X, y, @(X)mlpPredict(model, X));
+title(str);
+printPmtkFigure(sprintf(<span class="string">'mlpClassifH%d'</span>, nhidden));
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="mlpClassifDemo_01.png" alt=""> <img vspace="5" hspace="5" src="mlpClassifDemo_02.png" alt=""> <img vspace="5" hspace="5" src="mlpClassifDemo_03.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% MLP Classification Demo
+% Based on Mark Schmidt's Demo from
+% http://people.cs.ubc.ca/~schmidtm/Software/minFunc/minFunc.html#9
+%%
+
+% This file is from pmtk3.googlecode.com
+
+H = [3, 6, 9];
+for hi=1:length(H)
+  nhidden = H(hi);
+setSeed(0);
+nVars = 2;
+nInstances = 400;
+options.Display = 'none';
+options.MaxIter = 100;
+[X,y] = makeData('classificationNonlinear',nInstances,nVars);
+[N,D] = size(X);
+X1 = [ones(N,1) X];
+lambda = 1e-2;
+
+model = mlpFit(X, y, 'nhidden', nhidden, 'lambda', lambda, ...
+  'fitOptions', options, 'method', 'schmidt');
+[yhat, py] = mlpPredict(model, X);
+
+model1 = mlpFit(X, y, 'nhidden', nhidden, 'lambda', lambda, ...
+  'fitOptions', options, 'method', 'netlab');
+[yhat1, py1] = mlpPredict(model, X);
+
+assert(approxeq(py, py1))
+
+nerr = sum(yhat ~= y);
+
+str = sprintf('mlp with %d hidden units, nerr = %d', model.nHidden, nerr);
+plotDecisionBoundary(X, y, @(X)mlpPredict(model, X));
+title(str);
+printPmtkFigure(sprintf('mlpClassifH%d', nhidden));
+end
+
+
+##### SOURCE END #####
+--></body></html>

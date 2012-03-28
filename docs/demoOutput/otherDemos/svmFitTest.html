@@ -1,0 +1,257 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>Simple Tests of the svmFit interface</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-31"><meta name="m-file" content="svmFitTest"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Simple Tests of the svmFit interface</h1><!--introduction--><p>PMTKslow PMTKneedsOptimToolbox quadprog</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">First we check that the 3 implementations give the same</a></li><li><a href="#2">Example of how to do CV</a></li><li><a href="#3">Example of how to specify the kernel</a></li><li><a href="#4">CV and kernels</a></li><li><a href="#5">REGRESSION</a></li><li><a href="#11">MULTICLASS</a></li></ul></div><h2>First we check that the 3 implementations give the same<a name="1"></a></h2><p>results on a simple binary dataset</p><pre class="codeinput">requireOptimToolbox
+loadData(<span class="string">'crabs'</span>);
+
+model = svmFit(Xtrain, ytrain);
+yhat  = svmPredict(model, Xtest);
+errorRateGen = mean(yhat ~= ytest);
+
+<span class="keyword">if</span> ispc <span class="comment">% svmlight only works on windows</span>
+    tic
+    model = svmFit(Xtrain, ytrain, <span class="string">'fitFn'</span>, @svmlightFit);
+    yhat  = svmPredict(model, Xtest);
+    errorRateSvmLight = mean(yhat ~= ytest);
+    timeSvmLight = toc;
+<span class="keyword">end</span>
+
+tic
+model = svmFit(Xtrain, ytrain, <span class="string">'fitFn'</span>, @svmQPclassifFit);
+yhat  = svmPredict(model, Xtest);
+errorRateQp = mean(yhat ~= ytest);
+timeQp = toc;
+
+tic
+model = svmFit(Xtrain, ytrain, <span class="string">'fitFn'</span>, @svmlibFit);
+yhat  = svmPredict(model, Xtest);
+errorRateSvmLib = mean(yhat ~= ytest);
+timeSvmLib=toc;
+
+fprintf(<span class="string">'method \t error \t time \n'</span>);
+<span class="keyword">if</span> ispc
+    fprintf(<span class="string">'svmLight \t %5.3f \t %5.3f\n'</span>, errorRateSvmLight, timeSvmLight);
+<span class="keyword">end</span>
+fprintf(<span class="string">'svmQp \t %5.3f \t %5.3f\n'</span>, errorRateQp, timeQp);
+fprintf(<span class="string">'svmLib \t %5.3f \t %5.3f\n'</span>, errorRateSvmLib, timeSvmLib);
+</pre><pre class="codeoutput">method 	 error 	 time 
+svmLight 	 0.108 	 0.589
+svmQp 	 0.108 	 1.526
+svmLib 	 0.108 	 0.015
+</pre><h2>Example of how to do CV<a name="2"></a></h2><pre class="codeinput">model = svmFit(Xtrain, ytrain, <span class="string">'C'</span>, logspace(-1,1,10));
+yhat  = svmPredict(model, Xtest);
+errorRate = mean(yhat ~= ytest)
+</pre><pre class="codeoutput">errorRate =
+    0.0500
+</pre><h2>Example of how to specify the kernel<a name="3"></a></h2><pre class="codeinput">model = svmFit(Xtrain, ytrain, <span class="string">'kernel'</span>, @kernelPoly, <span class="string">'kernelParam'</span>, 3);
+yhat  = svmPredict(model, Xtest);
+errorRate = mean(yhat ~= ytest)
+
+model = svmFit(Xtrain, ytrain, <span class="string">'kernel'</span>, <span class="string">'linear'</span>);
+yhat  = svmPredict(model, Xtest);
+errorRate = mean(yhat ~= ytest)
+</pre><pre class="codeoutput">errorRate =
+     0
+errorRate =
+     0
+</pre><h2>CV and kernels<a name="4"></a></h2><pre class="codeinput">model = svmFit(Xtrain, ytrain, <span class="string">'C'</span>, logspace(-1, 1, 10), <span class="string">'kernel'</span>, @kernelPoly, <span class="string">'kernelParam'</span>, 3);
+yhat  = svmPredict(model, Xtest);
+errorRate = mean(yhat ~= ytest)
+</pre><pre class="codeoutput">errorRate =
+    0.0083
+</pre><h2>REGRESSION<a name="5"></a></h2><pre class="codeinput">loadData(<span class="string">'prostate'</span>);
+</pre><pre class="codeinput">model = svmFit(Xtrain, ytrain);
+yhat = svmPredict(model, Xtest);
+mse = mean((yhat - ytest).^2)
+</pre><pre class="codeoutput">mse =
+    0.6138
+</pre><pre class="codeinput">model = svmFit(Xtrain, ytrain, <span class="string">'fitFn'</span>, @svmQPregFit);
+yhat = svmPredict(model, Xtest);
+mse = mean((yhat - ytest).^2)
+</pre><pre class="codeoutput">mse =
+    0.6138
+</pre><pre class="codeinput">model = svmFit(Xtrain, ytrain, <span class="string">'kernel'</span>, <span class="string">'rbf'</span>, <span class="string">'kernelParam'</span>, [0.1, 0.5, 1, 5], <span class="string">'C'</span>, logspace(-1,1,10));
+yhat = svmPredict(model, Xtest);
+mse = mean((yhat - ytest).^2)
+</pre><pre class="codeoutput">mse =
+    0.5915
+</pre><pre class="codeinput">model = svmFit(Xtrain, ytrain, <span class="string">'kernel'</span>, <span class="string">'poly'</span>, <span class="string">'kernelParam'</span>, 1:10, <span class="string">'C'</span>, logspace(-2,2,30));
+yhat = svmPredict(model, Xtest);
+mse = mean((yhat - ytest).^2)
+</pre><pre class="codeoutput">mse =
+    0.6139
+</pre><pre class="codeinput">model = svmFit(Xtrain, ytrain, <span class="string">'kernel'</span>, <span class="string">'linear'</span>, <span class="string">'C'</span>, logspace(-2,2,100));
+yhat = svmPredict(model, Xtest);
+error = mean((yhat - ytest).^2)
+</pre><pre class="codeoutput">error =
+    1.5443
+</pre><h2>MULTICLASS<a name="11"></a></h2><pre class="codeinput">loadData(<span class="string">'soy'</span>)
+setSeed(0);
+[X, Y] = shuffleRows(X, Y);
+Xtrain = X(1:250, :); ytrain = Y(1:250);
+Xtest = X(251:end, :); ytest = Y(251:end);
+</pre><pre class="codeinput">model = svmFit(Xtrain, ytrain);
+yhat = svmPredict(model, Xtest);
+errorRate = mean(yhat ~= ytest)
+</pre><pre class="codeoutput">errorRate =
+    0.0175
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Simple Tests of the svmFit interface
+% PMTKslow
+% PMTKneedsOptimToolbox quadprog
+%% First we check that the 3 implementations give the same
+% results on a simple binary dataset
+requireOptimToolbox
+loadData('crabs'); 
+
+model = svmFit(Xtrain, ytrain);
+yhat  = svmPredict(model, Xtest);
+errorRateGen = mean(yhat ~= ytest);
+
+if ispc % svmlight only works on windows
+    tic
+    model = svmFit(Xtrain, ytrain, 'fitFn', @svmlightFit);
+    yhat  = svmPredict(model, Xtest);
+    errorRateSvmLight = mean(yhat ~= ytest);
+    timeSvmLight = toc;
+end
+
+tic
+model = svmFit(Xtrain, ytrain, 'fitFn', @svmQPclassifFit);
+yhat  = svmPredict(model, Xtest);
+errorRateQp = mean(yhat ~= ytest);
+timeQp = toc;
+
+tic
+model = svmFit(Xtrain, ytrain, 'fitFn', @svmlibFit);
+yhat  = svmPredict(model, Xtest);
+errorRateSvmLib = mean(yhat ~= ytest);
+timeSvmLib=toc;
+
+fprintf('method \t error \t time \n');
+if ispc
+    fprintf('svmLight \t %5.3f \t %5.3f\n', errorRateSvmLight, timeSvmLight);
+end
+fprintf('svmQp \t %5.3f \t %5.3f\n', errorRateQp, timeQp);
+fprintf('svmLib \t %5.3f \t %5.3f\n', errorRateSvmLib, timeSvmLib);
+
+
+
+%% Example of how to do CV
+model = svmFit(Xtrain, ytrain, 'C', logspace(-1,1,10));
+yhat  = svmPredict(model, Xtest);
+errorRate = mean(yhat ~= ytest)
+%% Example of how to specify the kernel
+model = svmFit(Xtrain, ytrain, 'kernel', @kernelPoly, 'kernelParam', 3);
+yhat  = svmPredict(model, Xtest);
+errorRate = mean(yhat ~= ytest)
+
+model = svmFit(Xtrain, ytrain, 'kernel', 'linear');
+yhat  = svmPredict(model, Xtest);
+errorRate = mean(yhat ~= ytest)
+
+
+%% CV and kernels
+model = svmFit(Xtrain, ytrain, 'C', logspace(-1, 1, 10), 'kernel', @kernelPoly, 'kernelParam', 3);
+yhat  = svmPredict(model, Xtest);
+errorRate = mean(yhat ~= ytest)
+
+
+%% REGRESSION
+loadData('prostate');
+%%
+model = svmFit(Xtrain, ytrain);
+yhat = svmPredict(model, Xtest);
+mse = mean((yhat - ytest).^2)
+%%
+model = svmFit(Xtrain, ytrain, 'fitFn', @svmQPregFit);
+yhat = svmPredict(model, Xtest);
+mse = mean((yhat - ytest).^2)
+%%
+model = svmFit(Xtrain, ytrain, 'kernel', 'rbf', 'kernelParam', [0.1, 0.5, 1, 5], 'C', logspace(-1,1,10));
+yhat = svmPredict(model, Xtest);
+mse = mean((yhat - ytest).^2)
+%%
+model = svmFit(Xtrain, ytrain, 'kernel', 'poly', 'kernelParam', 1:10, 'C', logspace(-2,2,30));
+yhat = svmPredict(model, Xtest);
+mse = mean((yhat - ytest).^2)
+%%
+model = svmFit(Xtrain, ytrain, 'kernel', 'linear', 'C', logspace(-2,2,100));
+yhat = svmPredict(model, Xtest);
+error = mean((yhat - ytest).^2)
+%% MULTICLASS
+loadData('soy')
+setSeed(0);
+[X, Y] = shuffleRows(X, Y);
+Xtrain = X(1:250, :); ytrain = Y(1:250); 
+Xtest = X(251:end, :); ytest = Y(251:end);
+%%
+model = svmFit(Xtrain, ytrain);
+yhat = svmPredict(model, Xtest);
+errorRate = mean(yhat ~= ytest)
+
+##### SOURCE END #####
+--></body></html>

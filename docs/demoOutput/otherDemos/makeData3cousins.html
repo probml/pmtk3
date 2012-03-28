@@ -1,0 +1,205 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Simulation example from "a tale of three cousins: lasso, l2boosting, and dantzig"</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="makeData3cousins.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Simulation example from "a tale of three cousins: lasso, l2boosting, and dantzig"</h1><!--introduction--><p>Meinshausen, Rocha and Yu [y w s X]=three_cousin(options) creates measurements y with weights w and selected variables s, and matrix X options has the following fields: n - number of measurements d - number of variables rho - correlation coefficients sigma2 - noise variance Written by Emt and Kevin</p><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="keyword">function</span> [y w s X]=makeData3cousins(options)
+<span class="keyword">if</span> nargin == 0, options = {}; <span class="keyword">end</span>
+[n,d,rho,sigma2,amp] = myProcessOptions(options,<span class="string">'n'</span>,40,<span class="string">'d'</span>,60,<span class="string">'rho'</span>,0.1,<span class="string">'sigma2'</span>,0.2,<span class="string">'amp'</span>,1);
+
+<span class="comment">%generates random matrix X of size nx10, 4 variables on</span>
+<span class="comment">%Sigma = eye(n,n);</span>
+<span class="comment">%for i = 1:n</span>
+<span class="comment">%for j = 1:n</span>
+<span class="comment">%  Sigma(i,j) = rho^abs(i-j);</span>
+<span class="comment">%end</span>
+<span class="comment">%end</span>
+<span class="comment">%L = chol(Sigma);</span>
+<span class="comment">%for i = 1:d</span>
+<span class="comment">%  col = L*randn(n,1);</span>
+<span class="comment">%  X(:,i) = col;%/norm(col);%normalize the column of X</span>
+<span class="comment">%end</span>
+
+Sigma = eye(d,d);
+<span class="keyword">for</span> i = 1:d
+  <span class="keyword">for</span> j = 1:d
+    Sigma(i,j) = rho^abs(i-j);
+  <span class="keyword">end</span>
+<span class="keyword">end</span>
+L = chol(Sigma);
+X = (L*randn(d,n))';
+
+wstar = amp*[-0.65 -0.38 -0.37 -0.27 -0.12 -0.08 0.05 0.24 0.37 0.41]';
+ind = [60 2 21 49 20 27 4 43 51 32]';
+s = zeros(d,1);
+s(ind) = 1;
+w = zeros(d,1);
+w(ind) = wstar;
+<span class="comment">%w = w/(sqrt(n)*norm(X*w));</span>
+<span class="comment">%wstar = w(ind);</span>
+
+<span class="comment">%generate measurements</span>
+y = X*w + sqrt(sigma2)*randn(n,1);
+
+
+
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">ans =
+   1.386453742856848
+   0.107015236314760
+   1.678659706418598
+   2.533052959768918
+  -1.527445779451023
+   0.685825192450731
+   0.682282191605934
+   1.832201967021931
+   0.625370779728801
+   0.586506722094870
+   0.244016688867244
+   1.378605884829248
+  -0.782014832549993
+   0.841063761575110
+  -1.030130017367638
+   2.057947569583238
+   0.292511812251472
+  -0.434994995699641
+   0.350203603858996
+  -1.827871059259350
+   0.179963014410901
+   1.853902732479353
+   1.486000138909356
+  -0.801343599071512
+  -0.395854682732389
+  -1.965118254176953
+   1.010555130272103
+   0.480756068969987
+  -1.308307762537192
+  -2.040642494392905
+   2.676104408791429
+   1.149437310446062
+   0.111076713340171
+  -0.081609949019424
+  -0.917022896867983
+  -1.677610115034235
+   3.259122144800952
+   0.238767815468327
+   0.591783478439448
+   1.926661212839307
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Simulation example from "a tale of three cousins: lasso, l2boosting, and dantzig"
+% Meinshausen, Rocha and Yu
+% [y w s X]=three_cousin(options) creates measurements y with weights w and
+% selected variables s, and matrix X options has the following fields: n -
+% number of measurements d - number of variables rho - correlation
+% coefficients sigma2 - noise variance Written by Emt and Kevin
+%%
+
+% This file is from pmtk3.googlecode.com
+
+function [y w s X]=makeData3cousins(options)
+if nargin == 0, options = {}; end
+[n,d,rho,sigma2,amp] = myProcessOptions(options,'n',40,'d',60,'rho',0.1,'sigma2',0.2,'amp',1);
+
+%generates random matrix X of size nx10, 4 variables on
+%Sigma = eye(n,n);
+%for i = 1:n
+%for j = 1:n
+%  Sigma(i,j) = rho^abs(i-j);
+%end
+%end
+%L = chol(Sigma);
+%for i = 1:d
+%  col = L*randn(n,1);
+%  X(:,i) = col;%/norm(col);%normalize the column of X
+%end
+
+Sigma = eye(d,d);
+for i = 1:d
+  for j = 1:d
+    Sigma(i,j) = rho^abs(i-j);
+  end
+end
+L = chol(Sigma);
+X = (L*randn(d,n))';
+
+wstar = amp*[-0.65 -0.38 -0.37 -0.27 -0.12 -0.08 0.05 0.24 0.37 0.41]';
+ind = [60 2 21 49 20 27 4 43 51 32]';
+s = zeros(d,1);
+s(ind) = 1;
+w = zeros(d,1);
+w(ind) = wstar;
+%w = w/(sqrt(n)*norm(X*w));
+%wstar = w(ind);
+
+%generate measurements
+y = X*w + sqrt(sigma2)*randn(n,1);
+
+
+
+end
+
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,474 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>RBF Network Demo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-31"><meta name="m-file" content="rbfNetworkSarcosDemo"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>RBF Network Demo</h1><!--introduction--><p>PMTKslow</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">standard linear regression on response 1 - sanity check</a></li><li><a href="#3">ridge</a></li><li><a href="#4">RBF</a></li></ul></div><pre class="codeinput"> loadData(<span class="string">'sarcosData'</span>)
+ setSeed(0);
+
+ <span class="comment">% Standardize the inputs so they have zero mean and unit variance on the</span>
+ <span class="comment">% training set and standardize the test set accordingly using mu and sigma</span>
+ <span class="comment">% of training set</span>
+ [Xtrain, mu, sigma] = standardizeCols(Xtrain);
+ Xtest = standardizeCols(Xtest, mu, sigma);
+ assert(approxeq(mean(Xtrain),zeros(1,size(Xtrain,2))));
+ assert(approxeq(sqrt(var(Xtrain)),ones(1,size(Xtrain,2))));
+
+ <span class="comment">% center the outputs so they have zero mean on the training set and center</span>
+ <span class="comment">% the test test response accordingly using mu of y training set</span>
+ [ytrain mu_ytrain] = centerCols(ytrain);
+ ytest = centerCols(ytest,mu_ytrain);
+
+ Ntrain = size(Xtrain,1);
+ Ntest = size(Xtest,1);
+
+ <span class="comment">% now compute the variance of the output computed on the training set</span>
+ <span class="comment">% since it already centered, y_bar = 0;</span>
+ sigma2 = var(ytrain,1);
+</pre><h2>standard linear regression on response 1 - sanity check<a name="2"></a></h2><pre class="codeinput"> w = linregFitL2QR(Xtrain,ytrain(:,1),0);
+ ypred = Xtest*w;
+ SMSE_OLS = sum((ytest(:,1)-ypred).^2)/(Ntest*sigma2(1))
+
+ <span class="keyword">if</span> 1
+ <span class="comment">% Use unsupervised clustering on a subset of the data to define prototypes</span>
+ <span class="comment">% for subsequent use in an RBF network</span>
+ perm = randperm(Ntrain);
+ K = 100;
+ prototypes = kmeansFit(Xtrain(perm(1:5000), :), K);
+ <span class="keyword">end</span>
+
+ sigma = 25; <span class="comment">% quite sensitive to this</span>
+ Ktrain = kernelRbfSigma(Xtrain, prototypes', sigma);
+ Ktest = kernelRbfSigma(Xtest, prototypes', sigma);
+
+ trainSize = [10000, 20000, 30000, Ntrain];
+ nout = 7;
+ Dridge = size(Xtrain,2);
+ Drbf = size(Ktrain,2);
+ wSaveRidge = zeros(Dridge+1, nout);
+ wSaveRbf = zeros(Drbf+1, nout);
+ <span class="keyword">for</span> traini = 1:length(trainSize)
+   ntrain = trainSize(traini);
+   <span class="keyword">for</span> j=1:nout
+</pre><h2>ridge<a name="3"></a></h2><pre class="codeinput">     lambda = 1;
+     model = linregFit(Xtrain(1:ntrain,:), ytrain(1:ntrain,j), <span class="string">'regtype'</span>, <span class="string">'L2'</span>, <span class="string">'lambda'</span>, lambda);
+     ypred = linregPredict(model, Xtest);
+     SMSE_ridge(traini,j) = sum((ytest(:,j)-ypred).^2)/(Ntest*sigma2(j))
+     wSaveRidge(:,j) = model.w(:);
+</pre><pre class="codeoutput">SMSE_ridge =
+    0.2362
+</pre><pre class="codeoutput">SMSE_ridge =
+    0.2362    0.2854
+</pre><pre class="codeoutput">SMSE_ridge =
+    0.2362    0.2854    0.3032
+</pre><pre class="codeoutput">SMSE_ridge =
+    0.2362    0.2854    0.3032    0.0793
+</pre><pre class="codeoutput">SMSE_ridge =
+    0.2362    0.2854    0.3032    0.0793    0.3272
+</pre><pre class="codeoutput">SMSE_ridge =
+  Columns 1 through 5
+    0.2362    0.2854    0.3032    0.0793    0.3272
+  Column 6
+    1.2688
+</pre><pre class="codeoutput">SMSE_ridge =
+  Columns 1 through 5
+    0.2362    0.2854    0.3032    0.0793    0.3272
+  Columns 6 through 7
+    1.2688    0.4644
+</pre><pre class="codeoutput">SMSE_ridge =
+  Columns 1 through 5
+    0.2362    0.2854    0.3032    0.0793    0.3272
+    0.0959         0         0         0         0
+  Columns 6 through 7
+    1.2688    0.4644
+         0         0
+</pre><pre class="codeoutput">SMSE_ridge =
+  Columns 1 through 5
+    0.2362    0.2854    0.3032    0.0793    0.3272
+    0.0959    0.1186         0         0         0
+  Columns 6 through 7
+    1.2688    0.4644
+         0         0
+</pre><pre class="codeoutput">SMSE_ridge =
+  Columns 1 through 5
+    0.2362    0.2854    0.3032    0.0793    0.3272
+    0.0959    0.1186    0.1178         0         0
+  Columns 6 through 7
+    1.2688    0.4644
+         0         0
+</pre><pre class="codeoutput">SMSE_ridge =
+  Columns 1 through 5
+    0.2362    0.2854    0.3032    0.0793    0.3272
+    0.0959    0.1186    0.1178    0.0615         0
+  Columns 6 through 7
+    1.2688    0.4644
+         0         0
+</pre><pre class="codeoutput">SMSE_ridge =
+  Columns 1 through 5
+    0.2362    0.2854    0.3032    0.0793    0.3272
+    0.0959    0.1186    0.1178    0.0615    0.2130
+  Columns 6 through 7
+    1.2688    0.4644
+         0         0
+</pre><pre class="codeoutput">SMSE_ridge =
+  Columns 1 through 5
+    0.2362    0.2854    0.3032    0.0793    0.3272
+    0.0959    0.1186    0.1178    0.0615    0.2130
+  Columns 6 through 7
+    1.2688    0.4644
+    0.4322         0
+</pre><pre class="codeoutput">SMSE_ridge =
+  Columns 1 through 5
+    0.2362    0.2854    0.3032    0.0793    0.3272
+    0.0959    0.1186    0.1178    0.0615    0.2130
+  Columns 6 through 7
+    1.2688    0.4644
+    0.4322    0.0752
+</pre><pre class="codeoutput">SMSE_ridge =
+  Columns 1 through 5
+    0.2362    0.2854    0.3032    0.0793    0.3272
+    0.0959    0.1186    0.1178    0.0615    0.2130
+    0.0757         0         0         0         0
+  Columns 6 through 7
+    1.2688    0.4644
+    0.4322    0.0752
+         0         0
+</pre><pre class="codeoutput">SMSE_ridge =
+  Columns 1 through 5
+    0.2362    0.2854    0.3032    0.0793    0.3272
+    0.0959    0.1186    0.1178    0.0615    0.2130
+    0.0757    0.1027         0         0         0
+  Columns 6 through 7
+    1.2688    0.4644
+    0.4322    0.0752
+         0         0
+</pre><pre class="codeoutput">SMSE_ridge =
+  Columns 1 through 5
+    0.2362    0.2854    0.3032    0.0793    0.3272
+    0.0959    0.1186    0.1178    0.0615    0.2130
+    0.0757    0.1027    0.0928         0         0
+  Columns 6 through 7
+    1.2688    0.4644
+    0.4322    0.0752
+         0         0
+</pre><pre class="codeoutput">SMSE_ridge =
+  Columns 1 through 5
+    0.2362    0.2854    0.3032    0.0793    0.3272
+    0.0959    0.1186    0.1178    0.0615    0.2130
+    0.0757    0.1027    0.0928    0.0544         0
+  Columns 6 through 7
+    1.2688    0.4644
+    0.4322    0.0752
+         0         0
+</pre><pre class="codeoutput">SMSE_ridge =
+  Columns 1 through 5
+    0.2362    0.2854    0.3032    0.0793    0.3272
+    0.0959    0.1186    0.1178    0.0615    0.2130
+    0.0757    0.1027    0.0928    0.0544    0.1813
+  Columns 6 through 7
+    1.2688    0.4644
+    0.4322    0.0752
+         0         0
+</pre><pre class="codeoutput">SMSE_ridge =
+  Columns 1 through 5
+    0.2362    0.2854    0.3032    0.0793    0.3272
+    0.0959    0.1186    0.1178    0.0615    0.2130
+    0.0757    0.1027    0.0928    0.0544    0.1813
+  Columns 6 through 7
+    1.2688    0.4644
+    0.4322    0.0752
+    0.3433         0
+</pre><pre class="codeoutput">SMSE_ridge =
+  Columns 1 through 5
+    0.2362    0.2854    0.3032    0.0793    0.3272
+    0.0959    0.1186    0.1178    0.0615    0.2130
+    0.0757    0.1027    0.0928    0.0544    0.1813
+  Columns 6 through 7
+    1.2688    0.4644
+    0.4322    0.0752
+    0.3433    0.0693
+</pre><pre class="codeoutput">SMSE_ridge =
+  Columns 1 through 5
+    0.2362    0.2854    0.3032    0.0793    0.3272
+    0.0959    0.1186    0.1178    0.0615    0.2130
+    0.0757    0.1027    0.0928    0.0544    0.1813
+    0.0742         0         0         0         0
+  Columns 6 through 7
+    1.2688    0.4644
+    0.4322    0.0752
+    0.3433    0.0693
+         0         0
+</pre><pre class="codeoutput">SMSE_ridge =
+  Columns 1 through 5
+    0.2362    0.2854    0.3032    0.0793    0.3272
+    0.0959    0.1186    0.1178    0.0615    0.2130
+    0.0757    0.1027    0.0928    0.0544    0.1813
+    0.0742    0.1010         0         0         0
+  Columns 6 through 7
+    1.2688    0.4644
+    0.4322    0.0752
+    0.3433    0.0693
+         0         0
+</pre><pre class="codeoutput">SMSE_ridge =
+  Columns 1 through 5
+    0.2362    0.2854    0.3032    0.0793    0.3272
+    0.0959    0.1186    0.1178    0.0615    0.2130
+    0.0757    0.1027    0.0928    0.0544    0.1813
+    0.0742    0.1010    0.0918         0         0
+  Columns 6 through 7
+    1.2688    0.4644
+    0.4322    0.0752
+    0.3433    0.0693
+         0         0
+</pre><pre class="codeoutput">SMSE_ridge =
+  Columns 1 through 5
+    0.2362    0.2854    0.3032    0.0793    0.3272
+    0.0959    0.1186    0.1178    0.0615    0.2130
+    0.0757    0.1027    0.0928    0.0544    0.1813
+    0.0742    0.1010    0.0918    0.0513         0
+  Columns 6 through 7
+    1.2688    0.4644
+    0.4322    0.0752
+    0.3433    0.0693
+         0         0
+</pre><pre class="codeoutput">SMSE_ridge =
+  Columns 1 through 5
+    0.2362    0.2854    0.3032    0.0793    0.3272
+    0.0959    0.1186    0.1178    0.0615    0.2130
+    0.0757    0.1027    0.0928    0.0544    0.1813
+    0.0742    0.1010    0.0918    0.0513    0.1413
+  Columns 6 through 7
+    1.2688    0.4644
+    0.4322    0.0752
+    0.3433    0.0693
+         0         0
+</pre><pre class="codeoutput">SMSE_ridge =
+  Columns 1 through 5
+    0.2362    0.2854    0.3032    0.0793    0.3272
+    0.0959    0.1186    0.1178    0.0615    0.2130
+    0.0757    0.1027    0.0928    0.0544    0.1813
+    0.0742    0.1010    0.0918    0.0513    0.1413
+  Columns 6 through 7
+    1.2688    0.4644
+    0.4322    0.0752
+    0.3433    0.0693
+    0.2824         0
+</pre><pre class="codeoutput">SMSE_ridge =
+  Columns 1 through 5
+    0.2362    0.2854    0.3032    0.0793    0.3272
+    0.0959    0.1186    0.1178    0.0615    0.2130
+    0.0757    0.1027    0.0928    0.0544    0.1813
+    0.0742    0.1010    0.0918    0.0513    0.1413
+  Columns 6 through 7
+    1.2688    0.4644
+    0.4322    0.0752
+    0.3433    0.0693
+    0.2824    0.0646
+</pre><h2>RBF<a name="4"></a></h2><pre class="codeinput">     lambda = 1;
+     model = linregFit(Ktrain(1:ntrain,:), ytrain(1:ntrain,j), <span class="string">'regtype'</span>, <span class="string">'L2'</span>, <span class="string">'lambda'</span>, lambda);
+     ypred = linregPredict(model, Ktest);
+     SMSE_rbf(traini,j) = sum((ytest(:,j)-ypred).^2)/(Ntest*sigma2(j));
+     wSaveRbf(:,j) = model.w(:);
+</pre><pre class="codeinput">   <span class="keyword">end</span>
+ <span class="keyword">end</span>
+
+ SMSE_ridge
+ SMSE_rbf
+
+ <span class="comment">%figure;</span>
+ nr = 3; nc = 2;
+ <span class="keyword">for</span> j=1:nout
+   figure; <span class="comment">%subplot(nr,nc,j);</span>
+   hold <span class="string">on</span>
+   plot(trainSize, SMSE_ridge(:,j), <span class="string">'o-'</span>, <span class="string">'linewidth'</span>, 3);
+   plot(trainSize, SMSE_rbf(:,j), <span class="string">'ro:'</span>, <span class="string">'linewidth'</span>, 3);
+   legend(<span class="string">'linear'</span>,<span class="string">'rbf'</span>);
+   title(sprintf(<span class="string">'sarcos output %d'</span>, j))
+   fname = sprintf(<span class="string">'sarcosErr%d'</span>, j);
+   printPmtkFigure(fname);
+   <span class="comment">%xlabel('Ntrain'); ytrain('SMSE');</span>
+ <span class="keyword">end</span>
+
+
+ figure; imagesc(wSaveRidge); title(<span class="string">'linear'</span>); colorbar
+ figure; imagesc(wSaveRbf); title(<span class="string">'rbf'</span>); colorbar
+</pre><pre class="codeoutput">SMSE_OLS =
+    0.0742
+SMSE_ridge =
+  Columns 1 through 5
+    0.2362    0.2854    0.3032    0.0793    0.3272
+    0.0959    0.1186    0.1178    0.0615    0.2130
+    0.0757    0.1027    0.0928    0.0544    0.1813
+    0.0742    0.1010    0.0918    0.0513    0.1413
+  Columns 6 through 7
+    1.2688    0.4644
+    0.4322    0.0752
+    0.3433    0.0693
+    0.2824    0.0646
+SMSE_rbf =
+  Columns 1 through 5
+    0.9818    0.9725    0.9842    0.9693    0.9891
+    0.9698    0.9719    0.9620    0.9556    0.9698
+    0.9603    0.9621    0.9577    0.9505    0.9779
+    0.9567    0.9459    0.9391    0.9288    0.9622
+  Columns 6 through 7
+    1.3342    0.9856
+    1.0850    0.9592
+    0.9922    0.9570
+    0.9806    0.9368
+</pre><img vspace="5" hspace="5" src="rbfNetworkSarcosDemo_01.png" alt=""> <img vspace="5" hspace="5" src="rbfNetworkSarcosDemo_02.png" alt=""> <img vspace="5" hspace="5" src="rbfNetworkSarcosDemo_03.png" alt=""> <img vspace="5" hspace="5" src="rbfNetworkSarcosDemo_04.png" alt=""> <img vspace="5" hspace="5" src="rbfNetworkSarcosDemo_05.png" alt=""> <img vspace="5" hspace="5" src="rbfNetworkSarcosDemo_06.png" alt=""> <img vspace="5" hspace="5" src="rbfNetworkSarcosDemo_07.png" alt=""> <img vspace="5" hspace="5" src="rbfNetworkSarcosDemo_08.png" alt=""> <img vspace="5" hspace="5" src="rbfNetworkSarcosDemo_09.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
+##### SOURCE BEGIN #####
+%% RBF Network Demo
+% PMTKslow
+%%
+ 
+ loadData('sarcosData')
+ setSeed(0);
+ 
+ % Standardize the inputs so they have zero mean and unit variance on the
+ % training set and standardize the test set accordingly using mu and sigma
+ % of training set
+ [Xtrain, mu, sigma] = standardizeCols(Xtrain);
+ Xtest = standardizeCols(Xtest, mu, sigma);
+ assert(approxeq(mean(Xtrain),zeros(1,size(Xtrain,2))));
+ assert(approxeq(sqrt(var(Xtrain)),ones(1,size(Xtrain,2))));
+ 
+ % center the outputs so they have zero mean on the training set and center
+ % the test test response accordingly using mu of y training set
+ [ytrain mu_ytrain] = centerCols(ytrain);
+ ytest = centerCols(ytest,mu_ytrain);
+ 
+ Ntrain = size(Xtrain,1);
+ Ntest = size(Xtest,1);
+ 
+ % now compute the variance of the output computed on the training set
+ % since it already centered, y_bar = 0;
+ sigma2 = var(ytrain,1);
+ 
+ 
+ %% standard linear regression on response 1 - sanity check
+ w = linregFitL2QR(Xtrain,ytrain(:,1),0);
+ ypred = Xtest*w;
+ SMSE_OLS = sum((ytest(:,1)-ypred).^2)/(Ntest*sigma2(1))
+ 
+ if 1
+ % Use unsupervised clustering on a subset of the data to define prototypes
+ % for subsequent use in an RBF network
+ perm = randperm(Ntrain);
+ K = 100;
+ prototypes = kmeansFit(Xtrain(perm(1:5000), :), K);
+ end
+ 
+ sigma = 25; % quite sensitive to this
+ Ktrain = kernelRbfSigma(Xtrain, prototypes', sigma);
+ Ktest = kernelRbfSigma(Xtest, prototypes', sigma);
+ 
+ trainSize = [10000, 20000, 30000, Ntrain];
+ nout = 7;
+ Dridge = size(Xtrain,2);
+ Drbf = size(Ktrain,2);
+ wSaveRidge = zeros(Dridge+1, nout);
+ wSaveRbf = zeros(Drbf+1, nout);
+ for traini = 1:length(trainSize)
+   ntrain = trainSize(traini);
+   for j=1:nout
+     %% ridge
+     lambda = 1;
+     model = linregFit(Xtrain(1:ntrain,:), ytrain(1:ntrain,j), 'regtype', 'L2', 'lambda', lambda);
+     ypred = linregPredict(model, Xtest);
+     SMSE_ridge(traini,j) = sum((ytest(:,j)-ypred).^2)/(Ntest*sigma2(j))
+     wSaveRidge(:,j) = model.w(:);
+     
+     %% RBF
+     lambda = 1;
+     model = linregFit(Ktrain(1:ntrain,:), ytrain(1:ntrain,j), 'regtype', 'L2', 'lambda', lambda);
+     ypred = linregPredict(model, Ktest);
+     SMSE_rbf(traini,j) = sum((ytest(:,j)-ypred).^2)/(Ntest*sigma2(j));
+     wSaveRbf(:,j) = model.w(:);
+   end
+ end
+ 
+ SMSE_ridge
+ SMSE_rbf
+  
+ %figure;
+ nr = 3; nc = 2;
+ for j=1:nout
+   figure; %subplot(nr,nc,j);
+   hold on
+   plot(trainSize, SMSE_ridge(:,j), 'o-', 'linewidth', 3);
+   plot(trainSize, SMSE_rbf(:,j), 'ro:', 'linewidth', 3);
+   legend('linear','rbf');
+   title(sprintf('sarcos output %d', j))
+   fname = sprintf('sarcosErr%d', j);
+   printPmtkFigure(fname);
+   %xlabel('Ntrain'); ytrain('SMSE');
+ end
+
+ 
+ figure; imagesc(wSaveRidge); title('linear'); colorbar
+ figure; imagesc(wSaveRbf); title('rbf'); colorbar
+ 
+ 
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,218 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Fit an HMM and an equivalent DGM, making sure the results agree</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="dgmGaussHmmFitTest.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Fit an HMM and an equivalent DGM, making sure the results agree</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">sample data</a></li><li><a href="#2">create an hmm-like random dgm</a></li><li><a href="#3">convert data to dgm format</a></li><li><a href="#4">make sure we initialize both models in the same way</a></li><li><a href="#5">fit the hmm</a></li><li><a href="#6">initialize the dgm</a></li><li><a href="#7">fit the dgm</a></li><li><a href="#8">compare results</a></li></ul></div><h2>sample data<a name="1"></a></h2><pre class="codeinput"><span class="comment">%</span>
+<span class="comment">%                Note, unlike hmmFit, dgmTrain does not use cell arrays,</span>
+<span class="comment">%                instead it takes an NaN-padded matrix of size</span>
+<span class="comment">%                nobs-by-d-max(seqLength). You can use the localEv2HmmObs</span>
+<span class="comment">%                and hmmObs2LocalEv functions to convert between these</span>
+<span class="comment">%                two formats.</span>
+<span class="comment">%</span>
+
+<span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+setSeed(0);
+nstates   = 10;
+d         = 13;
+T         = 12;
+nsamples  = 15;
+hmmSource = mkRndGaussHmm(nstates, d);
+[Y, Z]    = hmmSample(hmmSource, T, nsamples);
+Y         = cellwrap(Y);
+Z         = cellwrap(Z);
+</pre><h2>create an hmm-like random dgm<a name="2"></a></h2><pre class="codeinput">dgmModel  = hmmToDgm(mkRndGaussHmm(nstates, d), T);
+</pre><h2>convert data to dgm format<a name="3"></a></h2><pre class="codeinput">localev  = hmmObs2LocalEv(Y);
+<span class="comment">%data     = cell2mat(Z);</span>
+</pre><h2>make sure we initialize both models in the same way<a name="4"></a></h2><pre class="codeinput">pi0    = normalize(rand(1, nstates));
+trans0 = normalize(rand(nstates, nstates), 2);
+Sigma0 = zeros(d, d, nstates);
+<span class="keyword">for</span> i=1:nstates
+    Sigma0(:, :, i) = randpd(d) + 2*eye(d);
+<span class="keyword">end</span>
+mu0 = randn(d, nstates);
+emission0 = condGaussCpdCreate(mu0, Sigma0);
+</pre><h2>fit the hmm<a name="5"></a></h2><pre class="codeinput">fprintf(<span class="string">'\nHMM\n'</span>);
+tic
+hmmModel = hmmFitEm(Y, nstates, <span class="string">'gauss'</span>, <span class="keyword">...</span>
+    <span class="string">'pi0'</span>       , pi0       , <span class="keyword">...</span>
+    <span class="string">'trans0'</span>    , trans0    , <span class="keyword">...</span>
+    <span class="string">'emission0'</span> , emission0 , <span class="keyword">...</span>
+    <span class="string">'verbose'</span>   , true      );
+toc
+</pre><pre class="codeoutput">
+HMM
+initializing model for EM
+1	 loglik: -15288.8
+2	 loglik: -12703.1
+3	 loglik: -11087.3
+4	 loglik: -10214.4
+5	 loglik: -10058.4
+6	 loglik: -9871.27
+7	 loglik: -9843.47
+8	 loglik: -9812.88
+9	 loglik: -9746.07
+10	 loglik: -9686.16
+11	 loglik: -9686.13
+Elapsed time is 0.376998 seconds.
+</pre><h2>initialize the dgm<a name="6"></a></h2><pre class="codeinput">dgmModel.localCPDs          = {emission0};
+dgmModel.localCPDs{1}.prior = hmmModel.emission.prior;
+dgmModel.CPDs{1}            = tabularCpdCreate(pi0(:), <span class="string">'prior'</span>, hmmModel.piPrior(:));
+dgmModel.CPDs{2}            = tabularCpdCreate(trans0, <span class="string">'prior'</span>, hmmModel.transPrior);
+</pre><h2>fit the dgm<a name="7"></a></h2><pre class="codeinput">fprintf(<span class="string">'\nDGM\n'</span>);
+tic; dgmModel = dgmTrain(dgmModel, <span class="string">'localev'</span>, localev, <span class="string">'verbose'</span>, true);toc
+</pre><pre class="codeoutput">
+DGM
+warning: dgmTrain is permuting data columns
+Elapsed time is 6.195557 seconds.
+</pre><h2>compare results<a name="8"></a></h2><pre class="codeinput">hmmPi = hmmModel.pi(:);
+dgmPi = dgmModel.CPDs{1}.T(:);
+assert(approxeq(hmmPi, dgmPi));
+
+hmmA = hmmModel.A;
+dgmA = dgmModel.CPDs{2}.T;
+assert(approxeq(hmmA, dgmA));
+
+hmmMu = hmmModel.emission.mu;
+dgmMu = dgmModel.localCPDs{1}.mu;
+assert(approxeq(hmmMu, dgmMu));
+
+hmmSigma = hmmModel.emission.Sigma;
+dgmSigma = dgmModel.localCPDs{1}.Sigma;
+assert(approxeq(hmmSigma, dgmSigma));
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Fit an HMM and an equivalent DGM, making sure the results agree
+%
+%% sample data
+
+%
+%                Note, unlike hmmFit, dgmTrain does not use cell arrays,
+%                instead it takes an NaN-padded matrix of size
+%                nobs-by-d-max(seqLength). You can use the localEv2HmmObs
+%                and hmmObs2LocalEv functions to convert between these
+%                two formats.
+%
+
+% This file is from pmtk3.googlecode.com
+
+setSeed(0); 
+nstates   = 10;
+d         = 13; 
+T         = 12; 
+nsamples  = 15; 
+hmmSource = mkRndGaussHmm(nstates, d); 
+[Y, Z]    = hmmSample(hmmSource, T, nsamples); 
+Y         = cellwrap(Y);
+Z         = cellwrap(Z);
+%% create an hmm-like random dgm
+dgmModel  = hmmToDgm(mkRndGaussHmm(nstates, d), T);  
+%% convert data to dgm format
+localev  = hmmObs2LocalEv(Y); 
+%data     = cell2mat(Z); 
+%% make sure we initialize both models in the same way
+pi0    = normalize(rand(1, nstates)); 
+trans0 = normalize(rand(nstates, nstates), 2); 
+Sigma0 = zeros(d, d, nstates); 
+for i=1:nstates
+    Sigma0(:, :, i) = randpd(d) + 2*eye(d); 
+end
+mu0 = randn(d, nstates); 
+emission0 = condGaussCpdCreate(mu0, Sigma0); 
+%% fit the hmm
+fprintf('\nHMM\n'); 
+tic
+hmmModel = hmmFitEm(Y, nstates, 'gauss', ...
+    'pi0'       , pi0       , ...
+    'trans0'    , trans0    , ...
+    'emission0' , emission0 , ...
+    'verbose'   , true      );
+toc
+%% initialize the dgm 
+dgmModel.localCPDs          = {emission0};
+dgmModel.localCPDs{1}.prior = hmmModel.emission.prior; 
+dgmModel.CPDs{1}            = tabularCpdCreate(pi0(:), 'prior', hmmModel.piPrior(:)); 
+dgmModel.CPDs{2}            = tabularCpdCreate(trans0, 'prior', hmmModel.transPrior); 
+%% fit the dgm
+fprintf('\nDGM\n'); 
+tic; dgmModel = dgmTrain(dgmModel, 'localev', localev, 'verbose', true);toc
+%% compare results
+hmmPi = hmmModel.pi(:); 
+dgmPi = dgmModel.CPDs{1}.T(:);
+assert(approxeq(hmmPi, dgmPi)); 
+
+hmmA = hmmModel.A;
+dgmA = dgmModel.CPDs{2}.T;
+assert(approxeq(hmmA, dgmA)); 
+
+hmmMu = hmmModel.emission.mu;
+dgmMu = dgmModel.localCPDs{1}.mu;
+assert(approxeq(hmmMu, dgmMu)); 
+
+hmmSigma = hmmModel.emission.Sigma;
+dgmSigma = dgmModel.localCPDs{1}.Sigma;
+assert(approxeq(hmmSigma, dgmSigma)); 
+
+##### SOURCE END #####
+--></body></html>

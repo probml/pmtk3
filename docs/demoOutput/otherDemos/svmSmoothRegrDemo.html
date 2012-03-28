@@ -1,0 +1,197 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>Smooth support vector machine regression</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="svmSmoothRegrDemo"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Smooth support vector machine regression</h1><!--introduction--><p>PMTKauthor Mark Schmidt PMTKurl <a href="http://people.cs.ubc.ca/~schmidtm/Software/minFunc/minFunc.html#11">http://people.cs.ubc.ca/~schmidtm/Software/minFunc/minFunc.html#11</a></p><!--/introduction--><pre class="codeinput">nVars = 1;
+nInstances = 50;
+setSeed(0);
+[X,y] = makeData(<span class="string">'regressionNonlinear'</span>,nInstances,nVars);
+
+X = [ones(nInstances,1) X];
+nVars = nVars+1;
+
+lambda = 1e-2;
+
+<span class="comment">% Train smooth support vector regression machine</span>
+rbfScale = 1;
+
+<span class="keyword">for</span> lossType = 1:3
+    Krbf = kernelRbfSigma(X,X,rbfScale);
+    kernelFn = @(X1,X2) kernelRbfSigma(X1,X2,rbfScale);
+
+    <span class="keyword">switch</span> lossType
+        <span class="keyword">case</span> 1,
+            changePoint = 0.3;
+            funObj = @(u)SSVRLoss(u,Krbf,y,changePoint);
+            lossStr = <span class="string">'SSVR(0.3)'</span>;
+        <span class="keyword">case</span> 2,
+            changePoint = 0.2;
+            funObj = @(u)SSVRLoss(u,Krbf,y,changePoint);
+            lossStr = <span class="string">'SSVR(0.2)'</span>;
+        <span class="keyword">case</span> 3,
+            funObj = @(u)LinregLoss(u,Krbf,y);
+            lossStr = <span class="string">'linreg'</span>;
+    <span class="keyword">end</span>
+    fprintf(<span class="string">'Training kernel(rbf) support vector regression machine...\n'</span>);
+    options.Display = <span class="string">'none'</span>;
+    <span class="comment">%uRBF = minFunc(@penalizedKernelL2,zeros(nInstances,1),options,Krbf,funObj,lambda);</span>
+    uRBF = minFunc(@penalizedL2,zeros(nInstances,1),options,funObj,lambda);
+
+    weights{lossType} = uRBF;
+
+    <span class="comment">% Plot results</span>
+    figure; hold <span class="string">on</span>;
+    Xtest = [-5:.05:5]';
+    Xtest = [ones(size(Xtest,1),1) Xtest];
+    yhat = kernelRbfSigma(Xtest,X,rbfScale)*uRBF;
+    plot(X(:,2),y,<span class="string">'.'</span>);
+    h=plot(Xtest(:,2),yhat,<span class="string">'g-'</span>);
+    set(h,<span class="string">'LineWidth'</span>,3);
+    <span class="keyword">if</span> strcmp(lossStr(1:3), <span class="string">'SVM'</span>)
+        SV = abs(Krbf*uRBF - y) &gt;= changePoint;
+        plot(X(SV,2),y(SV),<span class="string">'o'</span>,<span class="string">'color'</span>,<span class="string">'r'</span>);
+        plot(Xtest(:,2),yhat+changePoint,<span class="string">'c--'</span>);
+        plot(Xtest(:,2),yhat-changePoint,<span class="string">'c--'</span>);
+        legend({<span class="string">'Data'</span>,<span class="string">'prediction'</span>,<span class="string">'Support Vectors'</span>,<span class="string">'Eps-Tube'</span>});
+        uRBF(SV)
+    <span class="keyword">end</span>
+    title(sprintf(<span class="string">'%s'</span>, lossStr))
+
+    figure; hist(uRBF,50);
+    title(sprintf(<span class="string">'weights for %s'</span>, lossStr))
+
+<span class="keyword">end</span>
+placeFigures();
+</pre><pre class="codeoutput">Training kernel(rbf) support vector regression machine...
+Training kernel(rbf) support vector regression machine...
+Training kernel(rbf) support vector regression machine...
+</pre><img vspace="5" hspace="5" src="svmSmoothRegrDemo_01.png" alt=""> <img vspace="5" hspace="5" src="svmSmoothRegrDemo_02.png" alt=""> <img vspace="5" hspace="5" src="svmSmoothRegrDemo_03.png" alt=""> <img vspace="5" hspace="5" src="svmSmoothRegrDemo_04.png" alt=""> <img vspace="5" hspace="5" src="svmSmoothRegrDemo_05.png" alt=""> <img vspace="5" hspace="5" src="svmSmoothRegrDemo_06.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Smooth support vector machine regression
+% PMTKauthor Mark Schmidt
+% PMTKurl http://people.cs.ubc.ca/~schmidtm/Software/minFunc/minFunc.html#11
+%%
+nVars = 1;
+nInstances = 50;
+setSeed(0);
+[X,y] = makeData('regressionNonlinear',nInstances,nVars);
+
+X = [ones(nInstances,1) X];
+nVars = nVars+1;
+
+lambda = 1e-2;
+
+% Train smooth support vector regression machine
+rbfScale = 1;
+
+for lossType = 1:3
+    Krbf = kernelRbfSigma(X,X,rbfScale);
+    kernelFn = @(X1,X2) kernelRbfSigma(X1,X2,rbfScale);
+    
+    switch lossType
+        case 1,
+            changePoint = 0.3;
+            funObj = @(u)SSVRLoss(u,Krbf,y,changePoint);
+            lossStr = 'SSVR(0.3)';
+        case 2,
+            changePoint = 0.2;
+            funObj = @(u)SSVRLoss(u,Krbf,y,changePoint);
+            lossStr = 'SSVR(0.2)';
+        case 3,
+            funObj = @(u)LinregLoss(u,Krbf,y);
+            lossStr = 'linreg';
+    end
+    fprintf('Training kernel(rbf) support vector regression machine...\n');
+    options.Display = 'none';
+    %uRBF = minFunc(@penalizedKernelL2,zeros(nInstances,1),options,Krbf,funObj,lambda);
+    uRBF = minFunc(@penalizedL2,zeros(nInstances,1),options,funObj,lambda);
+    
+    weights{lossType} = uRBF;
+    
+    % Plot results
+    figure; hold on;
+    Xtest = [-5:.05:5]';
+    Xtest = [ones(size(Xtest,1),1) Xtest];
+    yhat = kernelRbfSigma(Xtest,X,rbfScale)*uRBF;
+    plot(X(:,2),y,'.');
+    h=plot(Xtest(:,2),yhat,'g-');
+    set(h,'LineWidth',3);
+    if strcmp(lossStr(1:3), 'SVM')
+        SV = abs(Krbf*uRBF - y) >= changePoint;
+        plot(X(SV,2),y(SV),'o','color','r');
+        plot(Xtest(:,2),yhat+changePoint,'cREPLACE_WITH_DASH_DASH');
+        plot(Xtest(:,2),yhat-changePoint,'cREPLACE_WITH_DASH_DASH');
+        legend({'Data','prediction','Support Vectors','Eps-Tube'});
+        uRBF(SV)
+    end
+    title(sprintf('%s', lossStr))
+    
+    figure; hist(uRBF,50);
+    title(sprintf('weights for %s', lossStr))
+    
+end
+placeFigures();
+
+##### SOURCE END #####
+--></body></html>

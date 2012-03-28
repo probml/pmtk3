@@ -1,0 +1,256 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>mixdirDemo3</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="mixdirDemo3.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Biosequence analysis Demo</a></li><li><a href="#2">Data generation</a></li><li><a href="#5">Inference</a></li></ul></div><h2>Biosequence analysis Demo<a name="1"></a></h2><pre> t  = locn
+ Z(t)|w ~ Discrete(w(:)), k in {1,2,3,4,k}
+ theta(:,t) | Z(t)=k ~ Dir(alpha(:,k))
+ x(i,t) | theta(:,t) ~ Discrete(theta(:,t))</pre><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+</pre><h2>Data generation<a name="2"></a></h2><pre class="codeinput">setSeed(1);
+Nseq = 10;
+Nlocn = 15;
+Nletters = 4;
+Nmix = 4;
+pfg = 0.30;
+
+mixweights = [pfg/Nmix*ones(1, Nmix) 1-pfg]; <span class="comment">% 5 states</span>
+z = sampleDiscrete(mixweights, 1, Nlocn);
+alphas = 1*ones(Nletters, Nmix);
+<span class="keyword">for</span> i=1:Nmix
+    alphas(i, i) = 20; <span class="comment">% reflects purity</span>
+<span class="keyword">end</span>
+alphas(:, Nmix+1) = ones(Nletters, 1); <span class="comment">% state 5 is background</span>
+
+theta = zeros(Nletters, Nlocn);
+data = zeros(Nseq, Nlocn);
+chars = [<span class="string">'a'</span> <span class="string">'c'</span> <span class="string">'g'</span> <span class="string">'t'</span> <span class="string">'-'</span>]';
+dataStr = repmat(<span class="string">'-'</span>,Nseq , Nlocn);
+<span class="keyword">for</span> t=1:Nlocn
+    theta(:,t) = dirichlet_sample(alphas(:,z(t)), 1)';
+    data(:,t) = sampleDiscrete(theta(:,t), Nseq, 1);
+    dataStr(:, t) = chars(data(:, t));
+<span class="keyword">end</span>
+
+<span class="comment">%dataStr</span>
+<span class="keyword">for</span> i=1:Nseq
+    <span class="keyword">for</span> t=1:Nlocn
+        fprintf(<span class="string">'%s '</span>, dataStr(i,t));
+    <span class="keyword">end</span>
+    fprintf(<span class="string">'\n'</span>);
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">a t a g c c g g t a c g g c a 
+t t a g c t g c a a c c g c a 
+t c a g c c a c t a g a g c a 
+a t a a c c g c g a c c g c a 
+t t a g c c g c t a a g g t a 
+t a a g c c t c g t a c g t a 
+t t a g c c g t t a c g g c c 
+a t a t c c g g t a c a g t a 
+a t a g c a g g t a c c g a a 
+a c a t c c g t g a c g g a a 
+</pre><pre class="codeinput">W = seqlogoPmtk(dataStr);
+printPmtkFigure(<span class="string">'seqlogo'</span>);
+</pre><img vspace="5" hspace="5" src="mixdirDemo3_01.png" alt=""> <pre class="codeinput">zStr = chars(z);
+figure();
+image_rgb(data); title(<span class="string">'location'</span>)
+set(gca,<span class="string">'xtick'</span>,1:Nlocn);
+str = cell(Nlocn, 1);
+<span class="keyword">for</span> t=1:Nlocn
+    str{t} = sprintf(<span class="string">'%d'</span>, z(t));
+<span class="keyword">end</span>
+set(gca,<span class="string">'xticklabel'</span>,str);
+ylabel(<span class="string">'sample'</span>)
+</pre><img vspace="5" hspace="5" src="mixdirDemo3_02.png" alt=""> <h2>Inference<a name="5"></a></h2><pre class="codeinput">nvec = zeros(Nletters, Nlocn);
+postZ = zeros(Nmix+1, Nlocn);
+<span class="keyword">for</span> t=1:Nlocn
+    prior = mixweights;
+    nvec(:,t) = hist(data(:,t), 1:Nletters)';
+    loglik = zeros(1, Nmix+1);
+    <span class="keyword">for</span> k=1:Nmix+1
+        loglik(k) = logmarglikDirichletMultinom(nvec(:, t)', alphas(:, k)');
+    <span class="keyword">end</span>
+    logprior = log(prior);
+    numer = logprior + loglik;
+    postZ(:, t) = exp(numer - logsumexp(numer, 2));
+    <span class="comment">%postZ(:, t) = exp(numer - logsumexp(numer(:))',2);</span>
+<span class="keyword">end</span>
+prob = nvec./repmat(sum(nvec,1),4,1);
+figure()
+bar(matrixEntropy(prob));
+title(<span class="string">'entropy vs position'</span>)
+
+postC = sum(postZ(1:4,:));
+figure();
+stem(postC);
+title(<span class="string">'p(C(t)=1|Dt)'</span>);
+hold <span class="string">on</span>
+<span class="keyword">for</span> t=1:Nlocn
+    <span class="keyword">if</span> z(t)&lt;5
+        <span class="comment">% if conserved, mark with x</span>
+        plot(t, postC(t), <span class="string">'rx'</span>, <span class="string">'markersize'</span>, 14);
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+set(gca, <span class="string">'xlim'</span>, [0 Nlocn+1]);
+placeFigures();
+</pre><img vspace="5" hspace="5" src="mixdirDemo3_03.png" alt=""> <img vspace="5" hspace="5" src="mixdirDemo3_04.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Biosequence analysis Demo
+%   t  = locn
+%   Z(t)|w ~ Discrete(w(:)), k in {1,2,3,4,k}
+%   theta(:,t) | Z(t)=k ~ Dir(alpha(:,k))
+%   x(i,t) | theta(:,t) ~ Discrete(theta(:,t))
+
+% This file is from pmtk3.googlecode.com
+
+
+
+%% Data generation
+setSeed(1);
+Nseq = 10;
+Nlocn = 15;
+Nletters = 4;
+Nmix = 4;
+pfg = 0.30;
+
+mixweights = [pfg/Nmix*ones(1, Nmix) 1-pfg]; % 5 states
+z = sampleDiscrete(mixweights, 1, Nlocn);
+alphas = 1*ones(Nletters, Nmix);
+for i=1:Nmix
+    alphas(i, i) = 20; % reflects purity
+end
+alphas(:, Nmix+1) = ones(Nletters, 1); % state 5 is background
+
+theta = zeros(Nletters, Nlocn);
+data = zeros(Nseq, Nlocn);
+chars = ['a' 'c' 'g' 't' '-']';
+dataStr = repmat('-',Nseq , Nlocn);
+for t=1:Nlocn
+    theta(:,t) = dirichlet_sample(alphas(:,z(t)), 1)';
+    data(:,t) = sampleDiscrete(theta(:,t), Nseq, 1);
+    dataStr(:, t) = chars(data(:, t));
+end
+
+%dataStr
+for i=1:Nseq
+    for t=1:Nlocn
+        fprintf('%s ', dataStr(i,t));
+    end
+    fprintf('\n');
+end
+%%
+
+
+W = seqlogoPmtk(dataStr); 
+printPmtkFigure('seqlogo');
+
+
+
+%%
+zStr = chars(z);
+figure();
+image_rgb(data); title('location')
+set(gca,'xtick',1:Nlocn);
+str = cell(Nlocn, 1); 
+for t=1:Nlocn
+    str{t} = sprintf('%d', z(t));
+end
+set(gca,'xticklabel',str);
+ylabel('sample')
+
+%% Inference
+nvec = zeros(Nletters, Nlocn);
+postZ = zeros(Nmix+1, Nlocn); 
+for t=1:Nlocn
+    prior = mixweights;
+    nvec(:,t) = hist(data(:,t), 1:Nletters)';
+    loglik = zeros(1, Nmix+1); 
+    for k=1:Nmix+1
+        loglik(k) = logmarglikDirichletMultinom(nvec(:, t)', alphas(:, k)');
+    end
+    logprior = log(prior);
+    numer = logprior + loglik;
+    postZ(:, t) = exp(numer - logsumexp(numer, 2));
+    %postZ(:, t) = exp(numer - logsumexp(numer(:))',2);
+end
+prob = nvec./repmat(sum(nvec,1),4,1);
+figure()
+bar(matrixEntropy(prob));
+title('entropy vs position')
+
+postC = sum(postZ(1:4,:));
+figure();
+stem(postC); 
+title('p(C(t)=1|Dt)');
+hold on
+for t=1:Nlocn
+    if z(t)<5
+        % if conserved, mark with x
+        plot(t, postC(t), 'rx', 'markersize', 14);
+    end
+end
+set(gca, 'xlim', [0 Nlocn+1]);
+placeFigures();
+
+##### SOURCE END #####
+--></body></html>

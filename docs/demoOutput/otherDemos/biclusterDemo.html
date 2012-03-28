@@ -1,0 +1,664 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>biclusterDemo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="biclusterDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Bicluster Demo</a></li><li><a href="#4">First a really simple example</a></li><li><a href="#5">Now a more difficult example</a></li><li><a href="#6">Now an example with multiple biclusters</a></li><li><a href="#9">X0 = 1/2 + length(permuteCols) - length(intersect(matCols{j}, permuteCols));</a></li></ul></div><h2>Bicluster Demo<a name="1"></a></h2><pre class="codeinput"><span class="comment">%PMTKreallySlow</span>
+</pre><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="keyword">function</span> [] = biclusterDemo()
+</pre><pre class="codeinput">setSeed(0);
+nRow = 100;
+nCol = 30;
+dummyData = zeros(nRow, nCol);
+nLevels = 3;
+</pre><h2>First a really simple example<a name="4"></a></h2><pre class="codeinput">fprintf(<span class="string">'First discover a bicluster in a really simple example -- binary data\n'</span>)
+dummyData(5:5:end, 5:5:end) = 1;
+patternDummyRows = 5:5:size(dummyData,1);
+patternDummyCols = 5:5:size(dummyData,2);
+setSeed(1);
+[dummyBcRow, dummyBcCol, dummyRowProb, dummyColProb] = biclusteringGibbs(dummyData, <span class="string">'trace'</span>, true, <span class="string">'plot'</span>, false, <span class="string">'allRowThres'</span>, 0.7, <span class="string">'allColThres'</span>, 0.8);
+
+h = figure();
+axes(<span class="string">'Position'</span>, [0.15, 0.15, 0.8, 0.8]);
+colormap(<span class="string">'gray'</span>)
+imagesc(dummyRowProb{1}'*dummyColProb{1})
+title(<span class="string">'Posterior Probability'</span>);
+
+rowExp = axes(<span class="string">'Position'</span>, [0.07, 0.15, 0.01, 0.8]);
+imagesc(colvec(dummyRowProb{1}));
+set(rowExp, <span class="string">'XTick'</span>, []); set(rowExp, <span class="string">'YTick'</span>, []);
+
+rowTrue = axes(<span class="string">'Position'</span>, [0.01, 0.15, 0.01, 0.8]);
+rowTruth = zeros(nRow, 1); rowTruth(patternDummyRows) = 1;
+imagesc(rowTruth);
+set(rowTrue, <span class="string">'XTick'</span>, []); set(rowTrue, <span class="string">'YTick'</span>, []);
+
+colExp = axes(<span class="string">'Position'</span>, [0.15, 0.07, 0.8, 0.01]);
+imagesc(rowvec(dummyColProb{1}));
+set(colExp, <span class="string">'XTick'</span>, []); set(colExp, <span class="string">'YTick'</span>, []);
+
+colTrue = axes(<span class="string">'Position'</span>, [0.15, 0.01, 0.8, 0.01]);
+colTruth = zeros(1,nCol); colTruth(patternDummyCols) = 1;
+imagesc(colTruth);
+set(colTrue, <span class="string">'XTick'</span>, []); set(colTrue, <span class="string">'YTick'</span>, []);
+printPmtkFigure(<span class="string">'dummyBiclusterProb'</span>);
+
+figure(); colormap(<span class="string">'gray'</span>); imagesc(dummyData);
+title(<span class="string">'Data Matrix'</span>);
+printPmtkFigure(<span class="string">'dummyBiclusterData'</span>);
+</pre><h2>Now a more difficult example<a name="5"></a></h2><pre class="codeinput">fprintf(<span class="string">'\n\nNow we try a more difficult example, similar to the example from Fig. 2 in Shen et al (2003): Biclustering Microarray Data in Gibbs Sampling\n'</span>)
+uniData = unidrndPMTK(nLevels, [nRow, nCol]);
+<span class="comment">% now we embed the pattern</span>
+patternRowSize = 25;
+patternColSize = 8;
+sharp = 0.95;
+
+p = rand(nLevels,patternColSize)*(1-sharp); <span class="comment">% a sharp multinomial distributions</span>
+idx = sub2ind(size(p), unidrndPMTK(nLevels, 1, patternColSize), 1:patternColSize);
+p(idx) = sharp;
+p = normalize(p, 1);
+
+patternUniRows = unidrndPMTK(nRow, patternRowSize);
+patternUniCols = unidrndPMTK(nCol, patternColSize);
+fprintf(<span class="string">'True rows: %s\n'</span>, mat2str(sort(patternUniRows')))
+fprintf(<span class="string">'True columns: %s\n'</span>, mat2str(sort(patternUniCols')))
+<span class="keyword">for</span> k=1:patternColSize
+  uniData(patternUniRows,patternUniCols(k)) = sampleDiscrete(p(:,k), patternRowSize, 1);
+<span class="keyword">end</span>
+
+setSeed(2);
+[uniBcRow, uniBcCol, uniRowProb, uniColProb] = biclusteringGibbs(uniData, <span class="string">'plot'</span>, false, <span class="string">'allRowThres'</span>, 0.7, <span class="string">'allColThres'</span>, 0.8);
+figure();
+<span class="comment">%subplot('Position', [0.15, 0.15, 0.2, 0.8]);</span>
+subplot(<span class="string">'Position'</span>, [0.15, 0.15, 0.8, 0.8]);
+colormap(<span class="string">'gray'</span>)
+imagesc(uniRowProb{1}'*uniColProb{1})
+title(<span class="string">'Posterior Probabilities'</span>);
+
+C = length(uniBcRow);
+<span class="keyword">for</span> c=1:C <span class="comment">% loop really not needed, since this is an example with one bicluster</span>
+  rowExp = subplot(<span class="string">'Position'</span>, [0.07 - (c-1)*0.02, 0.15, 0.01, 0.8]);
+  imagesc(colvec(uniRowProb{c}));
+  set(rowExp, <span class="string">'XTick'</span>, []); set(rowExp, <span class="string">'YTick'</span>, []);
+
+  colExp = axes(<span class="string">'Position'</span>, [0.15, 0.07 - (c-1)*0.02, 0.8, 0.01]);
+  imagesc(rowvec(uniColProb{c}));
+  set(colExp, <span class="string">'XTick'</span>, []); set(colExp, <span class="string">'YTick'</span>, []);
+<span class="keyword">end</span>
+
+rowTrue = axes(<span class="string">'Position'</span>, [0.01, 0.15, 0.01, 0.8]);
+rowTruth = zeros(nRow, 1); rowTruth(patternUniRows) = 1;
+imagesc(rowTruth);
+set(rowTrue, <span class="string">'XTick'</span>, []); set(rowTrue, <span class="string">'YTick'</span>, []);
+
+colTrue = axes(<span class="string">'Position'</span>, [0.15, 0.01, 0.8, 0.01]);
+colTruth = zeros(1,nCol); colTruth(patternUniCols) = 1;
+imagesc(colTruth);
+set(colTrue, <span class="string">'XTick'</span>, []); set(colTrue, <span class="string">'YTick'</span>, []);
+printPmtkFigure(<span class="string">'uniBiclusterProb'</span>);
+
+figure(); imagesc(uniData); colormap(<span class="string">'gray'</span>);
+title(<span class="string">'True Data Matrix'</span>)
+printPmtkFigure(<span class="string">'uniBiclusterData'</span>);
+
+<span class="comment">% Permuted rows and columns</span>
+<span class="comment">%figure();</span>
+<span class="comment">%colormap('gray');</span>
+<span class="comment">%permuteRows = [sort(patternUniRows'), setdiff(1:nRow, patternUniRows)];</span>
+<span class="comment">%permuteCols = [sort(patternUniCols'), setdiff(1:nCol, patternUniCols)];</span>
+<span class="comment">%imagesc(uniData(permuteRows, permuteCols));</span>
+<span class="comment">%title('Data matrix with permuted rows and columns based on truth');</span>
+<span class="comment">%keyboard</span>
+plotPermute({patternUniRows}, {patternUniCols}, uniData);
+title(<span class="string">'Data matrix with permuted rows and columns based on truth'</span>);
+<span class="comment">%Y0 = 1/2; Y1 = length(patternUniRows) + 1/2; X0 = 1/2; X1 = length(patternUniCols) + 1/2;</span>
+<span class="comment">%Xpoint = [X0, X0, X0, X1; ...</span>
+<span class="comment">%          X1, X1, X0, X1];</span>
+<span class="comment">%Ypoint = [Y0, Y1, Y0, Y0; ...</span>
+<span class="comment">%          Y0, Y1, Y1, Y1];</span>
+<span class="comment">%line(Xpoint, Ypoint, 'color', 'red', 'linewidth', 3);</span>
+printPmtkFigure(<span class="string">'uniBiclusterDataPermuteTrue'</span>);
+<span class="comment">%keyboard</span>
+plotPermute(uniBcRow, uniBcCol, uniData);
+title(<span class="string">'Data matrix with permuted rows and columns based on discovery'</span>);
+printPmtkFigure(<span class="string">'uniBiclusterDataPermuteDiscovery'</span>)
+<span class="comment">%figure(); colormap('gray'); subplot(2,1,1);</span>
+<span class="comment">%subplot('Position', [0.75, 0.15, 0.2, 0.35]);</span>
+<span class="comment">%imagesc(uniData(uniBcRow{1}, uniBcCol{1}));</span>
+<span class="comment">%title('Discovered Bicluster');</span>
+<span class="comment">%subplot(2,1,2);</span>
+<span class="comment">%subplot('Position', [0.75, 0.60, 0.2, 0.35]);</span>
+<span class="comment">%imagesc(uniData(patternUniRows, patternUniCols));</span>
+<span class="comment">%title('True Bicluster');</span>
+<span class="comment">%printPmtkFigure('uniBiclusterTruthDiscovered');</span>
+</pre><h2>Now an example with multiple biclusters<a name="6"></a></h2><pre class="codeinput">fprintf(<span class="string">'\n\nNow multiple biclusters on a larger data matrix\n'</span>)
+clear <span class="string">data</span>
+nRow = 200;
+nCol = 40;
+setSeed(103);
+data = unidrndPMTK(nLevels, [nRow, nCol]);
+truecount = 3;
+patternRowSizeVec = [40, 25, 35];
+patternColSizeVec = [7, 10, 8];
+rowperm = randperm(nRow); colperm = randperm(nCol);
+<span class="comment">%p = [sharp, normalize(ones(1,nLevels-1))*(1-sharp)]; % a sharp multinomial distribution</span>
+sharp = 0.95;
+<span class="comment">%p = perms(p);</span>
+<span class="comment">%p = unique(p, 'rows');</span>
+<span class="keyword">for</span> j=1:truecount
+  <span class="comment">% now we embed the pattern</span>
+  patternRowSize = patternRowSizeVec(j);
+  patternColSize = patternColSizeVec(j);
+  <span class="comment">%patternRows{j} = randsample(nRow, patternRowSize);</span>
+  <span class="comment">%patternCols{j} = randsample(nCol, patternColSize);</span>
+  patternRows{j} = rowperm(1:patternRowSize);
+  patternCols{j} = colperm(1:patternColSize);
+  rowOverlap = unidrndPMTK(5); colOverlap = unidrndPMTK(3);
+  rowperm = rowperm((patternRowSize - rowOverlap + 1):end);
+  colperm = colperm((patternColSize - colOverlap + 1):end);
+  fprintf(<span class="string">'True rows: %s\n'</span>, mat2str(sort(patternRows{j}')))
+  fprintf(<span class="string">'True columns: %s\n'</span>, mat2str(sort(patternCols{j}')))
+
+  p = rand(nLevels,patternColSize)*(1-sharp); <span class="comment">% a sharp multinomial distributions</span>
+  idx = sub2ind(size(p), unidrndPMTK(nLevels, 1, patternColSize), 1:patternColSize);
+  p(idx) = sharp;
+  p = normalize(p, 1);
+
+  <span class="keyword">for</span> k=1:patternColSize
+<span class="comment">% Here was the problem.  We were using the first three rows of the matrix p to generate the hidden biclusters</span>
+<span class="comment">% The second two rows were the same, ie: there really was only two biclusters.  Fixed above</span>
+    data(patternRows{j}, patternCols{j}(k)) = sampleDiscrete(p(:,k), patternRowSize, 1);
+  <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+setSeed(3);
+[multBcRow, multBcCol, multRowPost, multColPost] = biclusteringGibbs(data, <span class="string">'plot'</span>, false, <span class="string">'allRowThres'</span>, 0.7, <span class="string">'allColThres'</span>, 0.8);
+
+<span class="comment">%figure();</span>
+<span class="comment">%colormap('gray');</span>
+<span class="comment">%dataPermute = zeros(nRow,nCol);</span>
+<span class="comment">%permuteRows = zeros(1, 0);</span>
+<span class="comment">%permuteCols = zeros(1, 0);</span>
+<span class="comment">%for j=1:truecount</span>
+<span class="comment">%  newrows = sort(setdiff(patternRows{j}', permuteRows));</span>
+<span class="comment">%  permuteRows = [permuteRows, newrows];</span>
+<span class="comment">%</span>
+<span class="comment">%  newcols = sort(setdiff(patternCols{j}', permuteCols));</span>
+<span class="comment">%  permuteCols = [permuteCols, newcols];</span>
+<span class="comment">%end</span>
+<span class="comment">%permuteRows = [permuteRows, setdiff(1:nRow, permuteRows)];</span>
+<span class="comment">%permuteCols = [permuteCols, setdiff(1:nCol, permuteCols)];</span>
+<span class="comment">%imagesc(data(permuteRows, permuteCols));</span>
+<span class="comment">%title('Data matrix with permuted rows and columns');</span>
+plotPermute(patternRows, patternCols, data);
+title(<span class="string">'Data matrix with permuted rows and columns based on truth'</span>);
+printPmtkFigure(<span class="string">'multBiclusterDataPermuteTrue'</span>);
+
+plotPermute(multBcRow, multBcCol, data);
+title(<span class="string">'Data matrix with permuted rows and columns based on discovery'</span>);
+printPmtkFigure(<span class="string">'multBiclusterDataPermuteDiscovered'</span>);
+
+figure();
+<span class="comment">%subplot('Position', [0.15, 0.15, 0.45, 0.8]);</span>
+subplot(<span class="string">'Position'</span>, [0.15, 0.15, 0.8, 0.80]);
+colormap(<span class="string">'gray'</span>);
+imagesc(data);
+title(<span class="string">'True Data Matrix'</span>)
+
+C = length(multBcRow);
+<span class="keyword">for</span> c=1:C
+  rowExp = subplot(<span class="string">'Position'</span>, [0.07 - (c-1)*0.02, 0.15, 0.01, 0.80]);
+  imagesc(colvec(multRowPost{c}));
+  set(rowExp, <span class="string">'XTick'</span>, []); set(rowExp, <span class="string">'YTick'</span>, []);
+
+  colExp = subplot(<span class="string">'Position'</span>, [0.15, 0.07 - (c-1)*0.02, 0.80, 0.01]);
+  imagesc(multColPost{c});
+  set(colExp, <span class="string">'XTick'</span>, []); set(colExp, <span class="string">'YTick'</span>, []);
+<span class="keyword">end</span>
+
+rowTruth = zeros(nRow, 1);
+colTruth = zeros(nCol, 1);
+<span class="keyword">for</span> j=1:truecount
+  rowTruth(patternRows{j}) = j;
+  colTruth(patternCols{j}) = j;
+<span class="keyword">end</span>
+
+rowTrue = subplot(<span class="string">'Position'</span>, [0.01, 0.15, 0.01, 0.80]);
+imagesc(colvec(rowTruth));
+set(rowTrue, <span class="string">'XTick'</span>, []); set(rowTrue, <span class="string">'YTick'</span>, []);
+colTrue = subplot(<span class="string">'Position'</span>, [0.15, 0.01, 0.80, 0.01]);
+imagesc(rowvec(colTruth));
+set(colTrue, <span class="string">'XTick'</span>, []); set(colTrue, <span class="string">'YTick'</span>, []);
+printPmtkFigure(<span class="string">'multBiclusterProb'</span>);
+
+figure(); colormap(<span class="string">'gray'</span>);
+<span class="keyword">for</span> c=1:max(C, truecount)
+  truth = subplot(2, max(C, truecount), c);
+  <span class="keyword">if</span>(c &lt;= C)
+    imagesc(data(multBcRow{c}, multBcCol{c}));
+    set(truth, <span class="string">'XTick'</span>, []); set(truth, <span class="string">'YTick'</span>, []);
+    title(sprintf(<span class="string">'Discovered Bicluster %d'</span>, c));
+  <span class="keyword">end</span>
+<span class="keyword">end</span>
+<span class="keyword">for</span> j=1:max(C,truecount);
+  truth = subplot(2, max(C, truecount), max(C, truecount) + j);
+  <span class="keyword">if</span>(j &lt;= truecount)
+    imagesc(data(patternRows{j}, patternCols{j}));
+    set(truth, <span class="string">'XTick'</span>, []); set(truth, <span class="string">'YTick'</span>, []);
+    title(sprintf(<span class="string">'True Bicluster %d'</span>, j));
+  <span class="keyword">end</span>
+<span class="keyword">end</span>
+printPmtkFigure(<span class="string">'multBiclusterDiscovered'</span>);
+</pre><pre class="codeinput"><span class="keyword">end</span>
+
+<span class="keyword">function</span> [] = plotPermute(matRows, matCols, data)
+
+  [nRow, nCol] = size(data);
+  permuteRows = zeros(1, 0);
+  permuteCols = zeros(1, 0);
+  nSets = length(matRows);
+  <span class="keyword">for</span> j=1:nSets
+</pre><pre class="codeinput"><span class="comment">%    Y0 = 1/2 + length(permuteRows) - length(intersect(matRows{j}, permuteRows));</span>
+</pre><h2>X0 = 1/2 + length(permuteCols) - length(intersect(matCols{j}, permuteCols));<a name="9"></a></h2><pre class="codeinput">    newrows = rowvec(setdiff(matRows{j}, permuteRows));
+    permuteRows = [permuteRows, sort(newrows)];
+
+    newcols = rowvec(setdiff(matCols{j}, permuteCols));
+    permuteCols = [permuteCols, sort(newcols)];
+
+<span class="comment">%    Y1 = Y0 + length(newrows);</span>
+<span class="comment">%    X1 = X0 + length(newcols);</span>
+<span class="comment">%    Xpoint{j} = [X0, X0, X0, X1; ...</span>
+<span class="comment">%              X1, X1, X0, X1];</span>
+<span class="comment">%    Ypoint{j} = [Y0, Y1, Y0, Y0; ...</span>
+<span class="comment">%              Y0, Y1, Y1, Y1];</span>
+</pre><pre class="codeinput">  <span class="keyword">end</span>
+  permuteRows = [permuteRows, setdiff(1:nRow, permuteRows)];
+  permuteCols = [permuteCols, setdiff(1:nCol, permuteCols)];
+  figure();
+  colormap(<span class="string">'gray'</span>);
+  imagesc(data(permuteRows, permuteCols));
+<span class="comment">%  for j=1:nSets</span>
+<span class="comment">%    line(Xpoint{j}, Ypoint{j}, 'color', 'red', 'linewidth', 3);</span>
+<span class="comment">%  end</span>
+<span class="comment">%  for j=1:nSets</span>
+<span class="comment">%    startX = length(cell2mat(matRows(1:(j-1)))) + 1/2;</span>
+<span class="comment">%    endX = length(cell2mat(matRows(1:j))) + 1/2;</span>
+<span class="comment">%    startY = length(cell2mat(matCols(1:(j-1)))) + 1/2;</span>
+<span class="comment">%    endY = length(cell2mat(matCols(1:j))) + 1/2;</span>
+<span class="comment">%    boxX = [startX, startX, startX, startX; ...</span>
+<span class="comment">%            endX, endX, startX, startX];</span>
+<span class="comment">%    boxY = [startY, endY, startY, endY; ...</span>
+<span class="comment">%            startY, endY, startY, endY];</span>
+<span class="comment">%    line(boxX, boxY, 'color', 'red', 'linewidth', 3);</span>
+<span class="comment">%  end</span>
+<span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Bicluster Demo
+%PMTKreallySlow
+%%
+
+% This file is from pmtk3.googlecode.com
+
+function [] = biclusterDemo()
+setSeed(0);
+nRow = 100;
+nCol = 30;
+dummyData = zeros(nRow, nCol);
+nLevels = 3;
+
+%% First a really simple example
+
+fprintf('First discover a bicluster in a really simple example REPLACE_WITH_DASH_DASH binary data\n')
+dummyData(5:5:end, 5:5:end) = 1;
+patternDummyRows = 5:5:size(dummyData,1);
+patternDummyCols = 5:5:size(dummyData,2);
+setSeed(1);
+[dummyBcRow, dummyBcCol, dummyRowProb, dummyColProb] = biclusteringGibbs(dummyData, 'trace', true, 'plot', false, 'allRowThres', 0.7, 'allColThres', 0.8);
+
+h = figure();
+axes('Position', [0.15, 0.15, 0.8, 0.8]);
+colormap('gray')
+imagesc(dummyRowProb{1}'*dummyColProb{1})
+title('Posterior Probability');
+
+rowExp = axes('Position', [0.07, 0.15, 0.01, 0.8]);
+imagesc(colvec(dummyRowProb{1}));
+set(rowExp, 'XTick', []); set(rowExp, 'YTick', []);
+
+rowTrue = axes('Position', [0.01, 0.15, 0.01, 0.8]);
+rowTruth = zeros(nRow, 1); rowTruth(patternDummyRows) = 1;
+imagesc(rowTruth);
+set(rowTrue, 'XTick', []); set(rowTrue, 'YTick', []);
+
+colExp = axes('Position', [0.15, 0.07, 0.8, 0.01]);
+imagesc(rowvec(dummyColProb{1}));
+set(colExp, 'XTick', []); set(colExp, 'YTick', []);
+
+colTrue = axes('Position', [0.15, 0.01, 0.8, 0.01]);
+colTruth = zeros(1,nCol); colTruth(patternDummyCols) = 1;
+imagesc(colTruth);
+set(colTrue, 'XTick', []); set(colTrue, 'YTick', []);
+printPmtkFigure('dummyBiclusterProb');
+
+figure(); colormap('gray'); imagesc(dummyData);
+title('Data Matrix');
+printPmtkFigure('dummyBiclusterData');
+
+%% Now a more difficult example
+fprintf('\n\nNow we try a more difficult example, similar to the example from Fig. 2 in Shen et al (2003): Biclustering Microarray Data in Gibbs Sampling\n')
+uniData = unidrndPMTK(nLevels, [nRow, nCol]);
+% now we embed the pattern
+patternRowSize = 25;
+patternColSize = 8;
+sharp = 0.95;
+
+p = rand(nLevels,patternColSize)*(1-sharp); % a sharp multinomial distributions
+idx = sub2ind(size(p), unidrndPMTK(nLevels, 1, patternColSize), 1:patternColSize);
+p(idx) = sharp;
+p = normalize(p, 1);
+
+patternUniRows = unidrndPMTK(nRow, patternRowSize);
+patternUniCols = unidrndPMTK(nCol, patternColSize);
+fprintf('True rows: %s\n', mat2str(sort(patternUniRows')))
+fprintf('True columns: %s\n', mat2str(sort(patternUniCols')))
+for k=1:patternColSize
+  uniData(patternUniRows,patternUniCols(k)) = sampleDiscrete(p(:,k), patternRowSize, 1);
+end
+
+setSeed(2);
+[uniBcRow, uniBcCol, uniRowProb, uniColProb] = biclusteringGibbs(uniData, 'plot', false, 'allRowThres', 0.7, 'allColThres', 0.8);
+figure();
+%subplot('Position', [0.15, 0.15, 0.2, 0.8]);
+subplot('Position', [0.15, 0.15, 0.8, 0.8]);
+colormap('gray')
+imagesc(uniRowProb{1}'*uniColProb{1})
+title('Posterior Probabilities');
+
+C = length(uniBcRow);
+for c=1:C % loop really not needed, since this is an example with one bicluster
+  rowExp = subplot('Position', [0.07 - (c-1)*0.02, 0.15, 0.01, 0.8]);
+  imagesc(colvec(uniRowProb{c}));
+  set(rowExp, 'XTick', []); set(rowExp, 'YTick', []);
+
+  colExp = axes('Position', [0.15, 0.07 - (c-1)*0.02, 0.8, 0.01]);
+  imagesc(rowvec(uniColProb{c}));
+  set(colExp, 'XTick', []); set(colExp, 'YTick', []);
+end
+
+rowTrue = axes('Position', [0.01, 0.15, 0.01, 0.8]);
+rowTruth = zeros(nRow, 1); rowTruth(patternUniRows) = 1;
+imagesc(rowTruth);
+set(rowTrue, 'XTick', []); set(rowTrue, 'YTick', []);
+
+colTrue = axes('Position', [0.15, 0.01, 0.8, 0.01]);
+colTruth = zeros(1,nCol); colTruth(patternUniCols) = 1;
+imagesc(colTruth);
+set(colTrue, 'XTick', []); set(colTrue, 'YTick', []);
+printPmtkFigure('uniBiclusterProb');
+
+figure(); imagesc(uniData); colormap('gray');
+title('True Data Matrix')
+printPmtkFigure('uniBiclusterData');
+
+% Permuted rows and columns
+%figure();
+%colormap('gray');
+%permuteRows = [sort(patternUniRows'), setdiff(1:nRow, patternUniRows)];
+%permuteCols = [sort(patternUniCols'), setdiff(1:nCol, patternUniCols)];
+%imagesc(uniData(permuteRows, permuteCols));
+%title('Data matrix with permuted rows and columns based on truth');
+%keyboard
+plotPermute({patternUniRows}, {patternUniCols}, uniData);
+title('Data matrix with permuted rows and columns based on truth');
+%Y0 = 1/2; Y1 = length(patternUniRows) + 1/2; X0 = 1/2; X1 = length(patternUniCols) + 1/2;
+%Xpoint = [X0, X0, X0, X1; ...
+%          X1, X1, X0, X1];
+%Ypoint = [Y0, Y1, Y0, Y0; ...
+%          Y0, Y1, Y1, Y1];
+%line(Xpoint, Ypoint, 'color', 'red', 'linewidth', 3);
+printPmtkFigure('uniBiclusterDataPermuteTrue');
+%keyboard
+plotPermute(uniBcRow, uniBcCol, uniData);
+title('Data matrix with permuted rows and columns based on discovery');
+printPmtkFigure('uniBiclusterDataPermuteDiscovery')
+%figure(); colormap('gray'); subplot(2,1,1);
+%subplot('Position', [0.75, 0.15, 0.2, 0.35]);
+%imagesc(uniData(uniBcRow{1}, uniBcCol{1}));
+%title('Discovered Bicluster');
+%subplot(2,1,2);
+%subplot('Position', [0.75, 0.60, 0.2, 0.35]);
+%imagesc(uniData(patternUniRows, patternUniCols));
+%title('True Bicluster');
+%printPmtkFigure('uniBiclusterTruthDiscovered');
+
+%% Now an example with multiple biclusters
+fprintf('\n\nNow multiple biclusters on a larger data matrix\n')
+clear data
+nRow = 200;
+nCol = 40;
+setSeed(103);
+data = unidrndPMTK(nLevels, [nRow, nCol]);
+truecount = 3;
+patternRowSizeVec = [40, 25, 35];
+patternColSizeVec = [7, 10, 8];
+rowperm = randperm(nRow); colperm = randperm(nCol);
+%p = [sharp, normalize(ones(1,nLevels-1))*(1-sharp)]; % a sharp multinomial distribution
+sharp = 0.95;
+%p = perms(p);
+%p = unique(p, 'rows');
+for j=1:truecount
+  % now we embed the pattern
+  patternRowSize = patternRowSizeVec(j);
+  patternColSize = patternColSizeVec(j);
+  %patternRows{j} = randsample(nRow, patternRowSize);
+  %patternCols{j} = randsample(nCol, patternColSize);
+  patternRows{j} = rowperm(1:patternRowSize);
+  patternCols{j} = colperm(1:patternColSize);
+  rowOverlap = unidrndPMTK(5); colOverlap = unidrndPMTK(3);
+  rowperm = rowperm((patternRowSize - rowOverlap + 1):end);
+  colperm = colperm((patternColSize - colOverlap + 1):end);
+  fprintf('True rows: %s\n', mat2str(sort(patternRows{j}')))
+  fprintf('True columns: %s\n', mat2str(sort(patternCols{j}')))
+
+  p = rand(nLevels,patternColSize)*(1-sharp); % a sharp multinomial distributions
+  idx = sub2ind(size(p), unidrndPMTK(nLevels, 1, patternColSize), 1:patternColSize);
+  p(idx) = sharp;
+  p = normalize(p, 1);
+
+  for k=1:patternColSize
+% Here was the problem.  We were using the first three rows of the matrix p to generate the hidden biclusters
+% The second two rows were the same, ie: there really was only two biclusters.  Fixed above
+    data(patternRows{j}, patternCols{j}(k)) = sampleDiscrete(p(:,k), patternRowSize, 1);
+  end
+end
+
+setSeed(3);
+[multBcRow, multBcCol, multRowPost, multColPost] = biclusteringGibbs(data, 'plot', false, 'allRowThres', 0.7, 'allColThres', 0.8);
+
+%figure();
+%colormap('gray');
+%dataPermute = zeros(nRow,nCol);
+%permuteRows = zeros(1, 0);
+%permuteCols = zeros(1, 0);
+%for j=1:truecount
+%  newrows = sort(setdiff(patternRows{j}', permuteRows));
+%  permuteRows = [permuteRows, newrows];
+%
+%  newcols = sort(setdiff(patternCols{j}', permuteCols));
+%  permuteCols = [permuteCols, newcols];
+%end
+%permuteRows = [permuteRows, setdiff(1:nRow, permuteRows)];
+%permuteCols = [permuteCols, setdiff(1:nCol, permuteCols)];
+%imagesc(data(permuteRows, permuteCols));
+%title('Data matrix with permuted rows and columns');
+plotPermute(patternRows, patternCols, data);
+title('Data matrix with permuted rows and columns based on truth');
+printPmtkFigure('multBiclusterDataPermuteTrue');
+
+plotPermute(multBcRow, multBcCol, data);
+title('Data matrix with permuted rows and columns based on discovery');
+printPmtkFigure('multBiclusterDataPermuteDiscovered');
+
+figure();
+%subplot('Position', [0.15, 0.15, 0.45, 0.8]);
+subplot('Position', [0.15, 0.15, 0.8, 0.80]);
+colormap('gray');
+imagesc(data);
+title('True Data Matrix')
+
+C = length(multBcRow);
+for c=1:C
+  rowExp = subplot('Position', [0.07 - (c-1)*0.02, 0.15, 0.01, 0.80]);
+  imagesc(colvec(multRowPost{c}));
+  set(rowExp, 'XTick', []); set(rowExp, 'YTick', []);
+
+  colExp = subplot('Position', [0.15, 0.07 - (c-1)*0.02, 0.80, 0.01]);
+  imagesc(multColPost{c});
+  set(colExp, 'XTick', []); set(colExp, 'YTick', []);
+end
+
+rowTruth = zeros(nRow, 1);
+colTruth = zeros(nCol, 1);
+for j=1:truecount
+  rowTruth(patternRows{j}) = j;
+  colTruth(patternCols{j}) = j;
+end
+
+rowTrue = subplot('Position', [0.01, 0.15, 0.01, 0.80]);
+imagesc(colvec(rowTruth));
+set(rowTrue, 'XTick', []); set(rowTrue, 'YTick', []);
+colTrue = subplot('Position', [0.15, 0.01, 0.80, 0.01]);
+imagesc(rowvec(colTruth));
+set(colTrue, 'XTick', []); set(colTrue, 'YTick', []);
+printPmtkFigure('multBiclusterProb');
+
+figure(); colormap('gray');
+for c=1:max(C, truecount)
+  truth = subplot(2, max(C, truecount), c);
+  if(c <= C)
+    imagesc(data(multBcRow{c}, multBcCol{c}));
+    set(truth, 'XTick', []); set(truth, 'YTick', []);
+    title(sprintf('Discovered Bicluster %d', c));
+  end
+end
+for j=1:max(C,truecount);
+  truth = subplot(2, max(C, truecount), max(C, truecount) + j);
+  if(j <= truecount)
+    imagesc(data(patternRows{j}, patternCols{j}));
+    set(truth, 'XTick', []); set(truth, 'YTick', []);
+    title(sprintf('True Bicluster %d', j));
+  end
+end
+printPmtkFigure('multBiclusterDiscovered');
+
+end
+
+function [] = plotPermute(matRows, matCols, data)
+
+  [nRow, nCol] = size(data);
+  permuteRows = zeros(1, 0);
+  permuteCols = zeros(1, 0);
+  nSets = length(matRows);
+  for j=1:nSets
+
+%    Y0 = 1/2 + length(permuteRows) - length(intersect(matRows{j}, permuteRows));
+%%    X0 = 1/2 + length(permuteCols) - length(intersect(matCols{j}, permuteCols));
+
+    newrows = rowvec(setdiff(matRows{j}, permuteRows));
+    permuteRows = [permuteRows, sort(newrows)];
+  
+    newcols = rowvec(setdiff(matCols{j}, permuteCols));
+    permuteCols = [permuteCols, sort(newcols)];
+
+%    Y1 = Y0 + length(newrows);
+%    X1 = X0 + length(newcols);
+%    Xpoint{j} = [X0, X0, X0, X1; ...
+%              X1, X1, X0, X1];
+%    Ypoint{j} = [Y0, Y1, Y0, Y0; ...
+%              Y0, Y1, Y1, Y1];
+  end
+  permuteRows = [permuteRows, setdiff(1:nRow, permuteRows)];
+  permuteCols = [permuteCols, setdiff(1:nCol, permuteCols)];
+  figure();
+  colormap('gray');
+  imagesc(data(permuteRows, permuteCols));
+%  for j=1:nSets
+%    line(Xpoint{j}, Ypoint{j}, 'color', 'red', 'linewidth', 3);
+%  end
+%  for j=1:nSets
+%    startX = length(cell2mat(matRows(1:(j-1)))) + 1/2;
+%    endX = length(cell2mat(matRows(1:j))) + 1/2;
+%    startY = length(cell2mat(matCols(1:(j-1)))) + 1/2;
+%    endY = length(cell2mat(matCols(1:j))) + 1/2;
+%    boxX = [startX, startX, startX, startX; ...
+%            endX, endX, startX, startX];
+%    boxY = [startY, endY, startY, endY; ...
+%            startY, endY, startY, endY];
+%    line(boxX, boxY, 'color', 'red', 'linewidth', 3);
+%  end
+end
+
+##### SOURCE END #####
+--></body></html>

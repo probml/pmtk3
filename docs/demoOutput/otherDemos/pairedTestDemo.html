@@ -1,0 +1,159 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Plot posterior on difference in rates given paired contingency table</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="pairedTestDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Plot posterior on difference in rates given paired contingency table</h1><!--introduction--><p>MC approx to figure 1a of Shi and Bai 2008 PMTKneedsStatsToolbox ksdensity</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#5">Unpaired</a></li></ul></div><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+requireStatsToolbox
+setSeed(1);
+ns = [20 20 10 50 30];
+n10s = [0 1 2 20 28];
+n01s = [20 19 4 5 0];
+figure; hold <span class="string">on</span>;
+[styles, colors, symbols] = plotColors;
+<span class="keyword">for</span> i=1:length(ns)
+</pre><pre class="codeinput">    n = ns(i); n10=n10s(i); n01=n01s(i);
+    n00 = n - (n01+n10);
+    n11 = 0;
+    [deltasPaired, postPaired, thetasPaired] = <span class="keyword">...</span>
+        contingencyTablePairedDiffPostMc(n00, n10, n01, n11);
+</pre><pre class="codeinput">    style = [styles{i}, colors(i)];
+    plot(deltasPaired, postPaired, style, <span class="string">'linewidth'</span>, 3, <span class="keyword">...</span>
+        <span class="string">'displayname'</span>, sprintf(<span class="string">'n=%d,n10=%d,n01=%d'</span>, n, n10, n01));
+</pre><img vspace="5" hspace="5" src="pairedTestDemo_01.png" alt=""> <img vspace="5" hspace="5" src="pairedTestDemo_02.png" alt=""> <img vspace="5" hspace="5" src="pairedTestDemo_03.png" alt=""> <img vspace="5" hspace="5" src="pairedTestDemo_04.png" alt=""> <img vspace="5" hspace="5" src="pairedTestDemo_05.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
+legend(<span class="string">'location'</span>, <span class="string">'north'</span>);
+box <span class="string">on</span>;
+title(<span class="string">'paired'</span>);
+printPmtkFigure(<span class="string">'pairedTestDemo'</span>)
+</pre><img vspace="5" hspace="5" src="pairedTestDemo_06.png" alt=""> <h2>Unpaired<a name="5"></a></h2><pre class="codeinput">figure; hold <span class="string">on</span>
+<span class="keyword">for</span> i=1:length(ns)
+</pre><pre class="codeinput">    n = ns(i); n10=n10s(i); n01=n01s(i);
+    y1 = n10+n11; y2 = n01+n11;
+    n1 = n00+n01+y1;
+    n2 = n00 + n10 + y2;
+    [deltasUnpaired, postUnpaired, thetasUnpaired] = <span class="keyword">...</span>
+        contingencyTableUnpairedDiffPostMc(n1, y1, n2, y2);
+</pre><pre class="codeinput">    style = [styles{i}, colors(i)];
+    plot(deltasUnpaired, postUnpaired, style, <span class="string">'linewidth'</span>, 3, <span class="keyword">...</span>
+        <span class="string">'displayname'</span>, sprintf(<span class="string">'n1=%d,y1=%d,n2=%d,y2=%d'</span>, n1, y1, n2, y2));
+</pre><img vspace="5" hspace="5" src="pairedTestDemo_07.png" alt=""> <img vspace="5" hspace="5" src="pairedTestDemo_08.png" alt=""> <img vspace="5" hspace="5" src="pairedTestDemo_09.png" alt=""> <img vspace="5" hspace="5" src="pairedTestDemo_10.png" alt=""> <img vspace="5" hspace="5" src="pairedTestDemo_11.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
+legend(<span class="string">'location'</span>, <span class="string">'north'</span>);
+title(<span class="string">'unpaired'</span>);
+box <span class="string">on</span>;
+printPmtkFigure(<span class="string">'unpairedTestDemo'</span>)
+</pre><img vspace="5" hspace="5" src="pairedTestDemo_12.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Plot posterior on difference in rates given paired contingency table
+% MC approx to figure 1a of Shi and Bai 2008
+% PMTKneedsStatsToolbox ksdensity
+%%
+
+% This file is from pmtk3.googlecode.com
+
+requireStatsToolbox
+setSeed(1);
+ns = [20 20 10 50 30];
+n10s = [0 1 2 20 28];
+n01s = [20 19 4 5 0];
+figure; hold on;
+[styles, colors, symbols] = plotColors;
+for i=1:length(ns)
+    n = ns(i); n10=n10s(i); n01=n01s(i);
+    n00 = n - (n01+n10);
+    n11 = 0;
+    [deltasPaired, postPaired, thetasPaired] = ...
+        contingencyTablePairedDiffPostMc(n00, n10, n01, n11);
+    %% 
+    style = [styles{i}, colors(i)];
+    plot(deltasPaired, postPaired, style, 'linewidth', 3, ...
+        'displayname', sprintf('n=%d,n10=%d,n01=%d', n, n10, n01));
+end
+legend('location', 'north');
+box on;
+title('paired');
+printPmtkFigure('pairedTestDemo')
+%% Unpaired
+
+figure; hold on
+for i=1:length(ns)
+    n = ns(i); n10=n10s(i); n01=n01s(i);
+    y1 = n10+n11; y2 = n01+n11;
+    n1 = n00+n01+y1;
+    n2 = n00 + n10 + y2;
+    [deltasUnpaired, postUnpaired, thetasUnpaired] = ...
+        contingencyTableUnpairedDiffPostMc(n1, y1, n2, y2);
+    %%
+    style = [styles{i}, colors(i)];
+    plot(deltasUnpaired, postUnpaired, style, 'linewidth', 3, ...
+        'displayname', sprintf('n1=%d,y1=%d,n2=%d,y2=%d', n1, y1, n2, y2));
+    %%
+end
+legend('location', 'north');
+title('unpaired');
+box on;
+printPmtkFigure('unpairedTestDemo')
+
+
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,379 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Sparse linear regression with EM on synthetic data</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="linregSparseEmSynthDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Sparse linear regression with EM on synthetic data</h1><!--introduction--><p>Similar to fig 8 from "Sparse Bayesian nonparametric regression", Caron and Doucet, ICML08 We do not include normalInverseGaussian but we do include normalExpGaussian  (see Griffin and Brown) PMTKreallySlow PMTKneedsStatsToolbox boxplot</p><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="keyword">function</span> linregSparseEmSynthDemo()
+
+requireStatsToolbox
+setSeed(0);
+
+D=100; <span class="comment">% Number of coefficients to estimate</span>
+rho=.5; <span class="comment">% Correlation</span>
+<span class="keyword">for</span> i=1:D
+    <span class="keyword">for</span> j=1:D
+        correl(i,j)=rho^(abs(i-j));
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+C  = chol(correl);
+sparsities = [0.05];
+<span class="keyword">for</span> sparsityNdx=1:length(sparsities)
+    sparsity = sparsities(sparsityNdx);
+
+    Ntrials = 5;
+    <span class="keyword">for</span> trial=1:Ntrials
+        fprintf(<span class="string">'\n\n starting trial %d of %d\n\n'</span>, trial, Ntrials);
+        nnz = ceil(D*sparsity);
+        ndx = unidrndPMTK(D,1,nnz);
+        w_true = zeros(D,1);
+        w_true(ndx) = 1*randn(nnz,1);
+        weightsTrue{trial} = w_true;
+
+        Ntrain = 100;
+        Ntest = 10000;
+        sigmaTrue = 1;
+        Xtrain=randn(Ntrain,D)*C;
+        ytrain=Xtrain*w_true + sigmaTrue*randn(Ntrain,1);
+        Xtest=randn(Ntest,D)*C;
+        ytest=Xtest*w_true + sigmaTrue*randn(Ntest,1);
+
+        [ytrain, muY, sY] = standardizeCols(ytrain);
+        ytest = standardizeCols(ytest, muY, sY);
+
+        [Xtrain, mu] = centerCols(Xtrain);
+        Xtest = centerCols(Xtest, mu);
+
+        priors = {<span class="string">'Scad'</span>,<span class="string">'NJ'</span>, <span class="string">'NG'</span>, <span class="string">'NEG'</span>, <span class="string">'Laplace'</span>, <span class="string">'Ridge'</span>};
+
+        mseLoss = @(yhat, ytest)mean((yhat - ytest).^2);
+        <span class="keyword">for</span> m=1:length(priors)
+            useEM = false;
+            prior = priors{m};
+            <span class="keyword">switch</span> lower(prior)
+                <span class="keyword">case</span> {<span class="string">'ng'</span>, <span class="string">'neg'</span>}
+                    scales = [0.001 0.01 0.1 1 10];
+                    shapes = [0.001 0.01 0.1 1 10];
+                    [w, logPostTrace] = fitWithEmAndCV(Xtrain, ytrain, prior, scales, shapes);
+                    useEM = true;
+                <span class="keyword">case</span> <span class="string">'nj'</span>
+                    <span class="comment">% no tuning parameters so no need for CV</span>
+                    options = {<span class="string">'maxIter'</span>, 30, <span class="string">'verbose'</span>, true};
+                    [w, sigma, logPostTrace] = linregFitSparseEm(Xtrain, ytrain,  <span class="string">'nj'</span>,  options{:});
+                    useEM = true;
+                <span class="keyword">case</span> <span class="string">'scad'</span>
+                    <span class="comment">% this will use CV to pick lambda</span>
+                    lambdas = 10.^(linspace(-3,2, 10));
+                    fitFn = @(X, y, l)linregFit(X, y, <span class="string">'lambda'</span>, l, <span class="string">'regType'</span>, <span class="string">'scad'</span>,  <span class="string">'preproc'</span>, struct(<span class="string">'addOnes'</span>, false));
+                    model = fitCv(lambdas, fitFn, @linregPredict, mseLoss, Xtrain, ytrain);
+                    w = model.w;
+                <span class="keyword">case</span> <span class="string">'ridge'</span>
+                    <span class="comment">% this will use CV to pick lambda</span>
+                    lambdas = 10.^(linspace(-3,2, 10));
+                    fitFn = @(X, y, l)linregFit(X, y, <span class="string">'lambda'</span>, l, <span class="string">'regType'</span>, <span class="string">'L2'</span>,  <span class="string">'preproc'</span>, struct(<span class="string">'addOnes'</span>, false));
+                    model = fitCv(lambdas, fitFn, @linregPredict, mseLoss, Xtrain, ytrain);
+                    w = model.w;
+                <span class="keyword">case</span> <span class="string">'laplace'</span>
+                    <span class="comment">% this will use CV to pick lambda</span>
+                    lambdaMax = lambdaMaxLasso(Xtrain, centerCols(ytrain));
+                    lambdas = linspace(1e-5, lambdaMax, 10);
+                    fitFn = @(X, y, l)linregFit(X, y, <span class="string">'lambda'</span>, l, <span class="string">'regType'</span>, <span class="string">'L1'</span>, <span class="string">'preproc'</span>, struct(<span class="string">'addOnes'</span>, false));
+                    model = fitCv(lambdas, fitFn, @linregPredict, mseLoss, Xtrain, ytrain);
+                    w = model.w;
+                <span class="keyword">otherwise</span>
+                    w = [];
+            <span class="keyword">end</span>
+
+
+            mse(m) = mean((ytest-Xtest*w).^2);
+            mseTrial(trial,m) = mse(m);
+            nnzTrial(trial,m) = sum(abs(w) &gt; 1e-3);
+            nnzTrue(trial) = nnz;
+            weights{trial,m} = w;
+
+            <span class="keyword">if</span> useEM
+                figure(m); clf; plot(logPostTrace, <span class="string">'o-'</span>);
+                title(sprintf(<span class="string">'%s, trial %d, sparsity %5.3f'</span>, prior, trial, sparsity))
+            <span class="keyword">end</span>
+        <span class="keyword">end</span> <span class="comment">% for m</span>
+
+    <span class="keyword">end</span> <span class="comment">% for trial</span>
+
+
+    figure;
+    boxplot(mseTrial, <span class="string">'labels'</span>, priors)
+    title(sprintf(<span class="string">'mse on test for D=%d, Ntrain=%d, sparsity=%3.2f'</span>, D, Ntrain, sparsity))
+    printPmtkFigure(sprintf(<span class="string">'linregSparseEmSynthMseBoxplotSp%d'</span>, sparsity*100))
+
+    figure;
+    ridgeNdx = strcmpi(priors,<span class="string">'Ridge'</span>);
+    boxplot(nnzTrial(:, ~ridgeNdx), <span class="string">'labels'</span>, priors(~ridgeNdx))
+    title(sprintf(<span class="string">'nnz  for D=%d, Ntrain=%d, sparsity=%3.2f'</span>, D, Ntrain, sparsity))
+    printPmtkFigure(sprintf(<span class="string">'linregSparseEmSynthNnzBoxplotSp%d'</span>, sparsity*100))
+
+    <span class="comment">%nr = 2; nc = 2;</span>
+    figure;
+    <span class="comment">%subplot(nr, nc, 1);</span>
+    trial = 1;
+    stem(weightsTrue{trial}, <span class="string">'marker'</span>, <span class="string">'none'</span>, <span class="string">'linewidth'</span>, 2);
+    box <span class="string">off</span>
+    title(<span class="string">'true'</span>);
+    printPmtkFigure(sprintf(<span class="string">'linregSparseEmSynthWeightsTruthSp%d'</span>,  sparsity*100))
+    <span class="keyword">for</span> m=1:length(priors)
+        w = weights{trial,m};
+        <span class="comment">%subplot(nr, nc, m+1);</span>
+        figure;
+        stem(w, <span class="string">'marker'</span>, <span class="string">'none'</span>, <span class="string">'linewidth'</span>, 2)
+        box <span class="string">off</span>
+        title(priors{m})
+        printPmtkFigure(sprintf(<span class="string">'linregSparseEmSynthWeights%sSp%d'</span>,  priors{m}, sparsity*100))
+    <span class="keyword">end</span>
+
+    <span class="comment">%printPmtkFigure(sprintf('linregSparseEmSynthWeights%d',  sparsity*100))</span>
+
+<span class="keyword">end</span> <span class="comment">% sparsityNdx</span>
+
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> [w, logPostTrace] = fitWithEmAndCV(Xtrain, ytrain, prior, scales, shapes)
+params = crossProduct(scales, shapes);
+Nfolds=3;
+useSErule = false;
+options = {<span class="string">'maxIter'</span>, 15, <span class="string">'verbose'</span>, false};
+fitFn = @(X,y,ps) linregFitSparseEm(X,y, prior, <span class="string">'scale'</span>, ps(1), <span class="string">'shape'</span>, ps(2),options{:});
+predictFn = @(w, X) X*w;
+lossFn = @(yhat, y)  sum((yhat-y).^2);
+[w, bestParams, mu, se] = fitCv(params, fitFn, predictFn, lossFn, Xtrain, ytrain,  Nfolds, <span class="string">'useSErule'</span>, useSErule);
+
+<span class="comment">% refit model using more iterations with best params and all the data</span>
+scale = bestParams(1);
+shape = bestParams(2);
+options = {<span class="string">'maxIter'</span>, 30, <span class="string">'verbose'</span>, true};
+[w, sigma, logPostTrace] = <span class="keyword">...</span>
+    linregFitSparseEm(Xtrain, ytrain,  prior,  <span class="string">'scale'</span>, scale, <span class="string">'shape'</span>, shape, options{:});
+<span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Sparse linear regression with EM on synthetic data
+% Similar to fig 8 from "Sparse Bayesian nonparametric regression",
+% Caron and Doucet, ICML08
+% We do not include normalInverseGaussian
+% but we do include normalExpGaussian  (see Griffin and Brown)
+% PMTKreallySlow
+% PMTKneedsStatsToolbox boxplot
+%%
+
+% This file is from pmtk3.googlecode.com
+
+function linregSparseEmSynthDemo()
+
+requireStatsToolbox
+setSeed(0);
+
+D=100; % Number of coefficients to estimate
+rho=.5; % Correlation
+for i=1:D
+    for j=1:D
+        correl(i,j)=rho^(abs(i-j));
+    end
+end
+C  = chol(correl);
+sparsities = [0.05];
+for sparsityNdx=1:length(sparsities)
+    sparsity = sparsities(sparsityNdx);
+    
+    Ntrials = 5;
+    for trial=1:Ntrials
+        fprintf('\n\n starting trial %d of %d\n\n', trial, Ntrials);
+        nnz = ceil(D*sparsity);
+        ndx = unidrndPMTK(D,1,nnz);
+        w_true = zeros(D,1);
+        w_true(ndx) = 1*randn(nnz,1);
+        weightsTrue{trial} = w_true;
+        
+        Ntrain = 100;
+        Ntest = 10000;
+        sigmaTrue = 1;
+        Xtrain=randn(Ntrain,D)*C;
+        ytrain=Xtrain*w_true + sigmaTrue*randn(Ntrain,1);
+        Xtest=randn(Ntest,D)*C;
+        ytest=Xtest*w_true + sigmaTrue*randn(Ntest,1);
+        
+        [ytrain, muY, sY] = standardizeCols(ytrain);
+        ytest = standardizeCols(ytest, muY, sY);
+        
+        [Xtrain, mu] = centerCols(Xtrain);
+        Xtest = centerCols(Xtest, mu);
+        
+        priors = {'Scad','NJ', 'NG', 'NEG', 'Laplace', 'Ridge'};
+        
+        mseLoss = @(yhat, ytest)mean((yhat - ytest).^2);
+        for m=1:length(priors)
+            useEM = false;
+            prior = priors{m};
+            switch lower(prior)
+                case {'ng', 'neg'}
+                    scales = [0.001 0.01 0.1 1 10];
+                    shapes = [0.001 0.01 0.1 1 10];
+                    [w, logPostTrace] = fitWithEmAndCV(Xtrain, ytrain, prior, scales, shapes);
+                    useEM = true;
+                case 'nj'
+                    % no tuning parameters so no need for CV
+                    options = {'maxIter', 30, 'verbose', true};
+                    [w, sigma, logPostTrace] = linregFitSparseEm(Xtrain, ytrain,  'nj',  options{:});
+                    useEM = true;
+                case 'scad'
+                    % this will use CV to pick lambda
+                    lambdas = 10.^(linspace(-3,2, 10));
+                    fitFn = @(X, y, l)linregFit(X, y, 'lambda', l, 'regType', 'scad',  'preproc', struct('addOnes', false));
+                    model = fitCv(lambdas, fitFn, @linregPredict, mseLoss, Xtrain, ytrain);
+                    w = model.w;
+                case 'ridge'
+                    % this will use CV to pick lambda
+                    lambdas = 10.^(linspace(-3,2, 10));
+                    fitFn = @(X, y, l)linregFit(X, y, 'lambda', l, 'regType', 'L2',  'preproc', struct('addOnes', false));
+                    model = fitCv(lambdas, fitFn, @linregPredict, mseLoss, Xtrain, ytrain);
+                    w = model.w;
+                case 'laplace'
+                    % this will use CV to pick lambda
+                    lambdaMax = lambdaMaxLasso(Xtrain, centerCols(ytrain));
+                    lambdas = linspace(1e-5, lambdaMax, 10);
+                    fitFn = @(X, y, l)linregFit(X, y, 'lambda', l, 'regType', 'L1', 'preproc', struct('addOnes', false));
+                    model = fitCv(lambdas, fitFn, @linregPredict, mseLoss, Xtrain, ytrain);
+                    w = model.w;
+                otherwise
+                    w = [];
+            end
+            
+            
+            mse(m) = mean((ytest-Xtest*w).^2);
+            mseTrial(trial,m) = mse(m);
+            nnzTrial(trial,m) = sum(abs(w) > 1e-3);
+            nnzTrue(trial) = nnz;
+            weights{trial,m} = w;
+            
+            if useEM
+                figure(m); clf; plot(logPostTrace, 'o-');
+                title(sprintf('%s, trial %d, sparsity %5.3f', prior, trial, sparsity))
+            end
+        end % for m
+        
+    end % for trial
+    
+    
+    figure;
+    boxplot(mseTrial, 'labels', priors)
+    title(sprintf('mse on test for D=%d, Ntrain=%d, sparsity=%3.2f', D, Ntrain, sparsity))
+    printPmtkFigure(sprintf('linregSparseEmSynthMseBoxplotSp%d', sparsity*100))
+    
+    figure;
+    ridgeNdx = strcmpi(priors,'Ridge');
+    boxplot(nnzTrial(:, ~ridgeNdx), 'labels', priors(~ridgeNdx))
+    title(sprintf('nnz  for D=%d, Ntrain=%d, sparsity=%3.2f', D, Ntrain, sparsity))
+    printPmtkFigure(sprintf('linregSparseEmSynthNnzBoxplotSp%d', sparsity*100))
+    
+    %nr = 2; nc = 2;
+    figure;
+    %subplot(nr, nc, 1);
+    trial = 1;
+    stem(weightsTrue{trial}, 'marker', 'none', 'linewidth', 2);
+    box off
+    title('true');
+    printPmtkFigure(sprintf('linregSparseEmSynthWeightsTruthSp%d',  sparsity*100))
+    for m=1:length(priors)
+        w = weights{trial,m};
+        %subplot(nr, nc, m+1);
+        figure;
+        stem(w, 'marker', 'none', 'linewidth', 2)
+        box off
+        title(priors{m})
+        printPmtkFigure(sprintf('linregSparseEmSynthWeights%sSp%d',  priors{m}, sparsity*100))
+    end
+    
+    %printPmtkFigure(sprintf('linregSparseEmSynthWeights%d',  sparsity*100))
+    
+end % sparsityNdx
+
+end
+
+function [w, logPostTrace] = fitWithEmAndCV(Xtrain, ytrain, prior, scales, shapes)
+params = crossProduct(scales, shapes);
+Nfolds=3;
+useSErule = false;
+options = {'maxIter', 15, 'verbose', false};
+fitFn = @(X,y,ps) linregFitSparseEm(X,y, prior, 'scale', ps(1), 'shape', ps(2),options{:});
+predictFn = @(w, X) X*w;
+lossFn = @(yhat, y)  sum((yhat-y).^2);
+[w, bestParams, mu, se] = fitCv(params, fitFn, predictFn, lossFn, Xtrain, ytrain,  Nfolds, 'useSErule', useSErule);
+
+% refit model using more iterations with best params and all the data
+scale = bestParams(1);
+shape = bestParams(2);
+options = {'maxIter', 30, 'verbose', true};
+[w, sigma, logPostTrace] = ...
+    linregFitSparseEm(Xtrain, ytrain,  prior,  'scale', scale, 'shape', shape, options{:});
+end
+
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,382 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>emtShootout</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="emtShootout.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Data</a></li><li><a href="#3">Models/ methods</a></li><li><a href="#4">Plot performance</a></li></ul></div><pre class="codeinput"><span class="comment">% This is a simplified version of 'discreteDensityModelsShootout'</span>
+<span class="comment">% It should give the same results as 'exptKevin2'</span>
+
+<span class="comment">% Stop it from being included in list of automatic demos</span>
+<span class="comment">%PMTKinprogress</span>
+</pre><h2>Data<a name="2"></a></h2><p>data.discrete is D*N where discrete(d,n) in {1..nClass(d)}</p><pre class="codeinput">clear <span class="string">all</span>
+
+seed = 1;
+dataName = <span class="string">'ases4'</span>;
+pcTrain = 0.5; pcTest = 0.5;
+missProbD = 0.3;
+setSeed(seed);
+[dataTrain, nClass] = processData(dataName, struct(<span class="string">'ratio'</span>,pcTrain));
+
+
+setSeed(seed);
+[dataTest, nClass2] = processData(dataName, struct(<span class="string">'ratio'</span>,1-pcTest));
+ydT = dataTest.discreteTestTruth;
+miss = rand(size(ydT))&lt;missProbD;
+testData.discrete(miss) = NaN;
+
+<span class="comment">% Convert to KPM format</span>
+<span class="comment">% labels is N*D, where labels(n,d) in {1..Nstates(d)} or NaN</span>
+train.labels = dataTrain.discrete';
+test.labels = dataTest.discreteTestTruth';
+<span class="comment">%test.labelsMasked = testData.discrete';</span>
+test.missingMask = miss';
+test.labelsMasked  = test.labels;
+test.labelsMasked(test.missingMask) = nan;
+Nstates = nClass;
+</pre><pre class="codeoutput">Error using ==&gt; getDirNameData at 14
+unrecognized user 
+
+Error in ==&gt; processData at 5
+dirName = getDirNameData;
+
+Error in ==&gt; emtShootout at 17
+[dataTrain, nClass] = processData(dataName, struct('ratio',pcTrain));
+</pre><h2>Models/ methods<a name="3"></a></h2><pre class="codeinput">methods = [];
+m = 0;
+
+m = m + 1;
+methods(m).modelname = <span class="string">'indep'</span>;
+methods(m).fitFn = @(labels) discreteFit(labels);
+methods(m).logprobFn = @(model, labels) discreteLogprob(model, labels);
+methods(m).predictMissingFn = @(model, labels) discretePredictMissing(model, labels);
+
+
+Ks = [1,5,10,20,40];
+<span class="comment">%Ks = [1,5];</span>
+<span class="keyword">for</span> kk=1:numel(Ks)
+  K = Ks(kk); <span class="comment">% num mix components</span>
+  m = m + 1;
+  alpha = 1.1;
+  <span class="comment">%methods(m).modelname = sprintf('mixK%d,a%2.1f', K, alpha);</span>
+  methods(m).modelname = sprintf(<span class="string">'mix%d'</span>, K);
+  methods(m).fitFn = @(labels) mixDiscreteFit(labels, K, <span class="string">'maxIter'</span>, 30, <span class="keyword">...</span>
+    <span class="string">'verbose'</span>, false, <span class="string">'alpha'</span>, 1.1);
+  methods(m).logprobFn = @(model, labels) mixDiscreteLogprob(model, labels);
+  methods(m).predictMissingFn = @(model, labels) mixDiscretePredictMissing(model, labels);
+<span class="keyword">end</span>
+
+
+
+Ks = [1,5,10,20,40];
+<span class="comment">%Ks = [1,5];</span>
+<span class="keyword">for</span> kk=1:numel(Ks)
+  K = Ks(kk); <span class="comment">% size of latent space (Dz)</span>
+  m = m + 1;
+  methods(m).modelname = sprintf(<span class="string">'dFA-%d'</span>, K);
+  methods(m).fitFn = @(labels) catFAfit(labels, [],  K,  <span class="string">'nClass'</span>, Nstates, <span class="keyword">...</span>
+    <span class="string">'maxIter'</span>, 30, <span class="string">'verbose'</span>, true, <span class="string">'nClass'</span>, Nstates);
+  methods(m).logprobFn = @(model, labels) nan(size(labels,1),1);
+  methods(m).predictMissingFn = @(model, labels) catFApredictMissing(model, labels, []);
+<span class="keyword">end</span>
+
+
+
+Nmethods = numel(methods);
+[Ntrain, Nnodes] = size(train.labels);
+[Ntest, Nnodes2] = size(test.labels);
+fold = 1;
+Nfolds = 1;
+
+models = cell(1, Nmethods);
+methodNames = cell(1, Nmethods);
+<span class="keyword">for</span> m=1:Nmethods
+  methodNames{m} = sprintf(<span class="string">'%s'</span>, methods(m).modelname);
+  fprintf(<span class="string">'fitting %s\n'</span>, methodNames{m});
+  models{m} = methods(m).fitFn(train.labels);
+<span class="keyword">end</span>
+
+
+ll = zeros(1, Nmethods);
+imputationErr = zeros(1,Nmethods);
+<span class="keyword">for</span> m=1:Nmethods
+  fprintf(<span class="string">'evaluating %s\n'</span>, methodNames{m});
+  ll(m) = sum(methods(m).logprobFn(models{m}, test.labels))/Ntest;
+
+  pred = methods(m).predictMissingFn(models{m}, test.labelsMasked);
+  <span class="comment">% pred is N * D * K</span>
+
+  <span class="comment">% Emt's evaluation code</span>
+  nClass = Nstates;
+  yd = test.labelsMasked';
+  ydT = test.labels';
+  ydT_oneOfM = encodeDataOneOfM(ydT, nClass, <span class="string">'M'</span>);
+  yd_oneOfM = encodeDataOneOfM(yd, nClass, <span class="string">'M'</span>);
+  N = size(yd_oneOfM,2);
+  miss = isnan(yd_oneOfM);
+  pred2 = permute(pred, [3 2 1]); <span class="comment">% K D N</span>
+  Ntest = N;
+  pred3 = reshape(pred2, [sum(nClass) Ntest]); <span class="comment">% KD * N</span>
+  <span class="comment">%yhatD = reshape(pred+eps, [Ntest sum(nClass)])';</span>
+
+
+  <span class="comment">% if predict [0 0], replace with eps</span>
+  M = nClass;
+  <span class="keyword">for</span> d = 1:length(M)
+    idx = sum(M(1:d-1))+1:sum(M(1:d));
+    p1 = pred3(idx,:);
+    <span class="keyword">if</span> ~isempty(find(sum(p1,2) == 0))
+      p1 = p1 + eps;
+      p1 = bsxfun(@times, p1, 1./sum(p1));
+    <span class="keyword">end</span>
+    pred3(idx,:) = p1;
+  <span class="keyword">end</span>
+
+  yhatD = pred3;
+  entrpyD = -sum(ydT_oneOfM(miss).*log2(yhatD(miss)))/(Ntest*length(nClass))
+  <span class="comment">%entrpyD = -sum(ydT_oneOfM(miss).*log2(yhatD(miss)))/(sum(miss(:)));</span>
+
+  imputationErr(m) =  entrpyD;
+<span class="keyword">end</span>
+loglik_models(fold, :) = ll;
+imputation_err_models(fold, :) = imputationErr;
+</pre><h2>Plot performance<a name="4"></a></h2><pre class="codeinput"><span class="comment">% imputation error</span>
+figure;
+ndx = 1:Nmethods
+<span class="keyword">if</span> Nfolds==1
+  plot(imputation_err_models(ndx), <span class="string">'x'</span>, <span class="string">'markersize'</span>, 12, <span class="string">'linewidth'</span>, 2)
+  axis_pct
+<span class="keyword">else</span>
+  boxplot(imputation_err_models(:, ndx))
+<span class="keyword">end</span>
+set(gca, <span class="string">'xtick'</span>, 1:numel(ndx))
+set(gca, <span class="string">'xticklabel'</span>, methodNames(ndx))
+<span class="comment">%xticklabelRot(methodNames(ndx), -45);</span>
+title(sprintf(<span class="string">'KPM imputation error on %s, %5.3fpc missing, D=%d, Ntr=%d, Nte=%d'</span>, <span class="keyword">...</span>
+  dataName, missProbD, Nnodes, Ntrain, Ntest))
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+% This is a simplified version of 'discreteDensityModelsShootout'
+% It should give the same results as 'exptKevin2'
+
+% Stop it from being included in list of automatic demos
+%PMTKinprogress
+
+%% Data
+% data.discrete is D*N where discrete(d,n) in {1..nClass(d)}
+
+clear all
+
+seed = 1;
+dataName = 'ases4';
+pcTrain = 0.5; pcTest = 0.5;
+missProbD = 0.3;
+setSeed(seed);
+[dataTrain, nClass] = processData(dataName, struct('ratio',pcTrain));
+
+  
+setSeed(seed);
+[dataTest, nClass2] = processData(dataName, struct('ratio',1-pcTest));
+ydT = dataTest.discreteTestTruth;
+miss = rand(size(ydT))<missProbD;
+testData.discrete(miss) = NaN;
+      
+% Convert to KPM format 
+% labels is N*D, where labels(n,d) in {1..Nstates(d)} or NaN
+train.labels = dataTrain.discrete';
+test.labels = dataTest.discreteTestTruth';
+%test.labelsMasked = testData.discrete';
+test.missingMask = miss';
+test.labelsMasked  = test.labels;
+test.labelsMasked(test.missingMask) = nan;
+Nstates = nClass;
+
+
+%% Models/ methods
+
+methods = [];
+m = 0;
+
+m = m + 1;
+methods(m).modelname = 'indep';
+methods(m).fitFn = @(labels) discreteFit(labels);
+methods(m).logprobFn = @(model, labels) discreteLogprob(model, labels);
+methods(m).predictMissingFn = @(model, labels) discretePredictMissing(model, labels);
+
+
+Ks = [1,5,10,20,40];
+%Ks = [1,5];
+for kk=1:numel(Ks)
+  K = Ks(kk); % num mix components
+  m = m + 1;
+  alpha = 1.1;
+  %methods(m).modelname = sprintf('mixK%d,a%2.1f', K, alpha);
+  methods(m).modelname = sprintf('mix%d', K);
+  methods(m).fitFn = @(labels) mixDiscreteFit(labels, K, 'maxIter', 30, ...
+    'verbose', false, 'alpha', 1.1);
+  methods(m).logprobFn = @(model, labels) mixDiscreteLogprob(model, labels);
+  methods(m).predictMissingFn = @(model, labels) mixDiscretePredictMissing(model, labels);
+end 
+
+
+
+Ks = [1,5,10,20,40];
+%Ks = [1,5];
+for kk=1:numel(Ks)
+  K = Ks(kk); % size of latent space (Dz)
+  m = m + 1;
+  methods(m).modelname = sprintf('dFA-%d', K);
+  methods(m).fitFn = @(labels) catFAfit(labels, [],  K,  'nClass', Nstates, ...
+    'maxIter', 30, 'verbose', true, 'nClass', Nstates);
+  methods(m).logprobFn = @(model, labels) nan(size(labels,1),1);
+  methods(m).predictMissingFn = @(model, labels) catFApredictMissing(model, labels, []);
+end
+
+
+
+Nmethods = numel(methods);
+[Ntrain, Nnodes] = size(train.labels);
+[Ntest, Nnodes2] = size(test.labels);
+fold = 1;
+Nfolds = 1;
+
+models = cell(1, Nmethods);
+methodNames = cell(1, Nmethods);
+for m=1:Nmethods
+  methodNames{m} = sprintf('%s', methods(m).modelname);
+  fprintf('fitting %s\n', methodNames{m});
+  models{m} = methods(m).fitFn(train.labels);
+end
+
+
+ll = zeros(1, Nmethods);
+imputationErr = zeros(1,Nmethods);
+for m=1:Nmethods
+  fprintf('evaluating %s\n', methodNames{m});
+  ll(m) = sum(methods(m).logprobFn(models{m}, test.labels))/Ntest;
+  
+  pred = methods(m).predictMissingFn(models{m}, test.labelsMasked);
+  % pred is N * D * K
+  
+  % Emt's evaluation code
+  nClass = Nstates;
+  yd = test.labelsMasked';
+  ydT = test.labels';
+  ydT_oneOfM = encodeDataOneOfM(ydT, nClass, 'M');
+  yd_oneOfM = encodeDataOneOfM(yd, nClass, 'M');
+  N = size(yd_oneOfM,2);
+  miss = isnan(yd_oneOfM);
+  pred2 = permute(pred, [3 2 1]); % K D N
+  Ntest = N;
+  pred3 = reshape(pred2, [sum(nClass) Ntest]); % KD * N
+  %yhatD = reshape(pred+eps, [Ntest sum(nClass)])';
+  
+  
+  % if predict [0 0], replace with eps
+  M = nClass;
+  for d = 1:length(M)
+    idx = sum(M(1:d-1))+1:sum(M(1:d));
+    p1 = pred3(idx,:);
+    if ~isempty(find(sum(p1,2) == 0))
+      p1 = p1 + eps;
+      p1 = bsxfun(@times, p1, 1./sum(p1));
+    end
+    pred3(idx,:) = p1;
+  end
+  
+  yhatD = pred3;
+  entrpyD = -sum(ydT_oneOfM(miss).*log2(yhatD(miss)))/(Ntest*length(nClass))
+  %entrpyD = -sum(ydT_oneOfM(miss).*log2(yhatD(miss)))/(sum(miss(:)));
+  
+  imputationErr(m) =  entrpyD;
+end
+loglik_models(fold, :) = ll;
+imputation_err_models(fold, :) = imputationErr;
+
+
+
+
+
+%% Plot performance
+
+
+
+
+% imputation error
+figure;
+ndx = 1:Nmethods 
+if Nfolds==1
+  plot(imputation_err_models(ndx), 'x', 'markersize', 12, 'linewidth', 2)
+  axis_pct
+else
+  boxplot(imputation_err_models(:, ndx))
+end
+set(gca, 'xtick', 1:numel(ndx))
+set(gca, 'xticklabel', methodNames(ndx))
+%xticklabelRot(methodNames(ndx), -45);
+title(sprintf('KPM imputation error on %s, %5.3fpc missing, D=%d, Ntr=%d, Nte=%d', ...
+  dataName, missProbD, Nnodes, Ntrain, Ntest))
+
+
+
+##### SOURCE END #####
+--></body></html>

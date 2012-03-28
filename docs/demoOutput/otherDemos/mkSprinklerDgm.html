@@ -1,0 +1,134 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>Make the sprinkler dgm</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="mkSprinklerDgm"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Make the sprinkler dgm</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="keyword">function</span> dgm = mkSprinklerDgm(varargin)
+</pre><pre class="codeinput"><span class="comment">%    C</span>
+<span class="comment">%   / \</span>
+<span class="comment">%  v  v</span>
+<span class="comment">%  S  R</span>
+<span class="comment">%   \/</span>
+<span class="comment">%   v</span>
+<span class="comment">%   W</span>
+</pre><pre class="codeinput">C = 1; S = 2; R = 3; W = 4;
+
+G = zeros(4,4);
+G(C,[S R]) = 1;
+G(S, W)=1;
+G(R, W)=1;
+
+
+CPTs{C} = reshape([0.5 0.5], 2, 1);
+CPTs{S} = reshape([0.5 0.9 0.5 0.1], 2, 2);
+CPTs{R} = reshape([0.8 0.2 0.2 0.8], 2, 2);
+CPTs{W} = reshape([1 0.1 0.1 0.01 0 0.9 0.9 0.99], 2, 2, 2);
+
+dgm = dgmCreate(G, CPTs, varargin{:});
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><pre class="codeoutput">ans = 
+                   G: [4x4 double]
+                CPDs: {1x4 cell}
+           localCPDs: {}
+         CPDpointers: [1 2 3 4]
+    localCPDpointers: []
+              nnodes: 4
+          infEngArgs: {}
+           infEngine: 'jtree'
+             nstates: [4x1 double]
+          isdirected: 1
+           modelType: 'dgm'
+               jtree: [1x1 struct]
+             factors: {4x1 cell}
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Make the sprinkler dgm
+%
+%%
+function dgm = mkSprinklerDgm(varargin)
+%    C
+%   / \
+%  v  v
+%  S  R
+%   \/
+%   v
+%   W
+%%
+C = 1; S = 2; R = 3; W = 4;
+
+G = zeros(4,4);
+G(C,[S R]) = 1;
+G(S, W)=1;
+G(R, W)=1;
+
+
+CPTs{C} = reshape([0.5 0.5], 2, 1);
+CPTs{S} = reshape([0.5 0.9 0.5 0.1], 2, 2);
+CPTs{R} = reshape([0.8 0.2 0.2 0.8], 2, 2);
+CPTs{W} = reshape([1 0.1 0.1 0.01 0 0.9 0.9 0.99], 2, 2, 2);
+
+dgm = dgmCreate(G, CPTs, varargin{:}); 
+
+end
+##### SOURCE END #####
+--></body></html>

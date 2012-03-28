@@ -1,0 +1,203 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>mrf2ChainInferDemo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="mrf2ChainInferDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Demonstrate inference in undirected markov chain</a></li><li><a href="#2">Setup model</a></li><li><a href="#3">Unconditional inference</a></li><li><a href="#4">Conditional inference</a></li></ul></div><h2>Demonstrate inference in undirected markov chain<a name="1"></a></h2><p>Based on <a href="http://www.cs.ubc.ca/~schmidtm/Software/UGM/chain.html">http://www.cs.ubc.ca/~schmidtm/Software/UGM/chain.html</a></p><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+</pre><h2>Setup model<a name="2"></a></h2><pre class="codeinput">nNodes = 60;
+adj = chainAdjMatrix(nNodes);
+nStates = 7*ones(1,nNodes);
+
+initial = [.3 .6 .1 0 0 0 0];
+nodePot = zeros(nNodes,nStates);
+nodePot(1,:) = initial;
+nodePot(2:end,:) = 1;
+
+edgePot = [.08 .9 .01 0 0 0 .01
+  .03 .95 .01 0 0 0 .01
+  .06 .06 .75 .05 .05 .02 .01
+  0 0 0 .3 .6 .09 .01
+  0 0 0 .02 .95 .02 .01
+  0 0 0 .01 .01 .97 .01
+  0 0 0 0 0 0 1];
+
+<span class="comment">% Conditional inferenec fails using Chain due to a bug</span>
+<span class="comment">%method = 'Chain';</span>
+method = <span class="string">'Tree'</span>;
+model = mrf2Create(adj, nStates, <span class="string">'nodePot'</span>, nodePot, <span class="string">'edgePot'</span>, edgePot, <span class="keyword">...</span>
+  <span class="string">'method'</span>, method);
+</pre><pre class="codeoutput">Warning: Input arguments must be scalar. 
+</pre><h2>Unconditional inference<a name="3"></a></h2><pre class="codeinput">map =  mrf2Map(model)
+
+[nodeBel, edgeBel, logZ] =  mrf2InferNodesAndEdges(model);
+
+setSeed(0);
+samples = mrf2Sample(model, 100);
+figure; imagesc(samples); colorbar;
+</pre><pre class="codeoutput">map =
+  Columns 1 through 7
+     2     2     2     2     2     2     2
+  Columns 8 through 14
+     2     2     2     2     2     2     2
+  Columns 15 through 21
+     2     2     2     2     2     2     2
+  Columns 22 through 28
+     2     2     2     2     2     2     2
+  Columns 29 through 35
+     2     2     2     2     2     2     2
+  Columns 36 through 42
+     2     2     2     2     2     2     2
+  Columns 43 through 49
+     2     2     2     2     2     2     2
+  Columns 50 through 56
+     2     2     2     2     2     2     2
+  Columns 57 through 60
+     2     2     2     2
+</pre><img vspace="5" hspace="5" src="mrf2ChainInferDemo_01.png" alt=""> <h2>Conditional inference<a name="4"></a></h2><p>Based on <a href="http://www.cs.ubc.ca/~schmidtm/Software/UGM/condition.html">http://www.cs.ubc.ca/~schmidtm/Software/UGM/condition.html</a></p><pre class="codeinput">clamped = zeros(nNodes,1);
+clamped(10) = 6;
+
+map =  mrf2Map(model, clamped)
+
+[nodeBel, edgeBel, logZ] =  mrf2InferNodesAndEdges(model, clamped);
+
+setSeed(0);
+samples = mrf2Sample(model, 100, clamped);
+figure; imagesc(samples); colorbar;
+</pre><pre class="codeoutput">map =
+  Columns 1 through 7
+     3     6     6     6     6     6     6
+  Columns 8 through 14
+     6     6     6     6     6     6     6
+  Columns 15 through 21
+     6     6     6     6     6     6     6
+  Columns 22 through 28
+     6     6     6     6     6     6     6
+  Columns 29 through 35
+     6     6     6     6     6     6     6
+  Columns 36 through 42
+     6     6     6     6     6     6     6
+  Columns 43 through 49
+     6     6     6     6     6     6     6
+  Columns 50 through 56
+     6     6     6     6     6     6     6
+  Columns 57 through 60
+     6     6     6     6
+</pre><img vspace="5" hspace="5" src="mrf2ChainInferDemo_02.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Demonstrate inference in undirected markov chain
+% Based on http://www.cs.ubc.ca/~schmidtm/Software/UGM/chain.html
+
+% This file is from pmtk3.googlecode.com
+
+
+%% Setup model
+nNodes = 60;
+adj = chainAdjMatrix(nNodes);
+nStates = 7*ones(1,nNodes);
+
+initial = [.3 .6 .1 0 0 0 0];
+nodePot = zeros(nNodes,nStates);
+nodePot(1,:) = initial;
+nodePot(2:end,:) = 1;
+
+edgePot = [.08 .9 .01 0 0 0 .01
+  .03 .95 .01 0 0 0 .01
+  .06 .06 .75 .05 .05 .02 .01
+  0 0 0 .3 .6 .09 .01
+  0 0 0 .02 .95 .02 .01
+  0 0 0 .01 .01 .97 .01
+  0 0 0 0 0 0 1];
+
+% Conditional inferenec fails using Chain due to a bug
+%method = 'Chain';
+method = 'Tree';
+model = mrf2Create(adj, nStates, 'nodePot', nodePot, 'edgePot', edgePot, ...
+  'method', method);
+  
+%% Unconditional inference
+
+map =  mrf2Map(model)
+
+[nodeBel, edgeBel, logZ] =  mrf2InferNodesAndEdges(model);
+
+setSeed(0);
+samples = mrf2Sample(model, 100);
+figure; imagesc(samples); colorbar;
+
+%% Conditional inference
+% Based on http://www.cs.ubc.ca/~schmidtm/Software/UGM/condition.html
+
+clamped = zeros(nNodes,1);
+clamped(10) = 6;
+
+map =  mrf2Map(model, clamped)
+
+[nodeBel, edgeBel, logZ] =  mrf2InferNodesAndEdges(model, clamped);
+
+setSeed(0);
+samples = mrf2Sample(model, 100, clamped);
+figure; imagesc(samples); colorbar;
+
+
+##### SOURCE END #####
+--></body></html>

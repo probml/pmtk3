@@ -1,0 +1,221 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Bayes Factor Gene Demo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="bayesfactorGeneDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Bayes Factor Gene Demo</h1><!--introduction--><p>PMTKneedsStatsToolbox ttest2</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#3">BF = p(data|H0)/p(data|H1) where H0=no change</a></li><li><a href="#4">pval = prob(&gt;=data|H0), small pval means H0 unlikely</a></li></ul></div><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="keyword">function</span> bayesfactorGeneDemo()
+</pre><pre class="codeinput">requireStatsToolbox
+<span class="comment">%load('bayesFactorGeneData.mat');</span>
+<span class="comment">%ngenes = size(Xtreat,1);</span>
+
+<span class="comment">%setSeed(1);</span>
+ngenes = 100; nsamples = 2;
+mu1 = 0; s1 = 1; mu2 = 5; s2 = 1;
+ndx = find(rand(1,ngenes) &gt; 0.5);
+truth = zeros(1,ngenes);
+truth(ndx) = 1; <span class="comment">% these entries are  differentially expressed</span>
+Xcontrol = repmat(mu1, ngenes, nsamples) + s1*randn(ngenes, nsamples);
+Xtreat = repmat(mu1, ngenes, nsamples) + s1*randn(ngenes, nsamples);
+Xtreat(ndx, :) = repmat(mu2, length(ndx), nsamples) + s2*randn(length(ndx), nsamples);
+</pre><h2>BF = p(data|H0)/p(data|H1) where H0=no change<a name="3"></a></h2><pre class="codeinput"><span class="keyword">for</span> i=1:ngenes
+    <span class="comment">%BF(i) = bayesianTtest(Xtreat(i,:), Xcontrol(i,:), 0, 100);</span>
+    <span class="comment">%BF(i) = bayesTtestOneSample(Xtreat(i,:)-Xcontrol(i,:));</span>
+    BF(i) = bayesTtestTwoSample(Xtreat(i,:),Xcontrol(i,:));
+<span class="keyword">end</span>
+score = log(1./BF);
+</pre><h2>pval = prob(&gt;=data|H0), small pval means H0 unlikely<a name="4"></a></h2><pre class="codeinput"><span class="keyword">for</span> i=1:ngenes
+    [hyptest(i),pval(i)] = ttest2(Xtreat(i,:), Xcontrol(i,:));
+<span class="keyword">end</span>
+scoreFreq = 1./pval;
+[faRateBF, hitRateBF, AUCBF] = ROCcurve(log(1./BF), truth, 0);
+[faRatePval, hitRatePval, AUCPval] = ROCcurve(1./pval, truth, 0);
+
+<span class="comment">%setSeed(1);</span>
+R = rand(size(pval));
+<span class="comment">%R = 0.5*ones(size(pval));</span>
+[faRateRnd, hitRateRnd, AUCRnd] = ROCcurve(R, truth, 0);
+
+figure()
+h=plot(faRateBF, hitRateBF, <span class="string">'b-'</span>); set(h, <span class="string">'linewidth'</span>, 3)
+hold <span class="string">on</span>
+h=plot(faRatePval, hitRatePval, <span class="string">'r:'</span>); set(h, <span class="string">'linewidth'</span>, 3)
+h=plot(faRateRnd, hitRateRnd, <span class="string">'k-.'</span>);  set(h, <span class="string">'linewidth'</span>, 3);
+e = 0.05; axis([0-e 1+e 0-e 1+e])
+xlabel(<span class="string">'false alarm rate'</span>)
+ylabel(<span class="string">'hit rate'</span>)
+grid <span class="string">on</span>
+legendstr{1} = sprintf(<span class="string">'BF AUC=%5.3f'</span>, AUCBF);
+legendstr{2} = sprintf(<span class="string">'pval AUC=%5.3f'</span>, AUCPval);
+legendstr{3} = sprintf(<span class="string">'rnd AUC=%5.3f'</span>, AUCRnd);
+legend(legendstr, <span class="string">'location'</span>, <span class="string">'SouthEast'</span>)
+</pre><img vspace="5" hspace="5" src="bayesfactorGeneDemo_01.png" alt=""> <pre class="codeinput"><span class="keyword">if</span> 0
+</pre><pre class="codeinput">    figure();
+    perm = 1:ngenes;
+    <span class="comment">%[junk, perm] = sort(truth);</span>
+    doplot(Xcontrol, Xtreat, BF, pval, perm);
+</pre><pre class="codeinput">    figure();
+    perm = sortidx(truth);
+    doplot(Xcontrol, Xtreat, BF, pval, perm);
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">function</span> doplot(Xcontrol, Xtreat, BF, pval, perm)
+
+subplot(2,2,1)
+plot(Xcontrol(perm,:)); title(<span class="string">'control'</span>)
+subplot(2,2,2)
+plot(Xtreat(perm,:)); title(<span class="string">'treatment'</span>)
+subplot(2,2,3)
+scoreBF = log(1./BF);
+plot(scoreBF(perm), <span class="string">'-'</span>); title(<span class="string">'log(BF(1,0))'</span>)
+subplot(2,2,4)
+scorePval = log(1./pval);
+plot(scorePval(perm)); title(<span class="string">'log(1/pval)'</span>);
+<span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Bayes Factor Gene Demo
+% PMTKneedsStatsToolbox ttest2
+%%
+
+% This file is from pmtk3.googlecode.com
+
+function bayesfactorGeneDemo()
+
+requireStatsToolbox
+%load('bayesFactorGeneData.mat');
+%ngenes = size(Xtreat,1);
+
+%setSeed(1);
+ngenes = 100; nsamples = 2;
+mu1 = 0; s1 = 1; mu2 = 5; s2 = 1;
+ndx = find(rand(1,ngenes) > 0.5);
+truth = zeros(1,ngenes);
+truth(ndx) = 1; % these entries are  differentially expressed
+Xcontrol = repmat(mu1, ngenes, nsamples) + s1*randn(ngenes, nsamples);
+Xtreat = repmat(mu1, ngenes, nsamples) + s1*randn(ngenes, nsamples);
+Xtreat(ndx, :) = repmat(mu2, length(ndx), nsamples) + s2*randn(length(ndx), nsamples);
+%% BF = p(data|H0)/p(data|H1) where H0=no change
+for i=1:ngenes
+    %BF(i) = bayesianTtest(Xtreat(i,:), Xcontrol(i,:), 0, 100);
+    %BF(i) = bayesTtestOneSample(Xtreat(i,:)-Xcontrol(i,:));
+    BF(i) = bayesTtestTwoSample(Xtreat(i,:),Xcontrol(i,:));
+end
+score = log(1./BF);
+%% pval = prob(>=data|H0), small pval means H0 unlikely
+for i=1:ngenes
+    [hyptest(i),pval(i)] = ttest2(Xtreat(i,:), Xcontrol(i,:));
+end
+scoreFreq = 1./pval;
+[faRateBF, hitRateBF, AUCBF] = ROCcurve(log(1./BF), truth, 0);
+[faRatePval, hitRatePval, AUCPval] = ROCcurve(1./pval, truth, 0);
+
+%setSeed(1);
+R = rand(size(pval));
+%R = 0.5*ones(size(pval));
+[faRateRnd, hitRateRnd, AUCRnd] = ROCcurve(R, truth, 0);
+
+figure()
+h=plot(faRateBF, hitRateBF, 'b-'); set(h, 'linewidth', 3)
+hold on
+h=plot(faRatePval, hitRatePval, 'r:'); set(h, 'linewidth', 3)
+h=plot(faRateRnd, hitRateRnd, 'k-.');  set(h, 'linewidth', 3);
+e = 0.05; axis([0-e 1+e 0-e 1+e])
+xlabel('false alarm rate')
+ylabel('hit rate')
+grid on
+legendstr{1} = sprintf('BF AUC=%5.3f', AUCBF);
+legendstr{2} = sprintf('pval AUC=%5.3f', AUCPval);
+legendstr{3} = sprintf('rnd AUC=%5.3f', AUCRnd);
+legend(legendstr, 'location', 'SouthEast')
+%%
+if 0
+    figure();
+    perm = 1:ngenes;
+    %[junk, perm] = sort(truth);
+    doplot(Xcontrol, Xtreat, BF, pval, perm);
+    %%
+    figure();
+    perm = sortidx(truth);
+    doplot(Xcontrol, Xtreat, BF, pval, perm);
+end
+
+end
+%%
+function doplot(Xcontrol, Xtreat, BF, pval, perm)
+
+subplot(2,2,1)
+plot(Xcontrol(perm,:)); title('control')
+subplot(2,2,2)
+plot(Xtreat(perm,:)); title('treatment')
+subplot(2,2,3)
+scoreBF = log(1./BF);
+plot(scoreBF(perm), '-'); title('log(BF(1,0))')
+subplot(2,2,4)
+scorePval = log(1./pval);
+plot(scorePval(perm)); title('log(1/pval)');
+end
+
+##### SOURCE END #####
+--></body></html>

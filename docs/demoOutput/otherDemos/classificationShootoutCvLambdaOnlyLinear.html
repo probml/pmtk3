@@ -1,0 +1,777 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Compare different classification algorithms on a number of data sets</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="classificationShootoutCvLambdaOnlyLinear.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Compare different classification algorithms on a number of data sets</h1><!--introduction--><p>This is similar to classificationShootout, except we (1) pick a gamma for all methods to use, (2) also compare performance on larger data sets using linear kernels, (3) cross validate over a sparser range.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#6">Pick a value for gamma, which all of the methods will use, by cv on an svm</a></li><li><a href="#8">Evaluate the performance of a method on a given data set.</a></li><li><a href="#9">record sparsity level</a></li><li><a href="#11">Display the results in a table</a></li><li><a href="#13">Load various dataSets, and standardize the format</a></li><li><a href="#14">Crabs</a></li><li><a href="#15">fisherIris</a></li><li><a href="#16">Bankruptcy</a></li><li><a href="#17">Pimatr</a></li><li><a href="#19">Soy</a></li><li><a href="#20">Fglass</a></li><li><a href="#22">colon</a></li><li><a href="#24">amlAll</a></li><li><a href="#26">Display data set info in a latex table</a></li></ul></div><p>Based on table 2 of ""Learning sparse Bayesian classifiers: multi-class formulation, fast algorithms, and generalization bounds", Krishnapuram et al, PAMI 2005</p><pre class="codeinput"><span class="comment">%PMTKslow</span>
+</pre><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="keyword">function</span> results = classificationShootoutCvLambdaOnlyLinear()
+</pre><pre class="codeinput">setSeed(0);
+doLatex = true;
+doHtml  = true;
+split   = 0.7; <span class="comment">% 70% training data, 30% testing</span>
+</pre><pre class="codeinput">dataSets = setupData(split);
+nDataSets = numel(dataSets);
+
+methods = {<span class="string">'SVM'</span>, <span class="string">'RVM'</span>, <span class="string">'SMLR'</span>, <span class="string">'RMLR'</span>};
+nMethods = numel(methods);
+results = cell(nDataSets, nMethods);
+<span class="keyword">for</span> i=1:nDataSets
+    gamma = pickGamma(dataSets(i))
+    <span class="keyword">for</span> j=1:nMethods
+        fprintf(<span class="string">'%s:%s'</span>, dataSets(i).name, methods{j});
+        R = evaluateMethod(methods{j}, dataSets(i), gamma, split);
+        fprintf(<span class="string">':nerrs=%d/%d:(nsvecs=%d/%d)\n'</span>, R.nerrs, R.nTest, R.nsvecs, R.nTrain*R.nClasses);
+        results{i, j} = R;
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+displayResults(results, methods, {dataSets.name}, doLatex, doHtml);
+</pre><pre class="codeinput"><span class="keyword">end</span>
+
+<span class="keyword">function</span> gamma = pickGamma(data)
+</pre><h2>Pick a value for gamma, which all of the methods will use, by cv on an svm<a name="6"></a></h2><pre class="codeinput"><span class="keyword">if</span> strcmpi(data.kernel, <span class="string">'linear'</span>)
+    gamma = [];
+    <span class="keyword">return</span>;
+<span class="keyword">end</span>
+gammaRange = logspace(-4, 3, 100);
+X = rescaleData(data.X);
+fitFn = @(X, y, gamma)svmFit(X, y, <span class="string">'kernel'</span>, <span class="string">'rbf'</span>, <span class="string">'kernelParam'</span>, gamma);
+[model, gamma] = fitCv(gammaRange, fitFn, @svmPredict, @(a, b)mean(a~=b), X, data.y);
+</pre><pre class="codeoutput">gamma =
+     []
+Soy:SVM</pre><pre class="codeinput"><span class="keyword">end</span>
+
+<span class="keyword">function</span> results = evaluateMethod(method, dataSet, gamma, split)
+</pre><h2>Evaluate the performance of a method on a given data set.<a name="8"></a></h2><pre class="codeinput">tic;
+X      = rescaleData(standardizeCols(dataSet.X));
+y      = dataSet.y;
+N      = size(X, 1);
+nTrain = floor(split*N);
+nTest  = N - nTrain;
+Xtrain = X(1:nTrain, :);
+Xtest  = X(nTrain+1:end, :);
+yTrain = y(1:nTrain);
+yTest  = y(nTrain+1:end);
+
+lambdaRange = logspace(-6, 1, 5);
+<span class="comment">%lambdaRange = logspace(-6, 1, 20);</span>
+
+
+<span class="keyword">switch</span> method
+    <span class="keyword">case</span> <span class="string">'SVM'</span>
+
+        <span class="keyword">switch</span> dataSet.kernel
+            <span class="keyword">case</span> <span class="string">'rbf'</span>
+                fitFn = @(X, y, param)<span class="keyword">...</span>
+                    svmFit(X, y, <span class="string">'C'</span>, 1./param(1), <span class="string">'kernelParam'</span>, gamma, <span class="string">'kernel'</span>, <span class="string">'rbf'</span>);
+            <span class="keyword">case</span> <span class="string">'linear'</span>
+                fitFn = @(X, y, param)svmFit(X, y, <span class="string">'C'</span>, 1./param(1), <span class="string">'kernel'</span>, <span class="string">'linear'</span>);
+        <span class="keyword">end</span>
+         predictFn = @svmPredict;
+         doCv = true;
+
+    <span class="keyword">case</span> <span class="string">'RVM'</span>
+
+        <span class="keyword">switch</span> dataSet.kernel
+            <span class="keyword">case</span> <span class="string">'rbf'</span>
+                model = rvmFit(Xtrain, yTrain, gamma);
+                bestParams = gamma;
+            <span class="keyword">case</span> <span class="string">'linear'</span>
+                model = rvmFit(Xtrain, yTrain, [], <span class="string">'kernelFn'</span>, @kernelLinear);
+                bestParams = [];
+        <span class="keyword">end</span>
+        predictFn = @rvmPredict;
+        doCv = false;
+
+    <span class="keyword">case</span> <span class="string">'SMLR'</span>
+
+        <span class="keyword">switch</span> dataSet.kernel
+            <span class="keyword">case</span> <span class="string">'rbf'</span>
+                fitFn = @(X, y, param)logregFit(X, y, <span class="keyword">...</span>
+                    <span class="string">'lambda'</span> , param, <span class="keyword">...</span>
+                    <span class="string">'regType'</span>, <span class="string">'L1'</span>,<span class="keyword">...</span>
+                    <span class="string">'preproc'</span>, preprocessorCreate(<span class="string">'kernelFn'</span>,<span class="keyword">...</span>
+                    @(X1, X2)kernelRbfGamma(X1, X2, gamma)));
+            <span class="keyword">case</span> <span class="string">'linear'</span>
+                fitFn = @(X, y, param)logregFit(X, y, <span class="keyword">...</span>
+                    <span class="string">'lambda'</span> , param, <span class="keyword">...</span>
+                    <span class="string">'regType'</span>, <span class="string">'L1'</span>,<span class="keyword">...</span>
+                    <span class="string">'preproc'</span>, preprocessorCreate(<span class="string">'kernelFn'</span>, @kernelLinear));
+        <span class="keyword">end</span>
+        predictFn = @logregPredict;
+        doCv = true;
+
+    <span class="keyword">case</span> <span class="string">'RMLR'</span>
+
+         <span class="keyword">switch</span> dataSet.kernel
+            <span class="keyword">case</span> <span class="string">'rbf'</span>
+                fitFn = @(X, y, param)logregFit(X, y, <span class="keyword">...</span>
+                    <span class="string">'lambda'</span> , param, <span class="keyword">...</span>
+                    <span class="string">'regType'</span>, <span class="string">'L2'</span>,<span class="keyword">...</span>
+                    <span class="string">'preproc'</span>, preprocessorCreate(<span class="string">'kernelFn'</span>,<span class="keyword">...</span>
+                    @(X1, X2)kernelRbfGamma(X1, X2, gamma)));
+            <span class="keyword">case</span> <span class="string">'linear'</span>
+                fitFn = @(X, y, param)logregFit(X, y, <span class="keyword">...</span>
+                    <span class="string">'lambda'</span> , param, <span class="keyword">...</span>
+                    <span class="string">'regType'</span>, <span class="string">'L2'</span>,<span class="keyword">...</span>
+                    <span class="string">'preproc'</span>, preprocessorCreate(<span class="string">'kernelFn'</span>, @kernelLinear));
+        <span class="keyword">end</span>
+        predictFn = @logregPredict;
+        doCv = true;
+<span class="keyword">end</span>
+<span class="keyword">if</span> doCv
+    lossFn = @(yTest, yHat)mean(yHat ~= yTest);
+    nfolds = 5;
+    [model, bestParams]  = fitCv(lambdaRange, fitFn, predictFn, lossFn, Xtrain, yTrain, nfolds);
+<span class="keyword">end</span>
+results.trainingTime = toc;
+tic
+yHat   = predictFn(model, Xtest);
+results.testingTime = toc;
+nerrs  = sum(yHat ~= yTest);
+
+results.method      = method;
+results.dataSetName = dataSet.name;
+results.nClasses    = dataSet.nClasses;
+results.nFeatures   = dataSet.nFeatures;
+results.nTrain      = nTrain;
+results.nTest       = nTest;
+results.nerrs       = nerrs;
+results.bestParams  = bestParams;
+</pre><pre class="codeoutput">Undefined function or method 'libLinearTrain' for input arguments of type 'double'.
+
+Error in ==&gt; svmlibLinearFit at 20
+model = libLinearTrain(y, sparse(X), options); % requires sparse matrix
+
+Error in ==&gt; svmFit at 146
+    model = fitFn(X, y, C, kernelParam, kernel, fitOptions{:});
+
+Error in ==&gt; classificationShootoutCvLambdaOnlyLinear&gt;@(X,y,param)svmFit(X,y,'C',1./param(1),'kernel','linear') at 77
+                fitFn = @(X, y, param)svmFit(X, y, 'C', 1./param(1), 'kernel', 'linear');
+
+Error in ==&gt; fitCv&gt;@(X,y)fitFn(X,y,param) at 68
+    [mu(m), se(m)] =  cvEstimate(@(X, y) fitFn(X, y, param), predictFn, lossFn, X, y,  Nfolds, 'testFolds', testFolds);
+
+Error in ==&gt; cvEstimate at 34
+   model = fitFn(Xtrain, ytrain);
+
+Error in ==&gt; fitCv at 68
+    [mu(m), se(m)] =  cvEstimate(@(X, y) fitFn(X, y, param), predictFn, lossFn, X, y,  Nfolds, 'testFolds', testFolds);
+
+Error in ==&gt; classificationShootoutCvLambdaOnlyLinear&gt;evaluateMethod at 134
+    [model, bestParams]  = fitCv(lambdaRange, fitFn, predictFn, lossFn, Xtrain, yTrain, nfolds);
+
+Error in ==&gt; classificationShootoutCvLambdaOnlyLinear at 32
+        R = evaluateMethod(methods{j}, dataSets(i), gamma, split);
+</pre><h2>record sparsity level<a name="9"></a></h2><pre class="codeinput"><span class="keyword">switch</span> method
+    <span class="keyword">case</span> <span class="string">'SVM'</span>
+        results.nsvecs = model.nsvecs; <span class="comment">% total for all classes</span>
+    <span class="keyword">case</span> <span class="string">'RVM'</span>
+
+        <span class="keyword">if</span> results.nClasses &lt; 3
+            results.nsvecs = numel(model.Relevant);
+        <span class="keyword">else</span>
+            nsvecs = 0;
+            <span class="keyword">for</span> i=1:results.nClasses
+                nsvecs = nsvecs + numel(model.modelClass{i}.Relevant);
+            <span class="keyword">end</span>
+            results.nsvecs = nsvecs;
+        <span class="keyword">end</span>
+
+    <span class="keyword">case</span> <span class="string">'SMLR'</span>
+
+        w = model.w;
+        nsvecs = 0;
+        <span class="keyword">for</span> i=1:size(w, 2)
+           nsvecs = nsvecs +  sum(~arrayfun(@(x)approxeq(x, 0), w(:, i)));
+        <span class="keyword">end</span>
+       results.nsvecs = nsvecs;
+
+    <span class="keyword">case</span> <span class="string">'RMLR'</span>
+        results.nsvecs = nTrain*results.nClasses;
+<span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+
+<span class="keyword">function</span> displayResults(results, methods, dataSetNames, doLatex, doHtml)
+</pre><h2>Display the results in a table<a name="11"></a></h2><pre class="codeinput">[ndata, nmeth] = size(results);
+data = cell(nmeth, ndata);
+<span class="keyword">for</span> i=1:nmeth
+    <span class="keyword">for</span> j=1:ndata
+        R = results{j, i};
+        <span class="keyword">if</span> ~isempty(R)
+           data{i, j} =  sprintf(<span class="string">'%d (%d)'</span>, R.nerrs, R.nsvecs);
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+trainingTime = zeros(nmeth, 1);
+testingTime  = zeros(nmeth, 1);
+<span class="keyword">for</span> i=1:nmeth
+    <span class="keyword">for</span> j=1:ndata
+        trainingTime(i) = trainingTime(i) + results{j, i}.trainingTime;
+        testingTime(i) = testingTime(i) + results{j, i}.testingTime;
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+data = [data, mat2cellRows(num2str(trainingTime, <span class="string">'%.2g'</span>)), mat2cellRows(num2str(testingTime, <span class="string">'%.2g'</span>))];
+
+data = [data; cell(1, ndata + 2)];
+<span class="keyword">for</span> j=1:ndata
+    R = results{j, 1};
+    <span class="keyword">if</span> ~isempty(R)
+        data{nmeth+1, j} = sprintf(<span class="string">'%d (%d)'</span>, R.nTest, R.nTrain*R.nClasses);
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+rowNames = [methods(:); {<span class="string">'Out of'</span>}];
+colNames = [dataSetNames(:)', {<span class="string">'train(seconds)'</span>, <span class="string">'test(seconds)'</span>}];
+
+<span class="keyword">if</span> doHtml
+    htmlTable(<span class="string">'data'</span>, data, <span class="string">'colNames'</span>, colNames, <span class="string">'rowNames'</span>, rowNames);
+<span class="keyword">end</span>
+<span class="keyword">if</span> doLatex
+    latextable(data, <span class="string">'Vert'</span>, rowNames, <span class="string">'Horiz'</span>, colNames);
+<span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+
+
+
+
+<span class="keyword">function</span> dataSets = setupData(split)
+</pre><h2>Load various dataSets, and standardize the format<a name="13"></a></h2><pre class="codeinput">d = 1;
+<span class="keyword">if</span> 0
+</pre><h2>Crabs<a name="14"></a></h2><pre class="codeinput">loadData(<span class="string">'crabs'</span>);
+X = [Xtrain; Xtest];
+y = [ytrain; ytest];
+[X, y] = shuffleRows(X, y);
+dataSets(1).X = X;
+dataSets(1).y = y;
+dataSets(1).name = <span class="string">'Crabs'</span>;
+dataSets(1).nClasses  = 2;
+dataSets(1).nFeatures = 5;
+dataSets(1).kernel = <span class="string">'rbf'</span>;
+</pre><h2>fisherIris<a name="15"></a></h2><pre class="codeinput">loadData(<span class="string">'fisherIrisData'</span>);
+X = meas;
+y = canonizeLabels(species);
+[X, y] = shuffleRows(X, y);
+dataSets(2).X = X;
+dataSets(2).y = y;
+dataSets(2).name = <span class="string">'Iris'</span>;
+dataSets(2).nClasses  = 3;
+dataSets(2).nFeatures = 4;
+dataSets(2).kernel = <span class="string">'rbf'</span>;
+</pre><h2>Bankruptcy<a name="16"></a></h2><pre class="codeinput">loadData(<span class="string">'bankruptcy'</span>);
+X = data(:, 2:end);
+y = data(:, 1);
+[X, y] = shuffleRows(X, y);
+dataSets(3).X = X;
+dataSets(3).y = y;
+dataSets(3).name = <span class="string">'Bankruptcy'</span>;
+dataSets(3).nClasses  = 2;
+dataSets(3).nFeatures = 2;
+dataSets(3).kernel = <span class="string">'rbf'</span>;
+</pre><h2>Pimatr<a name="17"></a></h2><pre class="codeinput">loadData(<span class="string">'pimatr'</span>)
+X = data(:, 2:end-1);
+y = data(:, end);
+[X, y] = shuffleRows(X, y);
+dataSets(4).X = X;
+dataSets(4).y = y;
+dataSets(4).name = <span class="string">'Pima'</span>;
+dataSets(4).nClasses  = 2;
+dataSets(4).nFeatures = 7;
+dataSets(4).kernel = <span class="string">'rbf'</span>;
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><h2>Soy<a name="19"></a></h2><pre class="codeinput">loadData(<span class="string">'soy'</span>)
+[X, y] = shuffleRows(X, Y);
+dataSets(d).X = X;
+dataSets(d).y = y;
+dataSets(d).name = <span class="string">'Soy'</span>;
+dataSets(d).nClasses = 3;
+dataSets(d).nFeatures = 35;
+<span class="comment">%dataSets(d).kernel = 'rbf';</span>
+dataSets(d).kernel = <span class="string">'linear'</span>;
+d=d+1;
+
+<span class="keyword">if</span> 0
+</pre><h2>Fglass<a name="20"></a></h2><pre class="codeinput">loadData(<span class="string">'fglass'</span>);
+X = [Xtrain; Xtest];
+y = [ytrain; ytest];
+[X, y] = shuffleRows(X, y);
+dataSets(6).X = X;
+dataSets(6).y = y;
+dataSets(6).name = <span class="string">'Fglass'</span>;
+dataSets(6).nClasses  = 6;
+dataSets(6).nFeatures = 9;
+dataSets(6).kernel = <span class="string">'rbf'</span>;
+</pre><pre class="codeinput"><span class="keyword">end</span>
+
+<span class="keyword">if</span> 0
+</pre><h2>colon<a name="22"></a></h2><pre class="codeinput">loadData(<span class="string">'colon'</span>)
+[X, y] = shuffleRows(X, y);
+dataSets(d).X = X;
+dataSets(d).y = y;
+dataSets(d).name = <span class="string">'colon (linear)'</span>;
+dataSets(d).nClasses = 2;
+dataSets(d).nFeatures = 2000;
+dataSets(d).kernel = <span class="string">'linear'</span>;
+d=d+1;
+</pre><pre class="codeinput"><span class="keyword">end</span>
+
+<span class="keyword">if</span> 0
+</pre><h2>amlAll<a name="24"></a></h2><pre class="codeinput">loadData(<span class="string">'amlAll'</span>);
+X = [Xtrain; Xtest];
+y = [ytrain; ytest];
+[X, y] = shuffleRows(X, y);
+dataSets(8).X = X;
+dataSets(8).y = y;
+dataSets(8).name = <span class="string">'amlAll (linear)'</span>;
+dataSets(8).nClasses = 2;
+dataSets(8).nFeatures = 7129;
+dataSets(8).kernel = <span class="string">'linear'</span>;
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><h2>Display data set info in a latex table<a name="26"></a></h2><pre class="codeinput">fprintf(<span class="string">'Data Sets\n\n'</span>);
+nDataSets = numel(dataSets);
+table = zeros(4, nDataSets);
+dnames = cell(1, nDataSets);
+<span class="keyword">for</span> i=1:nDataSets
+    table(1, i) = dataSets(i).nClasses;
+    table(2, i) = dataSets(i).nFeatures;
+    N = size(dataSets(i).X, 1);
+    table(3, i) = floor(split*N);
+    table(4, i) =  N - table(3, i);
+    dnames{i} = dataSets(i).name;
+<span class="keyword">end</span>
+Vert = {<span class="string">'Num. Classes'</span>, <span class="string">'Num. Features'</span>, <span class="string">'Num. train'</span>, <span class="string">'Num. test'</span>};
+latextable(table, <span class="string">'Horiz'</span>, dnames, <span class="string">'Vert'</span>, Vert, <span class="string">'format'</span>, <span class="string">'%d'</span>);
+fprintf(<span class="string">'\n\n'</span>);
+</pre><pre class="codeoutput">Data Sets
+
+\begin{tabular}{cc}
+\hline
+&amp; Soy \\
+Num. Classes &amp; 3 \\
+Num. Features &amp; 35 \\
+Num. train &amp; 214 \\
+Num. test &amp; 93 \\
+\hline
+\end{tabular}
+
+
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Compare different classification algorithms on a number of data sets
+% This is similar to classificationShootout, except we (1) pick a gamma for
+% all methods to use, (2) also compare performance on larger data sets
+% using linear kernels, (3) cross validate over a sparser range. 
+%%
+% Based on table 2 of 
+% ""Learning sparse Bayesian classifiers: multi-class formulation, fast
+% algorithms, and generalization bounds", Krishnapuram et al, PAMI 2005
+%
+%PMTKslow
+%%
+
+% This file is from pmtk3.googlecode.com
+
+function results = classificationShootoutCvLambdaOnlyLinear()
+setSeed(0);
+doLatex = true; 
+doHtml  = true;
+split   = 0.7; % 70% training data, 30% testing
+
+%%
+dataSets = setupData(split);
+nDataSets = numel(dataSets);
+
+methods = {'SVM', 'RVM', 'SMLR', 'RMLR'};
+nMethods = numel(methods);
+results = cell(nDataSets, nMethods);
+for i=1:nDataSets
+    gamma = pickGamma(dataSets(i))
+    for j=1:nMethods
+        fprintf('%s:%s', dataSets(i).name, methods{j}); 
+        R = evaluateMethod(methods{j}, dataSets(i), gamma, split);
+        fprintf(':nerrs=%d/%d:(nsvecs=%d/%d)\n', R.nerrs, R.nTest, R.nsvecs, R.nTrain*R.nClasses);
+        results{i, j} = R; 
+    end
+end
+displayResults(results, methods, {dataSets.name}, doLatex, doHtml);
+end
+
+function gamma = pickGamma(data)
+%% Pick a value for gamma, which all of the methods will use, by cv on an svm
+if strcmpi(data.kernel, 'linear')
+    gamma = [];
+    return;
+end
+gammaRange = logspace(-4, 3, 100);
+X = rescaleData(data.X); 
+fitFn = @(X, y, gamma)svmFit(X, y, 'kernel', 'rbf', 'kernelParam', gamma);
+[model, gamma] = fitCv(gammaRange, fitFn, @svmPredict, @(a, b)mean(a~=b), X, data.y);
+end
+
+function results = evaluateMethod(method, dataSet, gamma, split)
+%% Evaluate the performance of a method on a given data set.
+tic;
+X      = rescaleData(standardizeCols(dataSet.X)); 
+y      = dataSet.y;
+N      = size(X, 1);
+nTrain = floor(split*N);
+nTest  = N - nTrain;
+Xtrain = X(1:nTrain, :);
+Xtest  = X(nTrain+1:end, :);
+yTrain = y(1:nTrain);
+yTest  = y(nTrain+1:end);
+
+lambdaRange = logspace(-6, 1, 5);
+%lambdaRange = logspace(-6, 1, 20);
+
+
+switch method
+    case 'SVM'
+
+        switch dataSet.kernel
+            case 'rbf'
+                fitFn = @(X, y, param)...
+                    svmFit(X, y, 'C', 1./param(1), 'kernelParam', gamma, 'kernel', 'rbf');
+            case 'linear'
+                fitFn = @(X, y, param)svmFit(X, y, 'C', 1./param(1), 'kernel', 'linear');
+        end
+         predictFn = @svmPredict;
+         doCv = true;
+                
+    case 'RVM'
+        
+        switch dataSet.kernel
+            case 'rbf'
+                model = rvmFit(Xtrain, yTrain, gamma);
+                bestParams = gamma;
+            case 'linear'
+                model = rvmFit(Xtrain, yTrain, [], 'kernelFn', @kernelLinear); 
+                bestParams = [];
+        end
+        predictFn = @rvmPredict;
+        doCv = false;
+        
+    case 'SMLR'
+        
+        switch dataSet.kernel
+            case 'rbf'
+                fitFn = @(X, y, param)logregFit(X, y, ...
+                    'lambda' , param, ...
+                    'regType', 'L1',...
+                    'preproc', preprocessorCreate('kernelFn',...
+                    @(X1, X2)kernelRbfGamma(X1, X2, gamma)));
+            case 'linear'
+                fitFn = @(X, y, param)logregFit(X, y, ...
+                    'lambda' , param, ...
+                    'regType', 'L1',...
+                    'preproc', preprocessorCreate('kernelFn', @kernelLinear));
+        end
+        predictFn = @logregPredict;
+        doCv = true;
+        
+    case 'RMLR'
+        
+         switch dataSet.kernel
+            case 'rbf'
+                fitFn = @(X, y, param)logregFit(X, y, ...
+                    'lambda' , param, ...
+                    'regType', 'L2',...
+                    'preproc', preprocessorCreate('kernelFn',...
+                    @(X1, X2)kernelRbfGamma(X1, X2, gamma)));
+            case 'linear'
+                fitFn = @(X, y, param)logregFit(X, y, ...
+                    'lambda' , param, ...
+                    'regType', 'L2',...
+                    'preproc', preprocessorCreate('kernelFn', @kernelLinear));
+        end
+        predictFn = @logregPredict;
+        doCv = true;
+end
+if doCv
+    lossFn = @(yTest, yHat)mean(yHat ~= yTest);
+    nfolds = 5;
+    [model, bestParams]  = fitCv(lambdaRange, fitFn, predictFn, lossFn, Xtrain, yTrain, nfolds);
+end
+results.trainingTime = toc;
+tic
+yHat   = predictFn(model, Xtest);
+results.testingTime = toc; 
+nerrs  = sum(yHat ~= yTest);
+
+results.method      = method;
+results.dataSetName = dataSet.name;
+results.nClasses    = dataSet.nClasses;
+results.nFeatures   = dataSet.nFeatures;
+results.nTrain      = nTrain;
+results.nTest       = nTest;
+results.nerrs       = nerrs;
+results.bestParams  = bestParams; 
+%% record sparsity level
+switch method
+    case 'SVM'
+        results.nsvecs = model.nsvecs; % total for all classes
+    case 'RVM'
+        
+        if results.nClasses < 3
+            results.nsvecs = numel(model.Relevant); 
+        else
+            nsvecs = 0;
+            for i=1:results.nClasses
+                nsvecs = nsvecs + numel(model.modelClass{i}.Relevant);
+            end
+            results.nsvecs = nsvecs; 
+        end
+        
+    case 'SMLR'
+        
+        w = model.w;
+        nsvecs = 0;
+        for i=1:size(w, 2)
+           nsvecs = nsvecs +  sum(~arrayfun(@(x)approxeq(x, 0), w(:, i)));
+        end
+       results.nsvecs = nsvecs; 
+        
+    case 'RMLR'
+        results.nsvecs = nTrain*results.nClasses; 
+end
+end
+
+function displayResults(results, methods, dataSetNames, doLatex, doHtml)
+%% Display the results in a table
+
+[ndata, nmeth] = size(results); 
+data = cell(nmeth, ndata); 
+for i=1:nmeth
+    for j=1:ndata
+        R = results{j, i}; 
+        if ~isempty(R)
+           data{i, j} =  sprintf('%d (%d)', R.nerrs, R.nsvecs); 
+        end
+    end
+end
+
+trainingTime = zeros(nmeth, 1); 
+testingTime  = zeros(nmeth, 1); 
+for i=1:nmeth
+    for j=1:ndata
+        trainingTime(i) = trainingTime(i) + results{j, i}.trainingTime; 
+        testingTime(i) = testingTime(i) + results{j, i}.testingTime; 
+    end
+end
+data = [data, mat2cellRows(num2str(trainingTime, '%.2g')), mat2cellRows(num2str(testingTime, '%.2g'))];
+
+data = [data; cell(1, ndata + 2)];
+for j=1:ndata
+    R = results{j, 1};
+    if ~isempty(R)
+        data{nmeth+1, j} = sprintf('%d (%d)', R.nTest, R.nTrain*R.nClasses); 
+    end
+end
+
+rowNames = [methods(:); {'Out of'}]; 
+colNames = [dataSetNames(:)', {'train(seconds)', 'test(seconds)'}];
+
+if doHtml
+    htmlTable('data', data, 'colNames', colNames, 'rowNames', rowNames); 
+end
+if doLatex
+    latextable(data, 'Vert', rowNames, 'Horiz', colNames); 
+end
+
+end
+
+
+
+
+function dataSets = setupData(split)
+%% Load various dataSets, and standardize the format
+
+d = 1;
+if 0
+%% Crabs
+loadData('crabs');
+X = [Xtrain; Xtest];
+y = [ytrain; ytest];
+[X, y] = shuffleRows(X, y);
+dataSets(1).X = X;
+dataSets(1).y = y;
+dataSets(1).name = 'Crabs';
+dataSets(1).nClasses  = 2;
+dataSets(1).nFeatures = 5;
+dataSets(1).kernel = 'rbf';
+
+%% fisherIris
+loadData('fisherIrisData');
+X = meas;
+y = canonizeLabels(species);
+[X, y] = shuffleRows(X, y);
+dataSets(2).X = X;
+dataSets(2).y = y;
+dataSets(2).name = 'Iris';
+dataSets(2).nClasses  = 3;
+dataSets(2).nFeatures = 4;
+dataSets(2).kernel = 'rbf';
+%% Bankruptcy
+loadData('bankruptcy'); 
+X = data(:, 2:end); 
+y = data(:, 1); 
+[X, y] = shuffleRows(X, y); 
+dataSets(3).X = X;
+dataSets(3).y = y;
+dataSets(3).name = 'Bankruptcy';
+dataSets(3).nClasses  = 2;
+dataSets(3).nFeatures = 2;
+dataSets(3).kernel = 'rbf';
+%% Pimatr
+loadData('pimatr')
+X = data(:, 2:end-1); 
+y = data(:, end); 
+[X, y] = shuffleRows(X, y); 
+dataSets(4).X = X;
+dataSets(4).y = y;
+dataSets(4).name = 'Pima';
+dataSets(4).nClasses  = 2;
+dataSets(4).nFeatures = 7;
+dataSets(4).kernel = 'rbf';
+end
+
+%% Soy
+loadData('soy')
+[X, y] = shuffleRows(X, Y); 
+dataSets(d).X = X;
+dataSets(d).y = y;
+dataSets(d).name = 'Soy';
+dataSets(d).nClasses = 3;
+dataSets(d).nFeatures = 35; 
+%dataSets(d).kernel = 'rbf';
+dataSets(d).kernel = 'linear';
+d=d+1;
+
+if 0
+%% Fglass
+loadData('fglass');
+X = [Xtrain; Xtest];
+y = [ytrain; ytest];
+[X, y] = shuffleRows(X, y);
+dataSets(6).X = X;
+dataSets(6).y = y;
+dataSets(6).name = 'Fglass';
+dataSets(6).nClasses  = 6;
+dataSets(6).nFeatures = 9;
+dataSets(6).kernel = 'rbf';
+end
+
+if 0
+%% colon
+loadData('colon')
+[X, y] = shuffleRows(X, y); 
+dataSets(d).X = X;
+dataSets(d).y = y;
+dataSets(d).name = 'colon (linear)';
+dataSets(d).nClasses = 2;
+dataSets(d).nFeatures = 2000;
+dataSets(d).kernel = 'linear';
+d=d+1;
+end
+
+if 0
+%% amlAll
+loadData('amlAll');
+X = [Xtrain; Xtest];
+y = [ytrain; ytest];
+[X, y] = shuffleRows(X, y); 
+dataSets(8).X = X;
+dataSets(8).y = y;
+dataSets(8).name = 'amlAll (linear)';
+dataSets(8).nClasses = 2;
+dataSets(8).nFeatures = 7129;
+dataSets(8).kernel = 'linear';
+end
+
+
+%% Display data set info in a latex table
+
+fprintf('Data Sets\n\n'); 
+nDataSets = numel(dataSets);
+table = zeros(4, nDataSets); 
+dnames = cell(1, nDataSets); 
+for i=1:nDataSets
+    table(1, i) = dataSets(i).nClasses;
+    table(2, i) = dataSets(i).nFeatures;
+    N = size(dataSets(i).X, 1);  
+    table(3, i) = floor(split*N);
+    table(4, i) =  N - table(3, i);
+    dnames{i} = dataSets(i).name; 
+end
+Vert = {'Num. Classes', 'Num. Features', 'Num. train', 'Num. test'};
+latextable(table, 'Horiz', dnames, 'Vert', Vert, 'format', '%d');
+fprintf('\n\n'); 
+
+
+end
+
+##### SOURCE END #####
+--></body></html>

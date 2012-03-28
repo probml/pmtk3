@@ -1,0 +1,147 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Plot a Dirichlet distribution in 3d</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="dirichlet3dPlotWedge.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Plot a Dirichlet distribution in 3d</h1><pre class="codeinput"><span class="comment">%PMTKauthor Peter Perkins</span>
+<span class="comment">%PMTKurl http://www.mofeel.net/582-comp-soft-sys-matlab/86896.aspx</span>
+
+<span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+
+alphaVals = [10];
+<span class="keyword">for</span> alpha=alphaVals(:)'
+
+alphas = alpha*ones(1,3);
+x1 = linspace(0,1,101);
+x2 = linspace(0,1,101);
+[X1,X2] = ndgrid(x1,x2);
+X3 = 1 - X1 - X2;
+ <span class="comment">% NaN's don't get printed</span>
+bad = (X1+X2 &gt; 1); X1(bad) = NaN; X2(bad) = NaN; X3(bad) = NaN;
+bad = (X1+X2 &lt; 0); X1(bad) = NaN; X2(bad) = NaN; X3(bad) = NaN;
+
+betaConst = exp(sum(gammaln(alphas))-gammaln(sum(alphas)));
+F = (X1.^(alphas(1)-1) .* X2.^(alphas(2)-1) .* X3.^(alphas(3)-1)) / betaConst;
+
+Freal = real(F);
+bad = (F ~= Freal);
+F(bad) =NaN;
+
+
+figure, surf(X1,X2,F,<span class="string">'EdgeColor'</span>,<span class="string">'none'</span>);
+xlabel(<span class="string">'x1'</span>); ylabel(<span class="string">'x2'</span>); zlabel(<span class="string">'f(x1,x2,1-x1-x2)'</span>);
+view(-160,40);
+title(sprintf(<span class="string">'alpha=%5.3f'</span>, alpha))
+
+figure, surf(X1,X2,X3,F,<span class="string">'EdgeColor'</span>,<span class="string">'none'</span>);
+xlabel(<span class="string">'x1'</span>); ylabel(<span class="string">'x2'</span>); zlabel(<span class="string">'x3'</span>);
+view(-160,40);
+title(sprintf(<span class="string">'alpha=%5.3f'</span>, alpha))
+
+
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="dirichlet3dPlotWedge_01.png" alt=""> <img vspace="5" hspace="5" src="dirichlet3dPlotWedge_02.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Plot a Dirichlet distribution in 3d
+%PMTKauthor Peter Perkins
+%PMTKurl http://www.mofeel.net/582-comp-soft-sys-matlab/86896.aspx
+
+% This file is from pmtk3.googlecode.com
+
+
+alphaVals = [10];
+for alpha=alphaVals(:)'
+
+alphas = alpha*ones(1,3);
+x1 = linspace(0,1,101);
+x2 = linspace(0,1,101);
+[X1,X2] = ndgrid(x1,x2);
+X3 = 1 - X1 - X2;
+ % NaN's don't get printed
+bad = (X1+X2 > 1); X1(bad) = NaN; X2(bad) = NaN; X3(bad) = NaN;
+bad = (X1+X2 < 0); X1(bad) = NaN; X2(bad) = NaN; X3(bad) = NaN;
+
+betaConst = exp(sum(gammaln(alphas))-gammaln(sum(alphas)));
+F = (X1.^(alphas(1)-1) .* X2.^(alphas(2)-1) .* X3.^(alphas(3)-1)) / betaConst;
+
+Freal = real(F);
+bad = (F ~= Freal);
+F(bad) =NaN;
+
+
+figure, surf(X1,X2,F,'EdgeColor','none');
+xlabel('x1'); ylabel('x2'); zlabel('f(x1,x2,1-x1-x2)');
+view(-160,40);
+title(sprintf('alpha=%5.3f', alpha))
+
+figure, surf(X1,X2,X3,F,'EdgeColor','none');
+xlabel('x1'); ylabel('x2'); zlabel('x3');
+view(-160,40);
+title(sprintf('alpha=%5.3f', alpha))
+
+
+end
+
+##### SOURCE END #####
+--></body></html>

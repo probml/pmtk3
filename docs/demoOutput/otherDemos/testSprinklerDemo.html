@@ -1,0 +1,171 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>Low level test of the TabularFactor code using the water sprinkeler BN</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="testSprinklerDemo"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Low level test of the TabularFactor code using the water sprinkeler BN</h1><!--introduction--><pre> C
+/ \
+v  v
+S  R
+\/
+v
+W</pre><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">naive method</a></li><li><a href="#3">vectorized method</a></li><li><a href="#4">using factors</a></li><li><a href="#6">check against dgm code</a></li></ul></div><pre class="codeinput"><span class="comment">%testSprinklerDemo()</span>
+<span class="comment">% Specify the conditional probability tables as cell arrays</span>
+<span class="comment">% The left-most index toggles fastest, so entries are stored in this order:</span>
+<span class="comment">% (1,1,1), (2,1,1), (1,2,1), (2,2,1), etc.</span>
+C = 1; S = 2; R = 3; W = 4;
+CPD{C} = reshape([0.5 0.5], 2, 1);
+CPD{R} = reshape([0.8 0.2 0.2 0.8], 2, 2);
+CPD{S} = reshape([0.5 0.9 0.5 0.1], 2, 2);
+CPD{W} = reshape([1 0.1 0.1 0.01 0 0.9 0.9 0.99], 2, 2, 2);
+</pre><h2>naive method<a name="2"></a></h2><pre class="codeinput">joint = zeros(2,2,2,2);
+<span class="keyword">for</span> c=1:2
+    <span class="keyword">for</span> r=1:2
+        <span class="keyword">for</span> s=1:2
+            <span class="keyword">for</span> w=1:2
+                joint(c,s,r,w) = CPD{C}(c) * CPD{S}(c,s) * CPD{R}(c,r) * CPD{W}(s,r,w);
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><h2>vectorized method<a name="3"></a></h2><pre class="codeinput">joint2 = repmat(reshape(CPD{C}, [2 1 1 1]), [1 2 2 2]) .* <span class="keyword">...</span>
+    repmat(reshape(CPD{S}, [2 2 1 1]), [1 1 2 2]) .* <span class="keyword">...</span>
+    repmat(reshape(CPD{R}, [2 1 2 1]), [1 2 1 2]) .* <span class="keyword">...</span>
+    repmat(reshape(CPD{W}, [1 2 2 2]), [2 1 1 1]);
+assert(approxeq(joint, joint2));
+</pre><h2>using factors<a name="4"></a></h2><pre class="codeinput">fac{C} = tabularFactorCreate(CPD{C}, [C]);
+fac{R} = tabularFactorCreate(CPD{R}, [C R]);
+fac{S} = tabularFactorCreate(CPD{S}, [C S]);
+fac{W} = tabularFactorCreate(CPD{W}, [S R W]);
+J = tabularFactorMultiply(fac);
+joint3 = J.T;
+assert(approxeq(joint, joint3));
+</pre><h2>check against dgm code<a name="6"></a></h2><pre class="codeinput">dgm = mkSprinklerDgm();
+marginals = dgmInferNodes(dgm);
+
+tfMarginals = cell(4, 1);
+<span class="keyword">for</span> i=1:4
+    tfMarginals{i} = tabularFactorMarginalize(J, i);
+<span class="keyword">end</span>
+assert(tfequal(marginals, tfMarginals));
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Low level test of the TabularFactor code using the water sprinkeler BN
+%   C
+%  / \
+% v  v
+% S  R
+%  \/
+%  v
+%  W
+%%
+%testSprinklerDemo()
+% Specify the conditional probability tables as cell arrays
+% The left-most index toggles fastest, so entries are stored in this order:
+% (1,1,1), (2,1,1), (1,2,1), (2,2,1), etc.
+C = 1; S = 2; R = 3; W = 4;
+CPD{C} = reshape([0.5 0.5], 2, 1);
+CPD{R} = reshape([0.8 0.2 0.2 0.8], 2, 2);
+CPD{S} = reshape([0.5 0.9 0.5 0.1], 2, 2);
+CPD{W} = reshape([1 0.1 0.1 0.01 0 0.9 0.9 0.99], 2, 2, 2);
+%% naive method
+joint = zeros(2,2,2,2);
+for c=1:2
+    for r=1:2
+        for s=1:2
+            for w=1:2
+                joint(c,s,r,w) = CPD{C}(c) * CPD{S}(c,s) * CPD{R}(c,r) * CPD{W}(s,r,w);
+            end
+        end
+    end
+end
+%% vectorized method
+joint2 = repmat(reshape(CPD{C}, [2 1 1 1]), [1 2 2 2]) .* ...
+    repmat(reshape(CPD{S}, [2 2 1 1]), [1 1 2 2]) .* ...
+    repmat(reshape(CPD{R}, [2 1 2 1]), [1 2 1 2]) .* ...
+    repmat(reshape(CPD{W}, [1 2 2 2]), [2 1 1 1]);
+assert(approxeq(joint, joint2));
+%% using factors
+fac{C} = tabularFactorCreate(CPD{C}, [C]);
+fac{R} = tabularFactorCreate(CPD{R}, [C R]);
+fac{S} = tabularFactorCreate(CPD{S}, [C S]);
+fac{W} = tabularFactorCreate(CPD{W}, [S R W]);
+J = tabularFactorMultiply(fac);
+joint3 = J.T;
+assert(approxeq(joint, joint3));
+%%
+
+
+%% check against dgm code
+dgm = mkSprinklerDgm(); 
+marginals = dgmInferNodes(dgm);
+
+tfMarginals = cell(4, 1);
+for i=1:4
+    tfMarginals{i} = tabularFactorMarginalize(J, i);
+end
+assert(tfequal(marginals, tfMarginals)); 
+
+
+##### SOURCE END #####
+--></body></html>

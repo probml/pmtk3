@@ -1,0 +1,138 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>Make the lung cancer dgm</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="mkLungCancerDgm"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Make the lung cancer dgm</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#4">Make CPDs</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> dgm = mkLungCancerDgm(varargin)
+</pre><pre class="codeinput"><span class="comment">%     S</span>
+<span class="comment">%    / \</span>
+<span class="comment">%   v  v</span>
+<span class="comment">%  CB  LC</span>
+<span class="comment">%    \/   \</span>
+<span class="comment">%    v     v</span>
+<span class="comment">%   SOB    X</span>
+</pre><pre class="codeinput">S = 1; CB = 2; LC = 3; SOB = 4; X = 5;
+G = zeros(5, 5);
+G(S,[CB LC]) = 1;
+G([CB LC], SOB) = 1;
+G(LC, X) = 1;
+</pre><h2>Make CPDs<a name="4"></a></h2><p>Specify the conditional probability tables as cell arrays The left-most index toggles fastest, so entries are stored in this order: (1,1,1), (2,1,1), (1,2,1), (2,2,1), etc.</p><pre class="codeinput">CPDs{S}   = tabularCpdCreate(reshape([0.8 0.2], 2, 1));
+CPDs{CB}  = tabularCpdCreate(reshape([0.95 0.75  0.05 0.25], 2, 2));
+CPDs{LC}  = tabularCpdCreate(reshape([0.99995 0.997 0.00005 0.003], 2, 2));
+CPDs{SOB} = tabularCpdCreate(reshape([0.95 0.5 0.5 0.25  0.05 0.5 0.5 0.75], 2, 2, 2));
+CPDs{X}   = tabularCpdCreate(reshape([0.98 0.4 0.02 0.6], 2, 2));
+
+dgm = dgmCreate(G, CPDs, varargin{:});
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><pre class="codeoutput">ans = 
+                   G: [5x5 double]
+                CPDs: {1x5 cell}
+           localCPDs: {}
+         CPDpointers: [1 2 3 4 5]
+    localCPDpointers: []
+              nnodes: 5
+          infEngArgs: {}
+           infEngine: 'jtree'
+             nstates: [5x1 double]
+          isdirected: 1
+           modelType: 'dgm'
+               jtree: [1x1 struct]
+             factors: {5x1 cell}
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Make the lung cancer dgm
+%
+%%
+function dgm = mkLungCancerDgm(varargin)
+%     S
+%    / \
+%   v  v
+%  CB  LC
+%    \/   \
+%    v     v
+%   SOB    X
+%%
+S = 1; CB = 2; LC = 3; SOB = 4; X = 5;
+G = zeros(5, 5);
+G(S,[CB LC]) = 1;
+G([CB LC], SOB) = 1;
+G(LC, X) = 1;
+
+
+%% Make CPDs
+% Specify the conditional probability tables as cell arrays
+% The left-most index toggles fastest, so entries are stored in this order:
+% (1,1,1), (2,1,1), (1,2,1), (2,2,1), etc.
+
+CPDs{S}   = tabularCpdCreate(reshape([0.8 0.2], 2, 1));
+CPDs{CB}  = tabularCpdCreate(reshape([0.95 0.75  0.05 0.25], 2, 2));
+CPDs{LC}  = tabularCpdCreate(reshape([0.99995 0.997 0.00005 0.003], 2, 2));
+CPDs{SOB} = tabularCpdCreate(reshape([0.95 0.5 0.5 0.25  0.05 0.5 0.5 0.75], 2, 2, 2));
+CPDs{X}   = tabularCpdCreate(reshape([0.98 0.4 0.02 0.6], 2, 2)); 
+
+dgm = dgmCreate(G, CPDs, varargin{:}); 
+
+
+end
+##### SOURCE END #####
+--></body></html>

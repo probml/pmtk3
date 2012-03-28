@@ -1,0 +1,253 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>gaussEvec</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="gaussEvec.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> gaussEvec
+
+    lambda1 = 9;
+    lambda2 = 1;
+    tx1 = 5;
+    tx2 = 4;
+    theta = 30 * pi / 180;
+    rot = [cos(theta), -sin(theta);
+           sin(theta), cos(theta)];
+
+    [x1, x2] = generate_ellipse(lambda1, lambda2);
+    v = rot * [x1; x2] + repmat([tx1;tx2], 1, size(x1,2));
+
+    <span class="comment">% compute y1 &amp; y2</span>
+    y1 = [min(x1)-0.5, max(x1)+0.5;
+                    0,           0];
+    y1 = rot * y1 + repmat([tx1; tx2], 1, 2);
+    y2 = [          0,           0;
+          min(x2)-0.5, max(x2)+0.5];
+    y2 = rot * y2 + repmat([tx1; tx2], 1, 2);
+
+    <span class="comment">% compute lam1 &amp; lam2</span>
+    lam1 = [          0, max(x1)+0.5;
+            min(x2)-0.5, min(x2)-0.5];
+    lam1 = rot * lam1 + repmat([tx1;tx2], 1, 2);
+    lam2 = [min(x1)-0.5, min(x1)-0.5;
+                      0, max(x2)+0.5];
+    lam2 = rot * lam2 + repmat([tx1;tx2], 1, 2);
+
+    <span class="comment">% compute u1 &amp; u2;</span>
+    u1 = [2, 3;
+          2, 2];
+    u1 = rot * u1 + repmat([tx1;tx2], 1, 2);
+    u2 = [2, 2;
+          2, 3];
+    u2 = rot * u2 + repmat([tx1;tx2], 1, 2);
+
+    figure(1); clf; hold <span class="string">on</span>;
+    xlim([0,10]);
+    ylim([0,8]);
+    axis <span class="string">equal</span>;
+    <span class="comment">% draw ellipse</span>
+    plot(v(1,:), v(2,:), <span class="string">'r-'</span>, <span class="string">'LineWidth'</span>, 3);
+
+    <span class="comment">% draw y1 and y2</span>
+    y1f = d2f(y1);
+    y2f = d2f(y2);
+    annotation(<span class="string">'arrow'</span>, y1f(1,:), y1f(2,:), <span class="string">'LineWidth'</span>, 3, <span class="string">'Color'</span>, <span class="string">'b'</span>);
+    annotation(<span class="string">'arrow'</span>, y2f(1,:), y2f(2,:), <span class="string">'LineWidth'</span>, 3, <span class="string">'Color'</span>, <span class="string">'b'</span>);
+
+    <span class="comment">% draw lam1 &amp; lam2</span>
+    lam1f = d2f(lam1);
+    lam2f = d2f(lam2);
+    annotation(<span class="string">'doublearrow'</span>, lam1f(1,:), lam1f(2,:), <span class="string">'LineWidth'</span>, 3, <span class="string">'Color'</span>, <span class="string">'k'</span>);
+    annotation(<span class="string">'doublearrow'</span>, lam2f(1,:), lam2f(2,:), <span class="string">'LineWidth'</span>, 3, <span class="string">'color'</span>, <span class="string">'k'</span>);
+
+    <span class="comment">% draw u1 &amp; u2</span>
+    u1f = d2f(u1);
+    u2f = d2f(u2);
+    annotation(<span class="string">'arrow'</span>, u1f(1,:), u1f(2,:), <span class="string">'LineWidth'</span>, 3, <span class="string">'Color'</span>, <span class="string">'k'</span>);
+    annotation(<span class="string">'arrow'</span>, u2f(1,:), u2f(2,:), <span class="string">'LineWidth'</span>, 3, <span class="string">'Color'</span>, <span class="string">'k'</span>);
+
+    <span class="comment">% text</span>
+    text(tx1, tx2+0.6, <span class="string">'\mu'</span>, <span class="string">'FontSize'</span>, 18);
+    <span class="comment">%text(y1(1,2), y1(2,2), 'y_1', 'FontSize', 18);</span>
+    <span class="comment">%text(y2(1,2)-0.1, y2(2,2)+0.3, 'y_2', 'FontSize', 18);</span>
+    text(u1(1,2)+0.1, u1(2,2)+0.1, <span class="string">'u_1'</span>, <span class="string">'FontSize'</span>, 18);
+    text(u2(1,2)+0.1, u2(2,2)+0.1, <span class="string">'u_2'</span>, <span class="string">'FontSize'</span>, 18);
+    text((lam1(1,1)+lam1(1,2))/2, (lam1(2,1)+lam1(2,2))/2-0.5, <span class="string">'\lambda_1^{1/2}'</span>, <span class="string">'FontSize'</span>, 18);
+    text((lam2(1,1)+lam2(1,2))/2-1, (lam2(2,1)+lam2(2,2))/2-0.5, <span class="string">'\lambda_2^{1/2}'</span>, <span class="string">'FontSize'</span>, 18);
+
+    set(gca, <span class="string">'XTick'</span>, [], <span class="string">'YTick'</span>, []);
+    xlabel(<span class="string">'x_1'</span>, <span class="string">'FontSize'</span>, 18, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>);
+    ylabel(<span class="string">'x_2'</span>, <span class="string">'FontSize'</span>, 18, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>);
+
+    hold <span class="string">off</span>;
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> [x1, x2] = generate_ellipse(lambda1, lambda2)
+    x1 = -sqrt(lambda1):0.05:sqrt(lambda1);
+    x2 = sqrt(1 - (x1.^2 / lambda1)) * sqrt(lambda2);
+    x1 = [x1, fliplr(x1)];
+    x2 = [x2, fliplr(-x2)];
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> p1 = d2f(p2)
+    position = get(gca, <span class="string">'Position'</span>);
+    xMinMax = xlim;
+    yMinMax = ylim;
+    p1(1,:) = position(3)*(p2(1,:) - xMinMax(1))/(xMinMax(2)-xMinMax(1))+position(1);
+    p1(2,:) = position(4)*(p2(2,:) - yMinMax(1))/(yMinMax(2)-yMinMax(1))+position(2);
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="gaussEvec_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+function gaussEvec
+
+    lambda1 = 9;
+    lambda2 = 1;
+    tx1 = 5; 
+    tx2 = 4;
+    theta = 30 * pi / 180;
+    rot = [cos(theta), -sin(theta);
+           sin(theta), cos(theta)];
+
+    [x1, x2] = generate_ellipse(lambda1, lambda2);
+    v = rot * [x1; x2] + repmat([tx1;tx2], 1, size(x1,2));
+    
+    % compute y1 & y2
+    y1 = [min(x1)-0.5, max(x1)+0.5;
+                    0,           0];
+    y1 = rot * y1 + repmat([tx1; tx2], 1, 2);
+    y2 = [          0,           0;
+          min(x2)-0.5, max(x2)+0.5];
+    y2 = rot * y2 + repmat([tx1; tx2], 1, 2);
+    
+    % compute lam1 & lam2
+    lam1 = [          0, max(x1)+0.5;
+            min(x2)-0.5, min(x2)-0.5];
+    lam1 = rot * lam1 + repmat([tx1;tx2], 1, 2);
+    lam2 = [min(x1)-0.5, min(x1)-0.5;
+                      0, max(x2)+0.5];
+    lam2 = rot * lam2 + repmat([tx1;tx2], 1, 2);
+    
+    % compute u1 & u2;
+    u1 = [2, 3;
+          2, 2];
+    u1 = rot * u1 + repmat([tx1;tx2], 1, 2);
+    u2 = [2, 2;
+          2, 3];
+    u2 = rot * u2 + repmat([tx1;tx2], 1, 2);
+    
+    figure(1); clf; hold on;
+    xlim([0,10]);
+    ylim([0,8]);
+    axis equal;
+    % draw ellipse
+    plot(v(1,:), v(2,:), 'r-', 'LineWidth', 3);
+    
+    % draw y1 and y2
+    y1f = d2f(y1);
+    y2f = d2f(y2);
+    annotation('arrow', y1f(1,:), y1f(2,:), 'LineWidth', 3, 'Color', 'b');
+    annotation('arrow', y2f(1,:), y2f(2,:), 'LineWidth', 3, 'Color', 'b');
+    
+    % draw lam1 & lam2
+    lam1f = d2f(lam1);
+    lam2f = d2f(lam2);
+    annotation('doublearrow', lam1f(1,:), lam1f(2,:), 'LineWidth', 3, 'Color', 'k');
+    annotation('doublearrow', lam2f(1,:), lam2f(2,:), 'LineWidth', 3, 'color', 'k');
+    
+    % draw u1 & u2
+    u1f = d2f(u1);
+    u2f = d2f(u2);
+    annotation('arrow', u1f(1,:), u1f(2,:), 'LineWidth', 3, 'Color', 'k');
+    annotation('arrow', u2f(1,:), u2f(2,:), 'LineWidth', 3, 'Color', 'k');
+    
+    % text
+    text(tx1, tx2+0.6, '\mu', 'FontSize', 18);
+    %text(y1(1,2), y1(2,2), 'y_1', 'FontSize', 18);
+    %text(y2(1,2)-0.1, y2(2,2)+0.3, 'y_2', 'FontSize', 18);
+    text(u1(1,2)+0.1, u1(2,2)+0.1, 'u_1', 'FontSize', 18);
+    text(u2(1,2)+0.1, u2(2,2)+0.1, 'u_2', 'FontSize', 18);
+    text((lam1(1,1)+lam1(1,2))/2, (lam1(2,1)+lam1(2,2))/2-0.5, '\lambda_1^{1/2}', 'FontSize', 18);
+    text((lam2(1,1)+lam2(1,2))/2-1, (lam2(2,1)+lam2(2,2))/2-0.5, '\lambda_2^{1/2}', 'FontSize', 18);
+    
+    set(gca, 'XTick', [], 'YTick', []);
+    xlabel('x_1', 'FontSize', 18, 'FontWeight', 'bold');
+    ylabel('x_2', 'FontSize', 18, 'FontWeight', 'bold');
+    
+    hold off;
+end
+
+function [x1, x2] = generate_ellipse(lambda1, lambda2)
+    x1 = -sqrt(lambda1):0.05:sqrt(lambda1);
+    x2 = sqrt(1 - (x1.^2 / lambda1)) * sqrt(lambda2);
+    x1 = [x1, fliplr(x1)];
+    x2 = [x2, fliplr(-x2)];
+end
+
+function p1 = d2f(p2)
+    position = get(gca, 'Position');
+    xMinMax = xlim;
+    yMinMax = ylim;
+    p1(1,:) = position(3)*(p2(1,:) - xMinMax(1))/(xMinMax(2)-xMinMax(1))+position(1);
+    p1(2,:) = position(4)*(p2(2,:) - yMinMax(1))/(yMinMax(2)-yMinMax(1))+position(2);
+end
+##### SOURCE END #####
+--></body></html>

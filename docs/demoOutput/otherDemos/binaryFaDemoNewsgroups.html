@@ -1,0 +1,269 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>binaryFaDemoNewsgroups</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="binaryFaDemoNewsgroups.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% Demo of factor analysis applied to binary newsgroups bag of words</span>
+<span class="comment">% We compute 2d embedding</span>
+
+<span class="comment">%PMTKreallySlow</span>
+
+<span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+requireStatsToolbox; <span class="comment">% cmdscale</span>
+
+setSeed(0);
+loadData(<span class="string">'20news_w100'</span>);
+<span class="comment">% documents, wordlist, newsgroups, groupnames</span>
+wordocc = double(full(documents))'; <span class="comment">% 16,642 documents by 100 words  (sparse logical  matrix)</span>
+[N,D] = size(wordocc);
+perm = randperm(N);
+ndx = perm(1:5000);
+data = wordocc(ndx, :);
+[N,D] = size(data);
+classLabels = newsgroups(ndx);
+
+<span class="comment">%{
+</span><span class="comment">% Latent 2d embedding - very poor
+</span><span class="comment">% We don't request loglik hist for speed
+</span><span class="comment">[model2d] = binaryFAfit(data, 2, 'maxIter', 6, 'verbose', true);
+</span><span class="comment">
+</span><span class="comment">% See where each word maps to
+</span><span class="comment">dummy = eye(D);
+</span><span class="comment">muPost2d = binaryFAinferLatent(model2d, dummy);
+</span><span class="comment">figure; hold on
+</span><span class="comment">% We need to plot points before text
+</span><span class="comment">for d=1:D
+</span><span class="comment">  plot(muPost2d(1,d), muPost2d(2,d), '.');
+</span><span class="comment">end
+</span><span class="comment">ndx = 1:1:D;
+</span><span class="comment">for d=ndx(:)'
+</span><span class="comment">  text(muPost2d(1,d), muPost2d(2,d), wordlist{d});
+</span><span class="comment">end
+</span><span class="comment">title(sprintf('latent 2d embedding of %d newsgroups words', D))
+</span><span class="comment">%}
+</span>
+methods = [];
+m = 0;
+
+Ks = [10, 50];
+<span class="keyword">for</span> kk=1:numel(Ks)
+  K = Ks(kk);
+  m = m + 1;
+  methods(m).modelname = <span class="string">'JJ'</span>;
+  methods(m).fitFn = @(data) binaryFAfit(data, K, <span class="string">'maxIter'</span>, 6, <span class="keyword">...</span>
+    <span class="string">'verbose'</span>, true, <span class="string">'computeLoglik'</span>, false);
+  methods(m).infFn = @(model, labels) binaryFAinferLatent(model, labels);
+  methods(m).nlatent = K;
+<span class="keyword">end</span>
+
+
+<span class="comment">%Ks = [];</span>
+<span class="keyword">for</span> kk=1:numel(Ks)
+  K = Ks(kk);
+  m = m + 1;
+  methods(m).modelname = <span class="string">'Bohning'</span>;
+  methods(m).fitFn = @(data) catFAfit(data, [], K, <span class="string">'maxIter'</span>, 10, <span class="keyword">...</span>
+    <span class="string">'verbose'</span>, true, <span class="string">'nClass'</span>, 2*ones(1,D));
+  methods(m).infFn = @(model, labels) catFAinferLatent(model, labels, []);
+  methods(m).nlatent = K;
+<span class="keyword">end</span>
+
+
+Nmethods = numel(methods);
+<span class="keyword">for</span> m=1:Nmethods
+  fitFn = methods(m).fitFn;
+  infFn = methods(m).infFn;
+  methodname = methods(m).modelname;
+
+  tic
+  model = fitFn(data);
+  timMethod(m) = toc
+
+  <span class="comment">% Compute latent embedding of each possible delta function</span>
+  dummy = eye(D);
+  muPost = infFn(model, dummy);
+
+  <span class="comment">% muPost is L*N, reduce to N*2 for vis purposes using MDS</span>
+  dst = pdist(muPost',<span class="string">'Euclidean'</span>);
+  [mdsCoords,eigvals] = cmdscale(dst);
+  eigvals(1:5)
+
+  figure; hold <span class="string">on</span>
+  <span class="comment">% We need to plot points before text</span>
+  <span class="keyword">for</span> d=1:D
+    plot(mdsCoords(d,1), mdsCoords(d,2), <span class="string">'.'</span>);
+  <span class="keyword">end</span>
+  ndx = 1:1:D;
+  <span class="keyword">for</span> d=ndx(:)'
+    <span class="comment">%text(mdsCoords(d,1), mdsCoords(d,2), wordlist{d}, 'fontsize', 10);</span>
+  <span class="keyword">end</span>
+  nlatent = methods(m).nlatent;
+  title(sprintf(<span class="string">'L=%d, N=%d, method = %s'</span>, nlatent, N, methodname))
+  fname = sprintf(<span class="string">'binaryFAnewsgroups-%s-L%d-N%d'</span>, methodname, nlatent, N);
+  printPmtkFigure(fname);
+<span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+% Demo of factor analysis applied to binary newsgroups bag of words
+% We compute 2d embedding
+
+%PMTKreallySlow
+
+% This file is from pmtk3.googlecode.com
+
+requireStatsToolbox; % cmdscale
+
+setSeed(0);
+loadData('20news_w100');
+% documents, wordlist, newsgroups, groupnames
+wordocc = double(full(documents))'; % 16,642 documents by 100 words  (sparse logical  matrix)
+[N,D] = size(wordocc);
+perm = randperm(N);
+ndx = perm(1:5000);
+data = wordocc(ndx, :);
+[N,D] = size(data);
+classLabels = newsgroups(ndx);
+
+%{
+% Latent 2d embedding - very poor
+% We don't request loglik hist for speed
+[model2d] = binaryFAfit(data, 2, 'maxIter', 6, 'verbose', true);
+
+% See where each word maps to
+dummy = eye(D);
+muPost2d = binaryFAinferLatent(model2d, dummy);
+figure; hold on
+% We need to plot points before text
+for d=1:D
+  plot(muPost2d(1,d), muPost2d(2,d), '.');
+end
+ndx = 1:1:D;
+for d=ndx(:)'
+  text(muPost2d(1,d), muPost2d(2,d), wordlist{d});
+end
+title(sprintf('latent 2d embedding of %d newsgroups words', D))
+%}
+
+methods = [];
+m = 0;
+
+Ks = [10, 50];
+for kk=1:numel(Ks)
+  K = Ks(kk);
+  m = m + 1;
+  methods(m).modelname = 'JJ';
+  methods(m).fitFn = @(data) binaryFAfit(data, K, 'maxIter', 6, ...
+    'verbose', true, 'computeLoglik', false);
+  methods(m).infFn = @(model, labels) binaryFAinferLatent(model, labels);
+  methods(m).nlatent = K;
+end
+
+
+%Ks = [];
+for kk=1:numel(Ks)
+  K = Ks(kk);
+  m = m + 1;
+  methods(m).modelname = 'Bohning';
+  methods(m).fitFn = @(data) catFAfit(data, [], K, 'maxIter', 10, ...
+    'verbose', true, 'nClass', 2*ones(1,D));
+  methods(m).infFn = @(model, labels) catFAinferLatent(model, labels, []);
+  methods(m).nlatent = K;
+end
+
+
+Nmethods = numel(methods);
+for m=1:Nmethods
+  fitFn = methods(m).fitFn;
+  infFn = methods(m).infFn;
+  methodname = methods(m).modelname;
+  
+  tic
+  model = fitFn(data);
+  timMethod(m) = toc
+  
+  % Compute latent embedding of each possible delta function
+  dummy = eye(D);
+  muPost = infFn(model, dummy);
+  
+  % muPost is L*N, reduce to N*2 for vis purposes using MDS
+  dst = pdist(muPost','Euclidean');
+  [mdsCoords,eigvals] = cmdscale(dst);
+  eigvals(1:5)
+  
+  figure; hold on
+  % We need to plot points before text
+  for d=1:D
+    plot(mdsCoords(d,1), mdsCoords(d,2), '.');
+  end
+  ndx = 1:1:D;
+  for d=ndx(:)'
+    %text(mdsCoords(d,1), mdsCoords(d,2), wordlist{d}, 'fontsize', 10);
+  end
+  nlatent = methods(m).nlatent;
+  title(sprintf('L=%d, N=%d, method = %s', nlatent, N, methodname))
+  fname = sprintf('binaryFAnewsgroups-%s-L%d-N%d', methodname, nlatent, N);
+  printPmtkFigure(fname);
+end
+##### SOURCE END #####
+--></body></html>

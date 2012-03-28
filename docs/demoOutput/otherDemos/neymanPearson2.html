@@ -1,0 +1,203 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Illustration of the Neyman-Pearson testing paradigm</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="neymanPearson2.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Illustration of the Neyman-Pearson testing paradigm</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+
+xmin = -4;xmax = 8;
+ymin = 0;ymax = 0.3;
+res = 0.01;
+domain = xmin:res:xmax;
+sigma = 1.5;
+f1 = @(x)gaussProb(x,0,sigma^2)';
+f2 = @(x)gaussProb(x,4,sigma^2)';
+
+linesize = {<span class="string">'LineWidth'</span>,2.5};
+plot(domain,f1(domain),<span class="string">'-b'</span>,linesize{:});
+hold <span class="string">on</span>;
+plot(domain,f2(domain),<span class="string">'-r'</span>,linesize{:});
+
+axis([xmin,xmax,ymin,ymax]);
+plot([2.3;2.3],[0;0.5],<span class="string">'-k'</span>,linesize{:});
+
+left = find(domain == 2.25);
+lineRes = 0.005;
+xrange = xmin:lineRes:xmax;
+xIntersectIdx = argmin(abs(xrange - 2.3));
+upperEnd = max(f2(1:xIntersectIdx));
+yrange = 0:lineRes:max(f2(xrange(1:xIntersectIdx)));
+ypoints = [yrange; yrange];
+offset = 0.17;
+xpoints = [gaussinv(yrange, 4, sigma.^2) - offset;
+           xrange(xIntersectIdx)*ones(1, length(yrange))];
+line(xpoints, ypoints, <span class="string">'Color'</span>, <span class="string">'r'</span>);
+
+lineRes = 0.1;
+xrange = xmin:lineRes:xmax;
+xIntersectIdx = find(xrange == 2.3);
+xpoints = [xrange((xIntersectIdx+1):end); xrange((xIntersectIdx+1):end)];
+ypoints = [zeros(1, length(xrange) - xIntersectIdx); f1(xrange((xIntersectIdx+1):end))];
+line(xpoints, ypoints, <span class="string">'Color'</span>, <span class="string">'b'</span>);
+
+set(gca,<span class="string">'XTick'</span>,2.3,<span class="string">'YTick'</span>,[],<span class="string">'XTickLabel'</span>,{<span class="string">'X*'</span>},<span class="string">'FontSize'</span>,18);
+
+annotation(gcf,<span class="string">'textarrow'</span>,rel2absX([0.5,1.9]),rel2absY([0.075,0.02]),<span class="keyword">...</span>
+    <span class="string">'TextEdgeColor'</span>,<span class="string">'none'</span>,<span class="keyword">...</span>
+    <span class="string">'TextLineWidth'</span>,2,<span class="keyword">...</span>
+    <span class="string">'FontSize'</span>,20,<span class="keyword">...</span>
+    <span class="string">'String'</span>,{<span class="string">'\beta'</span>},<span class="keyword">...</span>
+    <span class="string">'LineWidth'</span>,2);
+
+annotation(gcf,<span class="string">'textarrow'</span>,rel2absX([4.1,2.6]),rel2absY([0.075,0.02]),<span class="keyword">...</span>
+    <span class="string">'TextEdgeColor'</span>,<span class="string">'none'</span>,<span class="keyword">...</span>
+    <span class="string">'TextLineWidth'</span>,2,<span class="keyword">...</span>
+    <span class="string">'FontSize'</span>,20,<span class="keyword">...</span>
+    <span class="string">'String'</span>,{<span class="string">'\alpha'</span>},<span class="keyword">...</span>
+    <span class="string">'LineWidth'</span>,2);
+
+annotation(gcf,<span class="string">'textbox'</span>,[rel2absX(-0.4) rel2absY(0.275) 0.0403 0.07213],<span class="string">'String'</span>,{<span class="string">'H_0'</span>},<span class="keyword">...</span>
+    <span class="string">'FontSize'</span>,16,<span class="keyword">...</span>
+    <span class="string">'FitBoxToText'</span>,<span class="string">'off'</span>,<span class="keyword">...</span>
+    <span class="string">'LineStyle'</span>,<span class="string">'none'</span>);
+
+annotation(gcf,<span class="string">'textbox'</span>,[rel2absX(3.6) rel2absY(0.275) 0.0403 0.07213],<span class="keyword">...</span>
+    <span class="string">'String'</span>,{<span class="string">'H_1'</span>},<span class="keyword">...</span>
+    <span class="string">'FontSize'</span>,16,<span class="keyword">...</span>
+    <span class="string">'FitBoxToText'</span>,<span class="string">'off'</span>,<span class="keyword">...</span>
+    <span class="string">'LineStyle'</span>,<span class="string">'none'</span>);
+</pre><img vspace="5" hspace="5" src="neymanPearson2_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Illustration of the Neyman-Pearson testing paradigm
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+
+xmin = -4;xmax = 8;
+ymin = 0;ymax = 0.3;
+res = 0.01;
+domain = xmin:res:xmax;
+sigma = 1.5;
+f1 = @(x)gaussProb(x,0,sigma^2)';
+f2 = @(x)gaussProb(x,4,sigma^2)';
+
+linesize = {'LineWidth',2.5};
+plot(domain,f1(domain),'-b',linesize{:});
+hold on;
+plot(domain,f2(domain),'-r',linesize{:});
+
+axis([xmin,xmax,ymin,ymax]);
+plot([2.3;2.3],[0;0.5],'-k',linesize{:});
+
+left = find(domain == 2.25);
+lineRes = 0.005;
+xrange = xmin:lineRes:xmax;
+xIntersectIdx = argmin(abs(xrange - 2.3));
+upperEnd = max(f2(1:xIntersectIdx));
+yrange = 0:lineRes:max(f2(xrange(1:xIntersectIdx)));
+ypoints = [yrange; yrange];
+offset = 0.17; 
+xpoints = [gaussinv(yrange, 4, sigma.^2) - offset; 
+           xrange(xIntersectIdx)*ones(1, length(yrange))];
+line(xpoints, ypoints, 'Color', 'r'); 
+
+lineRes = 0.1;
+xrange = xmin:lineRes:xmax;
+xIntersectIdx = find(xrange == 2.3);
+xpoints = [xrange((xIntersectIdx+1):end); xrange((xIntersectIdx+1):end)];
+ypoints = [zeros(1, length(xrange) - xIntersectIdx); f1(xrange((xIntersectIdx+1):end))];
+line(xpoints, ypoints, 'Color', 'b'); 
+
+set(gca,'XTick',2.3,'YTick',[],'XTickLabel',{'X*'},'FontSize',18);
+
+annotation(gcf,'textarrow',rel2absX([0.5,1.9]),rel2absY([0.075,0.02]),...
+    'TextEdgeColor','none',...
+    'TextLineWidth',2,...
+    'FontSize',20,...
+    'String',{'\beta'},...
+    'LineWidth',2);
+
+annotation(gcf,'textarrow',rel2absX([4.1,2.6]),rel2absY([0.075,0.02]),...
+    'TextEdgeColor','none',...
+    'TextLineWidth',2,...
+    'FontSize',20,...
+    'String',{'\alpha'},...
+    'LineWidth',2);
+
+annotation(gcf,'textbox',[rel2absX(-0.4) rel2absY(0.275) 0.0403 0.07213],'String',{'H_0'},...
+    'FontSize',16,...
+    'FitBoxToText','off',...
+    'LineStyle','none');
+
+annotation(gcf,'textbox',[rel2absX(3.6) rel2absY(0.275) 0.0403 0.07213],...
+    'String',{'H_1'},...
+    'FontSize',16,...
+    'FitBoxToText','off',...
+    'LineStyle','none');
+
+
+##### SOURCE END #####
+--></body></html>

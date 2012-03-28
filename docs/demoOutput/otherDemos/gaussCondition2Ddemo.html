@@ -1,0 +1,147 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Conditioning a 2D Gaussian</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="gaussCondition2Ddemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Conditioning a 2D Gaussian</h1><!--introduction--><p>Take a horizontal slice thru a 2d Gaussian and plot the resulting conditional</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">unconditional marginal</a></li><li><a href="#3">conditional marginals</a></li></ul></div><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+mu = [0 0]';
+rho = 0.5;
+S = [1 rho; rho 1];
+figure;
+gaussPlot2d(mu, S);
+hold <span class="string">on</span>;
+[U,D] = eig(S);
+sf=  -2.5;
+line([mu(1) mu(1)+sf*sqrt(D(1,1))*U(1,1)],[mu(2) mu(2)+sf*sqrt(D(1,1))*U(2,1)],<span class="keyword">...</span>
+  <span class="string">'color'</span>,<span class="string">'r'</span>,<span class="string">'linewidth'</span>,2)
+line([mu(1) mu(1)+sf*sqrt(D(2,2))*U(1,2)],[mu(2) mu(2)+sf*sqrt(D(2,2))*U(2,2)],<span class="keyword">...</span>
+  <span class="string">'color'</span>,<span class="string">'r'</span>,<span class="string">'linewidth'</span>,2)
+x2 = 1; line([-5 5], [x2 x2],  <span class="string">'color'</span>, <span class="string">'k'</span>, <span class="string">'linewidth'</span>, 2);
+</pre><img vspace="5" hspace="5" src="gaussCondition2Ddemo_01.png" alt=""> <h2>unconditional marginal<a name="2"></a></h2><pre class="codeinput">marg.mu = mu(1); marg.Sigma = S(1, 1);
+xs = -5:0.2:5;
+ps = gaussProb(xs(:), marg.mu, marg.Sigma);
+ps = 50*normalize(ps);
+plot(xs, 0+ps, <span class="string">'b:'</span>, <span class="string">'linewidth'</span>,3 );
+</pre><img vspace="5" hspace="5" src="gaussCondition2Ddemo_02.png" alt=""> <h2>conditional marginals<a name="3"></a></h2><pre class="codeinput">model = struct(<span class="string">'mu'</span>, mu, <span class="string">'Sigma'</span>, S);
+modelHgivenV = gaussCondition(model, 2, x2);
+[muHgivenV, SigmaHgivenV] = structvals(modelHgivenV, <span class="string">'mu'</span>, <span class="string">'Sigma'</span>);
+ps = gaussProb(xs(:), muHgivenV, SigmaHgivenV);
+ps = 50*normalize(ps);
+plot(xs, 1+ps, <span class="string">'k-.'</span>, <span class="string">'linewidth'</span>,3 );
+postMu = muHgivenV;
+</pre><img vspace="5" hspace="5" src="gaussCondition2Ddemo_03.png" alt=""> <pre class="codeinput">grid <span class="string">off</span>
+h=text(2.0, 3.1, <span class="string">'p(x1|x2=1)'</span>); set(h,<span class="string">'color'</span>,<span class="string">'k'</span>,<span class="string">'fontsize'</span>,15);
+<span class="comment">%h=text(2.5, 2.1, 'p(x1,x2)'); set(h,'color','r','fontsize',15);</span>
+h=text(2.7, 0.4, <span class="string">'p(x1)'</span>); set(h,<span class="string">'color'</span>,<span class="string">'b'</span>,<span class="string">'fontsize'</span>,15);
+xlabel(<span class="string">'x1'</span>); ylabel(<span class="string">'x2'</span>);
+printPmtkFigure(<span class="string">'gaussCond'</span>);
+</pre><img vspace="5" hspace="5" src="gaussCondition2Ddemo_04.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Conditioning a 2D Gaussian
+%
+% Take a horizontal slice thru a 2d Gaussian and plot the resulting
+% conditional
+%%
+
+% This file is from pmtk3.googlecode.com
+
+mu = [0 0]';
+rho = 0.5;
+S = [1 rho; rho 1];
+figure;
+gaussPlot2d(mu, S);
+hold on;
+[U,D] = eig(S); 
+sf=  -2.5;
+line([mu(1) mu(1)+sf*sqrt(D(1,1))*U(1,1)],[mu(2) mu(2)+sf*sqrt(D(1,1))*U(2,1)],...
+  'color','r','linewidth',2)
+line([mu(1) mu(1)+sf*sqrt(D(2,2))*U(1,2)],[mu(2) mu(2)+sf*sqrt(D(2,2))*U(2,2)],...
+  'color','r','linewidth',2)
+x2 = 1; line([-5 5], [x2 x2],  'color', 'k', 'linewidth', 2);
+
+%% unconditional marginal
+marg.mu = mu(1); marg.Sigma = S(1, 1);
+xs = -5:0.2:5;
+ps = gaussProb(xs(:), marg.mu, marg.Sigma);
+ps = 50*normalize(ps);
+plot(xs, 0+ps, 'b:', 'linewidth',3 );
+
+%% conditional marginals
+model = struct('mu', mu, 'Sigma', S);
+modelHgivenV = gaussCondition(model, 2, x2);
+[muHgivenV, SigmaHgivenV] = structvals(modelHgivenV, 'mu', 'Sigma');
+ps = gaussProb(xs(:), muHgivenV, SigmaHgivenV);
+ps = 50*normalize(ps);
+plot(xs, 1+ps, 'k-.', 'linewidth',3 );
+postMu = muHgivenV;
+%%
+grid off
+h=text(2.0, 3.1, 'p(x1|x2=1)'); set(h,'color','k','fontsize',15);
+%h=text(2.5, 2.1, 'p(x1,x2)'); set(h,'color','r','fontsize',15);
+h=text(2.7, 0.4, 'p(x1)'); set(h,'color','b','fontsize',15);
+xlabel('x1'); ylabel('x2');
+printPmtkFigure('gaussCond'); 
+
+##### SOURCE END #####
+--></body></html>

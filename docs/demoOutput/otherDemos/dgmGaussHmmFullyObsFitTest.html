@@ -1,0 +1,156 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Fit an HMM and an equivalent DGM and make sure the results agree</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="dgmGaussHmmFullyObsFitTest.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Fit an HMM and an equivalent DGM and make sure the results agree</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">sample data</a></li><li><a href="#3">create an hmm-like random dgm</a></li><li><a href="#4">compare results</a></li></ul></div><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+setSeed(2);
+</pre><h2>sample data<a name="2"></a></h2><pre class="codeinput">nstates   = 10;
+d         = 13;
+T         = 11;
+nsamples  = 15;
+hmmSource = mkRndGaussHmm(nstates, d);
+[Y, Z]    = hmmSample(hmmSource, T, nsamples);
+Y         = cellwrap(Y);
+Z         = cellwrap(Z);
+</pre><h2>create an hmm-like random dgm<a name="3"></a></h2><pre class="codeinput">dgmModel  = hmmToDgm(mkRndGaussHmm(nstates, d), T);
+<span class="comment">% fit the hmm model</span>
+hmmModel = hmmFitFullyObs(Z, Y, <span class="string">'gauss'</span>);
+<span class="comment">% convert data to dgm format</span>
+localev  = hmmObs2LocalEv(Y);
+data     = cell2mat(Z);
+<span class="comment">% make sure they have the same priors</span>
+<span class="comment">% KPM 25Oct10 added -1 to priors</span>
+<span class="comment">% because tabularCpd now interprets prior as pseudocounts (alpha-1)</span>
+dgmModel.CPDs{1}.prior = hmmModel.piPrior(:)-1;
+dgmModel.CPDs{2}.prior = hmmModel.transPrior-1;
+dgmModel.localCPDs{1}.prior = hmmModel.emission.prior; <span class="comment">% no -1</span>
+<span class="comment">% fit dgm</span>
+dgmModel = dgmTrain(dgmModel,<span class="string">'data'</span>, data, <span class="string">'localev'</span>, localev);
+</pre><h2>compare results<a name="4"></a></h2><pre class="codeinput">pi    = hmmModel.pi;
+A     = hmmModel.A;
+Ehmm  = hmmModel.emission;
+Edgm  = dgmModel.localCPDs{1};
+piDgm = dgmModel.CPDs{1}.T';
+Adgm  = dgmModel.CPDs{2}.T;
+assert(approxeq(pi, piDgm));
+assert(approxeq(A, Adgm));
+assert(approxeq(Ehmm.mu, Edgm.mu));
+assert(approxeq(Ehmm.Sigma, Edgm.Sigma));
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Fit an HMM and an equivalent DGM and make sure the results agree
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+setSeed(2); 
+%% sample data
+nstates   = 10;
+d         = 13; 
+T         = 11; 
+nsamples  = 15; 
+hmmSource = mkRndGaussHmm(nstates, d); 
+[Y, Z]    = hmmSample(hmmSource, T, nsamples); 
+Y         = cellwrap(Y);
+Z         = cellwrap(Z);
+%% create an hmm-like random dgm
+dgmModel  = hmmToDgm(mkRndGaussHmm(nstates, d), T);  
+% fit the hmm model
+hmmModel = hmmFitFullyObs(Z, Y, 'gauss'); 
+% convert data to dgm format
+localev  = hmmObs2LocalEv(Y); 
+data     = cell2mat(Z); 
+% make sure they have the same priors
+% KPM 25Oct10 added -1 to priors
+% because tabularCpd now interprets prior as pseudocounts (alpha-1) 
+dgmModel.CPDs{1}.prior = hmmModel.piPrior(:)-1; 
+dgmModel.CPDs{2}.prior = hmmModel.transPrior-1;
+dgmModel.localCPDs{1}.prior = hmmModel.emission.prior; % no -1 
+% fit dgm
+dgmModel = dgmTrain(dgmModel,'data', data, 'localev', localev); 
+%% compare results
+pi    = hmmModel.pi;
+A     = hmmModel.A; 
+Ehmm  = hmmModel.emission;
+Edgm  = dgmModel.localCPDs{1}; 
+piDgm = dgmModel.CPDs{1}.T'; 
+Adgm  = dgmModel.CPDs{2}.T;
+assert(approxeq(pi, piDgm)); 
+assert(approxeq(A, Adgm)); 
+assert(approxeq(Ehmm.mu, Edgm.mu)); 
+assert(approxeq(Ehmm.Sigma, Edgm.Sigma)); 
+%%
+
+
+
+
+
+
+
+
+
+##### SOURCE END #####
+--></body></html>

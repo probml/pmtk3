@@ -1,0 +1,126 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>Fit a rbf kernel binary logistic regression model to the crabs data</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="logregKernelCrabsDemo"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Fit a rbf kernel binary logistic regression model to the crabs data</h1><!--introduction--><p>PMTKslow see svmCrabsDemo</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Load data</a></li><li><a href="#3">Here we cross validate over both lambda and Sigma</a></li><li><a href="#4">Construct fit function</a></li></ul></div><h2>Load data<a name="1"></a></h2><pre class="codeinput">loadData(<span class="string">'crabs'</span>);
+</pre><h2>Here we cross validate over both lambda and Sigma<a name="3"></a></h2><pre class="codeinput">lambda     = logspace(-7, -4, 10); <span class="comment">%logspace(-7, -4, 20);</span>
+Sigma      = 8:10; <span class="comment">% 8:0.5:10;</span>
+paramRange = crossProduct(lambda, Sigma);
+</pre><h2>Construct fit function<a name="4"></a></h2><p>plotCv expects a function of three variables, X, y, and param, where param is a 1x2 vector with lambda = param(1) and Sigma = param(2). Notice that a call to fitFn of the form fitFn(X, y, [lambda, Sigma]) will construct the kernel function @(X1, X2)kernelRbfSigma(X1, X2, Sigma) 'on the fly', i.e. anew each time with a potentially different value of Sigma.</p><pre class="codeinput">fitFn = @(X, y, param)<span class="keyword">...</span>
+    logregFit(X, y, <span class="string">'lambda'</span>, param(1), <span class="string">'regType'</span>, <span class="string">'L1'</span>, <span class="string">'preproc'</span>, <span class="keyword">...</span>
+    preprocessorCreate(<span class="string">'kernelFn'</span>, @(X1, X2)kernelRbfSigma(X1, X2, param(2))));
+</pre><pre class="codeinput">predictFn = @logregPredict;
+lossFn = @(ytest, yhat)mean(yhat ~= ytest);
+nfolds = 5;
+useSErule = true;
+plotCv = true;
+[LRmodel, lambdaStar, LRmu, LRse] = <span class="keyword">...</span>
+    fitCv(paramRange, fitFn, predictFn, lossFn, Xtrain, ytrain, nfolds, <span class="keyword">...</span>
+    <span class="string">'useSErule'</span>, useSErule, <span class="string">'doPlot'</span>, plotCv);
+
+set(gca, <span class="string">'xscale'</span>, <span class="string">'log'</span>)
+yhat = logregPredict(LRmodel, Xtest);
+lrL1Nerrors = sum(yhat ~= ytest)
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Fit a rbf kernel binary logistic regression model to the crabs data 
+% PMTKslow
+% see svmCrabsDemo
+%% Load data
+loadData('crabs');
+%%
+%% Here we cross validate over both lambda and Sigma
+lambda     = logspace(-7, -4, 10); %logspace(-7, -4, 20); 
+Sigma      = 8:10; % 8:0.5:10;
+paramRange = crossProduct(lambda, Sigma); 
+%% Construct fit function
+% plotCv expects a function of three variables, X, y, and param, where
+% param is a 1x2 vector with lambda = param(1) and Sigma = param(2). Notice
+% that a call to fitFn of the form fitFn(X, y, [lambda, Sigma]) will 
+% construct the kernel function @(X1, X2)kernelRbfSigma(X1, X2, Sigma) 'on
+% the fly', i.e. anew each time with a potentially different value of
+% Sigma. 
+fitFn = @(X, y, param)...
+    logregFit(X, y, 'lambda', param(1), 'regType', 'L1', 'preproc', ...
+    preprocessorCreate('kernelFn', @(X1, X2)kernelRbfSigma(X1, X2, param(2))));
+%%
+predictFn = @logregPredict;
+lossFn = @(ytest, yhat)mean(yhat ~= ytest);
+nfolds = 5; 
+useSErule = true;
+plotCv = true; 
+[LRmodel, lambdaStar, LRmu, LRse] = ...
+    fitCv(paramRange, fitFn, predictFn, lossFn, Xtrain, ytrain, nfolds, ...
+    'useSErule', useSErule, 'doPlot', plotCv);
+
+set(gca, 'xscale', 'log')
+yhat = logregPredict(LRmodel, Xtest);
+lrL1Nerrors = sum(yhat ~= ytest) 
+
+
+
+
+
+##### SOURCE END #####
+--></body></html>

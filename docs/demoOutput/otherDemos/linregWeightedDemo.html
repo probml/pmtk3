@@ -1,0 +1,226 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Several ways of implementing weighted least squares</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="linregWeightedDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Several ways of implementing weighted least squares</h1><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+
+setSeed(0);
+N = 100; D = 5;
+X = randn(N,D);
+w = randn(D,1);
+y = X*w + 0.1*randn(N,1);
+rk = rand(N,1); <span class="comment">% positive weights</span>
+
+<span class="comment">% Method 1</span>
+RRk = sqrt(diag(rk));
+W1 = ((RRk*X) \ (RRk*y));
+yhat = X*W1;
+sigma2_1 = sum(rk .* (y-yhat).^2) / sum(rk);
+W1'
+
+<span class="comment">% Method 2</span>
+RRk = sqrt(diag(rk));
+model = linregFit(RRk*X, RRk*y, <span class="string">'preproc'</span>, []);
+W2 = model.w'
+sigma2_2b = model.sigma2; <span class="comment">% wrong!</span>
+
+<span class="comment">% Method 2b - joAnne</span>
+RRk = diag(rk);
+model = linregFit(RRk*X, y, <span class="string">'preproc'</span>, []);
+W2b = model.w'
+sigma2_2 = model.sigma2; <span class="comment">% wrong!</span>
+
+<span class="comment">% Method 3</span>
+model = linregFit(X, y, <span class="string">'preproc'</span>, [], <span class="string">'weights'</span>, rk, <span class="string">'fitFnName'</span>, <span class="string">'qr'</span>);
+W3 = model.w'
+sigma2_3 = model.sigma2;
+
+<span class="comment">% Method 4</span>
+opts.Display     = <span class="string">'none'</span>;
+opts.verbose     = false;
+opts.TolFun      = 1e-8;
+opts.MaxIter     = 500;
+opts.Method      = <span class="string">'lbfgs'</span>; <span class="comment">% for minFunc</span>
+opts.MaxFunEvals = 2000;
+opts.TolX        = 1e-8;
+model = linregFit(X, y, <span class="string">'preproc'</span>, [], <span class="string">'weights'</span>, rk, <span class="keyword">...</span>
+  <span class="string">'fitFnName'</span>, <span class="string">'minfunc'</span>, <span class="string">'fitOptions'</span>, opts);
+W4 = model.w'
+sigma2_4 = model.sigma2;
+
+[sigma2_1 sigma2_2 sigma2_2b sigma2_3 sigma2_4]
+</pre><pre class="codeoutput">ans =
+  Columns 1 through 2
+  -1.454218056577198   0.606725987463074
+  Columns 3 through 4
+  -1.335635141762316  -0.644523634262716
+  Column 5
+  -0.145559444504264
+W2 =
+  Columns 1 through 2
+  -1.454218056577198   0.606725987463074
+  Columns 3 through 4
+  -1.335635141762316  -0.644523634262716
+  Column 5
+  -0.145559444504264
+W2b =
+  Columns 1 through 2
+  -2.046370588146565   1.013234913571604
+  Columns 3 through 4
+  -2.151694224578293  -1.073693556409625
+  Column 5
+  -0.372918048862126
+W3 =
+  Columns 1 through 2
+  -1.454218056577198   0.606725987463074
+  Columns 3 through 4
+  -1.335635141762316  -0.644523634262716
+  Column 5
+  -0.145559444504264
+Warning: Could not find an exact
+(case-sensitive) match for
+'SquaredErrorObjective'.
+/Users/matt/Documents/MATLAB/pmtk3/matlabTools/stats/squaredErrorObjective.m
+is a case-insensitive match and will be used
+instead.
+You can improve the performance of your code
+by using exact
+name matches and we therefore recommend that
+you update your
+usage accordingly. Alternatively, you can
+disable this warning using
+warning('off','MATLAB:dispatcher:InexactCaseMatch').
+This warning will become an error in future
+releases. 
+W4 =
+  Columns 1 through 2
+  -1.456547257094976   0.604096423745839
+  Columns 3 through 4
+  -1.345884243548274  -0.638191465987640
+  Column 5
+  -0.147195886352508
+ans =
+  Columns 1 through 2
+   0.009383976047397   1.224392301178504
+  Columns 3 through 4
+   0.004436686065342   0.009383976047397
+  Column 5
+   0.009511759584761
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Several ways of implementing weighted least squares
+
+% This file is from pmtk3.googlecode.com
+
+
+setSeed(0);
+N = 100; D = 5;
+X = randn(N,D);
+w = randn(D,1);
+y = X*w + 0.1*randn(N,1);
+rk = rand(N,1); % positive weights
+
+% Method 1
+RRk = sqrt(diag(rk));
+W1 = ((RRk*X) \ (RRk*y));
+yhat = X*W1;
+sigma2_1 = sum(rk .* (y-yhat).^2) / sum(rk);
+W1'
+
+% Method 2
+RRk = sqrt(diag(rk));
+model = linregFit(RRk*X, RRk*y, 'preproc', []);
+W2 = model.w'
+sigma2_2b = model.sigma2; % wrong!
+
+% Method 2b - joAnne
+RRk = diag(rk);
+model = linregFit(RRk*X, y, 'preproc', []);
+W2b = model.w'
+sigma2_2 = model.sigma2; % wrong!
+
+% Method 3
+model = linregFit(X, y, 'preproc', [], 'weights', rk, 'fitFnName', 'qr');
+W3 = model.w'
+sigma2_3 = model.sigma2;
+
+% Method 4
+opts.Display     = 'none';
+opts.verbose     = false;
+opts.TolFun      = 1e-8;
+opts.MaxIter     = 500;
+opts.Method      = 'lbfgs'; % for minFunc
+opts.MaxFunEvals = 2000;
+opts.TolX        = 1e-8;
+model = linregFit(X, y, 'preproc', [], 'weights', rk, ...
+  'fitFnName', 'minfunc', 'fitOptions', opts);
+W4 = model.w'
+sigma2_4 = model.sigma2;
+
+[sigma2_1 sigma2_2 sigma2_2b sigma2_3 sigma2_4]
+
+
+##### SOURCE END #####
+--></body></html>

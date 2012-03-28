@@ -1,0 +1,142 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>weighted logistic regression</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="logregWeightedDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>weighted logistic regression</h1><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+
+setSeed(0);
+N = 100; D = 5;
+X = randn(N,D);
+w = randn(D,1);
+C = 3; pi = normalize(rand(1,C));
+y = sampleDiscrete(pi, N, 1);
+rk = rand(N,1); <span class="comment">% positive weights</span>
+
+
+<span class="comment">% Jo-Anne's method</span>
+<span class="comment">%RRk = sqrt(diag(rk))</span>
+RRk = diag(round(rk));
+pp = preprocessorCreate();
+model = logregFit(RRk*X, y, <span class="string">'preproc'</span>, pp);
+W1 = model.w'
+
+<span class="comment">% Method 2</span>
+model = logregFit(X, y, <span class="string">'preproc'</span>, pp, <span class="string">'weights'</span>, rk);
+W2 = model.w'
+</pre><pre class="codeoutput">W1 =
+  Columns 1 through 2
+  -0.388786819878502   0.200576118180219
+   0.274059306520062  -0.225428918601534
+   0.114727513358440   0.024852800421314
+  Columns 3 through 4
+  -0.366274681176108   0.301596745254164
+   0.398281347181620  -0.227260302293985
+  -0.032006666005512  -0.074336442960179
+  Column 5
+  -0.437920956959860
+   0.135182851642547
+   0.302738105317313
+W2 =
+  Columns 1 through 2
+  -0.286736917936269   0.270479114626896
+   0.177386636758519  -0.334686516759060
+   0.109350281177750   0.064207402132164
+  Columns 3 through 4
+  -0.327287600799775   0.137652747797019
+   0.347999994246299  -0.028205088657202
+  -0.020712393446524  -0.109447659139817
+  Column 5
+  -0.340746237306971
+   0.101699147547786
+   0.239047089759184
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% weighted logistic regression
+
+% This file is from pmtk3.googlecode.com
+
+
+setSeed(0);
+N = 100; D = 5;
+X = randn(N,D);
+w = randn(D,1);
+C = 3; pi = normalize(rand(1,C));
+y = sampleDiscrete(pi, N, 1);
+rk = rand(N,1); % positive weights
+
+
+% Jo-Anne's method
+%RRk = sqrt(diag(rk))
+RRk = diag(round(rk));
+pp = preprocessorCreate();
+model = logregFit(RRk*X, y, 'preproc', pp);
+W1 = model.w'
+
+% Method 2
+model = logregFit(X, y, 'preproc', pp, 'weights', rk);
+W2 = model.w'
+
+##### SOURCE END #####
+--></body></html>

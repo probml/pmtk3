@@ -1,0 +1,144 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Simple test of hmmFitEm with Gaussian observations</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="hmmGaussTest.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Simple test of hmmFitEm with Gaussian observations</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+loadData(<span class="string">'speechDataDigits4And5'</span>);
+data = [train4'; train5'];
+d = 13;
+
+<span class="comment">% test with a bogus prior</span>
+<span class="keyword">if</span> 1
+    prior.mu = ones(1, d);
+    prior.Sigma = 0.1*eye(d);
+    prior.k = d;
+    prior.dof = prior.k + 1;
+<span class="keyword">else</span>
+    prior.mu = [1 3 5 2 9 7 0 0 0 0 0 0 1];
+    prior.Sigma = randpd(d) + eye(d);
+    prior.k = 12;
+    prior.dof = 15;
+<span class="keyword">end</span>
+
+model = hmmFitEm(data, 2, <span class="string">'gauss'</span>, <span class="string">'verbose'</span>, true, <span class="string">'piPrior'</span>, [3 2], <span class="keyword">...</span>
+    <span class="string">'emissionPrior'</span>, prior, <span class="string">'nRandomRestarts'</span>, 2, <span class="string">'maxIter'</span>, 10);
+
+X = hmmSample(model, 200, 10);
+<span class="comment">%m2 = hmmFitEm(X, 5, 'gauss', 'verbose', true);</span>
+</pre><pre class="codeoutput">
+********** Random Restart 1 **********
+initializing model for EM
+1	 loglik: -267832
+2	 loglik: -202715
+3	 loglik: -202498
+4	 loglik: -202480
+
+********** Random Restart 2 **********
+initializing model for EM
+1	 loglik: -289590
+2	 loglik: -250215
+3	 loglik: -250148
+4	 loglik: -249632
+5	 loglik: -247392
+6	 loglik: -243037
+7	 loglik: -234000
+8	 loglik: -222794
+9	 loglik: -213813
+10	 loglik: -204883
+11	 loglik: -203518
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Simple test of hmmFitEm with Gaussian observations
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+loadData('speechDataDigits4And5');
+data = [train4'; train5'];
+d = 13;
+
+% test with a bogus prior
+if 1
+    prior.mu = ones(1, d);
+    prior.Sigma = 0.1*eye(d);
+    prior.k = d;
+    prior.dof = prior.k + 1;
+else 
+    prior.mu = [1 3 5 2 9 7 0 0 0 0 0 0 1];
+    prior.Sigma = randpd(d) + eye(d);
+    prior.k = 12;
+    prior.dof = 15;
+end
+
+model = hmmFitEm(data, 2, 'gauss', 'verbose', true, 'piPrior', [3 2], ...
+    'emissionPrior', prior, 'nRandomRestarts', 2, 'maxIter', 10);
+
+X = hmmSample(model, 200, 10);
+%m2 = hmmFitEm(X, 5, 'gauss', 'verbose', true);
+
+
+##### SOURCE END #####
+--></body></html>

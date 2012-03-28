@@ -1,0 +1,229 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>Variable Selection Demo</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-31"><meta name="m-file" content="varSelDemo"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Variable Selection Demo</h1><!--introduction--><p>PMTKslow</p><!--/introduction--><pre class="codeinput"><span class="keyword">function</span> varSelDemo()
+
+methods = {<span class="keyword">...</span>
+    @(X,y) larsSelectSubsetCV(X,y, <span class="string">'nfolds'</span>, 5), <span class="keyword">...</span>
+    @(X,y) fbmpCore(X,y,<span class="string">'maxNumSearches'</span>,5), <span class="keyword">...</span>
+    @(X,y) ARDwipf(X,y,<span class="string">'maxIter'</span>,50)};
+
+methodNames = {<span class="string">'lars'</span>, <span class="string">'bmp'</span>, <span class="string">'ard'</span>};
+nmethods = length(methodNames);
+
+n = 100;
+ds = [50 150 200]; <span class="comment">% 10:50:500;</span>
+sigma = 0.1;
+sparsity = 0.1;
+lassoSignConsistent = false; <span class="comment">% faster to generate data if not require sign consistency</span>
+ntrials = 2;
+nexpts = length(ds);
+
+nmetrics = 4;
+metrics = zeros(ntrials, nexpts, nmetrics, nmethods);
+metricNames = {<span class="string">'NMSE'</span>, <span class="string">'time'</span>, <span class="string">'precision'</span>, <span class="string">'recall'</span>};
+
+<span class="keyword">for</span> expt=1:nexpts
+    d = ds(expt);
+    fprintf(<span class="string">'expt %d (d=%d) of %d\n'</span>, expt, d, nexpts);
+    <span class="keyword">for</span> m=1:nmethods
+        fprintf(<span class="string">'method %d (%s) of %d\n'</span>, m, methodNames{m}, nmethods);
+        r = floor(sparsity*d);
+        metrics(:,expt,:,m) = helper(methods{m}, n,d,r,lassoSignConsistent,sigma,ntrials);
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="keyword">for</span> k=1:nmetrics
+    str = sprintf(<span class="string">'%s, n %d, sigma %3.2f, sparsity %3.2f, SC %d'</span>, <span class="keyword">...</span>
+        metricNames{k}, n, sigma, sparsity, lassoSignConsistent);
+    figure; hold <span class="string">on</span>
+    [styles, colors, symbols] =  plotColors;
+    <span class="keyword">for</span> m=1:nmethods
+        mu = mean(metrics(:,:,k,m));
+        se = std(metrics(:,:,k,m))/sqrt(ntrials);
+        h(m) = errorbar(ds, mu, se, [styles{m}, colors(m)]);
+        <span class="comment">%set(h(m), 'color', colors(m));</span>
+    <span class="keyword">end</span>
+    legend(methodNames)
+    title(str)
+    xlabel(<span class="string">'d'</span>)
+<span class="keyword">end</span>
+
+
+
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> [metrics] = helper(fn, n,d,r,lassoSignConsistent,sigma,ntrials)
+<span class="keyword">for</span> t=1:ntrials
+    setSeed(t);
+    [X,y,Wtrue] = bolassoMakeData(n,d,r,1,lassoSignConsistent,sigma);
+    <span class="comment">%X = centerCols(X);</span>
+    <span class="comment">%X = mkUnitVariance(X);</span>
+    <span class="comment">%y = centerCols(y);</span>
+    trueSupport = find(Wtrue ~= 0); <span class="comment">% 1 to r</span>
+    start = cputime;
+    [estSupport,West] = fn(X,y);
+    time(t) = cputime-start;
+    ncorrect = length(intersect(estSupport, trueSupport));
+    ncalled = length(estSupport);
+    ntrue = length(trueSupport);
+    precision(t) = ncorrect/ncalled;
+    recall(t) = ncorrect/ntrue;
+    nmse(t) = norm(West-Wtrue)/norm(Wtrue);
+<span class="keyword">end</span>
+metrics = [nmse(:) time(:) precision(:) recall(:)];
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">expt 1 (d=50) of 3
+method 1 (lars) of 3
+method 2 (bmp) of 3
+method 3 (ard) of 3
+expt 2 (d=150) of 3
+method 1 (lars) of 3
+method 2 (bmp) of 3
+method 3 (ard) of 3
+expt 3 (d=200) of 3
+method 1 (lars) of 3
+method 2 (bmp) of 3
+method 3 (ard) of 3
+</pre><img vspace="5" hspace="5" src="varSelDemo_01.png" alt=""> <img vspace="5" hspace="5" src="varSelDemo_02.png" alt=""> <img vspace="5" hspace="5" src="varSelDemo_03.png" alt=""> <img vspace="5" hspace="5" src="varSelDemo_04.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Variable Selection Demo
+% PMTKslow
+%%
+function varSelDemo()
+
+methods = {...
+    @(X,y) larsSelectSubsetCV(X,y, 'nfolds', 5), ...
+    @(X,y) fbmpCore(X,y,'maxNumSearches',5), ...
+    @(X,y) ARDwipf(X,y,'maxIter',50)};
+
+methodNames = {'lars', 'bmp', 'ard'};
+nmethods = length(methodNames);
+
+n = 100;
+ds = [50 150 200]; % 10:50:500;
+sigma = 0.1;
+sparsity = 0.1;
+lassoSignConsistent = false; % faster to generate data if not require sign consistency
+ntrials = 2;
+nexpts = length(ds);
+
+nmetrics = 4;
+metrics = zeros(ntrials, nexpts, nmetrics, nmethods);
+metricNames = {'NMSE', 'time', 'precision', 'recall'};
+
+for expt=1:nexpts
+    d = ds(expt);
+    fprintf('expt %d (d=%d) of %d\n', expt, d, nexpts);
+    for m=1:nmethods
+        fprintf('method %d (%s) of %d\n', m, methodNames{m}, nmethods);
+        r = floor(sparsity*d);
+        metrics(:,expt,:,m) = helper(methods{m}, n,d,r,lassoSignConsistent,sigma,ntrials);
+    end
+end
+
+for k=1:nmetrics
+    str = sprintf('%s, n %d, sigma %3.2f, sparsity %3.2f, SC %d', ...
+        metricNames{k}, n, sigma, sparsity, lassoSignConsistent);
+    figure; hold on
+    [styles, colors, symbols] =  plotColors;
+    for m=1:nmethods
+        mu = mean(metrics(:,:,k,m));
+        se = std(metrics(:,:,k,m))/sqrt(ntrials);
+        h(m) = errorbar(ds, mu, se, [styles{m}, colors(m)]);
+        %set(h(m), 'color', colors(m));
+    end
+    legend(methodNames)
+    title(str)
+    xlabel('d')
+end
+
+
+
+end
+
+function [metrics] = helper(fn, n,d,r,lassoSignConsistent,sigma,ntrials)
+for t=1:ntrials
+    setSeed(t);
+    [X,y,Wtrue] = bolassoMakeData(n,d,r,1,lassoSignConsistent,sigma);
+    %X = centerCols(X);
+    %X = mkUnitVariance(X);
+    %y = centerCols(y);
+    trueSupport = find(Wtrue ~= 0); % 1 to r
+    start = cputime;
+    [estSupport,West] = fn(X,y);
+    time(t) = cputime-start;
+    ncorrect = length(intersect(estSupport, trueSupport));
+    ncalled = length(estSupport);
+    ntrue = length(trueSupport);
+    precision(t) = ncorrect/ncalled;
+    recall(t) = ncorrect/ntrue;
+    nmse(t) = norm(West-Wtrue)/norm(Wtrue);
+end
+metrics = [nmse(:) time(:) precision(:) recall(:)];
+end
+
+##### SOURCE END #####
+--></body></html>

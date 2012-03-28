@@ -1,0 +1,354 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>demoFAemt</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="demoFAemt.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><pre class="codeinput">  load <span class="string">autoData</span>;
+  setSeed(3);
+  <span class="comment">% number of latent variables</span>
+  Dz = 2;
+
+
+  <span class="comment">% CONTINUOUS DATA FA</span>
+  <span class="comment">% initialize</span>
+   fprintf(<span class="string">'\n\n*****demoFAemt cts\n\n'</span>)
+  opt=struct(<span class="string">'Dz'</span>, Dz);
+  [params0, data] = initFA(data, [], opt);
+  dataC = data; dataC.discrete = [];
+  params0.a = 1;
+  params0.b = 1;
+  <span class="comment">% Learn theta with EM algorithm</span>
+  options = struct(<span class="string">'maxNumOfItersLearn'</span>, 3,<span class="keyword">...</span>
+                    <span class="string">'lowerBoundTol'</span>, 1e-6,<span class="keyword">...</span>
+                    <span class="string">'estimateBeta'</span>,1,<span class="keyword">...</span><span class="comment">% estimate loading factos</span>
+                    <span class="string">'estimateMean'</span>, 1,<span class="keyword">...</span><span class="comment">% estimate prior mean (which is equivalent to estimating bias)</span>
+                    <span class="string">'estimateCovMat'</span>,0);
+  funcName = struct(<span class="string">'inferFunc'</span>, @inferFA, <span class="string">'maxParamsFunc'</span>, @maxParamsFA);
+  [params, logLik] = learnEm(dataC, funcName, params0, options);
+  <span class="comment">% Obtain p(z|y,\theta)</span>
+  [ss, logLik, postDist] = inferFA(data, params, []);
+  factorsC = postDist.mean;
+
+  figure(2);clf
+  <span class="comment">% PLOT</span>
+  [D,N] = size(data.continuous);
+  nr = 2; nc =2;
+  <span class="comment">%colors = repmat([1:13]'/14, 1, 3).*repmat([1 1 1], 13, 1);</span>
+  count = 1;
+  <span class="keyword">for</span> i = [1 3]
+    <span class="keyword">if</span> i == 1
+      colors = [0 0 0; 1/4 0 0; 2/4 0 0; 3/4 0 0; 1 0 0];
+      markers = {<span class="string">'x'</span>,<span class="string">'o'</span>,<span class="string">'*'</span>,<span class="string">'d'</span>,<span class="string">'s'</span>};
+    <span class="keyword">elseif</span> i == 3
+      colors = [1 0 1; 0 1 0; 0 0 1];
+      markers = {<span class="string">'o'</span>,<span class="string">'d'</span>,<span class="string">'s'</span>};
+    <span class="keyword">end</span>
+    subplot(nr,nc,count)
+    hold <span class="string">on</span>
+    <span class="keyword">for</span> j = 1:nClass(i)
+      idx = find(data.discrete(i,:) == j);
+      h(j) = plot(factorsC(1,idx), factorsC(2,idx),<span class="string">'o'</span>,<span class="string">'color'</span>, colors(j,:),<span class="string">'marker'</span>,markers{j});
+    <span class="keyword">end</span>
+    <span class="keyword">if</span> i == 1
+      legend(<span class="string">'1'</span>,<span class="string">'2'</span>,<span class="string">'3'</span>,<span class="string">'4'</span>,<span class="string">'5'</span>,<span class="string">'location'</span>,<span class="string">'northwest'</span>);
+      ht = title(<span class="string">'Continuous-Data FA: #Cylinders'</span>);
+    <span class="keyword">elseif</span> i == 3
+      legend(<span class="string">'US'</span>,<span class="string">'Europe'</span>,<span class="string">'Japan'</span>,<span class="string">'location'</span>,<span class="string">'northwest'</span>);
+      ht = title(<span class="string">'Continuous-Data FA: Country'</span>);
+    <span class="keyword">end</span>
+    hx = xlabel(<span class="string">'Factor 1'</span>);
+    hy = ylabel(<span class="string">'Factor 2'</span>);
+    <span class="comment">%xlim([-3,3]);</span>
+    <span class="comment">%ylim([-3,3]);</span>
+
+    set(gca,<span class="string">'fontname'</span>,<span class="string">'Helvetica'</span>);
+    set([hx,hy],<span class="string">'fontname'</span>,<span class="string">'avantgarde'</span>,<span class="string">'fontsize'</span>,13,<span class="string">'color'</span>,[.3 .3 .3]);
+    set(ht,<span class="string">'fontname'</span>,<span class="string">'avantgarde'</span>,<span class="string">'fontsize'</span>,13,<span class="string">'fontweight'</span>,<span class="string">'bold'</span>);
+    set(gca,<span class="string">'box'</span>,<span class="string">'off'</span>,<span class="string">'tickdir'</span>,<span class="string">'out'</span>, <span class="string">'ticklength'</span>,[.02 .02],<span class="string">'xcolor'</span>,[.3 .3 .3],<span class="string">'ycolor'</span>,[.3 .3 .3],<span class="string">'linewidth'</span>,1);
+
+    clear <span class="string">h</span>;
+    count = count + 1;
+  <span class="keyword">end</span>
+
+
+
+  fprintf(<span class="string">'\n\n*****demoFAemt mixed\n\n'</span>)
+  <span class="comment">%MIXED-DATA FA</span>
+  setSeed(3);
+  <span class="comment">% 1 of M encoding</span>
+  data.categorical = encodeDataOneOfM(data.discrete, nClass);
+  <span class="comment">% initialize</span>
+  opt=struct(<span class="string">'Dz'</span>, Dz, <span class="string">'nClass'</span>, nClass);
+  [params0, data] = initMixedDataFA(data, [], opt);
+  params0.a = 1;
+  params0.b = 1;
+  <span class="comment">% learn theta with EM algorithm</span>
+  options = struct(<span class="string">'maxNumOfItersLearn'</span>, 10,<span class="keyword">...</span>
+                    <span class="string">'lowerBoundTol'</span>, 1e-6,<span class="keyword">...</span>
+                    <span class="string">'estimateBeta'</span>,1,<span class="keyword">...</span><span class="comment">% estimate loading factos</span>
+                    <span class="string">'estimateMean'</span>, 1,<span class="keyword">...</span><span class="comment">% estimate prior mean (which is equivalent to estimating bias)</span>
+                    <span class="string">'estimateCovMat'</span>,0);
+  funcName = struct(<span class="string">'inferFunc'</span>, @inferMixedDataFA, <span class="string">'maxParamsFunc'</span>, @maxParamsMixedDataFA);
+  [params, logLik] = learnEm(data, funcName, params0, options);
+  <span class="comment">% Obtain p(z|y,\theta)</span>
+  params.psi = randn(size(data.categorical));<span class="comment">% initialize variational parameters</span>
+  [ss, logLik, postDist] = inferMixedDataFA(data, params, []);
+  factorsD = postDist.mean;
+
+  figure(2);
+  nr = 2; nc =2; count = 3;
+  <span class="comment">%colors = repmat([1:13]'/14, 1, 3).*repmat([1 1 1], 13, 1);</span>
+  <span class="keyword">for</span> i = [1 3]
+    <span class="keyword">if</span> i == 1
+      colors = [0 0 0; 1/4 0 0; 2/4 0 0; 3/4 0 0; 1 0 0];
+      markers = {<span class="string">'x'</span>,<span class="string">'o'</span>,<span class="string">'*'</span>,<span class="string">'d'</span>,<span class="string">'s'</span>};
+    <span class="keyword">elseif</span> i == 3
+      colors = [1 0 1; 0 1 0; 0 0 1];
+      markers = {<span class="string">'o'</span>,<span class="string">'d'</span>,<span class="string">'s'</span>};
+    <span class="keyword">end</span>
+    subplot(nr,nc,count)
+    hold <span class="string">on</span>
+    <span class="keyword">for</span> j = 1:nClass(i)
+      idx = find(data.discrete(i,:) == j);
+      h(j) = plot(factorsD(1,idx), factorsD(2,idx),<span class="string">'o'</span>,<span class="string">'color'</span>,colors(j,:),<span class="string">'marker'</span>,markers{j});
+    <span class="keyword">end</span>
+    <span class="keyword">if</span> i == 1
+      legend(<span class="string">'1'</span>,<span class="string">'2'</span>,<span class="string">'3'</span>,<span class="string">'4'</span>,<span class="string">'5'</span>,<span class="string">'location'</span>,<span class="string">'northwest'</span>);
+      ht = title(<span class="string">'Mixed-Data FA: #Cylinders'</span>);
+    <span class="keyword">elseif</span> i == 3
+      legend(<span class="string">'US'</span>,<span class="string">'Europe'</span>,<span class="string">'Japan'</span>,<span class="string">'location'</span>,<span class="string">'northwest'</span>);
+      ht = title(<span class="string">'Mixed-Data FA: Country'</span>);
+    <span class="keyword">end</span>
+    <span class="comment">%ylim([-5 0]);</span>
+    <span class="comment">%xlim([9.8 10.8]);</span>
+    hx = xlabel(<span class="string">'Factor 1'</span>);
+    hy = ylabel(<span class="string">'Factor 2'</span>);
+    set(gca,<span class="string">'fontname'</span>,<span class="string">'Helvetica'</span>);
+    set([hx,hy],<span class="string">'fontname'</span>,<span class="string">'avantgarde'</span>,<span class="string">'fontsize'</span>,13,<span class="string">'color'</span>,[.3 .3 .3]);
+    set(ht,<span class="string">'fontname'</span>,<span class="string">'avantgarde'</span>,<span class="string">'fontsize'</span>,13,<span class="string">'fontweight'</span>,<span class="string">'bold'</span>);
+    set(gca,<span class="string">'box'</span>,<span class="string">'off'</span>,<span class="string">'tickdir'</span>,<span class="string">'out'</span>, <span class="string">'ticklength'</span>,[.02 .02],<span class="string">'xcolor'</span>,[.3 .3 .3],<span class="string">'ycolor'</span>,[.3 .3 .3],<span class="string">'linewidth'</span>,1);
+
+    clear <span class="string">h</span>;
+    count = count + 1;
+  <span class="keyword">end</span>
+ <span class="comment">% print -djpeg demoAutoFA2.jpeg</span>
+</pre><pre class="codeoutput">
+
+*****demoFAemt cts
+
+Iter 1 Lower bound -8.509632, increase by NaN
+Iter 2 Lower bound -7.119670, increase by 1.389962
+Iter 3 Lower bound -6.112891, increase by 1.006779
+
+
+*****demoFAemt mixed
+
+Dm =
+    18
+Nm =
+   392
+Iter 1 Lower bound -16.557657, increase by NaN
+Iter 2 Lower bound -11.412171, increase by 5.145487
+Iter 3 Lower bound -10.092401, increase by 1.319769
+Iter 4 Lower bound -9.713573, increase by 0.378828
+Iter 5 Lower bound -9.580678, increase by 0.132895
+Iter 6 Lower bound -9.509354, increase by 0.071324
+Iter 7 Lower bound -9.462040, increase by 0.047313
+Iter 8 Lower bound -9.427408, increase by 0.034633
+Iter 9 Lower bound -9.400459, increase by 0.026949
+Iter 10 Lower bound -9.378611, increase by 0.021848
+</pre><img vspace="5" hspace="5" src="demoFAemt_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+  load autoData;
+  setSeed(3);
+  % number of latent variables
+  Dz = 2;
+  
+ 
+  % CONTINUOUS DATA FA 
+  % initialize 
+   fprintf('\n\n*****demoFAemt cts\n\n')
+  opt=struct('Dz', Dz);
+  [params0, data] = initFA(data, [], opt);
+  dataC = data; dataC.discrete = [];
+  params0.a = 1;
+  params0.b = 1;
+  % Learn theta with EM algorithm 
+  options = struct('maxNumOfItersLearn', 3,...
+                    'lowerBoundTol', 1e-6,...
+                    'estimateBeta',1,...% estimate loading factos
+                    'estimateMean', 1,...% estimate prior mean (which is equivalent to estimating bias)
+                    'estimateCovMat',0);
+  funcName = struct('inferFunc', @inferFA, 'maxParamsFunc', @maxParamsFA);
+  [params, logLik] = learnEm(dataC, funcName, params0, options);
+  % Obtain p(z|y,\theta)
+  [ss, logLik, postDist] = inferFA(data, params, []);
+  factorsC = postDist.mean;
+  
+  figure(2);clf
+  % PLOT
+  [D,N] = size(data.continuous);
+  nr = 2; nc =2;
+  %colors = repmat([1:13]'/14, 1, 3).*repmat([1 1 1], 13, 1);
+  count = 1;
+  for i = [1 3]
+    if i == 1
+      colors = [0 0 0; 1/4 0 0; 2/4 0 0; 3/4 0 0; 1 0 0];
+      markers = {'x','o','*','d','s'};
+    elseif i == 3
+      colors = [1 0 1; 0 1 0; 0 0 1];
+      markers = {'o','d','s'};
+    end
+    subplot(nr,nc,count)
+    hold on
+    for j = 1:nClass(i)
+      idx = find(data.discrete(i,:) == j);
+      h(j) = plot(factorsC(1,idx), factorsC(2,idx),'o','color', colors(j,:),'marker',markers{j});
+    end
+    if i == 1
+      legend('1','2','3','4','5','location','northwest');
+      ht = title('Continuous-Data FA: #Cylinders');
+    elseif i == 3
+      legend('US','Europe','Japan','location','northwest');
+      ht = title('Continuous-Data FA: Country');
+    end
+    hx = xlabel('Factor 1');
+    hy = ylabel('Factor 2');
+    %xlim([-3,3]);
+    %ylim([-3,3]);
+
+    set(gca,'fontname','Helvetica');
+    set([hx,hy],'fontname','avantgarde','fontsize',13,'color',[.3 .3 .3]);
+    set(ht,'fontname','avantgarde','fontsize',13,'fontweight','bold'); 
+    set(gca,'box','off','tickdir','out', 'ticklength',[.02 .02],'xcolor',[.3 .3 .3],'ycolor',[.3 .3 .3],'linewidth',1);
+
+    clear h;
+    count = count + 1;
+  end
+
+
+  
+  fprintf('\n\n*****demoFAemt mixed\n\n')
+  %MIXED-DATA FA 
+  setSeed(3);
+  % 1 of M encoding
+  data.categorical = encodeDataOneOfM(data.discrete, nClass);
+  % initialize
+  opt=struct('Dz', Dz, 'nClass', nClass);
+  [params0, data] = initMixedDataFA(data, [], opt);
+  params0.a = 1;
+  params0.b = 1;
+  % learn theta with EM algorithm
+  options = struct('maxNumOfItersLearn', 10,...
+                    'lowerBoundTol', 1e-6,...
+                    'estimateBeta',1,...% estimate loading factos
+                    'estimateMean', 1,...% estimate prior mean (which is equivalent to estimating bias)
+                    'estimateCovMat',0);
+  funcName = struct('inferFunc', @inferMixedDataFA, 'maxParamsFunc', @maxParamsMixedDataFA);
+  [params, logLik] = learnEm(data, funcName, params0, options);
+  % Obtain p(z|y,\theta)
+  params.psi = randn(size(data.categorical));% initialize variational parameters
+  [ss, logLik, postDist] = inferMixedDataFA(data, params, []);
+  factorsD = postDist.mean;
+
+  figure(2);
+  nr = 2; nc =2; count = 3;
+  %colors = repmat([1:13]'/14, 1, 3).*repmat([1 1 1], 13, 1);
+  for i = [1 3]
+    if i == 1
+      colors = [0 0 0; 1/4 0 0; 2/4 0 0; 3/4 0 0; 1 0 0];
+      markers = {'x','o','*','d','s'};
+    elseif i == 3
+      colors = [1 0 1; 0 1 0; 0 0 1];
+      markers = {'o','d','s'};
+    end
+    subplot(nr,nc,count)
+    hold on
+    for j = 1:nClass(i)
+      idx = find(data.discrete(i,:) == j);
+      h(j) = plot(factorsD(1,idx), factorsD(2,idx),'o','color',colors(j,:),'marker',markers{j});
+    end
+    if i == 1
+      legend('1','2','3','4','5','location','northwest');
+      ht = title('Mixed-Data FA: #Cylinders');
+    elseif i == 3
+      legend('US','Europe','Japan','location','northwest');
+      ht = title('Mixed-Data FA: Country');
+    end
+    %ylim([-5 0]);
+    %xlim([9.8 10.8]);
+    hx = xlabel('Factor 1');
+    hy = ylabel('Factor 2');
+    set(gca,'fontname','Helvetica');
+    set([hx,hy],'fontname','avantgarde','fontsize',13,'color',[.3 .3 .3]);
+    set(ht,'fontname','avantgarde','fontsize',13,'fontweight','bold'); 
+    set(gca,'box','off','tickdir','out', 'ticklength',[.02 .02],'xcolor',[.3 .3 .3],'ycolor',[.3 .3 .3],'linewidth',1);
+
+    clear h;
+    count = count + 1;
+  end
+ % print -djpeg demoAutoFA2.jpeg
+
+
+##### SOURCE END #####
+--></body></html>

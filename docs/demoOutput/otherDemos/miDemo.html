@@ -1,0 +1,105 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Computing pairwise mutual information, timing comparison</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="miDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Computing pairwise mutual information, timing comparison</h1><!--introduction--><p>PMTKneedsStatsToolbox hist3 PMTKslow</p><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+requireStatsToolbox
+loadData(<span class="string">'20news_w100'</span>);
+X = documents';
+tic; [mi] = mutualInfoAllPairsDiscrete(X);toc
+tic; [mi2] = mutualInfoAllPairsMixed(X); toc
+tic; [mi3] = mutualInfoAllPairsMixed(X, [], <span class="string">'useSpeedup'</span>, false); toc
+
+approxeq(mi, mi2)
+approxeq(mi, mi3)
+</pre><pre class="codeoutput">Elapsed time is 0.344165 seconds.
+Elapsed time is 0.395058 seconds.
+Elapsed time is 13.241621 seconds.
+ans =
+     1
+ans =
+     1
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Computing pairwise mutual information, timing comparison
+% PMTKneedsStatsToolbox hist3
+% PMTKslow
+%%
+
+% This file is from pmtk3.googlecode.com
+
+requireStatsToolbox
+loadData('20news_w100');
+X = documents';
+tic; [mi] = mutualInfoAllPairsDiscrete(X);toc
+tic; [mi2] = mutualInfoAllPairsMixed(X); toc
+tic; [mi3] = mutualInfoAllPairsMixed(X, [], 'useSpeedup', false); toc
+
+approxeq(mi, mi2)
+approxeq(mi, mi3)
+%%
+
+##### SOURCE END #####
+--></body></html>

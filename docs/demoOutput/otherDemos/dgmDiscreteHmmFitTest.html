@@ -1,0 +1,173 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Fit a discrete HMM via hmmFit and dgmTrain, comparing the results</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="dgmDiscreteHmmFitTest.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Fit a discrete HMM via hmmFit and dgmTrain, comparing the results</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">sample data</a></li><li><a href="#3">create the hmm model</a></li><li><a href="#4">fit the hmm model on random data</a></li><li><a href="#5">convert to a dgm</a></li><li><a href="#6">fit the dgm</a></li><li><a href="#7">compare results</a></li></ul></div><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+setSeed(0);
+obsModel = [1/6 , 1/6 , 1/6 , 1/6 , 1/6 , 1/6  ;
+           1/10, 1/10, 1/10, 1/10, 1/10, 5/10 ];
+transmat = [0.95 , 0.05;
+           0.10  , 0.90];
+pi = [0.5, 0.5];
+T = 30;
+</pre><h2>sample data<a name="2"></a></h2><pre class="codeinput">nsamples = 1;
+markov.pi = pi;
+markov.A = transmat;
+hidden = markovSample(markov, T, nsamples);
+observed = zeros(1, T);
+<span class="keyword">for</span> t=1:T
+   observed(1, t) = sampleDiscrete(obsModel(hidden(t), :));
+<span class="keyword">end</span>
+</pre><h2>create the hmm model<a name="3"></a></h2><pre class="codeinput">nstates = size(obsModel, 1);
+hmm.nObsStates = size(obsModel, 2);
+hmm.emission = tabularCpdCreate(obsModel);
+hmm.nstates = nstates;
+hmm.pi = pi;
+hmm.A = transmat;
+hmm.type = <span class="string">'discrete'</span>;
+</pre><h2>fit the hmm model on random data<a name="4"></a></h2><pre class="codeinput">fprintf(<span class="string">'HMM\n'</span>);
+hmmF = hmmFit(observed, nstates, <span class="string">'discrete'</span>, <span class="string">'verbose'</span>, true, <span class="keyword">...</span>
+    <span class="string">'pi0'</span>, hmm.pi, <span class="string">'trans0'</span>, hmm.A, <span class="string">'emission0'</span>, hmm.emission);
+</pre><pre class="codeoutput">HMM
+initializing model for EM
+1	 loglik: -56.9173
+2	 loglik: -52.545
+3	 loglik: -51.8302
+4	 loglik: -51.529
+5	 loglik: -51.384
+6	 loglik: -51.2931
+7	 loglik: -51.2239
+8	 loglik: -51.1681
+9	 loglik: -51.1239
+10	 loglik: -51.0906
+11	 loglik: -51.0664
+12	 loglik: -51.0494
+13	 loglik: -51.0377
+14	 loglik: -51.0297
+15	 loglik: -51.0243
+16	 loglik: -51.0206
+</pre><h2>convert to a dgm<a name="5"></a></h2><pre class="codeinput">dgm = hmmToDgm(hmm, T);
+dgm.CPDs{1}.prior = hmmF.piPrior(:);
+dgm.CPDs{2}.prior = hmmF.transPrior;
+</pre><h2>fit the dgm<a name="6"></a></h2><pre class="codeinput">fprintf(<span class="string">'DGM\n'</span>);
+dgm = dgmTrain(dgm, <span class="string">'localev'</span>, permute(observed(:), [3 2 1]), <span class="string">'verbose'</span>, true);
+</pre><pre class="codeoutput">DGM
+warning: dgmTrain is permuting data columns
+</pre><h2>compare results<a name="7"></a></h2><pre class="codeinput">assert(approxeq(hmmF.pi(:), dgm.CPDs{1}.T(:)));
+assert(approxeq(hmmF.A, dgm.CPDs{2}.T));
+assert(approxeq(hmmF.emission.T, dgm.localCPDs{1}.T));
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Fit a discrete HMM via hmmFit and dgmTrain, comparing the results
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+setSeed(0); 
+obsModel = [1/6 , 1/6 , 1/6 , 1/6 , 1/6 , 1/6  ;   
+           1/10, 1/10, 1/10, 1/10, 1/10, 5/10 ];   
+transmat = [0.95 , 0.05;
+           0.10  , 0.90];
+pi = [0.5, 0.5];
+T = 30; 
+%% sample data
+nsamples = 1;
+markov.pi = pi;
+markov.A = transmat;
+hidden = markovSample(markov, T, nsamples);
+observed = zeros(1, T); 
+for t=1:T
+   observed(1, t) = sampleDiscrete(obsModel(hidden(t), :)); 
+end
+%% create the hmm model
+nstates = size(obsModel, 1);
+hmm.nObsStates = size(obsModel, 2); 
+hmm.emission = tabularCpdCreate(obsModel);
+hmm.nstates = nstates;
+hmm.pi = pi;
+hmm.A = transmat; 
+hmm.type = 'discrete';
+%% fit the hmm model on random data
+%
+fprintf('HMM\n'); 
+hmmF = hmmFit(observed, nstates, 'discrete', 'verbose', true, ...
+    'pi0', hmm.pi, 'trans0', hmm.A, 'emission0', hmm.emission); 
+%% convert to a dgm
+dgm = hmmToDgm(hmm, T); 
+dgm.CPDs{1}.prior = hmmF.piPrior(:);
+dgm.CPDs{2}.prior = hmmF.transPrior;
+%% fit the dgm
+fprintf('DGM\n'); 
+dgm = dgmTrain(dgm, 'localev', permute(observed(:), [3 2 1]), 'verbose', true); 
+%% compare results
+assert(approxeq(hmmF.pi(:), dgm.CPDs{1}.T(:))); 
+assert(approxeq(hmmF.A, dgm.CPDs{2}.T)); 
+assert(approxeq(hmmF.emission.T, dgm.localCPDs{1}.T)); 
+
+
+
+##### SOURCE END #####
+--></body></html>

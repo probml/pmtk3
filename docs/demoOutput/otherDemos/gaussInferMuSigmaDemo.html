@@ -1,0 +1,235 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Plot p(mu, sigma^2 | D) in 2d using an uninformative prior for different n</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="gaussInferMuSigmaDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Plot p(mu, sigma^2 | D) in 2d using an uninformative prior for different n</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="keyword">function</span> gaussInferMuSigmaDemo()
+
+setSeed(1);
+muTrue = 5; varTrue = 8;
+X = randn(500,1)*sqrt(varTrue) + muTrue;
+
+muRange = [0 10]; sigma2Range  = [0.1 12];
+npts = 100;
+mus = linspace(muRange(1), muRange(2), npts);
+sigma2s = linspace(sigma2Range(1), sigma2Range(2), npts);
+[X1,X2] = meshgrid(mus',sigma2s');
+grid = [X1(:) X2(:)];
+[nr] = size(X1,1); nc = size(X2,1);
+
+[styles, colors, symbols] =  plotColors();
+ns = [2 5 50 100];
+h = zeros(1,length(ns));
+ps = cell(1,length(ns));
+legendstr = cell(1,length(ns));
+fig1 = figure; hold <span class="string">on</span>;
+fig2 = figure; hold <span class="string">on</span>;
+fig3 = figure; hold <span class="string">on</span>;
+<span class="keyword">for</span> i=1:length(ns)
+    n = ns(i);
+    x = X(1:n);
+    mn = mean(x);
+    kn = n;
+    an = n/2;
+    bn = 0.5*sum((x-mn).^2);
+    figure(fig1);
+    logp = GIGlogpdf(grid(:,1), grid(:,2), mn, kn, an, bn);
+    p = reshape(exp(logp), nr, nc);
+    [c,h] = contour(X1, X2, p, 5, styles{i}, <span class="string">'linewidth'</span> , 3);
+    <span class="comment">%h = surf(X1, X2, p, plotArgs{:});</span>
+    legendstr{i} = sprintf(<span class="string">'n=%d'</span>, n);
+
+    figure(fig2);
+    model.mu = 2*an;
+    model.Sigma = mn;
+    model.dof = bn/(an*kn);
+    logp = studentLogprob(model, mus);
+    plot(mus, exp(logp), styles{i}, <span class="string">'linewidth'</span>, 3);
+
+    figure(fig3);
+    logp = IGlogpdf(sigma2s, an, bn);
+    plot(sigma2s, exp(logp), styles{i}, <span class="string">'linewidth'</span>, 3);
+
+<span class="keyword">end</span>
+figure(fig1);
+legend(legendstr);
+xlabel(sprintf(<span class="string">'%s'</span>, <span class="string">'\mu'</span>))
+ylabel(sprintf(<span class="string">'%s'</span>, <span class="string">'\sigma^2'</span>))
+plot(muTrue, varTrue, <span class="string">'x'</span>, <span class="string">'markersize'</span>, 12, <span class="string">'linewidth'</span>, 4, <span class="string">'color'</span>, <span class="string">'k'</span>);
+printPmtkFigure(<span class="string">'muSigmaPost'</span>)
+
+figure(fig2);
+legend(legendstr);
+xlabel(sprintf(<span class="string">'%s'</span>, <span class="string">'\mu'</span>))
+printPmtkFigure(<span class="string">'muPost'</span>)
+
+figure(fig3);
+legend(legendstr);
+xlabel(sprintf(<span class="string">'%s'</span>, <span class="string">'\sigma^2'</span>))
+printPmtkFigure(<span class="string">'sigmaPost'</span>)
+
+
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> logp=GIGlogpdf(mu,s2,m,k,a,b)
+logZ = 0.5*log(2*pi) -0.5*log(k) + gammaln(a) - a*log(b);
+logp = -(a+1.5).*log(s2) - (2*b + k*(m-mu).^2)./(2*s2);
+logp = logp - logZ;
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> logp = IGlogpdf(x, a, b)
+logp = a*log(b)-gammaln(a) -(a+1).*log(x) -b./x;
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="gaussInferMuSigmaDemo_01.png" alt=""> <img vspace="5" hspace="5" src="gaussInferMuSigmaDemo_02.png" alt=""> <img vspace="5" hspace="5" src="gaussInferMuSigmaDemo_03.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Plot p(mu, sigma^2 | D) in 2d using an uninformative prior for different n
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+function gaussInferMuSigmaDemo()
+
+setSeed(1);
+muTrue = 5; varTrue = 8;
+X = randn(500,1)*sqrt(varTrue) + muTrue;
+
+muRange = [0 10]; sigma2Range  = [0.1 12];
+npts = 100;
+mus = linspace(muRange(1), muRange(2), npts);
+sigma2s = linspace(sigma2Range(1), sigma2Range(2), npts);
+[X1,X2] = meshgrid(mus',sigma2s');
+grid = [X1(:) X2(:)];
+[nr] = size(X1,1); nc = size(X2,1);
+
+[styles, colors, symbols] =  plotColors();
+ns = [2 5 50 100];
+h = zeros(1,length(ns));
+ps = cell(1,length(ns));
+legendstr = cell(1,length(ns));
+fig1 = figure; hold on;
+fig2 = figure; hold on;
+fig3 = figure; hold on;
+for i=1:length(ns)
+    n = ns(i);
+    x = X(1:n);
+    mn = mean(x);
+    kn = n;
+    an = n/2;
+    bn = 0.5*sum((x-mn).^2);
+    figure(fig1);
+    logp = GIGlogpdf(grid(:,1), grid(:,2), mn, kn, an, bn);
+    p = reshape(exp(logp), nr, nc);
+    [c,h] = contour(X1, X2, p, 5, styles{i}, 'linewidth' , 3);
+    %h = surf(X1, X2, p, plotArgs{:});
+    legendstr{i} = sprintf('n=%d', n);
+    
+    figure(fig2);
+    model.mu = 2*an; 
+    model.Sigma = mn;
+    model.dof = bn/(an*kn);
+    logp = studentLogprob(model, mus);
+    plot(mus, exp(logp), styles{i}, 'linewidth', 3);
+    
+    figure(fig3);
+    logp = IGlogpdf(sigma2s, an, bn);
+    plot(sigma2s, exp(logp), styles{i}, 'linewidth', 3);
+    
+end
+figure(fig1);
+legend(legendstr);
+xlabel(sprintf('%s', '\mu'))
+ylabel(sprintf('%s', '\sigma^2'))
+plot(muTrue, varTrue, 'x', 'markersize', 12, 'linewidth', 4, 'color', 'k');
+printPmtkFigure('muSigmaPost')
+
+figure(fig2);
+legend(legendstr);
+xlabel(sprintf('%s', '\mu'))
+printPmtkFigure('muPost')
+
+figure(fig3);
+legend(legendstr);
+xlabel(sprintf('%s', '\sigma^2'))
+printPmtkFigure('sigmaPost')
+
+
+end
+
+function logp=GIGlogpdf(mu,s2,m,k,a,b)
+logZ = 0.5*log(2*pi) -0.5*log(k) + gammaln(a) - a*log(b);
+logp = -(a+1.5).*log(s2) - (2*b + k*(m-mu).^2)./(2*s2);
+logp = logp - logZ;
+end
+
+function logp = IGlogpdf(x, a, b)
+logp = a*log(b)-gammaln(a) -(a+1).*log(x) -b./x;
+end
+
+
+
+
+##### SOURCE END #####
+--></body></html>

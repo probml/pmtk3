@@ -1,0 +1,180 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Run Kmeans on the old faithful data</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="kmeansDemoFaithful.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Run Kmeans on the old faithful data</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="keyword">function</span> kmeansDemoFaithful
+
+
+X = loadData(<span class="string">'faithful'</span>);
+X = standardizeCols(X);
+figure; plot(X(:,1), X(:,2), <span class="string">'.'</span>, <span class="string">'markersize'</span>, 10)
+title(<span class="string">'old faithful data'</span>)
+grid <span class="string">on</span>
+printPmtkFigure(<span class="string">'faithful'</span>);
+
+<span class="comment">% specify initial params to make for a pretty plot</span>
+mu = [-1.5 1.5; 1.5 -1.5]';
+setSeed(4);
+K = 2;
+[mu, assign, errHist] = kmeansFit(X, K, <span class="string">'plotfn'</span>, @plotKmeans, <span class="keyword">...</span>
+   <span class="string">'maxIter'</span>, 10, <span class="string">'mu'</span>, mu);
+<span class="keyword">end</span>
+
+<span class="comment">%%%%%%</span>
+
+<span class="keyword">function</span> plotKmeans(data, mu, assign, err, iter)
+
+fprintf(<span class="string">'iteration %d, error %5.4f\n'</span>, iter, err);
+mu
+[K D] = size(mu);
+figure;
+symbols = {<span class="string">'r.'</span>, <span class="string">'gx'</span>, <span class="string">'b'</span>, <span class="string">'k'</span>};
+<span class="keyword">for</span> k=1:K
+  <span class="comment">%subplot(2,2,iter)</span>
+  members = find(assign==k);
+  plot(data(members,1), data(members, 2), symbols{k}, <span class="string">'markersize'</span>, 10);
+  hold <span class="string">on</span>
+  plot(mu(1,k), mu(2,k), sprintf(<span class="string">'%sx'</span>, <span class="string">'k'</span>), <span class="string">'markersize'</span>, 14, <span class="string">'linewidth'</span>, 3)
+  grid <span class="string">on</span>
+<span class="keyword">end</span>
+title(sprintf(<span class="string">'iteration %d, error %5.4f'</span>, iter, err))
+<span class="keyword">if</span> iter==2, printPmtkFigure(<span class="string">'kmeansDemoFaithfulIter2'</span>); <span class="keyword">end</span>
+
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">iteration 1, error 5.4062
+mu =
+  -0.147475090872531   0.145322169837896
+   0.217344518199515  -0.214171605525068
+iteration 2, error 1.8911
+mu =
+   0.335996130232005  -0.335996130232004
+   0.620904210701580  -0.620904210701579
+iteration 3, error 0.7929
+mu =
+   0.731112991348343  -1.199593160561843
+   0.704836306808314  -1.156478988840825
+iteration 4, error 0.2935
+mu =
+   0.719393289384476  -1.237356457741298
+   0.686259900653882  -1.180367029124675
+iteration 5, error 0.2918
+mu =
+   0.714623254253566  -1.248786090766330
+   0.680210936029413  -1.188651433667559
+iteration 6, error 0.2916
+mu =
+   0.708397462428352  -1.257766923087073
+   0.675499716913095  -1.199356640233453
+</pre><img vspace="5" hspace="5" src="kmeansDemoFaithful_01.png" alt=""> <img vspace="5" hspace="5" src="kmeansDemoFaithful_02.png" alt=""> <img vspace="5" hspace="5" src="kmeansDemoFaithful_03.png" alt=""> <img vspace="5" hspace="5" src="kmeansDemoFaithful_04.png" alt=""> <img vspace="5" hspace="5" src="kmeansDemoFaithful_05.png" alt=""> <img vspace="5" hspace="5" src="kmeansDemoFaithful_06.png" alt=""> <img vspace="5" hspace="5" src="kmeansDemoFaithful_07.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Run Kmeans on the old faithful data
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+function kmeansDemoFaithful
+
+
+X = loadData('faithful');
+X = standardizeCols(X);
+figure; plot(X(:,1), X(:,2), '.', 'markersize', 10)
+title('old faithful data')
+grid on
+printPmtkFigure('faithful'); 
+
+% specify initial params to make for a pretty plot
+mu = [-1.5 1.5; 1.5 -1.5]';
+setSeed(4);
+K = 2;
+[mu, assign, errHist] = kmeansFit(X, K, 'plotfn', @plotKmeans, ...
+   'maxIter', 10, 'mu', mu);
+end
+
+%%%%%%
+
+function plotKmeans(data, mu, assign, err, iter)
+
+fprintf('iteration %d, error %5.4f\n', iter, err);
+mu
+[K D] = size(mu);
+figure;
+symbols = {'r.', 'gx', 'b', 'k'};
+for k=1:K
+  %subplot(2,2,iter)
+  members = find(assign==k);
+  plot(data(members,1), data(members, 2), symbols{k}, 'markersize', 10);
+  hold on
+  plot(mu(1,k), mu(2,k), sprintf('%sx', 'k'), 'markersize', 14, 'linewidth', 3)
+  grid on
+end
+title(sprintf('iteration %d, error %5.4f', iter, err))
+if iter==2, printPmtkFigure('kmeansDemoFaithfulIter2'); end
+
+end
+
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,184 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Relative MSE plot</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="hoffNormalmsePlots.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Relative MSE plot</h1><pre class="codeinput"><span class="comment">%PMTKneedsStatsToolbox ksdensity</span>
+</pre><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+requireStatsToolbox
+n = 1:50;
+k0 = 0:3;
+sigmaTrue = 13;
+mu0 = 100;
+thetaTrue = 112;
+theta0 = 100;
+mseThetaE = zeros(length(n), length(k0));
+mseThetaB = zeros(length(n), length(k0));
+<span class="keyword">for</span> k=k0
+  w = (n./(n + k));
+  mseThetaE(:,k+1) = sigmaTrue^2./n;
+  mseThetaB(:,k+1) = w.^2.*sigmaTrue^2./n + (1-w).^2*(mu0 - thetaTrue)^2;
+<span class="keyword">end</span>
+
+ratio = mseThetaB ./ mseThetaE;
+
+plot(ratio);
+legend(strread(num2str(k0),<span class="string">'%s'</span>), <span class="string">'Location'</span>, <span class="string">'Best'</span>);
+title(<span class="string">'MSE ratio: ratio of bayesian to frequentist MSE'</span>);
+ylabel(<span class="string">'relative MSE'</span>);
+
+<span class="comment">% Sampling distribution - Bootstrap</span>
+nSamples = 10; nBootSamples = 1000;
+thetaBoot = zeros(nBootSamples, length(k0));
+model = struct(<span class="string">'mu'</span>, thetaTrue, <span class="string">'Sigma'</span>, sigmaTrue);
+<span class="keyword">for</span> k=k0
+  <span class="keyword">for</span> b=1:nBootSamples
+    X = gaussSample(model, nSamples);
+    thetaBoot(b,k+1) = (mean(X)*nSamples + theta0*k)/(nSamples + k);
+  <span class="keyword">end</span>
+<span class="keyword">end</span>
+opt = {<span class="string">'k'</span>, <span class="string">'b'</span>, <span class="string">'g'</span>, <span class="string">'r'</span>};
+figure(); hold <span class="string">on</span>;
+<span class="keyword">for</span> k=k0
+  [f,xi] = ksdensity(thetaBoot(:,k+1));
+  plot(xi, f, opt{k+1});
+<span class="keyword">end</span>
+legend(strread(num2str(k0), <span class="string">'%s'</span>), <span class="string">'Location'</span>, <span class="string">'Best'</span>);
+title(<span class="string">'Sampling distributions based on kernel density estimate of samples'</span>);
+
+<span class="comment">% Sampling distributions - theory</span>
+xrange = 95:(1/10):125;
+w = nSamples ./ (nSamples + k0);
+var = w.^2*sigmaTrue^2/nSamples;
+thetaEst = w*thetaTrue + (1-w)*theta0;
+figure(); hold <span class="string">on</span>;
+<span class="keyword">for</span> k=k0
+  plot(xrange, gaussProb(xrange, thetaEst(k + 1), sqrt(var(k+1)))), opt{k+1};
+<span class="keyword">end</span>
+title(<span class="string">'True sampling distribution based on theory'</span>);
+legend(strread(num2str(k0), <span class="string">'%s'</span>), <span class="string">'Location'</span>, <span class="string">'Best'</span>);
+</pre><img vspace="5" hspace="5" src="hoffNormalmsePlots_01.png" alt=""> <img vspace="5" hspace="5" src="hoffNormalmsePlots_02.png" alt=""> <img vspace="5" hspace="5" src="hoffNormalmsePlots_03.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Relative MSE plot
+%PMTKneedsStatsToolbox ksdensity
+%%
+
+% This file is from pmtk3.googlecode.com
+
+requireStatsToolbox
+n = 1:50;
+k0 = 0:3;
+sigmaTrue = 13;
+mu0 = 100;
+thetaTrue = 112;
+theta0 = 100;
+mseThetaE = zeros(length(n), length(k0));
+mseThetaB = zeros(length(n), length(k0));
+for k=k0
+  w = (n./(n + k));
+  mseThetaE(:,k+1) = sigmaTrue^2./n;
+  mseThetaB(:,k+1) = w.^2.*sigmaTrue^2./n + (1-w).^2*(mu0 - thetaTrue)^2;
+end
+
+ratio = mseThetaB ./ mseThetaE;
+
+plot(ratio);
+legend(strread(num2str(k0),'%s'), 'Location', 'Best');
+title('MSE ratio: ratio of bayesian to frequentist MSE');
+ylabel('relative MSE');
+
+% Sampling distribution - Bootstrap
+nSamples = 10; nBootSamples = 1000;
+thetaBoot = zeros(nBootSamples, length(k0));
+model = struct('mu', thetaTrue, 'Sigma', sigmaTrue);
+for k=k0
+  for b=1:nBootSamples
+    X = gaussSample(model, nSamples);
+    thetaBoot(b,k+1) = (mean(X)*nSamples + theta0*k)/(nSamples + k);
+  end
+end
+opt = {'k', 'b', 'g', 'r'};
+figure(); hold on;
+for k=k0
+  [f,xi] = ksdensity(thetaBoot(:,k+1));
+  plot(xi, f, opt{k+1});
+end
+legend(strread(num2str(k0), '%s'), 'Location', 'Best');
+title('Sampling distributions based on kernel density estimate of samples');
+
+% Sampling distributions - theory
+xrange = 95:(1/10):125;
+w = nSamples ./ (nSamples + k0);
+var = w.^2*sigmaTrue^2/nSamples;
+thetaEst = w*thetaTrue + (1-w)*theta0;
+figure(); hold on;
+for k=k0
+  plot(xrange, gaussProb(xrange, thetaEst(k + 1), sqrt(var(k+1)))), opt{k+1};
+end
+title('True sampling distribution based on theory');
+legend(strread(num2str(k0), '%s'), 'Location', 'Best');
+
+
+##### SOURCE END #####
+--></body></html>

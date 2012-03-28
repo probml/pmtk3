@@ -1,0 +1,213 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Robust linear regression demo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="linregRobustDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Robust linear regression demo</h1><!--introduction--><p>PMTKneedsOptimToolbox linprog</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#3">Laplace loss</a></li><li><a href="#4">Student loss</a></li><li><a href="#5">Laplace and student on same plot</a></li><li><a href="#6">Huber loss</a></li></ul></div><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="keyword">function</span> linregRobustDemo()
+</pre><pre class="codeinput">requireOptimToolbox
+seed = 0; setSeed(seed);
+x = sort(rand(10,1));
+y = 1+2*x + rand(size(x))-.5;
+<span class="comment">% add some outliers</span>
+x = [x' 0.1 0.5 0.9]';
+k =  -5;
+y = [y' k  k k]';
+
+n = length(x);
+Xtrain = x(:);
+modelLS = linregFit(Xtrain, y, <span class="string">'lambda'</span>, 0);<span class="comment">% least squares soln</span>
+xs = 0:0.1:1;
+Xtest = xs(:);
+yhatLS = linregPredict(modelLS, Xtest);
+</pre><h2>Laplace loss<a name="3"></a></h2><pre class="codeinput">modelLP = linregRobustLaplaceFitLinprog(Xtrain, y);
+yhatLaplace = linregPredict(modelLP, Xtest);
+</pre><pre class="codeoutput">Optimization terminated.
+</pre><h2>Student loss<a name="4"></a></h2><pre class="codeinput">modelStudent = linregRobustStudentFit(Xtrain, y);
+yhatStudent = linregPredict(modelStudent, Xtest);
+</pre><h2>Laplace and student on same plot<a name="5"></a></h2><pre class="codeinput">legendStr ={<span class="string">'least squares'</span>, <span class="string">'laplace'</span>, sprintf(<span class="string">'student, dof=%5.3f'</span>, modelStudent.dof)};
+doPlot(x, y,  {yhatLS, yhatLaplace, yhatStudent}, legendStr)
+printPmtkFigure(<span class="string">'linregRobustLaplaceStudent'</span>)
+</pre><img vspace="5" hspace="5" src="linregRobustDemo_01.png" alt=""> <h2>Huber loss<a name="6"></a></h2><pre class="codeinput"><span class="keyword">if</span> 1
+  legendStr = {<span class="string">'Least Squares'</span>};
+  deltas = [1 5];
+  <span class="keyword">for</span> i=1:length(deltas)
+    delta = deltas(i);
+    modelHuber = linregRobustHuberFit(Xtrain, y, delta);
+    yhatHuber{i} = linregPredict(modelHuber, Xtest); <span class="comment">%#ok</span>
+    legendStr{1+i} = sprintf(<span class="string">'Huber loss %3.1f'</span>, delta);
+  <span class="keyword">end</span>
+  doPlot(x, y, {yhatLS, yhatHuber{:}}, legendStr);
+  printPmtkFigure(<span class="string">'linregRobustHuber'</span>)
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="linregRobustDemo_02.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">function</span> doPlot(x, y, yhat, legendStr)
+<span class="keyword">if</span> ~iscell(yhat), yhat = {yhat}; <span class="keyword">end</span>
+K = length(yhat);
+xs = 0:0.1:1;
+styles = {<span class="string">'k:'</span>, <span class="string">'b--'</span>, <span class="string">'r-'</span>, <span class="string">'r-o'</span>, <span class="string">'b:s'</span>, <span class="string">'g-.*'</span>, <span class="string">'k-.+'</span>, <span class="string">'c--v'</span>, <span class="string">'y-^'</span>};
+figure; hold <span class="string">on</span>;
+plot(x,y,<span class="string">'ko'</span>,<span class="string">'linewidth'</span>,2)
+h = [];
+<span class="keyword">for</span> i=1:K
+  h(i) = plot(xs, yhat{i}, styles{i}, <span class="string">'linewidth'</span>, 3, <span class="string">'markersize'</span>, 10);
+<span class="keyword">end</span>
+plotLegend(legendStr, h)
+<span class="comment">%axis_pct</span>
+set(gca,<span class="string">'ylim'</span>,[-6 4])
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> plotLegend(legendStr, h)
+<span class="keyword">if</span> isOctave()
+  legendStr = [{<span class="string">'Data'</span>}, legendStr];
+  legend(legendStr, <span class="string">'location'</span>, <span class="string">'east'</span>);
+<span class="keyword">else</span>
+  legend(h, legendStr, <span class="string">'location'</span>, <span class="string">'east'</span>);
+<span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Robust linear regression demo
+% PMTKneedsOptimToolbox linprog
+%%
+
+% This file is from pmtk3.googlecode.com
+
+function linregRobustDemo()
+requireOptimToolbox
+seed = 0; setSeed(seed);
+x = sort(rand(10,1));
+y = 1+2*x + rand(size(x))-.5;
+% add some outliers
+x = [x' 0.1 0.5 0.9]';
+k =  -5;
+y = [y' k  k k]';
+
+n = length(x);
+Xtrain = x(:);
+modelLS = linregFit(Xtrain, y, 'lambda', 0);% least squares soln
+xs = 0:0.1:1;
+Xtest = xs(:);
+yhatLS = linregPredict(modelLS, Xtest);
+
+
+
+%% Laplace loss
+modelLP = linregRobustLaplaceFitLinprog(Xtrain, y);
+yhatLaplace = linregPredict(modelLP, Xtest);
+
+%% Student loss 
+modelStudent = linregRobustStudentFit(Xtrain, y);
+yhatStudent = linregPredict(modelStudent, Xtest);
+
+%% Laplace and student on same plot
+legendStr ={'least squares', 'laplace', sprintf('student, dof=%5.3f', modelStudent.dof)};
+doPlot(x, y,  {yhatLS, yhatLaplace, yhatStudent}, legendStr)
+printPmtkFigure('linregRobustLaplaceStudent')
+
+%% Huber loss
+if 1
+  legendStr = {'Least Squares'};
+  deltas = [1 5];
+  for i=1:length(deltas)
+    delta = deltas(i);
+    modelHuber = linregRobustHuberFit(Xtrain, y, delta);
+    yhatHuber{i} = linregPredict(modelHuber, Xtest); %#ok
+    legendStr{1+i} = sprintf('Huber loss %3.1f', delta);
+  end
+  doPlot(x, y, {yhatLS, yhatHuber{:}}, legendStr);
+  printPmtkFigure('linregRobustHuber')
+end
+
+end
+
+%%%
+
+function doPlot(x, y, yhat, legendStr)
+if ~iscell(yhat), yhat = {yhat}; end
+K = length(yhat);
+xs = 0:0.1:1;
+styles = {'k:', 'bREPLACE_WITH_DASH_DASH', 'r-', 'r-o', 'b:s', 'g-.*', 'k-.+', 'cREPLACE_WITH_DASH_DASHv', 'y-^'};
+figure; hold on;
+plot(x,y,'ko','linewidth',2)
+h = [];
+for i=1:K
+  h(i) = plot(xs, yhat{i}, styles{i}, 'linewidth', 3, 'markersize', 10);
+end
+plotLegend(legendStr, h)
+%axis_pct
+set(gca,'ylim',[-6 4])
+end
+
+function plotLegend(legendStr, h)
+if isOctave()
+  legendStr = [{'Data'}, legendStr];
+  legend(legendStr, 'location', 'east');
+else
+  legend(h, legendStr, 'location', 'east');
+end
+end
+
+##### SOURCE END #####
+--></body></html>

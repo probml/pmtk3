@@ -1,0 +1,208 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Illustration of decision regions for the 3 class case</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="dboundaries3bumps.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Illustration of decision regions for the 3 class case</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+domain = -3:0.01:13;
+sigma = 1.5.^2;
+r1 = gaussProb(domain, 0, sigma);
+r2 = gaussProb(domain, 5, sigma);
+r3 = gaussProb(domain, 10, sigma);
+linesize = {<span class="string">'LineWidth'</span>,2.5};
+
+plot(domain,r1,<span class="string">'-r'</span>,linesize{:});
+hold <span class="string">on</span>;
+plot(domain,r2,<span class="string">'-g'</span>,linesize{:});
+plot(domain,r3,<span class="string">'-b'</span>,linesize{:});
+axis([-3,13,0.015,1]);
+set(gca,<span class="string">'XTick'</span>,[],<span class="string">'YTick'</span>,[])
+plot([2.5;2.5],[0;0.5],<span class="string">'-k'</span>,linesize{:});
+plot([7.5;7.5],[0;0.5],<span class="string">'-k'</span>,linesize{:});
+
+annotation(gcf,<span class="string">'textbox'</span>,[0.20 0.35 0.1472 0.07709],<span class="keyword">...</span>
+    <span class="string">'String'</span>,{<span class="string">'p(x | y=1)'</span>},<span class="keyword">...</span>
+    <span class="string">'HorizontalAlignment'</span>,<span class="string">'center'</span>,<span class="keyword">...</span>
+    <span class="string">'FontSize'</span>,12,<span class="keyword">...</span>
+    <span class="string">'FitBoxToText'</span>,<span class="string">'off'</span>,<span class="keyword">...</span>
+    <span class="string">'LineStyle'</span>,<span class="string">'none'</span>);
+
+
+annotation(gcf,<span class="string">'textbox'</span>,[0.44 0.35 0.1472 0.07709],<span class="keyword">...</span>
+    <span class="string">'String'</span>,{<span class="string">'p(x | y=2)'</span>},<span class="keyword">...</span>
+    <span class="string">'HorizontalAlignment'</span>,<span class="string">'center'</span>,<span class="keyword">...</span>
+    <span class="string">'FontSize'</span>,12,<span class="keyword">...</span>
+    <span class="string">'FitBoxToText'</span>,<span class="string">'off'</span>,<span class="keyword">...</span>
+    <span class="string">'LineStyle'</span>,<span class="string">'none'</span>);
+
+annotation(gcf,<span class="string">'textbox'</span>,[0.69 0.35 0.1472 0.07709],<span class="keyword">...</span>
+    <span class="string">'String'</span>,{<span class="string">'p(x | y=3)'</span>},<span class="keyword">...</span>
+    <span class="string">'HorizontalAlignment'</span>,<span class="string">'center'</span>,<span class="keyword">...</span>
+    <span class="string">'FontSize'</span>,12,<span class="keyword">...</span>
+    <span class="string">'FitBoxToText'</span>,<span class="string">'off'</span>,<span class="keyword">...</span>
+    <span class="string">'LineStyle'</span>,<span class="string">'none'</span>);
+
+
+annotation(gcf,<span class="string">'textbox'</span>,[0.132 0.025 0.264 0.06388],<span class="keyword">...</span>
+    <span class="string">'String'</span>,{<span class="string">'R_1'</span>},<span class="keyword">...</span>
+    <span class="string">'HorizontalAlignment'</span>,<span class="string">'center'</span>,<span class="keyword">...</span>
+    <span class="string">'VerticalAlignment'</span>,<span class="string">'middle'</span>,<span class="keyword">...</span>
+    <span class="string">'FontSize'</span>,12,<span class="keyword">...</span>
+    <span class="string">'FitBoxToText'</span>,<span class="string">'off'</span>,<span class="keyword">...</span>
+    <span class="string">'LineStyle'</span>,<span class="string">':'</span>);
+
+
+annotation(gcf,<span class="string">'textbox'</span>,[0.399775 0.025 0.238 0.06388],<span class="keyword">...</span>
+    <span class="string">'String'</span>,{<span class="string">'R_2'</span>},<span class="keyword">...</span>
+    <span class="string">'HorizontalAlignment'</span>,<span class="string">'center'</span>,<span class="keyword">...</span>
+    <span class="string">'VerticalAlignment'</span>,<span class="string">'middle'</span>,<span class="keyword">...</span>
+    <span class="string">'FontSize'</span>,12,<span class="keyword">...</span>
+    <span class="string">'FitBoxToText'</span>,<span class="string">'off'</span>,<span class="keyword">...</span>
+    <span class="string">'LineStyle'</span>,<span class="string">':'</span>);
+
+annotation(gcf,<span class="string">'textbox'</span>,[0.64125 0.025 0.264 0.06388],<span class="keyword">...</span>
+    <span class="string">'String'</span>,{<span class="string">'R_3'</span>},<span class="keyword">...</span>
+    <span class="string">'HorizontalAlignment'</span>,<span class="string">'center'</span>,<span class="keyword">...</span>
+    <span class="string">'VerticalAlignment'</span>,<span class="string">'middle'</span>,<span class="keyword">...</span>
+    <span class="string">'FontSize'</span>,12,<span class="keyword">...</span>
+    <span class="string">'FitBoxToText'</span>,<span class="string">'off'</span>,<span class="keyword">...</span>
+    <span class="string">'LineStyle'</span>,<span class="string">':'</span>);
+
+axis <span class="string">tight</span>;
+</pre><img vspace="5" hspace="5" src="dboundaries3bumps_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Illustration of decision regions for the 3 class case
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+domain = -3:0.01:13;
+sigma = 1.5.^2;
+r1 = gaussProb(domain, 0, sigma);
+r2 = gaussProb(domain, 5, sigma);
+r3 = gaussProb(domain, 10, sigma);
+linesize = {'LineWidth',2.5};
+
+plot(domain,r1,'-r',linesize{:});
+hold on;
+plot(domain,r2,'-g',linesize{:});
+plot(domain,r3,'-b',linesize{:});
+axis([-3,13,0.015,1]);
+set(gca,'XTick',[],'YTick',[])
+plot([2.5;2.5],[0;0.5],'-k',linesize{:});
+plot([7.5;7.5],[0;0.5],'-k',linesize{:});
+
+annotation(gcf,'textbox',[0.20 0.35 0.1472 0.07709],...
+    'String',{'p(x | y=1)'},...
+    'HorizontalAlignment','center',...
+    'FontSize',12,...
+    'FitBoxToText','off',...
+    'LineStyle','none');
+
+
+annotation(gcf,'textbox',[0.44 0.35 0.1472 0.07709],...
+    'String',{'p(x | y=2)'},...
+    'HorizontalAlignment','center',...
+    'FontSize',12,...
+    'FitBoxToText','off',...
+    'LineStyle','none');
+
+annotation(gcf,'textbox',[0.69 0.35 0.1472 0.07709],...
+    'String',{'p(x | y=3)'},...
+    'HorizontalAlignment','center',...
+    'FontSize',12,...
+    'FitBoxToText','off',...
+    'LineStyle','none');
+
+
+annotation(gcf,'textbox',[0.132 0.025 0.264 0.06388],...
+    'String',{'R_1'},...
+    'HorizontalAlignment','center',...
+    'VerticalAlignment','middle',...
+    'FontSize',12,...
+    'FitBoxToText','off',...
+    'LineStyle',':');
+
+
+annotation(gcf,'textbox',[0.399775 0.025 0.238 0.06388],...
+    'String',{'R_2'},...
+    'HorizontalAlignment','center',...
+    'VerticalAlignment','middle',...
+    'FontSize',12,...
+    'FitBoxToText','off',...
+    'LineStyle',':');
+
+annotation(gcf,'textbox',[0.64125 0.025 0.264 0.06388],...
+    'String',{'R_3'},...
+    'HorizontalAlignment','center',...
+    'VerticalAlignment','middle',...
+    'FontSize',12,...
+    'FitBoxToText','off',...
+    'LineStyle',':');
+
+axis tight;
+
+##### SOURCE END #####
+--></body></html>

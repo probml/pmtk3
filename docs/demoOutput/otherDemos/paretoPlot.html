@@ -1,0 +1,124 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>Plot the pareto distribution</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="paretoPlot"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Plot the pareto distribution</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Plot on a log log scale</a></li></ul></div><pre class="codeinput">figure; hold <span class="string">on</span>;
+k = [0.5 1 2 3];
+[styles, colors] = plotColors();
+xs = 0.9:0.05:5;
+model.m = 1;
+nk = length(k);
+legendStr = cell(1, nk);
+<span class="keyword">for</span> i=1:nk
+  model.K = k(i);
+  p = exp(paretoLogprob(model, xs));
+  plot(xs, p, styles{i}, <span class="string">'color'</span>, colors(i), <span class="string">'linewidth'</span>, 3);
+  legendStr{i} = sprintf(<span class="string">'%s=%2.1f'</span>, <span class="string">'k'</span>, k(i));
+<span class="keyword">end</span>
+legend(legendStr)
+title(<span class="string">'Pa(m=1, k)'</span>)
+set(gca, <span class="string">'xlim'</span>, [1 5]);
+printPmtkFigure <span class="string">pareto-pdf</span>;
+</pre><img vspace="5" hspace="5" src="paretoPlot_01.png" alt=""> <h2>Plot on a log log scale<a name="2"></a></h2><pre class="codeinput">copyobj(gca, figure());
+set(gca, <span class="string">'xscale'</span>, <span class="string">'log'</span>, <span class="string">'yscale'</span>, <span class="string">'log'</span>);
+axis(exp([0 1.5 -6 2]));
+set(gca, <span class="string">'XTick'</span>, 1:0.5:5);
+set(gca, <span class="string">'YTick'</span>, [0 0.5 1 2 3]);
+legend(legendStr)
+title(<span class="string">'Pa(m=1, k) - log scale - '</span>)
+printPmtkFigure <span class="string">pareto-log-pdf</span>;
+</pre><img vspace="5" hspace="5" src="paretoPlot_02.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Plot the pareto distribution
+%
+%%
+figure; hold on;
+k = [0.5 1 2 3];
+[styles, colors] = plotColors();
+xs = 0.9:0.05:5;
+model.m = 1;
+nk = length(k); 
+legendStr = cell(1, nk); 
+for i=1:nk
+  model.K = k(i); 
+  p = exp(paretoLogprob(model, xs));
+  plot(xs, p, styles{i}, 'color', colors(i), 'linewidth', 3);
+  legendStr{i} = sprintf('%s=%2.1f', 'k', k(i));
+end
+legend(legendStr)
+title('Pa(m=1, k)')
+set(gca, 'xlim', [1 5]);
+printPmtkFigure pareto-pdf;
+%% Plot on a log log scale
+copyobj(gca, figure());
+set(gca, 'xscale', 'log', 'yscale', 'log');
+axis(exp([0 1.5 -6 2]));
+set(gca, 'XTick', 1:0.5:5);
+set(gca, 'YTick', [0 0.5 1 2 3]);
+legend(legendStr)
+title('Pa(m=1, k) - log scale - ')
+printPmtkFigure pareto-log-pdf;
+%%
+##### SOURCE END #####
+--></body></html>

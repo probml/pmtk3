@@ -1,0 +1,205 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Kmeans Model Selection in 2D</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="kmeansModelSel2d.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Kmeans Model Selection in 2D</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+setSeed(0);
+d = 2; ncentres = 3;
+mix = gmm(d, ncentres, <span class="string">'spherical'</span>);
+mix.centres = [1 1; -1 -1; 0 0]; <span class="comment">% mu(k,:)</span>
+mix.covars = [0.1 0.1 0.1];
+
+n = 1000; ndx = 1:n;
+Xtrain = gmmsamp(mix, n);
+n = 1000;
+Xtest = gmmsamp(mix, n);
+
+figure;
+<span class="comment">%Ks = [1 2 3 4 5  10 15 20 25];</span>
+Ks = [2 3 4 5  10 15 20 25 30];
+<span class="keyword">for</span> i=1:length(Ks)
+    K = Ks(i);
+    mu = kmeansFit(Xtrain, K)';
+    Xhat = kmeansDecode(kmeansEncode(Xtest, mu'), mu');
+    mse(i) = mean(sum((Xhat - Xtest).^2,2));
+
+    subplot(3,3,i)
+    plot(Xtrain(:,1), Xtrain(:,2), <span class="string">'.'</span>);
+    hold <span class="string">on</span>
+    <span class="keyword">for</span> k=1:K
+        plot(mu(k,1), mu(k,2), <span class="string">'rs'</span>, <span class="string">'linewidth'</span>, 3);
+    <span class="keyword">end</span>
+    <span class="comment">%title('train')</span>
+    <span class="comment">%plot(Xtest(:,1), Xtest(:,2), 'ko'); hold on;</span>
+    <span class="comment">%plot(Xhat{i}(:,1), Xhat{i}(:,2), 'rx');</span>
+    title(sprintf(<span class="string">'K=%d, mse=%5.4f'</span>, K, mse(i)))
+<span class="keyword">end</span>
+
+figure
+plot(Ks, mse, <span class="string">'o-'</span>)
+title(<span class="string">'MSE on test set vs K'</span>)
+
+
+figure;
+options = foptions;
+<span class="keyword">for</span> i=1:length(Ks)
+    K = Ks(i);
+    mix = gmm(d, K, <span class="string">'spherical'</span>);
+    mix = gmmem(mix, Xtrain, options);
+    nll(i) = -sum(log(gmmprob(mix, Xtest)));
+
+    subplot(3,3,i)
+    plot(Xtrain(:,1), Xtrain(:,2), <span class="string">'.'</span>);
+    hold <span class="string">on</span>
+    mu = mix.centres;
+    <span class="keyword">for</span> k=1:K
+        plot(mu(k,1), mu(k,2), <span class="string">'rs'</span>, <span class="string">'linewidth'</span>, 3);
+    <span class="keyword">end</span>
+    <span class="comment">%title('train')</span>
+    <span class="comment">%plot(Xtest(:,1), Xtest(:,2), 'ko'); hold on;</span>
+    <span class="comment">%plot(Xhat{i}(:,1), Xhat{i}(:,2), 'rx');</span>
+    title(sprintf(<span class="string">'K=%d, nll=%5.4f'</span>, K, nll(i)))
+<span class="keyword">end</span>
+
+figure; plot(Ks, nll, <span class="string">'o-'</span>)
+title(<span class="string">'NLL on test set vs K'</span>)
+</pre><pre class="codeoutput">Maximum number of iterations has been exceeded
+Maximum number of iterations has been exceeded
+Maximum number of iterations has been exceeded
+Maximum number of iterations has been exceeded
+Maximum number of iterations has been exceeded
+Maximum number of iterations has been exceeded
+Maximum number of iterations has been exceeded
+</pre><img vspace="5" hspace="5" src="kmeansModelSel2d_01.png" alt=""> <img vspace="5" hspace="5" src="kmeansModelSel2d_02.png" alt=""> <img vspace="5" hspace="5" src="kmeansModelSel2d_03.png" alt=""> <img vspace="5" hspace="5" src="kmeansModelSel2d_04.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Kmeans Model Selection in 2D
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+setSeed(0);
+d = 2; ncentres = 3;
+mix = gmm(d, ncentres, 'spherical');
+mix.centres = [1 1; -1 -1; 0 0]; % mu(k,:)
+mix.covars = [0.1 0.1 0.1];
+
+n = 1000; ndx = 1:n;
+Xtrain = gmmsamp(mix, n);
+n = 1000;
+Xtest = gmmsamp(mix, n);
+
+figure;
+%Ks = [1 2 3 4 5  10 15 20 25];
+Ks = [2 3 4 5  10 15 20 25 30];
+for i=1:length(Ks)
+    K = Ks(i);
+    mu = kmeansFit(Xtrain, K)';
+    Xhat = kmeansDecode(kmeansEncode(Xtest, mu'), mu');
+    mse(i) = mean(sum((Xhat - Xtest).^2,2));
+    
+    subplot(3,3,i)
+    plot(Xtrain(:,1), Xtrain(:,2), '.');
+    hold on
+    for k=1:K
+        plot(mu(k,1), mu(k,2), 'rs', 'linewidth', 3);
+    end
+    %title('train')
+    %plot(Xtest(:,1), Xtest(:,2), 'ko'); hold on;
+    %plot(Xhat{i}(:,1), Xhat{i}(:,2), 'rx');
+    title(sprintf('K=%d, mse=%5.4f', K, mse(i)))
+end
+
+figure
+plot(Ks, mse, 'o-')
+title('MSE on test set vs K')
+
+
+figure;
+options = foptions;
+for i=1:length(Ks)
+    K = Ks(i);
+    mix = gmm(d, K, 'spherical');
+    mix = gmmem(mix, Xtrain, options);
+    nll(i) = -sum(log(gmmprob(mix, Xtest)));
+    
+    subplot(3,3,i)
+    plot(Xtrain(:,1), Xtrain(:,2), '.');
+    hold on
+    mu = mix.centres;
+    for k=1:K
+        plot(mu(k,1), mu(k,2), 'rs', 'linewidth', 3);
+    end
+    %title('train')
+    %plot(Xtest(:,1), Xtest(:,2), 'ko'); hold on;
+    %plot(Xhat{i}(:,1), Xhat{i}(:,2), 'rx');
+    title(sprintf('K=%d, nll=%5.4f', K, nll(i)))
+end
+
+figure; plot(Ks, nll, 'o-')
+title('NLL on test set vs K')
+
+##### SOURCE END #####
+--></body></html>

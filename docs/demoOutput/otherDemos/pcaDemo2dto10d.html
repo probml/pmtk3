@@ -1,0 +1,170 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>PCA Scree Plot</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="pcaDemo2dto10d.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>PCA Scree Plot</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+seed = 0; randn(<span class="string">'state'</span>, seed);
+<span class="comment">%X=[randn(100,2)+2.*ones(100,2);2.*randn(100,2)-2.*ones(100,2)];</span>
+
+
+data = loadData(<span class="string">'heightWeight'</span>); <span class="comment">% data(:,1) = class, 2 = height, 3 = weight</span>
+X = data(:,2:3);
+X = standardize(X);
+figure;
+plot(X(:,1), X(:,2), <span class="string">'.'</span>);
+xlabel(<span class="string">'height'</span>); ylabel(<span class="string">'weight'</span>)
+n = size(X,1);
+
+<span class="comment">% concatenate noise dimensions to convert from 2d to 10d</span>
+Y = [X 0.01*randn(n,8)];
+[B, Z, evals, Xrecon, mu] = pcaPmtk(Y);
+
+figure;
+bar(evals)
+ylabel(<span class="string">'eigenvalue'</span>)
+printPmtkFigure(<span class="string">'pcaDemo2dto10dEmbedEig'</span>);
+
+figure;
+plot(cumsum(evals)/sum(evals), <span class="string">'ro-'</span>, <span class="string">'linewidth'</span>, 2)
+ylabel(<span class="string">'proportion of variance'</span>)
+xlabel(<span class="string">'K'</span>)
+axis_pct
+printPmtkFigure(<span class="string">'pcaDemo2dto10dEmbedScree'</span>)
+
+<span class="comment">% Linear transdformation from 2d to 10d</span>
+A=randn(10,2);
+Y=X*A';
+Y=Y+randn(n,10).*0.2;
+[B, Z, evals, Xrecon, mu] = pcaPmtk(Y);
+
+figure;
+bar(evals)
+ylabel(<span class="string">'eigenvalue'</span>)
+printPmtkFigure(<span class="string">'pcaDemo2dto10dRotateEig'</span>)
+
+figure;
+plot(cumsum(evals)/sum(evals), <span class="string">'ko-'</span>)
+ylabel(<span class="string">'proportion of variance'</span>)
+plot(cumsum(evals)/sum(evals), <span class="string">'ro-'</span>, <span class="string">'linewidth'</span>, 2)
+axis_pct
+xlabel(<span class="string">'K'</span>)
+printPmtkFigure(<span class="string">'pcaDemo2dto10dRotateScree'</span>);
+</pre><img vspace="5" hspace="5" src="pcaDemo2dto10d_01.png" alt=""> <img vspace="5" hspace="5" src="pcaDemo2dto10d_02.png" alt=""> <img vspace="5" hspace="5" src="pcaDemo2dto10d_03.png" alt=""> <img vspace="5" hspace="5" src="pcaDemo2dto10d_04.png" alt=""> <img vspace="5" hspace="5" src="pcaDemo2dto10d_05.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% PCA Scree Plot
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+seed = 0; randn('state', seed);
+%X=[randn(100,2)+2.*ones(100,2);2.*randn(100,2)-2.*ones(100,2)];
+
+
+data = loadData('heightWeight'); % data(:,1) = class, 2 = height, 3 = weight
+X = data(:,2:3);
+X = standardize(X);
+figure;
+plot(X(:,1), X(:,2), '.');
+xlabel('height'); ylabel('weight')
+n = size(X,1);
+
+% concatenate noise dimensions to convert from 2d to 10d
+Y = [X 0.01*randn(n,8)];
+[B, Z, evals, Xrecon, mu] = pcaPmtk(Y);
+
+figure;
+bar(evals)
+ylabel('eigenvalue')
+printPmtkFigure('pcaDemo2dto10dEmbedEig');
+
+figure;
+plot(cumsum(evals)/sum(evals), 'ro-', 'linewidth', 2)
+ylabel('proportion of variance')
+xlabel('K')
+axis_pct
+printPmtkFigure('pcaDemo2dto10dEmbedScree')
+
+% Linear transdformation from 2d to 10d
+A=randn(10,2);
+Y=X*A';
+Y=Y+randn(n,10).*0.2;
+[B, Z, evals, Xrecon, mu] = pcaPmtk(Y);
+
+figure;
+bar(evals)
+ylabel('eigenvalue')
+printPmtkFigure('pcaDemo2dto10dRotateEig')
+
+figure;
+plot(cumsum(evals)/sum(evals), 'ko-')
+ylabel('proportion of variance')
+plot(cumsum(evals)/sum(evals), 'ro-', 'linewidth', 2)
+axis_pct
+xlabel('K')
+printPmtkFigure('pcaDemo2dto10dRotateScree'); 
+
+##### SOURCE END #####
+--></body></html>

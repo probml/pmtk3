@@ -1,0 +1,152 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>Compute empirical distribution of coefficients drawn from a Gaussian ensemble</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="sparseLinRegMargDistDemo"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Compute empirical distribution of coefficients drawn from a Gaussian ensemble</h1><!--introduction--><p>Exactly k0 elements are non-zero. The resulting marginal is a good prior for the weights in a sparse linear regression model</p><p>Based on code by Baback Moghaddam</p><!--/introduction--><pre class="codeinput"><span class="keyword">if</span> ~exist(<span class="string">'n'</span>,<span class="string">'var'</span>), n=12; <span class="keyword">end</span>                 <span class="comment">% n = dimension of x (#cols of A)</span>
+<span class="keyword">if</span> ~exist(<span class="string">'m'</span>,<span class="string">'var'</span>), m=10*n; <span class="keyword">end</span>               <span class="comment">% m = dimension of y (#rows of A)</span>
+<span class="keyword">if</span> ~exist(<span class="string">'nCases'</span>,<span class="string">'var'</span>), nCases = 20; <span class="keyword">end</span>    <span class="comment">% nCases = no. of MC trials</span>
+
+xr = [-6.5:0.1:6.5];  <span class="comment">% discretized x range</span>
+
+sparsities = [0.1 0.5 0.9];
+
+<span class="keyword">for</span> sparsity=sparsities(:)'
+
+k0 = fix(sparsity*n);
+
+<span class="comment">% Generate a bunch of random sparse weight vectors</span>
+<span class="keyword">for</span> c = 1:nCases   <span class="comment">% ------------------------------------- MC loop</span>
+   <span class="comment">%x0 = randn(n,1);         % Gaussian x</span>
+   x0 = unifrndPMTK(-1,1,n,1);
+   <span class="comment">%x0 = 3*(2*rand(n,1)-1);  % Uniform x</span>
+   <span class="comment">%x0 = sign(randn(n,1));   % Binary x</span>
+   idx = randperm(n);
+   x0(idx(1:n-k0)) = 0;
+   trueWeights(:,c) = x0;
+<span class="keyword">end</span>  <span class="comment">% ---------------------------------------------- end MC loop</span>
+
+
+Pw = zeros(1,length(xr));
+<span class="keyword">for</span> i = 1:nCases
+   h = hist(trueWeights(:,i),xr);
+   Pw = Pw + h/nCases;
+<span class="keyword">end</span>
+figure;
+subplot(2,1,1); bar(xr, Pw);
+title(sprintf(<span class="string">'marginal of weights for sparsity=%5.3f'</span>, sparsity))
+subplot(2,1,2); bar(xr, Pw);
+ylim = get(gca, <span class="string">'ylim'</span>);
+axis([min(xr) max(xr) 0 ylim(2)*0.1])
+
+<span class="keyword">end</span> <span class="comment">% for sparsity</span>
+</pre><img vspace="5" hspace="5" src="sparseLinRegMargDistDemo_01.png" alt=""> <img vspace="5" hspace="5" src="sparseLinRegMargDistDemo_02.png" alt=""> <img vspace="5" hspace="5" src="sparseLinRegMargDistDemo_03.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Compute empirical distribution of coefficients drawn from a Gaussian ensemble
+% Exactly k0 elements are non-zero. The resulting marginal is a good prior
+% for the weights in a sparse linear regression model
+%
+% Based on code by Baback Moghaddam
+%%
+if ~exist('n','var'), n=12; end                 % n = dimension of x (#cols of A)
+if ~exist('m','var'), m=10*n; end               % m = dimension of y (#rows of A)
+if ~exist('nCases','var'), nCases = 20; end    % nCases = no. of MC trials
+
+xr = [-6.5:0.1:6.5];  % discretized x range
+
+sparsities = [0.1 0.5 0.9];
+
+for sparsity=sparsities(:)'
+   
+k0 = fix(sparsity*n);
+
+% Generate a bunch of random sparse weight vectors
+for c = 1:nCases   % REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH- MC loop
+   %x0 = randn(n,1);         % Gaussian x
+   x0 = unifrndPMTK(-1,1,n,1);
+   %x0 = 3*(2*rand(n,1)-1);  % Uniform x
+   %x0 = sign(randn(n,1));   % Binary x
+   idx = randperm(n);
+   x0(idx(1:n-k0)) = 0;
+   trueWeights(:,c) = x0;   
+end  % REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH end MC loop
+
+
+Pw = zeros(1,length(xr));
+for i = 1:nCases
+   h = hist(trueWeights(:,i),xr);
+   Pw = Pw + h/nCases;
+end
+figure;
+subplot(2,1,1); bar(xr, Pw);
+title(sprintf('marginal of weights for sparsity=%5.3f', sparsity)) 
+subplot(2,1,2); bar(xr, Pw);
+ylim = get(gca, 'ylim');
+axis([min(xr) max(xr) 0 ylim(2)*0.1])
+
+end % for sparsity
+
+
+
+##### SOURCE END #####
+--></body></html>

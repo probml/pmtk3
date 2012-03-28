@@ -1,0 +1,183 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>We compare the posterior on 2 graphs, X1-X2 and X1 indep of X2</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="graphicalIndepTest.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>We compare the posterior on 2 graphs, X1-X2 and X1 indep of X2</h1><p>Here X1 and X2 are discrete We use tabular CPDs with uniform priors</p><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+
+<span class="comment">% simulate handedness data, X1=gender, X2=hand</span>
+<span class="comment">% suppose we have N1 males (1), N2 females (2)</span>
+<span class="comment">% of which y1 males are LH (1) and y2 females are LH</span>
+<span class="comment">%y1 = 9; n1 = 52; y2 = 4; n2 = 48;</span>
+<span class="comment">%y1 = 1; n1=100; y2=20; n2=100;</span>
+<span class="comment">% Data from http://en.wikipedia.org/wiki/Contingency_table</span>
+<span class="comment">% Compare to unpairedTestHandednessDemo</span>
+
+<span class="comment">% Let us see how changing the sample size changes our beliefs</span>
+sfs = [1 2 3 4 5];
+<span class="keyword">for</span> trial=1:numel(sfs)
+sf = sfs(trial);
+y1 = 9*sf; n1 = 52*sf; y2 = 4*sf; n2 = 48*sf;
+N(trial) = n1+n2;
+male = 1; female = 2; LH = 1; RH = 2;
+X1 = [male*ones(1,n1) female*ones(1,n2)];
+X2 = [LH*ones(1,y1) RH*ones(1,n1-y1) LH*ones(1,y2) RH*ones(1,n2-y2)];
+<span class="comment">% let us check the order of the data does not matter</span>
+<span class="comment">%X2 = [ RH*ones(1,n1-y1) LH*ones(1,y1) LH*ones(1,y2) RH*ones(1,n2-y2)];</span>
+
+X = [X1(:) X2(:)];
+<span class="comment">% sanity check</span>
+mleMale = sum(X2(X1==male)==LH)/n1
+mleFemale = sum(X2(X1==female)==LH)/n2
+
+alpha = 1;
+Gs = { [0 1; 0 0], [0 0; 0 0] };
+<span class="keyword">for</span> i=1:length(Gs)
+   G = Gs{i};
+   L(i) = discreteDAGlogEv(X, G, alpha);
+   p(i) = exp(L(i));
+<span class="keyword">end</span>
+post = exp(normalizeLogspace(L));
+pnull(trial) = post(2);
+<span class="keyword">end</span>
+
+figure;
+plot(N, pnull, <span class="string">'o-'</span>, <span class="string">'linewidth'</span>, 3);
+xlabel(<span class="string">'total sample size'</span>)
+ylabel(<span class="string">'prob null hypothesis is true'</span>)
+printPmtkFigure(<span class="string">'graphicalIndepTest'</span>)
+</pre><pre class="codeoutput">mleMale =
+   0.173076923076923
+mleFemale =
+   0.083333333333333
+mleMale =
+   0.173076923076923
+mleFemale =
+   0.083333333333333
+mleMale =
+   0.173076923076923
+mleFemale =
+   0.083333333333333
+mleMale =
+   0.173076923076923
+mleFemale =
+   0.083333333333333
+mleMale =
+   0.173076923076923
+mleFemale =
+   0.083333333333333
+</pre><img vspace="5" hspace="5" src="graphicalIndepTest_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% We compare the posterior on 2 graphs, X1-X2 and X1 indep of X2
+% Here X1 and X2 are discrete
+% We use tabular CPDs with uniform priors
+
+% This file is from pmtk3.googlecode.com
+
+
+% simulate handedness data, X1=gender, X2=hand
+% suppose we have N1 males (1), N2 females (2)
+% of which y1 males are LH (1) and y2 females are LH
+%y1 = 9; n1 = 52; y2 = 4; n2 = 48;
+%y1 = 1; n1=100; y2=20; n2=100;
+% Data from http://en.wikipedia.org/wiki/Contingency_table
+% Compare to unpairedTestHandednessDemo
+
+% Let us see how changing the sample size changes our beliefs
+sfs = [1 2 3 4 5];
+for trial=1:numel(sfs)
+sf = sfs(trial);
+y1 = 9*sf; n1 = 52*sf; y2 = 4*sf; n2 = 48*sf;
+N(trial) = n1+n2;
+male = 1; female = 2; LH = 1; RH = 2;
+X1 = [male*ones(1,n1) female*ones(1,n2)];
+X2 = [LH*ones(1,y1) RH*ones(1,n1-y1) LH*ones(1,y2) RH*ones(1,n2-y2)];
+% let us check the order of the data does not matter
+%X2 = [ RH*ones(1,n1-y1) LH*ones(1,y1) LH*ones(1,y2) RH*ones(1,n2-y2)];
+
+X = [X1(:) X2(:)];
+% sanity check
+mleMale = sum(X2(X1==male)==LH)/n1
+mleFemale = sum(X2(X1==female)==LH)/n2
+
+alpha = 1;
+Gs = { [0 1; 0 0], [0 0; 0 0] };
+for i=1:length(Gs)
+   G = Gs{i};
+   L(i) = discreteDAGlogEv(X, G, alpha);
+   p(i) = exp(L(i));
+end
+post = exp(normalizeLogspace(L));
+pnull(trial) = post(2);
+end
+
+figure; 
+plot(N, pnull, 'o-', 'linewidth', 3);
+xlabel('total sample size')
+ylabel('prob null hypothesis is true')
+printPmtkFigure('graphicalIndepTest')
+
+
+##### SOURCE END #####
+--></body></html>

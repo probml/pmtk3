@@ -1,0 +1,318 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Sparse linear regression with EM on biscuits data</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="linregSparseEmBiscuitsDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Sparse linear regression with EM on biscuits data</h1><!--introduction--><p>PMTKreallySlow</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#3">plot results</a></li></ul></div><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+
+
+loadData(<span class="string">'biscuits'</span>);
+ings = [1:4]; <span class="comment">% fat, sucrose, flour, water</span>
+<span class="keyword">for</span> dim=1:length(ings)
+</pre><pre class="codeinput">   ing = ings(dim);
+
+Xtrain = A_train;
+Xtest = A_test;
+ytrain = y_train(:, ing);
+ytest = y_test(:, ing);
+[N,D] = size(Xtrain);
+
+[ytrain, muY, sY] = standardizeCols(ytrain);
+ytest = standardizeCols(ytest, muY, sY);
+
+[Xtrain, mu] = centerCols(Xtrain);
+Xtest = centerCols(Xtest, mu);
+
+options = {<span class="string">'maxIter'</span>, 200, <span class="string">'verbose'</span>, false};
+models = {<span class="string">'ridge'</span>, <span class="string">'normaljeffreys'</span>, <span class="string">'normalgamma'</span>, <span class="string">'normalinversegaussian'</span>, <span class="string">'laplace'</span>};
+names= {<span class="string">'ridge'</span>, <span class="string">'NJ'</span>, <span class="string">'NG'</span>, <span class="string">'NIG'</span>, <span class="string">'Laplace'</span>};
+<span class="keyword">for</span> m=1:length(models)
+   clear <span class="string">param</span>
+   param.model = models{m};
+   <span class="comment">% use CV to pick hyper params</span>
+   <span class="keyword">if</span> strcmp(param.model, <span class="string">'normaljeffreys'</span>)
+      c_trial = [1]; <span class="comment">% dummy value</span>
+   <span class="keyword">else</span>
+      c_trial= [0.001 0.01 0.1 1 10];
+      <span class="comment">%c_trial= [.0001:.1:1];</span>
+   <span class="keyword">end</span>
+   <span class="keyword">if</span> ismember(param.model, {<span class="string">'laplace'</span>, <span class="string">'normaljeffreys'</span>, <span class="string">'ridge'</span>})
+      alpha_trial = [1]; <span class="comment">% dummy value</span>
+   <span class="keyword">else</span>
+      alpha_trial=[.1 1 5 10];
+   <span class="keyword">end</span>
+   <span class="keyword">if</span> ismember(param.model, {<span class="string">'ridge'</span>})
+      sigma_trial = [1]; <span class="comment">% dummy</span>
+   <span class="keyword">else</span>
+      sigma_trial=[.1 .5 1]; <span class="comment">% starting values for EM</span>
+   <span class="keyword">end</span>
+   Nfolds=3;
+   clear <span class="string">errMean</span>
+   <span class="keyword">for</span> ndx1 = 1:length(c_trial)
+      <span class="keyword">for</span> ndx2 = 1:length(alpha_trial)
+         <span class="keyword">for</span> ndx3 = 1:length(sigma_trial)
+            param.c = c_trial(ndx1);
+            param.alpha = alpha_trial(ndx2);
+            param.sigma = -sigma_trial(ndx3);
+            tmpOptions = {<span class="string">'maxIter'</span>, 30, <span class="string">'verbose'</span>, false};
+            fitFn = @(X,y) linregFitSparseEmFrancois(X,y, param, tmpOptions{:});
+            predictFn = @(w, X) X*w;
+            lossFn = @(yhat, y)  sum((yhat-y).^2);
+            [errMean(ndx1,ndx2,ndx3), se] = cvEstimate(fitFn, predictFn, lossFn, Xtrain, ytrain,  Nfolds);
+         <span class="keyword">end</span>
+      <span class="keyword">end</span>
+   <span class="keyword">end</span>
+   <span class="comment">% Pick best then refit with all training data</span>
+   err = errMean(:);
+   [minErr, bestNdx] = min(err);
+   [ndx1, ndx2, ndx3] = ind2sub([length(c_trial), length(alpha_trial), length(sigma_trial)], bestNdx);
+   param.c = c_trial(ndx1);
+   param.alpha = alpha_trial(ndx2);
+   param.sigma = -sigma_trial(ndx3);
+   fprintf(<span class="string">'CV %s best c=%5.3f, alpha=%5.3f, sigma = %5.3f\n'</span>, <span class="keyword">...</span>
+      param.model, param.c, param.alpha, param.sigma);
+   [param.w] =  linregFitSparseEmFrancois(Xtrain, ytrain, param, options{:});
+   params{m} = param;
+   errSurface{m} = errMean;
+   w = param.w;
+   mse(m) = mean((ytest-Xtest*w).^2);
+<span class="keyword">end</span>
+
+<span class="comment">% null model</span>
+<span class="comment">%w=zeros(size(Xtrain,2),1);</span>
+<span class="comment">%mse(end+1)=mean((ytest-Xtest*w).^2);</span>
+</pre><h2>plot results<a name="3"></a></h2><pre class="codeinput"><span class="comment">%{
+</span><span class="comment">figure;
+</span><span class="comment">bar(mse);
+</span><span class="comment">set(gca,'xticklabel',names)
+</span><span class="comment">title(sprintf('mse test on %s', ingredients{ing}))
+</span><span class="comment">%}
+</span>
+figure;
+sse = mse*length(ytest);
+bar(sse)
+set(gca,<span class="string">'xticklabel'</span>,names)
+title(sprintf(<span class="string">'sse test on %s'</span>, ingredients{ing}))
+drawnow
+
+<span class="keyword">if</span> 0
+<span class="keyword">for</span> m=1:length(params)
+   param = params{m};
+   w = param.w;
+   figure(<span class="string">'name'</span>,param.model)
+   title(param.model)
+   stem(spectrum, w, <span class="string">'marker'</span>,<span class="string">'none'</span>)
+   xlabel(<span class="string">'Wavelength (nm)'</span>)
+   ylabel(<span class="string">'coef'</span>)
+   box <span class="string">off</span>
+
+   figure(<span class="string">'name'</span>,param.model)
+   title(param.model)
+   plot(Xtrain*w,ytrain,<span class="string">'+'</span>)
+   hold <span class="string">on</span>
+   plot(Xtest*w,ytest,<span class="string">'og'</span>)
+   plot(-5:5,-5:5,<span class="string">'--r'</span>)
+   xlim([-3 3])
+   ylim([-3 3])
+   legend(<span class="string">'Training data'</span>,<span class="string">'Test data'</span>,<span class="string">'location'</span>,<span class="string">'Northwest'</span>)
+   xlabel(<span class="string">'Predicted observations'</span>)
+   ylabel(<span class="string">'Observations'</span>)
+   box <span class="string">off</span>
+<span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span> <span class="comment">% for dim</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Sparse linear regression with EM on biscuits data
+% PMTKreallySlow
+%%
+
+% This file is from pmtk3.googlecode.com
+
+
+
+loadData('biscuits');
+ings = [1:4]; % fat, sucrose, flour, water
+for dim=1:length(ings)
+   ing = ings(dim);
+
+Xtrain = A_train;
+Xtest = A_test;
+ytrain = y_train(:, ing);
+ytest = y_test(:, ing);
+[N,D] = size(Xtrain);
+
+[ytrain, muY, sY] = standardizeCols(ytrain);
+ytest = standardizeCols(ytest, muY, sY);
+
+[Xtrain, mu] = centerCols(Xtrain);
+Xtest = centerCols(Xtest, mu);
+
+options = {'maxIter', 200, 'verbose', false};
+models = {'ridge', 'normaljeffreys', 'normalgamma', 'normalinversegaussian', 'laplace'};
+names= {'ridge', 'NJ', 'NG', 'NIG', 'Laplace'};
+for m=1:length(models)
+   clear param
+   param.model = models{m};
+   % use CV to pick hyper params
+   if strcmp(param.model, 'normaljeffreys')
+      c_trial = [1]; % dummy value
+   else
+      c_trial= [0.001 0.01 0.1 1 10]; 
+      %c_trial= [.0001:.1:1];
+   end
+   if ismember(param.model, {'laplace', 'normaljeffreys', 'ridge'})
+      alpha_trial = [1]; % dummy value
+   else
+      alpha_trial=[.1 1 5 10];
+   end
+   if ismember(param.model, {'ridge'})
+      sigma_trial = [1]; % dummy
+   else
+      sigma_trial=[.1 .5 1]; % starting values for EM
+   end
+   Nfolds=3;
+   clear errMean
+   for ndx1 = 1:length(c_trial)
+      for ndx2 = 1:length(alpha_trial)
+         for ndx3 = 1:length(sigma_trial)
+            param.c = c_trial(ndx1);
+            param.alpha = alpha_trial(ndx2);
+            param.sigma = -sigma_trial(ndx3);
+            tmpOptions = {'maxIter', 30, 'verbose', false};
+            fitFn = @(X,y) linregFitSparseEmFrancois(X,y, param, tmpOptions{:});
+            predictFn = @(w, X) X*w;
+            lossFn = @(yhat, y)  sum((yhat-y).^2);
+            [errMean(ndx1,ndx2,ndx3), se] = cvEstimate(fitFn, predictFn, lossFn, Xtrain, ytrain,  Nfolds);
+         end
+      end
+   end
+   % Pick best then refit with all training data
+   err = errMean(:);
+   [minErr, bestNdx] = min(err);
+   [ndx1, ndx2, ndx3] = ind2sub([length(c_trial), length(alpha_trial), length(sigma_trial)], bestNdx);
+   param.c = c_trial(ndx1);
+   param.alpha = alpha_trial(ndx2);
+   param.sigma = -sigma_trial(ndx3);
+   fprintf('CV %s best c=%5.3f, alpha=%5.3f, sigma = %5.3f\n', ...
+      param.model, param.c, param.alpha, param.sigma);
+   [param.w] =  linregFitSparseEmFrancois(Xtrain, ytrain, param, options{:});
+   params{m} = param;
+   errSurface{m} = errMean;
+   w = param.w;
+   mse(m) = mean((ytest-Xtest*w).^2);
+end
+
+% null model
+%w=zeros(size(Xtrain,2),1);
+%mse(end+1)=mean((ytest-Xtest*w).^2);
+
+
+%% plot results
+%{
+figure;
+bar(mse);
+set(gca,'xticklabel',names)
+title(sprintf('mse test on %s', ingredients{ing}))
+%}
+
+figure;
+sse = mse*length(ytest);
+bar(sse)
+set(gca,'xticklabel',names)
+title(sprintf('sse test on %s', ingredients{ing}))
+drawnow
+
+if 0
+for m=1:length(params)
+   param = params{m};
+   w = param.w;
+   figure('name',param.model)
+   title(param.model)
+   stem(spectrum, w, 'marker','none')
+   xlabel('Wavelength (nm)')
+   ylabel('coef')
+   box off
+   
+   figure('name',param.model)
+   title(param.model)
+   plot(Xtrain*w,ytrain,'+')
+   hold on
+   plot(Xtest*w,ytest,'og')
+   plot(-5:5,-5:5,'REPLACE_WITH_DASH_DASHr')
+   xlim([-3 3])
+   ylim([-3 3])
+   legend('Training data','Test data','location','Northwest')
+   xlabel('Predicted observations')
+   ylabel('Observations')
+   box off
+end
+end
+
+end % for dim
+
+
+
+##### SOURCE END #####
+--></body></html>

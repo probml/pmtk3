@@ -1,0 +1,207 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>mdgGridDemoSutton</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="mdgGridDemoSutton.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> sutton_demo()
+<span class="comment">% do the example in Sutton and Barto (1998) p79</span>
+
+nrows = 5; ncols = 5;
+obstacle = zeros(nrows, ncols);
+terminal = zeros(nrows, ncols);
+psucc_act = 1.0;
+absorb = 0;
+wrap_around = 0;
+noop = 0;
+T = mk_grid_world(nrows, ncols, psucc_act, obstacle, terminal, absorb, wrap_around, noop);
+bump = mk_bump(nrows, ncols);
+R = -1*bump;
+
+A = 6; AA = 10;
+R(A,:) = 10;
+T(A,:,:) = 0.0; T(A,:,AA) = 1.0;
+B = 16; BB = 18;
+R(B,:) = 5;
+T(B,:,:) = 0.0; T(B,:,BB) = 1.0;
+
+discount_factor = 0.9;
+V = value_iteration(T, R, discount_factor);
+
+<span class="comment">%reshape(V,[nrows ncols])</span>
+<span class="comment">%   21.9773   24.4193   21.9773   19.4193   17.4773</span>
+<span class="comment">%   19.7796   21.9773   19.7796   17.8016   16.0214</span>
+<span class="comment">%   17.8016   19.7796   17.8016   16.0214   14.4193</span>
+<span class="comment">%   16.0214   17.8016   16.0214   14.4193   12.9773</span>
+<span class="comment">%   14.4193   16.0214   14.4193   12.9773   11.6796</span>
+
+<span class="comment">% Extract the policy</span>
+Q = Q_from_V(V, T, R, discount_factor);
+[V, p] = max(Q, [], 2);
+<span class="comment">%reshape(p,[nrows ncols])</span>
+<span class="comment">%     2     1     4     1     4</span>
+<span class="comment">%     1     1     1     4     4</span>
+<span class="comment">%     1     1     1     1     1</span>
+<span class="comment">%     1     1     1     1     1</span>
+<span class="comment">%     1     1     1     1     1</span>
+<span class="comment">% Note: this might not match the book because of ties in the argmax</span>
+
+[p, V] = policy_iteration(T, R, discount_factor);
+
+<span class="comment">%reshape(V,[nrows ncols])</span>
+<span class="comment">%ans =</span>
+<span class="comment">%   21.9775   24.4194   21.9775   19.4194   17.4775</span>
+<span class="comment">%   19.7797   21.9775   19.7797   17.8018   16.0216</span>
+<span class="comment">%   17.8018   19.7797   17.8018   16.0216   14.4194</span>
+<span class="comment">%   16.0216   17.8018   16.0216   14.4194   12.9775</span>
+<span class="comment">%   14.4194   16.0216   14.4194   12.9775   11.6797</span>
+
+<span class="comment">%%%%%%%%%</span>
+
+<span class="keyword">function</span> bump = mk_bump(nrows, ncols)
+<span class="comment">% MK_BUMP Will moving cause the agent to bump into the boundary?</span>
+<span class="comment">% bump = mk_bump(nrows, ncols)</span>
+
+N = 1; E = 2; S = 3; W = 4;
+nact = 4;
+
+nstates = nrows*ncols;
+node = reshape(1:nstates, [nrows ncols]);
+bump = zeros(nstates, nact);
+bump(node(1,1:ncols), N) = 1;
+bump(node(nrows,1:ncols), S) = 1;
+bump(node(1:nrows,1), W) = 1;
+bump(node(1:nrows,ncols), E) = 1;
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+function sutton_demo()
+% do the example in Sutton and Barto (1998) p79
+
+nrows = 5; ncols = 5;
+obstacle = zeros(nrows, ncols);
+terminal = zeros(nrows, ncols);
+psucc_act = 1.0;
+absorb = 0;
+wrap_around = 0;
+noop = 0;
+T = mk_grid_world(nrows, ncols, psucc_act, obstacle, terminal, absorb, wrap_around, noop);
+bump = mk_bump(nrows, ncols);
+R = -1*bump;
+
+A = 6; AA = 10;
+R(A,:) = 10;
+T(A,:,:) = 0.0; T(A,:,AA) = 1.0; 
+B = 16; BB = 18;
+R(B,:) = 5;
+T(B,:,:) = 0.0; T(B,:,BB) = 1.0;
+
+discount_factor = 0.9;
+V = value_iteration(T, R, discount_factor);
+
+%reshape(V,[nrows ncols])
+%   21.9773   24.4193   21.9773   19.4193   17.4773
+%   19.7796   21.9773   19.7796   17.8016   16.0214
+%   17.8016   19.7796   17.8016   16.0214   14.4193
+%   16.0214   17.8016   16.0214   14.4193   12.9773
+%   14.4193   16.0214   14.4193   12.9773   11.6796
+
+% Extract the policy
+Q = Q_from_V(V, T, R, discount_factor);
+[V, p] = max(Q, [], 2);
+%reshape(p,[nrows ncols])
+%     2     1     4     1     4
+%     1     1     1     4     4
+%     1     1     1     1     1
+%     1     1     1     1     1
+%     1     1     1     1     1
+% Note: this might not match the book because of ties in the argmax
+
+[p, V] = policy_iteration(T, R, discount_factor);
+
+%reshape(V,[nrows ncols])
+%ans =
+%   21.9775   24.4194   21.9775   19.4194   17.4775
+%   19.7797   21.9775   19.7797   17.8018   16.0216
+%   17.8018   19.7797   17.8018   16.0216   14.4194
+%   16.0216   17.8018   16.0216   14.4194   12.9775
+%   14.4194   16.0216   14.4194   12.9775   11.6797
+
+%%%%%%%%%
+
+function bump = mk_bump(nrows, ncols)
+% MK_BUMP Will moving cause the agent to bump into the boundary?
+% bump = mk_bump(nrows, ncols)
+
+N = 1; E = 2; S = 3; W = 4;
+nact = 4;
+
+nstates = nrows*ncols;
+node = reshape(1:nstates, [nrows ncols]);
+bump = zeros(nstates, nact);
+bump(node(1,1:ncols), N) = 1;
+bump(node(nrows,1:ncols), S) = 1;
+bump(node(1:nrows,1), W) = 1;
+bump(node(1:nrows,ncols), E) = 1;
+
+
+##### SOURCE END #####
+--></body></html>

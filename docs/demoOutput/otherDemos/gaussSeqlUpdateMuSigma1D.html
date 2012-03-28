@@ -1,0 +1,201 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Sequential Bayesian updating of (mu,sigma) for a 1D gaussian</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="gaussSeqlUpdateMuSigma1D.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Sequential Bayesian updating of (mu,sigma) for a 1D gaussian</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Uninformative prior</a></li><li><a href="#2">Sample data</a></li><li><a href="#4">Update</a></li><li><a href="#5">Plot</a></li></ul></div><h2>Uninformative prior<a name="1"></a></h2><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+m0 = 0;
+k0 = 0;
+v0 = 0; <span class="comment">% 0.01;</span>
+S0 = 0; <span class="comment">% 0.01;</span>
+</pre><h2>Sample data<a name="2"></a></h2><pre class="codeinput">truth.mu    = 5;
+truth.Sigma = 10;
+setSeed(1);
+X = colvec(gaussSample(truth, 100));
+xyrange = [-5 15 eps 15];
+figure; hold <span class="string">on</span>;
+[styles, colors, symbols] =  plotColors();
+
+<span class="comment">%</span>
+ns = [5 25 100];
+str = {};
+ncontours = 3;
+<span class="keyword">for</span> i=1:length(ns)
+</pre><pre class="codeinput">    n    = ns(i);
+    data = X(1:n);
+    xbar =  mean(data);
+    Xc   = data-xbar;
+    XX   = (Xc'*Xc)/n;
+</pre><h2>Update<a name="4"></a></h2><pre class="codeinput">    post.k     = k0 + n;
+    post.dof   = v0 + n;
+    post.Sigma = (S0 + n*XX + (k0*n)/(k0+n)*(xbar-m0)*(xbar-m0)');
+    post.mu    = (k0*m0 + n*xbar)/post.k;
+</pre><h2>Plot<a name="5"></a></h2><p>hat = posterior mean</p><pre class="codeinput">    muHat = post.mu;
+    sigma2Hat = post.Sigma/post.dof * (post.dof/(post.dof-2));
+    h(i) = plot(muHat, sigma2Hat, <span class="string">'X'</span>, <span class="string">'markersize'</span>  , 15 , <span class="keyword">...</span>
+      <span class="string">'linewidth'</span>   , 3  , <span class="keyword">...</span>
+      <span class="string">'color'</span>       , colors(i));
+    str{i} =  sprintf(<span class="string">'N=%d'</span>,n);
+
+    plot(xbar, var(data,1), <span class="string">'o'</span>, <span class="string">'markersize'</span>  , 10 , <span class="keyword">...</span>
+                           <span class="string">'linewidth'</span>   , 3  , <span class="keyword">...</span>
+                           <span class="string">'color'</span>       , colors(i));
+
+    fn = @(x)exp(gaussInvWishartLogprob(post, x(:, 1), x(:, 2)));
+    plotContour(fn, xyrange, <span class="string">'ncontours'</span>, ncontours, <span class="keyword">...</span>
+      <span class="string">'color'</span> , colors(i) ,<span class="keyword">...</span>
+      <span class="string">'linestyle'</span>, <span class="string">'-'</span>, <span class="keyword">...</span>
+      <span class="string">'linewidth'</span>   , 2);
+</pre><img vspace="5" hspace="5" src="gaussSeqlUpdateMuSigma1D_01.png" alt=""> <img vspace="5" hspace="5" src="gaussSeqlUpdateMuSigma1D_02.png" alt=""> <img vspace="5" hspace="5" src="gaussSeqlUpdateMuSigma1D_03.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
+</pre><pre class="codeinput">plot(truth.mu, truth.Sigma, <span class="string">'*'</span>, <span class="string">'markersize'</span>  , 15 , <span class="keyword">...</span>
+  <span class="string">'linewidth'</span>   , 3  , <span class="keyword">...</span>
+  <span class="string">'color'</span>       , <span class="string">'m'</span>);
+
+legend(h, str, <span class="string">'location'</span>, <span class="string">'NorthWest'</span>);
+xlabel(sprintf(<span class="string">'%s'</span>, <span class="string">'\mu'</span>))
+ylabel(sprintf(<span class="string">'%s'</span>, <span class="string">'\sigma^2'</span>))
+<span class="comment">%axis([-4 8 0 12])</span>
+<span class="comment">%grid on</span>
+box <span class="string">on</span>
+title(sprintf(<span class="string">'o = MLE, x = post mean, * = truth'</span>))
+<span class="comment">%set(gca, 'xtick', -2:2:8);</span>
+printPmtkFigure <span class="string">muSigmaPost</span>
+</pre><img vspace="5" hspace="5" src="gaussSeqlUpdateMuSigma1D_04.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Sequential Bayesian updating of (mu,sigma) for a 1D gaussian
+%
+%
+%% Uninformative prior
+
+% This file is from pmtk3.googlecode.com
+
+m0 = 0;
+k0 = 0; 
+v0 = 0; % 0.01;
+S0 = 0; % 0.01; 
+
+%% Sample data
+truth.mu    = 5;
+truth.Sigma = 10;
+setSeed(1);
+X = colvec(gaussSample(truth, 100));
+xyrange = [-5 15 eps 15];
+figure; hold on;
+[styles, colors, symbols] =  plotColors();
+
+%
+ns = [5 25 100];
+str = {};
+ncontours = 3;
+for i=1:length(ns)
+    n    = ns(i);
+    data = X(1:n);
+    xbar =  mean(data);
+    Xc   = data-xbar;
+    XX   = (Xc'*Xc)/n;
+    %% Update
+    post.k     = k0 + n;
+    post.dof   = v0 + n;
+    post.Sigma = (S0 + n*XX + (k0*n)/(k0+n)*(xbar-m0)*(xbar-m0)');
+    post.mu    = (k0*m0 + n*xbar)/post.k;
+    %% Plot
+    % hat = posterior mean
+    muHat = post.mu; 
+    sigma2Hat = post.Sigma/post.dof * (post.dof/(post.dof-2));
+    h(i) = plot(muHat, sigma2Hat, 'X', 'markersize'  , 15 , ...
+      'linewidth'   , 3  , ...
+      'color'       , colors(i));
+    str{i} =  sprintf('N=%d',n);
+
+    plot(xbar, var(data,1), 'o', 'markersize'  , 10 , ...
+                           'linewidth'   , 3  , ...
+                           'color'       , colors(i));
+                           
+    fn = @(x)exp(gaussInvWishartLogprob(post, x(:, 1), x(:, 2)));
+    plotContour(fn, xyrange, 'ncontours', ncontours, ...
+      'color' , colors(i) ,...
+      'linestyle', '-', ...
+      'linewidth'   , 2);
+    
+end
+%%
+
+plot(truth.mu, truth.Sigma, '*', 'markersize'  , 15 , ...
+  'linewidth'   , 3  , ...
+  'color'       , 'm');
+
+legend(h, str, 'location', 'NorthWest');
+xlabel(sprintf('%s', '\mu'))
+ylabel(sprintf('%s', '\sigma^2'))
+%axis([-4 8 0 12])
+%grid on
+box on
+title(sprintf('o = MLE, x = post mean, * = truth'))
+%set(gca, 'xtick', -2:2:8);
+printPmtkFigure muSigmaPost
+
+
+
+##### SOURCE END #####
+--></body></html>

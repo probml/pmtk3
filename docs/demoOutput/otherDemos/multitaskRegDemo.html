@@ -1,0 +1,392 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Multitask regression demo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="multitaskRegDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Multitask regression demo</h1><!--introduction--><p>PMTKslow</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#3">Generate training data</a></li><li><a href="#5">Plot truth (if 1D)</a></li><li><a href="#6">Fit models to different subsets of training data</a></li><li><a href="#7">Plot error</a></li><li><a href="#8">Plot fit (if 1D)</a></li></ul></div><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="keyword">function</span> multitaskRegDemo()
+seeds = [1 2 3];
+plotFns = true; <span class="comment">% set to false to reduce number of plots</span>
+<span class="keyword">for</span> seedi=1:length(seeds)
+</pre><pre class="codeinput">    seed = seeds(seedi);
+</pre><h2>Generate training data<a name="3"></a></h2><pre class="codeinput">    setSeed(seed);
+
+    Ds = [1 50];
+    <span class="keyword">for</span> Di=1:length(Ds)
+        D = Ds(Di);
+        <span class="keyword">if</span> D==1
+            Ntrain = 20;
+        <span class="keyword">else</span>
+            Ntrain = round(1.5*D);
+        <span class="keyword">end</span>
+        Ntest = 100*D;
+        Xtrain = randn(Ntrain, D);
+        <span class="keyword">if</span> D==1
+            Xtest = linspace(min(Xtrain), max(Xtrain), 100)';
+            T = 5;
+        <span class="keyword">else</span>
+            Xtest = randn(Ntest, D);
+            T = 25;
+        <span class="keyword">end</span>
+
+
+        Ks = [1 5];
+        <span class="keyword">for</span> Ki=1:length(Ks)
+</pre><pre class="codeinput">            K = Ks(Ki);
+            mu = 5*randn(D,K); <span class="comment">% common mean</span>
+            Sigma = repmat(0.01*randpd(D), [1 1 K]);
+            mixweight = normalize(ones(1,K));
+            <span class="comment">%W = gaussSample(struct('mu', mu, 'Sigma', Sigma), T)';</span>
+            [W, z]= mixGaussSample(mu, Sigma, mixweight, T);
+            W = W'; <span class="comment">% W(:,t) is weight vector for task t</span>
+            <span class="comment">%figure; imagesc(W);</span>
+            <span class="comment">%figure; plot(z)</span>
+            w0 = 5*randn(1,T); <span class="comment">% intecepts are not similar across tasks</span>
+            ytrain = zeros(Ntrain, T);
+            ytest = zeros(Ntest, T);
+            ftest = zeros(Ntest, T); <span class="comment">% no noise</span>
+            sigma2 = 5*ones(1,T);
+            Xtrain1 = [ones(Ntrain,1) Xtrain];
+            Xtest1 = [ones(Ntest,1) Xtest];
+            <span class="keyword">for</span> t=1:T
+                w = [w0(t); W(:,t)];
+                ytrain(:,t) = Xtrain1*w + sigma2(t)*randn(Ntrain,1);
+                ftest(:,t) = Xtest1*w;
+                ytest(:,t) = ftest(:,t) + sigma2(t)*randn(Ntest,1);
+            <span class="keyword">end</span>
+</pre><h2>Plot truth (if 1D)<a name="5"></a></h2><pre class="codeinput">            [styles, colors, symbols] =  plotColors;
+            <span class="keyword">if</span> D==1 &amp;&amp; seedi==1 &amp;&amp; plotFns
+                figure; hold <span class="string">on</span>;
+                <span class="keyword">for</span> t=1:T
+                    <span class="comment">%plot(Xtrain, ytrain(:,t), sprintf('%s%s', colors(t), symbols(t)));</span>
+                    plot(Xtest, ftest(:,t), sprintf(<span class="string">'%s%s'</span>, colors(t), styles{t}), <span class="string">'linewidth'</span>, 2);
+                <span class="keyword">end</span>
+                title(<span class="string">'true functions'</span>);
+                printPmtkFigure(sprintf(<span class="string">'multitaskRegTruthD%dK%d'</span>, D, K))
+            <span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="multitaskRegDemo_01.png" alt=""> <img vspace="5" hspace="5" src="multitaskRegDemo_09.png" alt=""> <h2>Fit models to different subsets of training data<a name="6"></a></h2><pre class="codeinput">            <span class="keyword">if</span> D==1
+                Ns = [3 6 9 12 15];
+            <span class="keyword">else</span>
+                Ns = round(linspace(D+1, Ntrain, 6));
+            <span class="keyword">end</span>
+            Nns = length(Ns);
+            methodStr = {<span class="string">'Separate'</span>, <span class="string">'Pooled'</span>};
+            Nmethods = length(methodStr);
+            ypred = zeros(Ntest, T, Nns, Nmethods);
+            mse = zeros(T, Nns, Nmethods);
+            <span class="keyword">for</span> ni=1:Nns
+                N = Ns(ni);
+                <span class="keyword">for</span> method=1:Nmethods
+                    modelEst = fitModels(Xtrain(1:N,:), ytrain(1:N,:), method);
+                    <span class="keyword">for</span> t=1:T
+                        ypred(:,t,ni, method) = linregPredict(modelEst{t}, Xtest);
+                        mse(t, ni, method) = mean( (ypred(:,t,ni, method) - ftest(:,t)).^2 );
+                    <span class="keyword">end</span>
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+</pre><h2>Plot error<a name="7"></a></h2><pre class="codeinput">            [styles, colors, symbols] =  plotColors;
+            figure; hold <span class="string">on</span>
+            <span class="keyword">for</span> m=1:Nmethods
+                plot(Ns, mean(mse(:,:,m),1), sprintf(<span class="string">'o%s%s'</span>, colors(m), styles{m}), <span class="string">'linewidth'</span>, 2);
+                xlabel(<span class="string">'N'</span>); ylabel(<span class="string">'mse on test'</span>);
+            <span class="keyword">end</span>
+            title(sprintf(<span class="string">'D=%d, T=%d, K=%d, seed=%d'</span>, D, T, K, seed))
+            legend(methodStr)
+            <span class="keyword">if</span> seedi==1
+                printPmtkFigure(sprintf(<span class="string">'multitaskRegMseD%dK%d'</span>, D, K))
+            <span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="multitaskRegDemo_02.png" alt=""> <img vspace="5" hspace="5" src="multitaskRegDemo_10.png" alt=""> <img vspace="5" hspace="5" src="multitaskRegDemo_17.png" alt=""> <img vspace="5" hspace="5" src="multitaskRegDemo_18.png" alt=""> <img vspace="5" hspace="5" src="multitaskRegDemo_19.png" alt=""> <img vspace="5" hspace="5" src="multitaskRegDemo_20.png" alt=""> <img vspace="5" hspace="5" src="multitaskRegDemo_21.png" alt=""> <img vspace="5" hspace="5" src="multitaskRegDemo_22.png" alt=""> <img vspace="5" hspace="5" src="multitaskRegDemo_23.png" alt=""> <img vspace="5" hspace="5" src="multitaskRegDemo_24.png" alt=""> <img vspace="5" hspace="5" src="multitaskRegDemo_25.png" alt=""> <img vspace="5" hspace="5" src="multitaskRegDemo_26.png" alt=""> <h2>Plot fit (if 1D)<a name="8"></a></h2><pre class="codeinput">            <span class="keyword">if</span> D==1 &amp;&amp; (seedi==1) &amp;&amp; plotFns
+                <span class="keyword">for</span> method=1:Nmethods
+                    <span class="keyword">for</span> ni=1:min(3,Nns)
+                        N = Ns(ni);
+                        figure; hold <span class="string">on</span>
+                        <span class="keyword">for</span> t=1:T
+                            <span class="keyword">if</span> N&lt;=10 <span class="comment">% too cluttered to show more than 10 points</span>
+                                plot(Xtrain(1:N,:), ytrain(1:N,t), sprintf(<span class="string">'%s%s'</span>, colors(t), symbols(t)));
+                            <span class="keyword">end</span>
+                            plot(Xtest, ypred(:,t,ni,method), sprintf(<span class="string">'%s%s'</span>, colors(t), styles{t}), <span class="string">'linewidth'</span>, 2);
+                        <span class="keyword">end</span>
+                        title(sprintf(<span class="string">'D=%d, K=%d, N=%d, %s'</span>, D,K,N,methodStr{method}));
+                        printPmtkFigure(sprintf(<span class="string">'multitaskReg%sD%dK%dN%d'</span>, methodStr{method}, D, K,N))
+                    <span class="keyword">end</span>
+
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="multitaskRegDemo_03.png" alt=""> <img vspace="5" hspace="5" src="multitaskRegDemo_04.png" alt=""> <img vspace="5" hspace="5" src="multitaskRegDemo_05.png" alt=""> <img vspace="5" hspace="5" src="multitaskRegDemo_06.png" alt=""> <img vspace="5" hspace="5" src="multitaskRegDemo_07.png" alt=""> <img vspace="5" hspace="5" src="multitaskRegDemo_08.png" alt=""> <img vspace="5" hspace="5" src="multitaskRegDemo_11.png" alt=""> <img vspace="5" hspace="5" src="multitaskRegDemo_12.png" alt=""> <img vspace="5" hspace="5" src="multitaskRegDemo_13.png" alt=""> <img vspace="5" hspace="5" src="multitaskRegDemo_14.png" alt=""> <img vspace="5" hspace="5" src="multitaskRegDemo_15.png" alt=""> <img vspace="5" hspace="5" src="multitaskRegDemo_16.png" alt=""> <pre class="codeinput">        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+
+
+placeFigures
+<span class="keyword">end</span> <span class="comment">% function</span>
+
+<span class="keyword">function</span> models = fitModels(X, Y, method)
+T = size(Y,2);
+models = cell(1,T);
+D = size(X,2);
+w0 = zeros(1,T); W = zeros(D,T); sigma2 = zeros(1,T);
+<span class="comment">% First fit models independently</span>
+<span class="keyword">for</span> t=1:T
+    lambda = 0.001; <span class="comment">% for numerical stability</span>
+    models{t} = linregFit(X, Y(:,t), <span class="string">'regtype'</span>, <span class="string">'L2'</span>, <span class="string">'lambda'</span>, lambda);
+    w0(t) = models{t}.w(1);
+    W(:,t) = models{t}.w(2:end);
+    sigma2(t) = models{t}.sigma2;
+<span class="keyword">end</span>
+
+<span class="comment">% Now optionally do improved fit</span>
+<span class="keyword">for</span> t=1:T
+    <span class="keyword">switch</span> method
+        <span class="keyword">case</span> 1, <span class="comment">% independent</span>
+            <span class="comment">% no-op</span>
+        <span class="keyword">case</span> 2, <span class="comment">% MAP estimate using pooled estimate for prior</span>
+            [y, ybar] = centerCols(Y(:,t));
+            mu = mean(W,2);
+            S0 = 0.01*eye(D); <span class="comment">% setting variance of the prior</span>
+            S0inv = inv(S0);
+            SN = inv(S0inv + (1/sigma2(t))*X'*X);
+            Wmap(:,t) = SN*S0inv*mu + (1/sigma2(t))*SN*X'*y; <span class="comment">%#ok</span>
+            <span class="comment">%Wmap(:,t) = inv(X'*X)*X'*y; %S0=inf</span>
+            models{t}.w(2:size(Wmap, 1)+1) = Wmap(:,t);
+            models{t}.w(1)  = ybar - mean(X)*models{t}.w(2:end);
+        <span class="keyword">otherwise</span>
+            error(<span class="string">'unknown method'</span>)
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Multitask regression demo
+% PMTKslow
+%%
+
+% This file is from pmtk3.googlecode.com
+
+function multitaskRegDemo()
+seeds = [1 2 3];
+plotFns = true; % set to false to reduce number of plots
+for seedi=1:length(seeds)
+    seed = seeds(seedi);
+    %% Generate training data
+    setSeed(seed);
+    
+    Ds = [1 50];
+    for Di=1:length(Ds)
+        D = Ds(Di);
+        if D==1
+            Ntrain = 20;
+        else
+            Ntrain = round(1.5*D);
+        end
+        Ntest = 100*D;
+        Xtrain = randn(Ntrain, D);
+        if D==1
+            Xtest = linspace(min(Xtrain), max(Xtrain), 100)';
+            T = 5;
+        else
+            Xtest = randn(Ntest, D);
+            T = 25;
+        end
+        
+        
+        Ks = [1 5];
+        for Ki=1:length(Ks)
+            
+            K = Ks(Ki);
+            mu = 5*randn(D,K); % common mean
+            Sigma = repmat(0.01*randpd(D), [1 1 K]);
+            mixweight = normalize(ones(1,K));
+            %W = gaussSample(struct('mu', mu, 'Sigma', Sigma), T)';
+            [W, z]= mixGaussSample(mu, Sigma, mixweight, T);
+            W = W'; % W(:,t) is weight vector for task t
+            %figure; imagesc(W);
+            %figure; plot(z)
+            w0 = 5*randn(1,T); % intecepts are not similar across tasks
+            ytrain = zeros(Ntrain, T);
+            ytest = zeros(Ntest, T);
+            ftest = zeros(Ntest, T); % no noise
+            sigma2 = 5*ones(1,T);
+            Xtrain1 = [ones(Ntrain,1) Xtrain];
+            Xtest1 = [ones(Ntest,1) Xtest];
+            for t=1:T
+                w = [w0(t); W(:,t)];
+                ytrain(:,t) = Xtrain1*w + sigma2(t)*randn(Ntrain,1);
+                ftest(:,t) = Xtest1*w;
+                ytest(:,t) = ftest(:,t) + sigma2(t)*randn(Ntest,1);
+            end
+            
+            %% Plot truth (if 1D)
+            [styles, colors, symbols] =  plotColors;
+            if D==1 && seedi==1 && plotFns
+                figure; hold on;
+                for t=1:T
+                    %plot(Xtrain, ytrain(:,t), sprintf('%s%s', colors(t), symbols(t)));
+                    plot(Xtest, ftest(:,t), sprintf('%s%s', colors(t), styles{t}), 'linewidth', 2);
+                end
+                title('true functions');
+                printPmtkFigure(sprintf('multitaskRegTruthD%dK%d', D, K))
+            end
+            
+            %% Fit models to different subsets of training data
+            if D==1
+                Ns = [3 6 9 12 15];
+            else
+                Ns = round(linspace(D+1, Ntrain, 6));
+            end
+            Nns = length(Ns);
+            methodStr = {'Separate', 'Pooled'};
+            Nmethods = length(methodStr);
+            ypred = zeros(Ntest, T, Nns, Nmethods);
+            mse = zeros(T, Nns, Nmethods);
+            for ni=1:Nns
+                N = Ns(ni);
+                for method=1:Nmethods
+                    modelEst = fitModels(Xtrain(1:N,:), ytrain(1:N,:), method);
+                    for t=1:T
+                        ypred(:,t,ni, method) = linregPredict(modelEst{t}, Xtest);
+                        mse(t, ni, method) = mean( (ypred(:,t,ni, method) - ftest(:,t)).^2 );
+                    end
+                end
+            end
+            
+            
+            %% Plot error
+            [styles, colors, symbols] =  plotColors;
+            figure; hold on
+            for m=1:Nmethods
+                plot(Ns, mean(mse(:,:,m),1), sprintf('o%s%s', colors(m), styles{m}), 'linewidth', 2);
+                xlabel('N'); ylabel('mse on test');
+            end
+            title(sprintf('D=%d, T=%d, K=%d, seed=%d', D, T, K, seed))
+            legend(methodStr)
+            if seedi==1
+                printPmtkFigure(sprintf('multitaskRegMseD%dK%d', D, K))
+            end
+            
+            %% Plot fit (if 1D)
+            if D==1 && (seedi==1) && plotFns
+                for method=1:Nmethods
+                    for ni=1:min(3,Nns)
+                        N = Ns(ni);
+                        figure; hold on
+                        for t=1:T
+                            if N<=10 % too cluttered to show more than 10 points
+                                plot(Xtrain(1:N,:), ytrain(1:N,t), sprintf('%s%s', colors(t), symbols(t)));
+                            end
+                            plot(Xtest, ypred(:,t,ni,method), sprintf('%s%s', colors(t), styles{t}), 'linewidth', 2);
+                        end
+                        title(sprintf('D=%d, K=%d, N=%d, %s', D,K,N,methodStr{method}));
+                        printPmtkFigure(sprintf('multitaskReg%sD%dK%dN%d', methodStr{method}, D, K,N))
+                    end
+                    
+                end
+            end
+            
+        end
+    end
+end
+
+
+placeFigures
+end % function
+
+function models = fitModels(X, Y, method)
+T = size(Y,2);
+models = cell(1,T);
+D = size(X,2);
+w0 = zeros(1,T); W = zeros(D,T); sigma2 = zeros(1,T);
+% First fit models independently
+for t=1:T
+    lambda = 0.001; % for numerical stability
+    models{t} = linregFit(X, Y(:,t), 'regtype', 'L2', 'lambda', lambda);
+    w0(t) = models{t}.w(1);
+    W(:,t) = models{t}.w(2:end);
+    sigma2(t) = models{t}.sigma2;
+end
+
+% Now optionally do improved fit
+for t=1:T
+    switch method
+        case 1, % independent
+            % no-op
+        case 2, % MAP estimate using pooled estimate for prior
+            [y, ybar] = centerCols(Y(:,t));
+            mu = mean(W,2);
+            S0 = 0.01*eye(D); % setting variance of the prior
+            S0inv = inv(S0);
+            SN = inv(S0inv + (1/sigma2(t))*X'*X);
+            Wmap(:,t) = SN*S0inv*mu + (1/sigma2(t))*SN*X'*y; %#ok
+            %Wmap(:,t) = inv(X'*X)*X'*y; %S0=inf
+            models{t}.w(2:size(Wmap, 1)+1) = Wmap(:,t);
+            models{t}.w(1)  = ybar - mean(X)*models{t}.w(2:end);
+        otherwise
+            error('unknown method')
+    end
+end
+
+end
+
+##### SOURCE END #####
+--></body></html>

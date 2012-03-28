@@ -1,0 +1,152 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>mrf2ChainTrainDemo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="mrf2ChainTrainDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Demonstrate training a chain-structured MRF</a></li><li><a href="#2">Get  data</a></li><li><a href="#3">Create chain model</a></li><li><a href="#4">Fit model</a></li></ul></div><h2>Demonstrate training a chain-structured MRF<a name="1"></a></h2><p>Based on <a href="http://www.cs.ubc.ca/~schmidtm/Software/UGM/trainMRF.html">http://www.cs.ubc.ca/~schmidtm/Software/UGM/trainMRF.html</a></p><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+</pre><h2>Get  data<a name="2"></a></h2><pre class="codeinput">setSeed(0);
+load <span class="string">rain.mat</span> <span class="comment">% X is 1059*28</span>
+y = X+1; <span class="comment">% Convert from {0,1} to {1,2} representation</span>
+
+<span class="comment">% Plot what data looks like</span>
+figure;
+imagesc(y(1:100,:)); colormap(gray);
+title(<span class="string">'Rain Data for first 100 months'</span>);
+
+<span class="comment">% Plot marginal fit</span>
+<span class="comment">% Compute marginal of raining on any day</span>
+p_rain = sum(y(:)==2)/numel(y)
+<span class="comment">% Plot what independent samples would look like</span>
+figure;
+imagesc(p_rain &gt; rand(100,28)); colormap(gray);
+title(<span class="string">'Samples based on independent model'</span>);
+</pre><pre class="codeoutput">p_rain =
+   0.411506812356671
+</pre><img vspace="5" hspace="5" src="mrf2ChainTrainDemo_01.png" alt=""> <img vspace="5" hspace="5" src="mrf2ChainTrainDemo_02.png" alt=""> <h2>Create chain model<a name="3"></a></h2><pre class="codeinput">nNodes = size(y,2);
+adj = chainAdjMatrix(nNodes);
+nStates = 2*ones(1,nNodes);
+model = mrf2Create(adj, nStates, <span class="string">'method'</span>, <span class="string">'Chain'</span>);
+
+<span class="comment">% Sample from model with random params</span>
+nSamples = 100;
+samples = mrf2Sample(model, nSamples);
+figure;
+imagesc(samples); colormap(gray);
+title(<span class="string">'Samples from untrained MRF model'</span>);
+</pre><img vspace="5" hspace="5" src="mrf2ChainTrainDemo_03.png" alt=""> <h2>Fit model<a name="4"></a></h2><pre class="codeinput">model = mrf2Train(model, y);
+samples = mrf2Sample(model, nSamples);
+figure;
+imagesc(samples); colormap(gray);
+title(<span class="string">'Samples from trained MRF model'</span>);
+</pre><img vspace="5" hspace="5" src="mrf2ChainTrainDemo_04.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Demonstrate training a chain-structured MRF
+% Based on
+% http://www.cs.ubc.ca/~schmidtm/Software/UGM/trainMRF.html
+
+% This file is from pmtk3.googlecode.com
+
+
+%% Get  data
+setSeed(0);
+load rain.mat % X is 1059*28
+y = X+1; % Convert from {0,1} to {1,2} representation
+
+% Plot what data looks like
+figure;
+imagesc(y(1:100,:)); colormap(gray);
+title('Rain Data for first 100 months');
+
+% Plot marginal fit
+% Compute marginal of raining on any day
+p_rain = sum(y(:)==2)/numel(y)
+% Plot what independent samples would look like
+figure;
+imagesc(p_rain > rand(100,28)); colormap(gray);
+title('Samples based on independent model');
+
+%% Create chain model
+nNodes = size(y,2);
+adj = chainAdjMatrix(nNodes);
+nStates = 2*ones(1,nNodes);
+model = mrf2Create(adj, nStates, 'method', 'Chain');
+
+% Sample from model with random params
+nSamples = 100;
+samples = mrf2Sample(model, nSamples);
+figure;
+imagesc(samples); colormap(gray);
+title('Samples from untrained MRF model');
+
+%% Fit model
+model = mrf2Train(model, y);
+samples = mrf2Sample(model, nSamples);
+figure;
+imagesc(samples); colormap(gray);
+title('Samples from trained MRF model');
+
+
+
+
+##### SOURCE END #####
+--></body></html>

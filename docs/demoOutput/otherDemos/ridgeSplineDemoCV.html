@@ -1,0 +1,333 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>Demo of L2 regualrization of a piecewise constant function (splines) with fixed knots</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-31"><meta name="m-file" content="ridgeSplineDemoCV"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Demo of L2 regualrization of a piecewise constant function (splines) with fixed knots</h1><!--introduction--><p>Based on code by John D'Errico <a href="http://www.mathworks.com/matlabcentral/fileexchange/loadFile.do?objectId=8553&amp;objectType=fileY">http://www.mathworks.com/matlabcentral/fileexchange/loadFile.do?objectId=8553&amp;objectType=fileY</a></p><!--/introduction--><pre class="codeinput"><span class="keyword">function</span> ridgeSplineDemoCV()
+
+<span class="keyword">if</span> 0
+  randn(<span class="string">'state'</span>,0); rand(<span class="string">'state'</span>, 0);
+  n = 50;
+  x = sort(rand(n,1));
+  y = sin(pi*x) + 0.2*randn(size(x));
+  lambdas = logspace(-1,2,20);
+  lambdaOpt = 3;
+<span class="keyword">else</span>
+  [xtrain, ytrain] = makePolyData;
+  x = rescaleData(xtrain);
+  y = ytrain;
+  <span class="comment">%x = rescaleData(xtest);</span>
+  <span class="comment">%y = ytest;</span>
+  lambdas = [logspace(-15,2,40)];
+  lambdaOpt = 3;
+<span class="keyword">end</span>
+
+[X, knots] = splineBasis(x,100); <span class="comment">% X(i,j) = 1 if x(i) is inside interval knot(j)</span>
+d = size(X,2);
+
+warning <span class="string">off</span>
+w = X\y; <span class="comment">% least squares soln</span>
+warning <span class="string">on</span>
+<span class="comment">%norm(w)</span>
+<span class="comment">%ww = pinv(full(X))*y; % least squares soln</span>
+<span class="comment">%norm(ww)</span>
+
+
+figure;
+plot(x,y,<span class="string">'go'</span>);
+hold <span class="string">on</span>
+plot([knots(1:(end-1));knots(2:end)],  repmat(w(1:(end-1))',2,1),<span class="string">'r-'</span>,<span class="string">'linewidth'</span>,3)
+<span class="comment">%axis([0 1 -.2 1.2])</span>
+title(<span class="string">'least squares  solution'</span>)
+xlabel <span class="string">'x'</span>
+ylabel <span class="string">'y'</span>
+
+
+
+<span class="comment">% Now use L2 regularizer</span>
+D = spdiags(ones(d-1,1)*[-1 1],[0 1],d-1,d);
+lambda = 1e-1;
+<span class="comment">%lambda = 10;</span>
+[n d] = size(X)
+wridge = ([X;lambda*D]\[y;zeros(d-1,1)]);
+<span class="comment">% This time, no zero coefficients, and no rank problems.</span>
+
+figure
+plot(x,y,<span class="string">'go'</span>);
+hold <span class="string">on</span>
+plot([knots(1:(end-1));knots(2:end)], repmat(wridge(1:(end-1))',2,1),<span class="string">'r-'</span>,<span class="string">'linewidth'</span>,3)
+title(sprintf(<span class="string">'regularized solution, %s=%5.3f'</span>, <span class="string">'\lambda'</span>, lambda));
+xlabel <span class="string">'x'</span>
+ylabel <span class="string">'y'</span>
+
+
+<span class="comment">% This least squares spline, with only a tiny amount of a bias,</span>
+<span class="comment">% looks quit reasonable. The trick is that the regularization</span>
+<span class="comment">% term is only significant for those knots where there is no data</span>
+<span class="comment">% at all to estimate the spline. The information for those spline</span>
+<span class="comment">% coefficients is provided entirely by the regularizer.</span>
+
+
+<span class="comment">% I'll show an example of ordinary cross validation (OCV) in</span>
+<span class="comment">% action for the same spline fit. First, we'll plot the prediction</span>
+<span class="comment">% error sums of squares (PRESS) as a function of lambda.</span>
+
+nl = length(lambdas);
+<span class="keyword">if</span> 0 <span class="comment">% missing cv function?</span>
+    [n d] = size(X);
+    K = n; <span class="comment">% LOOCV</span>
+
+    <span class="keyword">for</span> i=1:nl
+        [trainErr, testErr] = cv(X, y, K, @ridgeQRSimple, lambdas(i)*D);
+        meanErr(i) = mean(testErr);
+        stdErr(i) = std(testErr)/sqrt(K);
+    <span class="keyword">end</span>
+    figure
+    errorbar(log10(lambdas), meanErr, stdErr, <span class="string">'o-'</span>)
+    xlabel(<span class="string">'log10(\lambda)'</span>)
+    ylabel(<span class="string">'MSE'</span>)
+    title(<span class="string">'LOOCV'</span>)
+<span class="keyword">end</span>
+press = zeros(1,nl);
+<span class="comment">% loop over lambda values for the plot</span>
+<span class="keyword">for</span> i = 1:nl
+  k = 1:n;
+  <span class="comment">% loop over data points, dropping each out in turn</span>
+  <span class="keyword">for</span> j = 1:n
+    <span class="comment">% k_j is the list of data points, less the j'th point</span>
+    k_j = setdiff(k,j);
+
+    <span class="comment">% fit the reduced problem</span>
+    warning <span class="string">off</span>
+    spl_coef = ([X(k_j,:);lambdas(i)*D]\[y(k_j);zeros(d-1,1)]);
+    <span class="comment">%spl_coef = ([X(k_j,:);sqrt(lambdas(i))*D]\[y(k_j);zeros(d-1,1)]);</span>
+    warning <span class="string">on</span>
+
+    <span class="comment">% prediction at the point dropped out</span>
+    pred_j = X(j,:)*spl_coef;
+    <span class="comment">% accumulate press for this lambda</span>
+    press(i) = press(i) + (pred_j - y(j)).^2;
+  <span class="keyword">end</span>
+<span class="keyword">end</span>
+figure
+<span class="comment">% plot, using a log axis for x</span>
+semilogx(lambdas,press,<span class="string">'-o'</span>)
+title(<span class="string">'Leave one out cross validation'</span>)
+xlabel <span class="string">'Lambda'</span>
+ylabel <span class="string">'PRESS'</span>
+<span class="comment">% Note: there is a minimum in this function near lambda == 1,</span>
+<span class="comment">% although it is only a slight dip. We could now use fminbnd</span>
+<span class="comment">% to minimize PRESS(lambda).</span>
+
+
+spl_coef_r = ([X;lambdaOpt*D]\[y;zeros(d-1,1)]);
+<span class="comment">% This time, no zero coefficients, and no rank problems.</span>
+
+figure
+plot(x,y,<span class="string">'go'</span>,[knots(1:(end-1));knots(2:end)], <span class="keyword">...</span>
+  repmat(spl_coef_r(1:(end-1))',2,1),<span class="string">'r-'</span>,<span class="string">'linewidth'</span>,3)
+title(sprintf(<span class="string">'lambda = %5.3f'</span>, lambdaOpt))
+xlabel <span class="string">'x'</span>
+ylabel <span class="string">'y'</span>
+</pre><pre class="codeoutput">n =
+    21
+d =
+   100
+</pre><img vspace="5" hspace="5" src="ridgeSplineDemoCV_01.png" alt=""> <img vspace="5" hspace="5" src="ridgeSplineDemoCV_02.png" alt=""> <img vspace="5" hspace="5" src="ridgeSplineDemoCV_03.png" alt=""> <img vspace="5" hspace="5" src="ridgeSplineDemoCV_04.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Demo of L2 regualrization of a piecewise constant function (splines) with fixed knots
+% Based on code by John D'Errico
+% http://www.mathworks.com/matlabcentral/fileexchange/loadFile.do?objectId=8553&objectType=fileY
+%%
+function ridgeSplineDemoCV()
+
+if 0
+  randn('state',0); rand('state', 0);
+  n = 50;
+  x = sort(rand(n,1));
+  y = sin(pi*x) + 0.2*randn(size(x));
+  lambdas = logspace(-1,2,20);
+  lambdaOpt = 3;
+else
+  [xtrain, ytrain] = makePolyData;
+  x = rescaleData(xtrain);
+  y = ytrain;
+  %x = rescaleData(xtest);
+  %y = ytest;
+  lambdas = [logspace(-15,2,40)];
+  lambdaOpt = 3;
+end
+
+[X, knots] = splineBasis(x,100); % X(i,j) = 1 if x(i) is inside interval knot(j)
+d = size(X,2);
+
+warning off
+w = X\y; % least squares soln
+warning on
+%norm(w)
+%ww = pinv(full(X))*y; % least squares soln
+%norm(ww)
+
+
+figure;
+plot(x,y,'go');
+hold on
+plot([knots(1:(end-1));knots(2:end)],  repmat(w(1:(end-1))',2,1),'r-','linewidth',3)
+%axis([0 1 -.2 1.2])
+title('least squares  solution')
+xlabel 'x'
+ylabel 'y'
+
+
+
+% Now use L2 regularizer
+D = spdiags(ones(d-1,1)*[-1 1],[0 1],d-1,d);
+lambda = 1e-1;
+%lambda = 10;
+[n d] = size(X)
+wridge = ([X;lambda*D]\[y;zeros(d-1,1)]);
+% This time, no zero coefficients, and no rank problems.
+
+figure
+plot(x,y,'go');
+hold on
+plot([knots(1:(end-1));knots(2:end)], repmat(wridge(1:(end-1))',2,1),'r-','linewidth',3)
+title(sprintf('regularized solution, %s=%5.3f', '\lambda', lambda));
+xlabel 'x'
+ylabel 'y'
+
+
+% This least squares spline, with only a tiny amount of a bias,
+% looks quit reasonable. The trick is that the regularization
+% term is only significant for those knots where there is no data
+% at all to estimate the spline. The information for those spline
+% coefficients is provided entirely by the regularizer.
+
+
+% I'll show an example of ordinary cross validation (OCV) in
+% action for the same spline fit. First, we'll plot the prediction
+% error sums of squares (PRESS) as a function of lambda.
+
+nl = length(lambdas);
+if 0 % missing cv function?
+    [n d] = size(X);
+    K = n; % LOOCV
+    
+    for i=1:nl
+        [trainErr, testErr] = cv(X, y, K, @ridgeQRSimple, lambdas(i)*D);
+        meanErr(i) = mean(testErr);
+        stdErr(i) = std(testErr)/sqrt(K);
+    end
+    figure
+    errorbar(log10(lambdas), meanErr, stdErr, 'o-')
+    xlabel('log10(\lambda)')
+    ylabel('MSE')
+    title('LOOCV')
+end
+press = zeros(1,nl);
+% loop over lambda values for the plot
+for i = 1:nl
+  k = 1:n;
+  % loop over data points, dropping each out in turn
+  for j = 1:n
+    % k_j is the list of data points, less the j'th point
+    k_j = setdiff(k,j);
+    
+    % fit the reduced problem
+    warning off
+    spl_coef = ([X(k_j,:);lambdas(i)*D]\[y(k_j);zeros(d-1,1)]);
+    %spl_coef = ([X(k_j,:);sqrt(lambdas(i))*D]\[y(k_j);zeros(d-1,1)]);
+    warning on
+    
+    % prediction at the point dropped out
+    pred_j = X(j,:)*spl_coef;
+    % accumulate press for this lambda
+    press(i) = press(i) + (pred_j - y(j)).^2;
+  end
+end
+figure
+% plot, using a log axis for x
+semilogx(lambdas,press,'-o')
+title('Leave one out cross validation')
+xlabel 'Lambda'
+ylabel 'PRESS'
+% Note: there is a minimum in this function near lambda == 1,
+% although it is only a slight dip. We could now use fminbnd
+% to minimize PRESS(lambda).
+
+
+spl_coef_r = ([X;lambdaOpt*D]\[y;zeros(d-1,1)]);
+% This time, no zero coefficients, and no rank problems.
+
+figure
+plot(x,y,'go',[knots(1:(end-1));knots(2:end)], ...
+  repmat(spl_coef_r(1:(end-1))',2,1),'r-','linewidth',3)
+title(sprintf('lambda = %5.3f', lambdaOpt))
+xlabel 'x'
+ylabel 'y'
+
+
+
+
+##### SOURCE END #####
+--></body></html>

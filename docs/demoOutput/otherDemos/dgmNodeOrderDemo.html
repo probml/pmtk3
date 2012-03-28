@@ -1,0 +1,259 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>dgmNodeOrderDemo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="dgmNodeOrderDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% When queries are not in topogical order</span>
+<span class="comment">% problems may arise...</span>
+
+<span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+setSeed(0);
+
+G = zeros(2,2);
+<span class="comment">%C = 1; S = 2;</span>
+C = 2; S = 1;
+G(C, S) = 1;
+nstates = [2 2];
+CPDs = mkRndTabularCpds(G, nstates);
+dgm =  dgmCreate(G, CPDs, <span class="string">'infEngine'</span>, <span class="string">'jtree'</span>);
+
+
+clear <span class="string">fac</span>
+fac{C} = tabularFactorCreate(CPDs{C}.T, [C]);
+fac{S} = tabularFactorCreate(CPDs{S}.T, [C S]);
+jointF = tabularFactorMultiply(fac);
+<span class="comment">%jointF = tabularFactorMultiplyDomain(fac, [C S]); % specify domain of joint</span>
+
+query = [C,S];
+pquery1 = dgmInferQuery(dgm, query);
+pquery2 = tabularFactorMarginalize(jointF, query);
+
+joint = repmat(CPDs{C}.T(:), 1, 2) .* CPDs{S}.T;
+
+assert(approxeq(pquery1.T, joint))
+assert(tfequal(pquery1, pquery2))
+</pre><pre class="codeinput"><span class="comment">% Make DAG</span>
+<span class="comment">%    C 2</span>
+<span class="comment">%   / \</span>
+<span class="comment">%  v  v</span>
+<span class="comment">% 4 S  R 3</span>
+<span class="comment">%   \/</span>
+<span class="comment">%   v</span>
+<span class="comment">%   W 1</span>
+<span class="comment">%</span>
+<span class="comment">% interally this becomes</span>
+<span class="comment">%    1</span>
+<span class="comment">%   / \</span>
+<span class="comment">%  v  v</span>
+<span class="comment">% 3   2</span>
+<span class="comment">%   \/</span>
+<span class="comment">%   v</span>
+<span class="comment">%   4</span>
+<span class="comment">% So when the user asks for the marginal on node W,</span>
+<span class="comment">% we compute the marginal on node 4, then rename it to W/1.</span>
+<span class="comment">%</span>
+<span class="comment">% Also, if we give it data X(:,[W C R S])</span>
+<span class="comment">% we permtue it internally to XX(:, [2 3 4 1])</span>
+
+nvars = 4;
+<span class="comment">%Create the dgm</span>
+[dgmJ, C, S, R, W] = mkSprinklerDgmOutOfOrder(<span class="string">'infEngine'</span>, <span class="string">'jtree'</span>);
+dgmV = mkSprinklerDgmOutOfOrder(<span class="string">'infEngine'</span>, <span class="string">'varelim'</span>);
+dgmE = mkSprinklerDgmOutOfOrder(<span class="string">'infEngine'</span>, <span class="string">'enum'</span>);
+
+fac = {};
+fac{C} = tabularFactorCreate(reshape([0.5 0.5], 2, 1), [C]);
+fac{S} = tabularFactorCreate(reshape([0.5 0.9 0.5 0.1], 2, 2), [C S]);
+fac{R} = tabularFactorCreate(reshape([0.8 0.2 0.2 0.8], 2, 2), [C R]);
+fac{W} = tabularFactorCreate(reshape([1 0.1 0.1 0.01 0 0.9 0.9 0.99], 2, 2, 2), [S R W]);
+jointF = tabularFactorMultiply(fac);
+
+<span class="comment">% Inference</span>
+FALSE = 1; TRUE  = 2;
+
+[pWj, logZ, qq] = dgmInferQuery(dgmJ, W);
+pWv = dgmInferQuery(dgmV, W);
+pWe = dgmInferQuery(dgmE, W);
+assert(tfequal(pWj, pWv, pWe))
+assert(approxeq(pWj.T(TRUE), 0.6471, 1e-4))
+
+pSWj = dgmInferQuery(dgmJ, [S, W]);
+pSWv = dgmInferQuery(dgmV, [S, W]);
+pSWe = dgmInferQuery(dgmE, [S, W]);
+ assert(approxeq(pSWj.T(TRUE, TRUE), 0.2781, 1e-4));
+assert(tfequal(pSWj, pSWv, pSWe));
+
+<span class="comment">% When queries are not in topogical order</span>
+<span class="comment">% problems may arise...</span>
+query = [W,R,C];
+pSWj = dgmInferQuery(dgmJ, query);
+pSWv = dgmInferQuery(dgmV, query);
+pSWe = dgmInferQuery(dgmE, query);
+pquery = tabularFactorMarginalize(jointF, query);
+
+assert(tfequal(pSWj, pSWv, pSWe));
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+
+
+
+% When queries are not in topogical order
+% problems may arise...
+
+% This file is from pmtk3.googlecode.com
+
+setSeed(0);
+
+G = zeros(2,2);
+%C = 1; S = 2;
+C = 2; S = 1;
+G(C, S) = 1;
+nstates = [2 2];
+CPDs = mkRndTabularCpds(G, nstates);  
+dgm =  dgmCreate(G, CPDs, 'infEngine', 'jtree'); 
+
+ 
+clear fac
+fac{C} = tabularFactorCreate(CPDs{C}.T, [C]);
+fac{S} = tabularFactorCreate(CPDs{S}.T, [C S]);
+jointF = tabularFactorMultiply(fac);
+%jointF = tabularFactorMultiplyDomain(fac, [C S]); % specify domain of joint
+
+query = [C,S];
+pquery1 = dgmInferQuery(dgm, query); 
+pquery2 = tabularFactorMarginalize(jointF, query);
+
+joint = repmat(CPDs{C}.T(:), 1, 2) .* CPDs{S}.T;
+
+assert(approxeq(pquery1.T, joint))
+assert(tfequal(pquery1, pquery2)) 
+
+
+
+%%
+
+% Make DAG
+%    C 2
+%   / \
+%  v  v
+% 4 S  R 3
+%   \/
+%   v
+%   W 1
+%
+% interally this becomes
+%    1
+%   / \
+%  v  v
+% 3   2
+%   \/
+%   v
+%   4
+% So when the user asks for the marginal on node W,
+% we compute the marginal on node 4, then rename it to W/1.
+%
+% Also, if we give it data X(:,[W C R S])
+% we permtue it internally to XX(:, [2 3 4 1])
+
+nvars = 4; 
+%Create the dgm
+[dgmJ, C, S, R, W] = mkSprinklerDgmOutOfOrder('infEngine', 'jtree'); 
+dgmV = mkSprinklerDgmOutOfOrder('infEngine', 'varelim'); 
+dgmE = mkSprinklerDgmOutOfOrder('infEngine', 'enum'); 
+
+fac = {};
+fac{C} = tabularFactorCreate(reshape([0.5 0.5], 2, 1), [C]);
+fac{S} = tabularFactorCreate(reshape([0.5 0.9 0.5 0.1], 2, 2), [C S]);
+fac{R} = tabularFactorCreate(reshape([0.8 0.2 0.2 0.8], 2, 2), [C R]);
+fac{W} = tabularFactorCreate(reshape([1 0.1 0.1 0.01 0 0.9 0.9 0.99], 2, 2, 2), [S R W]);
+jointF = tabularFactorMultiply(fac);
+
+% Inference
+FALSE = 1; TRUE  = 2;
+
+[pWj, logZ, qq] = dgmInferQuery(dgmJ, W);
+pWv = dgmInferQuery(dgmV, W);
+pWe = dgmInferQuery(dgmE, W);
+assert(tfequal(pWj, pWv, pWe))
+assert(approxeq(pWj.T(TRUE), 0.6471, 1e-4)) 
+
+pSWj = dgmInferQuery(dgmJ, [S, W]); 
+pSWv = dgmInferQuery(dgmV, [S, W]);
+pSWe = dgmInferQuery(dgmE, [S, W]);
+ assert(approxeq(pSWj.T(TRUE, TRUE), 0.2781, 1e-4)); 
+assert(tfequal(pSWj, pSWv, pSWe));
+
+% When queries are not in topogical order
+% problems may arise...
+query = [W,R,C];
+pSWj = dgmInferQuery(dgmJ, query); 
+pSWv = dgmInferQuery(dgmV, query);
+pSWe = dgmInferQuery(dgmE, query);
+pquery = tabularFactorMarginalize(jointF, query);
+
+assert(tfequal(pSWj, pSWv, pSWe)); 
+
+
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,268 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Compare speed and accuracy of different linregStudent methods</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="linregStudentTest.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Compare speed and accuracy of different linregStudent methods</h1><pre class="codeinput"><span class="comment">%PMTKauthor Yi Huang</span>
+</pre><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+requireOptimToolbox
+
+
+seed = 0; setSeed(seed);
+x = sort(rand(10,1));
+y = 1+2*x + rand(size(x))-.5;
+<span class="comment">% add some outliers</span>
+x = [x' 0.1 0.5 0.9]';
+k =  -5;
+y = [y' k  k k]';
+
+
+NUs = [1:2:9 0];
+table = zeros(length(NUs), 7);
+<span class="keyword">for</span> i = 1:length(NUs)
+    nu = NUs(i);
+    <span class="comment">% Using gradient descent</span>
+    tic;
+    modelGradDesc = linregRobustStudentFitConstr(x, y, nu);
+    tGradDesc = toc;
+
+    <span class="comment">% Using EM</span>
+    tic;
+    modelEM = linregRobustStudentFitEm(x, y, nu, <span class="string">'verbose'</span>, true);
+    tEM = toc;
+    table(i,:) = [tGradDesc sqrt(modelGradDesc.sigma2) modelGradDesc.w0 rowvec(modelGradDesc.w) <span class="keyword">...</span>
+      tEM sqrt(modelEM.sigma2) rowvec(modelEM.w)];
+<span class="keyword">end</span>
+table
+
+labels = {<span class="string">'Gtime'</span>, <span class="string">'Gsigma'</span>, <span class="string">'Gw0'</span>, <span class="string">'Gw1'</span>, <span class="string">'EMtime'</span>, <span class="string">'EMsigma'</span>, <span class="string">'EMw0'</span>, <span class="string">'EMw1'</span>};
+latextable(table, <span class="string">'Format'</span>, <span class="string">'%5.3f'</span>, <span class="string">'horiz'</span>, labels, <span class="string">'hline'</span>, 1, <span class="keyword">...</span>
+  <span class="string">'name'</span>, <span class="string">'linregStudentTest'</span>);
+</pre><pre class="codeoutput">initializing model for EM
+1	 loglik: -36.0041
+2	 loglik: -33.2865
+3	 loglik: -30.7004
+4	 loglik: -28.6045
+5	 loglik: -27.066
+6	 loglik: -26.0603
+7	 loglik: -25.4595
+8	 loglik: -25.1143
+9	 loglik: -24.9158
+10	 loglik: -24.8
+11	 loglik: -24.7313
+12	 loglik: -24.6899
+13	 loglik: -24.6646
+14	 loglik: -24.6491
+15	 loglik: -24.6396
+16	 loglik: -24.6336
+17	 loglik: -24.6299
+18	 loglik: -24.6275
+initializing model for EM
+1	 loglik: -33.7749
+2	 loglik: -32.6584
+3	 loglik: -31.9944
+4	 loglik: -31.5854
+5	 loglik: -31.3152
+6	 loglik: -31.1286
+7	 loglik: -30.996
+8	 loglik: -30.9003
+9	 loglik: -30.8304
+10	 loglik: -30.7791
+11	 loglik: -30.7413
+12	 loglik: -30.7135
+13	 loglik: -30.693
+14	 loglik: -30.6779
+15	 loglik: -30.6669
+16	 loglik: -30.6588
+17	 loglik: -30.6529
+18	 loglik: -30.6485
+19	 loglik: -30.6454
+20	 loglik: -30.6431
+initializing model for EM
+1	 loglik: -33.3948
+2	 loglik: -32.8149
+3	 loglik: -32.5995
+4	 loglik: -32.5148
+5	 loglik: -32.4788
+6	 loglik: -32.4627
+7	 loglik: -32.4554
+8	 loglik: -32.452
+9	 loglik: -32.4504
+initializing model for EM
+1	 loglik: -33.262
+2	 loglik: -32.9137
+3	 loglik: -32.8281
+4	 loglik: -32.8061
+5	 loglik: -32.8002
+6	 loglik: -32.7985
+initializing model for EM
+1	 loglik: -33.2005
+2	 loglik: -32.9703
+3	 loglik: -32.9306
+4	 loglik: -32.9237
+5	 loglik: -32.9224
+initializing model for EM
+1	 loglik: -33.1816
+2	 loglik: -32.9737
+3	 loglik: -32.7788
+4	 loglik: -32.3634
+5	 loglik: -31.6061
+6	 loglik: -30.4533
+7	 loglik: -29.0077
+8	 loglik: -27.5438
+9	 loglik: -26.3567
+10	 loglik: -25.5498
+11	 loglik: -25.0434
+12	 loglik: -24.7237
+13	 loglik: -24.5137
+14	 loglik: -24.37
+15	 loglik: -24.2685
+16	 loglik: -24.1951
+17	 loglik: -24.1411
+18	 loglik: -24.1009
+19	 loglik: -24.0707
+20	 loglik: -24.0478
+21	 loglik: -24.0303
+22	 loglik: -24.0169
+23	 loglik: -24.0066
+24	 loglik: -23.9987
+25	 loglik: -23.9925
+26	 loglik: -23.9877
+27	 loglik: -23.984
+28	 loglik: -23.9812
+29	 loglik: -23.9789
+table =
+  Columns 1 through 2
+   0.821909904000000   0.295606598876312
+   0.218518520000000   1.003882357083230
+   0.048166640000000   2.064542287114052
+   0.058110453000000   2.360001448956592
+   0.033851373000000   2.513715298213909
+   0.174841471000000   0.089354956757034
+  Columns 3 through 4
+   0.862916669169644   2.479141447021911
+   0.218938220452050   3.115656370375776
+  -1.630888149891446   5.212179333628302
+  -1.900358688666641   5.271694737178003
+  -1.937213983766182   5.108456056546530
+   0.818315828325613   2.556864451601477
+  Columns 5 through 6
+   0.063997370000000   0.360810879108021
+   0.014060479000000   0.993397369981030
+   0.006190915000000   2.088506803663409
+   0.004566764000000   2.468973602789154
+   0.004048082000000   2.640082997084244
+   0.247107739000000   0.262318952940248
+  Column 7
+   2.792691392799105
+   2.556392517498554
+   1.888384811262496
+   1.481088963125871
+   1.257016308425770
+   2.832130661765432
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Compare speed and accuracy of different linregStudent methods
+%PMTKauthor Yi Huang
+%%
+
+
+% This file is from pmtk3.googlecode.com
+
+requireOptimToolbox
+
+
+seed = 0; setSeed(seed);
+x = sort(rand(10,1));
+y = 1+2*x + rand(size(x))-.5;
+% add some outliers
+x = [x' 0.1 0.5 0.9]';
+k =  -5;
+y = [y' k  k k]';
+
+  
+NUs = [1:2:9 0];
+table = zeros(length(NUs), 7);
+for i = 1:length(NUs)
+    nu = NUs(i);
+    % Using gradient descent
+    tic;
+    modelGradDesc = linregRobustStudentFitConstr(x, y, nu);
+    tGradDesc = toc;
+   
+    % Using EM
+    tic;
+    modelEM = linregRobustStudentFitEm(x, y, nu, 'verbose', true);
+    tEM = toc;
+    table(i,:) = [tGradDesc sqrt(modelGradDesc.sigma2) modelGradDesc.w0 rowvec(modelGradDesc.w) ...
+      tEM sqrt(modelEM.sigma2) rowvec(modelEM.w)];
+end
+table
+
+labels = {'Gtime', 'Gsigma', 'Gw0', 'Gw1', 'EMtime', 'EMsigma', 'EMw0', 'EMw1'};
+latextable(table, 'Format', '%5.3f', 'horiz', labels, 'hline', 1, ...
+  'name', 'linregStudentTest');
+
+##### SOURCE END #####
+--></body></html>

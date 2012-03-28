@@ -1,0 +1,150 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>Compare Student and Gaussian pdfs</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-08-30"><meta name="m-file" content="studentVsGauss"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Compare Student and Gaussian pdfs</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="keyword">for</span> useLog = [false true]
+
+dofs = [0.1 1 5];
+xs = linspace(-4, 4, 40);
+figure;
+[styles, colors, symbols, styleStr] = plotColors;
+N = length(dofs);
+<span class="keyword">for</span> i=1:N
+    dof = dofs(i);
+    <span class="comment">%ps = tpdf(xs, dof);</span>
+    model.mu = 0; model.Sigma = 1; model.dof = dof;
+    ps = exp(studentLogprob(model, xs));
+    <span class="keyword">if</span> useLog
+      plot(xs, log(ps), styleStr{i}, <span class="string">'linewidth'</span>, 2, <span class="string">'markersize'</span>, 12);
+    <span class="keyword">else</span>
+      plot(xs, ps, styleStr{i}, <span class="string">'linewidth'</span>, 2, <span class="string">'markersize'</span>, 12);
+    <span class="keyword">end</span>
+    hold <span class="string">on</span>
+    legendStr{i} = sprintf(<span class="string">'t(%s=%2.1f)'</span>, <span class="string">'\nu'</span>, dof);
+<span class="keyword">end</span>
+<span class="comment">%ps = normpdf(xs, 0, 1);</span>
+ps = gaussProb(xs, 0, 1);
+<span class="keyword">if</span> useLog
+  plot(xs,  log(ps), styleStr{N+1}, <span class="string">'linewidth'</span>, 2, <span class="string">'markersize'</span>, 12);
+<span class="keyword">else</span>
+  plot(xs, ps, styleStr{N+1}, <span class="string">'linewidth'</span>, 2, <span class="string">'markersize'</span>, 12);
+<span class="keyword">end</span>
+
+legendStr{N+1} = <span class="string">'N(0,1)'</span>;
+legend(legendStr)
+<span class="keyword">if</span>(useLog)
+  ylabel(<span class="string">'log density'</span>);
+  printPmtkFigure(<span class="string">'studentTvsGaussLog'</span>);
+<span class="keyword">else</span>
+  ylabel(<span class="string">'density'</span>);
+  printPmtkFigure(<span class="string">'studentTvsGauss'</span>);
+<span class="keyword">end</span>
+
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="studentVsGauss_01.png" alt=""> <img vspace="5" hspace="5" src="studentVsGauss_02.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Compare Student and Gaussian pdfs
+%
+%%
+for useLog = [false true]
+
+dofs = [0.1 1 5];
+xs = linspace(-4, 4, 40);  
+figure;
+[styles, colors, symbols, styleStr] = plotColors;
+N = length(dofs);
+for i=1:N
+    dof = dofs(i);
+    %ps = tpdf(xs, dof);  
+    model.mu = 0; model.Sigma = 1; model.dof = dof; 
+    ps = exp(studentLogprob(model, xs));  
+    if useLog
+      plot(xs, log(ps), styleStr{i}, 'linewidth', 2, 'markersize', 12);
+    else
+      plot(xs, ps, styleStr{i}, 'linewidth', 2, 'markersize', 12);
+    end
+    hold on
+    legendStr{i} = sprintf('t(%s=%2.1f)', '\nu', dof);
+end
+%ps = normpdf(xs, 0, 1);
+ps = gaussProb(xs, 0, 1);
+if useLog
+  plot(xs,  log(ps), styleStr{N+1}, 'linewidth', 2, 'markersize', 12);
+else
+  plot(xs, ps, styleStr{N+1}, 'linewidth', 2, 'markersize', 12);
+end
+  
+legendStr{N+1} = 'N(0,1)';
+legend(legendStr)
+if(useLog)
+  ylabel('log density');
+  printPmtkFigure('studentTvsGaussLog'); 
+else
+  ylabel('density');
+  printPmtkFigure('studentTvsGauss'); 
+end
+
+end
+##### SOURCE END #####
+--></body></html>

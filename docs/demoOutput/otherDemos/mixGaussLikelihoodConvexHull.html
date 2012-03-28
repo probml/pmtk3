@@ -1,0 +1,172 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Illustration of the likelihood surface created by a GMM</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="mixGaussLikelihoodConvexHull.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Illustration of the likelihood surface created by a GMM</h1><!--introduction--><p>The GMM has 10 isotropic components in 2d. The centers are marked with a '+' symbol. The three modes are marked with blue triangles. The green line is the convex hull of the centers.</p><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+
+setSeed(39)
+mu = [0.05:0.1:0.95;0.05:0.1:0.95];
+mu(1,:) = mu(1,randperm(10));
+mu(2,:) = mu(2,randperm(10));
+mu = mu';
+sigma = 0.2*[0.045,0.045,0.045,0.1,0.2,0.25,0.3,0.21,0.15,0.11];
+
+
+f = @(x)0;
+<span class="keyword">for</span> i=1:10
+    f = @(x)f(x) + 0.1*gaussProb(x, mu(i,:)', sigma(i).*eye(2));
+<span class="keyword">end</span>
+
+stepsize = 0.005;
+[x1,y1] = meshgrid(0:stepsize:1,0:stepsize:1);
+[nrows,ncols] = size(x1);
+xx = x1(:); yy = y1(:);
+z = f([xx,yy]);
+z = reshape(z,nrows,ncols);
+
+figure;
+surf(x1, y1, z);
+shading <span class="string">interp</span>
+view([-170, 52])
+printPmtkFigure(<span class="string">'gmmLikelihoodSurf'</span>);
+
+figure;
+contour(x1,y1,z,<span class="string">'-r'</span>); hold <span class="string">on</span>;
+plot(mu(:,1),mu(:,2),<span class="string">'+k'</span>,<span class="string">'MarkerSize'</span>,16);
+
+<span class="comment">%options = optimset('Display', 'off');</span>
+options.display = <span class="string">'off'</span>;
+options.verbose = 0;
+options.numDiff = 1;
+modes = zeros(3, 2);
+<span class="keyword">for</span> i=1:3
+   modes(i, :) = minFunc(@(x)-f(x), mu(i, :)', options);
+<span class="keyword">end</span>
+plot(modes(:,1),modes(:,2),<span class="string">'^b'</span>,<span class="string">'MarkerSize'</span>,12,<span class="string">'MarkerFaceColor'</span>,<span class="string">'b'</span>);
+k = convhull(mu(:,1),mu(:,2));
+plot(mu(k,1),mu(k,2),<span class="string">'-g'</span>,<span class="string">'LineWidth'</span>,3);
+view([180, 90])
+set(gca,<span class="string">'box'</span>,<span class="string">'on'</span>,<span class="string">'XTick'</span>,[],<span class="string">'YTick'</span>,[],<span class="string">'LineWidth'</span>,3);
+printPmtkFigure(<span class="string">'gmmLikelihoodConvexHull'</span>);
+</pre><img vspace="5" hspace="5" src="mixGaussLikelihoodConvexHull_01.png" alt=""> <img vspace="5" hspace="5" src="mixGaussLikelihoodConvexHull_02.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Illustration of the likelihood surface created by a GMM 
+% The GMM has 10 isotropic components in 2d. The centers are marked with a
+% '+' symbol. The three modes are marked with blue triangles. The green
+% line is the convex hull of the centers. 
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+
+setSeed(39)
+mu = [0.05:0.1:0.95;0.05:0.1:0.95];
+mu(1,:) = mu(1,randperm(10));
+mu(2,:) = mu(2,randperm(10));
+mu = mu';
+sigma = 0.2*[0.045,0.045,0.045,0.1,0.2,0.25,0.3,0.21,0.15,0.11];
+
+
+f = @(x)0;
+for i=1:10
+    f = @(x)f(x) + 0.1*gaussProb(x, mu(i,:)', sigma(i).*eye(2));
+end
+
+stepsize = 0.005;
+[x1,y1] = meshgrid(0:stepsize:1,0:stepsize:1);
+[nrows,ncols] = size(x1);
+xx = x1(:); yy = y1(:);
+z = f([xx,yy]);
+z = reshape(z,nrows,ncols);
+
+figure;
+surf(x1, y1, z);
+shading interp
+view([-170, 52])
+printPmtkFigure('gmmLikelihoodSurf'); 
+
+figure;
+contour(x1,y1,z,'-r'); hold on;
+plot(mu(:,1),mu(:,2),'+k','MarkerSize',16);
+
+%options = optimset('Display', 'off');
+options.display = 'off';
+options.verbose = 0;
+options.numDiff = 1;
+modes = zeros(3, 2);
+for i=1:3
+   modes(i, :) = minFunc(@(x)-f(x), mu(i, :)', options);
+end
+plot(modes(:,1),modes(:,2),'^b','MarkerSize',12,'MarkerFaceColor','b');
+k = convhull(mu(:,1),mu(:,2));
+plot(mu(k,1),mu(k,2),'-g','LineWidth',3);
+view([180, 90])
+set(gca,'box','on','XTick',[],'YTick',[],'LineWidth',3);
+printPmtkFigure('gmmLikelihoodConvexHull');
+
+
+##### SOURCE END #####
+--></body></html>
