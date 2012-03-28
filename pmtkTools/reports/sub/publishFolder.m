@@ -18,9 +18,9 @@ cleaner = onCleanup(@(x)cleanup(warnState));
 shadowFunction({'pause', 'keyboard', 'input', 'placeFigures'}, [], true);
 %% Settings
 % Demos with these tags have only their text published, they are not run.
-doNotEvalList = {'PMTKinteractive', 'PMTKbroken', 'PMTKreallySlow'};
+doNotEvalList = {'PMTKinteractive', 'PMTKbroken', 'PMTKreallySlow', 'PMTKslow'};
 globalEval    = true; % if false, no code is evaluated during publishing.
-googleRoot    = sprintf('http://code.google.com/p/pmtk3/source/browse/trunk/bookDemos/%s/', folder);
+googleRoot    = sprintf('http://code.google.com/p/pmtk3/source/browse/trunk/demos/%s/', folder);
 dest          = fullfile(pmtk3Root(), 'docs', 'demoOutput');
 %% Make sure the folder is non-empty
 if (isempty(mfiles(fullfile(pmtk3Root(), 'demos', folder))));
@@ -123,7 +123,7 @@ d = date;
 fid = fopen(fname,'w+');
 fprintf(fid,'<html>\n');
 fprintf(fid,'<head>\n');
-fprintf(fid,'<font align="left" style="color:#990000"><h2>PMTK3: %s</h2></font>\n', folder);
+fprintf(fid,'<font align="left" style="color:#990000"><h2>PMTK3: %s</h2></font>\n', formatDirectoryTitle(fnameOnly(folder)));
 if linkToPml
     fprintf(fid,'<br>Revision Date: %s \n<br> Book Version: %s<br>\n',d, datestr);
 else
@@ -161,3 +161,18 @@ warning(warnState);
 removeShadows(true);
 end
 
+
+function title = formatDirectoryTitle(title)
+    
+title = strrep(title, '-', ' '); 
+title = strrep(title, '_', ' '); 
+toks = tokenize(title); 
+for i=1:numel(toks)
+   toks{i}(1) = upper(toks{i}(1)); 
+end
+title = '';
+for i=1:numel(toks)
+   title = [title, ' ', toks{i}]; %#ok
+end
+
+end

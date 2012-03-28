@@ -41,7 +41,7 @@ function [missing, extra, copyProblems, missingExtra] = pmlOrganizeCode(bookSour
 SetDefaultValue(1, 'bookSource', getConfigValue('PMTKpmlBookSource'));
 %SetDefaultValue(1, 'bookSource', 'C:\Users\matt\Desktop\may1backup'); 
 %SetDefaultValue(2, 'dest',  'C:\users\matt\Desktop\PMLcode');
-SetDefaultValue(2, 'dest',  'C:\kmurphy\GoogleCode\pmtk3\demos\organizedDemos');
+SetDefaultValue(2, 'dest',  '/Users/Matt/Desktop/organizedDemos');
 SetDefaultValue(3, 'demosOnly', true);
 SetDefaultValue(4, 'includeCodeSol', false);
 %% Optionally add CodeSol to path
@@ -71,12 +71,12 @@ for i=1:numel(pmlCode)
 end
 %% Create destination directory structure
 if ~exist(dest, 'file')
-   system(sprintf('md "%s"', dest)); 
+   system(sprintf('mkdir "%s"', dest)); 
 end
 for i=1:nchapters
-    directory = fullfile(dest, sprintf('%s', chname{i}));
+    directory = fullfile(dest, sprintf('(%d)-%s',i, chname{i}));
     if ~exist(directory, 'file')
-        system(sprintf('md "%s"', directory));
+        system(sprintf('mkdir "%s"', directory));
     end
 end
 %% Get a list of all PMTK demo files
@@ -91,17 +91,17 @@ for i=1:numel(pmlCode)
     if demosOnly && ~ismember(file, PMTKdemos)
         continue
     end
-    d = fullfile(dest, sprintf('%s', chname{chapter}));
-    err = system(sprintf('copy "%s" "%s"', which(file), d));
+    d = fullfile(dest, sprintf('(%d)-%s',chapter, chname{chapter}));
+    err = system(sprintf('cp "%s" "%s"', which(file), d));
     if err
         copyProblems = insertEnd(file, copyProblems);
     end
     if ~exist(fullfile(dest, 'extra'), 'file')
-        system(sprintf('md "%s"', (fullfile(dest, 'extra'))));
+        system(sprintf('mkdir "%s"', (fullfile(dest, 'extra'))));
     end
 end
 for i=1:numel(extra)
-    err = system(sprintf('copy "%s" %s"', which(extra{i}),  fullfile(dest, 'extra')));
+    err = system(sprintf('cp "%s" "%s"', which(extra{i}),  fullfile(dest, 'extra')));
     if err
         copyProblems = insertEnd(extra{i}, copyProblems);
     end

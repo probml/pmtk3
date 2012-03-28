@@ -7,7 +7,7 @@ function publishDemos(wikiFile)
 
 % This file is from pmtk3.googlecode.com
 
-wikiOnly = false;     % set true if you only want to regenerate the wiki and 
+wikiOnly = true;     % set true if you only want to regenerate the wiki and 
                      % index.html pages, and not republish. 
 svnAutomatically = false;
 
@@ -18,6 +18,7 @@ googleRoot = 'http://pmtk3.googlecode.com/svn/trunk/docs/demoOutput';
 cd(fullfile(pmtk3Root(), 'demos'));
 %% book demos
 d = cellfuncell(@(c)fullfile('bookDemos', c), dirs(fullfile(pmtk3Root(), 'demos', 'bookDemos')));
+d = sortDirectories(d); 
 dirEmpty = @(d)isempty(mfiles(d, 'topOnly', true));
 for i = 1:numel(d)
     if ~dirEmpty(d{i})
@@ -27,7 +28,7 @@ end
 wikiTextBook = cell(numel(d), 1);
 for i=1:numel(d)
     if ~dirEmpty(d{i})
-        wikiTextBook{i} = sprintf(' * [%s/%s/index.html %s]',googleRoot, strrep(d{i}, '\', '/'), fnameOnly(d{i}));
+        wikiTextBook{i} = sprintf(' * [%s/%s/index.html %s]',googleRoot, strrep(d{i}, '\', '/'), fnameOnly(formatDirectoryTitle(d{i})));
     end
 end
 wikiTextBook = filterCell(wikiTextBook, @(c)~isempty(c));
@@ -55,7 +56,7 @@ end
 wikiTextOther   = cell(numel(d), 1);
 for i=1:numel(d)
     if ~dirEmpty(d{i})
-        wikiTextOther{i} = sprintf(' * [%s/%s/index.html %s]',googleRoot, strrep(d{i}, '\', '/'), fnameOnly(d{i}));
+        wikiTextOther{i} = sprintf(' * [%s/%s/index.html %s]',googleRoot, strrep(d{i}, '\', '/'), formatDirectoryTitle(fnameOnly(d{i})));
     end
 end
 wikiTextOther = filterCell(wikiTextOther, @(c)~isempty(c));
@@ -80,3 +81,25 @@ if svnAutomatically
 end
 end
 
+
+function title = formatDirectoryTitle(title)
+    
+title = strrep(title, '-', ' '); 
+title = strrep(title, '_', ' '); 
+toks = tokenize(title); 
+for i=1:numel(toks)
+   toks{i}(1) = upper(toks{i}(1)); 
+end
+title = '';
+for i=1:numel(toks)
+   title = [title, ' ', toks{i}]; %#ok
+end
+
+end
+
+
+function d = sortDirectories(d)
+
+d = sortfun(@(x)str2double(textBetween(x,'(', ')')), d);
+
+end

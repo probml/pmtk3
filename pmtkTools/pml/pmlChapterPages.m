@@ -27,6 +27,7 @@ text = filterCell(text, @(c)isSubstring('{chapter}', c));
 if isSubstring('{Preface}', text{1});
     text(1) = [];
 end
+text(end) = []; %bibliography
 nchapters = numel(text);
 pg = zeros(nchapters, 1);
 name = cell(nchapters, 1);
