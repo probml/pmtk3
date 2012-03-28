@@ -1,0 +1,109 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Binary Logistic Regression on SAT data</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="logregSATdemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Binary Logistic Regression on SAT data</h1><!--introduction--><p>Example from Johnson and Albert p87</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Load data</a></li><li><a href="#2">Fit model</a></li><li><a href="#3">visualize model fit for each training point</a></li><li><a href="#4">Highlight the two x's which have different labels.</a></li></ul></div><h2>Load data<a name="1"></a></h2><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+stat = loadData(<span class="string">'sat'</span>);  y = stat(:,1); X = stat(:,4);
+</pre><h2>Fit model<a name="2"></a></h2><pre class="codeinput">model = logregFit(X, y);
+[yhat, prob] = logregPredict(model, X);
+</pre><h2>visualize model fit for each training point<a name="3"></a></h2><pre class="codeinput">figure;
+plot(X, y, <span class="string">'ko'</span>, <span class="string">'linewidth'</span>, 2, <span class="string">'MarkerSize'</span>, 7, <span class="string">'markerfacecolor'</span>, <span class="string">'k'</span>);
+hold <span class="string">on</span>
+plot(X, prob, <span class="string">'ro'</span>, <span class="string">'linewidth'</span>, 2,<span class="string">'MarkerSize'</span>, 10)
+axis_pct
+</pre><img vspace="5" hspace="5" src="logregSATdemo_01.png" alt=""> <h2>Highlight the two x's which have different labels.<a name="4"></a></h2><pre class="codeinput">plot(525, 0, <span class="string">'gx'</span>, <span class="string">'linewidth'</span>, 2, <span class="string">'markersize'</span>, 14);
+plot(525, 1, <span class="string">'gx'</span>, <span class="string">'linewidth'</span>, 2, <span class="string">'markersize'</span>, 14);
+
+printPmtkFigure(<span class="string">'logregSATdemo'</span>)
+</pre><img vspace="5" hspace="5" src="logregSATdemo_02.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Binary Logistic Regression on SAT data
+% Example from Johnson and Albert p87
+%% Load data
+
+% This file is from pmtk3.googlecode.com
+
+stat = loadData('sat');  y = stat(:,1); X = stat(:,4);
+
+%% Fit model
+model = logregFit(X, y);
+[yhat, prob] = logregPredict(model, X);
+
+%% visualize model fit for each training point
+figure;
+plot(X, y, 'ko', 'linewidth', 2, 'MarkerSize', 7, 'markerfacecolor', 'k');
+hold on
+plot(X, prob, 'ro', 'linewidth', 2,'MarkerSize', 10)
+axis_pct
+
+%% Highlight the two x's which have different labels.
+plot(525, 0, 'gx', 'linewidth', 2, 'markersize', 14);
+plot(525, 1, 'gx', 'linewidth', 2, 'markersize', 14);
+
+printPmtkFigure('logregSATdemo')
+
+
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,377 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Classify using KNN</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="knnClassifyDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Classify using KNN</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#3">load data</a></li><li><a href="#4">Plot data</a></li><li><a href="#5">Classify and plot predictions on test data</a></li><li><a href="#6">Plot  predicted class  across a 2d grid of points</a></li><li><a href="#7">Plot  predictive probability  across a 2d grid of points</a></li><li><a href="#8">Plot error vs K</a></li><li><a href="#9">Cross validation</a></li></ul></div><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="keyword">function</span> knnClassifyDemo()
+</pre><h2>load data<a name="3"></a></h2><pre class="codeinput">loadData(<span class="string">'knnClassify3c'</span>);
+Ntest = size(Xtest,1);
+Ntrain = size(Xtrain,1);
+</pre><h2>Plot data<a name="4"></a></h2><pre class="codeinput">range = [min(Xtrain(:,1)) max(Xtrain(:,1)) min(Xtrain(:,2)) max(Xtrain(:,2))];
+figure;
+plotLabeledData(Xtrain, ytrain)
+title(<span class="string">'train'</span>)
+axis(range)
+printPmtkFigure(<span class="string">'knnClassifyTrainData'</span>);
+
+figure;
+plotLabeledData(Xtest, ytest)
+title(<span class="string">'test - truth'</span>)
+axis(range)
+printPmtkFigure(<span class="string">'knnClassifyTestData'</span>);
+</pre><img vspace="5" hspace="5" src="knnClassifyDemo_01.png" alt=""> <img vspace="5" hspace="5" src="knnClassifyDemo_02.png" alt=""> <h2>Classify and plot predictions on test data<a name="5"></a></h2><pre class="codeinput">Ks = [1 5 10];
+<span class="comment">%{
+</span><span class="comment">for ki=1:length(Ks)
+</span><span class="comment">  K = Ks(ki);
+</span><span class="comment">  model = knnFit(Xtrain, ytrain, K);
+</span><span class="comment">  [ypred] = knnPredict(model, Xtest);
+</span><span class="comment">  figure;
+</span><span class="comment">  plotLabeledData(Xtest, ypred);
+</span><span class="comment">  err = find(ypred(:) ~= ytest(:));
+</span><span class="comment">  nerrors = length(err);
+</span><span class="comment">  title(sprintf('K=%d, error rate = %d/%d = %5.3f', ...
+</span><span class="comment">		K, nerrors, Ntest, nerrors/Ntest))
+</span><span class="comment">  axis(range)
+</span><span class="comment">  % Put circles around errors
+</span><span class="comment">  hold on
+</span><span class="comment">  h=plot(Xtest(err,1), Xtest(err,2), 'ko'); set(h,'markersize',15)
+</span><span class="comment">  printPmtkFigure(sprintf('knnClassifyTestK%d', K));
+</span><span class="comment">end
+</span><span class="comment">%}</span>
+</pre><h2>Plot  predicted class  across a 2d grid of points<a name="6"></a></h2><p>cf HTF fig 2.2</p><pre class="codeinput">[XtestGrid, xrange, yrange] = makeGrid2d(Xtrain);
+<span class="keyword">for</span> K=Ks(:)'
+  model = knnFit(Xtrain, ytrain, K);
+  [ypredGrid, yprobGrid] = knnPredict(model, XtestGrid);
+  figure;
+  plotLabeledData(XtestGrid, ypredGrid)
+  <span class="comment">%axis([min(x1range) max(x1range) min(x2range) max(x2range)])</span>
+  axis(range)
+  <span class="comment">%title(sprintf('mode of predictive density, K=%d', K))</span>
+  title(sprintf(<span class="string">'predicted label,  K=%d'</span>, K))
+  <span class="comment">%colorbar</span>
+  legend(<span class="string">'c1'</span>,<span class="string">'c2'</span>,<span class="string">'c3'</span>,<span class="string">'location'</span>,<span class="string">'southwest'</span>)
+  printPmtkFigure(sprintf(<span class="string">'knnClassifyPredK%d'</span>, K))
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="knnClassifyDemo_03.png" alt=""> <img vspace="5" hspace="5" src="knnClassifyDemo_04.png" alt=""> <img vspace="5" hspace="5" src="knnClassifyDemo_05.png" alt=""> <h2>Plot  predictive probability  across a 2d grid of points<a name="7"></a></h2><pre class="codeinput"><span class="keyword">for</span> K=[10]
+  model = knnFit(Xtrain, ytrain, K);
+  [ypredGrid, yprobGrid] = knnPredict(model, XtestGrid);
+  <span class="keyword">for</span> c=1:3
+    HH = reshape(yprobGrid(:,c), [length(yrange) length(xrange)]);
+    figure;
+    imagesc(HH); axis <span class="string">xy</span>; colorbar
+    title(sprintf(<span class="string">'p(y=%d|data,K=%d)'</span>, c,K))
+    printPmtkFigure(sprintf(<span class="string">'knnClassifyProbC%dK%d'</span>, c, K))
+  <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="knnClassifyDemo_06.png" alt=""> <img vspace="5" hspace="5" src="knnClassifyDemo_07.png" alt=""> <img vspace="5" hspace="5" src="knnClassifyDemo_08.png" alt=""> <h2>Plot error vs K<a name="8"></a></h2><pre class="codeinput">Ks = [1 5 10 20 50 100 120];
+<span class="keyword">for</span> ki=1:length(Ks)
+  K = Ks(ki);
+  model = knnFit(Xtrain, ytrain, K);
+  [ypred] = knnPredict(model, Xtest);
+  err = find(ypred(:) ~= ytest(:));
+  nerrors = length(err);
+  errRateTest(ki) = nerrors/Ntest;
+
+  <span class="comment">% compute error on training set</span>
+  [ypred] = knnPredict(model, Xtrain);
+  err = find(ypred(:) ~= ytrain(:));
+  nerrors = length(err);
+  errRateTrain(ki) = nerrors/Ntrain;
+<span class="keyword">end</span>
+
+figure;
+plot(Ks, errRateTrain, <span class="string">'bs:'</span>, Ks, errRateTest, <span class="string">'rx-'</span>, <span class="string">'linewidth'</span>, 2, <span class="string">'markersize'</span>, 20);
+legend(<span class="string">'train'</span>, <span class="string">'test'</span>)
+xlabel(<span class="string">'K'</span>); ylabel(<span class="string">'misclassification rate'</span>)
+printPmtkFigure(<span class="string">'knnClassifyErrVsK'</span>)
+</pre><img vspace="5" hspace="5" src="knnClassifyDemo_09.png" alt=""> <h2>Cross validation<a name="9"></a></h2><pre class="codeinput"><span class="keyword">for</span> k=1:numel(Ks)
+  K = Ks(k);
+  fitFn = @(Xtr,ytr) knnFit(Xtr, ytr, K);
+  predFn = @(mod, Xte) knnPredict(mod, Xte);
+  lossFn = @(yhat, yte)  mean((yhat ~= yte));
+  N = size(Xtrain, 1);
+  <span class="comment">%nfolds = N; % LOOCV</span>
+  nfolds = 5;
+  <span class="comment">% since the data is sorted left to right, we must randomize the order</span>
+  randomizeOrder = false;
+  [mu(k), se(k)] = cvEstimate(fitFn, predFn, lossFn, Xtrain, ytrain, nfolds, <span class="keyword">...</span>
+    <span class="string">'randomizeOrder'</span>, randomizeOrder);
+<span class="keyword">end</span>
+
+<span class="comment">%{
+</span><span class="comment">hold on
+</span><span class="comment">plot(Ks, mu, 'k-.*', 'linewidth', 2, 'markersize', 10)
+</span><span class="comment">legend('train', 'test', '5-CV')
+</span><span class="comment">set(gca, 'ylim', [0 0.6])
+</span><span class="comment">printPmtkFigure('knnClassifyErrVsKwithCV')
+</span><span class="comment">%}
+</span>
+<span class="comment">% Plot CV in separate figure</span>
+fs = 12;
+figure; hold <span class="string">on</span>
+ndx = Ks;
+
+xlabel(<span class="string">'K'</span>, <span class="string">'fontsize'</span>, fs)
+ylabel(<span class="string">'misclassification rate'</span>, <span class="string">'fontsize'</span>, fs)
+errorbar(ndx, mu, se, <span class="string">'ko-'</span>,<span class="string">'linewidth'</span>, 2, <span class="string">'MarkerSize'</span>, 12);
+title(sprintf(<span class="string">'%d-fold cross validation, ntrain = %d'</span>, nfolds, N), <span class="string">'fontsize'</span>, fs)
+set(gca, <span class="string">'xlim'</span>, [0 130])
+<span class="comment">% draw vertical line at best value</span>
+dof = 1./(Ks);
+<span class="keyword">if</span> 0
+  idx_opt  = argmin(mu);
+<span class="keyword">else</span>
+  idx_opt = oneStdErrorRule(mu, se, dof);
+<span class="keyword">end</span>
+verticalLine(ndx(idx_opt), <span class="string">'color'</span>,<span class="string">'b'</span>, <span class="string">'linewidth'</span>,2);
+printPmtkFigure(sprintf(<span class="string">'knnCV'</span>))
+</pre><img vspace="5" hspace="5" src="knnClassifyDemo_10.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
+
+<span class="comment">%%%%%%%%%%%%%</span>
+
+<span class="keyword">function</span> plotLabeledData(X, y)
+
+markers = {<span class="string">'r+'</span>, <span class="string">'b*'</span>, <span class="string">'gx'</span>};
+C = max(y);
+<span class="keyword">for</span> c=1:C
+  ndx = find(y==c);
+  h=plot(X(ndx,1), X(ndx,2), markers{c});
+  set(h,<span class="string">'markersize'</span>,12)
+  hold <span class="string">on</span>
+<span class="keyword">end</span>
+
+<span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Classify using KNN
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+function knnClassifyDemo()
+
+%% load data
+loadData('knnClassify3c');
+Ntest = size(Xtest,1);
+Ntrain = size(Xtrain,1);
+
+
+%% Plot data
+range = [min(Xtrain(:,1)) max(Xtrain(:,1)) min(Xtrain(:,2)) max(Xtrain(:,2))];
+figure;
+plotLabeledData(Xtrain, ytrain)
+title('train')
+axis(range)
+printPmtkFigure('knnClassifyTrainData'); 
+
+figure;
+plotLabeledData(Xtest, ytest)
+title('test - truth')
+axis(range)
+printPmtkFigure('knnClassifyTestData'); 
+
+%% Classify and plot predictions on test data
+Ks = [1 5 10];
+%{
+for ki=1:length(Ks)
+  K = Ks(ki);
+  model = knnFit(Xtrain, ytrain, K); 
+  [ypred] = knnPredict(model, Xtest);
+  figure;
+  plotLabeledData(Xtest, ypred);
+  err = find(ypred(:) ~= ytest(:));
+  nerrors = length(err);
+  title(sprintf('K=%d, error rate = %d/%d = %5.3f', ...
+		K, nerrors, Ntest, nerrors/Ntest))
+  axis(range)
+  % Put circles around errors
+  hold on
+  h=plot(Xtest(err,1), Xtest(err,2), 'ko'); set(h,'markersize',15)
+  printPmtkFigure(sprintf('knnClassifyTestK%d', K)); 
+end
+%}
+
+%% Plot  predicted class  across a 2d grid of points
+% cf HTF fig 2.2
+
+[XtestGrid, xrange, yrange] = makeGrid2d(Xtrain);
+for K=Ks(:)'
+  model = knnFit(Xtrain, ytrain, K); 
+  [ypredGrid, yprobGrid] = knnPredict(model, XtestGrid);
+  figure;
+  plotLabeledData(XtestGrid, ypredGrid)
+  %axis([min(x1range) max(x1range) min(x2range) max(x2range)])
+  axis(range)
+  %title(sprintf('mode of predictive density, K=%d', K))
+  title(sprintf('predicted label,  K=%d', K))
+  %colorbar
+  legend('c1','c2','c3','location','southwest')
+  printPmtkFigure(sprintf('knnClassifyPredK%d', K))
+end
+
+
+%% Plot  predictive probability  across a 2d grid of points
+
+for K=[10]
+  model = knnFit(Xtrain, ytrain, K);
+  [ypredGrid, yprobGrid] = knnPredict(model, XtestGrid);
+  for c=1:3
+    HH = reshape(yprobGrid(:,c), [length(yrange) length(xrange)]);
+    figure;
+    imagesc(HH); axis xy; colorbar
+    title(sprintf('p(y=%d|data,K=%d)', c,K))
+    printPmtkFigure(sprintf('knnClassifyProbC%dK%d', c, K))
+  end
+end
+
+
+%% Plot error vs K
+Ks = [1 5 10 20 50 100 120];
+for ki=1:length(Ks)
+  K = Ks(ki);
+  model = knnFit(Xtrain, ytrain, K); 
+  [ypred] = knnPredict(model, Xtest);
+  err = find(ypred(:) ~= ytest(:));
+  nerrors = length(err);
+  errRateTest(ki) = nerrors/Ntest;
+ 
+  % compute error on training set
+  [ypred] = knnPredict(model, Xtrain);
+  err = find(ypred(:) ~= ytrain(:));
+  nerrors = length(err);
+  errRateTrain(ki) = nerrors/Ntrain;
+end
+
+figure; 
+plot(Ks, errRateTrain, 'bs:', Ks, errRateTest, 'rx-', 'linewidth', 2, 'markersize', 20);
+legend('train', 'test')
+xlabel('K'); ylabel('misclassification rate')
+printPmtkFigure('knnClassifyErrVsK')
+
+
+%% Cross validation
+for k=1:numel(Ks)
+  K = Ks(k);
+  fitFn = @(Xtr,ytr) knnFit(Xtr, ytr, K);
+  predFn = @(mod, Xte) knnPredict(mod, Xte);
+  lossFn = @(yhat, yte)  mean((yhat ~= yte));
+  N = size(Xtrain, 1);
+  %nfolds = N; % LOOCV
+  nfolds = 5;
+  % since the data is sorted left to right, we must randomize the order
+  randomizeOrder = false;
+  [mu(k), se(k)] = cvEstimate(fitFn, predFn, lossFn, Xtrain, ytrain, nfolds, ...
+    'randomizeOrder', randomizeOrder);
+end
+
+%{
+hold on
+plot(Ks, mu, 'k-.*', 'linewidth', 2, 'markersize', 10)
+legend('train', 'test', '5-CV')
+set(gca, 'ylim', [0 0.6])
+printPmtkFigure('knnClassifyErrVsKwithCV')
+%}
+
+% Plot CV in separate figure
+fs = 12;
+figure; hold on
+ndx = Ks;
+
+xlabel('K', 'fontsize', fs)
+ylabel('misclassification rate', 'fontsize', fs)
+errorbar(ndx, mu, se, 'ko-','linewidth', 2, 'MarkerSize', 12);
+title(sprintf('%d-fold cross validation, ntrain = %d', nfolds, N), 'fontsize', fs)
+set(gca, 'xlim', [0 130])
+% draw vertical line at best value
+dof = 1./(Ks);
+if 0 
+  idx_opt  = argmin(mu);
+else
+  idx_opt = oneStdErrorRule(mu, se, dof);
+end
+verticalLine(ndx(idx_opt), 'color','b', 'linewidth',2);
+printPmtkFigure(sprintf('knnCV'))
+
+
+end
+
+%%%%%%%%%%%%%
+
+function plotLabeledData(X, y)
+
+markers = {'r+', 'b*', 'gx'};
+C = max(y);
+for c=1:C
+  ndx = find(y==c);
+  h=plot(X(ndx,1), X(ndx,2), markers{c});
+  set(h,'markersize',12)
+  hold on
+end
+
+end
+
+##### SOURCE END #####
+--></body></html>
