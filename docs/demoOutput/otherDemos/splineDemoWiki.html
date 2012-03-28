@@ -1,0 +1,137 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>splineDemoWiki</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="splineDemoWiki.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% http://en.wikipedia.org/wiki/Multivariate_adaptive_regression_splines</span>
+
+figure; hold <span class="string">on</span>;
+xs = 0:0.1:20;
+plot(xs, max(0,xs-13), <span class="string">'-'</span>, <span class="string">'linewidth'</span>, 3);
+plot(xs, max(0,13-xs), <span class="string">'r:'</span>, <span class="string">'linewidth'</span>, 3);
+printPmtkFigure(<span class="string">'splineDemoHinge'</span>)
+
+figure;
+xs = 0:0.1:20;
+<span class="comment">%f = @(x) 25+6.1*max(0,x-13) -3.1*max(0,13-x);</span>
+<span class="comment">%f = @(x) 25  -4*max(0,x-5) + 6.1*max(0,x-13) -3.1*max(0,13-x);</span>
+f = @(x) 25  -4*max(0,x-5) + 6.1*max(0,x-13);
+<span class="comment">%f = @(x) 25  -4*max(0,(x-5).^2) + 6.1*max(0,(x-13));</span>
+plot(xs, f(xs), <span class="string">'-'</span>, <span class="string">'linewidth'</span>, 3);
+axis_pct
+printPmtkFigure(<span class="string">'splineDemo1d'</span>)
+
+figure;
+f = @(x,y) 5 + 1*max(0,x-5) -2*max(x-10) <span class="keyword">...</span>
+  -3*max(0,5-y) -1.01*max(0,y-10).*max(0,x-8);
+[x, y] = meshgrid(0:0.1:20, 0:0.1:20);
+z= reshape(f(x(:),y(:)), size(x));
+surf(x,y,z);
+set(gca,<span class="string">'zlim'</span>,[-50 0])
+
+<span class="comment">%{
+</span><span class="comment">figure;
+</span><span class="comment">f = @(x,y) 5.2 + 0.93*max(0,x-58) -0.64*max(x-68) ...
+</span><span class="comment">  -0.046*max(0,234-x) -0.016*max(0,y-7).*max(0,200-x);
+</span><span class="comment">[x, y] = meshgrid(0:1:300, 0:0.1:10);
+</span><span class="comment">z= reshape(f(x(:),y(:)), size(x));
+</span><span class="comment">surf(x,y,z);
+</span><span class="comment">%}</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+% http://en.wikipedia.org/wiki/Multivariate_adaptive_regression_splines
+
+figure; hold on;
+xs = 0:0.1:20;
+plot(xs, max(0,xs-13), '-', 'linewidth', 3);
+plot(xs, max(0,13-xs), 'r:', 'linewidth', 3);
+printPmtkFigure('splineDemoHinge')
+
+figure;
+xs = 0:0.1:20;
+%f = @(x) 25+6.1*max(0,x-13) -3.1*max(0,13-x);
+%f = @(x) 25  -4*max(0,x-5) + 6.1*max(0,x-13) -3.1*max(0,13-x);
+f = @(x) 25  -4*max(0,x-5) + 6.1*max(0,x-13);
+%f = @(x) 25  -4*max(0,(x-5).^2) + 6.1*max(0,(x-13));
+plot(xs, f(xs), '-', 'linewidth', 3);
+axis_pct
+printPmtkFigure('splineDemo1d')
+
+figure;
+f = @(x,y) 5 + 1*max(0,x-5) -2*max(x-10) ...
+  -3*max(0,5-y) -1.01*max(0,y-10).*max(0,x-8);
+[x, y] = meshgrid(0:0.1:20, 0:0.1:20); 
+z= reshape(f(x(:),y(:)), size(x));
+surf(x,y,z);
+set(gca,'zlim',[-50 0])
+
+%{
+figure;
+f = @(x,y) 5.2 + 0.93*max(0,x-58) -0.64*max(x-68) ...
+  -0.046*max(0,234-x) -0.016*max(0,y-7).*max(0,200-x);
+[x, y] = meshgrid(0:1:300, 0:0.1:10); 
+z= reshape(f(x(:),y(:)), size(x));
+surf(x,y,z);
+%}
+##### SOURCE END #####
+--></body></html>

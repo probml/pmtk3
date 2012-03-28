@@ -1,0 +1,229 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Analysis of binomial differences on lefthand/righthand data</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="unpairedTestHandednessDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Analysis of binomial differences on lefthand/righthand data</h1><!--introduction--><p>PMTKneedsStatsToolbox ksdensity</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#3">numerical integration</a></li><li><a href="#4">Effect of sample size</a></li><li><a href="#5">Effect of  alternative prior</a></li><li><a href="#6">Sanity check</a></li><li><a href="#7">Now do a one-sided test</a></li></ul></div><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+clear <span class="string">all</span>
+requireStatsToolbox
+setSeed(0);
+y1 = 9; n1 = 52; y2 = 4; n2 = 48;
+<span class="comment">%sf=1;</span>
+<span class="comment">%y1 = 1*sf; n1 = 50*sf; y2 = 25*sf; n2 = 50*sf;</span>
+[deltas, post, thetas] = contingencyTableUnpairedDiffPostMc(n1,y1,n2,y2);
+figure; plot(deltas, post, <span class="string">'linewidth'</span>, 3, <span class="string">'color'</span>, <span class="string">'k'</span>);
+xlabel(<span class="string">'\delta'</span>); ylabel(<span class="string">'pdf'</span>)
+diff = thetas(:,1)-thetas(:,2);
+q = quantilePMTK(diff, [0.025 0.5 0.975]);
+hold <span class="string">on</span>
+verticalLine(q(1), <span class="string">'linewidth'</span>, 3);
+verticalLine(q(3), <span class="string">'linewidth'</span>, 3);
+printPmtkFigure(<span class="string">'unpairedTestHandednessDemo'</span>)
+</pre><pre class="codeinput">pgreaterMC = mean(thetas(:,1)&gt;thetas(:,2));
+</pre><h2>numerical integration<a name="3"></a></h2><pre class="codeinput">pgreaterExact = dblquad(@(t1,t2) betaProb(t1, y1+1, n1-y1+1) .* <span class="keyword">...</span>
+  betaProb(t2, y2+1, n2-y2+1) .* (t1 &gt; t2), <span class="keyword">...</span>
+   0, 1, 0, 1);
+fprintf(<span class="string">'prob(theta1 &gt; theta2 | data): MC= %5.3f, exact=%5.3f\n'</span>, <span class="keyword">...</span>
+  pgreaterMC, pgreaterExact);
+</pre><h2>Effect of sample size<a name="4"></a></h2><pre class="codeinput">sfs = [1 2 3 4 5];
+Nsf = length(sfs); BF10vsN = zeros(1,Nsf);
+<span class="keyword">for</span> i=1:Nsf
+sf = sfs(i);
+y1 = 9*sf; n1 = 52*sf; y2 = 4*sf; n2 = 48*sf;
+<span class="comment">%y1 = 1*sf; n1 = 50*sf; y2 = 25*sf; n2 = 50*sf;</span>
+N(i) = n1+n2;
+alphas = [1 1];
+logZ = betaln(alphas(1), alphas(2));
+logmarglik0 = nchoosekln(n1+n2,y1+y2)<span class="keyword">...</span>
+  + betaln(alphas(1)+y1+y2, alphas(2)+(n1+n2-y1-y2)) -logZ;
+logmarglik1 = (nchoosekln(n1,y1) + nchoosekln(n2,y2)) <span class="keyword">...</span>
+  + betaln(alphas(1)+y1, alphas(2)+(n1-y1)) -logZ <span class="keyword">...</span>
+  + betaln(alphas(1)+y2, alphas(2)+(n2-y2)) -logZ;
+<span class="comment">%post = exp(normalizeLogspace([logmarglik0 logmarglik1]));</span>
+BF10vsN(i) = exp(logmarglik1 - logmarglik0);
+
+<span class="comment">% shortcut formula if alpha=1</span>
+BF10(i) = ( (1/(n1+1))*(1/(n2+1))) / (1/(n1+n2+1));
+BF(i) = (n1+n2+1)/( (n1+1)*(n2+1) );
+<span class="keyword">end</span>
+BF10vsN
+BF10
+BF
+assert(approxeq(BF10, BF10vsN))
+postNull = 1./(1+BF10vsN)
+
+
+<span class="keyword">if</span> 1
+figure; plot(N, BF10vsN, <span class="string">'o-'</span>, <span class="string">'linewidth'</span>, 3);
+xlabel(<span class="string">'N'</span>); ylabel(<span class="string">'BF10'</span>)
+printPmtkFigure(<span class="string">'BFhandedness'</span>)
+<span class="keyword">end</span>
+</pre><h2>Effect of  alternative prior<a name="5"></a></h2><pre class="codeinput">y1 = 9; n1 = 52; y2 = 4; n2 = 48;
+alphas = [1 1];
+logZ = betaln(alphas(1), alphas(2));
+logZl = log(nchoosek(n1,y1) * nchoosek(n2,y2));
+logmarglik0 = logZl + betaln(alphas(1)+y1+y2, alphas(2)+(n1-y1)+(n2-y2)) -logZ;
+logmarglik1 = logZl + betaln(alphas(1)+y1, alphas(2)+(n1-y1)) -logZ <span class="keyword">...</span>
+  + betaln(alphas(1)+y2, alphas(2)+(n2-y2)) -logZ;
+post = exp(normalizeLogspace([logmarglik0 logmarglik1]))
+BF10 = exp(logmarglik1 - logmarglik0)
+</pre><h2>Sanity check<a name="6"></a></h2><pre class="codeinput">logmarglik1int = log(dblquad(@(t1,t2) binomialProb(y1, t1, n1) .* <span class="keyword">...</span>
+  binomialProb(y2, t2, n2) ./ beta(1,1),  0, 1, 0, 1));
+assert(approxeq(logmarglik1, logmarglik1int))
+</pre><h2>Now do a one-sided test<a name="7"></a></h2><pre class="codeinput">logmarglik1 = log(dblquad(@(t1,t2) binomialProb(y1, t1, n1) .* <span class="keyword">...</span>
+  binomialProb(y2, t2, n2) .* (t1(:) &gt; t2(:)) ./ beta(1,1),  0, 1, 0, 1) );
+post = exp(normalizeLogspace([logmarglik0 logmarglik1]))
+BF10 = exp(logmarglik1 - logmarglik0)
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Analysis of binomial differences on lefthand/righthand data
+% PMTKneedsStatsToolbox ksdensity
+%%
+
+% This file is from pmtk3.googlecode.com
+clear all
+requireStatsToolbox
+setSeed(0);
+y1 = 9; n1 = 52; y2 = 4; n2 = 48;
+%sf=1;
+%y1 = 1*sf; n1 = 50*sf; y2 = 25*sf; n2 = 50*sf;
+[deltas, post, thetas] = contingencyTableUnpairedDiffPostMc(n1,y1,n2,y2);
+figure; plot(deltas, post, 'linewidth', 3, 'color', 'k');
+xlabel('\delta'); ylabel('pdf')
+diff = thetas(:,1)-thetas(:,2);
+q = quantilePMTK(diff, [0.025 0.5 0.975]); 
+hold on
+verticalLine(q(1), 'linewidth', 3);
+verticalLine(q(3), 'linewidth', 3);
+printPmtkFigure('unpairedTestHandednessDemo')
+%%
+pgreaterMC = mean(thetas(:,1)>thetas(:,2));
+%% numerical integration
+pgreaterExact = dblquad(@(t1,t2) betaProb(t1, y1+1, n1-y1+1) .* ...
+  betaProb(t2, y2+1, n2-y2+1) .* (t1 > t2), ...
+   0, 1, 0, 1);
+fprintf('prob(theta1 > theta2 | data): MC= %5.3f, exact=%5.3f\n', ...
+  pgreaterMC, pgreaterExact);
+%% Effect of sample size
+sfs = [1 2 3 4 5];
+Nsf = length(sfs); BF10vsN = zeros(1,Nsf);
+for i=1:Nsf
+sf = sfs(i);
+y1 = 9*sf; n1 = 52*sf; y2 = 4*sf; n2 = 48*sf;
+%y1 = 1*sf; n1 = 50*sf; y2 = 25*sf; n2 = 50*sf;
+N(i) = n1+n2;
+alphas = [1 1];
+logZ = betaln(alphas(1), alphas(2));
+logmarglik0 = nchoosekln(n1+n2,y1+y2)...
+  + betaln(alphas(1)+y1+y2, alphas(2)+(n1+n2-y1-y2)) -logZ;
+logmarglik1 = (nchoosekln(n1,y1) + nchoosekln(n2,y2)) ...
+  + betaln(alphas(1)+y1, alphas(2)+(n1-y1)) -logZ ...
+  + betaln(alphas(1)+y2, alphas(2)+(n2-y2)) -logZ;
+%post = exp(normalizeLogspace([logmarglik0 logmarglik1]));
+BF10vsN(i) = exp(logmarglik1 - logmarglik0);
+
+% shortcut formula if alpha=1
+BF10(i) = ( (1/(n1+1))*(1/(n2+1))) / (1/(n1+n2+1));
+BF(i) = (n1+n2+1)/( (n1+1)*(n2+1) );
+end
+BF10vsN
+BF10
+BF
+assert(approxeq(BF10, BF10vsN))
+postNull = 1./(1+BF10vsN)
+
+
+if 1
+figure; plot(N, BF10vsN, 'o-', 'linewidth', 3);
+xlabel('N'); ylabel('BF10')
+printPmtkFigure('BFhandedness')
+end
+
+
+
+%% Effect of  alternative prior
+y1 = 9; n1 = 52; y2 = 4; n2 = 48;
+alphas = [1 1];
+logZ = betaln(alphas(1), alphas(2));
+logZl = log(nchoosek(n1,y1) * nchoosek(n2,y2));
+logmarglik0 = logZl + betaln(alphas(1)+y1+y2, alphas(2)+(n1-y1)+(n2-y2)) -logZ;
+logmarglik1 = logZl + betaln(alphas(1)+y1, alphas(2)+(n1-y1)) -logZ ...
+  + betaln(alphas(1)+y2, alphas(2)+(n2-y2)) -logZ;
+post = exp(normalizeLogspace([logmarglik0 logmarglik1]))
+BF10 = exp(logmarglik1 - logmarglik0)
+%% Sanity check
+logmarglik1int = log(dblquad(@(t1,t2) binomialProb(y1, t1, n1) .* ...
+  binomialProb(y2, t2, n2) ./ beta(1,1),  0, 1, 0, 1));
+assert(approxeq(logmarglik1, logmarglik1int))
+
+%% Now do a one-sided test
+logmarglik1 = log(dblquad(@(t1,t2) binomialProb(y1, t1, n1) .* ...
+  binomialProb(y2, t2, n2) .* (t1(:) > t2(:)) ./ beta(1,1),  0, 1, 0, 1) );
+post = exp(normalizeLogspace([logmarglik0 logmarglik1]))
+BF10 = exp(logmarglik1 - logmarglik0)
+
+
+  
+
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,265 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>LLA and LQA approximation - fig 1 of Zou &amp; Li 2008</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="scadPlot.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>LLA and LQA approximation - fig 1 of Zou &amp; Li 2008</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="keyword">function</span> scadPlot()
+
+z = -10:0.01:10;
+a = 3.7; lambda = 2;
+
+<span class="keyword">if</span> 0
+<span class="comment">% Reproduce fig 1c of Fan &amp; Li 2001</span>
+p = penalty(z, a, lambda);
+figure;
+plot(z, p, <span class="string">'k-'</span>, <span class="string">'linewidth'</span>, 3);
+title(sprintf(<span class="string">'scad penalty rule, %s=%5.3f, a=%5.3f'</span>, <span class="string">'\lambda'</span>, lambda, a))
+printPmtkFigure(<span class="string">'scadPenalty'</span>)
+<span class="keyword">end</span>
+
+
+p = penalty(z, a, lambda);
+figure; hold <span class="string">on</span>
+plot(z, p, <span class="string">'k-'</span>, <span class="string">'linewidth'</span>, 3);
+pl = LLA(z, a, lambda, 4);
+plot(z, pl, <span class="string">'r--'</span>, <span class="string">'linewidth'</span>, 3);
+pq = LQA(z, a, lambda, 4);
+plot(z, pq, <span class="string">'b:'</span>, <span class="string">'linewidth'</span>, 3);
+title(sprintf(<span class="string">'scad penalty rule, %s=%5.3f, a=%5.3f'</span>, <span class="string">'\lambda'</span>, lambda, a))
+legend(<span class="string">'SCAD'</span>, <span class="string">'LLA'</span>, <span class="string">'LQA'</span>)
+printPmtkFigure(<span class="string">'scadLLA'</span>)
+
+<span class="keyword">if</span> 0
+<span class="comment">% Reproduce fig 2c of Fan &amp; Li 2001</span>
+z=-10:0.01:10;
+theta = estimator(z, a, lambda);
+figure;
+plot(z, theta, <span class="string">'k-'</span>, <span class="string">'linewidth'</span>, 3);
+hold <span class="string">on</span>
+plot(z, z, <span class="string">':'</span>, <span class="string">'linewidth'</span>, 2);
+title(sprintf(<span class="string">'scad thresholding rule, %s=%5.3f, a=%5.3f'</span>,<span class="string">'\lambda'</span>, lambda, a))
+printPmtkFigure(<span class="string">'scadThreshold'</span>)
+<span class="keyword">end</span>
+
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> th = estimator(z, a, lambda)
+<span class="comment">% equation 2.8 of their paper</span>
+th = zeros(size(z));
+ndx = abs(z) &lt;= 2*lambda;
+zz = z(ndx);
+th(ndx) = sign(zz).*soft(abs(zz) - lambda);
+
+ndx = (abs(z) &gt; 2*lambda) &amp; (abs(z) &lt;= a*lambda);
+zz = z(ndx);
+th(ndx) = ((a-1)*zz - sign(zz).*a*lambda)/(a-2);
+
+ndx = abs(z)&gt;a*lambda;
+zz = z(ndx);
+th(ndx) = zz;
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> u = soft(x)
+u = max(0,x);
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> th=penalty(z, a, lambda)
+<span class="comment">% p612 of Clarke's book</span>
+th = zeros(size(z));
+ndx = abs(z) &lt;= lambda;
+zz = z(ndx);
+th(ndx) = lambda*abs(zz);
+
+ndx = (abs(z) &gt; lambda) &amp; (abs(z) &lt;= a*lambda);
+zz = z(ndx);
+th(ndx) = -(abs(zz).^2 - 2*a*lambda*abs(zz)+lambda^2)/(2*(a-1));
+
+ndx = abs(z)&gt;a*lambda;
+th(ndx) = (a+1)*lambda^2/2;
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> out = derivPenalty(z, a, lambda)
+out = zeros(size(z));
+ndx = z&lt;=lambda;
+out(ndx) = lambda;
+ndx = z&gt;lambda;
+out(ndx) = lambda*soft(a*lambda-z)/((a-1)*lambda);
+<span class="keyword">end</span>
+
+
+<span class="keyword">function</span> out = LLA(z, a, lambda, bstar)
+out = penalty(bstar, a, lambda) + <span class="keyword">...</span>
+  derivPenalty(bstar, a, lambda)*(abs(z)-abs(bstar));
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> out = LQA(z, a, lambda, bstar)
+out = penalty(bstar, a, lambda) + <span class="keyword">...</span>
+  0.5*derivPenalty(bstar, a, lambda)/abs(bstar)*(z.^2-bstar^2);
+<span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% LLA and LQA approximation - fig 1 of Zou & Li 2008
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+function scadPlot()
+
+z = -10:0.01:10;
+a = 3.7; lambda = 2;
+
+if 0
+% Reproduce fig 1c of Fan & Li 2001
+p = penalty(z, a, lambda);
+figure;
+plot(z, p, 'k-', 'linewidth', 3);
+title(sprintf('scad penalty rule, %s=%5.3f, a=%5.3f', '\lambda', lambda, a))
+printPmtkFigure('scadPenalty')
+end
+
+
+p = penalty(z, a, lambda);
+figure; hold on
+plot(z, p, 'k-', 'linewidth', 3);
+pl = LLA(z, a, lambda, 4);
+plot(z, pl, 'rREPLACE_WITH_DASH_DASH', 'linewidth', 3);
+pq = LQA(z, a, lambda, 4);
+plot(z, pq, 'b:', 'linewidth', 3);
+title(sprintf('scad penalty rule, %s=%5.3f, a=%5.3f', '\lambda', lambda, a))
+legend('SCAD', 'LLA', 'LQA')
+printPmtkFigure('scadLLA')
+
+if 0
+% Reproduce fig 2c of Fan & Li 2001
+z=-10:0.01:10;
+theta = estimator(z, a, lambda);
+figure;
+plot(z, theta, 'k-', 'linewidth', 3);
+hold on
+plot(z, z, ':', 'linewidth', 2);
+title(sprintf('scad thresholding rule, %s=%5.3f, a=%5.3f','\lambda', lambda, a))
+printPmtkFigure('scadThreshold')
+end
+
+end
+
+function th = estimator(z, a, lambda)
+% equation 2.8 of their paper
+th = zeros(size(z));
+ndx = abs(z) <= 2*lambda;
+zz = z(ndx);
+th(ndx) = sign(zz).*soft(abs(zz) - lambda);
+
+ndx = (abs(z) > 2*lambda) & (abs(z) <= a*lambda);
+zz = z(ndx);
+th(ndx) = ((a-1)*zz - sign(zz).*a*lambda)/(a-2);
+
+ndx = abs(z)>a*lambda;
+zz = z(ndx);
+th(ndx) = zz;
+end
+
+function u = soft(x)
+u = max(0,x);
+end
+
+function th=penalty(z, a, lambda)
+% p612 of Clarke's book
+th = zeros(size(z));
+ndx = abs(z) <= lambda;
+zz = z(ndx);
+th(ndx) = lambda*abs(zz);
+
+ndx = (abs(z) > lambda) & (abs(z) <= a*lambda);
+zz = z(ndx);
+th(ndx) = -(abs(zz).^2 - 2*a*lambda*abs(zz)+lambda^2)/(2*(a-1));
+
+ndx = abs(z)>a*lambda;
+th(ndx) = (a+1)*lambda^2/2;
+end
+
+function out = derivPenalty(z, a, lambda)
+out = zeros(size(z));
+ndx = z<=lambda;
+out(ndx) = lambda;
+ndx = z>lambda;
+out(ndx) = lambda*soft(a*lambda-z)/((a-1)*lambda);
+end
+
+
+function out = LLA(z, a, lambda, bstar)
+out = penalty(bstar, a, lambda) + ...
+  derivPenalty(bstar, a, lambda)*(abs(z)-abs(bstar));
+end
+
+function out = LQA(z, a, lambda, bstar)
+out = penalty(bstar, a, lambda) + ...
+  0.5*derivPenalty(bstar, a, lambda)/abs(bstar)*(z.^2-bstar^2);
+end
+
+
+##### SOURCE END #####
+--></body></html>

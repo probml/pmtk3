@@ -1,0 +1,209 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Denoise some MNIST digits using a binary RBM</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="rbmDenoiseDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Denoise some MNIST digits using a binary RBM</h1><pre class="codeinput"><span class="comment">%PMTKauthor Andrej Karpathy</span>
+<span class="comment">%PMTKmodified Kevin Murphy</span>
+
+<span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+
+setSeed(0);
+
+<span class="keyword">if</span> 0
+load <span class="string">mnistSubset</span>;
+<span class="comment">% data is 5000*784, testdata is 1000*784 both are in [0,1]</span>
+<span class="comment">% labels(i) in 1..10, testlabels(i) in 1..10</span>
+Xtrain = data; Xtest = testdata;
+<span class="keyword">end</span>
+
+Ntrain = 1000; Ntest = 100; keepSparse = false;
+[Xtrain, ytrain, Xtest, ytest] = setupMnist(<span class="string">'binary'</span>, true, <span class="string">'ntrain'</span>,<span class="keyword">...</span>
+    Ntrain,<span class="string">'ntest'</span>, Ntest,<span class="string">'keepSparse'</span>, keepSparse);
+
+  Nhidden = 100;
+tic
+m2= rbmFit(Xtrain, Nhidden, <span class="string">'verbose'</span>, true, <span class="string">'maxepoch'</span>, 20);
+toc
+
+<span class="comment">%distort 100 images around by setting 5% to random noise</span>
+imgs = Xtest(1:100,:);
+noiseLevel = 0.1;
+mask = rand(size(imgs))&lt;noiseLevel;
+noised = imgs;
+<span class="comment">%r=rand(size(imgs));</span>
+<span class="comment">%noised(mask)=r(mask);</span>
+r=rand(size(imgs)) &gt; 0.5;
+noised(mask)=r(mask);
+
+<span class="comment">%reconstruct the images by going up down then up again using learned model</span>
+<span class="comment">%up = rbmVtoH(m2, noised);</span>
+<span class="comment">%down= rbmHtoV(m2, up);</span>
+
+down = rbmReconstruct(m2, noised);
+z1=rbmPlotImg(noised', false);
+z2=rbmPlotImg(down', false);
+
+figure;
+imshow([z1 z2])
+title(sprintf(<span class="string">'denoising %5.2f pc noise with RBM with 100 hidden units'</span>, <span class="keyword">...</span>
+  100*noiseLevel))
+drawnow;
+printPmtkFigure(<span class="string">'rbmDenoiseDemo'</span>)
+
+<span class="comment">%{
+</span><span class="comment">% Now fit mixture of bernoullis - this is terrible
+</span><span class="comment">K = 10;
+</span><span class="comment">Xtrain12 = Xtrain+1; % Xtrain(i,j) in {1,2}
+</span><span class="comment">mmodel  = mixModelFit(Xtrain12, K, 'discrete', 'verbose', true);
+</span><span class="comment">if 0
+</span><span class="comment">for k=1:K,
+</span><span class="comment">  figure;img=reshape(T(k,1,:), [28 28]); imagesc(img); colormap('gray');
+</span><span class="comment">  title(sprintf('%d',k));
+</span><span class="comment">end
+</span><span class="comment">end
+</span><span class="comment">
+</span><span class="comment">noised12 = noised+1;
+</span><span class="comment">[Xrecon, Zhat] = mixModelReconstruct(mmodel, noised12);
+</span><span class="comment">%[Xrecon, Zhat] = mixModelReconstruct(mmodel, Xtrain12(1:100,:));
+</span><span class="comment">z3 = rbmPlotImg(Xrecon');
+</span><span class="comment">figure;
+</span><span class="comment">%imshow([z3])
+</span><span class="comment">imshow([z1 z2 z3])
+</span><span class="comment">%}</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Denoise some MNIST digits using a binary RBM
+%PMTKauthor Andrej Karpathy
+%PMTKmodified Kevin Murphy
+
+% This file is from pmtk3.googlecode.com
+
+
+setSeed(0);
+
+if 0
+load mnistSubset;
+% data is 5000*784, testdata is 1000*784 both are in [0,1]
+% labels(i) in 1..10, testlabels(i) in 1..10
+Xtrain = data; Xtest = testdata;
+end
+
+Ntrain = 1000; Ntest = 100; keepSparse = false;
+[Xtrain, ytrain, Xtest, ytest] = setupMnist('binary', true, 'ntrain',...
+    Ntrain,'ntest', Ntest,'keepSparse', keepSparse);
+
+  Nhidden = 100;
+tic
+m2= rbmFit(Xtrain, Nhidden, 'verbose', true, 'maxepoch', 20);
+toc
+
+%distort 100 images around by setting 5% to random noise
+imgs = Xtest(1:100,:);
+noiseLevel = 0.1;
+mask = rand(size(imgs))<noiseLevel;
+noised = imgs;
+%r=rand(size(imgs));
+%noised(mask)=r(mask);
+r=rand(size(imgs)) > 0.5;
+noised(mask)=r(mask);
+
+%reconstruct the images by going up down then up again using learned model
+%up = rbmVtoH(m2, noised);
+%down= rbmHtoV(m2, up);
+
+down = rbmReconstruct(m2, noised);
+z1=rbmPlotImg(noised', false);
+z2=rbmPlotImg(down', false);
+
+figure;
+imshow([z1 z2])
+title(sprintf('denoising %5.2f pc noise with RBM with 100 hidden units', ...
+  100*noiseLevel))
+drawnow;
+printPmtkFigure('rbmDenoiseDemo')
+
+%{
+% Now fit mixture of bernoullis - this is terrible
+K = 10;
+Xtrain12 = Xtrain+1; % Xtrain(i,j) in {1,2}
+mmodel  = mixModelFit(Xtrain12, K, 'discrete', 'verbose', true);
+if 0
+for k=1:K,
+  figure;img=reshape(T(k,1,:), [28 28]); imagesc(img); colormap('gray');
+  title(sprintf('%d',k)); 
+end
+end
+
+noised12 = noised+1; 
+[Xrecon, Zhat] = mixModelReconstruct(mmodel, noised12);
+%[Xrecon, Zhat] = mixModelReconstruct(mmodel, Xtrain12(1:100,:));
+z3 = rbmPlotImg(Xrecon');
+figure;
+%imshow([z3])
+imshow([z1 z2 z3])
+%}
+
+##### SOURCE END #####
+--></body></html>

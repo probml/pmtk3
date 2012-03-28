@@ -1,0 +1,372 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Create the adjacency graph of a portion of the Web.</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="surfer.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Create the adjacency graph of a portion of the Web.</h1><!--introduction--><p>[U,G] = surfer(root,n) starts at the URL root and follows Web links until it forms an adjacency graph with n nodes. U = a cell array of n strings, the URLs of the nodes. G = an n-by-n sparse matrix with G(i,j)=1 if node j is linked to node i.</p><p>Example:  [U,G] = surfer('http://www.harvard.edu',500); See also PAGERANK.</p><pre>  This function currently has two defects.  (1) The algorithm for
+  finding links is naive.  We just look for the string 'http:'. (2) An
+  attempt to read from a URL that is accessible, but very slow, might
+  take an unacceptably long time to complete.  In some cases, it may be
+  necessary to have the operating system terminate MATLAB. Key words
+  from such URLs can be added to the skip list in surfer.m.</pre><!--/introduction--><p>PMTKauthor Cleve Moler PMTKurl <a href="http://www.mathworks.com/moler/ncm/surfer.m">http://www.mathworks.com/moler/ncm/surfer.m</a> PMTKinteractive</p><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="keyword">function</span> [U,G] = surfer(root,n)
+
+
+<span class="comment">% Initialize</span>
+<span class="keyword">if</span> nargin == 0;
+    [U,G] = surfer(<span class="string">'http://www.harvard.edu'</span>,15);
+    <span class="keyword">return</span>
+<span class="keyword">end</span>
+
+figure
+shg
+set(gcf,<span class="string">'doublebuffer'</span>,<span class="string">'on'</span>)
+axis([0 n 0 n])
+axis <span class="string">square</span>
+axis <span class="string">ij</span>
+box <span class="string">on</span>
+set(gca,<span class="string">'position'</span>,[.12 .20 .78 .78])
+uicontrol(<span class="string">'style'</span>,<span class="string">'frame'</span>,<span class="string">'units'</span>,<span class="string">'normal'</span>,<span class="string">'position'</span>,[.01 .09 .98 .07]);
+uicontrol(<span class="string">'style'</span>,<span class="string">'frame'</span>,<span class="string">'units'</span>,<span class="string">'normal'</span>,<span class="string">'position'</span>,[.01 .01 .98 .07]);
+t1 = uicontrol(<span class="string">'style'</span>,<span class="string">'text'</span>,<span class="string">'units'</span>,<span class="string">'normal'</span>,<span class="string">'position'</span>,[.02 .10 .94 .04], <span class="keyword">...</span>
+   <span class="string">'horiz'</span>,<span class="string">'left'</span>);
+t2 = uicontrol(<span class="string">'style'</span>,<span class="string">'text'</span>,<span class="string">'units'</span>,<span class="string">'normal'</span>,<span class="string">'position'</span>,[.02 .02 .94 .04], <span class="keyword">...</span>
+   <span class="string">'horiz'</span>,<span class="string">'left'</span>);
+slow = uicontrol(<span class="string">'style'</span>,<span class="string">'toggle'</span>,<span class="string">'units'</span>,<span class="string">'normal'</span>, <span class="keyword">...</span>
+   <span class="string">'position'</span>,[.01 .24 .07 .05],<span class="string">'string'</span>,<span class="string">'slow'</span>,<span class="string">'value'</span>,0);
+quit = uicontrol(<span class="string">'style'</span>,<span class="string">'toggle'</span>,<span class="string">'units'</span>,<span class="string">'normal'</span>, <span class="keyword">...</span>
+   <span class="string">'position'</span>,[.01 .17 .07 .05],<span class="string">'string'</span>,<span class="string">'quit'</span>,<span class="string">'value'</span>,0);
+
+U = cell(n,1);
+hash = zeros(n,1);
+G = logical(sparse(n,n));
+m = 1;
+U{m} = root;
+hash(m) = hashfun(root);
+
+j = 1;
+<span class="keyword">while</span> j &lt; n &amp; get(quit,<span class="string">'value'</span>) == 0
+
+   <span class="comment">% Try to open a page.</span>
+
+   <span class="keyword">try</span>
+      set(t1,<span class="string">'string'</span>,sprintf(<span class="string">'%5d %s'</span>,j,U{j}))
+      set(t2,<span class="string">'string'</span>,<span class="string">''</span>);
+      drawnow
+      page = urlread(U{j});
+   <span class="keyword">catch</span>
+      set(t1,<span class="string">'string'</span>,sprintf(<span class="string">'fail: %5d %s'</span>,j,U{j}))
+      drawnow
+      <span class="keyword">continue</span>
+   <span class="keyword">end</span>
+   <span class="keyword">if</span> get(slow,<span class="string">'value'</span>)
+      pause(.25)
+   <span class="keyword">end</span>
+
+   <span class="comment">% Follow the links from the open page.</span>
+
+   <span class="keyword">for</span> f = findstr(<span class="string">'http:'</span>,page);
+
+      <span class="comment">% A link starts with 'http:' and ends with the next quote.</span>
+
+      e = min([findstr(<span class="string">'"'</span>,page(f:end)) findstr(<span class="string">''''</span>,page(f:end))]);
+      <span class="keyword">if</span> isempty(e), <span class="keyword">continue</span>, <span class="keyword">end</span>
+      url = deblank(page(f:f+e-2));
+      url(url&lt;<span class="string">' '</span>) = <span class="string">'!'</span>;   <span class="comment">% Nonprintable characters</span>
+      <span class="keyword">if</span> url(end) == <span class="string">'/'</span>, url(end) = []; <span class="keyword">end</span>
+
+      <span class="comment">% Look for links that should be skipped.</span>
+
+      skips = {<span class="string">'.gif'</span>,<span class="string">'.jpg'</span>,<span class="string">'.pdf'</span>,<span class="string">'.css'</span>,<span class="string">'lmscadsi'</span>,<span class="string">'cybernet'</span>, <span class="keyword">...</span>
+               <span class="string">'search.cgi'</span>,<span class="string">'.ram'</span>,<span class="string">'www.w3.org'</span>, <span class="keyword">...</span>
+               <span class="string">'scripts'</span>,<span class="string">'netscape'</span>,<span class="string">'shockwave'</span>,<span class="string">'webex'</span>,<span class="string">'fansonly'</span>};
+      skip = any(url==<span class="string">'!'</span>) | any(url==<span class="string">'?'</span>);
+      k = 0;
+      <span class="keyword">while</span> ~skip &amp; (k &lt; length(skips))
+         k = k+1;
+         skip = ~isempty(findstr(url,skips{k}));
+      <span class="keyword">end</span>
+      <span class="keyword">if</span> skip
+         <span class="keyword">if</span> isempty(findstr(url,<span class="string">'.gif'</span>)) &amp; isempty(findstr(url,<span class="string">'.jpg'</span>))
+            set(t2,<span class="string">'string'</span>,sprintf(<span class="string">'skip: %s'</span>,url))
+            drawnow
+            <span class="keyword">if</span> get(slow,<span class="string">'value'</span>)
+               pause(.25)
+            <span class="keyword">end</span>
+         <span class="keyword">end</span>
+         <span class="keyword">continue</span>
+      <span class="keyword">end</span>
+
+      <span class="comment">% Check if page is already in url list.</span>
+
+      i = 0;
+      <span class="keyword">for</span> k = find(hash(1:m) == hashfun(url))';
+         <span class="keyword">if</span> isequal(U{k},url)
+            i = k;
+            <span class="keyword">break</span>
+         <span class="keyword">end</span>
+      <span class="keyword">end</span>
+
+      <span class="comment">% Add a new url to the graph there if are fewer than n.</span>
+
+      <span class="keyword">if</span> (i == 0) &amp; (m &lt; n)
+         m = m+1;
+         U{m} = url;
+         hash(m) = hashfun(url);
+         i = m;
+      <span class="keyword">end</span>
+
+      <span class="comment">% Add a new link.</span>
+
+      <span class="keyword">if</span> i &gt; 0
+         G(i,j) = 1;
+         set(t2,<span class="string">'string'</span>,sprintf(<span class="string">'%5d %s'</span>,i,url))
+         line(j,i,<span class="string">'marker'</span>,<span class="string">'.'</span>,<span class="string">'markersize'</span>,6)
+         drawnow
+         <span class="keyword">if</span> get(slow,<span class="string">'value'</span>)
+            pause(.25)
+         <span class="keyword">end</span>
+      <span class="keyword">end</span>
+   <span class="keyword">end</span>
+
+   j = j+1;
+<span class="keyword">end</span>
+delete(t1)
+delete(t2)
+delete(slow)
+set(quit,<span class="string">'string'</span>,<span class="string">'close'</span>,<span class="string">'callback'</span>,<span class="string">'close(gcf)'</span>,<span class="string">'value'</span>,0)
+printPmtkFigure <span class="string">harvard500spy</span>
+
+<span class="keyword">end</span>
+<span class="comment">%------------------------</span>
+
+<span class="keyword">function</span> h = hashfun(url)
+<span class="comment">% Almost unique numeric hash code for pages already visited.</span>
+h = length(url) + 1024*sum(url);
+
+<span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Create the adjacency graph of a portion of the Web.
+% [U,G] = surfer(root,n) starts at the URL root and follows Web links
+% until it forms an adjacency graph with n nodes. U = a cell array of n
+% strings, the URLs of the nodes. G = an n-by-n sparse matrix with
+% G(i,j)=1 if node j is linked to node i.
+%
+% Example:  [U,G] = surfer('http://www.harvard.edu',500); See also
+% PAGERANK.
+%
+%    This function currently has two defects.  (1) The algorithm for
+%    finding links is naive.  We just look for the string 'http:'. (2) An
+%    attempt to read from a URL that is accessible, but very slow, might
+%    take an unacceptably long time to complete.  In some cases, it may be
+%    necessary to have the operating system terminate MATLAB. Key words
+%    from such URLs can be added to the skip list in surfer.m.
+%%
+% PMTKauthor Cleve Moler
+% PMTKurl http://www.mathworks.com/moler/ncm/surfer.m
+% PMTKinteractive
+%%
+
+% This file is from pmtk3.googlecode.com
+
+function [U,G] = surfer(root,n)
+
+
+% Initialize
+if nargin == 0; 
+    [U,G] = surfer('http://www.harvard.edu',15);
+    return
+end
+
+figure
+shg
+set(gcf,'doublebuffer','on')
+axis([0 n 0 n])
+axis square
+axis ij
+box on
+set(gca,'position',[.12 .20 .78 .78])
+uicontrol('style','frame','units','normal','position',[.01 .09 .98 .07]);
+uicontrol('style','frame','units','normal','position',[.01 .01 .98 .07]);
+t1 = uicontrol('style','text','units','normal','position',[.02 .10 .94 .04], ...
+   'horiz','left');
+t2 = uicontrol('style','text','units','normal','position',[.02 .02 .94 .04], ...
+   'horiz','left');
+slow = uicontrol('style','toggle','units','normal', ...
+   'position',[.01 .24 .07 .05],'string','slow','value',0);
+quit = uicontrol('style','toggle','units','normal', ...
+   'position',[.01 .17 .07 .05],'string','quit','value',0);
+
+U = cell(n,1);
+hash = zeros(n,1);
+G = logical(sparse(n,n));
+m = 1;
+U{m} = root;
+hash(m) = hashfun(root);
+
+j = 1;
+while j < n & get(quit,'value') == 0
+   
+   % Try to open a page.
+
+   try
+      set(t1,'string',sprintf('%5d %s',j,U{j}))
+      set(t2,'string','');
+      drawnow
+      page = urlread(U{j});
+   catch
+      set(t1,'string',sprintf('fail: %5d %s',j,U{j}))
+      drawnow
+      continue
+   end
+   if get(slow,'value')
+      pause(.25)
+   end
+
+   % Follow the links from the open page.
+
+   for f = findstr('http:',page);
+
+      % A link starts with 'http:' and ends with the next quote.
+
+      e = min([findstr('"',page(f:end)) findstr('''',page(f:end))]);
+      if isempty(e), continue, end
+      url = deblank(page(f:f+e-2));
+      url(url<' ') = '!';   % Nonprintable characters
+      if url(end) == '/', url(end) = []; end
+
+      % Look for links that should be skipped.
+
+      skips = {'.gif','.jpg','.pdf','.css','lmscadsi','cybernet', ...
+               'search.cgi','.ram','www.w3.org', ...
+               'scripts','netscape','shockwave','webex','fansonly'};
+      skip = any(url=='!') | any(url=='?');
+      k = 0;
+      while ~skip & (k < length(skips))
+         k = k+1;
+         skip = ~isempty(findstr(url,skips{k}));
+      end
+      if skip
+         if isempty(findstr(url,'.gif')) & isempty(findstr(url,'.jpg'))
+            set(t2,'string',sprintf('skip: %s',url))
+            drawnow
+            if get(slow,'value')
+               pause(.25)
+            end
+         end
+         continue
+      end
+
+      % Check if page is already in url list.
+
+      i = 0;
+      for k = find(hash(1:m) == hashfun(url))';
+         if isequal(U{k},url)
+            i = k;
+            break
+         end
+      end
+
+      % Add a new url to the graph there if are fewer than n.
+
+      if (i == 0) & (m < n)
+         m = m+1;
+         U{m} = url;
+         hash(m) = hashfun(url);
+         i = m;
+      end
+
+      % Add a new link.
+
+      if i > 0
+         G(i,j) = 1;
+         set(t2,'string',sprintf('%5d %s',i,url))
+         line(j,i,'marker','.','markersize',6)
+         drawnow
+         if get(slow,'value')
+            pause(.25)
+         end
+      end
+   end
+
+   j = j+1;
+end
+delete(t1)
+delete(t2)
+delete(slow)
+set(quit,'string','close','callback','close(gcf)','value',0)
+printPmtkFigure harvard500spy
+
+end
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+
+function h = hashfun(url)
+% Almost unique numeric hash code for pages already visited.
+h = length(url) + 1024*sum(url);
+
+end
+
+##### SOURCE END #####
+--></body></html>

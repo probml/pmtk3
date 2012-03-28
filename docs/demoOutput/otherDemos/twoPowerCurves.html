@@ -1,0 +1,235 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Two hypothetical two-sided power curves: B dominates A</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="twoPowerCurves.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Two hypothetical two-sided power curves: B dominates A</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+figure(<span class="string">'Color'</span>,[1,1,1]);
+domain = -pi:0.01:pi;
+f1 = @(x)-cos(x)+0.03;
+f2 = @(x) -cos(2*x./3);
+linewidth = {<span class="string">'LineWidth'</span>,2.5};
+
+plot(domain,f1(domain),<span class="string">'-b'</span>,linewidth{:}); <span class="comment">%curve B</span>
+hold <span class="string">on</span>;
+plot(domain,f2(domain),<span class="string">'-r'</span>,linewidth{:}); <span class="comment">%curve A</span>
+
+<span class="comment">%Small line indicating position of alpha</span>
+plot([-0.3;0.3],[-1.025;-1.025],<span class="string">'-k'</span>);
+
+axis([-pi,pi,-2,2]);
+axis <span class="string">off</span>;
+
+
+<span class="comment">%y-axis</span>
+annotation(gcf,<span class="string">'arrow'</span>,rel2absX([0,0]),rel2absY([-2,2]),<span class="string">'HeadWidth'</span>,12,<span class="keyword">...</span>
+    <span class="string">'HeadStyle'</span>,<span class="string">'plain'</span>,<span class="keyword">...</span>
+    <span class="string">'LineWidth'</span>,3);
+<span class="comment">%x-axis</span>
+annotation(gcf,<span class="string">'arrow'</span>,rel2absX([-pi,pi]),rel2absY([-1.5,-1.5]),<span class="keyword">...</span>
+    <span class="string">'HeadLength'</span>,12,<span class="keyword">...</span>
+    <span class="string">'HeadWidth'</span>,12,<span class="keyword">...</span>
+    <span class="string">'HeadStyle'</span>,<span class="string">'plain'</span>,<span class="keyword">...</span>
+    <span class="string">'LineWidth'</span>,3);
+
+<span class="comment">% 1 - beta</span>
+annotation(gcf,<span class="string">'textbox'</span>,[0.4411 0.97 0.153 0.05689],<span class="keyword">...</span>
+    <span class="string">'String'</span>,{<span class="string">'1 - \beta'</span>},<span class="keyword">...</span>
+    <span class="string">'HorizontalAlignment'</span>,<span class="string">'center'</span>,<span class="keyword">...</span>
+    <span class="string">'FontSize'</span>,24,<span class="keyword">...</span>
+    <span class="string">'FitBoxToText'</span>,<span class="string">'off'</span>,<span class="keyword">...</span>
+    <span class="string">'LineStyle'</span>,<span class="string">'none'</span>);
+
+<span class="comment">% alpha</span>
+annotation(gcf,<span class="string">'textbox'</span>,[0.46 0.275 0.1001 0.06587],<span class="keyword">...</span>
+    <span class="string">'String'</span>,{<span class="string">'\alpha'</span>},<span class="keyword">...</span>
+    <span class="string">'FontSize'</span>,24,<span class="keyword">...</span>
+    <span class="string">'FitBoxToText'</span>,<span class="string">'off'</span>,<span class="keyword">...</span>
+    <span class="string">'LineStyle'</span>,<span class="string">'none'</span>);
+
+<span class="comment">% 1</span>
+annotation(gcf,<span class="string">'textbox'</span>,[0.46 0.6 0.1001 0.06587],<span class="keyword">...</span>
+    <span class="string">'String'</span>,{<span class="string">'1'</span>},<span class="keyword">...</span>
+    <span class="string">'FontSize'</span>,24,<span class="keyword">...</span>
+    <span class="string">'FitBoxToText'</span>,<span class="string">'off'</span>,<span class="keyword">...</span>
+    <span class="string">'LineStyle'</span>,<span class="string">'none'</span>);
+
+
+<span class="comment">% A</span>
+annotation(gcf,<span class="string">'textbox'</span>,[0.8219 0.53 0.07987 0.05186],<span class="string">'String'</span>,{<span class="string">'A'</span>},<span class="keyword">...</span>
+    <span class="string">'HorizontalAlignment'</span>,<span class="string">'center'</span>,<span class="keyword">...</span>
+    <span class="string">'FontSize'</span>,20,<span class="keyword">...</span>
+    <span class="string">'FitBoxToText'</span>,<span class="string">'off'</span>,<span class="keyword">...</span>
+    <span class="string">'LineStyle'</span>,<span class="string">'none'</span>);
+
+<span class="comment">% B</span>
+annotation(gcf,<span class="string">'textbox'</span>,[0.8206 0.745 0.07987 0.07784],<span class="string">'String'</span>,{<span class="string">'B'</span>},<span class="keyword">...</span>
+    <span class="string">'HorizontalAlignment'</span>,<span class="string">'center'</span>,<span class="keyword">...</span>
+    <span class="string">'FontSize'</span>,20,<span class="keyword">...</span>
+    <span class="string">'FitBoxToText'</span>,<span class="string">'off'</span>,<span class="keyword">...</span>
+    <span class="string">'LineStyle'</span>,<span class="string">'none'</span>);
+
+<span class="comment">% theta</span>
+annotation(gcf,<span class="string">'textbox'</span>,[0.9092 0.1796 0.06743 0.1078],<span class="keyword">...</span>
+    <span class="string">'String'</span>,{<span class="string">'\theta'</span>},<span class="keyword">...</span>
+    <span class="string">'FontSize'</span>,24,<span class="keyword">...</span>
+    <span class="string">'FitBoxToText'</span>,<span class="string">'off'</span>,<span class="keyword">...</span>
+    <span class="string">'LineStyle'</span>,<span class="string">'none'</span>);
+
+<span class="comment">% theta_0</span>
+annotation(gcf,<span class="string">'textbox'</span>,[0.44 0.11 0.06743 0.1078],<span class="keyword">...</span>
+    <span class="string">'String'</span>,{<span class="string">'\theta_0'</span>},<span class="keyword">...</span>
+    <span class="string">'FontSize'</span>,20,<span class="keyword">...</span>
+    <span class="string">'FitBoxToText'</span>,<span class="string">'off'</span>,<span class="keyword">...</span>
+    <span class="string">'LineStyle'</span>,<span class="string">'none'</span>);
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Two hypothetical two-sided power curves: B dominates A
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+figure('Color',[1,1,1]);
+domain = -pi:0.01:pi;
+f1 = @(x)-cos(x)+0.03;
+f2 = @(x) -cos(2*x./3);
+linewidth = {'LineWidth',2.5};
+
+plot(domain,f1(domain),'-b',linewidth{:}); %curve B
+hold on;
+plot(domain,f2(domain),'-r',linewidth{:}); %curve A
+
+%Small line indicating position of alpha
+plot([-0.3;0.3],[-1.025;-1.025],'-k');
+
+axis([-pi,pi,-2,2]);
+axis off;
+
+
+%y-axis
+annotation(gcf,'arrow',rel2absX([0,0]),rel2absY([-2,2]),'HeadWidth',12,...
+    'HeadStyle','plain',...
+    'LineWidth',3);
+%x-axis
+annotation(gcf,'arrow',rel2absX([-pi,pi]),rel2absY([-1.5,-1.5]),...
+    'HeadLength',12,...
+    'HeadWidth',12,...
+    'HeadStyle','plain',...
+    'LineWidth',3);
+
+% 1 - beta
+annotation(gcf,'textbox',[0.4411 0.97 0.153 0.05689],...
+    'String',{'1 - \beta'},...
+    'HorizontalAlignment','center',...
+    'FontSize',24,...
+    'FitBoxToText','off',...
+    'LineStyle','none');
+
+% alpha
+annotation(gcf,'textbox',[0.46 0.275 0.1001 0.06587],...
+    'String',{'\alpha'},...
+    'FontSize',24,...
+    'FitBoxToText','off',...
+    'LineStyle','none');
+
+% 1
+annotation(gcf,'textbox',[0.46 0.6 0.1001 0.06587],...
+    'String',{'1'},...
+    'FontSize',24,...
+    'FitBoxToText','off',...
+    'LineStyle','none');
+
+
+% A
+annotation(gcf,'textbox',[0.8219 0.53 0.07987 0.05186],'String',{'A'},...
+    'HorizontalAlignment','center',...
+    'FontSize',20,...
+    'FitBoxToText','off',...
+    'LineStyle','none');
+
+% B
+annotation(gcf,'textbox',[0.8206 0.745 0.07987 0.07784],'String',{'B'},...
+    'HorizontalAlignment','center',...
+    'FontSize',20,...
+    'FitBoxToText','off',...
+    'LineStyle','none');
+
+% theta
+annotation(gcf,'textbox',[0.9092 0.1796 0.06743 0.1078],...
+    'String',{'\theta'},...
+    'FontSize',24,...
+    'FitBoxToText','off',...
+    'LineStyle','none');
+
+% theta_0
+annotation(gcf,'textbox',[0.44 0.11 0.06743 0.1078],...
+    'String',{'\theta_0'},...
+    'FontSize',20,...
+    'FitBoxToText','off',...
+    'LineStyle','none');
+
+
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,239 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Fit a student  distribution as class conditional density to the bankruptcy data</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="robustDiscrimAnalysisBankruptcyDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Fit a student  distribution as class conditional density to the bankruptcy data</h1><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+
+<span class="keyword">function</span> robustDiscrimAnalysisBankruptcyDemo()
+
+setSeed(0);
+bank = loadData(<span class="string">'bankruptcy'</span>);
+N = size(bank.data,1);
+perm = randperm(N);
+trainNdx = perm(1:round(0.5*N));
+testNdx = setdiff(perm, trainNdx);
+
+y = bank.data(:,1);
+ytrain = bank.data(trainNdx,1); <span class="comment">% 0,1</span>
+ytest = bank.data(testNdx,1); <span class="comment">% 0,1</span>
+X = standardizeCols(bank.data(:, 2:3));
+Xtrain = X(trainNdx, :);
+Xtest = X(testNdx, :);
+
+modelS = generativeClassifierFit(@studentFit, Xtrain, ytrain);
+[yhat] = generativeClassifierPredict(@studentLogprob, modelS, Xtest);
+figure;
+process(modelS, yhat, Xtest, ytest, <span class="string">'Student'</span>, Xtrain, ytrain);
+printPmtkFigure(<span class="string">'robustLDAstudent'</span>)
+
+modelG = generativeClassifierFit(@gaussFit, Xtrain, ytrain);
+[yhat] = generativeClassifierPredict(@gaussLogprob, modelG, Xtest);
+figure;
+process(modelG, yhat, Xtest, ytest, <span class="string">'Gaussian'</span>, Xtrain, ytrain);
+printPmtkFigure(<span class="string">'robustLDAgauss'</span>)
+
+<span class="keyword">if</span> 1
+<span class="comment">% Sanity check - should be same as using Gaussian</span>
+modelQ = discrimAnalysisFit(Xtrain, ytrain, <span class="string">'QDA'</span>);
+[yhat] = discrimAnalysisPredict(modelQ, Xtest);
+figure;
+process(modelQ, yhat, Xtest, ytest, <span class="string">'QDA'</span>, Xtrain, ytrain);
+<span class="keyword">end</span>
+
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> process(model, yhat, X, Y, name, Xtr, ytr)
+
+<span class="keyword">if</span> nargin &lt; 6, Xtr = []; ytr = []; <span class="keyword">end</span>
+
+<span class="comment">% Plot class conditional densities</span>
+hold <span class="string">on</span>;
+
+<span class="keyword">for</span> c=1:2
+  <span class="keyword">if</span> strcmpi(model.modelType, <span class="string">'generativeClassifier'</span>)
+    mod = model.classConditionals{c};
+    mu = mod.mu; Sigma = mod.Sigma;
+  <span class="keyword">else</span>
+    mu = model.mu(:,c); Sigma = model.Sigma(:,:,c);
+  <span class="keyword">end</span>
+	gaussPlot2d(mu, Sigma, <span class="string">'color'</span>, <span class="string">'k'</span>, <span class="string">'plotMarker'</span>, false);
+<span class="keyword">end</span>
+
+
+<span class="comment">% indices of true and false positive/ negatives</span>
+idxbankrupt1 = find(Y == 0 &amp; yhat(:) == 0);
+idxbankrupt2 = find(Y == 0 &amp; yhat(:) == 1);
+idxsolvent1 = find(Y == 1 &amp; yhat(:) == 1);
+idxsolvent2 = find(Y == 1 &amp; yhat(:) == 0);
+
+<span class="comment">% Plot data and predictions</span>
+nerrors = sum(Y ~= yhat);
+h1 = plot(X(idxbankrupt1, 1), X(idxbankrupt1,2), <span class="string">'bo'</span>);
+plot(X(idxbankrupt2, 1), X(idxbankrupt2,2), <span class="string">'ro'</span>, <span class="string">'markersize'</span>, 12, <span class="string">'linewidth'</span>, 3);
+h2 = plot(X(idxsolvent1, 1), X(idxsolvent1,2), <span class="string">'b^'</span>);
+plot(X(idxsolvent2, 1), X(idxsolvent2,2), <span class="string">'r^'</span>, <span class="string">'markersize'</span>, 12, <span class="string">'linewidth'</span>, 3);
+
+<span class="keyword">if</span> ~isempty(Xtr)
+  <span class="comment">% Plot training data</span>
+  plot(Xtr((ytr==0),1), Xtr((ytr==0),2), <span class="string">'ko'</span>, <span class="string">'markersize'</span>, 8);
+  plot(Xtr((ytr==1),1), Xtr((ytr==1),2), <span class="string">'k^'</span>, <span class="string">'markersize'</span>, 8);
+<span class="keyword">end</span>
+
+title(sprintf(<span class="string">'Bankruptcy Data using %s (black = train, blue=correct, red=wrong), nerr = %d'</span>, name, nerrors ));
+legend([h1, h2], <span class="string">'Bankrupt'</span>, <span class="string">'Solvent'</span>, <span class="string">'location'</span>, <span class="string">'southeast'</span>);
+fprintf(<span class="string">'Num Errors using %s: %d\n'</span> , name, nerrors);
+
+<span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Fit a student  distribution as class conditional density to the bankruptcy data
+%
+
+% This file is from pmtk3.googlecode.com
+
+
+function robustDiscrimAnalysisBankruptcyDemo()
+
+setSeed(0);
+bank = loadData('bankruptcy');
+N = size(bank.data,1);
+perm = randperm(N);
+trainNdx = perm(1:round(0.5*N));
+testNdx = setdiff(perm, trainNdx);
+
+y = bank.data(:,1);
+ytrain = bank.data(trainNdx,1); % 0,1
+ytest = bank.data(testNdx,1); % 0,1
+X = standardizeCols(bank.data(:, 2:3));
+Xtrain = X(trainNdx, :);
+Xtest = X(testNdx, :);
+
+modelS = generativeClassifierFit(@studentFit, Xtrain, ytrain); 
+[yhat] = generativeClassifierPredict(@studentLogprob, modelS, Xtest);
+figure;
+process(modelS, yhat, Xtest, ytest, 'Student', Xtrain, ytrain);
+printPmtkFigure('robustLDAstudent')
+
+modelG = generativeClassifierFit(@gaussFit, Xtrain, ytrain); 
+[yhat] = generativeClassifierPredict(@gaussLogprob, modelG, Xtest);
+figure;
+process(modelG, yhat, Xtest, ytest, 'Gaussian', Xtrain, ytrain);
+printPmtkFigure('robustLDAgauss')
+
+if 1
+% Sanity check - should be same as using Gaussian
+modelQ = discrimAnalysisFit(Xtrain, ytrain, 'QDA'); 
+[yhat] = discrimAnalysisPredict(modelQ, Xtest);
+figure;
+process(modelQ, yhat, Xtest, ytest, 'QDA', Xtrain, ytrain);
+end
+
+end
+
+function process(model, yhat, X, Y, name, Xtr, ytr)
+
+if nargin < 6, Xtr = []; ytr = []; end
+
+% Plot class conditional densities
+hold on;
+
+for c=1:2
+  if strcmpi(model.modelType, 'generativeClassifier')
+    mod = model.classConditionals{c};
+    mu = mod.mu; Sigma = mod.Sigma;
+  else
+    mu = model.mu(:,c); Sigma = model.Sigma(:,:,c);
+  end
+	gaussPlot2d(mu, Sigma, 'color', 'k', 'plotMarker', false);
+end
+
+
+% indices of true and false positive/ negatives
+idxbankrupt1 = find(Y == 0 & yhat(:) == 0);
+idxbankrupt2 = find(Y == 0 & yhat(:) == 1);
+idxsolvent1 = find(Y == 1 & yhat(:) == 1);
+idxsolvent2 = find(Y == 1 & yhat(:) == 0);
+
+% Plot data and predictions
+nerrors = sum(Y ~= yhat);
+h1 = plot(X(idxbankrupt1, 1), X(idxbankrupt1,2), 'bo');
+plot(X(idxbankrupt2, 1), X(idxbankrupt2,2), 'ro', 'markersize', 12, 'linewidth', 3);
+h2 = plot(X(idxsolvent1, 1), X(idxsolvent1,2), 'b^');
+plot(X(idxsolvent2, 1), X(idxsolvent2,2), 'r^', 'markersize', 12, 'linewidth', 3);
+
+if ~isempty(Xtr)
+  % Plot training data
+  plot(Xtr((ytr==0),1), Xtr((ytr==0),2), 'ko', 'markersize', 8);
+  plot(Xtr((ytr==1),1), Xtr((ytr==1),2), 'k^', 'markersize', 8);
+end
+
+title(sprintf('Bankruptcy Data using %s (black = train, blue=correct, red=wrong), nerr = %d', name, nerrors ));
+legend([h1, h2], 'Bankrupt', 'Solvent', 'location', 'southeast');
+fprintf('Num Errors using %s: %d\n' , name, nerrors);
+
+end
+
+##### SOURCE END #####
+--></body></html>

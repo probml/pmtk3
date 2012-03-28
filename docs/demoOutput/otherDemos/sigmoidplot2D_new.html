@@ -1,0 +1,262 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Plot 2d sigmoid functions for various values of w1, w2.</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="sigmoidplot2D_new.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Plot 2d sigmoid functions for various values of w1, w2.</h1><!--introduction--><p>i.e. sigmoid(w1*x1 +%w2*x2)</p><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="keyword">function</span> sigmoidplot2D
+</pre><pre class="codeinput"><span class="comment">% Plot sigmoids with these parameters</span>
+w_1 = [-2 ; -2 ; 0 ; 1 ; 1 ; 2 ;  2 ; 3 ; 5 ; 5];
+w_2 = [-1 ;  3 ; 2 ; 4 ; 0 ; 2 ; -2 ; 0 ; 4 ; 1];
+
+lowRes = 0;     <span class="comment">% Set to 1 for black and white printing</span>
+fullscreen = 1; <span class="comment">% Set to 1 to enlarge figure window</span>
+
+left   = min(w_1)-2;   right = max(w_1)+2;
+bottom = min(w_2)-2;   top   = max(w_2)+2;
+
+mainFig = setupMainFig;
+main_axes = gca;
+px = @(x)getX(main_axes,left,right,x);
+py = @(y)getY(main_axes,bottom,top,y);
+annotate;
+
+<span class="keyword">for</span> i=1:length(w_1)
+    plotSig(w_1(i),w_2(i),mainFig);
+<span class="keyword">end</span>
+<span class="keyword">if</span> lowRes
+  printPmtkFigure(<span class="string">'sigmoidPlot2dColor'</span>);
+<span class="keyword">else</span>
+   printPmtkFigure(<span class="string">'sigmoidPlot2dBW'</span>);
+<span class="keyword">end</span>
+</pre><p>Plot a single 2d sigmoid with specified values for w1, w2 to the specified figure, 'fig' at relative position, (w1,w2)</p><pre class="codeinput"><span class="keyword">function</span> plotSig(w1,w2,fig)
+    imageSize = 0.1;
+    ax = axes(<span class="string">'Parent'</span>,fig,<span class="string">'Position'</span>,[px(w1), py(w2), imageSize, imageSize],<span class="string">'FontSize'</span>,8);
+    sig = @(x1,x2)sigmoid(x1.*w1 + x2.*w2);
+    stepSize = 0.1; <span class="comment">% Decrease to increase image resolution, ( &lt; 0.05 takes up a lot of memory )</span>
+    <span class="keyword">if</span>(lowRes)
+        stepSize = 1.2;
+    <span class="keyword">end</span>
+    [x1, x2] = meshgrid(-10:stepSize:10,-10:stepSize:10);
+    [rows cols] = size(x1);
+    z = sig(x1(:),x2(:));
+    z = reshape(z,rows,cols);
+    <span class="keyword">if</span>(lowRes)
+        surf(x1,x2,z,<span class="string">'Parent'</span>,ax,<span class="string">'LineWidth'</span>,0.5,<span class="string">'FaceColor'</span>,[1 1 1],<span class="string">'EdgeColor'</span>,[0 0 0]);
+    <span class="keyword">else</span>
+        <span class="comment">%surfl(x1,x2,z,'FaceColor','interp','EdgeColor','interp'); % baback</span>
+        surfl(x1,x2,z);                     <span class="comment">% baback add</span>
+        colormap(gray), shading <span class="string">interp</span>      <span class="comment">% baback add</span>
+    <span class="keyword">end</span>
+    view([45 25]);  <span class="comment">%view([45 35]); % baback change</span>
+    xlabel(<span class="string">'x_1'</span>,<span class="string">'FontSize'</span>,8,<span class="string">'HorizontalAlignment'</span>,<span class="string">'right'</span>);
+    ylabel(<span class="string">'x_2'</span>,<span class="string">'FontSize'</span>,8,<span class="string">'HorizontalAlignment'</span>,<span class="string">'left'</span>);
+    axis([-10,10,-10,10,0,1]);
+    title([<span class="string">'W = ( '</span>, num2str(w1),<span class="string">' , '</span>,num2str(w2),<span class="string">' )'</span>],<span class="string">'FontWeight'</span>,<span class="string">'bold'</span>,<span class="string">'FontSize'</span>,10);
+<span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="comment">%Convert from a relative x position within the axes to an absolute position</span>
+<span class="comment">%within the figure. Specify the axes by 'ax', the min and max x values</span>
+<span class="comment">%within the axes and the relative position, 'xpos' you wish to convert to</span>
+<span class="comment">%an absolute position.</span>
+<span class="keyword">function</span> xabs = getX(ax,xmin,xmax,xpos)
+    xscale = xmax - xmin;
+    axAbs = get(ax,<span class="string">'Position'</span>);
+    xabs = axAbs(1) + ((xpos-xmin) ./ xscale).*axAbs(3);
+<span class="keyword">end</span>
+
+<span class="comment">%see getX</span>
+<span class="keyword">function</span> yabs = getY(ax,ymin,ymax,ypos)
+    yscale = ymax - ymin;
+    axAbs = get(ax,<span class="string">'Position'</span>);
+    yabs = axAbs(2) + ((ypos-ymin) ./ yscale).*axAbs(4);
+<span class="keyword">end</span>
+</pre><p>Setup the main figure</p><pre class="codeinput"><span class="keyword">function</span> fig = setupMainFig
+    close <span class="string">all</span>;
+    scrsz = get(0,<span class="string">'ScreenSize'</span>);
+    <span class="keyword">if</span>(fullscreen)
+        fig = figure(<span class="string">'Position'</span>,[20 50 9*scrsz(3)/10 8*scrsz(4)/10]);
+    <span class="keyword">else</span>
+        fig = figure;
+    <span class="keyword">end</span>
+    axis([left,right,bottom,top]);
+    set(gca,<span class="string">'XTick'</span>,left+1:right-1);
+    set(gca,<span class="string">'YTick'</span>,bottom+1:top-1);
+    hold <span class="string">on</span>;
+<span class="keyword">end</span>
+</pre><p>Add arrows and labels</p><pre class="codeinput"><span class="keyword">function</span> annotate
+    annotation(mainFig,<span class="string">'arrow'</span>,[px(left+1),px(right-1)],[py(0),py(0)],<span class="string">'LineWidth'</span>,1.5);
+    annotation(mainFig,<span class="string">'arrow'</span>,[px(0), px(0)],[py(bottom+1),py(top-1)],<span class="string">'LineWidth'</span>,1.5);
+    annotation(mainFig,<span class="string">'textbox'</span>,<span class="string">'String'</span>,{<span class="string">'w_1'</span>},<span class="string">'FontWeight'</span>,<span class="string">'bold'</span>,<span class="string">'FontSize'</span>,12,<span class="string">'FontName'</span>,<span class="string">'Arial'</span>,<span class="string">'FitHeightToText'</span>,<span class="string">'off'</span>,<span class="string">'LineStyle'</span>,<span class="string">'none'</span>,<span class="string">'Position'</span>,[px(right-1.5) py(-0.5) 0.04 0.04]);
+    annotation(mainFig,<span class="string">'textbox'</span>,<span class="string">'String'</span>,{<span class="string">'w_2'</span>},<span class="string">'FontWeight'</span>,<span class="string">'bold'</span>,<span class="string">'FontSize'</span>,12,<span class="string">'FontName'</span>,<span class="string">'Arial'</span>,<span class="string">'FitHeightToText'</span>,<span class="string">'off'</span>,<span class="string">'LineStyle'</span>,<span class="string">'none'</span>,<span class="string">'Position'</span>,[px(-0.4) py(top-1.5) 0.04 0.04]);
+<span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Plot 2d sigmoid functions for various values of w1, w2.
+% i.e. sigmoid(w1*x1 +%w2*x2)
+%%
+
+% This file is from pmtk3.googlecode.com
+
+function sigmoidplot2D
+
+
+% Plot sigmoids with these parameters
+w_1 = [-2 ; -2 ; 0 ; 1 ; 1 ; 2 ;  2 ; 3 ; 5 ; 5];
+w_2 = [-1 ;  3 ; 2 ; 4 ; 0 ; 2 ; -2 ; 0 ; 4 ; 1];
+
+lowRes = 0;     % Set to 1 for black and white printing
+fullscreen = 1; % Set to 1 to enlarge figure window
+
+left   = min(w_1)-2;   right = max(w_1)+2;
+bottom = min(w_2)-2;   top   = max(w_2)+2;
+
+mainFig = setupMainFig;
+main_axes = gca;
+px = @(x)getX(main_axes,left,right,x); 
+py = @(y)getY(main_axes,bottom,top,y);
+annotate;
+
+for i=1:length(w_1)
+    plotSig(w_1(i),w_2(i),mainFig);    
+end
+if lowRes
+  printPmtkFigure('sigmoidPlot2dColor');
+else
+   printPmtkFigure('sigmoidPlot2dBW');
+end
+
+%%
+% Plot a single 2d sigmoid with specified values for w1, w2 to the
+% specified figure, 'fig' at relative position, (w1,w2)
+function plotSig(w1,w2,fig)
+    imageSize = 0.1;
+    ax = axes('Parent',fig,'Position',[px(w1), py(w2), imageSize, imageSize],'FontSize',8);
+    sig = @(x1,x2)sigmoid(x1.*w1 + x2.*w2);
+    stepSize = 0.1; % Decrease to increase image resolution, ( < 0.05 takes up a lot of memory )
+    if(lowRes)
+        stepSize = 1.2;
+    end
+    [x1, x2] = meshgrid(-10:stepSize:10,-10:stepSize:10); 
+    [rows cols] = size(x1);
+    z = sig(x1(:),x2(:));
+    z = reshape(z,rows,cols);
+    if(lowRes)
+        surf(x1,x2,z,'Parent',ax,'LineWidth',0.5,'FaceColor',[1 1 1],'EdgeColor',[0 0 0]);
+    else
+        %surfl(x1,x2,z,'FaceColor','interp','EdgeColor','interp'); % baback
+        surfl(x1,x2,z);                     % baback add
+        colormap(gray), shading interp      % baback add
+    end
+    view([45 25]);  %view([45 35]); % baback change
+    xlabel('x_1','FontSize',8,'HorizontalAlignment','right');
+    ylabel('x_2','FontSize',8,'HorizontalAlignment','left');
+    axis([-10,10,-10,10,0,1]);
+    title(['W = ( ', num2str(w1),' , ',num2str(w2),' )'],'FontWeight','bold','FontSize',10);
+end
+%%
+%Convert from a relative x position within the axes to an absolute position
+%within the figure. Specify the axes by 'ax', the min and max x values
+%within the axes and the relative position, 'xpos' you wish to convert to
+%an absolute position. 
+function xabs = getX(ax,xmin,xmax,xpos)
+    xscale = xmax - xmin;
+    axAbs = get(ax,'Position');
+    xabs = axAbs(1) + ((xpos-xmin) ./ xscale).*axAbs(3);
+end
+
+%see getX
+function yabs = getY(ax,ymin,ymax,ypos)
+    yscale = ymax - ymin;
+    axAbs = get(ax,'Position');
+    yabs = axAbs(2) + ((ypos-ymin) ./ yscale).*axAbs(4);
+end
+%%
+% Setup the main figure
+function fig = setupMainFig
+    close all;
+    scrsz = get(0,'ScreenSize');
+    if(fullscreen)
+        fig = figure('Position',[20 50 9*scrsz(3)/10 8*scrsz(4)/10]);
+    else
+        fig = figure;
+    end
+    axis([left,right,bottom,top]);
+    set(gca,'XTick',left+1:right-1);
+    set(gca,'YTick',bottom+1:top-1);
+    hold on;
+end
+%%
+% Add arrows and labels
+function annotate
+    annotation(mainFig,'arrow',[px(left+1),px(right-1)],[py(0),py(0)],'LineWidth',1.5);
+    annotation(mainFig,'arrow',[px(0), px(0)],[py(bottom+1),py(top-1)],'LineWidth',1.5);
+    annotation(mainFig,'textbox','String',{'w_1'},'FontWeight','bold','FontSize',12,'FontName','Arial','FitHeightToText','off','LineStyle','none','Position',[px(right-1.5) py(-0.5) 0.04 0.04]);
+    annotation(mainFig,'textbox','String',{'w_2'},'FontWeight','bold','FontSize',12,'FontName','Arial','FitHeightToText','off','LineStyle','none','Position',[px(-0.4) py(top-1.5) 0.04 0.04]);
+end
+
+end
+
+##### SOURCE END #####
+--></body></html>
