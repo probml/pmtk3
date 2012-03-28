@@ -1,0 +1,194 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Visualize EM Lower Bounds</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="emLogLikelihoodMax.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Visualize EM Lower Bounds</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="keyword">function</span> emLogLikelihoodMax
+f1 = @(x) log(gaussProb(x,0,0.25.^2)')+1;
+f2 = @(x) log(gaussProb(x,1,0.2.^2)')+20;
+f3 = @(x) 5*sin(2*(x-0.5))                      + <span class="keyword">...</span>
+         f1(0.5*x)                              + <span class="keyword">...</span>
+         f2(0.5*x)                              + <span class="keyword">...</span>
+         3.5                                    + <span class="keyword">...</span>
+         20  * gaussProb(x, -2    , 0.5.^2)'     - <span class="keyword">...</span>
+         20  * gaussProb(x,  3    , 1.^2  )'     - <span class="keyword">...</span>
+         70  * gaussProb(x,  4    , 0.5.^2)'     + <span class="keyword">...</span>
+         40  * gaussProb(x, -3    , 0.5.^2)'     + <span class="keyword">...</span>
+         100 * gaussProb(x, -4    , 0.8.^2)'     + <span class="keyword">...</span>
+         10  * gaussProb(x,  3    , 0.3.^2)'     - <span class="keyword">...</span>
+         10  * gaussProb(x, -2.8  , 0.5.^2)';
+
+domain = -5:0.01:5;
+figure; hold <span class="string">on</span>;
+p1 = plot(domain, f1(domain), <span class="string">'-b'</span> , <span class="string">'LineWidth'</span>, 3);
+p2 = plot(domain, f2(domain), <span class="string">':g'</span> , <span class="string">'LineWidth'</span>, 3);
+p3 = plot(domain, f3(domain), <span class="string">'-.r'</span>, <span class="string">'LineWidth'</span>, 3);
+axis([-3 5 -50 50]);
+box <span class="string">on</span>;
+set(gca, <span class="string">'XTick'</span>, [], <span class="string">'YTick'</span>, []);
+legend([p1, p2, p3], {<span class="string">'Q(\theta,\theta_t)'</span>,<span class="string">'Q(\theta,\theta_{t+1})'</span>,<span class="keyword">...</span>
+  <span class="string">'l(\theta)'</span>}, <span class="keyword">...</span>
+    <span class="string">'Location'</span>, <span class="string">'NorthWest'</span>, <span class="string">'FontSize'</span>, 14);
+
+
+annotation(gcf,<span class="string">'line'</span>,[0.3673 0.3673],[0.5146 0.1108],<span class="string">'LineStyle'</span>,<span class="string">':'</span>);
+
+<span class="comment">%annotation(gcf,'line',[0.4356 0.4356],[0.5976 0.1108],'LineStyle',':');</span>
+annotation(gcf,<span class="string">'line'</span>,[0.415 0.415],[0.1108 0.59],<span class="string">'LineStyle'</span>,<span class="string">':'</span>);
+
+annotation(gcf,<span class="string">'line'</span>,[0.52 0.52],[0.1108 0.7],<span class="string">'LineStyle'</span>,<span class="string">':'</span>);
+
+
+annotation(gcf,<span class="string">'textbox'</span>,[0.3447 0.02411 0.08859 0.1012],<span class="keyword">...</span>
+  <span class="string">'String'</span>,{<span class="string">'\theta_{t}'</span>},<span class="keyword">...</span>
+  <span class="string">'FontSize'</span>,16,<span class="keyword">...</span>
+  <span class="string">'FitBoxToText'</span>,<span class="string">'off'</span>,<span class="keyword">...</span>
+  <span class="string">'LineStyle'</span>,<span class="string">'none'</span>);
+
+<span class="comment">% [0.4185 0.02411 0.08859 0.1012]</span>
+annotation(gcf,<span class="string">'textbox'</span>,[0.39 0.02411 0.08859 0.1012],<span class="keyword">...</span>
+  <span class="string">'String'</span>,{<span class="string">'\theta_{t+1}'</span>},<span class="keyword">...</span>
+  <span class="string">'FontSize'</span>,16,<span class="keyword">...</span>
+  <span class="string">'FitBoxToText'</span>,<span class="string">'off'</span>,<span class="keyword">...</span>
+  <span class="string">'LineStyle'</span>,<span class="string">'none'</span>);
+
+annotation(gcf,<span class="string">'textbox'</span>,[0.5 0.02411 0.08859 0.1012],<span class="keyword">...</span>
+  <span class="string">'String'</span>,{<span class="string">'\theta_{t+2}'</span>},<span class="keyword">...</span>
+  <span class="string">'FontSize'</span>,16,<span class="keyword">...</span>
+  <span class="string">'FitBoxToText'</span>,<span class="string">'off'</span>,<span class="keyword">...</span>
+  <span class="string">'LineStyle'</span>,<span class="string">'none'</span>);
+
+printPmtkFigure <span class="string">emLogLikelihoodMax</span>
+
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="emLogLikelihoodMax_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Visualize EM Lower Bounds
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+function emLogLikelihoodMax
+f1 = @(x) log(gaussProb(x,0,0.25.^2)')+1;
+f2 = @(x) log(gaussProb(x,1,0.2.^2)')+20;
+f3 = @(x) 5*sin(2*(x-0.5))                      + ...
+         f1(0.5*x)                              + ...
+         f2(0.5*x)                              + ...
+         3.5                                    + ...
+         20  * gaussProb(x, -2    , 0.5.^2)'     - ...
+         20  * gaussProb(x,  3    , 1.^2  )'     - ...
+         70  * gaussProb(x,  4    , 0.5.^2)'     + ...
+         40  * gaussProb(x, -3    , 0.5.^2)'     + ...
+         100 * gaussProb(x, -4    , 0.8.^2)'     + ...
+         10  * gaussProb(x,  3    , 0.3.^2)'     - ...
+         10  * gaussProb(x, -2.8  , 0.5.^2)';
+
+domain = -5:0.01:5;
+figure; hold on;
+p1 = plot(domain, f1(domain), '-b' , 'LineWidth', 3);
+p2 = plot(domain, f2(domain), ':g' , 'LineWidth', 3);
+p3 = plot(domain, f3(domain), '-.r', 'LineWidth', 3);
+axis([-3 5 -50 50]);
+box on;
+set(gca, 'XTick', [], 'YTick', []);
+legend([p1, p2, p3], {'Q(\theta,\theta_t)','Q(\theta,\theta_{t+1})',...
+  'l(\theta)'}, ...
+    'Location', 'NorthWest', 'FontSize', 14);
+
+
+annotation(gcf,'line',[0.3673 0.3673],[0.5146 0.1108],'LineStyle',':');
+
+%annotation(gcf,'line',[0.4356 0.4356],[0.5976 0.1108],'LineStyle',':');
+annotation(gcf,'line',[0.415 0.415],[0.1108 0.59],'LineStyle',':');
+ 
+annotation(gcf,'line',[0.52 0.52],[0.1108 0.7],'LineStyle',':');
+
+
+annotation(gcf,'textbox',[0.3447 0.02411 0.08859 0.1012],...
+  'String',{'\theta_{t}'},...
+  'FontSize',16,...
+  'FitBoxToText','off',...
+  'LineStyle','none');
+
+% [0.4185 0.02411 0.08859 0.1012]
+annotation(gcf,'textbox',[0.39 0.02411 0.08859 0.1012],...
+  'String',{'\theta_{t+1}'},...
+  'FontSize',16,...
+  'FitBoxToText','off',...
+  'LineStyle','none');
+
+annotation(gcf,'textbox',[0.5 0.02411 0.08859 0.1012],...
+  'String',{'\theta_{t+2}'},...
+  'FontSize',16,...
+  'FitBoxToText','off',...
+  'LineStyle','none');
+
+printPmtkFigure emLogLikelihoodMax
+
+end
+
+##### SOURCE END #####
+--></body></html>

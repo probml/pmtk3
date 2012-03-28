@@ -1,0 +1,184 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Bootstrap demo for the MLE for a Bernoulli</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="bootstrapDemoBer.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Bootstrap demo for the MLE for a Bernoulli</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+fs = 12;
+setSeed(1);
+theta = 0.7;
+Ns = [10 100];
+<span class="keyword">for</span> Ni=1:length(Ns)
+    N = Ns(Ni);
+    B = 10000;
+
+    X = rand(1,N) &lt; theta;
+    estimator = @(X) mean(X);
+    bmle = estimator(X);
+    mleBoot = zeros(1,B);
+    <span class="keyword">for</span> b=1:B
+        Xb = rand(1,N) &lt; bmle;
+        mleBoot(b) = estimator(Xb);
+        ndx = unidrndPMTK(N,1,N);
+        Xnonparam = X(ndx);
+        mleBootNP(b) = estimator(Xnonparam);
+    <span class="keyword">end</span>
+    figure;
+    hist(mleBoot)
+    set(gca,<span class="string">'xlim'</span>,[0 1])
+    ttl = sprintf(<span class="string">'Boot: true = %3.2f, n=%d, mle = %3.2f, se = %5.3f\n'</span>, <span class="keyword">...</span>
+        theta, N, bmle, std(mleBoot)/sqrt(B));
+    title(ttl,  <span class="string">'fontsize'</span>, fs)
+    printPmtkFigure(sprintf(<span class="string">'bootstrapDemoBer%d'</span>, N));
+
+<span class="comment">    %{
+</span><span class="comment">figure;
+</span><span class="comment">hist(mleBootNP)
+</span><span class="comment">set(gca,'xlim',[0 1])
+</span><span class="comment">ttl = sprintf('NP boot: true = %3.2f, n=%d, mle = %3.2f, se = %5.3f\n', ...
+</span><span class="comment">  theta, N, mle, std(mleBootNP)/sqrt(B));
+</span><span class="comment">title(ttl)
+</span><span class="comment">printPmtkFigure(sprintf('bootstrapDemoBerNP%d', N));
+</span><span class="comment">    %}
+</span>
+    <span class="comment">% Now do the Bayesian thing with an uniformative Beta prior</span>
+    N1 = length(find(X==1));
+    N0 = length(find(X==0));
+    alpha1 = 1; alpha0 = 1;
+    model.a = N1+alpha1;
+    model.b = N0+alpha0;
+    Xpost = betaSample(model, [1, B]);
+    figure;
+    hist(Xpost);
+    set(gca,<span class="string">'xlim'</span>,[0 1])
+    ttl = sprintf(<span class="string">'Bayes: true = %3.2f, n=%d, post mean = %3.2f, se = %5.3f\n'</span>, <span class="keyword">...</span>
+        theta, N, mean(Xpost), std(Xpost)/sqrt(B));
+    title(ttl,  <span class="string">'fontsize'</span>, fs)
+    printPmtkFigure(sprintf(<span class="string">'bootstrapDemoBerBayes%d'</span>, N));
+
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="bootstrapDemoBer_01.png" alt=""> <img vspace="5" hspace="5" src="bootstrapDemoBer_02.png" alt=""> <img vspace="5" hspace="5" src="bootstrapDemoBer_03.png" alt=""> <img vspace="5" hspace="5" src="bootstrapDemoBer_04.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Bootstrap demo for the MLE for a Bernoulli
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+fs = 12;
+setSeed(1);
+theta = 0.7;
+Ns = [10 100];
+for Ni=1:length(Ns)
+    N = Ns(Ni);
+    B = 10000;
+    
+    X = rand(1,N) < theta;
+    estimator = @(X) mean(X);
+    bmle = estimator(X);
+    mleBoot = zeros(1,B);
+    for b=1:B
+        Xb = rand(1,N) < bmle;
+        mleBoot(b) = estimator(Xb);
+        ndx = unidrndPMTK(N,1,N);
+        Xnonparam = X(ndx);
+        mleBootNP(b) = estimator(Xnonparam);
+    end
+    figure;
+    hist(mleBoot)
+    set(gca,'xlim',[0 1])
+    ttl = sprintf('Boot: true = %3.2f, n=%d, mle = %3.2f, se = %5.3f\n', ...
+        theta, N, bmle, std(mleBoot)/sqrt(B));
+    title(ttl,  'fontsize', fs)
+    printPmtkFigure(sprintf('bootstrapDemoBer%d', N));
+    
+    %{
+figure;
+hist(mleBootNP)
+set(gca,'xlim',[0 1])
+ttl = sprintf('NP boot: true = %3.2f, n=%d, mle = %3.2f, se = %5.3f\n', ...
+  theta, N, mle, std(mleBootNP)/sqrt(B));
+title(ttl)
+printPmtkFigure(sprintf('bootstrapDemoBerNP%d', N));
+    %}
+    
+    % Now do the Bayesian thing with an uniformative Beta prior
+    N1 = length(find(X==1));
+    N0 = length(find(X==0));
+    alpha1 = 1; alpha0 = 1;
+    model.a = N1+alpha1;
+    model.b = N0+alpha0;
+    Xpost = betaSample(model, [1, B]); 
+    figure;
+    hist(Xpost);
+    set(gca,'xlim',[0 1])
+    ttl = sprintf('Bayes: true = %3.2f, n=%d, post mean = %3.2f, se = %5.3f\n', ...
+        theta, N, mean(Xpost), std(Xpost)/sqrt(B));
+    title(ttl,  'fontsize', fs)
+    printPmtkFigure(sprintf('bootstrapDemoBerBayes%d', N));
+    
+end
+
+##### SOURCE END #####
+--></body></html>

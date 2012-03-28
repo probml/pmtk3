@@ -1,0 +1,295 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>sparsePostPlot</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="sparsePostPlot.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> sparsePostPlot
+<span class="comment">% Code for Plotting Gauss, Laplace and "Very Sparse" Prior and Posterior</span>
+<span class="comment">%PMTKauthor Florian Steinke 2005</span>
+
+<span class="comment">%PMTKslow</span>
+
+<span class="comment">% define fine grid to evalute distributions</span>
+<span class="comment">%(grid extends outside the targeted field of view for a better</span>
+<span class="comment">% normalisation of the distributions!)</span>
+ext = 3; pext = 10; N = 1000;
+h = (2*pext)/(N-1);
+x = -pext:h:pext;
+ii = find(x &gt;= -ext &amp; x &lt;= ext);
+[x,y] = meshgrid(x,x);
+
+<span class="comment">% compute prior distributions and likelihood</span>
+tau = sqrt(2);
+p_L =  tau^2/4*exp(-tau*(abs(x)+abs(y))); <span class="comment">% prior Laplace as matrix</span>
+
+sigma = 1;
+p_G = 1/sqrt(2*pi)^2/sigma^2*exp(-1/2/sigma^2*(x.^2+y.^2)); <span class="comment">% prior Gauss as matrix</span>
+
+alpha = 0.4;
+p_S =  5.6447^2 * exp(-4.2628*(abs(x).^alpha+abs(y).^alpha)); <span class="comment">% prior very sparse</span>
+
+<span class="comment">% likelihood as matrix</span>
+m = [0;1]; d = [0.5,1]; scale = 10;
+p_like = 1/sqrt(2*pi)^2*exp(-scale * ((x - m(1)) * d(1) + (y - m(2)) * d(2)).^2);
+<span class="comment">% p_like = p_like / sum(p_like(:));</span>
+
+<span class="comment">% plot via contours</span>
+<span class="keyword">for</span> i = 1:3
+    <span class="comment">% plot prior</span>
+    subplot(2,3,i)
+    <span class="keyword">if</span> i == 1, p = p_G; <span class="keyword">elseif</span> i == 2, p = p_L; <span class="keyword">else</span> p = p_S; <span class="keyword">end</span>
+
+    makeplot(p,x,y,ext,h,ii)
+    hold <span class="string">on</span>
+    contour(x,y,p_like,1,<span class="string">'k'</span>);
+    hold <span class="string">off</span>
+    caxis([0,1]);
+
+    <span class="comment">% plot poterior</span>
+    subplot(2,3,i+3)
+    post = p.*p_like;
+    post = post / sum(post(:));
+    makeplot(post,x,y,ext,h,ii)
+<span class="keyword">end</span>
+
+printPmtkFigure(<span class="string">'sparsePost'</span>)
+
+<span class="keyword">function</span> makeplot(p,x,y,ext,h,ii)
+cla
+p = p / sum(p(:));
+[v,levels] = plevels(p);
+caxis([0,1]);
+[C,h] = contourf(x(ii,ii),y(ii,ii),p(ii,ii),v); <span class="comment">% ii = only plot interior</span>
+<span class="comment">% clabel(levels)</span>
+labels = getlabels(C);
+<span class="keyword">for</span> i = 1:length(h)
+    ind = find(abs(v-labels(i)) &lt; 1e-6*max(v));
+    <span class="keyword">if</span> length(ind) ~= 1, error(<span class="string">'Shit'</span>), <span class="keyword">end</span>;
+    <span class="keyword">try</span>
+        set(h(i),<span class="string">'CData'</span>,1-levels(ind),<span class="string">'Edgecolor'</span>,<span class="string">'none'</span>);
+    <span class="keyword">catch</span>
+        <span class="comment">% ignore error</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+hold <span class="string">on</span>
+line([[0 -ext];[0 ext]],[[-ext 0];[ext 0]],<span class="string">'Color'</span>,<span class="string">'black'</span>);
+hold <span class="string">off</span>
+axis <span class="string">equal</span>
+axis <span class="string">tight</span>
+<span class="comment">% colorbar</span>
+axis <span class="string">off</span>
+caxis([0,1]);
+
+
+<span class="keyword">function</span> labels = getlabels(CS)
+<span class="comment">%GETLABELS Get contour labels</span>
+v = []; i =1;
+<span class="keyword">while</span> i &lt; size(CS,2),
+  v = [v,CS(1,i)];
+  i = i+CS(2,i)+1;
+<span class="keyword">end</span>
+labels = v;
+
+<span class="keyword">function</span> [v,levels] = plevels(p)
+<span class="comment">% get probability values for which 10%, 20% of all points are above/below</span>
+<span class="comment">% this level ( = quantiles)</span>
+thres = (1:-0.001:0)*max(p(:));
+mass = zeros(length(thres),1);
+<span class="keyword">for</span> i = 1:length(thres)
+    ii = p &gt; thres(i);
+    mass(i) = sum(p(ii));
+<span class="keyword">end</span>
+levels = sort([0.1:0.1:0.9],<span class="string">'ascend'</span>);
+<span class="keyword">for</span> i = 1:length(levels)
+    v(i) = interpolate(mass,thres,levels(i));
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> ya = interpolate(x,y,a)
+<span class="keyword">if</span> a &lt;= x(1)
+    ya = y(1);
+<span class="keyword">elseif</span> a &gt;= x(end)
+    ya = y(end);
+<span class="keyword">else</span>
+    dx = x(2:end)-x(1:end-1);
+    ii = sum(x &lt;= a);
+    lambda = (a - x(ii)) /dx(ii);
+    ya =  ((1-lambda/2)*y(ii)+lambda/2*y(ii+1));
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="sparsePostPlot_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+function sparsePostPlot
+% Code for Plotting Gauss, Laplace and "Very Sparse" Prior and Posterior
+%PMTKauthor Florian Steinke 2005
+
+%PMTKslow
+
+% define fine grid to evalute distributions
+%(grid extends outside the targeted field of view for a better 
+% normalisation of the distributions!)
+ext = 3; pext = 10; N = 1000; 
+h = (2*pext)/(N-1);
+x = -pext:h:pext;
+ii = find(x >= -ext & x <= ext);
+[x,y] = meshgrid(x,x);
+
+% compute prior distributions and likelihood
+tau = sqrt(2);
+p_L =  tau^2/4*exp(-tau*(abs(x)+abs(y))); % prior Laplace as matrix
+
+sigma = 1;
+p_G = 1/sqrt(2*pi)^2/sigma^2*exp(-1/2/sigma^2*(x.^2+y.^2)); % prior Gauss as matrix
+
+alpha = 0.4; 
+p_S =  5.6447^2 * exp(-4.2628*(abs(x).^alpha+abs(y).^alpha)); % prior very sparse
+
+% likelihood as matrix
+m = [0;1]; d = [0.5,1]; scale = 10;
+p_like = 1/sqrt(2*pi)^2*exp(-scale * ((x - m(1)) * d(1) + (y - m(2)) * d(2)).^2);
+% p_like = p_like / sum(p_like(:));
+
+% plot via contours
+for i = 1:3
+    % plot prior
+    subplot(2,3,i)
+    if i == 1, p = p_G; elseif i == 2, p = p_L; else p = p_S; end
+    
+    makeplot(p,x,y,ext,h,ii)
+    hold on
+    contour(x,y,p_like,1,'k');
+    hold off
+    caxis([0,1]);
+
+    % plot poterior
+    subplot(2,3,i+3)
+    post = p.*p_like;
+    post = post / sum(post(:));
+    makeplot(post,x,y,ext,h,ii)
+end
+
+printPmtkFigure('sparsePost')
+
+function makeplot(p,x,y,ext,h,ii)
+cla
+p = p / sum(p(:));
+[v,levels] = plevels(p);
+caxis([0,1]);
+[C,h] = contourf(x(ii,ii),y(ii,ii),p(ii,ii),v); % ii = only plot interior
+% clabel(levels)
+labels = getlabels(C);
+for i = 1:length(h)
+    ind = find(abs(v-labels(i)) < 1e-6*max(v));
+    if length(ind) ~= 1, error('Shit'), end;
+    try
+        set(h(i),'CData',1-levels(ind),'Edgecolor','none');
+    catch
+        % ignore error
+    end
+end
+hold on
+line([[0 -ext];[0 ext]],[[-ext 0];[ext 0]],'Color','black');
+hold off
+axis equal
+axis tight
+% colorbar
+axis off
+caxis([0,1]);
+
+
+function labels = getlabels(CS)
+%GETLABELS Get contour labels
+v = []; i =1;
+while i < size(CS,2), 
+  v = [v,CS(1,i)];
+  i = i+CS(2,i)+1;
+end
+labels = v;
+
+function [v,levels] = plevels(p)
+% get probability values for which 10%, 20% of all points are above/below
+% this level ( = quantiles)
+thres = (1:-0.001:0)*max(p(:));
+mass = zeros(length(thres),1);
+for i = 1:length(thres)
+    ii = p > thres(i);
+    mass(i) = sum(p(ii));
+end
+levels = sort([0.1:0.1:0.9],'ascend');
+for i = 1:length(levels)
+    v(i) = interpolate(mass,thres,levels(i));
+end
+
+function ya = interpolate(x,y,a)
+if a <= x(1)
+    ya = y(1);
+elseif a >= x(end)
+    ya = y(end);
+else
+    dx = x(2:end)-x(1:end-1);
+    ii = sum(x <= a);
+    lambda = (a - x(ii)) /dx(ii);
+    ya =  ((1-lambda/2)*y(ii)+lambda/2*y(ii+1));
+end
+
+
+##### SOURCE END #####
+--></body></html>

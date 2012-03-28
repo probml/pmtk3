@@ -1,0 +1,182 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>lsiCode</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="lsiCode.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% lsiCode</span>
+clear <span class="string">all</span>
+
+X = load(<span class="string">'lsiMatrix.txt'</span>)';
+
+<span class="comment">%fid = fopen('lsiWords.txt');</span>
+<span class="comment">%tmp = textscan(fid,'%s');</span>
+<span class="comment">%fclose(fid);</span>
+<span class="comment">%words = tmp{1};</span>
+words = textread(<span class="string">'lsiWords.txt'</span>, <span class="string">'%s'</span>);
+
+
+[U,S,V] = svd(X);
+K = 2;
+UK = U(:,1:K);
+SK = S(1:K, 1:K);
+VK = V(:,1:K);
+
+[nwords ndoc] = size(X);
+<span class="comment">% plot documents in latent space</span>
+Xhat = VK';
+figure(1);clf
+<span class="keyword">for</span> j=1:ndoc
+  plot(Xhat(1,j), Xhat(2,j),  <span class="string">'o'</span>, <span class="string">'linewidth'</span>, 2);
+  hold <span class="string">on</span>
+  eps = 0.005;
+  h=text(Xhat(1,j)+eps, Xhat(2,j)+eps,  sprintf(<span class="string">'%d'</span>, j),<span class="string">'fontsize'</span>,18);
+<span class="keyword">end</span>
+
+<span class="comment">% find closest documents to query</span>
+ndx = strmatch(<span class="string">'abducted'</span>,words);
+q = zeros(nwords,1);
+q(ndx) = 1;
+qhat = inv(SK)*UK'*q;
+<span class="keyword">for</span> j=1:ndoc
+  tmp = (qhat'*Xhat(:,j))/(norm(qhat)*norm(Xhat(:,j)));
+  angle(j) = acos(tmp)*(180/pi);
+<span class="keyword">end</span>
+[ndx, angles] = sort(angle)
+top3 = ndx(1:3)
+
+
+<span class="comment">%Xhat = UK; % 460x2</span>
+<span class="comment">%figure(1);clf</span>
+<span class="comment">%for i=1:nwords</span>
+<span class="comment">%  %plot(Xhat(i,1), Xhat(i,2),  'o');</span>
+<span class="comment">%  h=text(Xhat(i,1), Xhat(i,2),  sprintf('%d', i),'fontsize',10);</span>
+<span class="comment">%  hold on</span>
+<span class="comment">%end</span>
+</pre><pre class="codeoutput">ndx =
+  Columns 1 through 4
+   26.5830   27.7366   39.9344   63.2745
+  Columns 5 through 8
+   97.6569  113.1596  119.4842  119.5270
+  Column 9
+  140.3943
+angles =
+  Columns 1 through 7
+     1     3     2     9     5     8     7
+  Columns 8 through 9
+     6     4
+top3 =
+   26.5830   27.7366   39.9344
+</pre><img vspace="5" hspace="5" src="lsiCode_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+% lsiCode
+clear all
+
+X = load('lsiMatrix.txt')';
+
+%fid = fopen('lsiWords.txt');
+%tmp = textscan(fid,'%s');
+%fclose(fid);
+%words = tmp{1};
+words = textread('lsiWords.txt', '%s');
+
+	
+[U,S,V] = svd(X);
+K = 2;
+UK = U(:,1:K);
+SK = S(1:K, 1:K);
+VK = V(:,1:K);
+
+[nwords ndoc] = size(X);
+% plot documents in latent space
+Xhat = VK';
+figure(1);clf
+for j=1:ndoc
+  plot(Xhat(1,j), Xhat(2,j),  'o', 'linewidth', 2);
+  hold on
+  eps = 0.005;
+  h=text(Xhat(1,j)+eps, Xhat(2,j)+eps,  sprintf('%d', j),'fontsize',18);
+end
+
+% find closest documents to query
+ndx = strmatch('abducted',words);
+q = zeros(nwords,1);
+q(ndx) = 1;
+qhat = inv(SK)*UK'*q;
+for j=1:ndoc
+  tmp = (qhat'*Xhat(:,j))/(norm(qhat)*norm(Xhat(:,j)));
+  angle(j) = acos(tmp)*(180/pi);
+end
+[ndx, angles] = sort(angle)
+top3 = ndx(1:3)
+
+
+%Xhat = UK; % 460x2
+%figure(1);clf
+%for i=1:nwords
+%  %plot(Xhat(i,1), Xhat(i,2),  'o');
+%  h=text(Xhat(i,1), Xhat(i,2),  sprintf('%d', i),'fontsize',10);
+%  hold on
+%end
+
+##### SOURCE END #####
+--></body></html>

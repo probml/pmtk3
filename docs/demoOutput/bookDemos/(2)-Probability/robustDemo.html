@@ -1,0 +1,178 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Illustrate the robustness of the student and laplace distributions compared to the Gaussian.</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="robustDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Illustrate the robustness of the student and laplace distributions compared to the Gaussian.</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#4">Bucket the data into nbins, divide the size of each bin by norm and plot</a></li><li><a href="#5">the normalized histogram.</a></li></ul></div><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="keyword">function</span> robustDemo()
+</pre><pre class="codeinput">n = 30;
+setSeed(8);
+data = randn(n,1);
+outliers = [8 ; 8.75 ; 9.5];
+nn = length(outliers);
+nbins = 7;
+
+figure;
+plotHist(data,nbins,n);
+plotPDFs(data);
+printPmtkFigure(<span class="string">'robustDemoNoOutliers'</span>)
+</pre><img vspace="5" hspace="5" src="robustDemo_01.png" alt=""> <pre class="codeinput">figure;
+plotHist(data,nbins,n+nn);
+plotHist(outliers,nn,n+nn);
+plotPDFs([data ; outliers]);
+printPmtkFigure(<span class="string">'robustDemoOutliers'</span>)
+</pre><img vspace="5" hspace="5" src="robustDemo_02.png" alt=""> <h2>Bucket the data into nbins, divide the size of each bin by norm and plot<a name="4"></a></h2><h2>the normalized histogram.<a name="5"></a></h2><pre class="codeinput"><span class="keyword">function</span> plotHist(data,nbins,norm)
+    hold <span class="string">on</span>;
+    [counts, locations] = hist(data,nbins);
+    sCounts = counts ./ norm;
+    bar(locations,sCounts);
+<span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">function</span> plotPDFs(data)
+    Xbar = mean(data);
+    sigma = std(data);
+    gauss = @(X) gaussProb(X, Xbar, sigma.^2);
+    model = studentFit(data);
+    sT = @(X)exp(studentLogprob(model, X));
+    model = laplaceFit(data);
+    lap = @(X)exp(laplaceLogprob(model, X));
+    hold <span class="string">on</span>;
+    x = (-5:0.01:10)';
+    h(1) = plot(x,gauss(x),<span class="string">'k:'</span>,<span class="string">'LineWidth'</span>,3);
+    h(2) = plot(x,sT(x),<span class="string">'r-'</span>,<span class="string">'LineWidth'</span>,3);
+    h(3) = plot(x,lap(x),<span class="string">'b--'</span>,<span class="string">'LineWidth'</span>,3);
+    axis([-5,10,0,0.5]);
+    set(gca,<span class="string">'YTick'</span>,0:0.1:0.5);
+    legendStr = {<span class="string">'gaussian'</span>, <span class="string">'student T'</span>, <span class="string">'laplace'</span>};
+    <span class="keyword">if</span> isOctave(),
+        legend(legendStr{:})
+    <span class="keyword">else</span>
+        legend(h, legendStr{:})
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Illustrate the robustness of the student and laplace distributions compared to the Gaussian.
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+function robustDemo()
+
+n = 30;
+setSeed(8);
+data = randn(n,1);
+outliers = [8 ; 8.75 ; 9.5];
+nn = length(outliers);
+nbins = 7;
+
+figure;
+plotHist(data,nbins,n);
+plotPDFs(data);
+printPmtkFigure('robustDemoNoOutliers')
+%%
+figure;
+plotHist(data,nbins,n+nn);
+plotHist(outliers,nn,n+nn);
+plotPDFs([data ; outliers]);
+printPmtkFigure('robustDemoOutliers')
+
+%% Bucket the data into nbins, divide the size of each bin by norm and plot
+%% the normalized histogram. 
+function plotHist(data,nbins,norm)
+    hold on;
+    [counts, locations] = hist(data,nbins);
+    sCounts = counts ./ norm;
+    bar(locations,sCounts);
+end
+%% 
+function plotPDFs(data)
+    Xbar = mean(data);
+    sigma = std(data);
+    gauss = @(X) gaussProb(X, Xbar, sigma.^2);
+    model = studentFit(data);
+    sT = @(X)exp(studentLogprob(model, X));
+    model = laplaceFit(data);
+    lap = @(X)exp(laplaceLogprob(model, X));   
+    hold on;
+    x = (-5:0.01:10)';
+    h(1) = plot(x,gauss(x),'k:','LineWidth',3);
+    h(2) = plot(x,sT(x),'r-','LineWidth',3);
+    h(3) = plot(x,lap(x),'bREPLACE_WITH_DASH_DASH','LineWidth',3);
+    axis([-5,10,0,0.5]);
+    set(gca,'YTick',0:0.1:0.5);
+    legendStr = {'gaussian', 'student T', 'laplace'};
+    if isOctave(),
+        legend(legendStr{:})
+    else
+        legend(h, legendStr{:})
+    end
+end
+
+
+end
+
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,219 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Bayesian model selection demo for polynomial regression</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="linregEbModelSelVsN.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Bayesian model selection demo for polynomial regression</h1><p>This illustartes that if we have more data, Bayes picks a more complex model. We use empirical Bayes (EB) and variational Bayes (VB) to tune the hyper-parameter and approximate the marginal likelihood</p><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+
+<span class="comment">% Based on a demo by Zoubin Ghahramani</span>
+
+<span class="comment">% For EB, we either use the pmtk wrapper to Tao Chen's code</span>
+<span class="comment">% and to Ian Nabney's netlab code. The netlab version seems</span>
+<span class="comment">% to work better when N is small (~8), but both give the same</span>
+<span class="comment">% results when N is large (~ 32).</span>
+
+clear <span class="string">all</span>;
+Ns = [5 30];
+<span class="keyword">for</span> ni=1:length(Ns)
+  ndata = Ns(ni);
+
+  setSeed(2);
+
+  x1d=rand(ndata,1)*10; <span class="comment">% input points</span>
+  e=randn(ndata,1); <span class="comment">% noise</span>
+  ytrain = (x1d-4).^2 + 5*e; <span class="comment">% actual function</span>
+  plotvals1d = [-2:0.1:12]'; <span class="comment">% uniform grid for plotting/ testing</span>
+  trueOutput = (plotvals1d-4).^2;
+
+ <span class="comment">%names = {'vb', 'ebNetlab', 'ebChen'};</span>
+  names = {<span class="string">'VB'</span>, <span class="string">'EB'</span>};
+
+  <span class="keyword">for</span> i=1:length(names)
+    <span class="comment">%fitFn = fitFns{i}; predFn = predFns{i};</span>
+    name = names{i};
+
+    degs = [1 2 3];
+    <span class="keyword">for</span> m=1:length(degs)
+      deg=degs(m);
+      X = polyBasis(x1d, deg);
+      X = X(:,2:end); <span class="comment">% omit column of 1s</span>
+      Xtest = polyBasis(plotvals1d, deg);
+      Xtest = Xtest(:, 2:end);
+
+      [model, logev(m)] = linregFitBayes(X, ytrain, <span class="string">'prior'</span>, name);
+      [mu, sig2] = linregPredictBayes(model, Xtest);
+      sig = sqrt(sig2);
+
+      <span class="comment">% Plot the data, the original function, and the trained network function.</span>
+      <span class="keyword">if</span> 1
+      figure;
+      plot(x1d, ytrain, <span class="string">'ok'</span>, <span class="string">'markersize'</span>, 10, <span class="string">'linewidth'</span>, 3)
+      hold <span class="string">on</span>
+      plot(plotvals1d, trueOutput, <span class="string">'g-'</span>, <span class="string">'linewidth'</span>, 3);
+      plot(plotvals1d, mu, <span class="string">'r-.'</span>, <span class="string">'linewidth'</span>, 3)
+      plot(plotvals1d, mu + sig, <span class="string">'b:'</span>);
+      plot(plotvals1d, mu - sig, <span class="string">'b:'</span>);
+      <span class="comment">%title(sprintf('d=%d, logev=%5.3f', deg, logev(m)))</span>
+      title(sprintf(<span class="string">'d=%d, logev=%5.3f, %s'</span>, deg, logev(m), name))
+      printPmtkFigure(sprintf(<span class="string">'linregEbModelSelVsN%dD%d%s'</span>, ndata,  deg, name))
+      <span class="keyword">end</span>
+    <span class="keyword">end</span>
+
+
+    figure;
+    PP=exp(logev);
+    PP=PP/sum(PP);
+    bar(degs, PP)
+    axis([-0.5 length(degs)+0.5 0 1]);
+    set(gca,<span class="string">'FontSize'</span>,16);
+    aa=xlabel(<span class="string">'M'</span>); set(aa,<span class="string">'FontSize'</span>,20);
+    aa=ylabel(<span class="string">'P(M|D)'</span>); set(aa,<span class="string">'FontSize'</span>,20);
+    <span class="comment">%title(sprintf('N=%d', ndata))</span>
+    title(sprintf(<span class="string">'N=%d, method=%s'</span>, ndata, name))
+    printPmtkFigure(sprintf(<span class="string">'linregEbModelSelVsN%dPost%s'</span>, ndata, name))
+  <span class="keyword">end</span> <span class="comment">% for i</span>
+
+<span class="keyword">end</span> <span class="comment">% for ni</span>
+</pre><img vspace="5" hspace="5" src="linregEbModelSelVsN_01.png" alt=""> <img vspace="5" hspace="5" src="linregEbModelSelVsN_02.png" alt=""> <img vspace="5" hspace="5" src="linregEbModelSelVsN_03.png" alt=""> <img vspace="5" hspace="5" src="linregEbModelSelVsN_04.png" alt=""> <img vspace="5" hspace="5" src="linregEbModelSelVsN_05.png" alt=""> <img vspace="5" hspace="5" src="linregEbModelSelVsN_06.png" alt=""> <img vspace="5" hspace="5" src="linregEbModelSelVsN_07.png" alt=""> <img vspace="5" hspace="5" src="linregEbModelSelVsN_08.png" alt=""> <img vspace="5" hspace="5" src="linregEbModelSelVsN_09.png" alt=""> <img vspace="5" hspace="5" src="linregEbModelSelVsN_10.png" alt=""> <img vspace="5" hspace="5" src="linregEbModelSelVsN_11.png" alt=""> <img vspace="5" hspace="5" src="linregEbModelSelVsN_12.png" alt=""> <img vspace="5" hspace="5" src="linregEbModelSelVsN_13.png" alt=""> <img vspace="5" hspace="5" src="linregEbModelSelVsN_14.png" alt=""> <img vspace="5" hspace="5" src="linregEbModelSelVsN_15.png" alt=""> <img vspace="5" hspace="5" src="linregEbModelSelVsN_16.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Bayesian model selection demo for polynomial regression
+% This illustartes that if we have more data, Bayes picks a more complex model.
+% We use empirical Bayes (EB) and variational Bayes (VB)
+% to tune the hyper-parameter and approximate the marginal likelihood
+
+% This file is from pmtk3.googlecode.com
+
+
+% Based on a demo by Zoubin Ghahramani
+
+% For EB, we either use the pmtk wrapper to Tao Chen's code
+% and to Ian Nabney's netlab code. The netlab version seems
+% to work better when N is small (~8), but both give the same
+% results when N is large (~ 32).
+
+clear all;
+Ns = [5 30];
+for ni=1:length(Ns)
+  ndata = Ns(ni);
+  
+  setSeed(2);
+  
+  x1d=rand(ndata,1)*10; % input points
+  e=randn(ndata,1); % noise
+  ytrain = (x1d-4).^2 + 5*e; % actual function
+  plotvals1d = [-2:0.1:12]'; % uniform grid for plotting/ testing
+  trueOutput = (plotvals1d-4).^2;
+  
+ %names = {'vb', 'ebNetlab', 'ebChen'};
+  names = {'VB', 'EB'};
+ 
+  for i=1:length(names)
+    %fitFn = fitFns{i}; predFn = predFns{i};
+    name = names{i};
+    
+    degs = [1 2 3];
+    for m=1:length(degs)
+      deg=degs(m);
+      X = polyBasis(x1d, deg);
+      X = X(:,2:end); % omit column of 1s
+      Xtest = polyBasis(plotvals1d, deg);
+      Xtest = Xtest(:, 2:end);
+      
+      [model, logev(m)] = linregFitBayes(X, ytrain, 'prior', name);
+      [mu, sig2] = linregPredictBayes(model, Xtest);
+      sig = sqrt(sig2);
+      
+      % Plot the data, the original function, and the trained network function.
+      if 1
+      figure;
+      plot(x1d, ytrain, 'ok', 'markersize', 10, 'linewidth', 3)
+      hold on
+      plot(plotvals1d, trueOutput, 'g-', 'linewidth', 3);
+      plot(plotvals1d, mu, 'r-.', 'linewidth', 3)
+      plot(plotvals1d, mu + sig, 'b:');
+      plot(plotvals1d, mu - sig, 'b:');
+      %title(sprintf('d=%d, logev=%5.3f', deg, logev(m)))
+      title(sprintf('d=%d, logev=%5.3f, %s', deg, logev(m), name))
+      printPmtkFigure(sprintf('linregEbModelSelVsN%dD%d%s', ndata,  deg, name))
+      end
+    end
+     
+    
+    figure;
+    PP=exp(logev);
+    PP=PP/sum(PP);
+    bar(degs, PP)
+    axis([-0.5 length(degs)+0.5 0 1]);
+    set(gca,'FontSize',16);
+    aa=xlabel('M'); set(aa,'FontSize',20);
+    aa=ylabel('P(M|D)'); set(aa,'FontSize',20);
+    %title(sprintf('N=%d', ndata))
+    title(sprintf('N=%d, method=%s', ndata, name))
+    printPmtkFigure(sprintf('linregEbModelSelVsN%dPost%s', ndata, name))
+  end % for i
+  
+end % for ni
+
+##### SOURCE END #####
+--></body></html>

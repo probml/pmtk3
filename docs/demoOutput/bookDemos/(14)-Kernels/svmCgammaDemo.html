@@ -1,0 +1,207 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Plot CV error vs error vs gamma and C for an SVM, plus 1d slices</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="svmCgammaDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Plot CV error vs error vs gamma and C for an SVM, plus 1d slices</h1><!--introduction--><p>Similar to Figure 12.6 in "The elements of statistical learning" 2e by Hastie, Tibshirani, Friedman, We also show the 2D % surface similar to figure 7 in <a href="http://www.csie.ntu.edu.tw/~cjlin/papers/guide/guide.pdf">http://www.csie.ntu.edu.tw/~cjlin/papers/guide/guide.pdf</a>. PMTKslow</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Load Data</a></li><li><a href="#3">Plot 1D CV Slices</a></li><li><a href="#4">Plot 2D heat map</a></li><li><a href="#5">Plot 2D contour</a></li><li><a href="#6">Plot 2D surface</a></li></ul></div><h2>Load Data<a name="2"></a></h2><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+setSeed(0);
+data = loadData(<span class="string">'hastieMixture'</span>);
+y = convertLabelsToPM1(data.y);
+[X, y] = shuffleRows(data.X, y); <span class="comment">% data is ordered</span>
+</pre><h2>Plot 1D CV Slices<a name="3"></a></h2><pre class="codeinput">gammas = [5, 1, 0.5, 0.1];
+Crange = logspace(-1, 3.5, 15);
+plotArgs = {true, data.bayesError};  <span class="comment">%{useLogScale, hline}</span>
+cvopts = {5, <span class="string">'useSErule'</span>, false, <span class="string">'doPlot'</span>, true, <span class="string">'plotArgs'</span>, plotArgs}; <span class="comment">%{nfolds, useSErule, doPlot, plotArgs}</span>
+<span class="keyword">for</span> i=1:numel(gammas)
+    gamma = gammas(i);
+    svmFit(X, y, <span class="string">'kernelParam'</span>, gamma, <span class="string">'C'</span>, Crange, <span class="keyword">...</span>
+        <span class="string">'cvOptions'</span>, cvopts);
+    title([<span class="string">'\gamma'</span>, sprintf(<span class="string">' = %.1f'</span>, gamma)]);
+    xlabel(<span class="string">'C'</span>); ylabel(<span class="string">'cv error'</span>);
+    printPmtkFigure(sprintf(<span class="string">'svmCvGamma%d'</span>, 10*gamma));
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">Undefined function or method 'libsvmTrain' for input arguments of type 'double'.
+
+Error in ==&gt; svmlibFit at 89
+model = libsvmTrain(y, X, options);
+
+Error in ==&gt; svmFit&gt;@(X,y,p)fitFn(X,y,p(1),p(2),kernel,fitOptions{:}) at 140
+    fitcore = @(X, y, p)fitFn(X, y, p(1), p(2), kernel, fitOptions{:});
+
+Error in ==&gt; fitCv&gt;@(X,y)fitFn(X,y,param) at 68
+    [mu(m), se(m)] =  cvEstimate(@(X, y) fitFn(X, y, param), predictFn, lossFn, X, y,  Nfolds, 'testFolds', testFolds);
+
+Error in ==&gt; cvEstimate at 34
+   model = fitFn(Xtrain, ytrain);
+
+Error in ==&gt; fitCv at 68
+    [mu(m), se(m)] =  cvEstimate(@(X, y) fitFn(X, y, param), predictFn, lossFn, X, y,  Nfolds, 'testFolds', testFolds);
+
+Error in ==&gt; svmFit at 141
+    [model, varargout{1}, varargout{2}, varargout{3}] = ...
+
+Error in ==&gt; svmCgammaDemo at 23
+    svmFit(X, y, 'kernelParam', gamma, 'C', Crange, ...
+</pre><h2>Plot 2D heat map<a name="4"></a></h2><pre class="codeinput">C = logspace(-1, 3.5, 10);
+gammas = logspace(-1, 1, 10);
+[model, bestParams, CVmu, CVse] = svmFit<span class="keyword">...</span>
+    (X, y, <span class="string">'kernelParam'</span>, gammas, <span class="string">'C'</span>, C, <span class="string">'cvOptions'</span>, {5, <span class="string">'useSErule'</span>, false, <span class="string">'doPlot'</span>, true});
+xlabel(<span class="string">'C'</span>);
+ylabel(<span class="string">'\gamma'</span>);
+set(gca, <span class="string">'xscale'</span>, <span class="string">'log'</span>, <span class="string">'yscale'</span>, <span class="string">'log'</span>);
+t = {sprintf(<span class="string">'best C = %.2f'</span>, bestParams(1))
+    [<span class="string">'best \gamma'</span>, sprintf(<span class="string">' = %.2f'</span>, bestParams(2) )]};
+title(t);
+printPmtkFigure(<span class="string">'svmCvHeatmap'</span>)
+</pre><h2>Plot 2D contour<a name="5"></a></h2><pre class="codeinput">figure
+nc = numel(C);
+ng = numel(gammas);
+paramSpace = gridSpace(C, gammas);
+xx = reshape(paramSpace(:, 1), nc, ng);
+yy = reshape(paramSpace(:, 2), nc, ng);
+zz = reshape(CVmu, nc, ng);
+contour(xx, yy, zz, <span class="string">'LineWidth'</span>, 2);
+set(gca, <span class="string">'xscale'</span>, <span class="string">'log'</span>, <span class="string">'yscale'</span>, <span class="string">'log'</span>);
+xlabel(<span class="string">'C'</span>);
+ylabel(<span class="string">'\gamma'</span>);
+printPmtkFigure(<span class="string">'svmCvContour'</span>)
+</pre><h2>Plot 2D surface<a name="6"></a></h2><pre class="codeinput">figure
+surf(xx, yy, zz);
+set(gca, <span class="string">'xscale'</span>, <span class="string">'log'</span>, <span class="string">'yscale'</span>, <span class="string">'log'</span>);
+xlabel(<span class="string">'C'</span>);
+ylabel(<span class="string">'\gamma'</span>);
+zlabel(<span class="string">'cv error'</span>)
+printPmtkFigure(<span class="string">'svmCvSurf'</span>)
+</pre><pre class="codeinput">placeFigures;
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Plot CV error vs error vs gamma and C for an SVM, plus 1d slices
+% Similar to Figure 12.6 in "The elements of statistical learning" 2e 
+% by Hastie, Tibshirani, Friedman,
+% We also show the 2D % surface similar to figure 7 in
+% http://www.csie.ntu.edu.tw/~cjlin/papers/guide/guide.pdf.
+% PMTKslow
+%%
+%% Load Data
+
+% This file is from pmtk3.googlecode.com
+
+setSeed(0);
+data = loadData('hastieMixture'); 
+y = convertLabelsToPM1(data.y);
+[X, y] = shuffleRows(data.X, y); % data is ordered
+%% Plot 1D CV Slices
+gammas = [5, 1, 0.5, 0.1];
+Crange = logspace(-1, 3.5, 15); 
+plotArgs = {true, data.bayesError};  %{useLogScale, hline}
+cvopts = {5, 'useSErule', false, 'doPlot', true, 'plotArgs', plotArgs}; %{nfolds, useSErule, doPlot, plotArgs}
+for i=1:numel(gammas)
+    gamma = gammas(i); 
+    svmFit(X, y, 'kernelParam', gamma, 'C', Crange, ...
+        'cvOptions', cvopts);
+    title(['\gamma', sprintf(' = %.1f', gamma)]); 
+    xlabel('C'); ylabel('cv error');
+    printPmtkFigure(sprintf('svmCvGamma%d', 10*gamma));
+end
+%% Plot 2D heat map
+C = logspace(-1, 3.5, 10); 
+gammas = logspace(-1, 1, 10);
+[model, bestParams, CVmu, CVse] = svmFit...
+    (X, y, 'kernelParam', gammas, 'C', C, 'cvOptions', {5, 'useSErule', false, 'doPlot', true});
+xlabel('C');
+ylabel('\gamma');
+set(gca, 'xscale', 'log', 'yscale', 'log'); 
+t = {sprintf('best C = %.2f', bestParams(1))
+    ['best \gamma', sprintf(' = %.2f', bestParams(2) )]};
+title(t);
+printPmtkFigure('svmCvHeatmap')
+ 
+%% Plot 2D contour
+figure
+nc = numel(C);
+ng = numel(gammas); 
+paramSpace = gridSpace(C, gammas);
+xx = reshape(paramSpace(:, 1), nc, ng); 
+yy = reshape(paramSpace(:, 2), nc, ng); 
+zz = reshape(CVmu, nc, ng);
+contour(xx, yy, zz, 'LineWidth', 2); 
+set(gca, 'xscale', 'log', 'yscale', 'log'); 
+xlabel('C');
+ylabel('\gamma');
+printPmtkFigure('svmCvContour')
+
+%% Plot 2D surface
+figure
+surf(xx, yy, zz);
+set(gca, 'xscale', 'log', 'yscale', 'log'); 
+xlabel('C');
+ylabel('\gamma');
+zlabel('cv error')
+printPmtkFigure('svmCvSurf')
+
+%%
+placeFigures;
+
+##### SOURCE END #####
+--></body></html>

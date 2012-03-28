@@ -1,0 +1,115 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>bleiLDAperplexityPlot</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="bleiLDAperplexityPlot.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% Plot fig 9 of Blei'03, "latent dirichlet allocation"</span>
+
+x = [1,3,8,20,50,100,200];
+unigram     = [5800, 5800, 5800, 5800, 5800, 5800, 5800];
+mix_unigram = [5150, 4900, 3950, 3850, 3650, 3675, 3700];
+LDA         = [5200, 4850, 3800, 3450, 3250, 3100, 3050];
+pLSI        = [6750, 6500, 6250, 5600, 4600, 4250, 3450];
+
+figure; hold <span class="string">on</span>;
+ms = 12;
+plot(x, unigram, <span class="string">'-b'</span>, <span class="string">'LineWidth'</span>, 2, <span class="string">'MarkerSize'</span>, ms);
+plot(x, mix_unigram, <span class="string">':rx'</span>, <span class="string">'LineWidth'</span>, 2, <span class="string">'MarkerSize'</span>, ms);
+plot(x, LDA,  <span class="string">'-g*'</span>, <span class="string">'LineWidth'</span>, 2, <span class="string">'MarkerSize'</span>, ms);
+plot(x, pLSI, <span class="string">'-.kx'</span>, <span class="string">'LineWidth'</span>, 2, <span class="string">'MarkerSize'</span>, ms);
+xlim([0,200]);
+ylim([2500,7000]);
+xlabel(<span class="string">'Number of Topics'</span>, <span class="string">'FontSize'</span>, 12);
+ylabel(<span class="string">'Perplexity'</span>, <span class="string">'FontSize'</span>, 12);
+h = legend(<span class="string">'Unigram'</span>, <span class="string">'Mixtures of Unigrams'</span>,<span class="string">'LDA'</span>, <span class="string">'Fold in pLSI'</span>,<span class="keyword">...</span>
+  <span class="string">'Location'</span>, <span class="string">'NorthEast'</span>);
+set(h, <span class="string">'FontSize'</span>, 14);
+hold <span class="string">off</span>;
+printPmtkFigure(<span class="string">'bleiLDAperplexityPlot'</span>)
+</pre><img vspace="5" hspace="5" src="bleiLDAperplexityPlot_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+% Plot fig 9 of Blei'03, "latent dirichlet allocation"
+
+x = [1,3,8,20,50,100,200];
+unigram     = [5800, 5800, 5800, 5800, 5800, 5800, 5800];
+mix_unigram = [5150, 4900, 3950, 3850, 3650, 3675, 3700];
+LDA         = [5200, 4850, 3800, 3450, 3250, 3100, 3050];
+pLSI        = [6750, 6500, 6250, 5600, 4600, 4250, 3450];
+
+figure; hold on;
+ms = 12;
+plot(x, unigram, '-b', 'LineWidth', 2, 'MarkerSize', ms);
+plot(x, mix_unigram, ':rx', 'LineWidth', 2, 'MarkerSize', ms);
+plot(x, LDA,  '-g*', 'LineWidth', 2, 'MarkerSize', ms);
+plot(x, pLSI, '-.kx', 'LineWidth', 2, 'MarkerSize', ms);
+xlim([0,200]);
+ylim([2500,7000]);
+xlabel('Number of Topics', 'FontSize', 12);
+ylabel('Perplexity', 'FontSize', 12);
+h = legend('Unigram', 'Mixtures of Unigrams','LDA', 'Fold in pLSI',...
+  'Location', 'NorthEast');
+set(h, 'FontSize', 14);
+hold off;
+printPmtkFigure('bleiLDAperplexityPlot')
+##### SOURCE END #####
+--></body></html>

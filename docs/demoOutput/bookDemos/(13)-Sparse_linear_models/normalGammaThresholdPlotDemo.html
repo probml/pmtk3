@@ -1,0 +1,346 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Visualize soft thresholding behavior of different log priors</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="normalGammaThresholdPlotDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Visualize soft thresholding behavior of different log priors</h1><!--introduction--><p>PMTKauthor Francois Caron PMTKmodified Kevin Murphy</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#3">laplace</a></li><li><a href="#4">normal Jeffreys</a></li><li><a href="#5">Hierarchical adaptive lasso</a></li><li><a href="#6">NG</a></li><li><a href="#8">Plot</a></li></ul></div><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="keyword">function</span> normalGammaThresholdPlotDemo()
+</pre><pre class="codeinput"><span class="comment">%z=-10:.1:10;</span>
+z=-10:0.5:10;
+x=-10.005:.05:10;
+<span class="keyword">for</span> k=1:length(z)
+</pre><h2>laplace<a name="3"></a></h2><pre class="codeinput">    c=1;
+    [temp outLap(k)]= min(.5*(z(k)-x).^2+c*abs(x));
+</pre><h2>normal Jeffreys<a name="4"></a></h2><pre class="codeinput">    [temp outNJ(k)]=min(.5*(z(k)-x).^2+log(abs(x)));
+</pre><h2>Hierarchical adaptive lasso<a name="5"></a></h2><pre class="codeinput">    bs = [0.01, 0.1,  1];
+    a = 1;
+    <span class="keyword">for</span> i=1:length(bs)
+        [temp outHAL{i}(k)] = <span class="keyword">...</span>
+            min(.5*(z(k)-x).^2 + generalizedStudentNeglogpdf(x, a, bs(i)));
+    <span class="keyword">end</span>
+</pre><h2>NG<a name="6"></a></h2><pre class="codeinput"><span class="comment">    %{
+</span><span class="comment">    deltas = [0.01 0.75 1];
+</span><span class="comment">    for i=1:length(deltas)
+</span><span class="comment">        delta = deltas(i);
+</span><span class="comment">        [temp outNG{i}(k)] = ...
+</span><span class="comment">            min(.5*(z(k)-x).^2+normalGammaNeglogpdf(x, delta, 1)');
+</span><span class="comment">    end
+</span><span class="comment">    %}
+</span>
+
+<span class="comment">    %{
+</span><span class="comment">        %% normal inverse Gaussian
+</span><span class="comment">        deltas = [0.01 0.75 1 2];
+</span><span class="comment">        for i=1:length(deltas)
+</span><span class="comment">            delta = deltas(i);
+</span><span class="comment">            [temp outNIG{i}(k)]=min(.5*(z(k)-x).^2+pen_NIG(x, delta, 1));
+</span><span class="comment">        end
+</span><span class="comment">    %}
+</span>
+<span class="comment">    %{
+</span><span class="comment">    %% normal exponential Gaussian
+</span><span class="comment">    as = [0.5 0.5 0.5 5];
+</span><span class="comment">    bs = [1 0.1 0.05 0.1];
+</span><span class="comment">
+</span><span class="comment">    as = [0.01 0.75 1]; % 2];
+</span><span class="comment">    bs = ones(1,4);
+</span><span class="comment">
+</span><span class="comment">    for i=1:length(as)
+</span><span class="comment">        [temp outNEG{i}(k)]=min(.5*(z(k)-x).^2+normalExpGammaNeglogpdf(x, as(i), bs(i)));
+</span><span class="comment">    end
+</span><span class="comment">    %}</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><h2>Plot<a name="8"></a></h2><pre class="codeinput">fs = 14;
+
+[styles, colors, symbols] =  plotColors();
+figure();
+plot(z, x(outLap), [styles{1}, colors(1)], <span class="string">'linewidth'</span>, 3);
+hold <span class="string">on</span>
+plot(z, z, [styles{2}, colors(2)], <span class="string">'linewidth'</span>, 3)
+title(<span class="string">'Lasso'</span>, <span class="string">'fontsize'</span>, fs)
+xlabel(<span class="string">'w^{MLE}'</span>, <span class="string">'fontsize'</span>, fs)
+ylabel(<span class="string">'w^{MAP}'</span>, <span class="string">'fontsize'</span>, fs)
+printPmtkFigure(<span class="string">'lassoThreshold'</span>)
+</pre><img vspace="5" hspace="5" src="normalGammaThresholdPlotDemo_01.png" alt=""> <pre class="codeinput">[styles, colors, symbols] =  plotColors();
+figure();
+plot(z, x(outNJ), [styles{1}, colors(1)], <span class="string">'linewidth'</span>, 3);
+hold <span class="string">on</span>
+plot(z, z, [styles{2}, colors(2)], <span class="string">'linewidth'</span>, 3)
+title(<span class="string">'normalJeffreys'</span>, <span class="string">'fontsize'</span>, fs)
+xlabel(<span class="string">'w^{MLE}'</span>, <span class="string">'fontsize'</span>, fs)
+ylabel(<span class="string">'w^{MAP}'</span>, <span class="string">'fontsize'</span>, fs)
+printPmtkFigure(<span class="string">'NJthreshold'</span>)
+</pre><img vspace="5" hspace="5" src="normalGammaThresholdPlotDemo_02.png" alt=""> <pre class="codeinput">figure();
+hold <span class="string">on</span>
+<span class="keyword">for</span> i=1:length(bs)
+    plot(z, x(outHAL{i}), [styles{i+1}, colors(i+2)], <span class="string">'linewidth'</span>, 3);
+    str{i} = sprintf(<span class="string">'%s = %5.3f, a=1'</span>, <span class="string">'b'</span>, bs(i));
+<span class="keyword">end</span>
+legend(str, <span class="string">'location'</span>, <span class="string">'southeast'</span>)
+plot(z, z, [styles{2}, colors(2)], <span class="string">'linewidth'</span>, 3)
+title(<span class="string">'HAL'</span>, <span class="string">'fontsize'</span>, fs)
+xlabel(<span class="string">'w^{MLE}'</span>, <span class="string">'fontsize'</span>, fs)
+ylabel(<span class="string">'w^{MAP}'</span>, <span class="string">'fontsize'</span>, fs)
+printPmtkFigure(<span class="string">'HALthreshold'</span>)
+</pre><img vspace="5" hspace="5" src="normalGammaThresholdPlotDemo_03.png" alt=""> <pre class="codeinput"><span class="comment">%{
+</span><span class="comment">figure();
+</span><span class="comment">hold on
+</span><span class="comment">for i=1:length(deltas)
+</span><span class="comment">    plot(z, x(outNG{i}), [styles{i+1}, colors(i+2)], 'linewidth', 3);
+</span><span class="comment">    str{i} = sprintf('%s = %5.3f, c=1', '\delta', deltas(i));
+</span><span class="comment">end
+</span><span class="comment">legend(str, 'location', 'southeast')
+</span><span class="comment">plot(z, z, [styles{2}, colors(2)], 'linewidth', 3)
+</span><span class="comment">title('normalGamma', 'fontsize', fs)
+</span><span class="comment">xlabel('w^{MLE}', 'fontsize', fs)
+</span><span class="comment">ylabel('w^{MAP}', 'fontsize', fs)
+</span><span class="comment">printPmtkFigure('NGthreshold')
+</span><span class="comment">%}</span>
+</pre><pre class="codeinput"><span class="comment">%{
+</span><span class="comment">    figure();
+</span><span class="comment">    hold on
+</span><span class="comment">    for i=1:length(deltas)
+</span><span class="comment">        plot(z,x(outNIG{i}),styles{i}, 'linewidth', 3);
+</span><span class="comment">        str{i} = sprintf('%s = %5.3f, c=1', '\delta', deltas(i));
+</span><span class="comment">    end
+</span><span class="comment">    legend(str, 'location', 'southeast')
+</span><span class="comment">    plot(z,z,'r:', 'linewidth', 3)
+</span><span class="comment">    title('normalInvGauss')
+</span><span class="comment">    printPmtkFigure('NIGthreshold')
+</span><span class="comment">end
+</span><span class="comment">%}</span>
+</pre><pre class="codeinput"><span class="comment">%{
+</span><span class="comment">figure
+</span><span class="comment">hold on
+</span><span class="comment">for i=1:length(outNEG)
+</span><span class="comment">    plot(z,x(outNEG{i}),[styles{i+2}, colors(i+2)], 'linewidth', 3);
+</span><span class="comment">    str{i} = sprintf('a = %5.3f, b=%5.3f', as(i), bs(i));
+</span><span class="comment">end
+</span><span class="comment">legend(str, 'location', 'southeast')
+</span><span class="comment">plot(z, z, [styles{2}, colors(2)], 'linewidth', 3)
+</span><span class="comment">title('normalExpGamma', 'fontsize', fs)
+</span><span class="comment">xlabel('w^{MLE}', 'fontsize', fs)
+</span><span class="comment">ylabel('w^{MAP}', 'fontsize', fs)
+</span><span class="comment">printPmtkFigure('NEGthreshold')
+</span><span class="comment">%}</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">function</span> out = pen_NIG(w, delta, gamma)
+tmp = sqrt(delta^2 + w.^2);
+out = log(tmp)-log(besselk(1,gamma*tmp));
+<span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Visualize soft thresholding behavior of different log priors
+% PMTKauthor Francois Caron
+% PMTKmodified Kevin Murphy
+%%
+
+% This file is from pmtk3.googlecode.com
+
+function normalGammaThresholdPlotDemo()
+%z=-10:.1:10;
+z=-10:0.5:10;
+x=-10.005:.05:10;
+for k=1:length(z)
+    %% laplace
+    c=1;
+    [temp outLap(k)]= min(.5*(z(k)-x).^2+c*abs(x));
+    
+     %% normal Jeffreys
+    [temp outNJ(k)]=min(.5*(z(k)-x).^2+log(abs(x)));
+    
+    
+    %% Hierarchical adaptive lasso
+    bs = [0.01, 0.1,  1];
+    a = 1;
+    for i=1:length(bs)
+        [temp outHAL{i}(k)] = ...
+            min(.5*(z(k)-x).^2 + generalizedStudentNeglogpdf(x, a, bs(i)));
+    end
+    
+    %% NG
+    %{
+    deltas = [0.01 0.75 1];
+    for i=1:length(deltas)
+        delta = deltas(i);
+        [temp outNG{i}(k)] = ...
+            min(.5*(z(k)-x).^2+normalGammaNeglogpdf(x, delta, 1)');
+    end
+    %}
+    
+    
+    %{
+        %% normal inverse Gaussian
+        deltas = [0.01 0.75 1 2];
+        for i=1:length(deltas)
+            delta = deltas(i);
+            [temp outNIG{i}(k)]=min(.5*(z(k)-x).^2+pen_NIG(x, delta, 1));
+        end
+    %}
+    
+    %{
+    %% normal exponential Gaussian
+    as = [0.5 0.5 0.5 5];
+    bs = [1 0.1 0.05 0.1];
+    
+    as = [0.01 0.75 1]; % 2];
+    bs = ones(1,4);
+    
+    for i=1:length(as)
+        [temp outNEG{i}(k)]=min(.5*(z(k)-x).^2+normalExpGammaNeglogpdf(x, as(i), bs(i)));
+    end
+    %}
+end
+%% Plot
+fs = 14;
+
+[styles, colors, symbols] =  plotColors();
+figure();
+plot(z, x(outLap), [styles{1}, colors(1)], 'linewidth', 3);
+hold on
+plot(z, z, [styles{2}, colors(2)], 'linewidth', 3)
+title('Lasso', 'fontsize', fs)
+xlabel('w^{MLE}', 'fontsize', fs)
+ylabel('w^{MAP}', 'fontsize', fs)
+printPmtkFigure('lassoThreshold')
+
+%%
+[styles, colors, symbols] =  plotColors();
+figure();
+plot(z, x(outNJ), [styles{1}, colors(1)], 'linewidth', 3);
+hold on
+plot(z, z, [styles{2}, colors(2)], 'linewidth', 3)
+title('normalJeffreys', 'fontsize', fs)
+xlabel('w^{MLE}', 'fontsize', fs)
+ylabel('w^{MAP}', 'fontsize', fs)
+printPmtkFigure('NJthreshold')
+%%
+figure();
+hold on
+for i=1:length(bs)
+    plot(z, x(outHAL{i}), [styles{i+1}, colors(i+2)], 'linewidth', 3);
+    str{i} = sprintf('%s = %5.3f, a=1', 'b', bs(i));
+end
+legend(str, 'location', 'southeast')
+plot(z, z, [styles{2}, colors(2)], 'linewidth', 3)
+title('HAL', 'fontsize', fs)
+xlabel('w^{MLE}', 'fontsize', fs)
+ylabel('w^{MAP}', 'fontsize', fs)
+printPmtkFigure('HALthreshold')
+%%
+%{
+figure();
+hold on
+for i=1:length(deltas)
+    plot(z, x(outNG{i}), [styles{i+1}, colors(i+2)], 'linewidth', 3);
+    str{i} = sprintf('%s = %5.3f, c=1', '\delta', deltas(i));
+end
+legend(str, 'location', 'southeast')
+plot(z, z, [styles{2}, colors(2)], 'linewidth', 3)
+title('normalGamma', 'fontsize', fs)
+xlabel('w^{MLE}', 'fontsize', fs)
+ylabel('w^{MAP}', 'fontsize', fs)
+printPmtkFigure('NGthreshold')
+%}
+%%
+%{
+    figure();
+    hold on
+    for i=1:length(deltas)
+        plot(z,x(outNIG{i}),styles{i}, 'linewidth', 3);
+        str{i} = sprintf('%s = %5.3f, c=1', '\delta', deltas(i));
+    end
+    legend(str, 'location', 'southeast')
+    plot(z,z,'r:', 'linewidth', 3)
+    title('normalInvGauss')
+    printPmtkFigure('NIGthreshold')
+end
+%}
+%%
+%{
+figure
+hold on
+for i=1:length(outNEG)
+    plot(z,x(outNEG{i}),[styles{i+2}, colors(i+2)], 'linewidth', 3);
+    str{i} = sprintf('a = %5.3f, b=%5.3f', as(i), bs(i));
+end
+legend(str, 'location', 'southeast')
+plot(z, z, [styles{2}, colors(2)], 'linewidth', 3)
+title('normalExpGamma', 'fontsize', fs)
+xlabel('w^{MLE}', 'fontsize', fs)
+ylabel('w^{MAP}', 'fontsize', fs)
+printPmtkFigure('NEGthreshold')
+%}
+%%
+
+end
+
+%%
+function out = pen_NIG(w, delta, gamma)
+tmp = sqrt(delta^2 + w.^2);
+out = log(tmp)-log(besselk(1,gamma*tmp));
+end
+
+##### SOURCE END #####
+--></body></html>

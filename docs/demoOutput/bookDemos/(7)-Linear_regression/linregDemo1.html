@@ -1,0 +1,171 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Linear Regression Demo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="linregDemo1.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Linear Regression Demo</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Make data</a></li><li><a href="#2">Fit using Matlab's functions</a></li><li><a href="#3">Test simple linear regression equations</a></li><li><a href="#4">Use pmtk functions to do same thing</a></li><li><a href="#5">Plot</a></li><li><a href="#6">Repeat with standardization</a></li></ul></div><h2>Make data<a name="1"></a></h2><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+[xtrain, ytrain, xtest, ytestNoisefree, ytest] = polyDataMake(<span class="string">'sampling'</span>,<span class="string">'thibaux'</span>);
+Xtrain = xtrain; Xtest = xtest;
+</pre><h2>Fit using Matlab's functions<a name="2"></a></h2><pre class="codeinput">Xtrain1 = [ones(size(Xtrain,1),1) Xtrain];
+w = Xtrain1 \ ytrain
+Xtest1 = [ones(size(Xtest,1),1) Xtest];
+ypredTest = Xtest1*w;
+</pre><pre class="codeoutput">w =
+   -5.9605
+    0.6704
+</pre><h2>Test simple linear regression equations<a name="3"></a></h2><pre class="codeinput">xbar = mean(xtrain); ybar = mean(ytrain); N = length(ytrain);
+w1 = sum( (xtrain-xbar) .* (ytrain-ybar) ) / sum( (xtrain-xbar).^2 )
+w0 = ybar - w1*xbar
+assert(approxeq([w0 w1], w))
+</pre><pre class="codeoutput">w1 =
+    0.6704
+w0 =
+   -5.9605
+</pre><h2>Use pmtk functions to do same thing<a name="4"></a></h2><pre class="codeinput">model2 = linregFit(Xtrain, ytrain);
+[ypredTest2, v2] = linregPredict(model2, Xtest);
+assert(approxeq(ypredTest, ypredTest2))
+assert(approxeq(w, model2.w))
+</pre><h2>Plot<a name="5"></a></h2><pre class="codeinput">figure;
+scatter(xtrain,ytrain,<span class="string">'b'</span>,<span class="string">'filled'</span>);
+<span class="comment">%plot(xtrain,ytrain, 'bo', 'linewidth', 3, 'markersize', 12);</span>
+hold <span class="string">on</span>;
+plot(xtest, ypredTest, <span class="string">'k'</span>, <span class="string">'linewidth'</span>, 3);
+<span class="comment">% plot subset of error bars</span>
+Ntest = length(xtest);
+ndx = floor(linspace(1, Ntest, floor(0.05*Ntest)));
+errorbar(xtest(ndx), ypredTest(ndx), sqrt(v2(ndx)))
+printPmtkFigure(<span class="string">'linregDemo1'</span>)
+</pre><img vspace="5" hspace="5" src="linregDemo1_01.png" alt=""> <h2>Repeat with standardization<a name="6"></a></h2><p>This has no effect on the predictions in this case Be careful not to apply standardization to the column of 1s! Note that we use xtrain not Xtrain, and xtest not Xtest</p><pre class="codeinput">[Xtrain, mu, sigma] = standardizeCols(xtrain);
+Xtest = standardizeCols(xtest, mu, sigma);
+
+model = linregFit(Xtrain, ytrain);
+ypredTest3 = linregPredict(model, Xtest);
+assert(approxeq(ypredTest, ypredTest3))
+
+figure;
+scatter(Xtrain(:,1),ytrain,<span class="string">'b'</span>,<span class="string">'filled'</span>);
+hold <span class="string">on</span>;
+plot(Xtest(:,1), ypredTest, <span class="string">'k'</span>, <span class="string">'linewidth'</span>, 3);
+printPmtkFigure(<span class="string">'linregWedge2Line'</span>);
+</pre><img vspace="5" hspace="5" src="linregDemo1_02.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Linear Regression Demo
+%
+%% Make data
+
+% This file is from pmtk3.googlecode.com
+
+[xtrain, ytrain, xtest, ytestNoisefree, ytest] = polyDataMake('sampling','thibaux');
+Xtrain = xtrain; Xtest = xtest;
+
+%% Fit using Matlab's functions
+Xtrain1 = [ones(size(Xtrain,1),1) Xtrain];
+w = Xtrain1 \ ytrain
+Xtest1 = [ones(size(Xtest,1),1) Xtest];
+ypredTest = Xtest1*w;
+
+%% Test simple linear regression equations
+xbar = mean(xtrain); ybar = mean(ytrain); N = length(ytrain);
+w1 = sum( (xtrain-xbar) .* (ytrain-ybar) ) / sum( (xtrain-xbar).^2 )
+w0 = ybar - w1*xbar
+assert(approxeq([w0 w1], w))
+
+%% Use pmtk functions to do same thing
+model2 = linregFit(Xtrain, ytrain);
+[ypredTest2, v2] = linregPredict(model2, Xtest);
+assert(approxeq(ypredTest, ypredTest2))
+assert(approxeq(w, model2.w))
+
+%% Plot
+figure;
+scatter(xtrain,ytrain,'b','filled');
+%plot(xtrain,ytrain, 'bo', 'linewidth', 3, 'markersize', 12);
+hold on;
+plot(xtest, ypredTest, 'k', 'linewidth', 3);
+% plot subset of error bars
+Ntest = length(xtest);
+ndx = floor(linspace(1, Ntest, floor(0.05*Ntest)));
+errorbar(xtest(ndx), ypredTest(ndx), sqrt(v2(ndx)))
+printPmtkFigure('linregDemo1')
+
+%% Repeat with standardization
+% This has no effect on the predictions in this case
+% Be careful not to apply standardization to the column of 1s!
+% Note that we use xtrain not Xtrain, and xtest not Xtest
+[Xtrain, mu, sigma] = standardizeCols(xtrain);
+Xtest = standardizeCols(xtest, mu, sigma);
+
+model = linregFit(Xtrain, ytrain);
+ypredTest3 = linregPredict(model, Xtest);
+assert(approxeq(ypredTest, ypredTest3))
+
+figure;
+scatter(Xtrain(:,1),ytrain,'b','filled');
+hold on;
+plot(Xtest(:,1), ypredTest, 'k', 'linewidth', 3);
+printPmtkFigure('linregWedge2Line');
+
+
+##### SOURCE END #####
+--></body></html>

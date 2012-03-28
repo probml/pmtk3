@@ -1,0 +1,170 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Likelihood surface of mixture of 2 Gaussians in 1d</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="mixGaussLikSurfaceDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Likelihood surface of mixture of 2 Gaussians in 1d</h1><!--introduction--><p>Based on code by Mike Li</p><!--/introduction--><p>Generate data</p><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+fs = 12;
+setSeed(0);
+true_mu1 = -10;
+true_mu2 = 10;
+true_pi = 0.5;
+
+sigmas = [5];
+<span class="keyword">for</span> sigmai=1:length(sigmas)
+true_sigma = sigmas(sigmai);
+
+
+n_obs = 100;
+obs = [true_mu1 + true_sigma*randn(1, n_obs) true_mu2 + true_sigma*randn(1, n_obs)]';
+
+figure;
+hist(obs);
+printPmtkFigure(sprintf(<span class="string">'gmmLikSurfaceHistSigma%d'</span>, true_sigma))
+
+<span class="comment">% Evaluate likelihood surface</span>
+dmu = .5;
+mu1_bins = -20:dmu:20;
+mu2_bins = -20:dmu:20;
+
+n_mu1_bins = length(mu1_bins);
+n_mu2_bins = length(mu2_bins);
+
+lik_bins = zeros(n_mu1_bins, n_mu2_bins);
+<span class="keyword">for</span> b1 = 1:n_mu1_bins
+  <span class="keyword">for</span> b2 = 1:n_mu2_bins
+    p1 = true_pi * gaussProb(obs, mu1_bins(b1), true_sigma);
+    p2 = (1-true_pi) * gaussProb(obs, mu2_bins(b2), true_sigma);
+    lik_bins(b1, b2) = sum(log(p1 + p2));
+  <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+figure;
+contour(lik_bins);
+set(gca, <span class="string">'XTickLabel'</span>, mu1_bins(get(gca, <span class="string">'XTick'</span>)))
+set(gca, <span class="string">'YTickLabel'</span>, mu2_bins(get(gca, <span class="string">'YTick'</span>)))
+xlabel(<span class="string">'\mu_1'</span>, <span class="string">'fontsize'</span>, fs)
+ylabel(<span class="string">'\mu_2'</span>, <span class="string">'fontsize'</span>, fs)
+axis <span class="string">square</span>
+printPmtkFigure(sprintf(<span class="string">'gmmLikSurfaceSurSigma%d'</span>, true_sigma))
+
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="mixGaussLikSurfaceDemo_01.png" alt=""> <img vspace="5" hspace="5" src="mixGaussLikSurfaceDemo_02.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Likelihood surface of mixture of 2 Gaussians in 1d
+% Based on code by Mike Li
+%%
+% Generate data
+
+% This file is from pmtk3.googlecode.com
+
+fs = 12;
+setSeed(0);
+true_mu1 = -10;
+true_mu2 = 10;
+true_pi = 0.5;
+
+sigmas = [5];
+for sigmai=1:length(sigmas)
+true_sigma = sigmas(sigmai);
+
+
+n_obs = 100;
+obs = [true_mu1 + true_sigma*randn(1, n_obs) true_mu2 + true_sigma*randn(1, n_obs)]';
+
+figure;
+hist(obs);
+printPmtkFigure(sprintf('gmmLikSurfaceHistSigma%d', true_sigma))
+
+% Evaluate likelihood surface
+dmu = .5;
+mu1_bins = -20:dmu:20;
+mu2_bins = -20:dmu:20;
+
+n_mu1_bins = length(mu1_bins);
+n_mu2_bins = length(mu2_bins);
+
+lik_bins = zeros(n_mu1_bins, n_mu2_bins);
+for b1 = 1:n_mu1_bins
+  for b2 = 1:n_mu2_bins
+    p1 = true_pi * gaussProb(obs, mu1_bins(b1), true_sigma);
+    p2 = (1-true_pi) * gaussProb(obs, mu2_bins(b2), true_sigma);
+    lik_bins(b1, b2) = sum(log(p1 + p2));
+  end
+end
+
+figure;
+contour(lik_bins);
+set(gca, 'XTickLabel', mu1_bins(get(gca, 'XTick')))
+set(gca, 'YTickLabel', mu2_bins(get(gca, 'YTick')))
+xlabel('\mu_1', 'fontsize', fs)
+ylabel('\mu_2', 'fontsize', fs)
+axis square
+printPmtkFigure(sprintf('gmmLikSurfaceSurSigma%d', true_sigma))
+
+end
+
+
+##### SOURCE END #####
+--></body></html>

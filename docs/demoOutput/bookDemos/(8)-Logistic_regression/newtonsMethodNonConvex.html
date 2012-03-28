@@ -1,0 +1,166 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Illustration of Newton's method for a non convex function.</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="newtonsMethodNonConvex.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Illustration of Newton's method for a non convex function.</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="keyword">function</span> newtonsMethodNonConvex
+
+
+figure(); hold <span class="string">on</span>;
+xmin   = -4;  xmax = 13;
+ymin   = -50; ymax = 600;
+domain = xmin:0.01:xmax;
+f = @(x)-x.^3 + 15*x.^2;
+Xk = 8;
+f1 = @(x) -3*x.^2 + 30*x;
+f2 = @(x) -6*x + 30;
+t = @(x) f(Xk) + f1(Xk)*(x - Xk) + (1/2)*f2(Xk)*(x - Xk).^2;
+[val, maxNDX] = max(t(domain));
+maximum = domain(maxNDX);
+h1 = plot(domain, f(domain), <span class="string">'-r'</span>, <span class="string">'LineWidth'</span>, 3);
+h2 = plot(domain, t(domain), <span class="string">'--b'</span>, <span class="string">'LineWidth'</span>, 2.5);
+legend([h1, h2], {<span class="string">'f(x)'</span>, <span class="string">'f_{quad}(x)'</span>}, <span class="string">'Location'</span>, <span class="string">'NorthWest'</span>);
+plot(Xk, f(Xk), <span class="string">'.k'</span>, <span class="string">'MarkerSize'</span>, 25);
+plot([Xk, Xk], [ymin, f(Xk)], <span class="string">':k'</span>);
+plot(maximum, t(maximum),<span class="string">'.k'</span>, <span class="string">'MarkerSize'</span>, 25);
+plot([maximum,  maximum], [ymin, t(maximum)], <span class="string">':k'</span>);
+<span class="comment">% x^(k)</span>
+annotation(gcf,<span class="string">'textbox'</span>        , [0.65 0 0.09946 0.11] , <span class="keyword">...</span>
+               <span class="string">'String'</span>         , {<span class="string">'x_{k}'</span>}             , <span class="keyword">...</span>
+               <span class="string">'FontSize'</span>       , 18                    , <span class="keyword">...</span>
+               <span class="string">'FitBoxToText'</span>   , <span class="string">'off'</span>                 , <span class="keyword">...</span>
+               <span class="string">'LineStyle'</span>      , <span class="string">'none'</span>                );
+<span class="comment">% x^(k) + v^(k)</span>
+annotation(gcf,<span class="string">'textbox'</span>        , [0.76 0 0.09946 0.11] ,<span class="keyword">...</span>
+               <span class="string">'String'</span>         , {<span class="string">'x_{k}+d_{k}'</span>}       ,<span class="keyword">...</span>
+               <span class="string">'FontSize'</span>       , 18                    ,<span class="keyword">...</span>
+               <span class="string">'FitBoxToText'</span>   , <span class="string">'off'</span>                 ,<span class="keyword">...</span>
+               <span class="string">'LineStyle'</span>      , <span class="string">'none'</span>                );
+
+axis([xmin, xmax, ymin, ymax]);
+set(gca, <span class="string">'XTick'</span>, [Xk, maximum] , <span class="keyword">...</span>
+    <span class="string">'XTickLabel'</span>, {<span class="string">''</span>, <span class="string">''</span>}      , <span class="keyword">...</span>
+    <span class="string">'YTick'</span>, []                 , <span class="keyword">...</span>
+    <span class="string">'FontSize'</span>, 16              , <span class="keyword">...</span>
+    <span class="string">'Box'</span>, <span class="string">'on'</span>                 , <span class="keyword">...</span>
+    <span class="string">'LineWidth'</span>,2               );
+
+printPmtkFigure(<span class="string">'newtonsMethodNonConvex'</span>);
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="newtonsMethodNonConvex_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Illustration of Newton's method for a non convex function. 
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+function newtonsMethodNonConvex
+
+
+figure(); hold on; 
+xmin   = -4;  xmax = 13;
+ymin   = -50; ymax = 600;
+domain = xmin:0.01:xmax;
+f = @(x)-x.^3 + 15*x.^2;
+Xk = 8;         
+f1 = @(x) -3*x.^2 + 30*x;
+f2 = @(x) -6*x + 30;
+t = @(x) f(Xk) + f1(Xk)*(x - Xk) + (1/2)*f2(Xk)*(x - Xk).^2;
+[val, maxNDX] = max(t(domain));
+maximum = domain(maxNDX);
+h1 = plot(domain, f(domain), '-r', 'LineWidth', 3);
+h2 = plot(domain, t(domain), 'REPLACE_WITH_DASH_DASHb', 'LineWidth', 2.5);
+legend([h1, h2], {'f(x)', 'f_{quad}(x)'}, 'Location', 'NorthWest');
+plot(Xk, f(Xk), '.k', 'MarkerSize', 25);
+plot([Xk, Xk], [ymin, f(Xk)], ':k');
+plot(maximum, t(maximum),'.k', 'MarkerSize', 25);
+plot([maximum,  maximum], [ymin, t(maximum)], ':k');
+% x^(k)
+annotation(gcf,'textbox'        , [0.65 0 0.09946 0.11] , ...
+               'String'         , {'x_{k}'}             , ...
+               'FontSize'       , 18                    , ...
+               'FitBoxToText'   , 'off'                 , ...
+               'LineStyle'      , 'none'                );
+% x^(k) + v^(k)
+annotation(gcf,'textbox'        , [0.76 0 0.09946 0.11] ,...
+               'String'         , {'x_{k}+d_{k}'}       ,...
+               'FontSize'       , 18                    ,...
+               'FitBoxToText'   , 'off'                 ,...
+               'LineStyle'      , 'none'                );
+
+axis([xmin, xmax, ymin, ymax]);
+set(gca, 'XTick', [Xk, maximum] , ...
+    'XTickLabel', {'', ''}      , ...
+    'YTick', []                 , ...
+    'FontSize', 16              , ...
+    'Box', 'on'                 , ...
+    'LineWidth',2               );
+
+printPmtkFigure('newtonsMethodNonConvex');
+end
+
+##### SOURCE END #####
+--></body></html>

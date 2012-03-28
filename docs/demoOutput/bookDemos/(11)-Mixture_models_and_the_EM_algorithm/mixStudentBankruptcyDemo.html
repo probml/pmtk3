@@ -1,0 +1,287 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Fit a mixture of Gaussians and mixture of Students to some data</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="mixStudentBankruptcyDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Fit a mixture of Gaussians and mixture of Students to some data</h1><p>and use the resulting models to classify This example is based on fig 3.3 of Kenneth Lo's PhD thesis, "Statistical methods for high throughput genomics", UBC 2009</p><pre class="codeinput"><span class="comment">%PMTKauthor Hannes Bretschneider</span>
+</pre><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="keyword">function</span> mixStudentBankruptcyDemo()
+
+setSeed(0);
+bank = loadData(<span class="string">'bankruptcy'</span>);
+Y = bank.data(:,1); <span class="comment">% 0,1</span>
+X = bank.data(:,2:3);
+[N, D] = size(X);
+X = standardizeCols(X);
+K = 2;
+
+
+[model] = mixStudentFit(X, K);
+pz = mixStudentInferLatent(model, X);
+[~, zhat] = max(pz, [], 2);
+figure;
+process(model, zhat, X, Y, <span class="string">'student'</span>);
+printPmtkFigure(<span class="string">'robustMixStudentBankruptcy'</span>)
+
+
+[model] = mixGaussFit(X, K);
+pz = mixGaussInferLatent(model, X);
+[~, zhat] = max(pz, [], 2);
+figure;
+process(model, zhat, X, Y, <span class="string">'gauss'</span>);
+printPmtkFigure(<span class="string">'robustMixGaussBankruptcy'</span>)
+
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> process(model, classes, X, Y, name)
+
+K = model.nmix;
+<span class="comment">% Plot class conditional densities</span>
+hold <span class="string">on</span>;
+<span class="keyword">for</span> c=1:K
+	gaussPlot2d(model.cpd.mu(:,c), model.cpd.Sigma(:,:,c));
+<span class="keyword">end</span>
+
+<span class="comment">% Check whether class 1 should be bankrupt or otherwise</span>
+idx1 = find(classes == 1);
+idx2 = find(classes == 2);
+error1 = sum(Y(idx1) ~= 1) + sum(Y(idx2) ~= 0);
+error2 = sum(Y(idx1) ~= 0) + sum(Y(idx2) ~= 1);
+nerror = error1;
+<span class="keyword">if</span> (error2 &lt; error1)
+	<span class="comment">% swap the label of classes == 1 and classes == 2</span>
+	classes = classes + (classes == 1) - (classes == 2);
+	nerror = error2;
+<span class="keyword">end</span>
+
+<span class="comment">% indices of true and false positive/ negatives</span>
+idxbankrupt1 = find(Y == 0 &amp; classes(:) == 2);
+idxbankrupt2 = find(Y == 0 &amp; classes(:) == 1);
+idxsolvent1 = find(Y == 1 &amp; classes(:) == 1);
+idxsolvent2 = find(Y == 1 &amp; classes(:) == 2);
+
+<span class="comment">% Plot data and predictions</span>
+h1 = plot(X(idxbankrupt1, 1), X(idxbankrupt1,2), <span class="string">'bo'</span>);
+plot(X(idxbankrupt2, 1), X(idxbankrupt2,2), <span class="string">'ro'</span>);
+h2 = plot(X(idxsolvent1, 1), X(idxsolvent1,2), <span class="string">'b^'</span>);
+plot(X(idxsolvent2, 1), X(idxsolvent2,2), <span class="string">'r^'</span>);
+title(sprintf(<span class="string">'%d errors using %s (red=error)'</span>, nerror, name ));
+legend([h1 h2], <span class="string">'Bankrupt'</span>, <span class="string">'Solvent'</span>, <span class="string">'location'</span>, <span class="string">'southeast'</span>);
+fprintf(<span class="string">'Num Errors using %s: %d\n'</span> , name, nerror);
+
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">initializing model for EM
+1	 loglik: -124.115
+2	 loglik: -122.705
+3	 loglik: -121.873
+4	 loglik: -121.049
+5	 loglik: -120.423
+6	 loglik: -119.939
+7	 loglik: -119.559
+8	 loglik: -119.244
+9	 loglik: -118.961
+10	 loglik: -118.685
+11	 loglik: -118.399
+12	 loglik: -118.092
+13	 loglik: -117.768
+14	 loglik: -117.444
+15	 loglik: -117.141
+16	 loglik: -116.874
+17	 loglik: -116.651
+18	 loglik: -116.471
+19	 loglik: -116.326
+20	 loglik: -116.209
+21	 loglik: -116.111
+22	 loglik: -116.024
+23	 loglik: -115.942
+24	 loglik: -115.862
+25	 loglik: -115.779
+26	 loglik: -115.693
+27	 loglik: -115.6
+28	 loglik: -115.501
+29	 loglik: -115.395
+30	 loglik: -115.282
+31	 loglik: -115.161
+32	 loglik: -115.031
+33	 loglik: -114.891
+34	 loglik: -114.74
+35	 loglik: -114.576
+36	 loglik: -114.398
+37	 loglik: -114.211
+38	 loglik: -114.017
+39	 loglik: -113.826
+40	 loglik: -113.646
+41	 loglik: -113.484
+42	 loglik: -113.342
+43	 loglik: -113.221
+44	 loglik: -113.117
+45	 loglik: -113.03
+46	 loglik: -112.956
+47	 loglik: -112.893
+48	 loglik: -112.841
+49	 loglik: -112.797
+50	 loglik: -112.761
+51	 loglik: -112.732
+Num Errors using student: 3
+initializing model for EM
+1	 loglik: -148.053
+2	 loglik: -144.906
+3	 loglik: -144.518
+4	 loglik: -144.203
+5	 loglik: -143.941
+6	 loglik: -143.729
+7	 loglik: -143.556
+8	 loglik: -143.408
+9	 loglik: -143.273
+10	 loglik: -143.148
+11	 loglik: -143.031
+12	 loglik: -142.926
+13	 loglik: -142.835
+14	 loglik: -142.761
+15	 loglik: -142.703
+16	 loglik: -142.659
+17	 loglik: -142.626
+18	 loglik: -142.601
+19	 loglik: -142.584
+20	 loglik: -142.571
+Num Errors using gauss: 14
+</pre><img vspace="5" hspace="5" src="mixStudentBankruptcyDemo_01.png" alt=""> <img vspace="5" hspace="5" src="mixStudentBankruptcyDemo_02.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Fit a mixture of Gaussians and mixture of Students to some data
+% and use the resulting models to classify
+% This example is based on fig 3.3 of Kenneth Lo's PhD thesis,
+% "Statistical methods for high throughput genomics", UBC 2009
+%PMTKauthor Hannes Bretschneider
+%%
+
+% This file is from pmtk3.googlecode.com
+
+function mixStudentBankruptcyDemo()
+
+setSeed(0);
+bank = loadData('bankruptcy');
+Y = bank.data(:,1); % 0,1
+X = bank.data(:,2:3);
+[N, D] = size(X);
+X = standardizeCols(X);
+K = 2;
+
+
+[model] = mixStudentFit(X, K);
+pz = mixStudentInferLatent(model, X);
+[~, zhat] = max(pz, [], 2);
+figure;
+process(model, zhat, X, Y, 'student');
+printPmtkFigure('robustMixStudentBankruptcy')
+
+
+[model] = mixGaussFit(X, K);
+pz = mixGaussInferLatent(model, X);
+[~, zhat] = max(pz, [], 2);
+figure;
+process(model, zhat, X, Y, 'gauss');
+printPmtkFigure('robustMixGaussBankruptcy')
+
+end
+
+function process(model, classes, X, Y, name)
+
+K = model.nmix;
+% Plot class conditional densities
+hold on;
+for c=1:K
+	gaussPlot2d(model.cpd.mu(:,c), model.cpd.Sigma(:,:,c));
+end
+
+% Check whether class 1 should be bankrupt or otherwise
+idx1 = find(classes == 1);
+idx2 = find(classes == 2);
+error1 = sum(Y(idx1) ~= 1) + sum(Y(idx2) ~= 0);
+error2 = sum(Y(idx1) ~= 0) + sum(Y(idx2) ~= 1);
+nerror = error1;
+if (error2 < error1)
+	% swap the label of classes == 1 and classes == 2
+	classes = classes + (classes == 1) - (classes == 2);
+	nerror = error2;
+end
+
+% indices of true and false positive/ negatives
+idxbankrupt1 = find(Y == 0 & classes(:) == 2);
+idxbankrupt2 = find(Y == 0 & classes(:) == 1);
+idxsolvent1 = find(Y == 1 & classes(:) == 1);
+idxsolvent2 = find(Y == 1 & classes(:) == 2);
+
+% Plot data and predictions
+h1 = plot(X(idxbankrupt1, 1), X(idxbankrupt1,2), 'bo');
+plot(X(idxbankrupt2, 1), X(idxbankrupt2,2), 'ro');
+h2 = plot(X(idxsolvent1, 1), X(idxsolvent1,2), 'b^');
+plot(X(idxsolvent2, 1), X(idxsolvent2,2), 'r^');
+title(sprintf('%d errors using %s (red=error)', nerror, name ));
+legend([h1 h2], 'Bankrupt', 'Solvent', 'location', 'southeast');
+fprintf('Num Errors using %s: %d\n' , name, nerror);
+
+end
+
+##### SOURCE END #####
+--></body></html>

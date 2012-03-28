@@ -1,0 +1,221 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Posterior predictive density for Bayesian linear Regression in 1d with Polynomial Basis</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="linregPostPredDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Posterior predictive density for Bayesian linear Regression in 1d with Polynomial Basis</h1><!--introduction--><p>We use a gaussian prior with fixed noise variance We plot the posterior predictive density, and samples from it</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">MLE</a></li><li><a href="#3">Bayes</a></li><li><a href="#4">Plot samples from posterior predictive</a></li><li><a href="#5">Plot samples from  plug posterior predictive</a></li></ul></div><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+setSeed(1);
+[xtrain, ytrain, xtest, ytestNoisefree, ytest, sigma2] = <span class="keyword">...</span>
+  polyDataMake(<span class="string">'sampling'</span>, <span class="string">'sparse'</span>, <span class="string">'deg'</span>, 2);
+deg = 2;
+addOnes = false;
+Xtrain = degexpand(xtrain, deg, addOnes);
+Xtest  = degexpand(xtest, deg, addOnes);
+fs = 14;
+</pre><h2>MLE<a name="2"></a></h2><pre class="codeinput">modelMLE = linregFit(Xtrain, ytrain);
+[mu, v] = linregPredict(modelMLE, Xtest);
+
+fig1=figure;
+hold <span class="string">on</span>;
+plot(xtest, mu,  <span class="string">'k-'</span>, <span class="string">'linewidth'</span>, 3, <span class="string">'displayname'</span>, <span class="string">'prediction'</span>);
+<span class="comment">%plot(xtest, ytestNoisefree,  'b:', 'linewidth', 3, 'displayname', 'truth');</span>
+plot(xtrain,ytrain,<span class="string">'ro'</span>,<span class="string">'markersize'</span>, 14, <span class="string">'linewidth'</span>, 3, <span class="keyword">...</span>
+     <span class="string">'displayname'</span>, <span class="string">'training data'</span>);
+NN = length(xtest);
+ndx = 1:5:NN; <span class="comment">% plot subset of errorbars to reduce clutter</span>
+sigma = sqrt(v);
+h=legend(<span class="string">'location'</span>, <span class="string">'northwest'</span>);
+set(h, <span class="string">'fontsize'</span>, fs);
+errorbar(xtest(ndx), mu(ndx), sigma(ndx));
+title(<span class="string">'plugin approximation (MLE)'</span>, <span class="string">'fontsize'</span>, fs);
+printPmtkFigure(<span class="string">'linregPostPredPlugin'</span>)
+</pre><img vspace="5" hspace="5" src="linregPostPredDemo_01.png" alt=""> <h2>Bayes<a name="3"></a></h2><pre class="codeinput">model = linregFitBayes(Xtrain, ytrain, <span class="keyword">...</span>
+  <span class="string">'prior'</span>, <span class="string">'gauss'</span>, <span class="string">'alpha'</span>, 0.001, <span class="string">'beta'</span>, 1/sigma2);
+[mu, v] = linregPredictBayes(model, Xtest);
+fig2=figure;
+hold <span class="string">on</span>;
+plot(xtest, mu,  <span class="string">'k-'</span>, <span class="string">'linewidth'</span>, 3, <span class="string">'displayname'</span>, <span class="string">'prediction'</span>);
+<span class="comment">%plot(xtest, ytestNoisefree,  'b:', 'linewidth', 3, 'displayname', 'truth');</span>
+plot(xtrain,ytrain, <span class="string">'ro'</span>, <span class="string">'markersize'</span>, 14, <span class="string">'linewidth'</span>, 3, <span class="keyword">...</span>
+    <span class="string">'displayname'</span>, <span class="string">'training data'</span>);
+NN = length(xtest);
+ndx = 1:5:NN; <span class="comment">% plot subset of errorbars to reduce clutter</span>
+sigma = sqrt(v);
+h=legend(<span class="string">'location'</span>, <span class="string">'northwest'</span>);
+set(h,<span class="string">'fontsize'</span>, fs);
+errorbar(xtest(ndx), mu(ndx), sigma(ndx));
+title(<span class="string">'Posterior predictive (known variance)'</span>, <span class="string">'fontsize'</span>, fs);
+printPmtkFigure(<span class="string">'linregPostPredBayes'</span>)
+</pre><img vspace="5" hspace="5" src="linregPostPredDemo_02.png" alt=""> <h2>Plot samples from posterior predictive<a name="4"></a></h2><pre class="codeinput">S = 10;
+ws = gaussSample(struct(<span class="string">'mu'</span>, model.wN, <span class="string">'Sigma'</span>, model.VN), S);
+figure;
+hold <span class="string">on</span>;
+plot(xtrain,ytrain, <span class="string">'ro'</span>, <span class="string">'markersize'</span>, 14, <span class="string">'linewidth'</span>, 3, <span class="keyword">...</span>
+    <span class="string">'displayname'</span>, <span class="string">'training data'</span>);
+<span class="keyword">for</span> s=1:S
+  tmp = modelMLE;  tmp.w = ws(s,:)';
+  [mu] = linregPredict(tmp, Xtest);
+  plot(xtest, mu, <span class="string">'k-'</span>, <span class="string">'linewidth'</span>, 2);
+<span class="keyword">end</span>
+title(<span class="string">'functions sampled from posterior'</span>, <span class="string">'fontsize'</span>, fs)
+printPmtkFigure(<span class="string">'linregPostPredSamples'</span>)
+</pre><img vspace="5" hspace="5" src="linregPostPredDemo_03.png" alt=""> <h2>Plot samples from  plug posterior predictive<a name="5"></a></h2><pre class="codeinput">S = 10;
+figure;
+hold <span class="string">on</span>;
+plot(xtrain,ytrain, <span class="string">'ro'</span>, <span class="string">'markersize'</span>, 14, <span class="string">'linewidth'</span>, 3, <span class="keyword">...</span>
+    <span class="string">'displayname'</span>, <span class="string">'training data'</span>);
+<span class="keyword">for</span> s=1:S
+  [mu] = linregPredict(modelMLE, Xtest);
+  plot(xtest, mu, <span class="string">'k-'</span>, <span class="string">'linewidth'</span>, 2);
+<span class="keyword">end</span>
+title(<span class="string">'functions sampled from plugin approximation to posterior'</span>, <span class="string">'fontsize'</span>, fs)
+printPmtkFigure(<span class="string">'linregPostPredSamplesPlugin'</span>)
+</pre><img vspace="5" hspace="5" src="linregPostPredDemo_04.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Posterior predictive density for Bayesian linear Regression in 1d with Polynomial Basis 
+% We use a gaussian prior with fixed noise variance
+% We plot the posterior predictive density, and samples from it
+%%
+
+% This file is from pmtk3.googlecode.com
+
+setSeed(1);
+[xtrain, ytrain, xtest, ytestNoisefree, ytest, sigma2] = ...
+  polyDataMake('sampling', 'sparse', 'deg', 2);
+deg = 2;
+addOnes = false;
+Xtrain = degexpand(xtrain, deg, addOnes);
+Xtest  = degexpand(xtest, deg, addOnes);
+fs = 14;
+
+%% MLE
+modelMLE = linregFit(Xtrain, ytrain); 
+[mu, v] = linregPredict(modelMLE, Xtest);
+
+fig1=figure;
+hold on;
+plot(xtest, mu,  'k-', 'linewidth', 3, 'displayname', 'prediction');
+%plot(xtest, ytestNoisefree,  'b:', 'linewidth', 3, 'displayname', 'truth');
+plot(xtrain,ytrain,'ro','markersize', 14, 'linewidth', 3, ...
+     'displayname', 'training data');
+NN = length(xtest);
+ndx = 1:5:NN; % plot subset of errorbars to reduce clutter
+sigma = sqrt(v);
+h=legend('location', 'northwest');
+set(h, 'fontsize', fs); 
+errorbar(xtest(ndx), mu(ndx), sigma(ndx));
+title('plugin approximation (MLE)', 'fontsize', fs);
+printPmtkFigure('linregPostPredPlugin')
+
+
+%% Bayes
+model = linregFitBayes(Xtrain, ytrain, ...
+  'prior', 'gauss', 'alpha', 0.001, 'beta', 1/sigma2);
+[mu, v] = linregPredictBayes(model, Xtest);
+fig2=figure;
+hold on;
+plot(xtest, mu,  'k-', 'linewidth', 3, 'displayname', 'prediction');
+%plot(xtest, ytestNoisefree,  'b:', 'linewidth', 3, 'displayname', 'truth');
+plot(xtrain,ytrain, 'ro', 'markersize', 14, 'linewidth', 3, ...
+    'displayname', 'training data');
+NN = length(xtest);
+ndx = 1:5:NN; % plot subset of errorbars to reduce clutter
+sigma = sqrt(v);
+h=legend('location', 'northwest');
+set(h,'fontsize', fs); 
+errorbar(xtest(ndx), mu(ndx), sigma(ndx));
+title('Posterior predictive (known variance)', 'fontsize', fs);
+printPmtkFigure('linregPostPredBayes')
+
+%% Plot samples from posterior predictive
+S = 10;
+ws = gaussSample(struct('mu', model.wN, 'Sigma', model.VN), S);
+figure;
+hold on;
+plot(xtrain,ytrain, 'ro', 'markersize', 14, 'linewidth', 3, ...
+    'displayname', 'training data');
+for s=1:S
+  tmp = modelMLE;  tmp.w = ws(s,:)';
+  [mu] = linregPredict(tmp, Xtest);
+  plot(xtest, mu, 'k-', 'linewidth', 2);
+end
+title('functions sampled from posterior', 'fontsize', fs)
+printPmtkFigure('linregPostPredSamples')
+
+%% Plot samples from  plug posterior predictive
+S = 10;
+figure;
+hold on;
+plot(xtrain,ytrain, 'ro', 'markersize', 14, 'linewidth', 3, ...
+    'displayname', 'training data');
+for s=1:S
+  [mu] = linregPredict(modelMLE, Xtest);
+  plot(xtest, mu, 'k-', 'linewidth', 2);
+end
+title('functions sampled from plugin approximation to posterior', 'fontsize', fs)
+printPmtkFigure('linregPostPredSamplesPlugin')
+
+
+##### SOURCE END #####
+--></body></html>

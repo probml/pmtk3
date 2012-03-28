@@ -1,0 +1,168 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Hinge Loss Plot</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="hingeLossPlot.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Hinge Loss Plot</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+
+z = -2:0.01:2; <span class="comment">% margin y*f</span>
+L01 = double(sign(z)&lt;0);
+Lhinge = max(0,1-z);
+<span class="comment">%Lnll = log(1+exp(-z))/log(2);</span>
+Lnll = log2(1+exp(-z));
+
+Lbinom = log2(1+exp(-2*z));
+Lexp = exp(-z);
+
+figure; hold <span class="string">on</span>
+plot(z, L01, <span class="string">'k-'</span>, <span class="string">'linewidth'</span>, 3);
+plot(z, Lnll, <span class="string">'r--'</span>, <span class="string">'linewidth'</span>, 3);
+h=legend(<span class="string">'0-1'</span>,<span class="string">'logloss'</span>);
+set(h,<span class="string">'fontsize'</span>, 12)
+axis_pct
+xlabel(<span class="string">'\eta'</span>)
+ylabel(<span class="string">'loss'</span>)
+printPmtkFigure(<span class="string">'nllLoss'</span>)
+
+figure; hold <span class="string">on</span>
+plot(z, L01, <span class="string">'k-'</span>, <span class="string">'linewidth'</span>, 3);
+plot(z, Lhinge, <span class="string">'b:'</span>, <span class="string">'linewidth'</span>, 3);
+plot(z, Lnll, <span class="string">'r--'</span>, <span class="string">'linewidth'</span>, 3);
+<span class="comment">%plot(z, Lse, 'g-.x');</span>
+h=legend(<span class="string">'0-1'</span>,<span class="string">'hinge'</span>,<span class="string">'logloss'</span>);
+set(h,<span class="string">'fontsize'</span>, 12)
+axis_pct
+xlabel(<span class="string">'\eta'</span>)
+ylabel(<span class="string">'loss'</span>)
+printPmtkFigure(<span class="string">'hingeLoss'</span>)
+
+
+figure; hold <span class="string">on</span>
+plot(z, L01, <span class="string">'k-'</span>, <span class="string">'linewidth'</span>, 3);
+plot(z, Lbinom, <span class="string">'b:'</span>, <span class="string">'linewidth'</span>, 3);
+plot(z, Lexp, <span class="string">'r--'</span>, <span class="string">'linewidth'</span>, 3);
+<span class="comment">%plot(z, Lse, 'g-.x');</span>
+h=legend(<span class="string">'0-1'</span>,<span class="string">'logloss'</span>,<span class="string">'exp'</span>);
+set(h,<span class="string">'fontsize'</span>, 12)
+axis_pct
+xlabel(<span class="string">'y^{-} f'</span>)
+ylabel(<span class="string">'loss'</span>)
+printPmtkFigure(<span class="string">'expLoss'</span>)
+</pre><img vspace="5" hspace="5" src="hingeLossPlot_01.png" alt=""> <img vspace="5" hspace="5" src="hingeLossPlot_02.png" alt=""> <img vspace="5" hspace="5" src="hingeLossPlot_03.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Hinge Loss Plot
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+
+z = -2:0.01:2; % margin y*f
+L01 = double(sign(z)<0);
+Lhinge = max(0,1-z);
+%Lnll = log(1+exp(-z))/log(2);
+Lnll = log2(1+exp(-z));
+
+Lbinom = log2(1+exp(-2*z));
+Lexp = exp(-z);
+
+figure; hold on
+plot(z, L01, 'k-', 'linewidth', 3);
+plot(z, Lnll, 'rREPLACE_WITH_DASH_DASH', 'linewidth', 3);
+h=legend('0-1','logloss');
+set(h,'fontsize', 12)
+axis_pct
+xlabel('\eta')
+ylabel('loss')
+printPmtkFigure('nllLoss')
+
+figure; hold on
+plot(z, L01, 'k-', 'linewidth', 3);
+plot(z, Lhinge, 'b:', 'linewidth', 3);
+plot(z, Lnll, 'rREPLACE_WITH_DASH_DASH', 'linewidth', 3);
+%plot(z, Lse, 'g-.x');
+h=legend('0-1','hinge','logloss');
+set(h,'fontsize', 12)
+axis_pct
+xlabel('\eta')
+ylabel('loss')
+printPmtkFigure('hingeLoss')
+
+
+figure; hold on
+plot(z, L01, 'k-', 'linewidth', 3);
+plot(z, Lbinom, 'b:', 'linewidth', 3);
+plot(z, Lexp, 'rREPLACE_WITH_DASH_DASH', 'linewidth', 3);
+%plot(z, Lse, 'g-.x');
+h=legend('0-1','logloss','exp');
+set(h,'fontsize', 12)
+axis_pct
+xlabel('y^{-} f')
+ylabel('loss')
+printPmtkFigure('expLoss')
+
+
+
+##### SOURCE END #####
+--></body></html>

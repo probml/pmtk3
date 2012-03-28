@@ -1,0 +1,162 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Demo of RBF Expansion for linear regression</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="linregRbfDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Demo of RBF Expansion for linear regression</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+[xtrain, ytrain, xtest, ytest] = polyDataMake(<span class="string">'sampling'</span>,<span class="string">'thibaux'</span>);
+lambda = 0.001; <span class="comment">% just for numerical stability</span>
+<span class="comment">%sigmas = [0.05 0.5 50];</span>
+sigmas = [0.5 10 50];
+<span class="comment">%sigmas = [0.1 0.5 50];</span>
+K = 10;
+centers = linspace(min(xtrain), max(xtrain), K)';
+
+
+figure; hold <span class="string">on</span>
+<span class="keyword">for</span> i=1:length(sigmas)
+    sigma = sigmas(i);
+    preproc.kernelFn = @(X1, X2)kernelRbfSigma(X1, X2, sigma);
+    preproc.addOnes = true;
+    model = linregFit(xtrain, ytrain, <span class="string">'preproc'</span>, preproc, <span class="string">'lambda'</span>, lambda);
+
+
+    ypred = linregPredict(model, xtest);
+
+    subplot2(3,3,i,1)
+    plot(xtrain,ytrain,<span class="string">'.b'</span>,<span class="string">'markerSize'</span>, 40);
+    hold <span class="string">on</span>
+    plot(xtest, ypred, <span class="string">'k'</span>, <span class="string">'linewidth'</span>, 3);
+    <span class="comment">%title(sprintf('RBF, sigma %f', sigma))</span>
+
+    subplot2(3,3,i,2)
+    Xtest = kernelRbfSigma(xtest(:), centers, sigma);
+    <span class="keyword">for</span> j=1:K
+        plot(xtest, Xtest(:,j)); hold <span class="string">on</span>
+    <span class="keyword">end</span>
+    <span class="comment">%title(sprintf('RBF, sigma %f', sigma))</span>
+    XtrainRBF = kernelRbfSigma(xtrain(:), centers, sigma);
+    <span class="comment">%ld = log(det(XtrainRBF));</span>
+    subplot2(3,3,i,3)
+    imagesc(XtrainRBF); colormap(<span class="string">'gray'</span>)
+    <span class="comment">%title(sprintf('RBF, sigma %f', sigma))</span>
+
+    <span class="comment">%K = kernelRbfSigma(xtrain(:), xtrain, sigma);</span>
+    <span class="comment">%logdet(K);</span>
+<span class="keyword">end</span>
+<span class="comment">%printPmtkFigure('rbfDemo9')</span>
+printPmtkFigure <span class="string">rbfDemoALL</span>
+</pre><img vspace="5" hspace="5" src="linregRbfDemo_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%%  Demo of RBF Expansion for linear regression
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+[xtrain, ytrain, xtest, ytest] = polyDataMake('sampling','thibaux');
+lambda = 0.001; % just for numerical stability
+%sigmas = [0.05 0.5 50];
+sigmas = [0.5 10 50];
+%sigmas = [0.1 0.5 50];
+K = 10;
+centers = linspace(min(xtrain), max(xtrain), K)';
+
+
+figure; hold on
+for i=1:length(sigmas)
+    sigma = sigmas(i);
+    preproc.kernelFn = @(X1, X2)kernelRbfSigma(X1, X2, sigma); 
+    preproc.addOnes = true;
+    model = linregFit(xtrain, ytrain, 'preproc', preproc, 'lambda', lambda);
+        
+       
+    ypred = linregPredict(model, xtest);
+    
+    subplot2(3,3,i,1)
+    plot(xtrain,ytrain,'.b','markerSize', 40);
+    hold on
+    plot(xtest, ypred, 'k', 'linewidth', 3);
+    %title(sprintf('RBF, sigma %f', sigma))
+ 
+    subplot2(3,3,i,2)
+    Xtest = kernelRbfSigma(xtest(:), centers, sigma);
+    for j=1:K
+        plot(xtest, Xtest(:,j)); hold on
+    end
+    %title(sprintf('RBF, sigma %f', sigma))
+    XtrainRBF = kernelRbfSigma(xtrain(:), centers, sigma);
+    %ld = log(det(XtrainRBF));
+    subplot2(3,3,i,3)
+    imagesc(XtrainRBF); colormap('gray')
+    %title(sprintf('RBF, sigma %f', sigma))
+    
+    %K = kernelRbfSigma(xtrain(:), xtrain, sigma);
+    %logdet(K); 
+end
+%printPmtkFigure('rbfDemo9')
+printPmtkFigure rbfDemoALL
+
+##### SOURCE END #####
+--></body></html>

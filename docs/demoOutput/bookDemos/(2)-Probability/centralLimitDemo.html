@@ -1,0 +1,132 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Demonstration of the Central Limit Theorem, based on Bishop 2.6</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="centralLimitDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Demonstration of the Central Limit Theorem, based on Bishop 2.6</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="keyword">function</span> centralLimitDemo
+</pre><pre class="codeinput">samples = 100000;
+bins = 20;
+N = [1 5 10];
+<span class="keyword">for</span> i=1:length(N)
+   figure(i);
+   convolutionHist(N(i),samples,bins);
+   printPmtkFigure(sprintf(<span class="string">'cltBeta%d'</span>, N(i)));
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="centralLimitDemo_01.png" alt=""> <img vspace="5" hspace="5" src="centralLimitDemo_02.png" alt=""> <img vspace="5" hspace="5" src="centralLimitDemo_03.png" alt=""> <pre class="codeinput"><span class="comment">%Plot a normalized histogram of 'N' i.i.d. standard uniform samples of size</span>
+<span class="comment">%'sampleSize' using the specified number of bins.</span>
+<span class="keyword">function</span> convolutionHist(N,sampleSize,bins)
+<span class="comment">%X = mean(rand(sampleSize,N),2);</span>
+a = 1; b = 5;
+X = mean(betarnd(a, b,sampleSize,N),2);
+[counts binLocations] = hist(X,bins);
+counts = counts / (sampleSize/bins); <span class="comment">%Normalize counts</span>
+bar(binLocations,counts);
+axis([0 1 0 3])
+set(gca,<span class="string">'XTick'</span>,[0 0.5 1]);
+set(gca,<span class="string">'YTick'</span>,0:3);
+<span class="comment">%text(0.1,2.7,['N = ',num2str(N)],'FontSize',14);</span>
+title(sprintf(<span class="string">'N = %d'</span>, N), <span class="string">'fontsize'</span>, 14)
+<span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Demonstration of the Central Limit Theorem, based on Bishop 2.6
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+function centralLimitDemo
+
+
+samples = 100000;
+bins = 20;
+N = [1 5 10];
+for i=1:length(N)
+   figure(i);
+   convolutionHist(N(i),samples,bins);
+   printPmtkFigure(sprintf('cltBeta%d', N(i)));
+end
+
+%%
+%Plot a normalized histogram of 'N' i.i.d. standard uniform samples of size
+%'sampleSize' using the specified number of bins. 
+function convolutionHist(N,sampleSize,bins)
+%X = mean(rand(sampleSize,N),2);
+a = 1; b = 5;
+X = mean(betarnd(a, b,sampleSize,N),2);
+[counts binLocations] = hist(X,bins);
+counts = counts / (sampleSize/bins); %Normalize counts
+bar(binLocations,counts);
+axis([0 1 0 3])
+set(gca,'XTick',[0 0.5 1]);
+set(gca,'YTick',0:3);
+%text(0.1,2.7,['N = ',num2str(N)],'FontSize',14);
+title(sprintf('N = %d', N), 'fontsize', 14)
+end
+end
+
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,400 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>demo of mixture of linear regression experts in 1d</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="mixexpDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>demo of mixture of linear regression experts in 1d</h1><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+
+clear <span class="string">all</span>
+close <span class="string">all</span>
+setSeed(0);
+<span class="comment">%data = load('mixexp_data.txt');  % data from Mike Jordan's homework</span>
+datasource = 3;
+<span class="keyword">switch</span> datasource
+  <span class="keyword">case</span> 1,
+    xtrain = linspace(-1,1,200);
+    Ntrain = numel(xtrain);
+    ndx = (xtrain &lt; 0)+1;
+    w = [-1 1];
+    ytrain = xtrain.*w(ndx) + 0.5*randn(1,Ntrain);
+    data = [xtrain(:) ytrain(:)];
+    K = 2;
+  <span class="keyword">case</span> 2,
+    <span class="comment">% reproduce bishop fig 14.8</span>
+    xtrain = linspace(-1,1,50);
+    Ntrain = numel(xtrain);
+    ndx(xtrain &lt; -0.5) = 1;
+    ndx( (xtrain &gt; -0.5) &amp; (xtrain &lt; 0.5) ) = 2;
+    ndx(xtrain &gt; 0.5) = 3;
+    w = 0.01*randn(1,3);
+    b = [-1 1 -1];
+    ytrain = xtrain.*w(ndx) + b(ndx) + 0.2*randn(1,Ntrain);
+    data = [xtrain(:) ytrain(:)];
+    K = 3;
+  <span class="keyword">case</span> 3,
+    n = 200;
+    t = rand(n,1);
+    <span class="comment">% eta = normrnd(0,0.05,n,1);</span>
+    eta = randn(n,1)*0.05;
+    x = t + 0.3.*sin(2.*pi().*t) + eta;
+    data = [x(:) t(:)];
+    e = 3;
+<span class="keyword">end</span>
+
+
+
+
+N = size(data,1);
+ndx = 1:1:N;
+X = data(ndx,1);
+y = data(ndx,2);
+xtest = colvec(linspace(min(X), max(X), 100));
+
+figure;
+plot(X, y, <span class="string">'o'</span>, <span class="string">'markersize'</span>, 10); hold <span class="string">on</span>
+printPmtkFigure(sprintf(<span class="string">'mixexpData'</span>))
+
+<span class="keyword">for</span> fixmix=[0 1]
+  <span class="keyword">switch</span> fixmix
+    <span class="keyword">case</span> 0, K=3;
+    <span class="keyword">case</span> 1, K=2;
+  <span class="keyword">end</span>
+model = mixexpFit(X, y, K, <span class="string">'fixmix'</span>, fixmix, <span class="string">'EMargs'</span>, <span class="keyword">...</span>
+  {<span class="string">'verbose'</span>, true, <span class="string">'nrandomrestarts'</span>, 2});
+[mu, v, post, muk, vk] = mixexpPredict(model, xtest);
+
+figure;
+plot(X, y, <span class="string">'o'</span>, <span class="string">'markersize'</span>, 10); hold <span class="string">on</span>
+plot(xtest, mu, <span class="string">'r-'</span>, <span class="string">'linewidth'</span>, 3);
+title(sprintf(<span class="string">'predicted mean, fixed mixing weights=%d'</span>, fixmix))
+printPmtkFigure(sprintf(<span class="string">'mixexpMeanFixmix%d'</span>, fixmix))
+
+figure; plot(X, y, <span class="string">'o'</span>, <span class="string">'markersize'</span>, 10); hold <span class="string">on</span>
+plot(xtest, mu, <span class="string">'r-'</span>, <span class="string">'linewidth'</span>, 3);
+N = numel(xtest); ndx = 1:4:N;
+errorbar(xtest(ndx), mu(ndx), sqrt(v(ndx)));
+title(sprintf(<span class="string">'predicted mean and var, fixed mixing weights=%d'</span>, fixmix))
+printPmtkFigure(sprintf(<span class="string">'mixexpMeanVarFixmix%d'</span>, fixmix))
+
+
+<span class="comment">%colors = pmtkColors;</span>
+[styles, colors, symbols, str] = plotColors;
+
+figure; hold <span class="string">on</span>
+<span class="keyword">for</span> k=1:K
+  str = sprintf(<span class="string">'%s%s'</span>, styles{k}, colors(k));
+  plot(xtest, post(:,k), str,  <span class="string">'linewidth'</span>, 3);
+<span class="keyword">end</span>
+title(sprintf(<span class="string">'gating functions, fixed mixing weights=%d'</span>, fixmix))
+axis_pct
+printPmtkFigure(sprintf(<span class="string">'mixexpGatingFixmix%d'</span>, fixmix))
+
+
+figure; hold <span class="string">on</span>
+<span class="keyword">for</span> k=1:K
+  str = sprintf(<span class="string">'%s%s'</span>, styles{k}, colors(k));
+  plot(xtest, muk(:,k), str,  <span class="string">'linewidth'</span>, 3);
+<span class="keyword">end</span>
+plot(X, y, <span class="string">'o'</span>, <span class="string">'markersize'</span>, 10);
+title(sprintf(<span class="string">'expert predictions, fixed mixing weights=%d'</span>, fixmix))
+printPmtkFigure(sprintf(<span class="string">'mixexpExpertsFixmix%d'</span>, fixmix))
+
+
+<span class="keyword">end</span>
+
+placeFigures
+</pre><pre class="codeoutput">
+********** Random Restart 1 **********
+initializing model for EM
+1	 loglik: -501.843
+2	 loglik: 29.07
+3	 loglik: 42.6499
+4	 loglik: 65.7241
+5	 loglik: 84.183
+6	 loglik: 93.4211
+7	 loglik: 99.1256
+8	 loglik: 110.867
+9	 loglik: 136.633
+10	 loglik: 160.501
+11	 loglik: 177.483
+12	 loglik: 189.049
+13	 loglik: 198.71
+14	 loglik: 206.287
+15	 loglik: 210.92
+16	 loglik: 213.371
+17	 loglik: 215.048
+18	 loglik: 216.149
+19	 loglik: 216.712
+20	 loglik: 216.978
+21	 loglik: 217.111
+22	 loglik: 217.186
+23	 loglik: 217.235
+24	 loglik: 217.271
+25	 loglik: 217.302
+26	 loglik: 217.333
+27	 loglik: 217.366
+28	 loglik: 217.408
+29	 loglik: 217.468
+30	 loglik: 217.56
+31	 loglik: 217.7
+32	 loglik: 217.874
+33	 loglik: 218.007
+34	 loglik: 218.059
+35	 loglik: 218.072
+
+********** Random Restart 2 **********
+initializing model for EM
+1	 loglik: -2163.63
+2	 loglik: 60.4564
+3	 loglik: 87.3228
+4	 loglik: 108.394
+5	 loglik: 120.476
+6	 loglik: 129.015
+7	 loglik: 134.172
+8	 loglik: 137.119
+9	 loglik: 138.917
+10	 loglik: 140.217
+11	 loglik: 141.299
+12	 loglik: 142.244
+13	 loglik: 143.064
+14	 loglik: 143.813
+15	 loglik: 144.627
+16	 loglik: 145.728
+17	 loglik: 147.45
+18	 loglik: 150.315
+19	 loglik: 155.15
+20	 loglik: 163.039
+21	 loglik: 179.574
+22	 loglik: 199.953
+23	 loglik: 209.966
+24	 loglik: 213.452
+25	 loglik: 215.192
+26	 loglik: 216.249
+27	 loglik: 216.765
+28	 loglik: 217.006
+29	 loglik: 217.126
+30	 loglik: 217.196
+31	 loglik: 217.242
+32	 loglik: 217.277
+33	 loglik: 217.307
+34	 loglik: 217.338
+35	 loglik: 217.373
+36	 loglik: 217.417
+37	 loglik: 217.481
+38	 loglik: 217.58
+39	 loglik: 217.729
+40	 loglik: 217.902
+41	 loglik: 218.021
+42	 loglik: 218.063
+43	 loglik: 218.073
+
+********** Random Restart 1 **********
+initializing model for EM
+1	 loglik: -396.914
+2	 loglik: 22.4868
+3	 loglik: 26.5759
+4	 loglik: 32.9344
+5	 loglik: 47.3912
+6	 loglik: 62.5723
+7	 loglik: 70.1723
+8	 loglik: 73.5788
+9	 loglik: 75.0409
+10	 loglik: 75.7502
+11	 loglik: 76.4638
+12	 loglik: 77.4829
+13	 loglik: 78.8196
+14	 loglik: 80.2876
+15	 loglik: 81.6353
+16	 loglik: 82.7349
+17	 loglik: 83.5776
+18	 loglik: 84.1776
+19	 loglik: 84.5639
+20	 loglik: 84.7897
+21	 loglik: 84.9127
+22	 loglik: 84.9767
+23	 loglik: 85.009
+24	 loglik: 85.0251
+25	 loglik: 85.0329
+
+********** Random Restart 2 **********
+initializing model for EM
+1	 loglik: -276.146
+2	 loglik: 44.5961
+3	 loglik: 60.6044
+4	 loglik: 71.7382
+5	 loglik: 76.2903
+6	 loglik: 77.7467
+7	 loglik: 78.2016
+8	 loglik: 78.3407
+9	 loglik: 78.3819
+10	 loglik: 78.3942
+11	 loglik: 78.3982
+</pre><img vspace="5" hspace="5" src="mixexpDemo_01.png" alt=""> <img vspace="5" hspace="5" src="mixexpDemo_02.png" alt=""> <img vspace="5" hspace="5" src="mixexpDemo_03.png" alt=""> <img vspace="5" hspace="5" src="mixexpDemo_04.png" alt=""> <img vspace="5" hspace="5" src="mixexpDemo_05.png" alt=""> <img vspace="5" hspace="5" src="mixexpDemo_06.png" alt=""> <img vspace="5" hspace="5" src="mixexpDemo_07.png" alt=""> <img vspace="5" hspace="5" src="mixexpDemo_08.png" alt=""> <img vspace="5" hspace="5" src="mixexpDemo_09.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% demo of mixture of linear regression experts in 1d
+
+% This file is from pmtk3.googlecode.com
+
+
+clear all
+close all
+setSeed(0);
+%data = load('mixexp_data.txt');  % data from Mike Jordan's homework 
+datasource = 3;
+switch datasource
+  case 1,
+    xtrain = linspace(-1,1,200);
+    Ntrain = numel(xtrain);
+    ndx = (xtrain < 0)+1;
+    w = [-1 1];
+    ytrain = xtrain.*w(ndx) + 0.5*randn(1,Ntrain);
+    data = [xtrain(:) ytrain(:)];
+    K = 2;
+  case 2,
+    % reproduce bishop fig 14.8
+    xtrain = linspace(-1,1,50);
+    Ntrain = numel(xtrain);
+    ndx(xtrain < -0.5) = 1;
+    ndx( (xtrain > -0.5) & (xtrain < 0.5) ) = 2;
+    ndx(xtrain > 0.5) = 3;
+    w = 0.01*randn(1,3);
+    b = [-1 1 -1];
+    ytrain = xtrain.*w(ndx) + b(ndx) + 0.2*randn(1,Ntrain);
+    data = [xtrain(:) ytrain(:)];
+    K = 3;
+  case 3,
+    n = 200;
+    t = rand(n,1);
+    % eta = normrnd(0,0.05,n,1);
+    eta = randn(n,1)*0.05;
+    x = t + 0.3.*sin(2.*pi().*t) + eta;
+    data = [x(:) t(:)];
+    e = 3;
+end
+
+
+
+
+N = size(data,1);
+ndx = 1:1:N;
+X = data(ndx,1);
+y = data(ndx,2);
+xtest = colvec(linspace(min(X), max(X), 100));
+
+figure;
+plot(X, y, 'o', 'markersize', 10); hold on
+printPmtkFigure(sprintf('mixexpData'))
+
+for fixmix=[0 1]
+  switch fixmix
+    case 0, K=3;
+    case 1, K=2;
+  end
+model = mixexpFit(X, y, K, 'fixmix', fixmix, 'EMargs', ...
+  {'verbose', true, 'nrandomrestarts', 2});
+[mu, v, post, muk, vk] = mixexpPredict(model, xtest);
+
+figure;
+plot(X, y, 'o', 'markersize', 10); hold on
+plot(xtest, mu, 'r-', 'linewidth', 3);
+title(sprintf('predicted mean, fixed mixing weights=%d', fixmix))
+printPmtkFigure(sprintf('mixexpMeanFixmix%d', fixmix))
+
+figure; plot(X, y, 'o', 'markersize', 10); hold on
+plot(xtest, mu, 'r-', 'linewidth', 3);
+N = numel(xtest); ndx = 1:4:N;
+errorbar(xtest(ndx), mu(ndx), sqrt(v(ndx)));
+title(sprintf('predicted mean and var, fixed mixing weights=%d', fixmix))
+printPmtkFigure(sprintf('mixexpMeanVarFixmix%d', fixmix))
+
+
+%colors = pmtkColors;
+[styles, colors, symbols, str] = plotColors;
+
+figure; hold on
+for k=1:K
+  str = sprintf('%s%s', styles{k}, colors(k));
+  plot(xtest, post(:,k), str,  'linewidth', 3);
+end
+title(sprintf('gating functions, fixed mixing weights=%d', fixmix))
+axis_pct
+printPmtkFigure(sprintf('mixexpGatingFixmix%d', fixmix))
+
+
+figure; hold on
+for k=1:K
+  str = sprintf('%s%s', styles{k}, colors(k));
+  plot(xtest, muk(:,k), str,  'linewidth', 3);
+end
+plot(X, y, 'o', 'markersize', 10); 
+title(sprintf('expert predictions, fixed mixing weights=%d', fixmix))
+printPmtkFigure(sprintf('mixexpExpertsFixmix%d', fixmix))
+
+
+end
+
+placeFigures
+
+##### SOURCE END #####
+--></body></html>

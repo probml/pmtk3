@@ -1,0 +1,426 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>collapsed Gibbs sampler on DP mixture of 2d gaussians</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="dpmGauss2dDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>collapsed Gibbs sampler on DP mixture of 2d gaussians</h1><pre class="codeinput"><span class="comment">%PMTKauthor Yee Whye Teh</span>
+<span class="comment">%PMTKurl http://www.gatsby.ucl.ac.uk/~ywteh/teaching/npbayes/mlss2007.zip</span>
+<span class="comment">%PMTKmodified Kevin Murphy</span>
+<span class="comment">% Originally called dpm_demp2d</span>
+
+dd = 2;
+KK = 1;
+trueK = 5;
+NN = 100;
+aa = 1;
+s0 = 3;
+ss = 1;
+numiter = 200;
+
+hh.dd = dd;
+hh.ss = s0^2/ss^2;
+hh.vv = 3; <span class="comment">% 5;</span>
+hh.VV = 2*ss^2*eye(dd);
+hh.uu = zeros(dd,1);
+
+setSeed(0);
+  <span class="comment">% construct data</span>
+  truez = ceil((1:NN)/NN*trueK);
+  mu = randn(dd,trueK)*s0;
+  yy = mu(:,truez) + randn(dd,NN)*ss;
+  xx = num2cell(yy,1);
+
+seeds = [2];
+<span class="keyword">for</span> trial=1:numel(seeds)
+  seed = seeds(trial);
+  setSeed(seed);
+
+  <span class="comment">% initialize component assignment</span>
+  zz = ceil(rand(1,NN)*KK);
+
+  <span class="comment">% initialize DP mixture</span>
+  dpm = dpm_init(KK,aa,Gaussian(hh),xx,zz);
+
+  <span class="comment">% initialize records</span>
+  record.KK = zeros(1,numiter);
+
+  <span class="comment">% initialize colors to be used for plotting</span>
+  <span class="comment">%cc = colormap;</span>
+  <span class="comment">%cc = cc(randperm(size(cc,1)),:);</span>
+  <span class="comment">%cc = cc(rem(1:NN,size(cc,1))+1,:);</span>
+  [colors, colorMap] = pmtkColors();
+  cc = cat(1, colors{:});
+
+  Ns = [10 50 100 200]; <span class="comment">% times to stop, plot and roll</span>
+  cnt = 1;
+  <span class="keyword">for</span> iter = 1:numiter
+    disp(iter)
+    <span class="comment">% pretty pictures</span>
+    <span class="keyword">if</span> iter==Ns(cnt)
+      figure
+      dpm_demo2d_plot(dpm,cc);
+      axis([min(yy(:))-1 max(yy(:))+1  min(yy(:))-1 max(yy(:))+1]);
+      title([<span class="string">'iter# '</span> num2str(iter)]);
+      cnt = cnt+1;
+      printPmtkFigure(sprintf(<span class="string">'dpmGauss2dSeed%dIter%d'</span>, seed,iter))
+      drawnow
+    <span class="keyword">end</span>
+
+    <span class="comment">% gibbs iteration</span>
+    dpm = dpm_gibbs(dpm,1);
+
+    <span class="comment">% record keeping</span>
+    record.KK(iter) = sum(dpm.nn&gt;0);
+  <span class="keyword">end</span>
+  maxK = max(record.KK);
+  burnin = 50;
+  postK = normalize(histc(record.KK(burnin:end),1:maxK));
+  figure;
+  bar(postK)
+  printPmtkFigure(sprintf(<span class="string">'dpmGauss2dSeed%dPostK'</span>, seed))
+  drawnow
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">     1
+     2
+     3
+     4
+     5
+     6
+     7
+     8
+     9
+    10
+    11
+    12
+    13
+    14
+    15
+    16
+    17
+    18
+    19
+    20
+    21
+    22
+    23
+    24
+    25
+    26
+    27
+    28
+    29
+    30
+    31
+    32
+    33
+    34
+    35
+    36
+    37
+    38
+    39
+    40
+    41
+    42
+    43
+    44
+    45
+    46
+    47
+    48
+    49
+    50
+    51
+    52
+    53
+    54
+    55
+    56
+    57
+    58
+    59
+    60
+    61
+    62
+    63
+    64
+    65
+    66
+    67
+    68
+    69
+    70
+    71
+    72
+    73
+    74
+    75
+    76
+    77
+    78
+    79
+    80
+    81
+    82
+    83
+    84
+    85
+    86
+    87
+    88
+    89
+    90
+    91
+    92
+    93
+    94
+    95
+    96
+    97
+    98
+    99
+   100
+   101
+   102
+   103
+   104
+   105
+   106
+   107
+   108
+   109
+   110
+   111
+   112
+   113
+   114
+   115
+   116
+   117
+   118
+   119
+   120
+   121
+   122
+   123
+   124
+   125
+   126
+   127
+   128
+   129
+   130
+   131
+   132
+   133
+   134
+   135
+   136
+   137
+   138
+   139
+   140
+   141
+   142
+   143
+   144
+   145
+   146
+   147
+   148
+   149
+   150
+   151
+   152
+   153
+   154
+   155
+   156
+   157
+   158
+   159
+   160
+   161
+   162
+   163
+   164
+   165
+   166
+   167
+   168
+   169
+   170
+   171
+   172
+   173
+   174
+   175
+   176
+   177
+   178
+   179
+   180
+   181
+   182
+   183
+   184
+   185
+   186
+   187
+   188
+   189
+   190
+   191
+   192
+   193
+   194
+   195
+   196
+   197
+   198
+   199
+   200
+</pre><img vspace="5" hspace="5" src="dpmGauss2dDemo_01.png" alt=""> <img vspace="5" hspace="5" src="dpmGauss2dDemo_02.png" alt=""> <img vspace="5" hspace="5" src="dpmGauss2dDemo_03.png" alt=""> <img vspace="5" hspace="5" src="dpmGauss2dDemo_04.png" alt=""> <img vspace="5" hspace="5" src="dpmGauss2dDemo_05.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% collapsed Gibbs sampler on DP mixture of 2d gaussians
+%PMTKauthor Yee Whye Teh
+%PMTKurl http://www.gatsby.ucl.ac.uk/~ywteh/teaching/npbayes/mlss2007.zip
+%PMTKmodified Kevin Murphy
+% Originally called dpm_demp2d
+
+dd = 2;
+KK = 1;
+trueK = 5;
+NN = 100;
+aa = 1;
+s0 = 3;
+ss = 1;
+numiter = 200;
+
+hh.dd = dd;
+hh.ss = s0^2/ss^2;
+hh.vv = 3; % 5;
+hh.VV = 2*ss^2*eye(dd);
+hh.uu = zeros(dd,1);
+
+setSeed(0);
+  % construct data
+  truez = ceil((1:NN)/NN*trueK);
+  mu = randn(dd,trueK)*s0;
+  yy = mu(:,truez) + randn(dd,NN)*ss;
+  xx = num2cell(yy,1);
+ 
+seeds = [2];
+for trial=1:numel(seeds)
+  seed = seeds(trial);
+  setSeed(seed);
+  
+  % initialize component assignment
+  zz = ceil(rand(1,NN)*KK);
+  
+  % initialize DP mixture
+  dpm = dpm_init(KK,aa,Gaussian(hh),xx,zz);
+  
+  % initialize records
+  record.KK = zeros(1,numiter);
+  
+  % initialize colors to be used for plotting
+  %cc = colormap;
+  %cc = cc(randperm(size(cc,1)),:);
+  %cc = cc(rem(1:NN,size(cc,1))+1,:);
+  [colors, colorMap] = pmtkColors();
+  cc = cat(1, colors{:});
+  
+  Ns = [10 50 100 200]; % times to stop, plot and roll
+  cnt = 1;
+  for iter = 1:numiter
+    disp(iter)
+    % pretty pictures
+    if iter==Ns(cnt)
+      figure
+      dpm_demo2d_plot(dpm,cc);
+      axis([min(yy(:))-1 max(yy(:))+1  min(yy(:))-1 max(yy(:))+1]);
+      title(['iter# ' num2str(iter)]);
+      cnt = cnt+1;
+      printPmtkFigure(sprintf('dpmGauss2dSeed%dIter%d', seed,iter))
+      drawnow
+    end
+    
+    % gibbs iteration
+    dpm = dpm_gibbs(dpm,1);
+    
+    % record keeping
+    record.KK(iter) = sum(dpm.nn>0);
+  end
+  maxK = max(record.KK);
+  burnin = 50;
+  postK = normalize(histc(record.KK(burnin:end),1:maxK));
+  figure; 
+  bar(postK)
+  printPmtkFigure(sprintf('dpmGauss2dSeed%dPostK', seed))
+  drawnow
+end
+
+
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,320 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>icaDemoUniform</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="icaDemoUniform.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Comparing ICA and PCA on data from a 2d uniform distribution</a></li><li><a href="#2">Uniform data</a></li><li><a href="#3">Gaussian source</a></li></ul></div><h2>Comparing ICA and PCA on data from a 2d uniform distribution<a name="1"></a></h2><pre class="codeinput"><span class="comment">%PMTKauthorAapo Hyvarinen</span>
+<span class="comment">%PMTKdate Sep 2010</span>
+
+<span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+
+<span class="comment">%You need to have access to the FastICA package</span>
+
+setSeed(2);
+<span class="comment">%Number of data points</span>
+N=100;
+<span class="comment">%Choose a nice mixing matrix</span>
+A=[2,3;2,1]*.3;
+</pre><h2>Uniform data<a name="2"></a></h2><pre class="codeinput"><span class="comment">%Create data with uniform distribution</span>
+Suni=(rand(2,N)*2-1)*sqrt(3);
+Xuni=A*Suni;
+Vuni = fastica(Xuni,<span class="string">'only'</span>,<span class="string">'white'</span>);
+Shat = fastica(Xuni,<span class="string">'g'</span>,<span class="string">'tanh'</span>,<span class="string">'approach'</span>,<span class="string">'symm'</span>);
+
+<span class="comment">%Sets length of coordinate axes</span>
+cmax=3;
+
+<span class="comment">%Plot uniform ICs</span>
+figure;
+h1=plot(Suni(1,:),Suni(2,:),<span class="string">'.'</span>,[-cmax,cmax],[0,0],<span class="string">'k'</span>,[0,0],[-cmax,cmax],<span class="string">'k'</span>);
+<span class="comment">%just cosmetics:</span>
+set(h1,<span class="string">'LineWidth'</span>,2);
+set(h1,<span class="string">'MarkerSize'</span>,16);
+axis <span class="string">equal</span>;
+title(<span class="string">'uniform data'</span>)
+printPmtkFigure(<span class="string">'icaUniformSource'</span>)
+
+<span class="comment">%Plot uniform mixed data</span>
+figure;
+h1=plot(Xuni(1,:),Xuni(2,:),<span class="string">'.'</span>,[-cmax,cmax],[0,0],<span class="string">'k'</span>,[0,0],[-cmax,cmax],<span class="string">'k'</span>);
+axis <span class="string">equal</span>;
+set(h1,<span class="string">'LineWidth'</span>,2);
+set(h1,<span class="string">'MarkerSize'</span>,16);
+title(<span class="string">'uniform data after linear mixing'</span>)
+printPmtkFigure(<span class="string">'icaUniformMixed'</span>)
+
+
+<span class="comment">%Plot uniformly distributed data after PCA whitening</span>
+figure;
+h1=plot(Vuni(1,:),Vuni(2,:),<span class="string">'.'</span>,[-cmax,cmax],[0,0],<span class="string">'k'</span>,[0,0],[-cmax,cmax],<span class="string">'k'</span>);
+axis <span class="string">equal</span>;
+set(h1,<span class="string">'LineWidth'</span>,2);
+set(h1,<span class="string">'MarkerSize'</span>,16);
+title(<span class="string">'PCA applied to mixed data from uniform source'</span>)
+printPmtkFigure(<span class="string">'icaUniformPCA'</span>)
+
+
+<span class="comment">%Plot estimated ICs from uniformly distributed data</span>
+figure
+h1=plot(Shat(1,:),Shat(2,:),<span class="string">'.'</span>,[-cmax,cmax],[0,0],<span class="string">'k'</span>,[0,0],[-cmax,cmax],<span class="string">'k'</span>);
+axis <span class="string">equal</span>;
+set(h1,<span class="string">'LineWidth'</span>,2);
+set(h1,<span class="string">'MarkerSize'</span>,16);
+title(<span class="string">'ICA applied to mixed data from uniform source'</span>)
+printPmtkFigure(<span class="string">'icaUniformICA'</span>)
+</pre><pre class="codeoutput">Number of signals: 2
+Number of samples: 100
+Calculating covariance...
+Dimension not reduced.
+Selected [ 2 ] dimensions.
+Smallest remaining (non-zero) eigenvalue [ 0.0659808 ]
+Largest remaining (non-zero) eigenvalue [ 1.54907 ]
+Sum of removed eigenvalues [ 0 ]
+[ 100 ] % of (non-zero) eigenvalues retained.
+Whitening...
+Check: covariance differs from identity by [ 3.33067e-16 ].
+Number of signals: 2
+Number of samples: 100
+Calculating covariance...
+Dimension not reduced.
+Selected [ 2 ] dimensions.
+Smallest remaining (non-zero) eigenvalue [ 0.0659808 ]
+Largest remaining (non-zero) eigenvalue [ 1.54907 ]
+Sum of removed eigenvalues [ 0 ]
+[ 100 ] % of (non-zero) eigenvalues retained.
+Whitening...
+Check: covariance differs from identity by [ 3.33067e-16 ].
+Used approach [ symm ].
+Used nonlinearity [ tanh ].
+Starting ICA calculation...
+Step no. 1
+Step no. 2, change in value of estimate: 0.03 
+Step no. 3, change in value of estimate: 0.0662 
+Step no. 4, change in value of estimate: 0.00274 
+Convergence after 5 steps
+Adding the mean back to the data.
+</pre><img vspace="5" hspace="5" src="icaDemoUniform_01.png" alt=""> <img vspace="5" hspace="5" src="icaDemoUniform_02.png" alt=""> <img vspace="5" hspace="5" src="icaDemoUniform_03.png" alt=""> <img vspace="5" hspace="5" src="icaDemoUniform_04.png" alt=""> <h2>Gaussian source<a name="3"></a></h2><pre class="codeinput"><span class="keyword">if</span> 0
+<span class="comment">%Create Gaussian data for comparison</span>
+Sgauss=randn(2,N);
+Sgauss=Sgauss.*(abs(Sgauss)&lt;5);
+
+Xgauss=A*Sgauss;
+Vgauss = fastica(Xgauss,<span class="string">'only'</span>,<span class="string">'white'</span>);
+
+ShatGauss = fastica(Xgauss,<span class="string">'g'</span>,<span class="string">'tanh'</span>,<span class="string">'approach'</span>,<span class="string">'symm'</span>);
+
+<span class="comment">%Plot original gaussian distribution with independent variables</span>
+figure
+h1=plot(Sgauss(1,:),Sgauss(2,:),<span class="string">'.'</span>,[-cmax,cmax],[0,0],<span class="string">'k'</span>,[0,0],[-cmax,cmax],<span class="string">'k'</span>);
+axis <span class="string">off</span>; axis <span class="string">equal</span>;
+set(h1,<span class="string">'LineWidth'</span>,2);
+set(h1,<span class="string">'MarkerSize'</span>,16);
+title(<span class="string">'gaussian data'</span>)
+
+<span class="comment">%Plot mixtures of  gaussian variables</span>
+figure
+h1=plot(Xgauss(1,:),Xgauss(2,:),<span class="string">'.'</span>,[-cmax,cmax],[0,0],<span class="string">'k'</span>,[0,0],[-cmax,cmax],<span class="string">'k'</span>);
+axis <span class="string">off</span>; axis <span class="string">equal</span>;
+set(h1,<span class="string">'LineWidth'</span>,2);
+set(h1,<span class="string">'MarkerSize'</span>,16);
+title(<span class="string">'gaussian data after mixing'</span>)
+
+
+<span class="comment">%Plot PCA of gaussian data</span>
+figure
+hold <span class="string">on</span>
+h1=plot(Vgauss(1,:),Vgauss(2,:),<span class="string">'.'</span>,[-cmax,cmax],[0,0],<span class="string">'k'</span>,[0,0],[-cmax,cmax],<span class="string">'k'</span>);
+axis <span class="string">off</span>; axis <span class="string">equal</span>;
+set(h1,<span class="string">'LineWidth'</span>,2);
+set(h1,<span class="string">'MarkerSize'</span>,16);
+title(<span class="string">'gaussian data after whitening'</span>)
+
+<span class="comment">%Plot estimated ICs from gaussian distributed data</span>
+figure
+h1=plot(ShatGauss(1,:),ShatGauss(2,:),<span class="string">'.'</span>,[-cmax,cmax],[0,0],<span class="string">'k'</span>,[0,0],[-cmax,cmax],<span class="string">'k'</span>);
+axis <span class="string">equal</span>; axis <span class="string">off</span>;
+set(h1,<span class="string">'LineWidth'</span>,2);
+set(h1,<span class="string">'MarkerSize'</span>,16);
+title(<span class="string">'ica applied to mixed data from gaussian source'</span>)
+
+<span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Comparing ICA and PCA on data from a 2d uniform distribution
+%PMTKauthorAapo Hyvarinen
+%PMTKdate Sep 2010
+
+% This file is from pmtk3.googlecode.com
+
+
+%You need to have access to the FastICA package
+
+setSeed(2);
+%Number of data points
+N=100;
+%Choose a nice mixing matrix
+A=[2,3;2,1]*.3;
+
+
+%% Uniform data
+
+%Create data with uniform distribution
+Suni=(rand(2,N)*2-1)*sqrt(3);
+Xuni=A*Suni;
+Vuni = fastica(Xuni,'only','white');
+Shat = fastica(Xuni,'g','tanh','approach','symm');
+
+%Sets length of coordinate axes
+cmax=3; 
+
+%Plot uniform ICs
+figure;
+h1=plot(Suni(1,:),Suni(2,:),'.',[-cmax,cmax],[0,0],'k',[0,0],[-cmax,cmax],'k'); 
+%just cosmetics:
+set(h1,'LineWidth',2);
+set(h1,'MarkerSize',16);
+axis equal;
+title('uniform data')
+printPmtkFigure('icaUniformSource')
+
+%Plot uniform mixed data
+figure;
+h1=plot(Xuni(1,:),Xuni(2,:),'.',[-cmax,cmax],[0,0],'k',[0,0],[-cmax,cmax],'k'); 
+axis equal;
+set(h1,'LineWidth',2);
+set(h1,'MarkerSize',16);
+title('uniform data after linear mixing')
+printPmtkFigure('icaUniformMixed')
+
+
+%Plot uniformly distributed data after PCA whitening
+figure;
+h1=plot(Vuni(1,:),Vuni(2,:),'.',[-cmax,cmax],[0,0],'k',[0,0],[-cmax,cmax],'k'); 
+axis equal;
+set(h1,'LineWidth',2);
+set(h1,'MarkerSize',16);
+title('PCA applied to mixed data from uniform source')
+printPmtkFigure('icaUniformPCA')
+
+
+%Plot estimated ICs from uniformly distributed data
+figure
+h1=plot(Shat(1,:),Shat(2,:),'.',[-cmax,cmax],[0,0],'k',[0,0],[-cmax,cmax],'k'); 
+axis equal; 
+set(h1,'LineWidth',2);
+set(h1,'MarkerSize',16);
+title('ICA applied to mixed data from uniform source')
+printPmtkFigure('icaUniformICA')
+
+
+%% Gaussian source
+
+if 0
+%Create Gaussian data for comparison
+Sgauss=randn(2,N);
+Sgauss=Sgauss.*(abs(Sgauss)<5);
+
+Xgauss=A*Sgauss;
+Vgauss = fastica(Xgauss,'only','white');
+
+ShatGauss = fastica(Xgauss,'g','tanh','approach','symm');
+
+%Plot original gaussian distribution with independent variables
+figure
+h1=plot(Sgauss(1,:),Sgauss(2,:),'.',[-cmax,cmax],[0,0],'k',[0,0],[-cmax,cmax],'k'); 
+axis off; axis equal;
+set(h1,'LineWidth',2);
+set(h1,'MarkerSize',16);
+title('gaussian data')
+
+%Plot mixtures of  gaussian variables
+figure
+h1=plot(Xgauss(1,:),Xgauss(2,:),'.',[-cmax,cmax],[0,0],'k',[0,0],[-cmax,cmax],'k'); 
+axis off; axis equal;
+set(h1,'LineWidth',2);
+set(h1,'MarkerSize',16);
+title('gaussian data after mixing')
+
+
+%Plot PCA of gaussian data
+figure
+hold on
+h1=plot(Vgauss(1,:),Vgauss(2,:),'.',[-cmax,cmax],[0,0],'k',[0,0],[-cmax,cmax],'k'); 
+axis off; axis equal;
+set(h1,'LineWidth',2);
+set(h1,'MarkerSize',16);
+title('gaussian data after whitening')
+
+%Plot estimated ICs from gaussian distributed data
+figure
+h1=plot(ShatGauss(1,:),ShatGauss(2,:),'.',[-cmax,cmax],[0,0],'k',[0,0],[-cmax,cmax],'k'); 
+axis equal; axis off;
+set(h1,'LineWidth',2);
+set(h1,'MarkerSize',16);
+title('ica applied to mixed data from gaussian source')
+
+end
+
+##### SOURCE END #####
+--></body></html>

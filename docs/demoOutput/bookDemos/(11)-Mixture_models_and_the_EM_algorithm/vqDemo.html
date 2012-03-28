@@ -1,0 +1,114 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Vector Quantization Demo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="vqDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Vector Quantization Demo</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+setSeed(0);
+loadData(<span class="string">'clown'</span>); <span class="comment">% X is 200x320 image</span>
+figure;
+imagesc(X); colormap(gray); title(<span class="string">'original'</span>)
+printPmtkFigure(<span class="string">'vqDemoClownOrig'</span>);
+[nrows ncols ncolors] = size(X);
+data = reshape(X, [nrows*ncols ncolors]); <span class="comment">% data(i,:) = rgb value for pixel i</span>
+<span class="keyword">for</span> K=[2]
+    [mu, compressed, errHist] = kmeansFit(data, K);
+    compressed2 = kmeansEncode(data, mu);
+    assert(isequal(compressed, compressed2))
+    decompressed = kmeansDecode(compressed, mu);
+    Qimg = reshape(decompressed, [nrows ncols ncolors]);
+    figure;
+    imagesc(Qimg); colormap(gray)
+    title(sprintf(<span class="string">'K=%d'</span>,K))
+    printPmtkFigure(sprintf(<span class="string">'vqDemoClown%d'</span>, K));
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="vqDemo_01.png" alt=""> <img vspace="5" hspace="5" src="vqDemo_02.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Vector Quantization Demo
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+setSeed(0);
+loadData('clown'); % X is 200x320 image
+figure;
+imagesc(X); colormap(gray); title('original')
+printPmtkFigure('vqDemoClownOrig');
+[nrows ncols ncolors] = size(X);
+data = reshape(X, [nrows*ncols ncolors]); % data(i,:) = rgb value for pixel i
+for K=[2]
+    [mu, compressed, errHist] = kmeansFit(data, K);
+    compressed2 = kmeansEncode(data, mu);
+    assert(isequal(compressed, compressed2))
+    decompressed = kmeansDecode(compressed, mu);
+    Qimg = reshape(decompressed, [nrows ncols ncolors]);
+    figure;
+    imagesc(Qimg); colormap(gray)
+    title(sprintf('K=%d',K))
+    printPmtkFigure(sprintf('vqDemoClown%d', K));
+end
+
+##### SOURCE END #####
+--></body></html>

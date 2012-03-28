@@ -1,0 +1,245 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Gauss Imputation Demo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="gaussImputationDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Gauss Imputation Demo</h1><!--introduction--><p>PMTKneedsStatsToolbox regstats</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#3">Make data</a></li><li><a href="#4">Impute</a></li><li><a href="#5">Plotting</a></li></ul></div><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="keyword">function</span> gaussImputationDemo()
+</pre><pre class="codeinput">requireStatsToolbox
+</pre><h2>Make data<a name="3"></a></h2><pre class="codeinput">setSeed(1);
+d = 20; n = 5; pcMissing = 0.5;
+mu = randn(d,1); Sigma = randpd(d);
+trueModel = struct(<span class="string">'mu'</span>, mu, <span class="string">'Sigma'</span>, Sigma);
+Xfull = gaussSample(trueModel, n);
+missing = rand(n,d) &lt; pcMissing;
+Xmiss = Xfull;
+Xmiss(missing) = NaN;
+</pre><h2>Impute<a name="4"></a></h2><pre class="codeinput">[XimputeOracle] = gaussImpute(trueModel, Xmiss);
+</pre><h2>Plotting<a name="5"></a></h2><pre class="codeinput">Xmiss0 = Xmiss; Xmiss0(isnan(Xmiss0))=0;
+
+figure;
+ nr = 3; nc = 3;
+<span class="keyword">for</span> i=1:nr
+  subplot2(nr,nc,i,1);
+  vis = find(~isnan(Xmiss(i,:)));
+  stem(vis, Xmiss(i,vis)); title(<span class="string">'observed'</span>);
+  set(gca, <span class="string">'ylim'</span>, [-10 10]);
+
+  subplot2(nr,nc,i,2);
+  stem(XimputeOracle(i,:)); title(<span class="string">'imputed'</span>);
+  set(gca, <span class="string">'ylim'</span>, [-10 10]);
+
+  subplot2(nr,nc,i,3);
+  stem(Xfull(i, :)); title(<span class="string">'truth'</span>)
+  set(gca, <span class="string">'ylim'</span>, [-10 10]);
+<span class="keyword">end</span>
+
+
+
+<span class="keyword">if</span> 0
+
+ndx = 1:8; <span class="comment">% just plot first 20 rows</span>
+figure;
+hintonDiagram(Xmiss0(ndx,:)); title(<span class="string">'observed data'</span>);
+printPmtkFigure(<span class="string">'mvnImputeObs'</span>);
+
+
+figure; hintonDiagram(XimputeEM(ndx,:)); title(<span class="string">'imputation with em'</span>);
+printPmtkFigure(<span class="string">'mvnImputeEM'</span>);
+
+figure; hintonDiagram(XimputeOracle(ndx,:));
+title(<span class="string">'imputation with true params'</span>);
+printPmtkFigure(<span class="string">'mvnImputeOracle'</span>)
+
+figure; hintonDiagram(Xfull(ndx,:)); title(<span class="string">'truth'</span>);
+printPmtkFigure(<span class="string">'mvnImputeTruth'</span>);
+<span class="keyword">end</span>
+
+<span class="keyword">if</span> 0
+<span class="comment">% Scatter plots</span>
+doPlot(Xmiss, Xfull, XimputeOracle, <span class="string">'imputation with true params'</span>, <span class="string">'mvnImputeScatterOracle'</span>)
+doPlot(Xmiss, Xfull, XimputeEM, <span class="string">'imputation with em'</span>, <span class="string">'mvnImputeScatterEm'</span>)
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="gaussImputationDemo_01.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
+
+<span class="keyword">function</span> doPlot(Xmiss, Xfull, Ximpute, ttl, fname)
+
+figure; nr = 2; nc = 2;
+<span class="keyword">for</span> j=1:(nr*nc)
+  subplot(nr, nc, j);
+  miss = find(isnan(Xmiss(:,j)));
+  scatter(Xfull(miss, j), Ximpute(miss,j))
+  xlabel(<span class="string">'truth'</span>); ylabel(<span class="string">'imputed'</span>);
+  mini = min(Xfull(:,j)); maxi = max(Xfull(:,j));
+  line([mini maxi], [mini maxi]);
+  axis <span class="string">square</span>
+  grid <span class="string">on</span>
+   stats = regstats(Xfull(miss,j), Ximpute(miss,j));
+  r = stats.rsquare;
+  title(sprintf(<span class="string">'R^2 = %5.3f'</span>, r))
+<span class="keyword">end</span>
+suptitle(ttl)
+printPmtkFigure(fname);
+<span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Gauss Imputation Demo
+% PMTKneedsStatsToolbox regstats
+%%
+
+% This file is from pmtk3.googlecode.com
+
+function gaussImputationDemo()
+requireStatsToolbox
+%% Make data
+setSeed(1);
+d = 20; n = 5; pcMissing = 0.5;
+mu = randn(d,1); Sigma = randpd(d);
+trueModel = struct('mu', mu, 'Sigma', Sigma);
+Xfull = gaussSample(trueModel, n); 
+missing = rand(n,d) < pcMissing;
+Xmiss = Xfull;
+Xmiss(missing) = NaN;
+
+%% Impute
+
+
+
+[XimputeOracle] = gaussImpute(trueModel, Xmiss);
+
+
+%% Plotting
+Xmiss0 = Xmiss; Xmiss0(isnan(Xmiss0))=0;
+
+figure;
+ nr = 3; nc = 3;
+for i=1:nr
+  subplot2(nr,nc,i,1);
+  vis = find(~isnan(Xmiss(i,:)));
+  stem(vis, Xmiss(i,vis)); title('observed'); 
+  set(gca, 'ylim', [-10 10]);
+  
+  subplot2(nr,nc,i,2);
+  stem(XimputeOracle(i,:)); title('imputed');
+  set(gca, 'ylim', [-10 10]);
+  
+  subplot2(nr,nc,i,3);
+  stem(Xfull(i, :)); title('truth')
+  set(gca, 'ylim', [-10 10]);
+end
+
+
+
+if 0
+  
+ndx = 1:8; % just plot first 20 rows
+figure;
+hintonDiagram(Xmiss0(ndx,:)); title('observed data');
+printPmtkFigure('mvnImputeObs');
+
+
+figure; hintonDiagram(XimputeEM(ndx,:)); title('imputation with em');
+printPmtkFigure('mvnImputeEM');
+
+figure; hintonDiagram(XimputeOracle(ndx,:));
+title('imputation with true params');
+printPmtkFigure('mvnImputeOracle')
+
+figure; hintonDiagram(Xfull(ndx,:)); title('truth');
+printPmtkFigure('mvnImputeTruth');
+end
+
+if 0
+% Scatter plots
+doPlot(Xmiss, Xfull, XimputeOracle, 'imputation with true params', 'mvnImputeScatterOracle')
+doPlot(Xmiss, Xfull, XimputeEM, 'imputation with em', 'mvnImputeScatterEm')
+end
+
+end
+
+function doPlot(Xmiss, Xfull, Ximpute, ttl, fname)
+
+figure; nr = 2; nc = 2;
+for j=1:(nr*nc)
+  subplot(nr, nc, j);
+  miss = find(isnan(Xmiss(:,j)));
+  scatter(Xfull(miss, j), Ximpute(miss,j))
+  xlabel('truth'); ylabel('imputed');
+  mini = min(Xfull(:,j)); maxi = max(Xfull(:,j));
+  line([mini maxi], [mini maxi]);
+  axis square
+  grid on
+   stats = regstats(Xfull(miss,j), Ximpute(miss,j));
+  r = stats.rsquare;
+  title(sprintf('R^2 = %5.3f', r))
+end
+suptitle(ttl)
+printPmtkFigure(fname);
+end
+
+
+
+
+##### SOURCE END #####
+--></body></html>

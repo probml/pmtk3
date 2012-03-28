@@ -1,0 +1,150 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>discrimAnalysisDboundariesDemo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="discrimAnalysisDboundariesDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Plot Decision boundaries induced by a mixture of two or three 2D Gaussians</a></li><li><a href="#2">Two class linear</a></li><li><a href="#3">Two class quadratic</a></li><li><a href="#4">Three class linear</a></li><li><a href="#5">Three class mixed</a></li></ul></div><h2>Plot Decision boundaries induced by a mixture of two or three 2D Gaussians<a name="1"></a></h2><p>Based on code by Tommi Jaakkola</p><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+</pre><h2>Two class linear<a name="2"></a></h2><pre class="codeinput">model(1).classPrior  = [1 1]/2;
+model(1).mu          = [1.5 1.5 ; -1.5 -1.5]';
+model(1).Sigma       = repmat(eye(2), [1 1 2]);
+model(1).SigmaPooled = eye(2);
+model(1).type        = <span class="string">'linear'</span>;
+</pre><h2>Two class quadratic<a name="3"></a></h2><pre class="codeinput">model(2).classPrior  = [1 1]/2;
+model(2).mu          = [1.5 1.5 ; -1.5 -1.5]';
+model(2).Sigma       = cat(3, [1.5 0; 0 1], 0.7*eye(2));
+model(2).type        = <span class="string">'quadratic'</span>;
+</pre><h2>Three class linear<a name="4"></a></h2><pre class="codeinput">model(3).classPrior  = [1 1 1] /3;
+model(3).mu          = [0 0; 0 5; 5 5]';
+model(3).Sigma       = repmat(eye(2), [1 1 3]);
+model(3).SigmaPooled = eye(2);
+model(3).type        = <span class="string">'linear'</span>;
+</pre><h2>Three class mixed<a name="5"></a></h2><pre class="codeinput">model(4).classPrior  = [1 1 1] /3;
+model(4).mu          = [0 0; 0 5; 5 5]';
+model(4).Sigma       = cat(3, [4 0; 0 1], eye(2), eye(2));
+model(4).type        = <span class="string">'quadratic'</span>; <span class="comment">% i.e. not tied</span>
+</pre><pre class="codeinput">titles = {<span class="string">'Linear Boundary'</span>, <span class="string">'Parabolic Boundary'</span>, <span class="string">'All Linear Boundaries '</span>, <span class="string">'Some Linear, Some Quadratic'</span>};
+fnames = {<span class="string">'dboundaries2classLinear'</span>, <span class="string">'dboundaries2classParabolic'</span>, <span class="string">'dboundaries3classLinear'</span>, <span class="string">'dboundaries3classParabolic'</span>};
+setSeed(3); nsamples = 30;
+colors = pmtkColors();
+xyRange = [-10 10 -10 10];
+<span class="keyword">for</span> i = 1:numel(model)
+    [X, y] = mixGaussSample(model(i).mu,  model(i).Sigma, model(i).classPrior,  nsamples);
+    plotDecisionBoundary(X, y, @(Xtest)discrimAnalysisPredict(model(i), Xtest));
+    <span class="keyword">for</span> j = 1:size(model(i).Sigma, 3)
+        fn = @(x)gaussProb(x, model(i).mu(:, j), model(i).Sigma(:, :, j));
+        plotContour(fn, xyRange, <span class="string">'LineColor'</span>, colors{j});
+    <span class="keyword">end</span>
+    set(gca, <span class="string">'XTick'</span>, -10:2:10, <span class="string">'YTick'</span>, -10:2:10);
+    title(titles{i});
+    printPmtkFigure(fnames{i});
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="discrimAnalysisDboundariesDemo_01.png" alt=""> <img vspace="5" hspace="5" src="discrimAnalysisDboundariesDemo_02.png" alt=""> <img vspace="5" hspace="5" src="discrimAnalysisDboundariesDemo_03.png" alt=""> <img vspace="5" hspace="5" src="discrimAnalysisDboundariesDemo_04.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Plot Decision boundaries induced by a mixture of two or three 2D Gaussians
+% Based on code by Tommi Jaakkola
+
+% This file is from pmtk3.googlecode.com
+
+
+%% Two class linear
+model(1).classPrior  = [1 1]/2;
+model(1).mu          = [1.5 1.5 ; -1.5 -1.5]';
+model(1).Sigma       = repmat(eye(2), [1 1 2]);
+model(1).SigmaPooled = eye(2);
+model(1).type        = 'linear';
+%% Two class quadratic
+model(2).classPrior  = [1 1]/2;
+model(2).mu          = [1.5 1.5 ; -1.5 -1.5]';
+model(2).Sigma       = cat(3, [1.5 0; 0 1], 0.7*eye(2));
+model(2).type        = 'quadratic';
+%% Three class linear
+model(3).classPrior  = [1 1 1] /3;
+model(3).mu          = [0 0; 0 5; 5 5]';
+model(3).Sigma       = repmat(eye(2), [1 1 3]);
+model(3).SigmaPooled = eye(2);
+model(3).type        = 'linear';
+%% Three class mixed
+model(4).classPrior  = [1 1 1] /3;
+model(4).mu          = [0 0; 0 5; 5 5]';
+model(4).Sigma       = cat(3, [4 0; 0 1], eye(2), eye(2));
+model(4).type        = 'quadratic'; % i.e. not tied
+%%
+titles = {'Linear Boundary', 'Parabolic Boundary', 'All Linear Boundaries ', 'Some Linear, Some Quadratic'};
+fnames = {'dboundaries2classLinear', 'dboundaries2classParabolic', 'dboundaries3classLinear', 'dboundaries3classParabolic'};
+setSeed(3); nsamples = 30; 
+colors = pmtkColors();
+xyRange = [-10 10 -10 10];
+for i = 1:numel(model)
+    [X, y] = mixGaussSample(model(i).mu,  model(i).Sigma, model(i).classPrior,  nsamples); 
+    plotDecisionBoundary(X, y, @(Xtest)discrimAnalysisPredict(model(i), Xtest));
+    for j = 1:size(model(i).Sigma, 3)
+        fn = @(x)gaussProb(x, model(i).mu(:, j), model(i).Sigma(:, :, j));
+        plotContour(fn, xyRange, 'LineColor', colors{j});
+    end
+    set(gca, 'XTick', -10:2:10, 'YTick', -10:2:10);
+    title(titles{i});
+    printPmtkFigure(fnames{i});
+end
+
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,304 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>L1 regularization on a deep feedforwrd neural net</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="sparseNnetDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>L1 regularization on a deep feedforwrd neural net</h1><pre class="codeinput"><span class="comment">%PMTKauthor Mark Schmidt</span>
+<span class="comment">%PMTKurl http://www.cs.ubc.ca/~schmidtm/Software/L1General/L1General.html#16</span>
+
+fig = 1000;
+lambda = 1;
+options.maxIter = 100; <span class="comment">% Increase iteration limit</span>
+options.adjustStep = 2; <span class="comment">% Use quadratic initialization of line search</span>
+options.order = -1;
+options.corrections = 10;
+options.verbose = 0;
+
+<span class="comment">% Generate non-linear regression data set</span>
+nInstances = 200;
+nVars = 1;
+[X,y] = makeData(<span class="string">'regressionNonlinear2'</span>,nInstances,nVars);
+
+X = [ones(nInstances,1) X];
+nVars = nVars+1;
+
+<span class="comment">% Train neural network w/ multiple hiden layers</span>
+<span class="comment">%nHidden = [9 9 9 9 9 9 9 9 9];</span>
+nHidden = [5 5 5 5];
+nParams = nVars*nHidden(1);
+<span class="keyword">for</span> h = 2:length(nHidden);
+    nParams = nParams+nHidden(h-1)*nHidden(h);
+<span class="keyword">end</span>
+nParams = nParams+nHidden(end);
+
+funObj = @(weights)MLPregressionLoss_efficient(weights,X,y,nHidden);
+fprintf(<span class="string">'Training neural network for regression...\n'</span>);
+lambdaL2 = 1e-3;
+wMLP = randn(nParams,1);
+<span class="keyword">for</span> i = 1:300 <span class="comment">%1000</span>
+    w_old = wMLP;
+    wMLP = L1GeneralProjection(@penalizedL2,wMLP,lambda*ones(nParams,1),options,funObj,lambdaL2);
+    <span class="comment">%fprintf(' (nnz = %d, max change = %f)\n',nnz(wMLP),norm(w_old-wMLP,inf));</span>
+    <span class="keyword">if</span> norm(w_old-wMLP,inf) &lt; 1e-3 <span class="comment">%1e-5</span>
+        <span class="keyword">break</span>;
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">% Plot results</span>
+figure; hold <span class="string">on</span>
+Xtest = [-5:.05:5]';
+Xtest = [ones(size(Xtest,1),1) Xtest];
+yhat = MLPregressionPredict_efficient(wMLP,Xtest,nHidden);
+plot(X(:,2),y,<span class="string">'ko'</span>,<span class="string">'markersize'</span>,10);
+h=plot(Xtest(:,2),yhat,<span class="string">'g-'</span>);
+set(h,<span class="string">'LineWidth'</span>,3);
+legend({<span class="string">'Data'</span>,<span class="string">'Deep Neural Net'</span>});
+
+<span class="comment">% Form weights</span>
+inputWeights = reshape(wMLP(1:nVars*nHidden(1)),nVars,nHidden(1));
+offset = nVars*nHidden(1);
+<span class="keyword">for</span> h = 2:length(nHidden)
+    hiddenWeights{h-1} = reshape(wMLP(offset+1:offset+nHidden(h-1)*nHidden(h)),nHidden(h-1),nHidden(h));
+    offset = offset+nHidden(h-1)*nHidden(h);
+<span class="keyword">end</span>
+outputWeights = wMLP(offset+1:offset+nHidden(end));
+
+<span class="comment">% Make adjacency matrix</span>
+adj = zeros(nVars+sum(nHidden)+1);
+<span class="keyword">for</span> i = 1:nVars
+    <span class="keyword">for</span> j = 1:nHidden(1)
+        <span class="keyword">if</span> abs(inputWeights(i,j)) &gt; 1e-4
+            adj(i,nVars+j) = 1;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+<span class="keyword">for</span> h = 1:length(nHidden)-1
+    <span class="keyword">for</span> i = 1:nHidden(h)
+        <span class="keyword">for</span> j = 1:nHidden(h+1)
+            <span class="keyword">if</span> abs(hiddenWeights{h}(i,j)) &gt; 1e-4
+                adj(nVars+sum(nHidden(1:h-1))+i,nVars+sum(nHidden(1:h))+j) = 1;
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+<span class="keyword">for</span> i = 1:nHidden(end)
+    <span class="keyword">if</span> abs(outputWeights(i)) &gt; 1e-4
+        adj(nVars+sum(nHidden(1:end-1))+i,end) = 1;
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+labels = cell(length(adj),1);
+<span class="keyword">for</span> i = 1:nVars
+    labels{i,1} = sprintf(<span class="string">'x_%d'</span>,i-1);
+<span class="keyword">end</span>
+<span class="keyword">for</span> h = 1:length(nHidden)
+    <span class="keyword">for</span> j = 1:nHidden(h)
+        i = i + 1;
+        labels{i,1} = sprintf(<span class="string">'h_%d_%d'</span>,h,j-1);
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+labels{end,1} = <span class="string">'y'</span>;
+
+<span class="comment">% Plot Network</span>
+figure;
+<span class="comment">%drawGraph(adj,'labels',labels);</span>
+drawNetwork(<span class="string">'-adjMat'</span>,adj,<span class="string">'-nodeLabels'</span>,labels)
+title(<span class="string">'Neural Network'</span>);
+</pre><pre class="codeoutput">Training neural network for regression...
+ans = 
+  graphViz4Matlab handle
+
+  Properties:
+                path: [1x69558 char]
+        graphVizPath: 'unknown'
+              nnodes: 23
+              nedges: 40
+       currentLayout: [1x1 Gvizlayout]
+             layouts: [1x1 struct]
+           adjMatrix: [23x23 double]
+           isvisible: 1
+           nodeArray: [1x23 graphViz4MatlabNode]
+           edgeArray: [1x40 struct]
+                 fig: 1222
+                  ax: 575.0293
+       doubleClickFn: []
+        selectedNode: []
+         minNodeSize: 0.0427
+         maxNodeSize: 0.1496
+          undirected: 0
+             flipped: 0
+        knownLayouts: {1x8 cell}
+    defaultEdgeColor: [0 0 0]
+          edgeColors: []
+          edgeStyles: []
+              square: 1
+         splitLabels: 1
+</pre><img vspace="5" hspace="5" src="sparseNnetDemo_01.png" alt=""> <img vspace="5" hspace="5" src="sparseNnetDemo_02.png" alt=""> <img vspace="5" hspace="5" src="sparseNnetDemo_03.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% L1 regularization on a deep feedforwrd neural net
+%PMTKauthor Mark Schmidt
+%PMTKurl http://www.cs.ubc.ca/~schmidtm/Software/L1General/L1General.html#16
+
+fig = 1000;
+lambda = 1;
+options.maxIter = 100; % Increase iteration limit
+options.adjustStep = 2; % Use quadratic initialization of line search
+options.order = -1;
+options.corrections = 10;
+options.verbose = 0;
+
+% Generate non-linear regression data set
+nInstances = 200;
+nVars = 1;
+[X,y] = makeData('regressionNonlinear2',nInstances,nVars);
+
+X = [ones(nInstances,1) X];
+nVars = nVars+1;
+
+% Train neural network w/ multiple hiden layers
+%nHidden = [9 9 9 9 9 9 9 9 9];
+nHidden = [5 5 5 5];
+nParams = nVars*nHidden(1);
+for h = 2:length(nHidden);
+    nParams = nParams+nHidden(h-1)*nHidden(h);
+end
+nParams = nParams+nHidden(end);
+
+funObj = @(weights)MLPregressionLoss_efficient(weights,X,y,nHidden);
+fprintf('Training neural network for regression...\n');
+lambdaL2 = 1e-3;
+wMLP = randn(nParams,1);
+for i = 1:300 %1000
+    w_old = wMLP;
+    wMLP = L1GeneralProjection(@penalizedL2,wMLP,lambda*ones(nParams,1),options,funObj,lambdaL2);
+    %fprintf(' (nnz = %d, max change = %f)\n',nnz(wMLP),norm(w_old-wMLP,inf));
+    if norm(w_old-wMLP,inf) < 1e-3 %1e-5
+        break;
+    end
+end
+
+% Plot results
+figure; hold on
+Xtest = [-5:.05:5]';
+Xtest = [ones(size(Xtest,1),1) Xtest];
+yhat = MLPregressionPredict_efficient(wMLP,Xtest,nHidden);
+plot(X(:,2),y,'ko','markersize',10);
+h=plot(Xtest(:,2),yhat,'g-');
+set(h,'LineWidth',3);
+legend({'Data','Deep Neural Net'});
+
+% Form weights
+inputWeights = reshape(wMLP(1:nVars*nHidden(1)),nVars,nHidden(1));
+offset = nVars*nHidden(1);
+for h = 2:length(nHidden)
+    hiddenWeights{h-1} = reshape(wMLP(offset+1:offset+nHidden(h-1)*nHidden(h)),nHidden(h-1),nHidden(h));
+    offset = offset+nHidden(h-1)*nHidden(h);
+end
+outputWeights = wMLP(offset+1:offset+nHidden(end));
+
+% Make adjacency matrix
+adj = zeros(nVars+sum(nHidden)+1);
+for i = 1:nVars
+    for j = 1:nHidden(1)
+        if abs(inputWeights(i,j)) > 1e-4
+            adj(i,nVars+j) = 1;
+        end
+    end
+end
+for h = 1:length(nHidden)-1
+    for i = 1:nHidden(h)
+        for j = 1:nHidden(h+1)
+            if abs(hiddenWeights{h}(i,j)) > 1e-4
+                adj(nVars+sum(nHidden(1:h-1))+i,nVars+sum(nHidden(1:h))+j) = 1;
+            end
+        end
+    end
+end
+for i = 1:nHidden(end)
+    if abs(outputWeights(i)) > 1e-4
+        adj(nVars+sum(nHidden(1:end-1))+i,end) = 1;
+    end
+end
+
+labels = cell(length(adj),1);
+for i = 1:nVars
+    labels{i,1} = sprintf('x_%d',i-1);
+end
+for h = 1:length(nHidden)
+    for j = 1:nHidden(h)
+        i = i + 1;
+        labels{i,1} = sprintf('h_%d_%d',h,j-1);
+    end
+end
+labels{end,1} = 'y';
+
+% Plot Network
+figure;
+%drawGraph(adj,'labels',labels);
+drawNetwork('-adjMat',adj,'-nodeLabels',labels)
+title('Neural Network');
+
+
+
+##### SOURCE END #####
+--></body></html>

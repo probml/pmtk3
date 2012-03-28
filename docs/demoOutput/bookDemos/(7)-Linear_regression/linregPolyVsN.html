@@ -1,0 +1,163 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Plot performance of linear regression vs sample size</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="linregPolyVsN.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Plot performance of linear regression vs sample size</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#3">Generate data</a></li><li><a href="#4">Transform data</a></li><li><a href="#5">Fit</a></li><li><a href="#6">Predict</a></li><li><a href="#8">Plot</a></li></ul></div><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+setSeed(0);
+degrees = [1, 2, 10, 25];
+<span class="keyword">for</span> d=1:numel(degrees)
+</pre><pre class="codeinput">    deg = degrees(d);
+    lambda = 0; <span class="comment">%1e-3;</span>
+    ns = linspace(10, 200, 10);
+    Nns = length(ns);
+    testMse = zeros(1, Nns);
+    trainMse = zeros(1, Nns);
+    <span class="keyword">for</span> i=1:length(ns)
+</pre><h2>Generate data<a name="3"></a></h2><pre class="codeinput">        n=ns(i);
+        [xtrain, ytrain, xtest, ytestNoiseFree, ytest, sigma2] = <span class="keyword">...</span>
+            polyDataMake(<span class="string">'n'</span>, n, <span class="string">'sampling'</span>, <span class="string">'thibaux'</span>);
+</pre><h2>Transform data<a name="4"></a></h2><pre class="codeinput">        [xtrain, minx, rangex] = rescaleData(xtrain, -1, 1);
+        xtest = rescaleData(xtest, -1, 1, minx, rangex);
+        xtrain = addOnes(degexpand(xtrain, deg));
+        xtest  = addOnes(degexpand(xtest, deg));
+</pre><h2>Fit<a name="5"></a></h2><pre class="codeinput">        model = linregFit(xtrain, ytrain, <span class="string">'lambda'</span>, lambda);
+</pre><h2>Predict<a name="6"></a></h2><pre class="codeinput">        yhatTrain = linregPredict(model, xtrain);
+        trainMse(i) = mean((ytrain - yhatTrain).^2);
+        yhatTest = linregPredict(model, xtest);
+        testMse(i) = mean((ytest - yhatTest).^2);
+</pre><pre class="codeinput">    <span class="keyword">end</span>
+</pre><h2>Plot<a name="8"></a></h2><pre class="codeinput">    figure();
+    hold <span class="string">on</span>
+    ndx = ns;
+    fs = 12;
+    plot(ndx, trainMse, <span class="string">'bs:'</span>, <span class="string">'linewidth'</span>, 2, <span class="string">'markersize'</span>, 12);
+    plot(ndx, testMse, <span class="string">'rx-'</span>, <span class="string">'linewidth'</span>, 2, <span class="string">'markersize'</span>, 12);
+    legend(<span class="string">'train'</span>, <span class="string">'test'</span>)
+    ylabel(<span class="string">'mse'</span>, <span class="string">'fontsize'</span>, fs)
+    xlabel(<span class="string">'size of training set'</span>, <span class="string">'fontsize'</span>, fs)
+    title(sprintf(<span class="string">'truth=degree 2, model = degree %d'</span>, deg), <span class="string">'fontsize'</span>, fs);
+    set(gca,<span class="string">'ylim'</span>,[0 22]);
+    box <span class="string">on</span>;
+    horizontalLine(sigma2, <span class="string">'color'</span>, <span class="string">'k'</span>, <span class="string">'linewidth'</span>, 3);
+    <span class="comment">%line([0 max(ns)], [sigma2 sigma2],'color', 'k', 'linewidth', 3);</span>
+    printPmtkFigure(sprintf(<span class="string">'polyfitN%d'</span>, deg));
+</pre><img vspace="5" hspace="5" src="linregPolyVsN_01.png" alt=""> <img vspace="5" hspace="5" src="linregPolyVsN_02.png" alt=""> <img vspace="5" hspace="5" src="linregPolyVsN_03.png" alt=""> <img vspace="5" hspace="5" src="linregPolyVsN_04.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Plot performance of linear regression vs sample size
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+setSeed(0);
+degrees = [1, 2, 10, 25];
+for d=1:numel(degrees)
+    deg = degrees(d);
+    lambda = 0; %1e-3;
+    ns = linspace(10, 200, 10);
+    Nns = length(ns);
+    testMse = zeros(1, Nns); 
+    trainMse = zeros(1, Nns);
+    for i=1:length(ns)
+        %% Generate data
+        n=ns(i);
+        [xtrain, ytrain, xtest, ytestNoiseFree, ytest, sigma2] = ...
+            polyDataMake('n', n, 'sampling', 'thibaux');
+        %% Transform data
+        [xtrain, minx, rangex] = rescaleData(xtrain, -1, 1); 
+        xtest = rescaleData(xtest, -1, 1, minx, rangex); 
+        xtrain = addOnes(degexpand(xtrain, deg)); 
+        xtest  = addOnes(degexpand(xtest, deg)); 
+        %% Fit 
+        model = linregFit(xtrain, ytrain, 'lambda', lambda);
+        %% Predict
+        yhatTrain = linregPredict(model, xtrain); 
+        trainMse(i) = mean((ytrain - yhatTrain).^2);
+        yhatTest = linregPredict(model, xtest); 
+        testMse(i) = mean((ytest - yhatTest).^2); 
+    end
+    %% Plot
+    figure();
+    hold on
+    ndx = ns;
+    fs = 12;
+    plot(ndx, trainMse, 'bs:', 'linewidth', 2, 'markersize', 12);
+    plot(ndx, testMse, 'rx-', 'linewidth', 2, 'markersize', 12);
+    legend('train', 'test')
+    ylabel('mse', 'fontsize', fs)
+    xlabel('size of training set', 'fontsize', fs)
+    title(sprintf('truth=degree 2, model = degree %d', deg), 'fontsize', fs);
+    set(gca,'ylim',[0 22]);
+    box on;
+    horizontalLine(sigma2, 'color', 'k', 'linewidth', 3);
+    %line([0 max(ns)], [sigma2 sigma2],'color', 'k', 'linewidth', 3);
+    printPmtkFigure(sprintf('polyfitN%d', deg));
+end
+
+
+
+##### SOURCE END #####
+--></body></html>

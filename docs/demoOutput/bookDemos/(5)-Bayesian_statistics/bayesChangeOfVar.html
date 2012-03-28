@@ -1,0 +1,138 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>bayesChangeOfVar</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="bayesChangeOfVar.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% MC on change of variables and empirical distribution</span>
+
+<span class="keyword">function</span> bayesChangeOfVar()
+
+xseq = [0:0.1:10];
+<span class="keyword">function</span> y = ginv(x)
+  y = 1 ./ (1 + exp(-x + 5));
+<span class="keyword">end</span>
+
+mu = 6; sigma = 1;
+
+N = 10^6;
+x = normrnd(mu,sigma,N,1);
+<span class="comment">% [xheight,xpoints] = hist(x,50); octave</span>
+<span class="comment">% [ypoints,yheight] = hist(ginv(x),50); octave</span>
+[xheight,xpoints] = hist(x,50); <span class="comment">% matlab</span>
+[ypoints,yheight] = hist(ginv(x),50); <span class="comment">% matlab</span>
+
+bar(xpoints,xheight*2/N,<span class="string">'r'</span>);
+hold <span class="string">on</span>;
+plot(xseq,ginv(xseq),<span class="string">'b'</span>,<span class="string">'linewidth'</span>,3);
+barh(yheight,ypoints*100/N,<span class="string">'g'</span>);
+line([mu,mu],[0,ginv(mu)],<span class="string">'color'</span>,<span class="string">'c'</span>,<span class="string">'linewidth'</span>,3);
+line([0,mu],[ginv(mu),ginv(mu)],<span class="string">'color'</span>,<span class="string">'c'</span>,<span class="string">'linewidth'</span>,3);
+
+text(9,1/10,<span class="string">'p_X'</span>);
+text(1,2/10,<span class="string">'p_Y'</span>);
+text(9,ginv(9) - 1/10,<span class="string">'g'</span>);
+hold <span class="string">off</span>;
+
+
+printPmtkFigure(<span class="string">'bayesChangeOfVar'</span>)
+
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="bayesChangeOfVar_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+% MC on change of variables and empirical distribution
+
+function bayesChangeOfVar()
+
+xseq = [0:0.1:10];
+function y = ginv(x)
+  y = 1 ./ (1 + exp(-x + 5));
+end
+
+mu = 6; sigma = 1;
+
+N = 10^6;
+x = normrnd(mu,sigma,N,1);
+% [xheight,xpoints] = hist(x,50); octave
+% [ypoints,yheight] = hist(ginv(x),50); octave
+[xheight,xpoints] = hist(x,50); % matlab
+[ypoints,yheight] = hist(ginv(x),50); % matlab
+
+bar(xpoints,xheight*2/N,'r');
+hold on;
+plot(xseq,ginv(xseq),'b','linewidth',3);
+barh(yheight,ypoints*100/N,'g');
+line([mu,mu],[0,ginv(mu)],'color','c','linewidth',3);
+line([0,mu],[ginv(mu),ginv(mu)],'color','c','linewidth',3);
+
+text(9,1/10,'p_X');
+text(1,2/10,'p_Y');
+text(9,ginv(9) - 1/10,'g');
+hold off;
+
+
+printPmtkFigure('bayesChangeOfVar')
+
+end
+
+##### SOURCE END #####
+--></body></html>

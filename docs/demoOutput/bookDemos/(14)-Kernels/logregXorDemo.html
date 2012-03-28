@@ -1,0 +1,184 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Apply L2 Logistic Regression to the XOR problem</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="logregXorDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Apply L2 Logistic Regression to the XOR problem</h1><!--introduction--><p>We show how RBF, and polynomial expansions of the features 'solve' it, while using raw features does not.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#3">Linear Features</a></li><li><a href="#4">Kernel basis Expansions</a></li><li><a href="#5">Polynomial basis</a></li><li><a href="#6">Fit and predict</a></li></ul></div><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="keyword">function</span> logregXorDemo()
+</pre><pre class="codeinput">[X, y] = createXORdata();
+lambda = 1e-2;
+</pre><h2>Linear Features<a name="3"></a></h2><pre class="codeinput"><span class="keyword">if</span> 1
+model = logregFit(X, y, <span class="string">'lambda'</span>, lambda);
+yhat = logregPredict(model, X);
+errorRate = mean(yhat ~= y);
+fprintf(<span class="string">'Error rate using raw features: %2.f%%\n'</span>, 100*errorRate);
+plotDecisionBoundary(X, y, @(X)logregPredict(model, X));
+title(<span class="string">'linear'</span>);
+printPmtkFigure(<span class="string">'logregXorLinear'</span>)
+<span class="keyword">end</span>
+
+pp = {}; fnames = {}; titles = {};
+</pre><pre class="codeoutput">Error rate using raw features: 49%
+</pre><img vspace="5" hspace="5" src="logregXorDemo_01.png" alt=""> <h2>Kernel basis Expansions<a name="4"></a></h2><pre class="codeinput"><span class="keyword">if</span> 1
+rbfScale = 1;
+polydeg  = 2;
+protoTypes = [1 1; 1 5; 5 1; 5 5];
+<span class="comment">%protoTypes = [1 1; 5 5];</span>
+protoTypesStnd = standardizeCols(protoTypes);
+kernels = {@(X1, X2)kernelRbfSigma(X1, protoTypesStnd, rbfScale)
+           @(X1, X2)kernelRbfSigma(X1, X2, rbfScale)
+           @(X1, X2)kernelPoly(X1, X2, polydeg)};
+fnames  = {<span class="string">'logregXorRbfProto'</span>, <span class="string">'logregXorRbfAll'</span>, <span class="string">'logregXorPolyKernel'</span>};
+titles  = {<span class="string">'rbf prototypes'</span>, <span class="string">'rbf all'</span>, <span class="string">'poly kernel'</span>};
+<span class="keyword">for</span> i=1:numel(kernels)
+  pp{i} = preprocessorCreate(<span class="string">'kernelFn'</span>, kernels{i}, <span class="string">'standardizeX'</span>, true, <span class="string">'addOnes'</span>, true);
+<span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><h2>Polynomial basis<a name="5"></a></h2><pre class="codeinput">deg = 10;
+pp{end+1} =  preprocessorCreate(<span class="string">'poly'</span>, deg, <span class="string">'rescaleX'</span>, true, <span class="string">'addOnes'</span>, true);
+fnames{end+1} = <span class="string">'logregXorPoly'</span>;
+titles{end+1} = sprintf(<span class="string">'poly%d'</span>, deg);
+</pre><h2>Fit and predict<a name="6"></a></h2><pre class="codeinput"><span class="keyword">for</span> i=1:numel(pp)
+    model = logregFit(X, y, <span class="string">'lambda'</span>, lambda, <span class="string">'preproc'</span>, pp{i});
+    yhat = logregPredict(model, X);
+    errorRate = mean(yhat ~= y);
+    fprintf(<span class="string">'Error rate using %s features: %2.f%%\n'</span>, titles{i}, 100*errorRate);
+    predictFcn = @(Xtest)logregPredict(model, Xtest);
+    plotDecisionBoundary(X, y, predictFcn);
+    <span class="keyword">if</span>  i==1
+       hold <span class="string">on</span>;
+       plot(protoTypes(:, 1), protoTypes(:, 2), <span class="string">'*k'</span>, <span class="string">'linewidth'</span>, 2, <span class="string">'markersize'</span>, 10)
+    <span class="keyword">end</span>
+    title(titles{i});
+    printPmtkFigure(fnames{i})
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">Error rate using rbf prototypes features:  0%
+Error rate using rbf all features:  0%
+Error rate using poly kernel features:  0%
+Error rate using poly10 features: 45%
+</pre><img vspace="5" hspace="5" src="logregXorDemo_02.png" alt=""> <img vspace="5" hspace="5" src="logregXorDemo_03.png" alt=""> <img vspace="5" hspace="5" src="logregXorDemo_04.png" alt=""> <img vspace="5" hspace="5" src="logregXorDemo_05.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Apply L2 Logistic Regression to the XOR problem
+% We show how RBF, and polynomial expansions of the features 'solve' it,
+% while using raw features does not.
+%%
+
+% This file is from pmtk3.googlecode.com
+
+function logregXorDemo()
+[X, y] = createXORdata();
+lambda = 1e-2;
+%% Linear Features
+if 1
+model = logregFit(X, y, 'lambda', lambda);
+yhat = logregPredict(model, X);
+errorRate = mean(yhat ~= y);
+fprintf('Error rate using raw features: %2.f%%\n', 100*errorRate);
+plotDecisionBoundary(X, y, @(X)logregPredict(model, X));
+title('linear');
+printPmtkFigure('logregXorLinear')
+end
+
+pp = {}; fnames = {}; titles = {};
+%% Kernel basis Expansions
+if 1
+rbfScale = 1;
+polydeg  = 2;
+protoTypes = [1 1; 1 5; 5 1; 5 5];
+%protoTypes = [1 1; 5 5];
+protoTypesStnd = standardizeCols(protoTypes);
+kernels = {@(X1, X2)kernelRbfSigma(X1, protoTypesStnd, rbfScale)
+           @(X1, X2)kernelRbfSigma(X1, X2, rbfScale)
+           @(X1, X2)kernelPoly(X1, X2, polydeg)};
+fnames  = {'logregXorRbfProto', 'logregXorRbfAll', 'logregXorPolyKernel'};
+titles  = {'rbf prototypes', 'rbf all', 'poly kernel'};
+for i=1:numel(kernels)
+  pp{i} = preprocessorCreate('kernelFn', kernels{i}, 'standardizeX', true, 'addOnes', true);
+end
+end
+%% Polynomial basis
+deg = 10;
+pp{end+1} =  preprocessorCreate('poly', deg, 'rescaleX', true, 'addOnes', true);
+fnames{end+1} = 'logregXorPoly';
+titles{end+1} = sprintf('poly%d', deg);
+%% Fit and predict
+for i=1:numel(pp)
+    model = logregFit(X, y, 'lambda', lambda, 'preproc', pp{i});
+    yhat = logregPredict(model, X);
+    errorRate = mean(yhat ~= y);
+    fprintf('Error rate using %s features: %2.f%%\n', titles{i}, 100*errorRate);
+    predictFcn = @(Xtest)logregPredict(model, Xtest);
+    plotDecisionBoundary(X, y, predictFcn);
+    if  i==1
+       hold on; 
+       plot(protoTypes(:, 1), protoTypes(:, 2), '*k', 'linewidth', 2, 'markersize', 10)
+    end
+    title(titles{i});
+    printPmtkFigure(fnames{i})
+end
+end
+
+##### SOURCE END #####
+--></body></html>

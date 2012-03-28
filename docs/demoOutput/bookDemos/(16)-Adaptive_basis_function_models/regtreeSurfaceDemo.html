@@ -1,0 +1,153 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>regtreeSurfaceDemo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="regtreeSurfaceDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% The values used in the latex pstricks figure</span>
+x11 = 5;
+x12 = 3;
+x21 = 7;
+x22 = 3;
+
+<span class="comment">% Values for the tree in each region</span>
+r = 2:2:10;
+
+<span class="comment">% Create a mesh for X1 and X2</span>
+h = 0.1;
+M = 10;
+
+X1 = 0:h:M;
+X2 = 0:h:M;
+
+<span class="comment">% The matrix to store the values of the tree</span>
+tree = zeros(length(X1),length(X2));
+
+<span class="comment">% The five regions - manually assign values</span>
+<span class="comment">% not that the inequalities revere because of how the vectorized logical conditions compare.</span>
+tree(X1 &lt;= x11, X2 &lt;= x21) = r(1);
+tree(X1 &gt; x11, X2 &lt;= x22) = r(2);
+tree(X1 &gt; x11, X2 &gt; x22) = r(3);
+tree(X1 &lt;= min(x11,x22), X2 &gt; x21) = r(4);
+tree(X1 &lt;= x11 &amp; X1 &gt; x12, X2 &gt; x21) = r(5);
+
+<span class="comment">% Define a colormap so the colors are consistent between latex and Matlab</span>
+Col = [
+  255 0 0;
+  0 0 255;
+  160 32 240;
+  0 100 0;
+  255 140 0;
+  ] / 255;
+
+<span class="comment">% plot the mesh</span>
+colormap(Col);
+mesh(X1,X2,tree);
+
+printPmtkFigure(<span class="string">'tree3d'</span>);
+</pre><img vspace="5" hspace="5" src="regtreeSurfaceDemo_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+% The values used in the latex pstricks figure
+x11 = 5;
+x12 = 3;
+x21 = 7;
+x22 = 3;
+
+% Values for the tree in each region
+r = 2:2:10;
+
+% Create a mesh for X1 and X2
+h = 0.1;
+M = 10;
+
+X1 = 0:h:M;
+X2 = 0:h:M;
+
+% The matrix to store the values of the tree
+tree = zeros(length(X1),length(X2));
+
+% The five regions - manually assign values
+% not that the inequalities revere because of how the vectorized logical conditions compare.
+tree(X1 <= x11, X2 <= x21) = r(1);
+tree(X1 > x11, X2 <= x22) = r(2);
+tree(X1 > x11, X2 > x22) = r(3);
+tree(X1 <= min(x11,x22), X2 > x21) = r(4);
+tree(X1 <= x11 & X1 > x12, X2 > x21) = r(5);
+
+% Define a colormap so the colors are consistent between latex and Matlab
+Col = [
+  255 0 0;
+  0 0 255;
+  160 32 240;
+  0 100 0;
+  255 140 0;
+  ] / 255;
+
+% plot the mesh
+colormap(Col);
+mesh(X1,X2,tree);
+
+printPmtkFigure('tree3d');
+
+
+##### SOURCE END #####
+--></body></html>

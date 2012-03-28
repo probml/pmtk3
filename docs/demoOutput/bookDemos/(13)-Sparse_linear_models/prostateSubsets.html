@@ -1,0 +1,136 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Reproduce fig 3.5 on p56 of "Elements of statistical learning"</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="prostateSubsets.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Reproduce fig 3.5 on p56 of "Elements of statistical learning"</h1><!--introduction--><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+loadData(<span class="string">'prostate'</span>);
+[n, d] = size(X);
+X = standardizeCols(X);
+y = centerCols(y);
+mse = zeros(2^8-1, 1);
+ss = powerset(1:d);
+ss(1) = [];
+<span class="keyword">for</span> i=1:numel(ss);
+    ndx = ss{i};
+    model = linregFit(X(:, ndx), y, <span class="string">'preproc'</span>, struct(<span class="string">'addOnes'</span>, false));
+    model.w = padZeros(model.w, ndx, [d, 1]);
+    yhat = linregPredict(model, X);
+    mse(i) = mean((yhat - y).^2);
+<span class="keyword">end</span>
+mse0 = mean((y - mean(y)).^2);
+mse = [mse0; mse];
+sz = [0; cellfun(@numel, ss)]; <span class="comment">% sizes of each subset.</span>
+figure; hold <span class="string">on</span>;
+plot(sz, mse, <span class="string">'.'</span>, <span class="string">'markersize'</span>, 40);
+bestScores = zeros(1, d + 1);
+<span class="keyword">for</span> i=0:d
+    bestScores(i+1) = min(mse(sz==i));
+<span class="keyword">end</span>
+plot(0:d, bestScores, <span class="string">'ro-'</span>, <span class="string">'MarkerSize'</span>, 12, <span class="string">'LineWidth'</span>, 2);
+xlabel(<span class="string">'subset size'</span>)
+ylabel(<span class="string">'training set error'</span>);
+title(<span class="string">'all subsets on prostate cancer'</span>)
+box <span class="string">on</span>;
+printPmtkFigure <span class="string">prostateSubsets</span>
+</pre><img vspace="5" hspace="5" src="prostateSubsets_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Reproduce fig 3.5 on p56 of "Elements of statistical learning" 
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+loadData('prostate');
+[n, d] = size(X);
+X = standardizeCols(X); 
+y = centerCols(y); 
+mse = zeros(2^8-1, 1); 
+ss = powerset(1:d);
+ss(1) = [];
+for i=1:numel(ss);
+    ndx = ss{i};
+    model = linregFit(X(:, ndx), y, 'preproc', struct('addOnes', false));
+    model.w = padZeros(model.w, ndx, [d, 1]);
+    yhat = linregPredict(model, X); 
+    mse(i) = mean((yhat - y).^2);
+end
+mse0 = mean((y - mean(y)).^2);
+mse = [mse0; mse];
+sz = [0; cellfun(@numel, ss)]; % sizes of each subset. 
+figure; hold on;
+plot(sz, mse, '.', 'markersize', 40);
+bestScores = zeros(1, d + 1);
+for i=0:d
+    bestScores(i+1) = min(mse(sz==i));
+end
+plot(0:d, bestScores, 'ro-', 'MarkerSize', 12, 'LineWidth', 2);
+xlabel('subset size')
+ylabel('training set error');
+title('all subsets on prostate cancer')
+box on;    
+printPmtkFigure prostateSubsets
+
+##### SOURCE END #####
+--></body></html>

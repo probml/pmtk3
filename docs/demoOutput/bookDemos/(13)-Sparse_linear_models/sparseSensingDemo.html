@@ -1,0 +1,290 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Figure 1 from Figueiredo'07,  "Gradient projection for sparse reconstruction"</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="sparseSensingDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Figure 1 from Figueiredo'07,  "Gradient projection for sparse reconstruction"</h1><!--introduction--><p>PMTKauthor Figueiredo PMTKurl <a href="http://www.lx.it.pt/~mtf/GPSR/">http://www.lx.it.pt/~mtf/GPSR/</a> PMTKmodified Kevin Murphy PMTKslow</p><!--/introduction--><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+setSeed(0);
+<span class="comment">% n is the original signal length</span>
+n = 2^12;
+
+<span class="comment">% k is number of observations to make</span>
+k = 2^10;
+
+<span class="comment">% number of spikes to put down</span>
+<span class="comment">% n_spikes = floor(.01*n);</span>
+n_spikes = 160;
+
+
+<span class="comment">% random +/- 1 signal</span>
+f = zeros(n,1);
+q = randperm(n);
+f(q(1:n_spikes)) = sign(randn(n_spikes,1));
+<span class="comment">%f(q(1:n_spikes)) = randn(n_spikes,1);</span>
+
+<span class="comment">% measurement matrix</span>
+R = randn(k,n);
+
+<span class="comment">% orthonormalize rows</span>
+R = orth(R')';
+
+
+<span class="comment">% noisy observations</span>
+sigma = 0.01;
+y = R*f + sigma*randn(k, 1);
+
+<span class="comment">% regularization parameter</span>
+tau = 0.1*max(abs(R'*y));
+
+[x_l1_ls,status,history] = l1_ls(R,y,2*tau,0.01);
+
+w = x_l1_ls;
+aw = abs(w);
+zz = find(abs(w) &lt;= 0.01*max(aw));
+ndx = setdiff(1:n, zz);
+wdebiased = zeros(n,1);
+X = R;
+<span class="comment">%wdebiased(ndx) = pinv(X(:,ndx))*y;</span>
+wdebiased(ndx) = X(:,ndx)\y;
+wfull = X'*y; <span class="comment">% since X is orthogonal %pinv(X)*y; % X'*y; % X\y;</span>
+
+
+wsparse = w;
+wdeb = wdebiased;
+wls = wfull;
+
+figure
+scrsz = get(0,<span class="string">'ScreenSize'</span>);
+set(gca,<span class="string">'Position'</span>,[10 scrsz(4)*0.1 0.9*scrsz(3)/2 3*scrsz(4)/4])
+subplot(4,1,1)
+plot(f,<span class="string">'LineWidth'</span>,1.1)
+top = max(f(:));
+bottom = min(f(:));
+v = [0 n+1 bottom-0.05*(top-bottom)  top+0.05*((top-bottom))];
+set(gca,<span class="string">'FontName'</span>,<span class="string">'Times'</span>)
+set(gca,<span class="string">'FontSize'</span>,14)
+title(sprintf(<span class="string">'Original (D = %g, number of nonzeros = %g)'</span>,n,n_spikes))
+<span class="comment">%axis(v)</span>
+set(gca,<span class="string">'ylim'</span>,[-1 1])
+
+subplot(4,1,2)
+plot(wsparse,<span class="string">'LineWidth'</span>,1.1)
+set(gca,<span class="string">'FontName'</span>,<span class="string">'Times'</span>)
+set(gca,<span class="string">'FontSize'</span>,14)
+axis(v)
+title(sprintf(<span class="string">'L1 reconstruction (K0 = %g, lambda = %5.3g, MSE = %5.3g)'</span>,<span class="keyword">...</span>
+    k,tau,(1/n)*norm(wsparse-f)^2))
+
+subplot(4,1,3)
+plot(wdeb,<span class="string">'LineWidth'</span>,1.1)
+set(gca,<span class="string">'FontName'</span>,<span class="string">'Times'</span>)
+set(gca,<span class="string">'FontSize'</span>,14)
+top = max(f(:));
+bottom = min(f(:));
+v = [0 n+1 bottom-0.15*(top-bottom)  top+0.15*((top-bottom))];
+<span class="comment">%axis(v)</span>
+set(gca,<span class="string">'ylim'</span>,[-1 1])
+title(sprintf(<span class="keyword">...</span>
+    <span class="string">'Debiased (MSE = %0.4g)'</span>,(1/n)*norm(wdeb-f)^2))
+
+subplot(4,1,4)
+plot(wls,<span class="string">'LineWidth'</span>,1.1)
+set(gca,<span class="string">'FontName'</span>,<span class="string">'Times'</span>)
+set(gca,<span class="string">'FontSize'</span>,14)
+title(sprintf(<span class="string">'Minimum norm solution (MSE = %0.4g)'</span>,(1/n)*norm(wls-f)^2))
+top = max(wls(:));
+bottom = min(wls(:));
+v = [0 n+1 bottom-0.15*(top-bottom)  top+0.15*((top-bottom))];
+<span class="comment">%axis(v)</span>
+set(gca,<span class="string">'ylim'</span>,[-1 1])
+
+
+printPmtkFigure(<span class="string">'sparseSensingDemo'</span>)
+</pre><pre class="codeoutput">
+Solving a problem of size (m=1024, n=4096), with lambda=1.01929e-01
+-----------------------------------------------------------------------------
+ iter       gap         primobj         dualobj      step len   pcg iters
+   0     3.29e+01     4.06774e+01     7.72870e+00         Inf        0
+   1     2.26e+01     3.03156e+01     7.72870e+00     1.0e+00        1
+   2     2.23e+01     3.00092e+01     7.72870e+00     5.0e-01        1
+   3     1.84e+01     2.60989e+01     7.72870e+00     5.0e-01        2
+   4     1.40e+01     2.35402e+01     9.49669e+00     5.0e-01        2
+   5     8.06e+00     1.98114e+01     1.17465e+01     5.0e-01        4
+   6     4.33e+00     1.74732e+01     1.31408e+01     5.0e-01        7
+   7     2.00e+00     1.58017e+01     1.38020e+01     5.0e-01        7
+   8     1.12e+00     1.52604e+01     1.41416e+01     5.0e-01       11
+   9     5.37e-01     1.48638e+01     1.43265e+01     5.0e-01       10
+  10     2.97e-01     1.47249e+01     1.44283e+01     5.0e-01       11
+  11     1.43e-01     1.46261e+01     1.44832e+01     5.0e-01       10
+Absolute tolerance reached.
+</pre><img vspace="5" hspace="5" src="sparseSensingDemo_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Figure 1 from Figueiredo'07,  "Gradient projection for sparse reconstruction"
+% PMTKauthor Figueiredo
+% PMTKurl http://www.lx.it.pt/~mtf/GPSR/
+% PMTKmodified Kevin Murphy
+% PMTKslow
+%%
+
+% This file is from pmtk3.googlecode.com
+
+setSeed(0);
+% n is the original signal length
+n = 2^12;
+
+% k is number of observations to make
+k = 2^10;
+
+% number of spikes to put down
+% n_spikes = floor(.01*n);
+n_spikes = 160;
+
+
+% random +/- 1 signal
+f = zeros(n,1);
+q = randperm(n);
+f(q(1:n_spikes)) = sign(randn(n_spikes,1));
+%f(q(1:n_spikes)) = randn(n_spikes,1);
+
+% measurement matrix
+R = randn(k,n);
+
+% orthonormalize rows
+R = orth(R')';
+
+
+% noisy observations
+sigma = 0.01;
+y = R*f + sigma*randn(k, 1);
+
+% regularization parameter
+tau = 0.1*max(abs(R'*y));
+
+[x_l1_ls,status,history] = l1_ls(R,y,2*tau,0.01);
+
+w = x_l1_ls;
+aw = abs(w);
+zz = find(abs(w) <= 0.01*max(aw));
+ndx = setdiff(1:n, zz);
+wdebiased = zeros(n,1);
+X = R;
+%wdebiased(ndx) = pinv(X(:,ndx))*y;
+wdebiased(ndx) = X(:,ndx)\y;
+wfull = X'*y; % since X is orthogonal %pinv(X)*y; % X'*y; % X\y;
+
+
+wsparse = w;
+wdeb = wdebiased;
+wls = wfull;
+
+figure
+scrsz = get(0,'ScreenSize');
+set(gca,'Position',[10 scrsz(4)*0.1 0.9*scrsz(3)/2 3*scrsz(4)/4])
+subplot(4,1,1)
+plot(f,'LineWidth',1.1)
+top = max(f(:));
+bottom = min(f(:));
+v = [0 n+1 bottom-0.05*(top-bottom)  top+0.05*((top-bottom))];
+set(gca,'FontName','Times')
+set(gca,'FontSize',14)
+title(sprintf('Original (D = %g, number of nonzeros = %g)',n,n_spikes))
+%axis(v)
+set(gca,'ylim',[-1 1])
+
+subplot(4,1,2)
+plot(wsparse,'LineWidth',1.1)
+set(gca,'FontName','Times')
+set(gca,'FontSize',14)
+axis(v)
+title(sprintf('L1 reconstruction (K0 = %g, lambda = %5.3g, MSE = %5.3g)',...
+    k,tau,(1/n)*norm(wsparse-f)^2))
+
+subplot(4,1,3)
+plot(wdeb,'LineWidth',1.1)
+set(gca,'FontName','Times')
+set(gca,'FontSize',14)
+top = max(f(:));
+bottom = min(f(:));
+v = [0 n+1 bottom-0.15*(top-bottom)  top+0.15*((top-bottom))];
+%axis(v)
+set(gca,'ylim',[-1 1])
+title(sprintf(...
+    'Debiased (MSE = %0.4g)',(1/n)*norm(wdeb-f)^2))
+
+subplot(4,1,4)
+plot(wls,'LineWidth',1.1)
+set(gca,'FontName','Times')
+set(gca,'FontSize',14)
+title(sprintf('Minimum norm solution (MSE = %0.4g)',(1/n)*norm(wls-f)^2))
+top = max(wls(:));
+bottom = min(wls(:));
+v = [0 n+1 bottom-0.15*(top-bottom)  top+0.15*((top-bottom))];
+%axis(v)
+set(gca,'ylim',[-1 1])
+
+
+printPmtkFigure('sparseSensingDemo')
+
+##### SOURCE END #####
+--></body></html>

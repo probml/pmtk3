@@ -1,0 +1,175 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Plot a Mixture of Beta Distributions</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="mixBetaDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Plot a Mixture of Beta Distributions</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#4">Plot</a></li><li><a href="#6">Compute pbiased using just mixture component 1</a></li></ul></div><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="keyword">function</span> mixBetaDemo()
+</pre><pre class="codeinput">dataSS = [20 10];
+alphaPrior = [20 20 ; 30 10];
+M = 2;
+mixprior = [0.5 0.5];
+</pre><pre class="codeinput"><span class="keyword">for</span> z=1:M
+    logmarglik(z) = betaln(alphaPrior(z,1) + dataSS(1), alphaPrior(z,2) + dataSS(2)) - <span class="keyword">...</span>
+        betaln(alphaPrior(z,1), alphaPrior(z,2));
+<span class="keyword">end</span>
+mixpost = exp(normalizeLogspace(logmarglik + log(mixprior)))
+<span class="keyword">for</span> z=1:M
+    alphaPost(z,:) = alphaPrior(z,:) + dataSS
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">mixpost =
+    0.3458    0.6542
+alphaPost =
+    40    30
+alphaPost =
+    40    30
+    50    20
+</pre><h2>Plot<a name="4"></a></h2><pre class="codeinput">grid = 0.0001:0.01:0.9999;
+post = evalpdf(grid, mixpost, alphaPost);
+prior = evalpdf(grid, mixprior, alphaPrior);
+figure; hold <span class="string">on</span>
+plot(grid, prior, <span class="string">'r--'</span>, <span class="string">'linewidth'</span>, 3)
+plot(grid, post, <span class="string">'b-'</span>, <span class="string">'linewidth'</span>, 3)
+legend({<span class="string">'prior'</span>, <span class="string">'posterior'</span>}, <span class="string">'Location'</span>, <span class="string">'NorthWest'</span>)
+title(<span class="string">'mixture of Beta distributions'</span>)
+printPmtkFigure(<span class="string">'mixBetaDemo'</span>)
+</pre><img vspace="5" hspace="5" src="mixBetaDemo_01.png" alt=""> <pre class="codeinput">pbiased = 0;
+<span class="keyword">for</span> k=1:M
+    model.a = alphaPost(k, 1);
+    model.b = alphaPost(k, 2);
+    pbiased = pbiased + mixpost(k)*(1-betainc(0.5, alphaPost(k, 1), alphaPost(k, 2)));
+<span class="keyword">end</span>
+</pre><h2>Compute pbiased using just mixture component 1<a name="6"></a></h2><pre class="codeinput">pbiasedSimple = 1-betainc(0.5, alphaPost(1,1), alphaPost(1,2))
+</pre><pre class="codeoutput">pbiasedSimple =
+    0.8858
+</pre><pre class="codeinput"><span class="keyword">end</span>
+
+
+<span class="keyword">function</span> p = evalpdf(thetas, postZ, alphaPost)
+p = zeros(size(thetas));
+M = numel(postZ);
+<span class="keyword">for</span> k=1:M
+    model.a = alphaPost(k, 1);
+    model.b = alphaPost(k, 2);
+    p = p + postZ(k)*exp(betaLogprob(model, thetas));
+<span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Plot a Mixture of Beta Distributions
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+function mixBetaDemo()
+dataSS = [20 10];
+alphaPrior = [20 20 ; 30 10];
+M = 2;
+mixprior = [0.5 0.5];
+%%
+for z=1:M
+    logmarglik(z) = betaln(alphaPrior(z,1) + dataSS(1), alphaPrior(z,2) + dataSS(2)) - ...
+        betaln(alphaPrior(z,1), alphaPrior(z,2));
+end
+mixpost = exp(normalizeLogspace(logmarglik + log(mixprior)))
+for z=1:M
+    alphaPost(z,:) = alphaPrior(z,:) + dataSS
+end
+%% Plot
+grid = 0.0001:0.01:0.9999;
+post = evalpdf(grid, mixpost, alphaPost);
+prior = evalpdf(grid, mixprior, alphaPrior);
+figure; hold on
+plot(grid, prior, 'rREPLACE_WITH_DASH_DASH', 'linewidth', 3)
+plot(grid, post, 'b-', 'linewidth', 3)
+legend({'prior', 'posterior'}, 'Location', 'NorthWest')
+title('mixture of Beta distributions')
+printPmtkFigure('mixBetaDemo')
+%%
+pbiased = 0;
+for k=1:M
+    model.a = alphaPost(k, 1);
+    model.b = alphaPost(k, 2);
+    pbiased = pbiased + mixpost(k)*(1-betainc(0.5, alphaPost(k, 1), alphaPost(k, 2)));
+end
+
+%% Compute pbiased using just mixture component 1
+pbiasedSimple = 1-betainc(0.5, alphaPost(1,1), alphaPost(1,2))
+end
+
+
+function p = evalpdf(thetas, postZ, alphaPost)
+p = zeros(size(thetas));
+M = numel(postZ);
+for k=1:M
+    model.a = alphaPost(k, 1); 
+    model.b = alphaPost(k, 2);
+    p = p + postZ(k)*exp(betaLogprob(model, thetas)); 
+end
+end
+
+
+##### SOURCE END #####
+--></body></html>

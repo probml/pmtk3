@@ -1,0 +1,131 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>marsDemo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="marsDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% http://en.wikipedia.org/wiki/Multivariate_adaptive_regression_splines</span>
+
+figure; hold <span class="string">on</span>;
+xs = 0:0.1:20;
+plot(xs, max(0,xs-5), <span class="string">'-'</span>, <span class="string">'linewidth'</span>, 3);
+plot(xs, max(0,5-xs), <span class="string">'r:'</span>, <span class="string">'linewidth'</span>, 3);
+axis_pct
+printPmtkFigure(<span class="string">'marsHinge'</span>)
+
+figure;
+xs = 0:0.1:20;
+<span class="comment">%f = @(x) 25+6.1*max(0,x-13) -3.1*max(0,13-x);</span>
+<span class="comment">%f = @(x) 25  -4*max(0,x-5) + 6.1*max(0,x-13) -3.1*max(0,13-x);</span>
+f = @(x) 25  -4*max(0,x-5) + 20*max(0,5-x);
+<span class="comment">%f = @(x) 25  -4*max(0,(x-5).^2) + 6.1*max(0,(x-13));</span>
+plot(xs, f(xs), <span class="string">'-'</span>, <span class="string">'linewidth'</span>, 3);
+axis_pct
+printPmtkFigure(<span class="string">'mars1d'</span>)
+
+figure;
+<span class="comment">%f = @(x,y) 5 + 1*max(0,x-5) -2*max(x-10) ...</span>
+<span class="comment">%  -3*max(0,5-y) -2*max(0,y-10).*max(0,12-x);</span>
+f = @(x,y) 2  -2*max(0,x-5) + 3*max(0,5-x) <span class="keyword">...</span>
+  -1*max(0,y-10).*max(0,5-x) + <span class="keyword">...</span>
+   -1.2*max(0,10-y).*max(0,5-x);
+[x, y] = meshgrid(0:0.5:20, 0:0.5:20);
+z= reshape(f(x(:),y(:)), size(x));
+surf(x,y,z);
+<span class="comment">%view([-56, 46])</span>
+printPmtkFigure(<span class="string">'mars2d'</span>)
+</pre><img vspace="5" hspace="5" src="marsDemo_01.png" alt=""> <img vspace="5" hspace="5" src="marsDemo_02.png" alt=""> <img vspace="5" hspace="5" src="marsDemo_03.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+% http://en.wikipedia.org/wiki/Multivariate_adaptive_regression_splines
+
+figure; hold on;
+xs = 0:0.1:20;
+plot(xs, max(0,xs-5), '-', 'linewidth', 3);
+plot(xs, max(0,5-xs), 'r:', 'linewidth', 3);
+axis_pct
+printPmtkFigure('marsHinge')
+
+figure;
+xs = 0:0.1:20;
+%f = @(x) 25+6.1*max(0,x-13) -3.1*max(0,13-x);
+%f = @(x) 25  -4*max(0,x-5) + 6.1*max(0,x-13) -3.1*max(0,13-x);
+f = @(x) 25  -4*max(0,x-5) + 20*max(0,5-x);
+%f = @(x) 25  -4*max(0,(x-5).^2) + 6.1*max(0,(x-13));
+plot(xs, f(xs), '-', 'linewidth', 3);
+axis_pct
+printPmtkFigure('mars1d')
+
+figure;
+%f = @(x,y) 5 + 1*max(0,x-5) -2*max(x-10) ...
+%  -3*max(0,5-y) -2*max(0,y-10).*max(0,12-x);
+f = @(x,y) 2  -2*max(0,x-5) + 3*max(0,5-x) ...
+  -1*max(0,y-10).*max(0,5-x) + ...
+   -1.2*max(0,10-y).*max(0,5-x);
+[x, y] = meshgrid(0:0.5:20, 0:0.5:20); 
+z= reshape(f(x(:),y(:)), size(x));
+surf(x,y,z);
+%view([-56, 46])
+printPmtkFigure('mars2d')
+
+
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,162 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Multiclass Logistic Regression</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="logregMultinomKernelDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Multiclass Logistic Regression</h1><!--introduction--><p>In this demo, we fit a multiclass logistic regression model by first performing various basis expansions of the input features. This is a simplification of logregMultinomKernelMinfuncDemo.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Setup Data</a></li><li><a href="#3">Settings</a></li><li><a href="#4">No Kernel</a></li><li><a href="#6">Polynomial</a></li><li><a href="#7">RBF</a></li><li><a href="#8">Compute training errors</a></li><li><a href="#9">Plot decision boundaries</a></li></ul></div><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="keyword">function</span> logregMultinomKernelDemo()
+</pre><h2>Setup Data<a name="2"></a></h2><pre class="codeinput">setSeed(0);
+nClasses = 5;
+nInstances = 100;
+nVars = 2;
+[X, y] = makeData(<span class="string">'multinomialNonlinear'</span>, nInstances, nVars, nClasses);
+</pre><h2>Settings<a name="3"></a></h2><pre class="codeinput">lambda    = 1e-2;
+polyOrder = 2;
+rbfScale  = 1;
+</pre><h2>No Kernel<a name="4"></a></h2><pre class="codeinput">modelLinear = logregFit(X, y, <span class="string">'lambda'</span>, lambda);
+</pre><pre class="codeinput">fitkern = @(k, p)logregFit(X, y, <span class="string">'lambda'</span>, lambda, <span class="keyword">...</span>
+    <span class="string">'preproc'</span>, struct(<span class="string">'kernelFn'</span>, @(X1, X2)k(X1, X2, p)));
+</pre><h2>Polynomial<a name="6"></a></h2><pre class="codeinput">modelPoly = fitkern(@kernelPoly, polyOrder);
+</pre><h2>RBF<a name="7"></a></h2><pre class="codeinput">modelRBF = fitkern(@kernelRbfSigma, rbfScale);
+</pre><h2>Compute training errors<a name="8"></a></h2><pre class="codeinput">[yhat, prob] = logregPredict(modelLinear, X); <span class="comment">%#ok</span>
+trainErr_linear = mean(y~=yhat);
+fprintf(<span class="string">'Training error with raw features: %2.f%%\n'</span>, trainErr_linear*100);
+
+[yhat, prob] = logregPredict(modelPoly, X); <span class="comment">%#ok</span>
+trainErr_poly = mean(y~=yhat);
+fprintf(<span class="string">'Training error using a polynomial kernal of degree %d: %2.f%%\n'</span>, polyOrder,  trainErr_poly*100);
+
+[yhat, prob] = logregPredict(modelRBF, X);
+trainErr_rbf = mean(y~=yhat);
+fprintf(<span class="string">'Training error using an RBF kernel with scale %d: %2.f%%\n'</span>, rbfScale, trainErr_rbf*100);
+</pre><pre class="codeoutput">Training error with raw features: 30%
+Training error using a polynomial kernal of degree 2: 14%
+Training error using an RBF kernel with scale 1: 18%
+</pre><h2>Plot decision boundaries<a name="9"></a></h2><pre class="codeinput">plotDecisionBoundary(X, y, @(X)logregPredict(modelLinear, X));
+title(<span class="string">'Linear Multinomial Logistic Regression'</span>);
+</pre><img vspace="5" hspace="5" src="logregMultinomKernelDemo_01.png" alt=""> <pre class="codeinput">predictFcn = @(Xtest) logregPredict(modelPoly, Xtest);
+plotDecisionBoundary(X, y, predictFcn);
+title(<span class="string">'Kernel-Poly Multinomial Logistic Regression'</span>);
+</pre><img vspace="5" hspace="5" src="logregMultinomKernelDemo_02.png" alt=""> <pre class="codeinput">predictFcn = @(Xtest) logregPredict(modelRBF, Xtest);
+plotDecisionBoundary(X, y, predictFcn);
+title(<span class="string">'Kernel-RBF Multinomial Logistic Regression'</span>);
+</pre><img vspace="5" hspace="5" src="logregMultinomKernelDemo_03.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Multiclass Logistic Regression 
+% In this demo, we fit a multiclass logistic regression model by first
+% performing various basis expansions of the input features. This is a
+% simplification of logregMultinomKernelMinfuncDemo.
+%%
+
+% This file is from pmtk3.googlecode.com
+
+function logregMultinomKernelDemo()
+%% Setup Data
+setSeed(0);
+nClasses = 5;
+nInstances = 100;
+nVars = 2;
+[X, y] = makeData('multinomialNonlinear', nInstances, nVars, nClasses);
+%% Settings
+lambda    = 1e-2;
+polyOrder = 2;
+rbfScale  = 1;
+%% No Kernel
+modelLinear = logregFit(X, y, 'lambda', lambda);
+%% 
+fitkern = @(k, p)logregFit(X, y, 'lambda', lambda, ...
+    'preproc', struct('kernelFn', @(X1, X2)k(X1, X2, p))); 
+%% Polynomial
+modelPoly = fitkern(@kernelPoly, polyOrder); 
+%% RBF
+modelRBF = fitkern(@kernelRbfSigma, rbfScale); 
+%% Compute training errors
+[yhat, prob] = logregPredict(modelLinear, X); %#ok
+trainErr_linear = mean(y~=yhat);
+fprintf('Training error with raw features: %2.f%%\n', trainErr_linear*100);
+
+[yhat, prob] = logregPredict(modelPoly, X); %#ok
+trainErr_poly = mean(y~=yhat);
+fprintf('Training error using a polynomial kernal of degree %d: %2.f%%\n', polyOrder,  trainErr_poly*100);
+
+[yhat, prob] = logregPredict(modelRBF, X);
+trainErr_rbf = mean(y~=yhat);
+fprintf('Training error using an RBF kernel with scale %d: %2.f%%\n', rbfScale, trainErr_rbf*100);
+%% Plot decision boundaries
+plotDecisionBoundary(X, y, @(X)logregPredict(modelLinear, X));
+title('Linear Multinomial Logistic Regression');
+%%
+predictFcn = @(Xtest) logregPredict(modelPoly, Xtest); 
+plotDecisionBoundary(X, y, predictFcn);
+title('Kernel-Poly Multinomial Logistic Regression');
+%%
+predictFcn = @(Xtest) logregPredict(modelRBF, Xtest); 
+plotDecisionBoundary(X, y, predictFcn);
+title('Kernel-RBF Multinomial Logistic Regression');
+%%
+end
+
+##### SOURCE END #####
+--></body></html>

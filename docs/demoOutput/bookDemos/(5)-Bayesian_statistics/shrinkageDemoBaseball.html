@@ -1,0 +1,202 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Baseball Batting Average Shrinkage Estimates</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="shrinkageDemoBaseball.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Baseball Batting Average Shrinkage Estimates</h1><!--introduction--><p>Reproduce example from "Data Analysis Using Stein's Estimator and its Generalizations" Bradley Efron; Carl Morris JASA Vol. 70, No. 350. (Jun., 1975), pp. 311-319.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Data</a></li><li><a href="#2">Data Transformation</a></li><li><a href="#3">Shrinkage estimate</a></li><li><a href="#4">Back transform</a></li><li><a href="#5">Plot Shrinkage Estimates</a></li><li><a href="#6">Histograms</a></li></ul></div><h2>Data<a name="1"></a></h2><p>1970 batting averages for 18 major league players. first column = batting average for first 45 at bats 2nd column   = batting everage for remainder of season</p><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+data = [0.400 0.346;
+     0.378 0.298
+     0.356 0.276
+     0.333 0.222
+     0.311 0.273
+     0.311 0.270
+     0.289 0.263
+     0.267 0.210
+     0.244 0.269
+     0.244 0.230
+     0.222 0.264
+     0.222 0.256
+     0.222 0.303
+     0.222 0.264
+     0.222 0.226
+     0.200 0.285
+     0.178 0.316
+     0.156 0.200];
+</pre><h2>Data Transformation<a name="2"></a></h2><pre class="codeinput">y = data(:,1);
+ytest = data(:,2);
+n = 45;
+x = sqrt(n)*asin(2*y-1); <span class="comment">% arcsin transform</span>
+</pre><h2>Shrinkage estimate<a name="3"></a></h2><pre class="codeinput">d = length(x);
+xbar = mean(x);
+V    = sum((x-xbar).^2);
+s2   = V/d;
+<span class="comment">%B = (d-3)/V;% Efron-Morris shrinkage</span>
+sigma2 = 1; <span class="comment">% by construction of the arcsin transform</span>
+B = sigma2/(sigma2 + max(0, s2-sigma2)); <span class="comment">% B = lambda0</span>
+muShrunk = xbar + (1-B)*(x-xbar);
+</pre><h2>Back transform<a name="4"></a></h2><pre class="codeinput">thetaShrunk = 0.5*(sin(muShrunk/sqrt(n))+1);
+thetaMLE = y;
+</pre><h2>Plot Shrinkage Estimates<a name="5"></a></h2><pre class="codeinput">figure;
+plot(thetaMLE, ones(1, d) ,<span class="string">'o'</span>);
+hold <span class="string">on</span>
+plot(thetaShrunk, 0*ones(1, d), <span class="string">'o'</span>);
+<span class="keyword">for</span> i=1:d
+  line([thetaMLE(i); thetaShrunk(i)], [1; 0]);
+<span class="keyword">end</span>
+title(<span class="string">'MLE (top) and shrinkage estimates (bottom)'</span>)
+printPmtkFigure <span class="string">shrinkageDemoBaseballParams</span>;
+</pre><img vspace="5" hspace="5" src="shrinkageDemoBaseball_01.png" alt=""> <h2>Histograms<a name="6"></a></h2><pre class="codeinput">figure;
+ndx = 1:5;
+h = bar([ytest(ndx)';   thetaShrunk(ndx)'; thetaMLE(ndx)']');
+legend({<span class="string">'true'</span>,  <span class="string">'shrunk'</span>, <span class="string">'MLE'</span>})
+<span class="comment">%[im_hatch, colorlist] = applyhatch_pluscolor(gcf,'\-x.', 1);</span>
+mseMLE = mean((ytest-thetaMLE).^2);
+mseShrink = mean((ytest-thetaShrunk).^2);
+ttl = sprintf(<span class="string">'MSE MLE = %6.4f, MSE shrunk = %6.4f'</span>, mseMLE, mseShrink)
+title(ttl)
+xlabel(<span class="string">'player number'</span>)
+ylabel(<span class="string">'MSE'</span>)
+printPmtkFigure <span class="string">shrinkageDemoBaseballPred</span>;
+mseMLE/mseShrink
+</pre><pre class="codeoutput">ttl =
+MSE MLE = 0.0042, MSE shrunk = 0.0013
+ans =
+    3.2754
+</pre><img vspace="5" hspace="5" src="shrinkageDemoBaseball_02.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Baseball Batting Average Shrinkage Estimates
+% Reproduce example from
+% "Data Analysis Using Stein's Estimator and its Generalizations"
+% Bradley Efron; Carl Morris JASA Vol. 70, No. 350. (Jun., 1975), pp.
+% 311-319.
+%% Data
+% 1970 batting averages for 18 major league players. 
+% first column = batting average for first 45 at bats
+% 2nd column   = batting everage for remainder of season
+
+% This file is from pmtk3.googlecode.com
+
+data = [0.400 0.346;
+     0.378 0.298
+     0.356 0.276
+     0.333 0.222
+     0.311 0.273
+     0.311 0.270
+     0.289 0.263
+     0.267 0.210
+     0.244 0.269
+     0.244 0.230
+     0.222 0.264
+     0.222 0.256
+     0.222 0.303
+     0.222 0.264
+     0.222 0.226
+     0.200 0.285
+     0.178 0.316
+     0.156 0.200];
+%% Data Transformation
+y = data(:,1);
+ytest = data(:,2);
+n = 45;
+x = sqrt(n)*asin(2*y-1); % arcsin transform
+%% Shrinkage estimate
+d = length(x);
+xbar = mean(x);
+V    = sum((x-xbar).^2);
+s2   = V/d;
+%B = (d-3)/V;% Efron-Morris shrinkage
+sigma2 = 1; % by construction of the arcsin transform
+B = sigma2/(sigma2 + max(0, s2-sigma2)); % B = lambda0
+muShrunk = xbar + (1-B)*(x-xbar); 
+%% Back transform
+thetaShrunk = 0.5*(sin(muShrunk/sqrt(n))+1); 
+thetaMLE = y;
+
+%% Plot Shrinkage Estimates
+figure;
+plot(thetaMLE, ones(1, d) ,'o');
+hold on
+plot(thetaShrunk, 0*ones(1, d), 'o');
+for i=1:d
+  line([thetaMLE(i); thetaShrunk(i)], [1; 0]);
+end
+title('MLE (top) and shrinkage estimates (bottom)')
+printPmtkFigure shrinkageDemoBaseballParams; 
+%% Histograms
+figure;
+ndx = 1:5;
+h = bar([ytest(ndx)';   thetaShrunk(ndx)'; thetaMLE(ndx)']');
+legend({'true',  'shrunk', 'MLE'})
+%[im_hatch, colorlist] = applyhatch_pluscolor(gcf,'\-x.', 1);
+mseMLE = mean((ytest-thetaMLE).^2);
+mseShrink = mean((ytest-thetaShrunk).^2);
+ttl = sprintf('MSE MLE = %6.4f, MSE shrunk = %6.4f', mseMLE, mseShrink)
+title(ttl)
+xlabel('player number')
+ylabel('MSE')
+printPmtkFigure shrinkageDemoBaseballPred; 
+mseMLE/mseShrink
+
+##### SOURCE END #####
+--></body></html>

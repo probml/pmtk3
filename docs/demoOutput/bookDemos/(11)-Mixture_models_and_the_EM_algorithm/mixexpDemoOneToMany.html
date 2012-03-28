@@ -1,0 +1,279 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>demo of mixture of linear regression experts on an inverse problem</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="mixexpDemoOneToMany.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>demo of mixture of linear regression experts on an inverse problem</h1><p>Based on Bishop fig 5.21</p><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+
+clear <span class="string">all</span>
+close <span class="string">all</span>
+setSeed(0);
+
+n = 200;
+y = rand(n,1);
+<span class="comment">% eta = normrnd(0,0.05,n,1);</span>
+eta = randn(n,1)*0.05;
+x = y + 0.3.*sin(2.*pi().*y) + eta;
+data = [x(:) y(:)];
+K = 3;
+
+figure;
+plot(y, x, <span class="string">'o'</span>, <span class="string">'markersize'</span>, 6);
+title(<span class="string">'forwards problem'</span>);
+printPmtkFigure(sprintf(<span class="string">'mixexpOneManyFwds'</span>))
+
+
+figure;
+plot(x, y, <span class="string">'o'</span>, <span class="string">'markersize'</span>, 6);
+title(<span class="string">'inverse problem'</span>);
+printPmtkFigure(sprintf(<span class="string">'mixexpOneManyInverse'</span>))
+
+
+
+N = size(data,1);
+ndx = 1:1:N;
+X = data(ndx,1);
+y = data(ndx,2);
+<span class="comment">%xtest = colvec(linspace(min(X), max(X), 200));</span>
+xtest = colvec(x); ytest = colvec(y);
+
+fixmix = 0;
+model = mixexpFit(X, y, K, <span class="string">'fixmix'</span>, fixmix, <span class="string">'EMargs'</span>, <span class="keyword">...</span>
+  {<span class="string">'verbose'</span>, false, <span class="string">'nrandomrestarts'</span>, 3});
+[mu, v, post, muk, vk] = mixexpPredict(model, xtest);
+map = maxidx(post,[],2);
+<span class="keyword">for</span> i=1:numel(xtest)
+  yhat(i) = muk(i,map(i));
+<span class="keyword">end</span>
+
+figure;
+plot(X, y, <span class="string">'o'</span>, <span class="string">'markersize'</span>, 6); hold <span class="string">on</span>
+ndx = 1:4:numel(xtest);
+h(1)=plot(xtest(ndx), mu(ndx), <span class="string">'rx'</span>, <span class="string">'linewidth'</span>, 2);
+title(sprintf(<span class="string">'prediction'</span>))
+h(2)=plot(xtest(ndx), yhat(ndx), <span class="string">'ks'</span>, <span class="string">'linewidth'</span>, 2);
+legend(h,<span class="string">'mean'</span>, <span class="string">'mode'</span>, <span class="string">'location'</span>,<span class="string">'northwest'</span>)
+printPmtkFigure(sprintf(<span class="string">'mixexpOneManyMu'</span>))
+
+
+
+colors = [1 0 0; 0 1 0; 0 0 1; 1 1 0; 0 1 1; 1 0 1; 0 0 0];
+figure; hold <span class="string">on</span>
+<span class="keyword">for</span> k=1:K
+  plot(xtest, post(:,k), <span class="string">'x'</span>, <span class="string">'color'</span>, colors(k,:),  <span class="string">'linewidth'</span>, 3);
+<span class="keyword">end</span>
+title(sprintf(<span class="string">'gating functions'</span>))
+axis_pct
+printPmtkFigure(sprintf(<span class="string">'mixexpOneManyGating'</span>))
+
+
+
+
+<span class="comment">% Plot points with responsibilities represented by shading</span>
+<span class="comment">%PMTKauthor Catherine Gamroth</span>
+<span class="comment">%</span>
+figure;
+hold <span class="string">on</span>;
+
+W = model.Wy; v = model.Wq;
+r = post; t= ytest;
+<span class="keyword">for</span> i=1:numel(xtest)
+    c = repmat(r(i,:)',1,3);
+    c = sum(c.*colors(1:K,:));
+    <span class="keyword">for</span> g=i:3
+        <span class="keyword">if</span> c(1,g) &gt;=1
+            c(1,g) = 1;
+        <span class="keyword">end</span>
+        <span class="keyword">if</span> c(1,g) &lt;=0
+            c(1,g) = 0;
+        <span class="keyword">end</span>
+        <span class="keyword">if</span>  c(1,g) &lt; 2
+            c(1,g) = c(1,g);
+        <span class="keyword">else</span>
+            c(1,g) = 0;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+    plot(x(i),t(i),<span class="string">'d'</span>,<span class="string">'Color'</span>,c,<span class="string">'MarkerFaceColor'</span>, c, <span class="string">'MarkerSize'</span>, 5);
+<span class="keyword">end</span>
+
+<span class="comment">% Plot Experts</span>
+<span class="keyword">for</span> k=1:K
+    plot(xtest, muk(:,k), <span class="string">'Color'</span>, colors(k,:), <span class="string">'linewidth'</span>, 2);
+<span class="keyword">end</span>
+title(<span class="string">'expert predictions'</span>)
+printPmtkFigure(sprintf(<span class="string">'mixexpOneManyExperts'</span>))
+
+
+placeFigures
+</pre><img vspace="5" hspace="5" src="mixexpDemoOneToMany_01.png" alt=""> <img vspace="5" hspace="5" src="mixexpDemoOneToMany_02.png" alt=""> <img vspace="5" hspace="5" src="mixexpDemoOneToMany_03.png" alt=""> <img vspace="5" hspace="5" src="mixexpDemoOneToMany_04.png" alt=""> <img vspace="5" hspace="5" src="mixexpDemoOneToMany_05.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% demo of mixture of linear regression experts on an inverse problem
+% Based on Bishop fig 5.21
+
+% This file is from pmtk3.googlecode.com
+
+
+clear all
+close all
+setSeed(0);
+
+n = 200;
+y = rand(n,1);
+% eta = normrnd(0,0.05,n,1);
+eta = randn(n,1)*0.05;
+x = y + 0.3.*sin(2.*pi().*y) + eta;
+data = [x(:) y(:)];
+K = 3;
+
+figure;
+plot(y, x, 'o', 'markersize', 6);
+title('forwards problem');
+printPmtkFigure(sprintf('mixexpOneManyFwds'))
+
+
+figure;
+plot(x, y, 'o', 'markersize', 6);
+title('inverse problem');
+printPmtkFigure(sprintf('mixexpOneManyInverse'))
+
+
+
+N = size(data,1);
+ndx = 1:1:N;
+X = data(ndx,1);
+y = data(ndx,2);
+%xtest = colvec(linspace(min(X), max(X), 200));
+xtest = colvec(x); ytest = colvec(y);
+
+fixmix = 0;
+model = mixexpFit(X, y, K, 'fixmix', fixmix, 'EMargs', ...
+  {'verbose', false, 'nrandomrestarts', 3});
+[mu, v, post, muk, vk] = mixexpPredict(model, xtest);
+map = maxidx(post,[],2);
+for i=1:numel(xtest)
+  yhat(i) = muk(i,map(i));
+end
+
+figure;
+plot(X, y, 'o', 'markersize', 6); hold on
+ndx = 1:4:numel(xtest);
+h(1)=plot(xtest(ndx), mu(ndx), 'rx', 'linewidth', 2);
+title(sprintf('prediction'))
+h(2)=plot(xtest(ndx), yhat(ndx), 'ks', 'linewidth', 2);
+legend(h,'mean', 'mode', 'location','northwest')
+printPmtkFigure(sprintf('mixexpOneManyMu'))
+
+
+
+colors = [1 0 0; 0 1 0; 0 0 1; 1 1 0; 0 1 1; 1 0 1; 0 0 0];
+figure; hold on
+for k=1:K
+  plot(xtest, post(:,k), 'x', 'color', colors(k,:),  'linewidth', 3);
+end
+title(sprintf('gating functions'))
+axis_pct
+printPmtkFigure(sprintf('mixexpOneManyGating'))
+
+
+
+
+% Plot points with responsibilities represented by shading
+%PMTKauthor Catherine Gamroth
+%
+figure;
+hold on;
+
+W = model.Wy; v = model.Wq;
+r = post; t= ytest;
+for i=1:numel(xtest)
+    c = repmat(r(i,:)',1,3);
+    c = sum(c.*colors(1:K,:));
+    for g=i:3
+        if c(1,g) >=1
+            c(1,g) = 1;
+        end
+        if c(1,g) <=0
+            c(1,g) = 0;
+        end   
+        if  c(1,g) < 2
+            c(1,g) = c(1,g);
+        else
+            c(1,g) = 0;
+        end
+    end
+    plot(x(i),t(i),'d','Color',c,'MarkerFaceColor', c, 'MarkerSize', 5);
+end
+
+% Plot Experts
+for k=1:K
+    plot(xtest, muk(:,k), 'Color', colors(k,:), 'linewidth', 2);
+end
+title('expert predictions')
+printPmtkFigure(sprintf('mixexpOneManyExperts'))
+
+
+placeFigures
+
+##### SOURCE END #####
+--></body></html>

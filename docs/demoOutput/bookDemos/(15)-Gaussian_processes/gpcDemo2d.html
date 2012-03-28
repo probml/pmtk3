@@ -1,0 +1,151 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>gpcDemo2d</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="gpcDemo2d.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% Make something similar to figure 3.5 of Rasmussen and Williams book</span>
+<span class="comment">% based on demo_laplace_2d from the GPML toolkit</span>
+<span class="comment">%PMTKauthor Carl Rasmussen</span>
+<span class="comment">%PMTKmodified Kevin Murphy</span>
+
+<span class="comment">% make data</span>
+n1=80; n2=40;
+S1 = eye(2); S2 = [1 0.95; 0.95 1];
+m1 = [0.75; 0]; m2 = [-0.75; 0];
+randn(<span class="string">'seed'</span>,17);
+x1 = chol(S1)'*randn(2,n1)+repmat(m1,1,n1);
+x2 = chol(S2)'*randn(2,n2)+repmat(m2,1,n2);
+x = [x1 x2]';
+y = [repmat(-1,1,n1) repmat(1,1,n2)]';
+[t1 t2] = meshgrid(-4:0.1:4,-4:0.1:4);
+t = [t1(:) t2(:)]; <span class="comment">% test</span>
+
+<span class="comment">% training</span>
+loghyper = [0; 0]; <span class="comment">% initial guess</span>
+learnedloghyper = minimize(loghyper, <span class="string">'binaryLaplaceGP'</span>, -20, <span class="string">'covSEiso'</span>, <span class="string">'cumGauss'</span>, x, y);
+
+<span class="comment">% plotting</span>
+loghypers = {[log(0.5); log(10)],  learnedloghyper};
+<span class="keyword">for</span> i=1:numel(loghypers)
+  loghyper = loghypers{i}
+  prob = binaryLaplaceGP(loghyper, <span class="string">'covSEiso'</span>, <span class="string">'cumGauss'</span>, x, y, t);
+  figure;
+  contour(t1,t2,reshape(prob,size(t1)),[0.1:0.1:0.9]);
+  hold <span class="string">on</span>
+  contour(t1,t2,reshape(prob,size(t1)),[0.5], <span class="string">'linewidth'</span>, 3, <span class="string">'color'</span>, <span class="string">'k'</span>);
+  plot(x1(1,:),x1(2,:),<span class="string">'b+'</span>,<span class="string">'markersize'</span>,12)
+  plot(x2(1,:),x2(2,:),<span class="string">'ro'</span>,<span class="string">'markersize'</span>,12)
+  str = sprintf(<span class="string">'SE kernel, %s=%5.3f, %s=%5.3f'</span>, <span class="keyword">...</span>
+    <span class="string">'l'</span>, exp(loghyper(1)), <span class="string">'\sigma^2'</span>, exp(loghyper(2)));
+  title(str, <span class="string">'fontsize'</span>, 16);
+  colorbar
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">Function evaluation      6;  Value 4.131227e+01Function evaluation     10;  Value 4.119557e+01Function evaluation     13;  Value 4.096067e+01Function evaluation     17;  Value 4.077376e+01Function evaluation     20;  Value 4.077363e+01
+loghyper =
+   -0.6931
+    2.3026
+loghyper =
+    0.2467
+    2.6710
+</pre><img vspace="5" hspace="5" src="gpcDemo2d_01.png" alt=""> <img vspace="5" hspace="5" src="gpcDemo2d_02.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+% Make something similar to figure 3.5 of Rasmussen and Williams book
+% based on demo_laplace_2d from the GPML toolkit
+%PMTKauthor Carl Rasmussen
+%PMTKmodified Kevin Murphy
+
+% make data
+n1=80; n2=40;
+S1 = eye(2); S2 = [1 0.95; 0.95 1];
+m1 = [0.75; 0]; m2 = [-0.75; 0];                            
+randn('seed',17);
+x1 = chol(S1)'*randn(2,n1)+repmat(m1,1,n1);
+x2 = chol(S2)'*randn(2,n2)+repmat(m2,1,n2);
+x = [x1 x2]';
+y = [repmat(-1,1,n1) repmat(1,1,n2)]';
+[t1 t2] = meshgrid(-4:0.1:4,-4:0.1:4);
+t = [t1(:) t2(:)]; % test
+
+% training
+loghyper = [0; 0]; % initial guess
+learnedloghyper = minimize(loghyper, 'binaryLaplaceGP', -20, 'covSEiso', 'cumGauss', x, y);
+
+% plotting
+loghypers = {[log(0.5); log(10)],  learnedloghyper};
+for i=1:numel(loghypers)
+  loghyper = loghypers{i}
+  prob = binaryLaplaceGP(loghyper, 'covSEiso', 'cumGauss', x, y, t);
+  figure;
+  contour(t1,t2,reshape(prob,size(t1)),[0.1:0.1:0.9]);
+  hold on
+  contour(t1,t2,reshape(prob,size(t1)),[0.5], 'linewidth', 3, 'color', 'k');
+  plot(x1(1,:),x1(2,:),'b+','markersize',12)
+  plot(x2(1,:),x2(2,:),'ro','markersize',12)
+  str = sprintf('SE kernel, %s=%5.3f, %s=%5.3f', ...
+    'l', exp(loghyper(1)), '\sigma^2', exp(loghyper(2)));
+  title(str, 'fontsize', 16);
+  colorbar
+end
+
+##### SOURCE END #####
+--></body></html>

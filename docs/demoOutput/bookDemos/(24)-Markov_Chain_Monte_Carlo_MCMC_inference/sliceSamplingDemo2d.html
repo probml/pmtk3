@@ -1,0 +1,178 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>sliceSamplingDemo2d</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="sliceSamplingDemo2d.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Setup</a></li><li><a href="#3">Numerical evaluation of posteiror in 2d</a></li><li><a href="#4">MCMC</a></li></ul></div><pre class="codeinput"><span class="comment">% Slice sampling in 2d</span>
+<span class="comment">% From http://www.mathworks.com/products/statistics/demos.html?file=/products/demos/shipping/stats/bayesdemo.html</span>
+
+<span class="comment">%PMTKslow</span>
+
+requireStatsToolbox();
+setSeed(0);
+</pre><h2>Setup<a name="2"></a></h2><p>Likelihood: binomial regression poor(i) ~ Binom(total(i), logit(theta1 + theta2*weight(i))</p><pre class="codeinput"><span class="comment">% A set of car weights</span>
+weight = [2100 2300 2500 2700 2900 3100 3300 3500 3700 3900 4100 4300]';
+weight = (weight-2800)/1000;     <span class="comment">% recenter and rescale</span>
+<span class="comment">% The number of cars tested at each weight</span>
+total = [48 42 31 34 31 21 23 23 21 16 17 21]';
+<span class="comment">% The number of cars that have poor mpg performances at each weight</span>
+poor = [1 2 0 3 8 8 14 17 19 15 17 21]';
+
+logitp = @(b,x) exp(b(1)+b(2).*x)./(1+exp(b(1)+b(2).*x));
+prior1 = @(b1) normpdf(b1,0,20);    <span class="comment">% prior for intercept</span>
+prior2 = @(b2) normpdf(b2,0,20);    <span class="comment">% prior for slope</span>
+</pre><h2>Numerical evaluation of posteiror in 2d<a name="3"></a></h2><pre class="codeinput">post = @(b) prod(binopdf(poor,total,logitp(b,weight))) <span class="keyword">...</span><span class="comment">  % likelihood</span>
+            * prior1(b(1)) * prior2(b(2));                  <span class="comment">% priors</span>
+
+figure;
+b1 = linspace(-2.5, -1, 50);
+b2 = linspace(3, 5.5, 50);
+simpost = zeros(50,50);
+<span class="keyword">for</span> i = 1:length(b1)
+    <span class="keyword">for</span> j = 1:length(b2)
+        simpost(i,j) = post([b1(i), b2(j)]);
+    <span class="keyword">end</span>;
+<span class="keyword">end</span>;
+mesh(b2,b1,simpost)
+xlabel(<span class="string">'Slope'</span>)
+ylabel(<span class="string">'Intercept'</span>)
+zlabel(<span class="string">'Posterior density'</span>)
+view(-110,30)
+<span class="comment">%printPmtkFigure('sliceSamplingDemo2dGrid')</span>
+</pre><img vspace="5" hspace="5" src="sliceSamplingDemo2d_01.png" alt=""> <h2>MCMC<a name="4"></a></h2><pre class="codeinput">initial = [1 1];
+nsamples = 1000;
+trace = slicesample(initial,nsamples,<span class="string">'pdf'</span>,post,<span class="string">'width'</span>,[20 2], <span class="keyword">...</span>
+  <span class="string">'burnin'</span>, 50, <span class="string">'thin'</span>, 10);
+
+figure;
+hist3(trace,[25,25]);
+xlabel(<span class="string">'Intercept'</span>)
+ylabel(<span class="string">'Slope'</span>)
+zlabel(<span class="string">'Posterior density'</span>)
+view(-110,30)
+<span class="comment">%printPmtkFigure('sliceSampling2dHist')</span>
+</pre><img vspace="5" hspace="5" src="sliceSamplingDemo2d_02.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+% Slice sampling in 2d
+% From http://www.mathworks.com/products/statistics/demos.html?file=/products/demos/shipping/stats/bayesdemo.html
+
+%PMTKslow
+
+requireStatsToolbox();
+setSeed(0);
+
+%% Setup
+% Likelihood: binomial regression
+% poor(i) ~ Binom(total(i), logit(theta1 + theta2*weight(i))
+
+% A set of car weights
+weight = [2100 2300 2500 2700 2900 3100 3300 3500 3700 3900 4100 4300]';
+weight = (weight-2800)/1000;     % recenter and rescale
+% The number of cars tested at each weight
+total = [48 42 31 34 31 21 23 23 21 16 17 21]';
+% The number of cars that have poor mpg performances at each weight
+poor = [1 2 0 3 8 8 14 17 19 15 17 21]';
+
+logitp = @(b,x) exp(b(1)+b(2).*x)./(1+exp(b(1)+b(2).*x));
+prior1 = @(b1) normpdf(b1,0,20);    % prior for intercept
+prior2 = @(b2) normpdf(b2,0,20);    % prior for slope
+
+%% Numerical evaluation of posteiror in 2d
+
+post = @(b) prod(binopdf(poor,total,logitp(b,weight))) ...  % likelihood
+            * prior1(b(1)) * prior2(b(2));                  % priors
+
+figure;
+b1 = linspace(-2.5, -1, 50);
+b2 = linspace(3, 5.5, 50);
+simpost = zeros(50,50);
+for i = 1:length(b1)
+    for j = 1:length(b2)
+        simpost(i,j) = post([b1(i), b2(j)]);
+    end;
+end;
+mesh(b2,b1,simpost)
+xlabel('Slope')
+ylabel('Intercept')
+zlabel('Posterior density')
+view(-110,30)
+%printPmtkFigure('sliceSamplingDemo2dGrid')
+
+%% MCMC
+initial = [1 1];
+nsamples = 1000;
+trace = slicesample(initial,nsamples,'pdf',post,'width',[20 2], ...
+  'burnin', 50, 'thin', 10);
+
+figure;
+hist3(trace,[25,25]);
+xlabel('Intercept')
+ylabel('Slope')
+zlabel('Posterior density')
+view(-110,30)
+%printPmtkFigure('sliceSampling2dHist')
+
+
+
+##### SOURCE END #####
+--></body></html>

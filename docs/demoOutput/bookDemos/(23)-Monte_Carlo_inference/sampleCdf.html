@@ -1,0 +1,127 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>sampleCdf</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="sampleCdf.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> sampleCdf
+    x = randn([1,100000]);
+    y = -4:0.1:4;
+    cdf = zeros(size(y));
+    u = 0;
+    <span class="keyword">for</span> k = 1 : length(y)
+        cdf(k) = sum(x &lt; y(k));
+        <span class="keyword">if</span> ((cdf(k) &gt; 0.5*length(x)) &amp;&amp; (u == 0))
+            u = k;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+
+    figure(1); clf; hold <span class="string">on</span>;
+    plot(y, cdf, <span class="string">'-b'</span>, <span class="string">'LineWidth'</span>, 3);
+    plot([min(y),max(y)], [length(x),length(x)], <span class="string">'--g'</span>, <span class="string">'LineWidth'</span>, 3);
+    plot([min(y),y(u)], [0.5*length(x),0.5*length(x)], <span class="string">'-r'</span>, <span class="string">'LineWidth'</span>, 3);
+    fill([y(u),y(u)-0.5,y(u)-0.5], [0.5*length(x),0.5*length(x)+3000,0.5*length(x)-3000], <span class="string">'r'</span>);
+    plot([y(u),y(u)], [0.5*length(x),0], <span class="string">'-r'</span>, <span class="string">'LineWidth'</span>, 3);
+    fill([y(u),y(u)-0.2,y(u)+0.2],[0,8000,8000], <span class="string">'r'</span>);
+    text(max(y)+0.2,length(x), <span class="string">'F'</span>, <span class="string">'FontSize'</span>, 24, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>);
+    ylim([0, 1.25*length(x)]);
+    xlim([min(y), max(y)+1]);
+
+    set(gca, <span class="string">'FontSize'</span>, 24, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>);
+    set(gca, <span class="string">'YTick'</span>, [0, 0.5*length(x), length(x)], <span class="string">'YTickLabel'</span>, {<span class="string">'0'</span>, <span class="string">'u'</span>, <span class="string">'1'</span>});
+    set(gca, <span class="string">'XTick'</span>, [min(y), y(u)], <span class="string">'XTickLabel'</span>, {<span class="string">'0'</span>, <span class="string">'x'</span>});
+
+    hold <span class="string">off</span>;
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="sampleCdf_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+function sampleCdf
+    x = randn([1,100000]);
+    y = -4:0.1:4;
+    cdf = zeros(size(y));
+    u = 0;
+    for k = 1 : length(y)
+        cdf(k) = sum(x < y(k));
+        if ((cdf(k) > 0.5*length(x)) && (u == 0))
+            u = k;
+        end
+    end
+    
+    figure(1); clf; hold on;
+    plot(y, cdf, '-b', 'LineWidth', 3);
+    plot([min(y),max(y)], [length(x),length(x)], 'REPLACE_WITH_DASH_DASHg', 'LineWidth', 3);
+    plot([min(y),y(u)], [0.5*length(x),0.5*length(x)], '-r', 'LineWidth', 3);
+    fill([y(u),y(u)-0.5,y(u)-0.5], [0.5*length(x),0.5*length(x)+3000,0.5*length(x)-3000], 'r');
+    plot([y(u),y(u)], [0.5*length(x),0], '-r', 'LineWidth', 3);
+    fill([y(u),y(u)-0.2,y(u)+0.2],[0,8000,8000], 'r');
+    text(max(y)+0.2,length(x), 'F', 'FontSize', 24, 'FontWeight', 'bold');
+    ylim([0, 1.25*length(x)]);
+    xlim([min(y), max(y)+1]);
+    
+    set(gca, 'FontSize', 24, 'FontWeight', 'bold');
+    set(gca, 'YTick', [0, 0.5*length(x), length(x)], 'YTickLabel', {'0', 'u', '1'});
+    set(gca, 'XTick', [min(y), y(u)], 'XTickLabel', {'0', 'x'});
+    
+    hold off;
+end
+##### SOURCE END #####
+--></body></html>

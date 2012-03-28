@@ -1,0 +1,256 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>demo of spectral clustering</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="spectralClusteringDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>demo of spectral clustering</h1><pre class="codeinput"><span class="comment">%PMTKauthor Wei-Lwun Lu</span>
+
+<span class="keyword">function</span> spectralClusteringDemo()
+
+setSeed(0);
+datatypes = {<span class="string">'circle'</span>, <span class="string">'spiral'</span>};
+<span class="keyword">for</span> i=1:numel(datatypes)
+  <span class="keyword">switch</span> datatypes{i}
+    <span class="keyword">case</span> <span class="string">'circle'</span>
+      data = sample_circle(2);
+    <span class="keyword">case</span> <span class="string">'spiral'</span>
+      data = sample_spiral();
+  <span class="keyword">end</span>
+
+  <span class="comment">% Kmeans</span>
+  [centers, mincenter] = kmeansElkan(data, <span class="keyword">...</span>
+    [0,  1.5;
+    0, -1.5]);
+  group1 = (mincenter == 1);
+  group2 = (mincenter == 2);
+  figure;
+  plotData(data, group1, group2);
+  title(<span class="string">'k-means clustering'</span>, <span class="string">'FontSize'</span>, 12, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>);
+
+  <span class="comment">% SC</span>
+  sigma = 0.1;
+  num_clusters = 2;
+  S1S2 = -2 * data * data';
+  SS = sum(data.^2,2);
+  A = exp(- (S1S2 + repmat(SS, 1, length(SS)) + repmat(SS', length(SS), 1)) / (2 * sigma^2));
+  D = diag(1 ./ sqrt(sum(A, 2)));
+  L = D * A * D;
+
+  warning(<span class="string">'off'</span>);
+  [X, D] = eigs(L, num_clusters);
+  warning(<span class="string">'on'</span>);
+  Y = X ./ repmat(sqrt(sum(X.^2, 2)), 1, num_clusters);
+  [centers, mincenter] = kmeansElkan(Y, num_clusters);
+  group1 = (mincenter == 1);
+  group2 = (mincenter == 2);
+  figure;
+  plotData(data, group1, group2);
+  title(<span class="string">'spectral clustering'</span>, <span class="string">'FontSize'</span>, 12, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>);
+  drawnow
+<span class="keyword">end</span> <span class="comment">% for datatypes</span>
+
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> plotData(data, group1, group2)
+    hold <span class="string">on</span>;
+    plot(data(group1,1), data(group1,2), <span class="string">'r.'</span>);
+    plot(data(group2,1), data(group2,2), <span class="string">'b.'</span>);
+    axis <span class="string">square</span>;
+    grid <span class="string">on</span>;
+    hold <span class="string">off</span>;
+<span class="keyword">end</span>
+
+
+<span class="keyword">function</span> data = sample_circle( num_cluster )
+points_per_cluster = 500;
+bandwidth = 0.1;
+
+<span class="keyword">if</span> nargin == 0
+  num_cluster = 2;
+<span class="keyword">end</span>
+
+data = zeros([num_cluster*points_per_cluster, 2]);
+idx = 1;
+<span class="keyword">for</span> k = 1 : num_cluster
+  <span class="keyword">for</span> n = 1 : points_per_cluster
+    theta = 2 * pi * rand;
+    rho = k + randn(1) * bandwidth;
+    [x, y] = pol2cart(theta, rho);
+    data(idx,:) = [x, y];
+    idx = idx + 1;
+  <span class="keyword">end</span>
+<span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> data = sample_spiral()
+points_per_cluster = 500;
+bandwidth = 0.1;
+
+data = zeros([points_per_cluster, 2]);
+<span class="keyword">for</span> k = 1 : points_per_cluster
+  w = k / points_per_cluster;
+  data(k,1) = (4 * w + 1) * cos(2 * pi * w) + randn(1) * bandwidth;
+  data(k,2) = (4 * w + 1) * sin(2 * pi * w) + randn(1) * bandwidth;
+<span class="keyword">end</span>
+
+data = [data; -data];
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="spectralClusteringDemo_01.png" alt=""> <img vspace="5" hspace="5" src="spectralClusteringDemo_02.png" alt=""> <img vspace="5" hspace="5" src="spectralClusteringDemo_03.png" alt=""> <img vspace="5" hspace="5" src="spectralClusteringDemo_04.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%%  demo of spectral clustering
+%PMTKauthor Wei-Lwun Lu
+
+function spectralClusteringDemo()
+
+setSeed(0);
+datatypes = {'circle', 'spiral'};
+for i=1:numel(datatypes)
+  switch datatypes{i}
+    case 'circle'
+      data = sample_circle(2);
+    case 'spiral'
+      data = sample_spiral();
+  end
+  
+  % Kmeans
+  [centers, mincenter] = kmeansElkan(data, ...
+    [0,  1.5;
+    0, -1.5]);
+  group1 = (mincenter == 1);
+  group2 = (mincenter == 2);
+  figure;
+  plotData(data, group1, group2);
+  title('k-means clustering', 'FontSize', 12, 'FontWeight', 'bold');
+  
+  % SC
+  sigma = 0.1;
+  num_clusters = 2;
+  S1S2 = -2 * data * data';
+  SS = sum(data.^2,2);
+  A = exp(- (S1S2 + repmat(SS, 1, length(SS)) + repmat(SS', length(SS), 1)) / (2 * sigma^2));
+  D = diag(1 ./ sqrt(sum(A, 2)));
+  L = D * A * D;
+  
+  warning('off');
+  [X, D] = eigs(L, num_clusters);
+  warning('on');
+  Y = X ./ repmat(sqrt(sum(X.^2, 2)), 1, num_clusters);
+  [centers, mincenter] = kmeansElkan(Y, num_clusters);
+  group1 = (mincenter == 1);
+  group2 = (mincenter == 2);
+  figure;
+  plotData(data, group1, group2);
+  title('spectral clustering', 'FontSize', 12, 'FontWeight', 'bold');
+  drawnow
+end % for datatypes
+
+end
+
+function plotData(data, group1, group2)
+    hold on;
+    plot(data(group1,1), data(group1,2), 'r.');
+    plot(data(group2,1), data(group2,2), 'b.');
+    axis square;  
+    grid on;
+    hold off;
+end
+
+
+function data = sample_circle( num_cluster )
+points_per_cluster = 500;
+bandwidth = 0.1;
+
+if nargin == 0
+  num_cluster = 2;
+end
+
+data = zeros([num_cluster*points_per_cluster, 2]);
+idx = 1;
+for k = 1 : num_cluster
+  for n = 1 : points_per_cluster
+    theta = 2 * pi * rand;
+    rho = k + randn(1) * bandwidth;
+    [x, y] = pol2cart(theta, rho);
+    data(idx,:) = [x, y];
+    idx = idx + 1;
+  end
+end
+end
+
+function data = sample_spiral()
+points_per_cluster = 500;
+bandwidth = 0.1;
+
+data = zeros([points_per_cluster, 2]);
+for k = 1 : points_per_cluster
+  w = k / points_per_cluster;
+  data(k,1) = (4 * w + 1) * cos(2 * pi * w) + randn(1) * bandwidth;
+  data(k,2) = (4 * w + 1) * sin(2 * pi * w) + randn(1) * bandwidth;
+end
+
+data = [data; -data];
+end
+
+
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,133 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Demo of robust Bayesian analysis</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="robustPriorDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Demo of robust Bayesian analysis</h1><p>From Berger 1984</p><pre class="codeinput">x = 5; obsVar = 1;
+
+<span class="comment">% First let us verify that the Gaussian prior</span>
+<span class="comment">% indeed satisfies the prior quartiles</span>
+
+priorVar = 2.19; priorMu = 0;
+s=sqrt(priorVar); mu = priorMu;
+range = normcdf(1,mu,s) - normcdf(-1,mu,s);
+assert(approxeq(range, 0.5))
+
+<span class="comment">% Now compute posterior mean using Gaussian prior</span>
+postVar = 1/(1/obsVar + 1/priorVar);
+postMean = postVar*(priorMu/priorVar + x/obsVar);
+assert(approxeq(postMean, 3.43))
+
+<span class="comment">% Now let us do the same thing for the Cauchy</span>
+cauchyPdf = @(theta) exp(studentLogprob(0,1,1,theta));
+infty = 10;
+cauchyCdf = @(theta) quad(cauchyPdf, -infty, theta);
+range = cauchyCdf(1)-cauchyCdf(-1);
+assert(approxeq(range, 0.5))
+
+<span class="comment">% Now let us compute posterior mean using Cauchy</span>
+lik = @(theta) normpdf(x,theta,sqrt(obsVar));
+prior = cauchyPdf;
+post = @(theta) rowvec(lik(theta)).* rowvec(prior(theta));
+Z = quad(post, -infty, infty);
+postMean = quad(@(theta) rowvec(theta) .* rowvec(post(theta))/Z, -infty, infty)
+assert(approxeq(postMean, 4.56))
+</pre><pre class="codeoutput">postMean =
+    4.5631
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Demo of robust Bayesian analysis
+% From Berger 1984
+
+x = 5; obsVar = 1;
+
+% First let us verify that the Gaussian prior
+% indeed satisfies the prior quartiles
+
+priorVar = 2.19; priorMu = 0;
+s=sqrt(priorVar); mu = priorMu;
+range = normcdf(1,mu,s) - normcdf(-1,mu,s);
+assert(approxeq(range, 0.5))
+
+% Now compute posterior mean using Gaussian prior
+postVar = 1/(1/obsVar + 1/priorVar); 
+postMean = postVar*(priorMu/priorVar + x/obsVar);
+assert(approxeq(postMean, 3.43))
+
+% Now let us do the same thing for the Cauchy
+cauchyPdf = @(theta) exp(studentLogprob(0,1,1,theta));
+infty = 10;
+cauchyCdf = @(theta) quad(cauchyPdf, -infty, theta);
+range = cauchyCdf(1)-cauchyCdf(-1);
+assert(approxeq(range, 0.5))
+
+% Now let us compute posterior mean using Cauchy
+lik = @(theta) normpdf(x,theta,sqrt(obsVar));
+prior = cauchyPdf;
+post = @(theta) rowvec(lik(theta)).* rowvec(prior(theta));
+Z = quad(post, -infty, infty);
+postMean = quad(@(theta) rowvec(theta) .* rowvec(post(theta))/Z, -infty, infty)
+assert(approxeq(postMean, 4.56))
+
+##### SOURCE END #####
+--></body></html>

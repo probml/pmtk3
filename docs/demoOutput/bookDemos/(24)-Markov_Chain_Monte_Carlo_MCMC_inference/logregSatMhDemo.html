@@ -1,0 +1,292 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Metropolis Hastings Logistic Regression Demo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="logregSatMhDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Metropolis Hastings Logistic Regression Demo</h1><!--introduction--><p>Example from Johnson and Albert p87</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#3">nested function</a></li><li><a href="#4">main</a></li></ul></div><pre class="codeinput"><span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+<span class="keyword">function</span> [X, y, ws, perm] = logregGradeMH()
+</pre><pre class="codeinput">[X,y] = satDataLoad;
+model = logregBinaryFitL2IRLS(X, y, 1e-8, false);
+w = model.w;
+C = model.C;
+
+
+<span class="comment">% MH</span>
+setSeed(1);
+xinit = w;
+Nsamples = 5000;
+lambda = 0;
+<span class="comment">%targetArgs = {X,y,lambda};</span>
+sigmaMH = 2.38^2/2;
+<span class="comment">%proposalArgs = {sigmaMH*C};</span>
+</pre><h2>nested function<a name="3"></a></h2><pre class="codeinput">  <span class="keyword">function</span> bnew = proposal(w)
+    mu = zeros(1, length(w));
+    bnew = w + gaussSample(mu, sigmaMH*C, 1);
+  <span class="keyword">end</span>
+
+
+  <span class="keyword">function</span> p = logpost(w, X, y, lambda)
+    mu = 1 ./ (1 + exp(-X*w(:)));
+    p = sum( (y.*log(mu) + (1-y).*log(1-mu))) + lambda/2*sum(w.^2);
+  <span class="keyword">end</span>
+
+  <span class="keyword">function</span> p = target(w)
+    p = logpost(w, X, y, lambda);
+  <span class="keyword">end</span>
+</pre><h2>main<a name="4"></a></h2><pre class="codeinput"><span class="comment">%[ws, naccept] = metropolisHastings(@logpost, @proposal, xinit,...</span>
+<span class="comment">%    Nsamples, targetArgs, proposalArgs);</span>
+
+  [ws, naccept] = metropolisHastings(@target, @proposal, xinit, Nsamples);
+
+<span class="comment">% trace plots</span>
+figure
+<span class="keyword">for</span> i=1:2
+    subplot(2,2,i)
+    plot(ws(:,i));
+<span class="keyword">end</span>
+
+<span class="comment">% samples</span>
+figure;
+plot(ws(:,1), ws(:,2), <span class="string">'.'</span>);
+xlabel(<span class="string">'w0'</span>); ylabel(<span class="string">'w1'</span>)
+printPmtkFigure(<span class="string">'logregSatMhDemoPostBoth'</span>)
+
+figure
+hist(ws(:,2));
+title(<span class="string">'w1 slope'</span>)
+printPmtkFigure(<span class="string">'logregSatMhDemoPost1'</span>)
+
+figure
+hist(ws(:,1));
+title(<span class="string">'w0 intercept'</span>)
+printPmtkFigure(<span class="string">'logregSatMhDemoPost0'</span>)
+
+
+MLE =  xinit;
+postMean  = mean(ws,1);
+postMedian = median(ws,1);
+
+<span class="comment">% visualize model fit for each training point</span>
+figure
+perm = sortidx(X(:, 2), <span class="string">'ascend'</span>);
+N = length(perm);
+<span class="keyword">for</span> ii=1:N
+    i = perm(ii);
+    ps = 1 ./ (1+exp(-X(i,:)*ws')); <span class="comment">% ps(s) = p(y=1|x(i,:), bs(s,:)) row vec</span>
+
+    plot(X(i,2), median(ps), <span class="string">'o'</span>);
+    hold <span class="string">on</span>
+    h=plot(X(i,2), y(i), <span class="string">'ko'</span>);
+    set(h,<span class="string">'markerfacecolor'</span>, <span class="string">'k'</span>);
+
+    <span class="comment">% prediction interval</span>
+    tmp = sort(ps, <span class="string">'ascend'</span>);
+    Q5 = tmp(floor(0.05*Nsamples));
+    Q95 = tmp(floor(0.95*Nsamples));
+    line([X(i,2) X(i,2)], [Q5 Q95]);
+<span class="keyword">end</span>
+printPmtkFigure(<span class="string">'logregSatMhDemoPostPred'</span>)
+
+
+<span class="comment">%logregSATdemo</span>
+</pre><img vspace="5" hspace="5" src="logregSatMhDemo_01.png" alt=""> <img vspace="5" hspace="5" src="logregSatMhDemo_02.png" alt=""> <img vspace="5" hspace="5" src="logregSatMhDemo_03.png" alt=""> <img vspace="5" hspace="5" src="logregSatMhDemo_04.png" alt=""> <img vspace="5" hspace="5" src="logregSatMhDemo_05.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
+</pre><pre class="codeoutput">ans =
+     1   525
+     1   533
+     1   545
+     1   582
+     1   581
+     1   576
+     1   572
+     1   609
+     1   559
+     1   543
+     1   576
+     1   525
+     1   574
+     1   582
+     1   574
+     1   471
+     1   595
+     1   557
+     1   557
+     1   584
+     1   599
+     1   517
+     1   649
+     1   584
+     1   463
+     1   591
+     1   488
+     1   563
+     1   553
+     1   549
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Metropolis Hastings Logistic Regression Demo
+% Example from Johnson and Albert p87
+%
+%%
+
+% This file is from pmtk3.googlecode.com
+
+function [X, y, ws, perm] = logregGradeMH()
+
+[X,y] = satDataLoad;
+model = logregBinaryFitL2IRLS(X, y, 1e-8, false);
+w = model.w;
+C = model.C;
+
+
+% MH
+setSeed(1);
+xinit = w;
+Nsamples = 5000;
+lambda = 0;
+%targetArgs = {X,y,lambda};
+sigmaMH = 2.38^2/2;
+%proposalArgs = {sigmaMH*C};
+
+%% nested function
+  function bnew = proposal(w)
+    mu = zeros(1, length(w));
+    bnew = w + gaussSample(mu, sigmaMH*C, 1);
+  end
+
+
+  function p = logpost(w, X, y, lambda)
+    mu = 1 ./ (1 + exp(-X*w(:)));
+    p = sum( (y.*log(mu) + (1-y).*log(1-mu))) + lambda/2*sum(w.^2);
+  end
+
+  function p = target(w)
+    p = logpost(w, X, y, lambda);
+  end
+
+%% main
+
+%[ws, naccept] = metropolisHastings(@logpost, @proposal, xinit,...
+%    Nsamples, targetArgs, proposalArgs);
+
+  [ws, naccept] = metropolisHastings(@target, @proposal, xinit, Nsamples);
+
+% trace plots
+figure
+for i=1:2
+    subplot(2,2,i)
+    plot(ws(:,i));
+end
+
+% samples
+figure;
+plot(ws(:,1), ws(:,2), '.');
+xlabel('w0'); ylabel('w1')
+printPmtkFigure('logregSatMhDemoPostBoth')
+
+figure
+hist(ws(:,2));
+title('w1 slope')
+printPmtkFigure('logregSatMhDemoPost1')
+
+figure
+hist(ws(:,1));
+title('w0 intercept')
+printPmtkFigure('logregSatMhDemoPost0')
+
+
+MLE =  xinit;
+postMean  = mean(ws,1);
+postMedian = median(ws,1);
+
+% visualize model fit for each training point
+figure
+perm = sortidx(X(:, 2), 'ascend');
+N = length(perm);
+for ii=1:N
+    i = perm(ii);
+    ps = 1 ./ (1+exp(-X(i,:)*ws')); % ps(s) = p(y=1|x(i,:), bs(s,:)) row vec
+    
+    plot(X(i,2), median(ps), 'o');
+    hold on
+    h=plot(X(i,2), y(i), 'ko');
+    set(h,'markerfacecolor', 'k');
+    
+    % prediction interval
+    tmp = sort(ps, 'ascend');
+    Q5 = tmp(floor(0.05*Nsamples));
+    Q95 = tmp(floor(0.95*Nsamples));
+    line([X(i,2) X(i,2)], [Q5 Q95]);
+end
+printPmtkFigure('logregSatMhDemoPostPred')
+
+
+%logregSATdemo
+
+end
+
+  
+
+
+##### SOURCE END #####
+--></body></html>

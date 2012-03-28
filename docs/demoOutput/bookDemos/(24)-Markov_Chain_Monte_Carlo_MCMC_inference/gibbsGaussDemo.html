@@ -1,0 +1,173 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>gibbsGaussDemo</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="gibbsGaussDemo.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% Illustration of gibbs sampling for 2-dim Gaussian</span>
+
+Mu = zeros(1,2);
+Sigma = [1,0.99;0.99,1];
+
+
+hold <span class="string">on</span>;
+axis([-3 3 -3 3])<span class="comment">%'nolabel');</span>
+gaussPlot2d(Mu,Sigma,<span class="string">'-plotMarker'</span>,<span class="string">'false'</span>);
+
+x1 = [-2:0.01:2];
+x2obs = 0.7;
+mux1Cond = Mu(1) + Sigma(1,2)/Sigma(2,2) * (x2obs - Mu(2));
+varx1Cond = Sigma(1,1) - Sigma(1,2)^2 / Sigma(2,2);
+
+plot(x1,normpdf(x1,mux1Cond,sqrt(varx1Cond))*0.3-3,<span class="string">'g'</span>,<span class="string">'linewidth'</span>,3); <span class="comment">% scaled down, and shifted;</span>
+
+blueSeq = [
+-1/2,-1;
+-1/2,0;
+1,0;
+1,1;
+-1/2,1;
+-1/2,1/2;
+1.5,1/2;
+1.5,1.5;
+]/3;
+
+<span class="comment">% Sequnce of generated points</span>
+<span class="keyword">for</span> k=1:(size(blueSeq,1)-1)
+  plot(blueSeq(k:(k+1),1),blueSeq(k:(k+1),2),<span class="string">'b'</span>,<span class="string">'linewidth'</span>,3);
+<span class="keyword">end</span>
+
+<span class="comment">% Arrows and notation</span>
+line([-2.5,2.5],[1.5,1.5],<span class="string">'linewidth'</span>,3);
+line([-2.5,-2.3],[1.5,1.6],<span class="string">'linewidth'</span>,3);
+line([-2.5,-2.3],[1.5,1.4],<span class="string">'linewidth'</span>,3);
+line([2.5,2.3],[1.5,1.6],<span class="string">'linewidth'</span>,3);
+line([2.5,2.3],[1.5,1.4],<span class="string">'linewidth'</span>,3);
+text(0,1.7,<span class="string">'L'</span>);
+
+line( [0.5,1], [0,0] - 2,<span class="string">'linewidth'</span>,3) ;
+line([0.5,0.6],[0,0.1] - 2,<span class="string">'linewidth'</span>,3);
+line([0.5,0.6],[0,-0.1] - 2,<span class="string">'linewidth'</span>,3);
+line([1,0.9],[0,0.1] - 2,<span class="string">'linewidth'</span>,3);
+line([1,0.9],[0,-0.1] - 2,<span class="string">'linewidth'</span>,3);
+text(1.2,-2,<span class="string">'l'</span>);
+
+hold <span class="string">off</span>;
+
+print(<span class="string">'bishop-gibbs-gauss.pdf'</span>);
+</pre><img vspace="5" hspace="5" src="gibbsGaussDemo_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+% Illustration of gibbs sampling for 2-dim Gaussian
+
+Mu = zeros(1,2);
+Sigma = [1,0.99;0.99,1];
+
+
+hold on;
+axis([-3 3 -3 3])%'nolabel');
+gaussPlot2d(Mu,Sigma,'-plotMarker','false');
+
+x1 = [-2:0.01:2];
+x2obs = 0.7;
+mux1Cond = Mu(1) + Sigma(1,2)/Sigma(2,2) * (x2obs - Mu(2));
+varx1Cond = Sigma(1,1) - Sigma(1,2)^2 / Sigma(2,2);
+
+plot(x1,normpdf(x1,mux1Cond,sqrt(varx1Cond))*0.3-3,'g','linewidth',3); % scaled down, and shifted;
+
+blueSeq = [
+-1/2,-1;
+-1/2,0;
+1,0;
+1,1;
+-1/2,1;
+-1/2,1/2;
+1.5,1/2;
+1.5,1.5;
+]/3;
+
+% Sequnce of generated points
+for k=1:(size(blueSeq,1)-1)
+  plot(blueSeq(k:(k+1),1),blueSeq(k:(k+1),2),'b','linewidth',3);
+end
+
+% Arrows and notation
+line([-2.5,2.5],[1.5,1.5],'linewidth',3);
+line([-2.5,-2.3],[1.5,1.6],'linewidth',3);
+line([-2.5,-2.3],[1.5,1.4],'linewidth',3);
+line([2.5,2.3],[1.5,1.6],'linewidth',3);
+line([2.5,2.3],[1.5,1.4],'linewidth',3);
+text(0,1.7,'L');
+
+line( [0.5,1], [0,0] - 2,'linewidth',3) ;
+line([0.5,0.6],[0,0.1] - 2,'linewidth',3);
+line([0.5,0.6],[0,-0.1] - 2,'linewidth',3);
+line([1,0.9],[0,0.1] - 2,'linewidth',3);
+line([1,0.9],[0,-0.1] - 2,'linewidth',3);
+text(1.2,-2,'l');
+
+hold off;
+
+print('bishop-gibbs-gauss.pdf');
+
+
+##### SOURCE END #####
+--></body></html>

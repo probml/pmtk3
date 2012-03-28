@@ -1,0 +1,190 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>binaryFaDemoTipping</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-03-27"><meta name="DC.source" content="binaryFaDemoTipping.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% Demo of factor analysis applied to some synthetic 2d binary data</span>
+
+<span class="comment">% This file is from pmtk3.googlecode.com</span>
+
+
+setSeed(0);
+D = 16;
+K = 3;
+proto = rand(D,K) &lt; 0.5;
+M = 50;
+source = [1*ones(1,M) 2*ones(1,M) 3*ones(1,M)];
+N = numel(source);
+dataClean = zeros(N, D);
+<span class="keyword">for</span> n=1:N
+  src = source(n);
+  dataClean(n, :) = proto(:, src)';
+<span class="keyword">end</span>
+noiseLevel = 0.05;
+flipMask = rand(N,D) &lt; noiseLevel;
+dataNoisy = dataClean;
+dataNoisy(flipMask) = 1-dataClean(flipMask);
+dataMissing = dataClean;
+dataMissing(flipMask) = nan;
+
+figure; imagesc(dataNoisy); colormap(gray);
+title(<span class="string">'noisy binary data'</span>)
+printPmtkFigure(<span class="string">'binaryPCAinput'</span>);
+
+figure; imagesc(dataClean); colormap(gray); title(<span class="string">'hidden truth'</span>)
+
+<span class="comment">% Fit model</span>
+[model, loglikHist] = binaryFAfit(dataNoisy, 2, <span class="string">'maxIter'</span>, 10, <span class="string">'verbose'</span>, true);
+figure; plot(loglikHist); title(<span class="string">'(lower bound on) loglik vs iter for EM'</span>)
+
+<span class="comment">% Latent 2d embedding</span>
+muPost = binaryFAinferLatent(model, dataNoisy);
+figure;
+symbols = {<span class="string">'ro'</span>, <span class="string">'gs'</span>, <span class="string">'k*'</span>};
+<span class="keyword">for</span> k=1:K
+  ndx = (source==k);
+  plot(muPost(1,ndx), muPost(2,ndx), symbols{k});
+  hold <span class="string">on</span>
+<span class="keyword">end</span>
+title(<span class="string">'latent embedding'</span>)
+printPmtkFigure(<span class="string">'binaryPCAoutput'</span>)
+
+<span class="comment">% Denoising</span>
+[postPred] = binaryFApredictMissing(model, dataNoisy);
+yhat = postPred &gt; 0.5;
+figure; imagesc(yhat); colormap(gray); title(<span class="string">'prediciton given noisy'</span>)
+
+<span class="comment">% Imputation</span>
+[postPred] = binaryFApredictMissing(model, dataMissing);
+yhat = postPred &gt; 0.5;
+figure; imagesc(yhat); colormap(gray); title(<span class="string">'prediction given missing data'</span>)
+</pre><pre class="codeoutput">initializing model for EM
+1	 loglik: -1664.16
+2	 loglik: -1165.29
+3	 loglik: -1081.42
+4	 loglik: -1044.31
+5	 loglik: -998.017
+6	 loglik: -982.259
+7	 loglik: -978.028
+8	 loglik: -976.969
+9	 loglik: -976.942
+</pre><img vspace="5" hspace="5" src="binaryFaDemoTipping_01.png" alt=""> <img vspace="5" hspace="5" src="binaryFaDemoTipping_02.png" alt=""> <img vspace="5" hspace="5" src="binaryFaDemoTipping_03.png" alt=""> <img vspace="5" hspace="5" src="binaryFaDemoTipping_04.png" alt=""> <img vspace="5" hspace="5" src="binaryFaDemoTipping_05.png" alt=""> <img vspace="5" hspace="5" src="binaryFaDemoTipping_06.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+% Demo of factor analysis applied to some synthetic 2d binary data
+
+% This file is from pmtk3.googlecode.com
+
+
+setSeed(0);
+D = 16;
+K = 3;
+proto = rand(D,K) < 0.5;
+M = 50;
+source = [1*ones(1,M) 2*ones(1,M) 3*ones(1,M)];
+N = numel(source);
+dataClean = zeros(N, D);
+for n=1:N
+  src = source(n);
+  dataClean(n, :) = proto(:, src)';
+end
+noiseLevel = 0.05;
+flipMask = rand(N,D) < noiseLevel;
+dataNoisy = dataClean;
+dataNoisy(flipMask) = 1-dataClean(flipMask);
+dataMissing = dataClean;
+dataMissing(flipMask) = nan;
+
+figure; imagesc(dataNoisy); colormap(gray);
+title('noisy binary data')
+printPmtkFigure('binaryPCAinput');
+
+figure; imagesc(dataClean); colormap(gray); title('hidden truth')
+
+% Fit model
+[model, loglikHist] = binaryFAfit(dataNoisy, 2, 'maxIter', 10, 'verbose', true);
+figure; plot(loglikHist); title('(lower bound on) loglik vs iter for EM')
+
+% Latent 2d embedding
+muPost = binaryFAinferLatent(model, dataNoisy);
+figure;
+symbols = {'ro', 'gs', 'k*'};
+for k=1:K
+  ndx = (source==k);
+  plot(muPost(1,ndx), muPost(2,ndx), symbols{k});
+  hold on
+end
+title('latent embedding')
+printPmtkFigure('binaryPCAoutput')
+
+% Denoising
+[postPred] = binaryFApredictMissing(model, dataNoisy);
+yhat = postPred > 0.5;
+figure; imagesc(yhat); colormap(gray); title('prediciton given noisy')
+
+% Imputation
+[postPred] = binaryFApredictMissing(model, dataMissing);
+yhat = postPred > 0.5;
+figure; imagesc(yhat); colormap(gray); title('prediction given missing data')
+
+##### SOURCE END #####
+--></body></html>
