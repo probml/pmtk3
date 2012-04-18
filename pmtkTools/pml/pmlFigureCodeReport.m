@@ -15,7 +15,8 @@ function pmlFigureCodeReport(dest, includeEx, includeSol)
 
 % This file is from pmtk3.googlecode.com
 
-if nargin < 1, dest = '/Users/Matt/Documents/MATLAB/figureReport'; end
+%if nargin < 1, dest = '/Users/Matt/Documents/MATLAB/figureReport'; end
+if nargin < 1, dest = '/Users/kpmurphy/Dropbox/MLbook/Figures'; end
 if nargin < 2, includeEx  = true; end
 if nargin < 3, includeSol  = false; end
 

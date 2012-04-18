@@ -5,8 +5,8 @@
 % This file is from pmtk3.googlecode.com
 
 figure; hold on;
-ks = [1 1 2];
-ms = [0.5 1 1];
+ks = [0.1 0.5 1];
+ms = [0.01 0.001 1];
 [styles, colors] = plotColors();
 xs = 0:0.01:5;
 nk = length(ks); 
@@ -16,7 +16,7 @@ for i=1:nk
   model.m = ms(i);
   p = exp(paretoLogprob(model, xs));
   plot(xs, p, styles{i}, 'color', colors(i), 'linewidth', 3);
-  legendStr{i} = sprintf('m=%2.1f, k=%2.1f', ms(i), ks(i));
+  legendStr{i} = sprintf('m=%3.2f, k=%3.2f', ms(i), ks(i));
 end
 legend(legendStr)
 title('Pareto distribution', 'fontsize', 15)

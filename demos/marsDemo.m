@@ -5,6 +5,7 @@ xs = 0:0.1:20;
 plot(xs, max(0,xs-5), '-', 'linewidth', 3);
 plot(xs, max(0,5-xs), 'r:', 'linewidth', 3);
 axis_pct
+set(gca, 'fontsize', 16)
 printPmtkFigure('marsHinge')
 
 figure;

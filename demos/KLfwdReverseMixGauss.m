@@ -13,7 +13,8 @@ Sigma(:,:,1) = [1/2,1/4;1/4,1];
 Sigma(:,:,2) = [1/2,-1/4;-1/4,1];
 SigmaKL = [3,2;2,3];
 
-x1 = [-10:0.1:10]';
+%x1 = [-10:0.1:10]';
+x1 = [-4:0.1:4]';
 x2 = x1;
 
 n1 = length(x1);
@@ -36,30 +37,37 @@ end
 f = f1 + f2;
 % (a)
 figure
-contour(x1,x2,f); %,'b',4,'linewidth',3);
+%contour(x1,x2,f); %,'b',4,'linewidth',3);
+h=contour(x1,x2,f,'b'); 
 hold on;
-contour(x1,x2,klf); %'r',4,'linewidth',3);
+%contour(x1,x2,klf); %'r',4,'linewidth',3);
+contour(x1,x2,klf, 'r');
 hold off;
 axis square
+axis off
 printPmtkFigure('KLfwd')
 %print('bishop-5-4a.pdf'); close all;
 
 % (b)
 figure
-contour(x1,x2,f); %,'b',4,'linewidth',3);
+%contour(x1,x2,f); %,'b',4,'linewidth',3);
+contour(x1,x2,f,'b');
 hold on;
-contour(x1,x2,kll); %'r',4,'linewidth',3);
+contour(x1,x2,kll, 'r'); %,4,'linewidth',3);
 hold off;
+axis square
+axis off
 printPmtkFigure('KLreverse1')
 %print('bishop-5-4b.pdf'); close all;
 
 %(c)
 figure
-contour(x1,x2,f); %,'b',4,'linewidth',3);
+contour(x1,x2,f, 'b'); %,4,'linewidth',3);
 hold on;
-contour(x1,x2,klr); %,'r',4,'linewidth',3);
+contour(x1,x2,klr, 'r'); %,4,'linewidth',3);
 hold off;
 axis equal
-printPmtkFigure('KLreverse1')
+axis off
+printPmtkFigure('KLreverse2')
 %print('bishop-5-4c.pdf'); close all;
 
