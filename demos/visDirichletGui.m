@@ -18,6 +18,10 @@ if nargin == 0
 
 alpha=[ 2 2 2];
 
+%alpha=0.1*ones(1,3);
+
+end
+
 % compute a fine triangulation of 2-simplex
 disp('Triangulating...');
 res=200;
@@ -39,7 +43,8 @@ for i=1:res
         pts(counter,:)=p;
         tris2d(counter,:)=[u v];
         tris(counter,:)=p;
-        map(counter) = prod(p.^(alpha-1));
+        %map(counter) = prod(p.^(alpha-1));
+        map(counter) = exp(dirichletLogprob(alpha, [u v]));
     end
 end
 tris=tris(1:counter,:);
