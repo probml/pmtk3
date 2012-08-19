@@ -7,7 +7,8 @@ function pmlCopyAndRenameFigsByNumber
 % (2) All chapters must be included directly in pml.tex, (just
 %     copy pmlcore.tex right into pml.tex)
 % (3) The figure index must be made - add /makeindex{figures}
-% (4) The book must be correctly compiled
+% (4) Call makeIndex figures from the command line
+% (5) The book must be correctly compiled
 
 sourceDir = '/Users/matt/Documents/MLbook/Figures/pdfFigures';
 destDir = '/Users/matt/Desktop/figs/';
