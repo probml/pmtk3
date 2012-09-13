@@ -34,7 +34,7 @@ for i=1:Nseq
   end
   fprintf('\n');
 end
-return
+
 %% MLE
 counts = zeros(4, Nlocn);
 for c=1:4

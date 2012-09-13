@@ -5,6 +5,7 @@
 % This file is from pmtk3.googlecode.com
 
 setSeed(0);
+fs = 14;
 
 %% We generate data from two Gaussians:
 % x|C=1 ~ gauss([1,5], I)
@@ -30,7 +31,7 @@ W=[reshape(w1,n*n,1) reshape(w2,n*n,1)];
 figure; hold on
 plot(X(find(t==1),1),X(find(t==1),2),'r.', 'markersize', 10);
 plot(X(find(t==0),1),X(find(t==0),2),'bo', 'markersize', 10);
-title('data')
+title('data', 'fontsize', fs)
 
 
 % Plot predictions for certain chosen valyes of w
@@ -53,12 +54,12 @@ Log_Joint = Log_Like + Log_Prior;
 
 figure();
 contour(w1,w2,reshape(-Log_Prior,[n,n]),30);
-title('Log-Prior');
+title('Log-Prior', 'fontsize', fs);
 printPmtkFigure('logregLaplaceGirolamiPrior')
 
 figure;
 contour(w1,w2,reshape(-Log_Like,[n,n]),30);
-title('Log-Likelihood');
+title('Log-Likelihood', 'fontsize', fs);
 hold on
 % Plot points corresponding to chosen lines
 for ii=1:size(ws,1)
@@ -76,11 +77,12 @@ printPmtkFigure('logregLaplaceGirolamiNLL')
 
 figure;
 contour(w1,w2,reshape(-Log_Joint,[n,n]),30);
-title('Log-Unnormalised Posterior')
+title('Log-Unnormalised Posterior', 'fontsize', fs)
 hold on
 % Identify the parameters w1 & w2 which maximise the posterior (joint)
 [i,j]=max(Log_Joint);
 plot(W(j,1),W(j,2),'.','MarkerSize',40);
+grid on
 printPmtkFigure('logregLaplaceGirolamiPost')
 
 
@@ -97,9 +99,9 @@ figure;
 contour(w1,w2,reshape(-Log_Laplace_Posterior,[n,n]),30);
 hold on
 plot(W(j,1),W(j,2),'.','MarkerSize',40);
-title('Laplace Approximation to Posterior')
+title('Laplace Approximation to Posterior', 'fontsize', fs)
+grid on
 printPmtkFigure('logregLaplaceGirolamiPostLaplace')
-
 
 %% Plot the predictive distribution for logistic regression
 figure;
@@ -109,7 +111,7 @@ contour(w1,w2,reshape(pred,[n,n]),30);
 hold on
 plot(X(find(t==1),1),X(find(t==1),2),'r.');
 plot(X(find(t==0),1),X(find(t==0),2),'bo');
-title('p(y=1|x, wMAP)')
+title('p(y=1|x, wMAP)', 'fontsize', fs)
 printPmtkFigure('logregLaplaceGirolamiPlugin')
 
 % Samples
@@ -125,7 +127,7 @@ for i=1:S
   predMean = predMean + pred;
   contour(w1,w2,reshape(pred,[n,n]),[0.5 0.5]);
 end
-title('decision boundary for sampled w')
+title('decision boundary for sampled w', 'fontsize', fs)
 printPmtkFigure('logregLaplaceGirolamiSamples')
 
 % MC 
@@ -135,7 +137,7 @@ contour(w1,w2,reshape(predMean,[n,n]),30);
 hold on
 plot(X(find(t==1),1),X(find(t==1),2),'r.');
 plot(X(find(t==0),1),X(find(t==0),2),'bo');
-title('MC approx of p(y=1|x)')
+title('MC approx of p(y=1|x)', 'fontsize', fs)
 printPmtkFigure('logregLaplaceGirolamiMc')
 
 % Numerical
@@ -145,5 +147,5 @@ contour(w1,w2,reshape(pred,[n,n]),30);
 hold on
 plot(X(find(t==1),1),X(find(t==1),2),'r.');
 plot(X(find(t==0),1),X(find(t==0),2),'bo');
-title('numerical approx of p(y=1|x)')
+title('numerical approx of p(y=1|x)', 'fontsize', fs)
 printPmtkFigure('logregLaplaceGirolamiModerated')

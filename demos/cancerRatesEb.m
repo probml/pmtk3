@@ -29,15 +29,28 @@ end
 thetaPooledMLE = sum(data.y)/sum(data.n)
 %% Plot
 figure;
-subplot(4,1,1); bar(data.y); title('number of people with cancer (truncated at 5)')
+subplot(4,1,1); bar(data.y); 
+fs = 14;
+title('number of people with cancer (truncated at 5)', 'fontsize', fs)
 set(gca,'ylim',[0 5])
-subplot(4,1,2); bar(data.n); title('pop of city (truncated at 2000)');
+
+subplot(4,1,2); bar(data.n); 
+title('pop of city (truncated at 2000)', 'fontsize', fs);
 set(gca,'ylim',[0 2000])
-subplot(4,1,3); bar(thetaMLE);title('MLE');
-subplot(4,1,4); bar(post.meantheta);title('posterior mean (red line=pooled MLE)')
+
+subplot(4,1,3); bar(thetaMLE);
+title('MLE', 'fontsize', fs);
+set(gca,'ylim',[0 0.006])
+
+subplot(4,1,4); bar(post.meantheta);
+title('posterior mean (red line=pooled MLE)', 'fontsize', fs)
+set(gca,'ylim',[0 0.006])
 hold on;h=line([0 20], [thetaPooledMLE thetaPooledMLE]);
 set(h,'color','r','linewidth',2)
+
 printPmtkFigure('cancerRatesEb');
+
+
 %% 95% credible interval
 figure; hold on;
 for i=1:d
@@ -46,5 +59,5 @@ for i=1:d
     median = post.mediantheta(i);
     h=plot(median,i,'*');
 end
-title('95% credible interval on theta, *=median')
+title('95% credible interval on theta, *=median', 'fontsize', fs)
 printPmtkFigure('cancerRatesCredibleEb');

@@ -20,6 +20,7 @@ function CPD = noisyOrCpdCreate(leakI, parentsI)
 
 % This file is from pmtk3.googlecode.com
 
+error('not finished')
 CPD = structure(leakI, parentsI); 
 CPD.nstates = 2; 
 CPD.cpdType = 'noisyOr';

@@ -175,6 +175,7 @@ header = formatHtmlText(...
 'Source files ending in .m are matlab.'
 'Source files ending in .ppt are powerpoint.'
 'Source files ending in .tex are latex (needs pstricks).'
+'Source files with no file extension are (pointers to) google docs drawings.'
 'Images without source files are hand-drawn or taken from other sources.'
 ''
 'Total number of figures: %d'
