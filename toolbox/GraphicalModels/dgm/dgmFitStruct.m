@@ -71,8 +71,8 @@ else
       initG = [];
     case 'tree'
       [tree] = treegmFit(X12);
-      %initG = tree.dirTree;
-      initG = tree.adjmat;
+      initG = tree.dirTree;
+      %initG = tree.adjmat;
   end
   
   interv = [];

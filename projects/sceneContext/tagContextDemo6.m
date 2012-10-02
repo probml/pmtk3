@@ -51,7 +51,7 @@ methods(m).infFn = @(model, features, softev) discreteInferNodes(model, softev);
 methods(m).logprobFn = @(model, labels) discreteLogprob(model, labels);
 
 
-%{
+
 %[logZ, nodeBel] = treegmInferNodes(treeModel, localFeatures, softev);
 m = m + 1;
 methods(m).modelname = 'tree';
@@ -59,7 +59,7 @@ methods(m).obstype = 'gauss';
 methods(m).fitFn = @(labels, features) treegmFit(labels);
 methods(m).infFn = @(model, features, softev) argout(2, @treegmInferNodes, model, [], softev);
 methods(m).logprobFn = @(model, labels) treegmLogprob(model, labels);
-%}
+
 
 
 %[pZ, pX] = noisyMixModelInferNodes(mixModel{ki}, localFeatures, softev);
@@ -72,35 +72,17 @@ methods(m).logprobFn = @(model, labels) mixDiscreteLogprob(model.mixmodel, label
 
 
 %{
-%[pZ, pX] = noisyMixModelInferNodes(mixModel{ki}, localFeatures, softev);
-m = m + 1;
-methods(m).modelname = 'mix10';
-methods(m).obstype = 'gauss';
-methods(m).fitFn = @(labels, features) noisyMixModelFit(labels, [], 10);
-methods(m).infFn = @(model, features, softev) argout(2, @noisyMixModelInferNodes, model, [], softev);
-methods(m).logprobFn = @(model, labels) mixModelLogprob(model.mixmodel, labels);
-%}
-
-
-
-
-%{
-%[nodeBelCell, logZ, nodeBelArray] = dgmInferNodes(dgm, 'softev', softev)
-%logZ = dgmLogprob(dgm, 'clamped', Y)
 m = m + 1;
 methods(m).modelname = 'dag-empty';
 methods(m).obstype = 'gauss';
-methods(m).fitFn = @(labels, features) dgmFit(labels, 'nodeNames', objectnames, 'emptyGraph', true);
+methods(m).fitFn = @(labels, features) dgmFitStruct(labels, 'nodeNames', objectnames, 'emptyGraph', true);
 methods(m).infFn = @(model, features, softev) argout(3, @dgmInferNodes, model, 'softev', softev);
 methods(m).logprobFn = @(model, labels) dgmLogprob(model, 'obs', labels);
 
-
-%[nodeBelCell, logZ, nodeBelArray] = dgmInferNodes(dgm, 'softev', softev)
-%logZ = dgmLogprob(dgm, 'clamped', Y)
 m = m + 1;
 methods(m).modelname = 'dag';
 methods(m).obstype = 'gauss';
-methods(m).fitFn = @(labels, features) dgmFit(labels, 'nodeNames', objectnames);
+methods(m).fitFn = @(labels, features) dgmFitStruct(labels, 'nodeNames', objectnames);
 methods(m).infFn = @(model, features, softev) argout(3, @dgmInferNodes, model, 'softev', softev);
 methods(m).logprobFn = @(model, labels) dgmLogprob(model, 'obs', labels);
 %}
