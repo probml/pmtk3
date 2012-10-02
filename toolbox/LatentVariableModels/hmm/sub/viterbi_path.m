@@ -27,7 +27,7 @@ path = zeros(1,T);
 scale = ones(1,T);
 
 
-
+%{
 have_viterbi_helper = (exist('viterbi_path_helper') == 3);
 
 if ~have_viterbi_helper && exist('viterbi_path_helper.c','file')
@@ -42,8 +42,9 @@ if ~have_viterbi_helper && exist('viterbi_path_helper.c','file')
   end
   have_viterbi_helper = (exist('viterbi_path_helper') == 3);
 end
+%}
 
-if have_viterbi_helper
+if false % have_viterbi_helper
   [delta, psi, scale] = viterbi_path_helper(obslik, prior, transmat, scaled);
 else
   
