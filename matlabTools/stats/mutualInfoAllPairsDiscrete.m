@@ -58,8 +58,9 @@ for v1=1:numval,
     %pij(:,:,v1,v2) = full((documents==values(v1))*(documents==values(v2))');
     A = double(data==values(v1)) .*weights;
     B = double(data==values(v2));
-    % A(x1,d) = 1 iff D(x1,d)=v1,  B(x2,d) = 1 iff D(x2,d) = v2
-    % pij(x1,x2,v1,v2) = sum_d A(x1,d)  B(x2,d) = A*B'
+    % A(x1,n) = 1 iff data(x1,n)=v1
+    % B(x2,n) = 1 iff data(x2,n) = v2
+    % pij(x1,x2,v1,v2) = sum_n A(x1,n)  B(x2,n) = A*B'
     pij(:,:,v1,v2) = A*B';
   end;
 end;

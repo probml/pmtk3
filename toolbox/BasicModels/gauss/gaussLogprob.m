@@ -2,7 +2,7 @@ function logp = gaussLogprob(arg1, arg2, arg3)
 % Log pdf of multivariate Gaussian
 % L  = gaussLogprob(model, X)
 % L = gaussLogprob(mu, Sigma, X)
-% X(i,:) is i'th case, can contain NaNs for missing values.
+% L(i) = log prob X(i,:) is i'th case, can contain NaNs for missing values.
 % Sigma can be a vector; this is interpreted as a diagonal matrix.
 % *** In the univariate case, Sigma is the variance, not the standard
 % deviation! ***
