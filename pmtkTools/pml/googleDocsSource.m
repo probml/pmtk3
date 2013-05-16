@@ -18,6 +18,8 @@ sourceURLS = ...
 'https://docs.google.com/drawings/d/19r4sq5gveESZ6WB13UL492EyM9YjhuH1lPUVLQp8vGQ/edit';
 'https://docs.google.com/drawings/d/14gESir7LBAtYBVTWJtVATexdxqT6zLu909GyqvO98cE/edit';
 'https://docs.google.com/drawings/d/1GcMqdZJ1asFmw0fqvWPXb0Tzk7z0bBmK03Yk8NSMNic/edit';
+'https://docs.google.com/drawings/d/1PxUNccO49pUdM_LPnVJFjH4EDqh4XLL2jbckeRsSRIc/edit';
+'https://docs.google.com/drawings/d/1uizbhf6KGxlIokMxaSh4xlN9R3NmD7sWYfhV8Ndurvw/edit';
 };
 
 imageNames = ...
@@ -36,6 +38,8 @@ imageNames = ...
     'pentagonTriangulated'
     'GMvenn'
     'viterbi2'
+    'choiBidirectedY'
+    'choiBidirectedLatentY'
     };
 
 end

@@ -26,7 +26,7 @@ switch lower(model.type)
             end
         end
     case 'gauss'
-        d     = model.d;
+        d     = model.emission.d; % model.d;
         E     = model.emission;
         mu    = E.mu; 
         Sigma = E.Sigma; 

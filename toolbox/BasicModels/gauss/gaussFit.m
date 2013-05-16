@@ -34,7 +34,8 @@ else
   muN     = (N*xbar + kappa0*m0)./(N + kappa0);
   kappaN = kappa0 + N;
   nuN = nu0 + N;
-  SN = S0 + C + kappa0*m0*m0' - kappaN*muN*muN';
+  %SN = S0 + C + kappa0*m0*m0' - kappaN*muN*muN';
+  SN = S0 + X'*X + kappa0*m0*m0' - kappaN*muN*muN'; % Murphy eqn 4.214
   
  
   mu = muN;
