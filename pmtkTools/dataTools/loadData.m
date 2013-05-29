@@ -74,12 +74,22 @@ else % download zip file and unzip
     if ~quiet
         fprintf('downloading %s to %s\n', source, dest);
     end
+    destFolder = fullfile(destnRoot, dataset);
+    % SS check if file exists
+    [info,msg,err] = stat(dest);
+    if (msg == 0)
+      fprintf("%s exists, no need to download",dest);
+    else
+
     ok     = downloadFile(source, dest);
     if ~ok
         error('loadData:fileNotFound', 'Cannot find %s', source);
     end
-    destFolder = fullfile(destnRoot, dataset);
+    %destFolder = fullfile(destnRoot, dataset);
     unzip(dest, fileparts(dest));
+   end;
+
+
     addpath(destFolder)
     fname = [dataset, '.mat'];
     if isMatFile && exist(fname, 'file')
@@ -90,7 +100,8 @@ else % download zip file and unzip
       if ~quiet, fprintf('unzipped and added folder %s to path\n', dataset); end
       isfolder = true;
     end
-    delete(dest);
+    % don't delete stuff!!! because it takes so much time to download
+    %delete(dest);
 end
 if ~isMatFile
   return;
