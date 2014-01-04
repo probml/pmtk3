@@ -26,9 +26,9 @@ and the data is available from
 <a href="https://github.com/probml/pmtkdata">pmtkdata</a>,
 but will be downloaded automatically when a demo calls loadData.m.
 
-To get the code, click on the "Download zip" button on the bottom right of github, or just clone this repository.
+To get the code, click on the "Download zip" button on the right hand side of github, or just clone this repository.
 <a href="https://github.com/probml/pmtk3/wiki/pmtk3Documentation">Click here</a> for information on how to use the toolbox.
-If you want to contribute code, please follow the guidelines at
+If you want to contribute code, please follow the guidelines
 <a href = "https://github.com/probml/pmtk3/wiki/GuidelinesForContributors">here</a>,
 and issue a Pull Request.
 
