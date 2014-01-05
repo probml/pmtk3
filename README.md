@@ -1,4 +1,4 @@
-Kevin Murphy's textbook
+PMTK is a collection of Matlab/Octave functions, written by Matt Dunham, Kevin Murphy and various other people The toolkit is primarily designed to accompany Kevin Murphy's textbook
 <a href="http://people.cs.ubc.ca/~murphyk/MLbook">
 Machine learning: a probabilistic perspective</a>, but can also be used independently of this book. The goal is to provide a unified conceptual and software framework encompassing machine learning, graphical models, and Bayesian statistics (hence the logo). (Some methods from frequentist statistics, such as cross validation, are also supported.) Since December 2011, the toolbox is in maintenance mode, meaning that bugs will be fixed, but no new features will be added (at least not by Kevin or Matt).
 
