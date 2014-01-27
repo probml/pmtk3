@@ -76,9 +76,8 @@ else % download zip file and unzip
     end
     destFolder = fullfile(destnRoot, dataset);
     % SS check if file exists
-    [info,msg,err] = stat(dest);
-    if (msg == 0)
-      fprintf("%s exists, no need to download",dest);
+    if (exist(dest, 'file'))
+      fprintf('%s exists, no need to download',dest);
     else
 
     ok     = downloadFile(source, dest);
