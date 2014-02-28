@@ -1,0 +1,56 @@
+ch01
+========================================
+
+curseDimensionality
+----------------------------------------
+.. image:: curseDimensionality.png
+.. literalinclude:: curseDimensionality.py
+
+fisheririsDemo
+----------------------------------------
+.. image:: fisheririsDemo.png
+.. literalinclude:: fisheririsDemo.py
+
+gaussPlotDemo
+----------------------------------------
+.. image:: gaussPlotDemo.png
+.. literalinclude:: gaussPlotDemo.py
+
+kmeansHeightWeight
+----------------------------------------
+.. image:: kmeansHeightWeight_1.png
+.. image:: kmeansHeightWeight_2.png
+.. image:: kmeansHeightWeight_3.png
+.. literalinclude:: kmeansHeightWeight.py
+
+knnClassifyDemo
+----------------------------------------
+.. image:: knnClassifyDemo_1.png
+.. image:: knnClassifyDemo_2.png
+.. image:: knnClassifyDemo_4.png
+.. image:: knnClassifyDemo_hotmap_0.png
+.. image:: knnClassifyDemo_hotmap_1.png
+.. image:: knnClassifyDemo_hotmap_1.png
+.. literalinclude:: knnClassifyDemo.py
+
+knnVoronoi
+----------------------------------------
+.. image:: knnVoronoi_1.png
+.. image:: knnVoronoi_2.png
+.. literalinclude:: knnVoronoi.py
+
+newsgroupsVisualize
+----------------------------------------
+.. image:: newsgroupsVisualize.png
+.. literalinclude:: newsgroupsVisualize.py
+
+shuffledDigitsDemo
+----------------------------------------
+.. image:: shuffledDigitsDemo_shuffled.png
+.. image:: shuffledDigitsDemo_unshuffled.png
+.. literalinclude:: shuffledDigitsDemo.py
+
+sigmoidPlot
+----------------------------------------
+.. image:: sigmoidPlot.png
+.. literalinclude:: sigmoidPlot.py
