@@ -16,7 +16,7 @@ xy = [cos(t); sin(t)];
 k = sqrt(6);
 w = (k * U * sqrt(D)) * xy;
 z = repmat(mu, [1 n]) + w;
-h = plot(z(1, :), z(2, :), color, 'linewidth', 2);
+h = plot(z(1, :), z(2, :), 'color', color, 'linewidth', 2);
 hold on
 if plotMarker
   hh=plot(mu(1), mu(2),  'x');
