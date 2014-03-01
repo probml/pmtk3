@@ -10,8 +10,8 @@ function xiSummed = hmmComputeTwoSliceSum(alpha, beta, A, B)
 % alpha, and beta are computed using e.g. hmmFwdBack, A is the state
 % transition matrix, whose *rows* sum to one, and B is the soft evidence. 
 % 
-% alpha(j, t)      = p( S(t) = j  | y(1:t)    )   (KxT) 
-% beta (j, t) propto p( y(t+1:T)  | S(t)   = j)   (KxT)
+% alpha(j, t)      = log p( S(t) = j  | y(1:t)    )   (KxT) 
+% beta (j, t)      = log p( y(t+1:T)  | S(t)   = j)   (KxT)
 % A    (i, j)      = p( S(t) = j  | S(t-1) = i)   (KxK) 
 % B    (j, t)      = p( y(t)      | S(t)   = j)   (KxT)
 % 
@@ -23,11 +23,20 @@ function xiSummed = hmmComputeTwoSliceSum(alpha, beta, A, B)
 
 % This file is from pmtk3.googlecode.com
 
+% Go to log space
+A = log(A);
+B = log(B);
+
 [K, T] = size(B);
 xiSummed = zeros(K, K);
 for t = T-1:-1:1
-    b        = beta(:,t+1) .* B(:,t+1);
-    xit      = A .* (alpha(:,t) * b');
-    xiSummed = xiSummed + xit./sum(xit(:));
+    for k = 1:K
+        for l = 1:K
+            xit(k, l) = alpha(k,t) + A(k, l) + beta(l,t+1) + B(l,t+1);
+        end
+    end
+    xit = normalizeLogspace(xit(:)')';
+    xit = exp(reshape(xit, K, K)); % Go back to normal domain
+    xiSummed = xiSummed + xit;
 end
 end

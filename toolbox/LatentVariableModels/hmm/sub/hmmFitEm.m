@@ -68,9 +68,9 @@ for i=1:nobs
     [gamma, alpha, beta, logp] = hmmFwdBack(pi, A, Bi);
     loglik                     = loglik + logp; 
     xiSummed                   = hmmComputeTwoSliceSum(alpha, beta, A, Bi);
-    startCounts                = startCounts + gamma(:, 1)';
+    startCounts                = startCounts + exp(gamma(:, 1)');
     transCounts                = transCounts + xiSummed;
-    weights(ndx, :)            = weights(ndx, :) + gamma';
+    weights(ndx, :)            = weights(ndx, :) + exp(gamma');
 end
 loglik   = loglik + sum(scale); 
 %logprior = log(A(:)+eps)'*(model.transPrior(:)-1) + log(pi(:)+eps)'*(model.piPrior(:)-1);
