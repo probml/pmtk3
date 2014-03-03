@@ -33,5 +33,5 @@ def generate_rst():
             f.write('\n' + script[:-3])
             f.write('\n----------------------------------------\n')
             for img in glob.glob(script[:-3] + '*.png'):
-                f.write(".. image::" + img + "\n")
+                f.write(".. image:: " + img + "\n")
             f.write(".. literalinclude:: " + script + "\n")
