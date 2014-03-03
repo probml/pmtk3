@@ -1,0 +1,77 @@
+ch02
+========================================
+
+robustDemo
+----------------------------------------
+.. image:: robustDemo_with_outliers.png
+.. image:: robustDemo_without_outliers.png
+.. literalinclude:: robustDemo.py
+
+quantileDemo
+----------------------------------------
+.. image:: quantileDemo_cdf.png
+.. image:: quantileDemo_gaussDemo.png
+.. image:: quantileDemo.png
+.. literalinclude:: quantileDemo.py
+
+discreteProbDistFig
+----------------------------------------
+.. image:: discreteProbDistFig_a.png
+.. image:: discreteProbDistFig_b.png
+.. literalinclude:: discreteProbDistFig.py
+
+studentLaplacePdfPlot
+----------------------------------------
+.. image:: studentLaplacePdfPlot_2.png
+.. image:: studentLaplacePdfPlot_1.png
+.. literalinclude:: studentLaplacePdfPlot.py
+
+betaPlotDemo
+----------------------------------------
+.. image:: betaPlotDemo.png
+.. literalinclude:: betaPlotDemo.py
+
+binomDistPlot
+----------------------------------------
+.. image:: binomDistPlot_0.9.png
+.. image:: binomDistPlot_0.25.png
+.. literalinclude:: binomDistPlot.py
+
+mcEstimatePi
+----------------------------------------
+.. image:: mcEstimatePi.png
+.. literalinclude:: mcEstimatePi.py
+
+mcAccuracyDemo
+----------------------------------------
+.. image:: mcAccuracyDemo_kde10.png
+.. image:: mcAccuracyDemo_kde1000.png
+.. image:: mcAccuracyDemo_10.png
+.. image:: mcAccuracyDemo_kde100.png
+.. image:: mcAccuracyDemo_100.png
+.. image:: mcAccuracyDemo_1000.png
+.. literalinclude:: mcAccuracyDemo.py
+
+poissonPlotDemo
+----------------------------------------
+.. image:: poissonPlotDemo_10.0.png
+.. image:: poissonPlotDemo_1.0.png
+.. literalinclude:: poissonPlotDemo.py
+
+gammaPlotDemo
+----------------------------------------
+.. image:: gammaPlotDemo.png
+.. literalinclude:: gammaPlotDemo.py
+
+bernoulliEntropyFig
+----------------------------------------
+.. image:: bernoulliEntropyFig.png
+.. literalinclude:: bernoulliEntropyFig.py
+
+gaussPlot2Ddemo
+----------------------------------------
+.. image:: gaussPlot2Ddemo_2.png
+.. image:: gaussPlot2Ddemo_4.png
+.. image:: gaussPlot2Ddemo_1.png
+.. image:: gaussPlot2Ddemo_3.png
+.. literalinclude:: gaussPlot2Ddemo.py
