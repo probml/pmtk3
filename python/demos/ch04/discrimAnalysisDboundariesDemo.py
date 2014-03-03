@@ -79,6 +79,6 @@ for n_th, (u, sigma) in enumerate(models):
 
         pl.title('Seperate {0} classes using {1}'.
                  format(len(u), model_names[k]))
-        pl.savefig('discrimAna*2lysisDboundariesDemo_%d.png' % (n_th * 2 + k))
+        pl.savefig('discrimAnalysisDboundariesDemo_%d.png' % (n_th * 2 + k))
 
 pl.show()
