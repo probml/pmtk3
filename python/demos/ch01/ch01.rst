@@ -1,10 +1,31 @@
 ch01
 ========================================
 
-curseDimensionality
+kmeansHeightWeight
 ----------------------------------------
-.. image:: curseDimensionality.png
-.. literalinclude:: curseDimensionality.py
+.. image:: kmeansHeightWeight_1.png
+.. image:: kmeansHeightWeight_2.png
+.. image:: kmeansHeightWeight_3.png
+.. literalinclude:: kmeansHeightWeight.py
+
+shuffledDigitsDemo
+----------------------------------------
+.. image:: shuffledDigitsDemo_unshuffled.png
+.. image:: shuffledDigitsDemo_shuffled.png
+.. literalinclude:: shuffledDigitsDemo.py
+
+knnClassifyDemo
+----------------------------------------
+.. image:: knnClassifyDemo_hotmap_0.png
+.. image:: knnClassifyDemo_k10.png
+.. image:: knnClassifyDemo_4.png
+.. image:: knnClassifyDemo_hotmap_1.png
+.. image:: knnClassifyDemo_hotmap_2.png
+.. image:: knnClassifyDemo_1.png
+.. image:: knnClassifyDemo_k5.png
+.. image:: knnClassifyDemo_2.png
+.. image:: knnClassifyDemo_k1.png
+.. literalinclude:: knnClassifyDemo.py
 
 fisheririsDemo
 ----------------------------------------
@@ -16,39 +37,21 @@ gaussPlotDemo
 .. image:: gaussPlotDemo.png
 .. literalinclude:: gaussPlotDemo.py
 
-kmeansHeightWeight
+newsgroupsVisualize
 ----------------------------------------
-.. image:: kmeansHeightWeight_1.png
-.. image:: kmeansHeightWeight_2.png
-.. image:: kmeansHeightWeight_3.png
-.. literalinclude:: kmeansHeightWeight.py
+.. image:: newsgroupsVisualize.png
+.. literalinclude:: newsgroupsVisualize.py
 
-knnClassifyDemo
+curseDimensionality
 ----------------------------------------
-.. image:: knnClassifyDemo_1.png
-.. image:: knnClassifyDemo_2.png
-.. image:: knnClassifyDemo_4.png
-.. image:: knnClassifyDemo_hotmap_0.png
-.. image:: knnClassifyDemo_hotmap_1.png
-.. image:: knnClassifyDemo_hotmap_1.png
-.. literalinclude:: knnClassifyDemo.py
+.. image:: curseDimensionality.png
+.. literalinclude:: curseDimensionality.py
 
 knnVoronoi
 ----------------------------------------
 .. image:: knnVoronoi_1.png
 .. image:: knnVoronoi_2.png
 .. literalinclude:: knnVoronoi.py
-
-newsgroupsVisualize
-----------------------------------------
-.. image:: newsgroupsVisualize.png
-.. literalinclude:: newsgroupsVisualize.py
-
-shuffledDigitsDemo
-----------------------------------------
-.. image:: shuffledDigitsDemo_shuffled.png
-.. image:: shuffledDigitsDemo_unshuffled.png
-.. literalinclude:: shuffledDigitsDemo.py
 
 sigmoidPlot
 ----------------------------------------

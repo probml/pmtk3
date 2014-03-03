@@ -1,0 +1,149 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>ch03 &mdash; pmtk3-python 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="pmtk3-python 0.1 documentation" href="../../index.html" />
+    <link rel="up" title="Demos" href="../DEMOS.html" />
+    <link rel="next" title="ch04" href="../ch04/ch04.html" />
+    <link rel="prev" title="ch02" href="../ch02/ch02.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../ch04/ch04.html" title="ch04"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../ch02/ch02.html" title="ch02"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">pmtk3-python 0.1 documentation</a> &raquo;</li>
+          <li><a href="../DEMOS.html" accesskey="U">Demos</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="ch03">
+<h1>ch03<a class="headerlink" href="#ch03" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="naivebayesbowdemo">
+<h2>naiveBayesBowDemo<a class="headerlink" href="#naivebayesbowdemo" title="Permalink to this headline">¶</a></h2>
+<img alt="../../_images/naiveBayesBowDemo_1.png" src="../../_images/naiveBayesBowDemo_1.png" />
+<img alt="../../_images/naiveBayesBowDemo_0.png" src="../../_images/naiveBayesBowDemo_0.png" />
+<div class="highlight-python"><div class="highlight"><pre><span class="c">#!/usr/bin/env python</span>
+
+<span class="kn">from</span> <span class="nn">sklearn.naive_bayes</span> <span class="kn">import</span> <span class="n">MultinomialNB</span>
+<span class="kn">from</span> <span class="nn">utils</span> <span class="kn">import</span> <span class="n">load_mat</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pylab</span> <span class="kn">as</span> <span class="nn">pl</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">load_mat</span><span class="p">(</span><span class="s">&#39;XwindowsDocData&#39;</span><span class="p">)</span>
+<span class="n">xtrain</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s">&#39;xtrain&#39;</span><span class="p">]</span>
+<span class="n">ytrain</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s">&#39;ytrain&#39;</span><span class="p">]</span>
+
+<span class="n">clf</span> <span class="o">=</span> <span class="n">MultinomialNB</span><span class="p">()</span>
+<span class="n">clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">xtrain</span><span class="p">,</span> <span class="n">ytrain</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
+<span class="n">counts</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">feature_count_</span>
+<span class="n">y_counts</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">class_count_</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">counts</span><span class="p">)):</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">counts</span><span class="p">[</span><span class="n">i</span><span class="p">])),</span> <span class="n">counts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="n">y_counts</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&#39;p(xj=1|y=</span><span class="si">%d</span><span class="s">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">&#39;naiveBayesBowDemo_</span><span class="si">%d</span><span class="s">.png&#39;</span> <span class="o">%</span> <span class="n">i</span><span class="p">)</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">ch03</a><ul>
+<li><a class="reference internal" href="#naivebayesbowdemo">naiveBayesBowDemo</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../ch02/ch02.html"
+                        title="previous chapter">ch02</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../ch04/ch04.html"
+                        title="next chapter">ch04</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/demos/ch03/ch03.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../ch04/ch04.html" title="ch04"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../ch02/ch02.html" title="ch02"
+             >previous</a> |</li>
+        <li><a href="../../index.html">pmtk3-python 0.1 documentation</a> &raquo;</li>
+          <li><a href="../DEMOS.html" >Demos</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, pmtk3-developers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.1.
+    </div>
+  </body>
+</html>

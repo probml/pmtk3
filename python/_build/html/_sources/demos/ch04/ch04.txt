@@ -1,0 +1,20 @@
+ch04
+========================================
+
+discrimAnalysisDboundariesDemo
+----------------------------------------
+.. image:: discrimAnalysisDboundariesDemo_0.png
+.. image:: discrimAnalysisDboundariesDemo_5.png
+.. image:: discrimAnalysisDboundariesDemo_1.png
+.. image:: discrimAnalysisDboundariesDemo_2.png
+.. image:: discrimAnalysisDboundariesDemo_6.png
+.. image:: discrimAnalysisDboundariesDemo_7.png
+.. image:: discrimAnalysisDboundariesDemo_3.png
+.. image:: discrimAnalysisDboundariesDemo_4.png
+.. literalinclude:: discrimAnalysisDboundariesDemo.py
+
+gaussHeightWeight
+----------------------------------------
+.. image:: gaussHeightWeight_1.png
+.. image:: gaussHeightWeight_2.png
+.. literalinclude:: gaussHeightWeight.py

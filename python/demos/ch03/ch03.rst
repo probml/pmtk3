@@ -1,0 +1,8 @@
+ch03
+========================================
+
+naiveBayesBowDemo
+----------------------------------------
+.. image:: naiveBayesBowDemo_1.png
+.. image:: naiveBayesBowDemo_0.png
+.. literalinclude:: naiveBayesBowDemo.py

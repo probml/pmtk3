@@ -29,6 +29,11 @@ Here are some instructions on how to install:
     - How to install numpy, scipy, matplotlib http://www.scipy.org/install.html
     - How to install sklearn http://scikit-learn.org/stable/install.html
     - How to install networkx http://networkx.github.io/documentation/latest/install.html
+
+For develpoers, you need install sphinx to generate docs. 
+http://sphinx-doc.org/install.html
+To generate docs, change your working directory into ``/path/to/pmtk3/python``,
+run ``make html``, docs will be generated in ``/path/to/pmtk3/python/_build/html/``
    
 You may also need to install some other packages. Just follow the instructions above.
 
@@ -50,5 +55,7 @@ All you need to do is setting the PYTHONPATH
 
 Then change directory into each fold, run ``python script_name.py``
 You can also double click the scripts on windows.
+
+To view the scripts and figs in browser, see the html files in the fold ``/path/to/pmtk3/python/_build/html/``
 
 In the future, maybe we can build a package to make things easier.
