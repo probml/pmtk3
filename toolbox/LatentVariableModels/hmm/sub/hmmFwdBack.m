@@ -6,8 +6,8 @@ function [gamma, alpha, beta, loglik] = hmmFwdBack(initDist, transmat, softev)
 % softev(i,t) = p(y(t)| S(t)=i)
 %
 % OUTPUT
-% gamma(i,t) = p(S(t)=i | y(1:T))
-% alpha(i,t)  = log p(S(t)=i| y(1:t))
+% gamma(i,t) = log p(S(t)=i | y(1:T))
+% alpha(i,t)  = log p(S(t)=i, y(1:t))
 % beta(i,t) = log p(y(t+1:T) | S(t)=i)
 % loglik = log p(y(1:T))
 

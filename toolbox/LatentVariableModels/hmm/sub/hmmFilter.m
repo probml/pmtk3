@@ -7,7 +7,7 @@ function [loglik, alpha] = hmmFilter(initDist, transmat, softev)
 %
 % OUTPUT
 % loglik = log p(y(1:T))
-% alpha(i,t)  = log p(S(t)=i| y(1:t))
+% alpha(i,t)  = log p(S(t)=i, y(1:t))
 
 % This file is from pmtk3.googlecode.com
 

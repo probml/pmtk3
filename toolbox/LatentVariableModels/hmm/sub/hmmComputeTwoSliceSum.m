@@ -10,7 +10,7 @@ function xiSummed = hmmComputeTwoSliceSum(alpha, beta, A, B)
 % alpha, and beta are computed using e.g. hmmFwdBack, A is the state
 % transition matrix, whose *rows* sum to one, and B is the soft evidence. 
 % 
-% alpha(j, t)      = log p( S(t) = j  | y(1:t)    )   (KxT) 
+% alpha(j, t)      = log p( S(t) = j  , y(1:t)    )   (KxT) 
 % beta (j, t)      = log p( y(t+1:T)  | S(t)   = j)   (KxT)
 % A    (i, j)      = p( S(t) = j  | S(t-1) = i)   (KxK) 
 % B    (j, t)      = p( y(t)      | S(t)   = j)   (KxT)
