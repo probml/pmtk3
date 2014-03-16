@@ -1,4 +1,4 @@
-function path = viterbi_path(prior, transmat, obslik)
+function [loglik, path] = viterbi_path(prior, transmat, obslik)
 % VITERBI Find the most-probable (Viterbi) path through the HMM state trellis.
 % path = viterbi(prior, transmat, obslik)
 %
@@ -8,6 +8,7 @@ function path = viterbi_path(prior, transmat, obslik)
 % obslik(i,t) = Pr(y(t) | Q(t)=i)
 %
 % Outputs:
+% loglik
 % path(t) = q(t), where q1 ... qT is the argmax of the above expression.
 
 %PMTKauthor Kevin Murphy, Dan Ellis
@@ -15,74 +16,30 @@ function path = viterbi_path(prior, transmat, obslik)
 % delta(j,t) = prob. of the best sequence of length t-1 and then going to state j, and O(1:t)
 % psi(j,t) = the best predecessor state, given that we ended up in state j at t
 
-scaled = 1;
-
+% author: Long Le
 T = size(obslik, 2);
 prior = prior(:);
 Q = length(prior);
 
-delta = zeros(Q,T);
-psi = zeros(Q,T);
-path = zeros(1,T);
-scale = ones(1,T);
+% Go to log space
+obslik = log(obslik);
+transmat = log(transmat);
+prior = log(prior);
 
+delta = zeros(Q, T);
+psi = zeros(Q, T); % backtrace
+path = zeros(1, T);
 
-%{
-have_viterbi_helper = (exist('viterbi_path_helper') == 3);
-
-if ~have_viterbi_helper && exist('viterbi_path_helper.c','file')
-  % Attempt to compile mex
-  try
-    mypwd = pwd();
-    cd(fileparts(which('viterbi_path')));
-    mex('viterbi_path_helper.c');
-    cd(mypwd);
-  catch me
-    % ignore
-  end
-  have_viterbi_helper = (exist('viterbi_path_helper') == 3);
-end
-%}
-
-if false % have_viterbi_helper
-  [delta, psi, scale] = viterbi_path_helper(obslik, prior, transmat, scaled);
-else
-  
-  t=1;
-  delta(:,t) = prior .* obslik(:,t);
-  if scaled
-    [delta(:,t), n] = normalise(delta(:,t));
-    scale(t) = 1/n;
-  end
-  psi(:,t) = 0; % arbitrary value, since there is no predecessor to t=1
-
-  for t=2:T
-    for j=1:Q
-      [delta(j,t), psi(j,t)] = max(delta(:,t-1) .* transmat(:,j));
-      delta(j,t) = delta(j,t) * obslik(j,t);
+delta(:,1) = prior + obslik(:,1);
+for l = 2:T
+    for k = 1:Q
+        [delta(k,l), psi(k,l)] = max(delta(:, l-1) + transmat(:, k) + obslik(k, l));
     end
-    if scaled
-      [delta(:,t), n] = normalise(delta(:,t));
-      scale(t) = 1/n;
-    end
-  end
-
 end
-
-[p, path(T)] = max(delta(:,T));
-for t=T-1:-1:1
-  path(t) = psi(path(t+1),t+1);
+% Roll back state sequence
+[loglik, path(T)] = max(delta(:,T));
+for l = T:-1:2
+    path(l-1) = psi(path(l), l);
 end
-
-% If scaled==0, p = prob_path(best_path)
-% If scaled==1, p = Pr(replace sum with max and proceed as in the scaled forwards algo)
-% Both are different from p(data) as computed using the sum-product (forwards) algorithm
-
-if 0
-if scaled
-  loglik = -sum(log(scale));
-  %loglik = prob_path(prior, transmat, obslik, path);
-else
-  loglik = log(p);
-end
+    
 end

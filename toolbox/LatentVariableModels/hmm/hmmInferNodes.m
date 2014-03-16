@@ -9,6 +9,7 @@ function [gamma, logp, alpha, beta, B] = hmmInferNodes(model, X)
 
 % This file is from pmtk3.googlecode.com
 
+% Edit: Long Le
 pi            = model.pi;
 A             = model.A;
 logB          = mkSoftEvidence(model.emission, X); 

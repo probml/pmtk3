@@ -5,6 +5,8 @@ function [model, loglikHist] = hmmFitEm(data, nstates, type, varargin)
 
 % This file is from pmtk3.googlecode.com
 
+% Edit: Long Le
+
 if ~iscell(data)
     if isvector(data) % scalar time series
         data = rowvec(data);

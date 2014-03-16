@@ -23,6 +23,7 @@ function xiSummed = hmmComputeTwoSliceSum(alpha, beta, A, B)
 
 % This file is from pmtk3.googlecode.com
 
+% Author: Long Le
 % Go to log space
 A = log(A);
 B = log(B);

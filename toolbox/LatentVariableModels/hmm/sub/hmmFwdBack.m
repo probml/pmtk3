@@ -19,7 +19,7 @@ function [gamma, alpha, beta, loglik] = hmmFwdBack(initDist, transmat, softev)
 %PMTKauthor Guillaume Alain
 %PMTKmex
 
-
+% Author: Long Le
 [loglik, alpha] = hmmFilter(initDist, transmat, softev);
 beta = hmmBackwards(transmat, softev);
 

@@ -11,6 +11,7 @@ function [loglik, alpha] = hmmFilter(initDist, transmat, softev)
 
 % This file is from pmtk3.googlecode.com
 
+% Author: Long Le
 % Go to log space
 softev = log(softev);
 transmat = log(transmat);
