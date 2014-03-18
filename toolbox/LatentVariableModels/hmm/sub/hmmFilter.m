@@ -7,28 +7,25 @@ function [loglik, alpha] = hmmFilter(initDist, transmat, softev)
 %
 % OUTPUT
 % loglik = log p(y(1:T))
-% alpha(i,t)  = p(S(t)=i| y(1:t))
+% alpha(i,t)  = log p(S(t)=i, y(1:t))
 
 % This file is from pmtk3.googlecode.com
 
+% Author: Long Le
+% Go to log space
+softev = log(softev);
+transmat = log(transmat);
+initDist = log(initDist);
 
+[K, T] = size(softev);
 
-[K T] = size(softev);
-scale = zeros(T,1);
-AT = transmat';
-if nargout >= 2
-    alpha = zeros(K,T);
-    [alpha(:,1), scale(1)] = normalize(initDist(:) .* softev(:,1));
-    for t=2:T
-        [alpha(:,t), scale(t)] = normalize((AT * alpha(:,t-1)) .* softev(:,t));
-    end
-else
-    % save some memory
-    [alpha, scale(1)] = normalize(initDist(:) .* softev(:,1));
-    for t=2:T
-        [alpha, scale(t)] = normalize((AT * alpha) .* softev(:,t));
+alpha = zeros(K,T);
+alpha(:,1) = initDist(:) + softev(:,1);
+for t=2:T
+    for k = 1:K
+        alpha(k,t) = logsumexp((transmat(:,k) + alpha(:,t-1)) + softev(k,t));
     end
 end
-loglik = sum(log(scale+eps));
+[~, loglik] = normalizeLogspace(alpha(:,T)');
 
 end

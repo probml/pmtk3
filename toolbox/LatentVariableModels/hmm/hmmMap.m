@@ -1,4 +1,4 @@
-function path = hmmMap(model, X)
+function [loglik, path] = hmmMap(model, X)
 % Find the most-probable (Viterbi) path through the HMM state trellis. 
 %% Inputs:
 % model - a struct as returned by e.g. hmmFit, which must contain
@@ -12,6 +12,8 @@ function path = hmmMap(model, X)
 
 % This file is from pmtk3.googlecode.com
 
+% Edit: Long Le
+
 pi = model.pi;
 A  = model.A;
 logB  = mkSoftEvidence(model.emission, X);
@@ -19,7 +21,7 @@ logB  = mkSoftEvidence(model.emission, X);
 % this C code is a bit ugly
 
 % Use Dan Ellis's C code instead
-path = viterbi_path(pi, A, exp(logB));
+[loglik, path] = viterbi_path(pi, A, exp(logB));
 %assert(isequal(path, path))
 
 end
