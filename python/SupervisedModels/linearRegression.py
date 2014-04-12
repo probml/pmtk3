@@ -245,11 +245,16 @@ def linreg_logprob():
 
 def linreg_predict(model, X, v=False):
     """
-    Prediction with linear regression model
+    Prediction with linear regression
+    yhat[i] = E[y|X[i, :]], model]
+    v[i] = Var[y|X[i, :], model]
     """
     if 'preproc' in model:
         X = preprocessor_apply_to_test(model['preproc'], X)
 
+    yhat = X.dot(model['w'])
+    return yhat
+    
 
 def linreg_predict_bayes():
     pass

@@ -3,6 +3,7 @@
 from utils import preprocessor_create
 from utils import poly_data_make
 from SupervisedModels.linearRegression import linreg_fit
+from SupervisedModels.linearRegression import linreg_predict
 import numpy as np
 import pylab as pl
 
@@ -20,41 +21,41 @@ for m in xrange(len(degs)):
     pp = preprocessor_create(rescale_X=True, poly=deg, add_ones=True)
     model = linreg_fit(xtrain, ytrain, preproc=pp)
     ypredTrain = linreg_predict(model, xtrain)
-#     ypredTest = linregPredict(model, xtest)
-#     mseTrain[m] = np.mean(np.square(ytrain - ypredTrain))
-#     mseTest[m] = np.mean(np.square(ytest - ypredTest))
+    ypredTest = linreg_predict(model, xtest)
+    mseTrain[m] = np.mean(np.square(ytrain - ypredTrain))
+    mseTest[m] = np.mean(np.square(ytest - ypredTest))
 
-# ndx = degs <= 16
-# fig = pl.figure()
-# pl.plot(degs[ndx], mseTrain[ndx])
-# pl.plot(degs[ndx], mseTest[ndx])
-# pl.xlabel('degree')
-# pl.ylabel('mse')
-# pl.legend(('train', 'test'))
-# pl.savefig('linregPolyVsDegreeUcurve.png')
-# pl.show()
+ndx = degs <= 16
+fig = pl.figure()
+pl.plot(degs[ndx], mseTrain[ndx])
+pl.plot(degs[ndx], mseTest[ndx])
+pl.xlabel('degree')
+pl.ylabel('mse')
+pl.legend(('train', 'test'))
+pl.savefig('linregPolyVsDegreeUcurve.png')
+pl.show()
 
 
-# degs = [1, 2, 10, 14, 20]
-# mseTrain = np.zeros(len(degs))
-# mseTest = np.zeros(len(degs))
+degs = [1, 2, 10, 14, 20]
+mseTrain = np.zeros(len(degs))
+mseTest = np.zeros(len(degs))
 
-# for m, deg in enumerate(degs):
-#     pp = preprocessorCreate(rescaleX=True, poly=deg, addOnes=True)
-#     model = linregFit(xtrain, ytrain, preproc=pp)
-#     ypredTrain = linregPredict(model, xtrain)
-#     ypredTest = linregPredict(model, xtest)
-#     mseTrain[m] = np.mean(np.square(ytrain - ypredTrain))
-#     mseTest[m] = np.mean(np.square(ytest - ypredTest))
+for m, deg in enumerate(degs):
+    pp = preprocessor_create(rescale_X=True, poly=deg, add_ones=True)
+    model = linreg_fit(xtrain, ytrain, preproc=pp)
+    ypredTrain = linreg_predict(model, xtrain)
+    ypredTest = linreg_predict(model, xtest)
+    mseTrain[m] = np.mean(np.square(ytrain - ypredTrain))
+    mseTest[m] = np.mean(np.square(ytest - ypredTest))
 
-#     pl.figure(m)
-#     pl.plot(xtrain, ytrain, 'o')
-#     pl.plot(xtest, ypredTest, lw=3)
-#     pl.title("degree %d" % deg)
-#     pl.savefig('polyfitDemo%d.png' % deg)
-#     pl.xlim([-1, 21])
-#     pl.ylim([-10, 15])
-#     pl.show()
+    pl.figure(m)
+    pl.plot(xtrain, ytrain, 'o')
+    pl.plot(xtest, ypredTest, lw=3)
+    pl.title("degree %d" % deg)
+    pl.savefig('polyfitDemo%d.png' % deg)
+    pl.xlim([-1, 21])
+    pl.ylim([-10, 15])
+    pl.show()
 
 #     # figure;
 #     # plot(xtrain,ytrain,'.b', 'markersize', 50);
