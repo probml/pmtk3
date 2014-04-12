@@ -2,10 +2,113 @@
 
 import os
 import scipy.io as sio
+import numpy as np
 import glob
 
 PYTHON_DIR = os.path.dirname(os.path.realpath(__file__))
 DATA_DIR = os.path.join(os.path.dirname(PYTHON_DIR), 'pmtkdataCopy')
+
+
+def add_ones(X):
+    """Add a column of ones to X"""
+    n = len(X)
+    return np.column_stack((np.ones(n), X))
+
+
+def degexpand(X, deg, add_ones=False):
+    """Expand input vectors to contain powers of the input features"""
+    n = len(X)
+    xx = X
+    for i in xrange(1, deg):
+        xx = np.column_stack((xx, np.power(X, i + 1)))
+    if add_ones:
+        xx = np.column_stack((np.ones(n), xx))
+
+    return xx
+
+
+def rescale_data(X, min_val=-1, max_val=1, minx=None, rangex=None):
+    """
+    Rescale columns to lie in the range
+    [min_val, max_val] (defaults to [-1,1]])
+    """
+    if minx is None:
+        minx = X.min(axis=0)
+    if rangex is None:
+        rangex = X.max(axis=0) - X.min(axis=0)
+
+    return (max_val - min_val) * (X - minx) / rangex + min_val
+
+
+def center_cols(X, mu=None):
+    """
+    Make each column be zero mean
+    """
+    if mu is None:
+        mu = X.mean(axis=0)
+    return X - mu, mu
+
+
+def mk_unit_variance(X, s=None):
+    """
+    Make each column of X be variance 1
+    """
+    if s is None:
+        s = X.std(axis=0)
+
+    try:
+        len(s)
+        s[s < np.spacing(1)] = 1
+    except TypeError:
+        s = s if s > np.spacing(1) else 1
+
+    return X / s, s
+
+
+class preprocessor_create():
+    def __init__(self, standardize_X=False, rescale_X=False, kernel_fn=None,
+                 poly=None, add_ones=False):
+        self.standardize_X = standardize_X
+        self.rescale_X = rescale_X
+        self.kernel_fn = kernel_fn
+        self.poly = poly
+        self.add_ones = add_ones
+
+
+def poly_data_make(sampling="sparse", deg=3, n=21):
+    """create an artificial dataset"""
+    np.random.seed(0)
+
+    if sampling == "irregular":
+        xtrain = np.concatenate(
+            (np.arange(-1, -0.5, 0.1), np.arange(3, 3.5, 0.1)))
+    elif sampling == "sparse":
+        xtrain = np.array([-3, -2, 0, 2, 3])
+    elif sampling == "dense":
+        xtrain = np.arange(-5, 5, 0.6)
+    elif sampling == "thibaux":
+        xtrain = np.linspace(0, 20, n)
+        xtest = np.arange(0, 20, 0.1)
+        sigma2 = 4
+        w = np.array([-1.5, 1/9.])
+        fun = lambda x: w[0]*x + w[1]*np.square(x)
+
+    if sampling != "thibaux":
+        assert deg < 4, "bad degree, dude %d" % deg
+        xtest = np.arange(-7, 7, 0.1)
+        if deg == 2:
+            fun = lambda x: (10 + x + np.square(x))
+        else:
+            fun = lambda x: (10 + x + np.power(x, 3))
+        sigma2 = np.square(5)
+
+    ytrain = fun(xtrain) + np.random.normal(0, 1, xtrain.shape) * \
+        np.sqrt(sigma2)
+    ytestNoisefree = fun(xtest)
+    ytestNoisy = ytestNoisefree + np.random.normal(0, 1, xtest.shape) * \
+        np.sqrt(sigma2)
+
+    return xtrain, ytrain, xtest, ytestNoisefree, ytestNoisy, sigma2        
 
 
 def load_mat(matName):
