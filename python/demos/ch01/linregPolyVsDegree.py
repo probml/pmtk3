@@ -37,11 +37,12 @@ for m in xrange(len(degs)):
 
 ndx = degs <= 16
 fig = pl.figure()
-pl.plot(degs[ndx], mseTrain[ndx])
-pl.plot(degs[ndx], mseTest[ndx])
+pl.plot(degs[ndx], mseTrain[ndx], lw=3)
+pl.plot(degs[ndx], mseTest[ndx], lw=3)
 pl.xlabel('degree')
 pl.ylabel('mse')
-pl.legend(('train', 'test'))
+leg = pl.legend(('train', 'test'), loc='upper left')
+leg.draw_frame(False)
 pl.savefig('linregPolyVsDegreeUcurve.png')
 pl.show()
 
