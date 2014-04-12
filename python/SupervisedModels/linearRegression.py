@@ -84,7 +84,42 @@ def preprocessor_apply_to_train(preproc, X):
 
 
 def preprocessor_apply_to_test(preproc, X):
-    pass
+    """Transform the test data in the same way as the training data"""
+
+    try:
+        X = center_cols(X, preproc.Xmu)
+    except AttributeError:
+        pass
+
+    try:
+        X = mk_unit_variance(X, preproc.Xstnd)
+    except AttributeError:
+        pass
+
+    try:
+        X = rescale_data(X, preproc.Xscale[0], preproc.Xscale[1])
+    except AttributeError:
+        pass
+
+    try:
+        if preproc.kernel_fn is not None:
+            X = preproc.kernel_fn(X, preproc.basis)
+    except AttributeError:
+        pass
+
+    try:
+        if preproc.poly is not None:
+            X = degexpand(X, preproc.poly, False)
+    except AttributeError:
+        pass
+
+    try:
+        if preproc.add_ones:
+            X = add_ones(X)
+    except AttributeError:
+        pass
+
+    return X
 
 
 def linreg_create():
@@ -148,9 +183,50 @@ def linreg_fit(X, y, **kwargs):
         raise NotImplementedError
     elif likelihood.lower() == 'gaussian':
         preproc, X = preprocessor_apply_to_train(preproc, X)
-        print "here"
+        N = len(X)
+        D = 1 if len(X.shape) < 2 else X.shape[1]
+        model['lambda_'] = lambda_
+        lambda_vec = lambda_ * np.ones(D)
+
+        if preproc.add_ones:
+            lambda_vec[0] = 0  # don't penalize bias term
+
+        winit = np.zeros(D)
+        opts = fit_options
+
+        if reg_type == 'l1':
+            raise NotImplementedError
+        elif reg_type == 'l2':
+            if fit_fn_name == 'qr':
+                if lambda_ == 0:
+                    R = np.diag(np.sqrt(weights))
+                    RX = R.dot(X)
+                    w = np.linalg.pinv(RX.T.dot(RX)).dot(RX.T).dot(R.dot(y))
+                else:
+                    raise NotImplementedError
+            elif fit_fn_name == 'minfunc':
+                raise NotImplementedError
+            else:
+                raise ValueError('Invalid fit function')
+        elif reg_type == 'scad':
+            raise NotImplementedError
+        else:
+            raise ValueError('Invalid regression type')
     else:
         raise ValueError('Invalid likelihood')
+
+    model['w'] = w
+    yhat = X.dot(w)
+
+    if weights.sum() == 0:
+        model['sigma2'] = np.spacing(1)
+    else:
+        model['sigma2'] = np.sum(weights * np.square(y - yhat)) / \
+            np.sum(weights)
+
+    model['preproc'] = preproc
+    model['model_type'] = 'linreg'
+    model['likelihood'] = likelihood
 
     return model
 

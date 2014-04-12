@@ -19,7 +19,7 @@ for m in xrange(len(degs)):
     deg = degs[m]
     pp = preprocessor_create(rescale_X=True, poly=deg, add_ones=True)
     model = linreg_fit(xtrain, ytrain, preproc=pp)
-#     ypredTrain = linregPredict(model, xtrain)
+    ypredTrain = linreg_predict(model, xtrain)
 #     ypredTest = linregPredict(model, xtest)
 #     mseTrain[m] = np.mean(np.square(ytrain - ypredTrain))
 #     mseTest[m] = np.mean(np.square(ytest - ypredTest))
