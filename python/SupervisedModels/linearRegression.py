@@ -134,7 +134,7 @@ def linreg_fit(X, y, **kwargs):
     :param X: N*D design matrix
     :param y: N*1 response vector
     """
-    pp = preprocessor_create(add_ones=True, standardize_X=False)
+    pp = preprocessor_create(add_ones=True, standardize_X=False)  # default
 
     N = len(X)
     D = 1 if len(X.shape) < 2 else X.shape[1]
@@ -231,8 +231,46 @@ def linreg_fit(X, y, **kwargs):
     return model
 
 
-def linreg_fit_bayes():
-    pass
+def linreg_fit_bayes(X, y, **kwargs):
+    """
+    Fit a Bayesian linear regression model.
+    This is a port of linregFit.m from pmtk3.
+
+    :param X: N*D design matrix
+    :param y: N*1 response vector
+    """
+    pp = preprocessor_create(add_ones=True, standardize_X=False)  # default
+
+    prior = kwargs['prior'] if 'prior' in kwargs else 'uninf'
+    preproc = kwargs['preproc'] if 'preproc' in kwargs else pp
+    beta = kwargs['beta'] if 'beta' in kwargs else None
+    alpha = kwargs['alpha'] if 'alpha' in kwargs else None
+    g = kwargs['g'] if 'g' in kwargs else None
+    use_ARD = kwargs['use_ARD'] if 'use_ARD' in kwargs else False
+    verbose = kwargs['verbose'] if 'verbose' in kwargs else False
+
+    if prior.lower() == 'eb':
+        prior = 'ebnetlab'
+
+    if prior.lower() == 'uninf':
+        raise NotImplementedError
+    elif prior.lower() == 'gauss':
+        raise NotImplementedError
+    elif prior.lower() == 'zellner':
+        raise NotImplementedError
+    elif prior.lower() == 'vb':
+        raise NotImplementedError
+    elif prior.lower() == 'ebnetlab':
+        model, logev = linreg_fit_eb_netlab(X, y, preproc)
+    elif prior.lower() == 'ebchen':
+        raise NotImplementedError
+    else:
+        raise ValueError('Invalid prior')
+
+    model['model_type'] = 'linreg_bayes'
+    model['prior'] = prior
+
+    return model, logev
 
 
 def linreg_fit_path_cv():
@@ -254,7 +292,7 @@ def linreg_predict(model, X, v=False):
 
     yhat = X.dot(model['w'])
     return yhat
-    
+
 
 def linreg_predict_bayes():
     pass

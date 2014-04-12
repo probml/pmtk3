@@ -1,8 +1,18 @@
 #!/usr/bin/env python
+#
+#       Author:    J. Benjamin Cook
+#       E-mail:    jbenjamincook@gmail.com
+#
+#       File Name: linregPolyVsDegree.py
+#       Description:
+#           Linear Regression with Polynomial Basis of different degrees
+#           based on code code by Romain Thibaux
+#           (Lecture 2 from http://www.cs.berkeley.edu/~asimma/294-fall06/)
 
 from utils import preprocessor_create
 from utils import poly_data_make
 from SupervisedModels.linearRegression import linreg_fit
+from SupervisedModels.linearRegression import linreg_fit_bayes
 from SupervisedModels.linearRegression import linreg_predict
 import numpy as np
 import pylab as pl
@@ -56,44 +66,3 @@ for m, deg in enumerate(degs):
     pl.xlim([-1, 21])
     pl.ylim([-10, 15])
     pl.show()
-
-#     # figure;
-#     # plot(xtrain,ytrain,'.b', 'markersize', 50);
-#     # hold on;
-#     # plot(xtest, ypredTest, 'k', 'linewidth', 3, 'markersize', 20);
-#     # hold off
-#     # title(sprintf('degree %d', deg))
-#     # set(gca,'ylim',[-10 15]);
-#     # set(gca,'xlim',[-1 21]);
-#     # printPmtkFigure(sprintf('polyfitDemo%d', deg))    
-
-
-# #     print deg, np.mean(np.square(ytrain - ypredTrain))
-
-# #     pl.figure(m)
-# #     pl.plot(xtrain, ytrain, 'o')
-# #     pl.plot(xtrain, ypredTrain)
-# #     pl.title("degree %d" % deg)
-# #     pl.xlim([-1, 21])
-# #     pl.ylim([-10, 15])
-# #     pl.savefig('polyfitDemo%d.png' % deg)
-
-# # # logev = np.zeros(len(degs))
-
-# # # for m = xrange(len(degs)):
-# # #     deg = degs[m]
-# # #     pp = preprocessorCreate(rescaleX=True, poly=deg, addOnes=True)
-# # #     xxtrain = degexpand(xtrain, deg, True)
-# # #     modelEB, logev[m] = linregFitBayes(xxtrain, ytrain, preproc=pp, prior='eb')
-
-# # # figure;
-# # # probs = exp(normalizeLogspace(logev));
-# # # plot(degs, logev ,'ko-', 'linewidth', 2, 'markersize', 24);
-# # # xlabel('degree'); ylabel('log evidence')
-# # # printPmtkFigure('linregPolyVsDegreeLogev')
-
-# # # figure; bar(degs, probs)
-# # # xlabel('degree'); ylabel('probability')
-# # # printPmtkFigure('linregPolyVsDegreeProbModel')
-
-

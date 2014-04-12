@@ -76,7 +76,9 @@ class preprocessor_create():
 
 
 def poly_data_make(sampling="sparse", deg=3, n=21):
-    """create an artificial dataset"""
+    """
+    Create an artificial dataset
+    """
     np.random.seed(0)
 
     if sampling == "irregular":
