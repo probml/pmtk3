@@ -41,11 +41,11 @@ How to run demos
 ------------------
 All you need to do is setting the PYTHONPATH
 
-    - On linux, just put this in your ~/.bashrc
+  - On linux, just put this in your ~/.bashrc
     
       ``export PYTHONPATH=/path/to/pmtk3/python``
     
-    - On windows, you need to open
+  - On windows, you need to open
       My Computer > Properties > Advanced System Settings > Environment Variables >
        
       .. image:: http://i.stack.imgur.com/ZGp36.png

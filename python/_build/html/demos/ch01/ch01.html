@@ -437,6 +437,86 @@
 </pre></div>
 </div>
 </div>
+<div class="section" id="linregpolyvsdegree">
+<h2>linregPolyVsDegree<a class="headerlink" href="#linregpolyvsdegree" title="Permalink to this headline">¶</a></h2>
+<img alt="../../_images/linregPolyVsDegreeUcurve.png" src="../../_images/linregPolyVsDegreeUcurve.png" />
+<img alt="../../_images/polyfitDemo1.png" src="../../_images/polyfitDemo1.png" />
+<img alt="../../_images/polyfitDemo2.png" src="../../_images/polyfitDemo2.png" />
+<img alt="../../_images/polyfitDemo10.png" src="../../_images/polyfitDemo10.png" />
+<img alt="../../_images/polyfitDemo14.png" src="../../_images/polyfitDemo14.png" />
+<img alt="../../_images/polyfitDemo20.png" src="../../_images/polyfitDemo20.png" />
+<div class="highlight-python"><div class="highlight"><pre><span class="c">#!/usr/bin/env python</span>
+<span class="c">#</span>
+<span class="c">#       Author:    J. Benjamin Cook</span>
+<span class="c">#       E-mail:    jbenjamincook@gmail.com</span>
+<span class="c">#</span>
+<span class="c">#       File Name: linregPolyVsDegree.py</span>
+<span class="c">#       Description:</span>
+<span class="c">#           Linear Regression with Polynomial Basis of different degrees</span>
+<span class="c">#           based on code code by Romain Thibaux</span>
+<span class="c">#           (Lecture 2 from http://www.cs.berkeley.edu/~asimma/294-fall06/)</span>
+
+<span class="kn">from</span> <span class="nn">utils</span> <span class="kn">import</span> <span class="n">preprocessor_create</span>
+<span class="kn">from</span> <span class="nn">utils</span> <span class="kn">import</span> <span class="n">poly_data_make</span>
+<span class="kn">from</span> <span class="nn">SupervisedModels.linearRegression</span> <span class="kn">import</span> <span class="n">linreg_fit</span>
+<span class="kn">from</span> <span class="nn">SupervisedModels.linearRegression</span> <span class="kn">import</span> <span class="n">linreg_fit_bayes</span>
+<span class="kn">from</span> <span class="nn">SupervisedModels.linearRegression</span> <span class="kn">import</span> <span class="n">linreg_predict</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pylab</span> <span class="kn">as</span> <span class="nn">pl</span>
+
+<span class="n">N</span> <span class="o">=</span> <span class="mi">21</span>
+<span class="n">xtrain</span><span class="p">,</span> <span class="n">ytrain</span><span class="p">,</span> <span class="n">xtest</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">ytest</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">poly_data_make</span><span class="p">(</span><span class="n">sampling</span><span class="o">=</span><span class="s">&#39;thibaux&#39;</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">N</span><span class="p">)</span>
+
+<span class="n">degs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">22</span><span class="p">)</span>
+<span class="n">Nm</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">degs</span><span class="p">)</span>
+
+<span class="c"># Plot error vs degree</span>
+<span class="n">mseTrain</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">Nm</span><span class="p">)</span>
+<span class="n">mseTest</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">Nm</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">degs</span><span class="p">)):</span>
+    <span class="n">deg</span> <span class="o">=</span> <span class="n">degs</span><span class="p">[</span><span class="n">m</span><span class="p">]</span>
+    <span class="n">pp</span> <span class="o">=</span> <span class="n">preprocessor_create</span><span class="p">(</span><span class="n">rescale_X</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">poly</span><span class="o">=</span><span class="n">deg</span><span class="p">,</span> <span class="n">add_ones</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">linreg_fit</span><span class="p">(</span><span class="n">xtrain</span><span class="p">,</span> <span class="n">ytrain</span><span class="p">,</span> <span class="n">preproc</span><span class="o">=</span><span class="n">pp</span><span class="p">)</span>
+    <span class="n">ypredTrain</span> <span class="o">=</span> <span class="n">linreg_predict</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">xtrain</span><span class="p">)</span>
+    <span class="n">ypredTest</span> <span class="o">=</span> <span class="n">linreg_predict</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">xtest</span><span class="p">)</span>
+    <span class="n">mseTrain</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">ytrain</span> <span class="o">-</span> <span class="n">ypredTrain</span><span class="p">))</span>
+    <span class="n">mseTest</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">ytest</span> <span class="o">-</span> <span class="n">ypredTest</span><span class="p">))</span>
+
+<span class="n">ndx</span> <span class="o">=</span> <span class="n">degs</span> <span class="o">&lt;=</span> <span class="mi">16</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">degs</span><span class="p">[</span><span class="n">ndx</span><span class="p">],</span> <span class="n">mseTrain</span><span class="p">[</span><span class="n">ndx</span><span class="p">],</span> <span class="n">lw</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">degs</span><span class="p">[</span><span class="n">ndx</span><span class="p">],</span> <span class="n">mseTest</span><span class="p">[</span><span class="n">ndx</span><span class="p">],</span> <span class="n">lw</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">&#39;degree&#39;</span><span class="p">)</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">&#39;mse&#39;</span><span class="p">)</span>
+<span class="n">leg</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">legend</span><span class="p">((</span><span class="s">&#39;train&#39;</span><span class="p">,</span> <span class="s">&#39;test&#39;</span><span class="p">),</span> <span class="n">loc</span><span class="o">=</span><span class="s">&#39;upper left&#39;</span><span class="p">)</span>
+<span class="n">leg</span><span class="o">.</span><span class="n">draw_frame</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">&#39;linregPolyVsDegreeUcurve.png&#39;</span><span class="p">)</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+
+<span class="n">degs</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">20</span><span class="p">]</span>
+<span class="n">mseTrain</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">degs</span><span class="p">))</span>
+<span class="n">mseTest</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">degs</span><span class="p">))</span>
+
+<span class="k">for</span> <span class="n">m</span><span class="p">,</span> <span class="n">deg</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">degs</span><span class="p">):</span>
+    <span class="n">pp</span> <span class="o">=</span> <span class="n">preprocessor_create</span><span class="p">(</span><span class="n">rescale_X</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">poly</span><span class="o">=</span><span class="n">deg</span><span class="p">,</span> <span class="n">add_ones</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">linreg_fit</span><span class="p">(</span><span class="n">xtrain</span><span class="p">,</span> <span class="n">ytrain</span><span class="p">,</span> <span class="n">preproc</span><span class="o">=</span><span class="n">pp</span><span class="p">)</span>
+    <span class="n">ypredTrain</span> <span class="o">=</span> <span class="n">linreg_predict</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">xtrain</span><span class="p">)</span>
+    <span class="n">ypredTest</span> <span class="o">=</span> <span class="n">linreg_predict</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">xtest</span><span class="p">)</span>
+    <span class="n">mseTrain</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">ytrain</span> <span class="o">-</span> <span class="n">ypredTrain</span><span class="p">))</span>
+    <span class="n">mseTest</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">ytest</span> <span class="o">-</span> <span class="n">ypredTest</span><span class="p">))</span>
+
+    <span class="n">pl</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xtrain</span><span class="p">,</span> <span class="n">ytrain</span><span class="p">,</span> <span class="s">&#39;o&#39;</span><span class="p">)</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xtest</span><span class="p">,</span> <span class="n">ypredTest</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&quot;degree </span><span class="si">%d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">deg</span><span class="p">)</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">&#39;polyfitDemo</span><span class="si">%d</span><span class="s">.png&#39;</span> <span class="o">%</span> <span class="n">deg</span><span class="p">)</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">xlim</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">21</span><span class="p">])</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">ylim</span><span class="p">([</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">15</span><span class="p">])</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
 </div>
 
 
@@ -457,6 +537,7 @@
 <li><a class="reference internal" href="#cursedimensionality">curseDimensionality</a></li>
 <li><a class="reference internal" href="#knnvoronoi">knnVoronoi</a></li>
 <li><a class="reference internal" href="#sigmoidplot">sigmoidPlot</a></li>
+<li><a class="reference internal" href="#linregpolyvsdegree">linregPolyVsDegree</a></li>
 </ul>
 </li>
 </ul>
