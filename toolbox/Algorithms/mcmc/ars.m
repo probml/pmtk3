@@ -137,17 +137,15 @@ end
 
 upperHull = [];
 
-if isinf(domain(1))
-	% first line (from -infinity)
-	m = (fS(2)-fS(1))/(S(2)-S(1));
-	b = fS(1) - m*S(1);
-	pr = exp(b)/m * ( exp(m*S(1)) - 0 ); % integrating in from -infinity
-	upperHull(1).m = m;
-	upperHull(1).b = b;
-	upperHull(1).pr = pr;
-	upperHull(1).left = -inf;
-	upperHull(1).right = S(1);
-end
+% first line (from boundary)
+m = (fS(2)-fS(1))/(S(2)-S(1));
+b = fS(1) - m*S(1);
+pr = exp(b)/m * ( exp(m*S(1)) - 0 ); % integrating in from -infinity
+upperHull(1).m = m;
+upperHull(1).b = b;
+upperHull(1).pr = pr;
+upperHull(1).left = domain(1);
+upperHull(1).right = S(1);
 
 % second line
 m = (fS(3)-fS(2))/(S(3)-S(2));
@@ -202,18 +200,17 @@ upperHull(i).pr = pr;
 upperHull(i).left = S(end-1);
 upperHull(i).right = S(end);
 
-if isinf(domain(2))
-	% last line (to infinity)
-	m = (fS(end)-fS(end-1))/(S(end)-S(end-1));
-	b = fS(end) - m*S(end);
-	pr = exp(b)/m * ( 0 - exp(m*S(end)) );
-	i = length(upperHull)+1;
-	upperHull(i).m = m;
-	upperHull(i).b = b;
-	upperHull(i).pr = pr;
-	upperHull(i).left = S(end);
-	upperHull(i).right = inf;
-end
+% last line (to boundary)
+m = (fS(end)-fS(end-1))/(S(end)-S(end-1));
+b = fS(end) - m*S(end);
+pr = exp(b)/m * ( 0 - exp(m*S(end)) );
+i = length(upperHull)+1;
+upperHull(i).m = m;
+upperHull(i).b = b;
+upperHull(i).pr = pr;
+upperHull(i).left = S(end);
+upperHull(i).right = domain(2);
+
 
 Z = sum([upperHull(:).pr]);
 for li=1:length(upperHull)
