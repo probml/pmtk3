@@ -83,12 +83,12 @@ while 1
 	meshChanged = 0; % flag to indicate if a new point has been added to the mesh
 
 	% three cases for acception/rejection
-	if U<=lhVal/uhVal,
+	if U<=exp(lhVal - uhVal),
 		% accept, u is below lower bound
 		nSamplesNow = nSamplesNow + 1;
 		samples(nSamplesNow) = x;
 
-	elseif U<=func(x, varargin{:})/uhVal
+	elseif U<=exp(func(x, varargin{:}) - uhVal)
 		% accept, u is between lower bound and f
 		nSamplesNow = nSamplesNow + 1;
 		samples(nSamplesNow) = x;
