@@ -1,4 +1,4 @@
-function p = isdiag(M)
+function p = isdiagPmtk(M)
 % Return true iff the input is a diagonal matrix
 
 % This file is from pmtk3.googlecode.com
