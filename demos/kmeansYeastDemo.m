@@ -3,7 +3,7 @@
 
 % This file is from pmtk3.googlecode.com
 
-
+setSeed(0);
 loadData('yeastData310') % 'X', 'genes', 'times');
 
 figure;imagesc(X);
@@ -33,7 +33,10 @@ ctrs = ctrs';
 figure;
 for c = 1:16
     subplot(4,4,c);
-    plot(times,X((cidx == c),:)');
+    ndx = find(cidx==c);
+    if ~isempty(ndx)
+        plot(times,X(ndx,:)');
+    end
     axis tight
 end
 suptitle('K-Means Clustering of Profiles');

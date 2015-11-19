@@ -13,15 +13,18 @@ W = 0.05*[1; 1];
 %X = 0.1*randn(n,d);
 X = [1 1 1; 2 -2 2]';
 y = X*W + 5*randn(n,1);
-What = X\y;
-yHat =  X*What;
+wHat = X \ y;
+yHat =  X*wHat;
 
 % for plotting purposes, make all vectors be unit norm
+Xnorm = X;
 for j=1:d
-  X(:,j) = X(:,j)/norm(X(:,j));
+  Xnorm(:,j) = X(:,j)/norm(X(:,j));
 end
-yHat = yHat/norm(yHat);
-y = y/norm(y);
+%yHatNorm = yHat/norm(yHat);
+ynorm = y/norm(y);
+wHatNorm = Xnorm \ ynorm;
+yHatNorm = Xnorm*wHatNorm;
 
 figure('Color',[1 1 1]); hold on;
 %maximize;
@@ -30,13 +33,13 @@ view(-40,16);
 grid on
 xlabel('x1'); ylabel('x2'); zlabel('x3');
 
-plotLines;
-plotPoints;
-labelPoints;
+plotLines(Xnorm, ynorm, yHatNorm);
+plotPoints(Xnorm, ynorm, yHatNorm);
+labelPoints(Xnorm, ynorm, yHatNorm);
 
 
 printPmtkFigure leastSquaresProj
-  function plotLines
+  function plotLines(X, y, yHat)
     prefs = {'Color','g','LineStyle','--','LineWidth',2};
     line(X(1,:), X(2,:), X(3,:), prefs{:});
     s = 1.5;
@@ -48,7 +51,7 @@ printPmtkFigure leastSquaresProj
     line([y(1) yHat(1)], [y(2) yHat(2)], [y(3) yHat(3)],prefs{:});
   end
 
-  function plotPoints
+  function plotPoints(X, y, yHat)
     pointPrefs = {'.k','MarkerSize',20};
     plot3(0,0,0,pointPrefs{:});
     plot3(X(1,1),X(2,1),X(3,1),pointPrefs{:});
@@ -57,7 +60,7 @@ printPmtkFigure leastSquaresProj
     plot3(y(1), y(2), y(3),pointPrefs{:});
   end
 
-  function labelPoints
+  function labelPoints(X, y, yHat)
     textPrefs = {'FontSize',22,'FontWeight','bold','Interpreter','latex'};
     text(y(1), y(2), y(3), '$y$', textPrefs{:});
     text(yHat(1), yHat(2), yHat(3), '$\hat{y}$' ,textPrefs{:});

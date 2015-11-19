@@ -14,9 +14,9 @@ XD = data.X(:, ~cndx);
 mi = mutualInfoAllPairsMixed(XD, XC);
 
 figure; imagesc(triu(mi));
-%colormap(gray);
+colormap(jet);
 colorbar
-%xticklabelRot(data.varNames, 90, 10, -0.2)
+xticklabelRot(data.varNames, 45, 8, 0)
 set(gca,'yticklabel', data.varNames);
 title('pairwise mutual information in autompg data')
 printPmtkFigure('miMixedDemoColor3')

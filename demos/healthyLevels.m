@@ -18,7 +18,7 @@ priorType = 'uninfPrior';
 %%
 plotGeneralizations();
 %%
-%plotPostSamples();
+plotPostSamples();
 %%
 plotBayes();
 %%

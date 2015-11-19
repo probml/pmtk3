@@ -24,9 +24,10 @@ printPmtkFigure kmeansModelSel1dTrain
 
 Xtest = gmmsamp(mix, n);
 
-%figure
-%hist(Xtest, bins);
-%title('Xtest')
+figure
+hist(Xtest, bins);
+title('Xtest')
+printPmtkFigure kmeansModelSel1dTest
 
 %Ks = [1:9];
 %Ks = [1 2 3 4 5  10 15 20 25];

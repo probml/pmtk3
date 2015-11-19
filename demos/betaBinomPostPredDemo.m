@@ -5,14 +5,13 @@
 % This file is from pmtk3.googlecode.com
 
 N  = 10;
-X  = [1 2]';
-N1 = sum(X);
-N0 = N*length(X)-N1;
+N1 = 4;
+N0 = 1;
 xs = 0:N;
 %% Prior Predictive
 prior.N = N;
-prior.a = 2;
-prior.b = 2;
+prior.a = 1; % 2;
+prior.b = 1; % 2;
 priorPred  = exp(betaBinomLogprob(prior, xs));
 figure; 
 bar(priorPred);

@@ -4,15 +4,22 @@
 
 % This file is from pmtk3.googlecode.com
 
-data(1).a  = 2;     data(2).a  = 5;
+data(1).a  = 2;     data(2).a  = 2;
 data(1).b  = 2;     data(2).b  = 2;
-data(1).N1 = 3;     data(2).N1 = 11;
-data(1).N0 = 17;    data(2).N0 = 13;
+data(1).N1 = 4;     data(2).N1 = 40;
+data(1).N0 = 1;    data(2).N0 = 10;
+
+data(3).a  = 1;     data(4).a  = 1;
+data(3).b  = 1;     data(4).b  = 1;
+data(3).N1 = 4;     data(4).N1 = 40;
+data(3).N0 = 1;    data(4).N0 = 10;
 
 flatPrior.a = 1;
 flatPrior.b = 1;
+
 %%    
-figname = {'betaPost', 'betaDemoPost'};
+figname = {'betaPostInfSmallSample', 'betaPostInfLargeSample', ...
+'betaPostUninfSmallSample', 'betaPostUninfLargeSample'};
 legendstr = cell(1,3);
 x = linspace(0.001, 0.999, 50); 
 for i = 1:numel(data)
@@ -40,7 +47,7 @@ for i = 1:numel(data)
     name = sprintf('post Be(%2.1f, %2.1f)', post.a, post.b);
     plot(x, Ppost, 'b-.', 'linewidth', 3, 'DisplayName', name);
    
-    h=legend('Location', 'NorthEast');
+    h=legend('Location', 'Best');
     set(h, 'fontsize', 15);
     printPmtkFigure(figname{i});
     %%

@@ -11,7 +11,7 @@ function success = downloadFile(source, dest)
 if isPerlInstalled()
     fetcher = which('fetchfile.pl');
     status = perl(fetcher, source, dest);
-    success = ~isempty(status) && str2num(status);
+    success = ~isempty(status); % && str2num(status);
 else
     [f, success] = urlwrite(source, dest);
 end

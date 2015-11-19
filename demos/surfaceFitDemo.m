@@ -15,7 +15,7 @@ for useQuad = 0:1
     end
     w = Phi \ y;
     figure;
-    plot3(X(:,1),X(:,2),y,'.r', 'markersize', 50);axis vis3d;
+    plot3(X(:,1),X(:,2),y,'.b', 'markersize', 30);axis vis3d;
     hold on
     x1 = linspace(min(X(:,1)),max(X(:,1)),10)';
     y1 = linspace(min(X(:,2)),max(X(:,2)),10)';

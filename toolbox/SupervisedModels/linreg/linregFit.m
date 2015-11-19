@@ -145,7 +145,7 @@ switch lower(likelihood)
               w = (R*XX) \ (R*yy);
             end
           case 'minfunc'
-            loss = @(ww) SquaredErrorObjective(ww, X, y, weights);
+            loss = @(ww) squaredErrorObjective(ww, X, y, weights);
               penloss = @(ww)penalizedL2(ww, loss, lambdaVec(:));
               [w, opt.finalObj, opt.exitflag, opt.output] = ...
                 minFunc(penloss, winit(:), opts);

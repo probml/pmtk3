@@ -4,9 +4,8 @@
 % This file is from pmtk3.googlecode.com
 
 
-function [X,y] = contoursSSEdemo(doPlot)
+function [X,y] = contoursSSEdemo()
 
-if nargin < 1, doPlot = false; end
 
 setSeed(2);
 n = 20;
@@ -32,13 +31,13 @@ m = length(w0);
 SS = sum(((ones(n,1)*w0 + x*w1) - repmat(y,1,m)).^2,1);
 SS = reshape(SS,nv,nv);
 
-if 0
+if 1
 figure;
 surf(v,v,SS)
 printPmtkFigure('linregSurfSSE')
 end
 
-if doPlot
+if 1
 figure
 contour(v,v,SS)
 hold on
@@ -52,7 +51,7 @@ axis square
 grid on
 xlabel('w0')
 ylabel('w1')
-if 0, printPmtkFigure('linRegContoursSSE'); end
+printPmtkFigure('linRegContoursSSE');
 end
 
 end

@@ -27,6 +27,7 @@ pgreaterExact = dblquad(@(t1,t2) betaProb(t1, y1+1, n1-y1+1) .* ...
 fprintf('prob(theta1 > theta2 | data): MC= %5.3f, exact=%5.3f\n', ...
   pgreaterMC, pgreaterExact);
 %% Effect of sample size
+%{
 sfs = [1 2 3 4 5];
 Nsf = length(sfs); BF10vsN = zeros(1,Nsf);
 for i=1:Nsf
@@ -60,7 +61,7 @@ figure; plot(N, BF10vsN, 'o-', 'linewidth', 3);
 xlabel('N'); ylabel('BF10')
 printPmtkFigure('BFhandedness')
 end
-
+%}
 
 
 %% Effect of  alternative prior

@@ -65,11 +65,11 @@ end
 
 % Visualize a random subset of the data as a single image
 perm = randperm(n);
-figure(1); clf
+figure;
 %K = 24; %XX = reshape(X(perm(1:K),:)', [h w 1 K]); montage(XX)
 %title(sprintf('%d random training images', K))
-for i=1:25
-  subplot(5,5,i)
+for i=1:4
+  subplot(2,2,i)
   f = reshape(X(perm(i),:), [h w]);
   imagesc(f);  axis off; colormap gray
 end
@@ -83,7 +83,7 @@ sprintf('Performing PCA.... stay tuned\n');
 [V, Z, evals] = pcaPmtk(X);
 
 % visualize basis functions (eigenfaces)
-figure(2);clf
+figure;
 subplot(2,2,1)
 imagesc(reshape(mu,[h w])); colormap(gray); axis off;
 title('mean')
@@ -95,8 +95,25 @@ end
 printPmtkFigure(sprintf('pcaImages-%s-basis',name));
 
 
+% Plot reconstructed image
+ndx = 125; % selected face
+Ks = [5 10 20 rank(X)];
+figure;
+for ki=1:length(Ks)
+  k = Ks(ki);
+  %Xrecon = U(ndx,1:K) * S(1:K,1:K) * V(:,1:K)' + mu;
+  Xrecon = Z(ndx,1:k)*V(:,1:k)' + mu;
+  subplot(2,2,ki);
+  imagesc(reshape(Xrecon', h, w)); axis off; colormap(gray)
+  title(sprintf('Using %d bases', k))
+end
+printPmtkFigure(sprintf('pcaImages-%s-reconImages', name)); 
+
+
+
+
 % Plot reconstruction error
-figure(3); clf
+figure;
 n = size(X,1);
 Ks = [1:10 10:5:50 50:25:rank(X)];
 clear mse
@@ -111,25 +128,11 @@ plot(Ks, mse, '-o')
 ylabel('mse'); xlabel('K'); title('reconstruction error');
 printPmtkFigure(sprintf('pcaImages-%s-recon', name)); 
 
+
 % Scree plot
-figure(4);clf
+figure;
 plot(cumsum(evals)/sum(evals), 'ko-')
 ylabel('proportion of variance')
 xlabel('K')
 printPmtkFigure(sprintf('pcaImages-%s-scree', name)); 
-
-
-% Plot reconstructed image
-ndx = 125; % selected face
-Ks = [2 10 100 rank(X)];
-figure(5);clf
-for ki=1:length(Ks)
-  k = Ks(ki);
-  %Xrecon = U(ndx,1:K) * S(1:K,1:K) * V(:,1:K)' + mu;
-  Xrecon = Z(ndx,1:k)*V(:,1:k)' + mu;
-  subplot(2,2,ki);
-  imagesc(reshape(Xrecon', h, w)); axis off; colormap(gray)
-  title(sprintf('reconstructed with %d bases', k))
-end
-printPmtkFigure(sprintf('pcaImages-%s-reconImages', name)); 
 

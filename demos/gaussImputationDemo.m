@@ -27,7 +27,7 @@ Xmiss(missing) = NaN;
 Xmiss0 = Xmiss; Xmiss0(isnan(Xmiss0))=0;
 
 figure;
- nr = 3; nc = 3;
+ nr = 3; nc = 4;
 for i=1:nr
   subplot2(nr,nc,i,1);
   vis = find(~isnan(Xmiss(i,:)));
@@ -41,20 +41,24 @@ for i=1:nr
   subplot2(nr,nc,i,3);
   stem(Xfull(i, :)); title('truth')
   set(gca, 'ylim', [-10 10]);
-end
 
+ subplot2(nr,nc,i,4);
+  stem(Xfull(i, :) - XimputeOracle(i,:)); title('error')
+  set(gca, 'ylim', [-10 10]);
+end
+printPmtkFigure('gaussImputationLollipop');
 
 
 if 0
   
-ndx = 1:8; % just plot first 20 rows
+ndx = 1:n; % just plot first n rows
 figure;
 hintonDiagram(Xmiss0(ndx,:)); title('observed data');
 printPmtkFigure('mvnImputeObs');
 
 
-figure; hintonDiagram(XimputeEM(ndx,:)); title('imputation with em');
-printPmtkFigure('mvnImputeEM');
+%figure; hintonDiagram(XimputeEM(ndx,:)); title('imputation with em');
+%printPmtkFigure('mvnImputeEM');
 
 figure; hintonDiagram(XimputeOracle(ndx,:));
 title('imputation with true params');
@@ -62,12 +66,15 @@ printPmtkFigure('mvnImputeOracle')
 
 figure; hintonDiagram(Xfull(ndx,:)); title('truth');
 printPmtkFigure('mvnImputeTruth');
+
+figure; hintonDiagram(Xfull(ndx,:) - XimputeOracle(ndx,:)); title('error');
+printPmtkFigure('mvnImputeError');
 end
 
 if 0
 % Scatter plots
 doPlot(Xmiss, Xfull, XimputeOracle, 'imputation with true params', 'mvnImputeScatterOracle')
-doPlot(Xmiss, Xfull, XimputeEM, 'imputation with em', 'mvnImputeScatterEm')
+%doPlot(Xmiss, Xfull, XimputeEM, 'imputation with em', 'mvnImputeScatterEm')
 end
 
 end

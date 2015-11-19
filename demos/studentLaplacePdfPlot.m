@@ -11,6 +11,10 @@ mu = 0;
 pr{1} = gaussProb(xs, mu, sqrt(v));
 
 
+% variance of laplace = 2b^2
+b = sqrt(v/2);
+pr{2} = 1/(2*b)*exp(-abs(xs-mu)/b);
+
 % variance of student = dof*sigma^2/(dof-2)
 nu = 1;
 model.mu = mu;
@@ -21,13 +25,10 @@ else
   sigma2 = 1;
 end
 model.Sigma = sigma2;
-pr{2} = exp(studentLogprob(model, xs));
+pr{3} = exp(studentLogprob(model, xs));
 
-% variance of laplace = 2b^2
-b = sqrt(v/2);
-pr{3} = 1/(2*b)*exp(-abs(xs-mu)/b);
 
-legendStr = {'Gauss', 'Student', 'Laplace'};
+legendStr = {'Gauss', 'Laplace', 'Student'};
 
 %[styles, colors, symbols] =  plotColors;
 styles = {'k:',  'b--', 'r-'};
@@ -47,6 +48,24 @@ for i=1:3
 end
 legend(legendStr)
 printPmtkFigure('studentLaplaceLogpdf')
+title('log prob. density functions')
+
+
+
+figure; hold on
+for i=1:2
+  plot(xs, pr{i}, styles{i}, 'linewidth',3, 'markersize', 10);
+end
+legend(legendStr(1:2))
+printPmtkFigure('laplacePdf')
+title('prob. density functions')
+
+figure; hold on
+for i=1:2
+  plot(xs, log(pr{i}), styles{i}, 'linewidth', 3, 'markersize', 10);
+end
+legend(legendStr(1:2))
+printPmtkFigure('laplaceLogpdf')
 title('log prob. density functions')
 
 

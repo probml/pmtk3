@@ -31,15 +31,16 @@ titles = {'Linear Boundary', 'Parabolic Boundary', 'All Linear Boundaries ', 'So
 fnames = {'dboundaries2classLinear', 'dboundaries2classParabolic', 'dboundaries3classLinear', 'dboundaries3classParabolic'};
 setSeed(3); nsamples = 30; 
 colors = pmtkColors();
-xyRange = [-10 10 -10 10];
+%xyRange = [-10 10 -10 10];
 for i = 1:numel(model)
     [X, y] = mixGaussSample(model(i).mu,  model(i).Sigma, model(i).classPrior,  nsamples); 
-    plotDecisionBoundary(X, y, @(Xtest)discrimAnalysisPredict(model(i), Xtest));
+    [h, X1, X2] = plotDecisionBoundary(X, y, @(Xtest)discrimAnalysisPredict(model(i), Xtest));
+    xyRange = [min(X1(:)) max(X1(:)) min(X2(:)) max(X2(:))];
     for j = 1:size(model(i).Sigma, 3)
         fn = @(x)gaussProb(x, model(i).mu(:, j), model(i).Sigma(:, :, j));
         plotContour(fn, xyRange, 'LineColor', colors{j});
     end
-    set(gca, 'XTick', -10:2:10, 'YTick', -10:2:10);
+    %set(gca, 'XTick', -10:2:10, 'YTick', -10:2:10);
     title(titles{i});
     printPmtkFigure(fnames{i});
 end

@@ -23,8 +23,8 @@ plot(intersectB, fB(intersectB), '.b', 'MarkerSize', 40);
 
 axis([0, 1, 0, 1]);
 set(gca, 'XTick', [0, 1], 'YTick', [0, 1], 'FontSize', 20); 
-xlabel('fpr', 'fontsize', 50);
-ylabel('tpr', 'fontsize', 50);
+xlabel('FPR', 'fontsize', 50);
+ylabel('TPR', 'fontsize', 50);
 box on;
 
 %A

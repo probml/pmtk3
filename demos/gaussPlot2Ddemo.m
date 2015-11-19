@@ -17,10 +17,10 @@ S1 = U'*model.Sigma*U;
 
 figure; plotContour(@(x)gaussProb(x, model.mu, S1), [-5 5 -10 10]);
 title('diagonal');
-printPmtkFigure gaussPlot2dDemoSurfDiag
+printPmtkFigure gaussPlot2dDemoContourDiag
 figure; plotSurface(@(x)gaussProb(x, model.mu, S1), [-5 5 -10 10]);
 title('diagonal');
-printPmtkFigure gaussPlot2dDemoContourDiag
+printPmtkFigure gaussPlot2dDemoSurfDiag
 %% Whiten
 A = sqrt(inv(D))*U';
 mu2 = A*model.mu;

@@ -5,7 +5,8 @@
 % This file is from pmtk3.googlecode.com
 
 loadData('sachsCtsHtf'); % 7466 x 11
-lambdas = 36; %[36 27 7 0];
+%lambdas = 36; %[36 27 7 0];
+lambdas = [36 27 7 0]; % same as HTF p637
 %lambdas = [logspace(5,0,5) 0];
 S = cov(X)/1000; % same as http://www-stat.stanford.edu/~tibs/ElemStatLearn/datasets/sachs.info
 debug = false;

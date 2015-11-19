@@ -28,9 +28,10 @@ end
 % We use try catch here since tokenize is used by initPmtk3 before we
 % know if the user is running Octave or Matlab.
 try 
-    tokens = textscan(str,'%s','delimiter',delimiter, 'bufsize', 100000);
+    %tokens = textscan(str,'%s','delimiter',delimiter, 'bufsize', 100000);
+    tokens = textscan(str,'%s','delimiter',delimiter);
     tokens = tokens{:};
-catch %#ok
+catch 
     % Note, Matlab's regexp does a lot of this work automatically if you use
     % 'split' mode, but Octave does not support this, hence the following
     % code.

@@ -15,6 +15,7 @@ yhat = logregPredict(model, X);
 errorRate = mean(yhat ~= y);
 fprintf('Error rate using raw features: %2.f%%\n', 100*errorRate);
 plotDecisionBoundary(X, y, @(X)logregPredict(model, X));
+axis off
 title('linear');
 printPmtkFigure('logregXorLinear')
 end
@@ -54,6 +55,7 @@ for i=1:numel(pp)
        plot(protoTypes(:, 1), protoTypes(:, 2), '*k', 'linewidth', 2, 'markersize', 10)
     end
     title(titles{i});
+    axis off
     printPmtkFigure(fnames{i})
 end
 end

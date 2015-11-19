@@ -156,6 +156,7 @@ end
 beta = 1/sigma2;
 alphas = beta * lambdas;
 
+logev = [];
 for k=1:NL
   lambda = lambdas(k);
   [model, logev(k)] = linregFitBayes(Xtrain, ytrain, 'preproc', pp, ...
@@ -181,7 +182,7 @@ title('mean squared error')
 
 % Log evidence vs alpha
 figLogev = figure;
-plot(log(alphas), logev, 'ko-', 'linewidth', 2, 'markersize', 12);
+plot(log(alphas), logev, 'k-', 'linewidth', 2, 'markersize', 12);
 xlabel('log alpha')
 title('log evidence')
 
@@ -211,7 +212,7 @@ verticalLine(log(alphaVB), 'linewidth', 3, 'color', 'b');
 % We need to rescale the vertical axes
 figLogevCv = figure;
 logevErr = -logev; logevErr = logevErr/max(logevErr);
-plot(log(alphas), logevErr, 'ko-', 'linewidth', 2, 'markersize', 12);
+plot(log(alphas), logevErr, 'k-', 'linewidth', 2, 'markersize', 12);
 hold on
 cvErr = log(mu); cvErr = cvErr/max(cvErr); 
 plot(log(alphas), cvErr, 'bx:','linewidth', 2, 'markersize', 12 );

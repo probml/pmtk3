@@ -5,7 +5,7 @@ function h=gaussPlot2d(mu, Sigma, varargin)
 % This file is from pmtk3.googlecode.com
 
 if size(Sigma) ~= [2 2], error('Sigma must be a 2 by 2 matrix'); end
-[color, plotMarker] = process_options(varargin, 'color', 'r', 'plotMarker', true);
+[color, plotMarker] = process_options(varargin, 'color', 'b', 'plotMarker', true);
 
 mu = mu(:);
 [U, D] = eig(Sigma);

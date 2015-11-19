@@ -1,6 +1,6 @@
 function [h, p] = plotSurface(fn, xyRange, varargin)
 % Plot the surface of the function
-% evalatuated at xyRange = [xmin xmax ymin ymax].
+% evalauated at xyRange = [xmin xmax ymin ymax].
 %
 % All other args (varargin) are passed directly to the surf function,
 % except for 'npoints', which is by default 100.
@@ -8,7 +8,7 @@ function [h, p] = plotSurface(fn, xyRange, varargin)
 
 % This file is from pmtk3.googlecode.com
 
-[npoints, args] = process_options(varargin, 'npoints', 100);
+[npoints, args] = process_options(varargin, 'npoints', 50);
 if nargin < 2
     xyRange = [-10 10 -10 10];
 end

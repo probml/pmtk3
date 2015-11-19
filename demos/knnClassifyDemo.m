@@ -49,7 +49,8 @@ end
 
 %% Plot  predicted class  across a 2d grid of points
 % cf HTF fig 2.2
-
+% See knnClassifyDemo2 for a prettier print
+%{
 [XtestGrid, xrange, yrange] = makeGrid2d(Xtrain);
 for K=Ks(:)'
   model = knnFit(Xtrain, ytrain, K); 
@@ -64,10 +65,10 @@ for K=Ks(:)'
   legend('c1','c2','c3','location','southwest')
   printPmtkFigure(sprintf('knnClassifyPredK%d', K))
 end
-
+%}
 
 %% Plot  predictive probability  across a 2d grid of points
-
+%{
 for K=[10]
   model = knnFit(Xtrain, ytrain, K);
   [ypredGrid, yprobGrid] = knnPredict(model, XtestGrid);
@@ -76,10 +77,10 @@ for K=[10]
     figure;
     imagesc(HH); axis xy; colorbar
     title(sprintf('p(y=%d|data,K=%d)', c,K))
-    printPmtkFigure(sprintf('knnClassifyProbC%dK%d', c, K))
+    %printPmtkFigure(sprintf('knnClassifyProbC%dK%d', c, K))
   end
 end
-
+%}
 
 %% Plot error vs K
 Ks = [1 5 10 20 50 100 120];
@@ -99,7 +100,7 @@ for ki=1:length(Ks)
 end
 
 figure; 
-plot(Ks, errRateTrain, 'bs:', Ks, errRateTest, 'rx-', 'linewidth', 2, 'markersize', 20);
+plot(Ks, errRateTrain, 'bs:', Ks, errRateTest, 'rx-', 'linewidth', 3, 'markersize', 20);
 legend('train', 'test')
 xlabel('K'); ylabel('misclassification rate')
 printPmtkFigure('knnClassifyErrVsK')

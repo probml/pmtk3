@@ -1,8 +1,9 @@
 
 %% Run this script to initialize PMTK3
-% foofoo
 
 % This file is from pmtk3.googlecode.com
+
+set(0,'DefaultAxesFontSize',15,'DefaultTextFontSize',15);
 
 format compact
 more   off; % especially important in Octave - init may fail without it

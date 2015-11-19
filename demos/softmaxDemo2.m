@@ -4,7 +4,7 @@
 
 % This file is from pmtk3.googlecode.com
 
-T = [100 10 1 0.1];
+T = [100 5 1];
 eta = [3 0 1];
 figure();
 nr = 1; 
@@ -13,5 +13,6 @@ for i=1:numel(T)
     subplot(nr, nc, i)
     bar(softmaxPmtk(eta./T(i))); 
     title(sprintf('T = %g', T(i)));
+    set(gca,'ylim',[0 1]);
 end
 printPmtkFigure('softmaxDemo2'); 

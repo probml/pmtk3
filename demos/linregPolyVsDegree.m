@@ -8,6 +8,7 @@
 
 
 N = 21;
+N = 25;
 [xtrain, ytrain, xtest, ytestNoisefree, ytest] = ...
     polyDataMake('sampling','thibaux', 'n', N);
 
@@ -23,7 +24,7 @@ for m=1:length(degs)
     pp = preprocessorCreate('rescaleX', true, 'poly', deg, 'addOnes', true);
     model = linregFit(xtrain, ytrain, 'preproc', pp);
     ypredTrain = linregPredict(model, xtrain);
-    ypredTest = linregPredict(model, xtest);
+    [ypredTest] = linregPredict(model, xtest);
     mseTrain(m) = mean((ytrain-ypredTrain).^2);
     mseTest(m) = mean((ytest-ypredTest).^2);
 end
@@ -39,26 +40,6 @@ legend('train', 'test')
 printPmtkFigure('linregPolyVsDegreeUcurve')
 
 
-
-%% Plot fitted function for chosen values of degree
-for deg = [1, 2, 10, 14, 20]
-    pp = preprocessorCreate('rescaleX', true, 'poly', deg, 'addOnes', true);
-    model = linregFit(xtrain, ytrain, 'preproc', pp);
-    ypredTrain = linregPredict(model, xtrain);
-    ypredTest = linregPredict(model, xtest);
-    mseTrain(m) = mean((ytrain-ypredTrain).^2);
-    mseTest(m) = mean((ytest-ypredTest).^2);
-    
-    figure;
-    plot(xtrain,ytrain,'.b', 'markersize', 50);
-    hold on;
-    plot(xtest, ypredTest, 'k', 'linewidth', 3, 'markersize', 20);
-    hold off
-    title(sprintf('degree %d', deg))
-    set(gca,'ylim',[-10 15]);
-    set(gca,'xlim',[-1 21]);
-    printPmtkFigure(sprintf('polyfitDemo%d', deg))
-end
 
 %% Compute log evidence for each model
 for m=1:length(degs)
@@ -78,4 +59,26 @@ figure; bar(degs, probs)
 xlabel('degree'); ylabel('probability')
 printPmtkFigure('linregPolyVsDegreeProbModel')
 
+
+
+%% Plot fitted function for chosen values of degree
+for deg = [1, 2, 14, 19, 20]
+    pp = preprocessorCreate('rescaleX', true, 'poly', deg, 'addOnes', true);
+    model = linregFit(xtrain, ytrain, 'preproc', pp);
+    ypredTrain = linregPredict(model, xtrain);
+    [ypredTest, sigma2] = linregPredict(model, xtest);
+    sigma = sqrt(sigma2);
+       
+    figure;
+    plot(xtrain,ytrain,'.b', 'markersize', 30);
+    hold on;
+    plot(xtest, ypredTest, 'k', 'linewidth', 3, 'markersize', 20);
+    plot(xtest, ypredTest + sigma, 'b:', 'linewidth', 2);
+    plot(xtest, ypredTest - sigma, 'b:', 'linewidth', 2);
+    hold off
+    title(sprintf('degree %d', deg))
+    set(gca,'ylim',[-10 15]);
+    set(gca,'xlim',[-1 21]);
+    printPmtkFigure(sprintf('linregPolyVsDegreeFittedCurve%d', deg))
+end
 

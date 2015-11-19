@@ -6,20 +6,20 @@
 % This file is from pmtk3.googlecode.com
 
 function quantileDemo
-    scrsz = get(0,'ScreenSize');
-    width = 2*scrsz(3)/3;
-    height = width/2;
-    figure('Position',[(scrsz(3)-width)/2,(scrsz(4)-height)/2,width,height]);
+    %scrsz = get(0,'ScreenSize');
+    %width = 2*scrsz(3)/3;student
+    %height = width/2;
+    %figure('Position',[(scrsz(3)-width)/2,(scrsz(4)-height)/2,width,height]);
     f = @(x)gaussProb(x, 0, 1);
     x = -4:0.1:4;
     y = f(x);
-    plot(x,y,'r','LineWidth',3.5);
+    plot(x,y,'b','LineWidth',3.5);
     axis([-4,4,0,0.5]);
     set(gca,'XTick',[], 'Ytick', []);
-    shade(f,0.001, -4,   -1.96, 'r', 0.005);
-    shade(f,0.001, 1.96,  4,    'r', 0.005);
+    shade(f,0.001, -4,   -1.96, 'b', 0.005);
+    shade(f,0.001, 1.96,  4,    'b', 0.005);
     annotate;
-    printPmtkFigure normalDistAlphaRed
+    printPmtkFigure gaussianQuantile
     %printPmtkFigure quantile
 %%
 function annotate

@@ -12,11 +12,11 @@ X = X(:,1:10);
 
 
 %% plot the data
-if 0
+if 1
 figure;
 for i=1:9
    subplot(3,3,i);
-   h=scatter(X(:,i),y, 3, 'filled');
+   h=scatter(X(:,i),y, 8, 'filled');
    xlabel(sprintf('x%d', i));
    ylabel('y')
 end

@@ -7,8 +7,8 @@
 setSeed(0)
 
 n = 100; d = 3;
-%Sigma = diag(sqrt([10,2,0.5]));
-Sigma = diag([10,2,0.1]);
+Sigma = diag(sqrt([10,2,0.5]));
+%Sigma = diag([10,2,0.1]);
 model = struct('mu', zeros(1, d), 'Sigma', Sigma);
 X = gaussSample(model, n);
 

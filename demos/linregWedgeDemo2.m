@@ -48,4 +48,5 @@ ylabel('Y',fontSize{:});
 zlabel('P(Y | X)',fontSize{:});
 %set(gca,'XTick',[0,5,10],'YTick',[0,5,10],'ZTick',0:0.1:0.5);
 set(gca,fontSize{:},'LineWidth',1.5);
+%colormap('jet');
 printPmtkFigure('linregWedge2Wedge'); 

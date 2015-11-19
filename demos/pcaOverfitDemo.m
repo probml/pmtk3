@@ -8,8 +8,12 @@
 
 setSeed(0);
 
-%load('olivettifaces.mat'); % 0 to 255, from http://www.cs.toronto.edu/~roweis/data.html
-%X=faces'; clear faces; % 4096x400  (64x64=4096)
+if 0
+ loadData('olivettiFaces'); 
+     % 0 to 255, from http://www.cs.toronto.edu/~roweis/data.html
+    X=faces'; clear faces; % 4096x400  (64x64=4096)
+% Faces dataset is smaller than MNIST.
+end
 
 if 1
   loadData('mnistAll'); % mnist structure
@@ -29,7 +33,8 @@ X = centerCols(X);
 Xtrain = X(1:n2,:);
 Xtest = X((n2+1):end,:);
 
-Ks = round(linspace(1, rank(Xtrain), 5));
+%Ks = round(linspace(1, rank(Xtrain), 5));
+Ks = unique([1 5 10 20 round(linspace(1, 0.75*rank(Xtrain), 10))]);
 maxK = max(Ks);
 
 [V, Ztrain, evals] = pcaPmtk(Xtrain, maxK);
@@ -69,19 +74,20 @@ title('scree plot')
 printPmtkFigure('pcaOverfitScree')
 
 
-[best, ll]  = screeplotChooseDim(evals);
-figure;
-plot(ll(1:Ksmall), 'linewidth', 2)
-xlabel('num PCs')
-ylabel('profile log likelihood')
-printPmtkFigure('pcaOverfitProfile')
-
 figure;
 plot(cumsum(evals(1:Ksmall))./sum(evals), 'linewidth', 2)
 xlabel('num PCs')
 ylabel('proportion of variance explained')
 printPmtkFigure('pcaOverfitVar')
 
+
+
+[best, ll]  = screeplotChooseDim(evals);
+figure;
+plot(ll(1:Ksmall), 'linewidth', 2)
+xlabel('num PCs')
+ylabel('profile log likelihood')
+printPmtkFigure('pcaOverfitProfile')
 
 figure;
 plot(Ks, rmseTrain(1:length(Ks)), '-o', 'linewidth', 3, 'markersize', 12)

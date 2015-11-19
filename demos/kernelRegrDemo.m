@@ -97,7 +97,7 @@ for mi=1:numel(methods)
   plot(X,y,'*', 'markersize', 8, 'linewidth', 2);
   h=plot(Xtest(:,1),yhat,'g-');
   set(h,'LineWidth',3);
-  if method>1 % strcmp(lossStr(1:3), 'SVM')
+  if ~strcmpi(method, 'l2')
     %SV = abs(Krbf*uRBF - y) >= changePoint;
     plot(X(SV),y(SV),'o','color','r', 'markersize', 12, 'linewidth', 2);
     %plot(Xtest(:,1),yhat+epsilon,'c--', 'linewidth', 2);
@@ -115,5 +115,5 @@ for mi=1:numel(methods)
     printPmtkFigure(sprintf('kernelRegrDemoStem%s', fname))
   end
 end
-placeFigures;
+%placeFigures;
 
