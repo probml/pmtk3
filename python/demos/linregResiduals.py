@@ -20,13 +20,13 @@ y_estim = np.dot(X,w)
 
 pl.plot(X[:,1],y,'o')
 pl.plot(X[:,1],y_estim,'-')
-pl.show()
 pl.savefig('linregResidualsNoBars.png')
+pl.show()
 
 for x0, y0, y_hat in zip(X[:,1], y, y_estim):
   pl.plot([x0, x0],[y0,y_hat],'k-')
 pl.plot(X[:,1],y,'o')
 pl.plot(X[:,1],y_estim,'-')
 
-pl.show()
 pl.savefig('linregResidualsBars.png')
+pl.show()
