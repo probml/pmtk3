@@ -1,7 +1,4 @@
-ch05
-========================================
-
 bayesChangeOfVar
-----------------------------------------
+========================================
 .. image:: bayesChangeOfVar.png
 .. literalinclude:: bayesChangeOfVar.py
