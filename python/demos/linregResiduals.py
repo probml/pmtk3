@@ -12,9 +12,12 @@
 
 import matplotlib.pyplot as pl
 import numpy as np
-from contoursSSEDemo import contoursSSEDemo
+from utils import poly_data_make
 
-X,y  = contoursSSEDemo()
+
+N = 21
+x, y, _, _, _, _ = poly_data_make(sampling='thibaux', n=N)
+X = np.concatenate((np.ones((N,1)), x.reshape(N,1)), axis=1)  
 w = np.linalg.lstsq(X, y)[0]
 y_estim = np.dot(X,w)
 

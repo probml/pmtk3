@@ -13,10 +13,7 @@
 import matplotlib.pyplot as pl
 from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
-from utils import preprocessor_create
 from utils import poly_data_make
-
-
 
 def contoursSSEDemo():
   np.random.seed(0)
