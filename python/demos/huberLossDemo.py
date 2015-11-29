@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-from scipy.stats import pareto
+# Plots L2, L1 and Huber losses.
+
 import numpy as np
 import matplotlib.pylab as pl
 
@@ -15,7 +16,7 @@ labels = ['l2', '11', 'huber']
 x = np.arange(-3, 3, .01)
 
 for i, fun in enumerate(funs):
-    pl.plot(x, fun(x), styles[i], label=labels[i])
+  pl.plot(x, fun(x), styles[i], label=labels[i])
 
 pl.axis([-3, 3, -0.5, 5])
 pl.legend()

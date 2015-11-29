@@ -9,9 +9,9 @@ styles = ['b-', 'r:', 'k-.', 'g--']
 labels = ['m={:.2f}, k={:.2f}'.format(m, k) for m, k in params]
 
 for i, param in enumerate(params):
-    m, k = param
-    probabilities = pareto.pdf(np.arange(0, 2, .01), k, scale=m)
-    pl.plot(np.arange(0, 2, .01), probabilities, styles[i], label=labels[i])
+  m, k = param
+  probabilities = pareto.pdf(np.arange(0, 2, .01), k, scale=m)
+  pl.plot(np.arange(0, 2, .01), probabilities, styles[i], label=labels[i])
 
 pl.axis([0, 2, 0, 3])
 pl.title('Pareto Distribution')
