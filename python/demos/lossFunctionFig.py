@@ -1,4 +1,14 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
+#
+#       Author:    Srinivas Vasudevan
+#       E-mail:    srvasude@google.com
+#
+#       File Name: lossFunctionFig.py
+#       Description:
+#         Plots loss functions of form |x|**q
+#
+#       Last Modified:
+#           2015-11-28
 
 from scipy.stats import t, laplace, norm
 import numpy as np
