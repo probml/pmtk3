@@ -26,13 +26,10 @@ if __name__ == '__main__':
   X,y  = contoursSSEDemo()
   N = len(y)
   w = np.linalg.lstsq(X, y)[0]
-  #print sum((np.dot(X,w)-y)**2)
   v = np.arange(-6, 6, .1)
   W0, W1 = np.meshgrid(v, v)
-  #print W0, W1
   
   SS = np.array([sum((w0*X[:,0] + w1*X[:,1] - y)**2) for w0, w1 in zip(np.ravel(W0), np.ravel(W1))])
-  #print SS
   SS = SS.reshape(W0.shape)
   
   fig = pl.figure()
