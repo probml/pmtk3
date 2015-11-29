@@ -2,6 +2,4 @@ contoursSSEDemo
 =========================================
 .. image:: linregContourSSE.png
 .. image:: linregSurfaceSSE.png
-.. literalinclude:: ../constoursSSEDemo.py
-
-
+.. literalinclude:: ../demos/constoursSSEDemo.py
