@@ -1,4 +1,4 @@
 bayesChangeOfVar
 ========================================
 .. image:: bayesChangeOfVar.png
-.. literalinclude:: bayesChangeOfVar.py
+.. literalinclude:: ../demos/bayesChangeOfVar.py

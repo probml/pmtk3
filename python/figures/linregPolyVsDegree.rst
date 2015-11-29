@@ -6,4 +6,4 @@
 .. image:: polyfitDemo10.png
 .. image:: polyfitDemo14.png
 .. image:: polyfitDemo20.png
-.. literalinclude:: linregPolyVsDegree.py
+.. literalinclude:: ../demos/linregPolyVsDegree.py

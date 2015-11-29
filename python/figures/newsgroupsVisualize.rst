@@ -1,4 +1,4 @@
 newsgroupsVisualize
 ========================================
 .. image:: newsgroupsVisualize.png
-.. literalinclude:: newsgroupsVisualize.py
+.. literalinclude:: ../demos/newsgroupsVisualize.py

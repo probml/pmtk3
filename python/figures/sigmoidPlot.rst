@@ -1,4 +1,4 @@
 sigmoidPlot
 ========================================
 .. image:: sigmoidPlot.png
-.. literalinclude:: sigmoidPlot.py
+.. literalinclude:: ../demos/sigmoidPlot.py

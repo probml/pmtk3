@@ -1,4 +1,4 @@
 mcEstimatePi
 ========================================
 .. image:: mcEstimatePi.png
-.. literalinclude:: mcEstimatePi.py
+.. literalinclude:: ../demos/mcEstimatePi.py

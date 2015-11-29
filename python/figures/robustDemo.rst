@@ -2,4 +2,4 @@ robustDemo
 ========================================
 .. image:: robustDemo_with_outliers.png
 .. image:: robustDemo_without_outliers.png
-.. literalinclude:: robustDemo.py
+.. literalinclude:: ../demos/robustDemo.py

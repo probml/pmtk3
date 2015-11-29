@@ -9,4 +9,4 @@ knnClassifyDemo
 .. image:: knnClassifyDemo_hotmap_0.png
 .. image:: knnClassifyDemo_hotmap_1.png
 .. image:: knnClassifyDemo_hotmap_2.png
-.. literalinclude:: knnClassifyDemo.py
+.. literalinclude:: ../demos/knnClassifyDemo.py

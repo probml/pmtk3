@@ -1,4 +1,4 @@
 curseDimensionality
 ========================================
 .. image:: curseDimensionality.png
-.. literalinclude:: curseDimensionality.py
+.. literalinclude:: ../demos/curseDimensionality.py

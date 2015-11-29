@@ -8,4 +8,4 @@ discrimAnalysisDboundariesDemo
 .. image:: discrimAnalysisDboundariesDemo_5.png'
 .. image:: discrimAnalysisDboundariesDemo_6.png'
 .. image:: discrimAnalysisDboundariesDemo_7.png'
-.. literalinclude:: discrimAnalysisDboundariesDemo.py
+.. literalinclude:: ../demos/discrimAnalysisDboundariesDemo.py

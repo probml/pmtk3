@@ -1,4 +1,4 @@
 betaPlotDemo
 ========================================
 .. image:: betaPlotDemo.png
-.. literalinclude:: betaPlotDemo.py
+.. literalinclude:: ../demos/betaPlotDemo.py

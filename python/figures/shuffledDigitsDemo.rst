@@ -2,4 +2,4 @@ shuffledDigitsDemo
 ========================================
 .. image:: shuffledDigitsDemo_shuffled.png'
 .. image:: shuffledDigitsDemo_unshuffled.png'
-.. literalinclude:: shuffledDigitsDemo.py
+.. literalinclude:: ../demos/shuffledDigitsDemo.py

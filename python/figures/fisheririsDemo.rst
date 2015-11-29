@@ -1,4 +1,4 @@
 fisheririsDemo
 ========================================
 .. image:: fisheririsDemo.png
-.. literalinclude:: fisheririsDemo.py
+.. literalinclude:: ../demos/fisheririsDemo.py

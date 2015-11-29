@@ -1,4 +1,4 @@
 gammaPlotDemo
 ========================================
 .. image:: gammaPlotDemo.png
-.. literalinclude:: gammaPlotDemo.py
+.. literalinclude:: ../demos/gammaPlotDemo.py

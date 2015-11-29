@@ -2,4 +2,4 @@ poissonPlotDemo
 ========================================
 .. image:: poissonPlotDemo_1.0.png
 .. image:: poissonPlotDemo_10.0.png
-.. literalinclude:: poissonPlotDemo.py
+.. literalinclude:: ../demos/poissonPlotDemo.py

@@ -1,4 +1,4 @@
 bernoulliEntropyFig
 ========================================
 .. image:: bernoulliEntropyFig.png
-.. literalinclude:: bernoulliEntropyFig.py
+.. literalinclude:: ../demos/bernoulliEntropyFig.py

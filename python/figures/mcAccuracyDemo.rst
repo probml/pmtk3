@@ -6,4 +6,4 @@ mcAccuracyDemo
 .. image:: mcAccuracyDemo_kde10.png
 .. image:: mcAccuracyDemo_kde100.png
 .. image:: mcAccuracyDemo_kde1000.png
-.. literalinclude:: mcAccuracyDemo.py
+.. literalinclude:: ../demos/mcAccuracyDemo.py
