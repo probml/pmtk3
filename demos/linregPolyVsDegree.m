@@ -5,10 +5,8 @@
 
 % This file is from pmtk3.googlecode.com
 
-
-
 N = 21;
-N = 25;
+%N = 25;
 [xtrain, ytrain, xtest, ytestNoisefree, ytest] = ...
     polyDataMake('sampling','thibaux', 'n', N);
 
@@ -80,5 +78,21 @@ for deg = [1, 2, 14, 19, 20]
     set(gca,'ylim',[-10 15]);
     set(gca,'xlim',[-1 21]);
     printPmtkFigure(sprintf('linregPolyVsDegreeFittedCurve%d', deg))
+end
+
+%% Residual plot
+for deg = [1, 2]
+    pp = preprocessorCreate('rescaleX', true, 'poly', deg, 'addOnes', true);
+    model = linregFit(xtrain, ytrain, 'preproc', pp);
+    ypredTrain = linregPredict(model, xtrain);
+    residuals = (ytrain - ypredTrain);
+       
+    figure;
+    plot(xtrain,residuals,'.b', 'markersize', 30);
+    hold on
+    h=line([min(xtest) max(xtest)], [0 0]);
+    set(h, 'color', 'k');
+    title(sprintf('residual plot for degree %d', deg))
+    printPmtkFigure(sprintf('linregPolyVsDegreeResiduals%d', deg))
 end
 
