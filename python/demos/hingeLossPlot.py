@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Plots L2, L1 and Huber losses.
+# Plots 0-1, hinge and log loss.
 
 import numpy as np
 import matplotlib.pylab as pl

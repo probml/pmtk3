@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+# Plots Pareto distribution
+
 from scipy.stats import pareto
 import numpy as np
 import matplotlib.pylab as pl
