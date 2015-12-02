@@ -1,10 +1,11 @@
 %% Compare L1, L2, allSubsets, and OLS linear regression on the prostate data set
 % Approximately reproduces table 3.3 and fig 3.7 on p63 of "Elements of statistical
 % learning" 2nd edn
-% (The OLS results should be identical  - the fact that they are not
-% suggests something strange is going on - most likely to do with
-% the offset term, which should be unregularized.)
-%%
+
+
+% According to http://statweb.stanford.edu/~tibs/ElemStatLearn/datasets/prostate.info.txt
+%  "The features must first be scaled to have mean zero and variance 96 (=n)"
+
 
 % This file is from pmtk3.googlecode.com
 
@@ -12,7 +13,13 @@ function prostateComparison()
 
 setSeed(0);
 saveLatex = false;
-data = loadData('prostate');
+%data = loadData('prostate'); % data online is incorrect!
+
+url= 'http://statweb.stanford.edu/~tibs/ElemStatLearn/datasets/prostate.data';
+fname = 'prostate.csv';
+urlwrite(url, fname);
+data = importdata(fname, ',', 1);
+
 [Xtrain, ytrain] = shuffleRows(data.Xtrain, data.ytrain); 
 % the data has been sorted which messes up CV
 

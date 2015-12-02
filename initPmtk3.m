@@ -47,7 +47,8 @@ if exist(source, 'dir')
     fprintf('adding %s to path\n', source);
 end
 if ~(exist('pmtkSupportRoot', 'file') == 2)
-    downloadAllSupport(~,~);
+    %downloadAllSupport(~,~);
+    downloadAllSupport;
 end
 
 %% include graphViz 
