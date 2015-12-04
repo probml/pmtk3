@@ -2,15 +2,25 @@
 
 from itertools import chain, combinations
 from scipy.stats import linregress
+import sklearn
 from sklearn.cross_validation import cross_val_score
 from sklearn.linear_model import LassoCV, LinearRegression, RidgeCV
 from sklearn.metrics import mean_squared_error
 from sklearn.preprocessing import scale
-from utils import load_mat
+
+from sys import path
+path.append('..') # add parent directory
+#from utils import load_mat
 
 import csv
 import numpy as np
+#import urllib2
+import pandas as pd
 
+pd.set_option('display.max_columns', 160)
+pd.set_option('display.width', 1000)
+
+### Helper functions
 
 def _format(s):
   return '{0:.3f}'.format(s)
@@ -38,54 +48,112 @@ def _best_subset_cv(model, X, y, cv=3):
 
   return best_subset
 
-X = load_mat('prostate')
 
+def L2loss(yhat, ytest):
+    ntest = ytest.size
+    sqerr = np.power(yhat - ytest, 2)
+    mse = np.mean(sqerr)
+    stderr = np.std(sqerr) / np.sqrt(ntest)
+    return (mse, stderr)
+    
+
+#### Get data
+
+url = 'http://statweb.stanford.edu/~tibs/ElemStatLearn/datasets/prostate.data'
+#filename = '/Users/kpmurphy/github/pmtk3/prostate.csv'
+df = pd.read_csv(url, sep='\t', header=0)
+data = df.values[:,1:] # skip the column of indices
+(nr, nc) = data.shape
+istrain_str = data[:, 9]
+istrain = np.asarray([True if s == 'T' else False for s in istrain_str])
+istest = np.logical_not(istrain)
+y = np.double(data[:,8])
+X = np.double(data[:,0:8]) # note 0:8 actually means columns 0 to 7 inclusive!
+
+#Xscaled = _scale(X)
+Xscaled = sklearn.preprocessing.scale(X)
+
+Xtrain = Xscaled[istrain, :]
+Xtest = Xscaled[istest, :]
+ytrain = y[istrain]
+ytest = y[istest]
+ntest = ytest.size
+
+#X = load_mat('prostate')
 # Hack to use the correct dataset.
-X['Xtest'][8][1] = 3.804438
+#X['Xtest'][8][1] = 3.804438
 # Rescale all data at once.
-Xscaled = _scale(np.append(X['Xtrain'], X['Xtest'], axis=0))
-Xtrain = Xscaled[0:67,:]
-Xtest = Xscaled[67:,:]
-ytrain = X['ytrain']
-ytest = X['ytest']
+#Xscaled = _scale(np.append(X['Xtrain'], X['Xtest'], axis=0))
+#Xtrain = Xscaled[0:67,:]
+#Xtest = Xscaled[67:,:]
+#ytrain = X['ytrain']
+#ytest = X['ytest']
 
-methods=[LassoCV(), RidgeCV(cv=3), LinearRegression()]
-method_names = ["Lasso", "Ridge", "Least Squares"]
-intercepts=["Intercept"]
-coefficients=[["lcalvol"], ["lweight"], ["age"], ["lbph"], ["svi"], ["lcp"], ["gleason"], ["pgg45"]]
-MSEs=["Test Error"]
-SEs=["Standard Error"]
+### Process data
+
+methods=[LinearRegression(),  RidgeCV(cv=3), LassoCV()]
+method_names = ["LS", "Ridge", "Lasso"]
+
+# Hash table to store parameters and performance, indexed by method name
+coefHt = {}
+mseHt = {}
+stderrHt = {}
 
 for i,method in enumerate(methods):
+  name = method_names[i]
   clf = method
   model = clf.fit(Xtrain, ytrain.ravel())
-  intercepts.append(_format(model.intercept_))
+  coef = np.append(model.intercept_, model.coef_)
+  coefHt[name] = coef
+  yhat = model.predict(Xtest)
+  #mse = mean_squared_error(yhat, ytest)
+  (mseHt[name], stderrHt[name]) = L2loss(yhat, ytest) 
 
-  for i,coef in enumerate(model.coef_):
-    coefficients[i].append(_format(coef))
 
-  MSEs.append(_format(mean_squared_error(model.predict(Xtest), ytest)))
-
-
-method_names.append("Best Subset")
+method_names.append("Subset")
+name = "Subset"
 clf = LinearRegression()
 subset = _best_subset_cv(clf, Xtrain, ytrain, cv=3)
 model = clf.fit(Xtrain[:, subset], ytrain)
 
-for i in range(Xtrain.shape[1]):
-  coefficients[i].append(0.00)
-for i,coef in enumerate(model.coef_.ravel()):
-  coefficients[i][-1] = _format(coef)
+ndims = Xtrain.shape[1]
+coef = np.zeros(ndims)
+subset_ndx = np.asarray(subset) # convert from tuple to array
+coef[subset_ndx] = model.coef_
+coef = np.append(model.intercept_, coef)
+coefHt[name] = coef
 
-intercepts.append(_format(model.intercept_[0]))
-MSEs.append(_format(mean_squared_error(model.predict(Xtest[:, subset]), ytest)))
+yhat = model.predict(Xtest[:, subset])
+#mse = mean_squared_error(yhat, ytest)
+(mseHt[name], stderrHt[name]) = L2loss(yhat, ytest)
 
+print method_names
+print mseHt
+print coefHt
 
-# Write CSV
-CSV=[method_names, intercepts]
-CSV+=coefficients
-CSV.append(MSEs)
+### Pretty print the results in latex format
+coef_names = ["intercept", "lcalvol", "lweight", "age", "lbph", "svi", "lcp", "gleason", "pgg45"]
+method_names = ['LS', 'Subset', 'Ridge', 'Lasso'] # Choose desired ordering of methods
 
-with open("prostateComparison.txt", "wb") as f:
-  writer = csv.writer(f, delimiter='\t')
-  writer.writerows(CSV)
+print " Term &" , " & ".join(method_names)
+for coef_ndx, coef_name in enumerate(coef_names):
+    str_list = []
+    for method_name in method_names:
+        method_coefs = coefHt[method_name]
+        coef = method_coefs[coef_ndx]
+        str_list.append(_format(coef))
+    str_list.insert(0, coef_name)
+    print " & ".join([str(s) for s in str_list]), "\\\\"
+
+str_list = []
+for method_name in method_names:
+    str_list.append(_format(mseHt[method_name]))
+str_list.insert(0, "Test error")
+print " & ".join([str(s) for s in str_list]), "\\\\"
+
+str_list = []
+for method_name in method_names:
+    str_list.append(_format(stderrHt[method_name]))
+str_list.insert(0, "Std error")
+print " & ".join([str(s) for s in str_list]), "\\\\"
+

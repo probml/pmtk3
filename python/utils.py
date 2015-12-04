@@ -6,8 +6,8 @@ import numpy as np
 import glob
 
 PYTHON_DIR = os.path.dirname(os.path.realpath(__file__))
-DATA_DIR = os.path.join(os.path.dirname(PYTHON_DIR), 'pmtkdataCopy')
-
+#DATA_DIR = os.path.join(os.path.dirname(PYTHON_DIR), 'pmtkdataCopy')
+DATA_DIR = '/Users/kpmurphy/github/pmtk3/pmtkdataCopy/prostate'
 
 def add_ones(X):
     """Add a column of ones to X"""
@@ -117,6 +117,7 @@ def load_mat(matName):
     """look for the .mat file in pmtk3/pmtkdataCopy/
     currently only support .mat files create by Matlab 5,6,7~7.2,
     """
+    print 'looking for ', matName, ' in ', DATA_DIR
     try:
         data = sio.loadmat(os.path.join(DATA_DIR, matName))
     except NotImplementedError:
