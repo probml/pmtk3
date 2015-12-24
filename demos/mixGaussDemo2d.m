@@ -4,7 +4,7 @@
 
 % This file is from pmtk3.googlecode.com
 
-function mixGaussDemoFaithful
+function mixGaussDemo2d
 
 setSeed(0);
 K = 2;
