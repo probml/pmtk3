@@ -1,0 +1,7 @@
+usps_all.mat from
+http://www.cs.toronto.edu/~roweis/data.html
+% data(x, i, c) x=1:256, i=1:1100, c=1:10 (class 10 is zero)
+% 16x16 uint8, values 0 to 255
+
+img=reshape(bar.data(:,1,5),[16 16]);
+imagesc(img);colormap(gray)
