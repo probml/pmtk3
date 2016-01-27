@@ -1,5 +1,5 @@
 Probabilistic modeling toolkit version 3
-See pmtk3.googlecode.com for details.
+See https://github.com/probml/pmtk3 for details.
 
 Steps:
 1. run initPmtk3.m (takes a few minutes)

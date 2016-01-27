@@ -1,0 +1,54 @@
+1. Title: Auto-Mpg Data
+
+2. Sources:
+   (a) Origin:  This dataset was taken from the StatLib library which is
+                maintained at Carnegie Mellon University. The dataset was 
+                used in the 1983 American Statistical Association Exposition.
+   (c) Date: July 7, 1993
+
+3. Past Usage:
+    -  See 2b (above)
+    -  Quinlan,R. (1993). Combining Instance-Based and Model-Based Learning.
+       In Proceedings on the Tenth International Conference of Machine 
+       Learning, 236-243, University of Massachusetts, Amherst. Morgan
+       Kaufmann.
+
+4. Relevant Information:
+
+   This dataset is a slightly modified version of the dataset provided in
+   the StatLib library.  In line with the use by Ross Quinlan (1993) in
+   predicting the attribute "mpg", 8 of the original instances were removed 
+   because they had unknown values for the "mpg" attribute.  The original 
+   dataset is available in the file "auto-mpg.data-original".
+
+   "The data concerns city-cycle fuel consumption in miles per gallon,
+    to be predicted in terms of 3 multivalued discrete and 5 continuous
+    attributes." (Quinlan, 1993)
+
+5. Number of Instances: 392
+
+6. Number of Attributes: 9 including the class attribute
+
+   NOTE FOR 6.867 STUDENTS: you will work with data which have only 8
+   dimensions, including the target value (called "class" above)- see
+   comment below.
+
+7. Attribute Information:
+
+    1. cylinders:     multi-valued discrete
+    2. displacement:  continuous
+    3. horsepower:    continuous
+    4. weight:        continuous
+    5. acceleration:  continuous
+    6. model year:    multi-valued discrete
+    7. origin:        multi-valued discrete
+    8. mpg:           continuous
+
+    9. car name:      string (unique for each instance)
+
+     NOTE FOR 6.867 STUDENTS: we removed the car names; these nominal,
+     i.e. non-numerical attributes do not fit into the regression
+     framework. In case you are curious, however, you can find the
+     data in its original format in file mpg_full.names.
+
+
