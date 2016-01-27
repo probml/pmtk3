@@ -32,8 +32,6 @@ for i=1:length(SS)
   title(sprintf('%d samples', S))
   printPmtkFigure(sprintf('mcAccuracyDemoHist%s%d', name, S));
 end
-
-break
         
 for i=1:length(SS)
    S = SS(i);

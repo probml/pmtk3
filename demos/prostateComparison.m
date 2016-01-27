@@ -97,7 +97,6 @@ display(roundto(weights(:, end:-1:1), 0.001));
 fprintf('mse: \n'); 
 display(roundto(mse(end:-1:1), 0.001));
 
-keyboard
 
 %%
 if saveLatex
