@@ -22,10 +22,7 @@ Most of the code also runs on
 <a href="https://github.com/ubcmatlabguide/ubcmatlabguide/wiki/Octave">Octave</a>
 an open-source Matlab clone.) However, in a few cases we also provide wrappers to implementations written in C,  for speed reasons. PMTK currently (October 2010) has over 67,000 lines.
 
-PMTK contains many demos of different methods applied to  many different kinds of data sets. The demos are listed <a href="https://github.com/probml/pmtk3/wiki/Demos">here</a>,
-and the data is available from
-<a href="https://github.com/probml/pmtkdata">pmtkdata</a>,
-but will be downloaded automatically when a demo calls loadData.m.
+PMTK contains many demos of different methods applied to  many different kinds of data sets. The demos are listed <a href="https://github.com/probml/pmtk3/wiki/Demos">here</a>.
 
 To get the code, click on the "Download zip" button on the right hand side of github, or just clone this repository.
 <a href="https://github.com/probml/pmtk3/wiki/pmtk3Documentation">Click here</a> for information on how to use the toolbox.
