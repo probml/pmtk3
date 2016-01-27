@@ -17,6 +17,7 @@ function [model, logev, postSummary] = linregFitBayes(X, y, varargin)
 %   for automatic relevancy determination 
 % preproc       ... a struct, passed to preprocessorApplyToTtrain
 % displaySummary ... set to true to display summary of posterior
+% names ... optional cellarray of variable names (for summary)
 %
 % If the prior is Gaussian, the posterior is
 %   p(w|D) = N(w| wN, VN)
@@ -35,7 +36,7 @@ function [model, logev, postSummary] = linregFitBayes(X, y, varargin)
 % This file is from pmtk3.googlecode.com
 
 
-[prior, preproc,  beta, alpha, g, useARD, displaySummary] = ...
+[prior, preproc,  beta, alpha, g, useARD, displaySummary, names] = ...
   process_options(varargin , ...
   'prior', 'uninf', ...
   'preproc', preprocessorCreate('addOnes', true, 'standardizeX', false), ...      
@@ -43,7 +44,8 @@ function [model, logev, postSummary] = linregFitBayes(X, y, varargin)
   'alpha', [], ...
   'g', [], ...
   'useARD', false, ...
-  'displaySummary', false);
+  'displaySummary', false, ...
+  'names', {});
 
 % The prior is p(w) = N(w|0, (1/alpha) I)
 % which shrinks the offset term w(1) as well.
@@ -69,7 +71,7 @@ model.prior = prior;
 
 postSummary = [];
 if nargout >= 3 && ~strcmpi(prior, 'ebnetlab')
-    postSummary = linregPostSummary(model, 'displaySummary', displaySummary);
+    postSummary = linregPostSummary(model, 'displaySummary', displaySummary, 'names', names);
 end
 
 end % end of main function

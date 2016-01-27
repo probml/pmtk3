@@ -8,6 +8,8 @@ from sklearn.linear_model import LassoCV, LinearRegression, RidgeCV
 from sklearn.metrics import mean_squared_error
 from sklearn.preprocessing import scale
 
+import matplotlib.pyplot as plt
+
 from sys import path
 path.append('..') # add parent directory
 #from utils import load_mat
@@ -54,7 +56,7 @@ def L2loss(yhat, ytest):
     sqerr = np.power(yhat - ytest, 2)
     mse = np.mean(sqerr)
     stderr = np.std(sqerr) / np.sqrt(ntest)
-    return (mse, stderr)
+    return (mse, stderr, np.sqrt(sqerr))
     
 
 #### Get data
@@ -98,6 +100,7 @@ method_names = ["LS", "Ridge", "Lasso"]
 coefHt = {}
 mseHt = {}
 stderrHt = {}
+errorsHt = {}
 
 for i,method in enumerate(methods):
   name = method_names[i]
@@ -107,7 +110,7 @@ for i,method in enumerate(methods):
   coefHt[name] = coef
   yhat = model.predict(Xtest)
   #mse = mean_squared_error(yhat, ytest)
-  (mseHt[name], stderrHt[name]) = L2loss(yhat, ytest) 
+  (mseHt[name], stderrHt[name], errorsHt[name]) = L2loss(yhat, ytest) 
 
 
 method_names.append("Subset")
@@ -125,7 +128,7 @@ coefHt[name] = coef
 
 yhat = model.predict(Xtest[:, subset])
 #mse = mean_squared_error(yhat, ytest)
-(mseHt[name], stderrHt[name]) = L2loss(yhat, ytest)
+(mseHt[name], stderrHt[name], errorsHt[name]) = L2loss(yhat, ytest)
 
 print method_names
 print mseHt
@@ -156,4 +159,18 @@ for method_name in method_names:
     str_list.append(_format(stderrHt[method_name]))
 str_list.insert(0, "Std error")
 print " & ".join([str(s) for s in str_list]), "\\\\"
+
+# Boxplot of errors for each method
+nmethods = len(method_names)
+ntest  = np.shape(ytest)[0]
+errorsMatrix = np.zeros((ntest, nmethods))
+for i in range(0, nmethods):
+    method_name = method_names[i]
+    errorsMatrix[:,i] = errorsHt[method_name]
+plt.boxplot(errorsMatrix)
+ax = plt.gca()
+ax.set_xticklabels(method_names)
+#fname = '/Users/kpmurphy/GDrive/Backup/MLbook/book2.0/Figures/pdfFigures/prostateBoxplot.pdf'
+#plt.savefig(fname, bbox_inches='tight')
+
 

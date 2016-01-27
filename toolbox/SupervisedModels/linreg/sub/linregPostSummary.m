@@ -11,8 +11,8 @@ function out = linregPostSummary(model, varargin)
 
 % This file is from pmtk3.googlecode.com
 
-[doDisplay, useLatex] = process_options(varargin, ...
-  'displaySummary', true, 'latex', false);
+[doDisplay, useLatex, names] = process_options(varargin, ...
+  'displaySummary', true, 'latex', true, 'names', {});
 
 % Extract posterior parameters
 wn = model.wN; Vn = model.VN;
@@ -50,16 +50,28 @@ if doDisplay
     fprintf('%-5s %-10s %-10s %-20s %-5s \n', 'coeff', 'mean', 'stddev', '95pc CI', 'sig');
   end
   for i=1:D
-    if model.preproc.addOnes, j=i-1; else j=i; end
     %L = credint(i,1); U = credint(i,2);
     %sig = (L<0 && U<0) || (L>0 && U>0);
     if sig(i), sigStr = '*'; else sigStr = ''; end
+    if isempty(names)
+       if model.preproc.addOnes
+            varname = sprintf('w%d', i-1);
+       else
+           varname = sprintf('w%d', i);
+       end
+    else 
+        if model.preproc.addOnes && i==1
+            varname = 'intercept';
+        else
+            varname = names{i-1};
+        end
+    end
     if useLatex
-      fprintf('w%d & %3.3f & %3.5f & [%3.3f, %3.3f] & %s \\\\\n', ...
-        j, what(i), stderr(i), credint(i,1), credint(i,2), sigStr)
+      fprintf('%s & %3.3f & %3.5f & [%3.3f, %3.3f] & %s \\\\\n', ...
+        varname, what(i), stderr(i), credint(i,1), credint(i,2), sigStr)
     else
       fprintf('%5s %8.3f  %8.5f  [%8.3f, %8.3f] %5s \n', ...
-        sprintf('w%d',j), what(i), stderr(i), credint(i,1), credint(i,2), sigStr)
+        varname, what(i), stderr(i), credint(i,1), credint(i,2), sigStr)
     end
   end
   fprintf('\n');

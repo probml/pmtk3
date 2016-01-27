@@ -10,7 +10,7 @@ setSeed(1); % seed 0 reproduces Bishop's figure
 a0 = -0.3; %Parameters of the actual underlying model that we wish to recover
 a1 = 0.5;  %We will estimate these values with w0 and w1 respectively. 
 
-trainingPoints = 20;    % Number of (x,y) training points
+trainingPoints = 100;    % Number of (x,y) training points
 noiseSD = 0.2;          % Standard deviation of Gaussian noise, applied to actual underlying model. 
 priorPrecision = 2.0;   % Fix the prior precision, alpha. We will use a zero-mean isotropic Gaussian.
 likelihoodSD = noiseSD; % Assume the likelihood precision, beta, is known.
@@ -21,6 +21,7 @@ model = struct('mu', 0, 'Sigma', noiseSD);
 noise = gaussSample(model, trainingPoints);
 ytrain = a0 + a1*xtrain + noise;
 %% Plot
+figure
 % Number of successive data points for which likelihood distributions will
 % be graphed. The prior and the last data point are always plotted so 0 <=
 % iter <= trainingPoints - 1.
@@ -106,7 +107,7 @@ end
 %the specified point as a white cross. 
 end
 function contourPlot(func,trueValue)
-stepSize = 0.05; 
+stepSize = 0.2; %0.05; 
 [x,y] = meshgrid(-1:stepSize:1,-1:stepSize:1); % Create grid.
 [r,c]=size(x);
 

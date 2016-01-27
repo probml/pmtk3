@@ -1,6 +1,6 @@
 function varargout = loadData(dataset, varargin) %destnRoot, quiet, isMatFile)
-%% Load the specified dataset, downloading it if necessary from pmtkdata.googlecode.com
-% 
+%% Load the specified dataset
+
 % If you specify an output, as in D = loadData('foo'), all of the variables
 % in the .mat file are stored in the struct D, (unless there is only one).
 %
@@ -8,7 +8,10 @@ function varargout = loadData(dataset, varargin) %destnRoot, quiet, isMatFile)
 % workspace, just like the built in load() function, as in loadData('foo');
 %
 %
-% Options: [default]
+% Previously the data was downloaded if necessary from pmtkdata.googlecode.com
+% This is no longer supported.
+%
+% Deprecated Options: [default]
 % isMatFile - [true] will try to load in to work space
 % isZipFile - [true] will download and unzip
 %
@@ -21,6 +24,7 @@ function varargout = loadData(dataset, varargin) %destnRoot, quiet, isMatFile)
 % s = loadData('sat')       % s is a matrix since there is only one variable
 %
 %
+% Deprecated functionality:
 % loadData('pmtkImages') % downloads pmtkImages.zip, unzips it and adds directory to path
 %
 % loadData('mathDataHoff.csv', 'isZipFile', false)
@@ -36,13 +40,48 @@ function varargout = loadData(dataset, varargin) %destnRoot, quiet, isMatFile)
 %if nargin < 4, isMatFile = true; end
 
 
+try
+    D = load([dataset, '.mat']);
+catch ME
+    %if ismember(dataset, bigFiles)
+    %    fprintf('please download %s.zip from XXX\n', dataset);
+    %end
+    rethrow(ME)
+end
+
+%{
+files = dir('/Users/kpmurphy/github/bigData');
+for i=1:length(files)
+    name = files(i).name;
+    if name(1) == '.'
+        continue
+    end
+    %{
+    name = name(1:end-4); % drop .zip
+    disp(fname)
+    fname = sprintf('/Users/kpmurphy/github/bigData/%s', name);
+    cmd = sprintf('unzip %s.zip %s', fname, fname);
+    disp(cmd)
+    system(cmd)
+    %}
+    fname = sprintf('/Users/kpmurphy/github/bigData/%s/%s.zip', name, name);
+    cmd = sprintf('rm %s', fname);
+    disp(cmd)
+    system(cmd)
+end
+%}
+
+
+%{ 
+
+
 [destnRoot, quiet, isMatFile, isZipFile, dataset2] = process_options(varargin, ...
     'destnRoot', fullfile(pmtk3Root(), 'pmtkdataCopy'), ...
     'quiet', false, ...
     'isMatFile', true, ...
     'isZipFile', true, ...
     'dataset', filenames(dataset));
- 
+
 if isOctave(),  warning('off', 'Octave:load-file-in-path'); end
 googleRoot = ' http://pmtkdata.googlecode.com/svn/trunk';
 %%
@@ -106,6 +145,7 @@ end
 if isfolder
   return
 end
+%}
 
 if nargout == 0
     names = fieldnames(D);
