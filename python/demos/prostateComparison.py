@@ -81,15 +81,6 @@ ytrain = y[istrain]
 ytest = y[istest]
 ntest = ytest.size
 
-#X = load_mat('prostate')
-# Hack to use the correct dataset.
-#X['Xtest'][8][1] = 3.804438
-# Rescale all data at once.
-#Xscaled = _scale(np.append(X['Xtrain'], X['Xtest'], axis=0))
-#Xtrain = Xscaled[0:67,:]
-#Xtest = Xscaled[67:,:]
-#ytrain = X['ytrain']
-#ytest = X['ytest']
 
 ### Process data
 
