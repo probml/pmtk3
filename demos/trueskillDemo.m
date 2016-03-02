@@ -107,7 +107,7 @@ for iter=1:5
   % compute this first because it is needed for the mean update
   Psg = Ps(G) - Pgs;
   %Msg = (Ps(G).*Ms(G) - Pgs.*Mgs)./Ps(G); 
-  Msg = (Ps(G).*Ms(G) - Pgs.*Mgs)./Psg(G); % KPM 
+  Msg = (Ps(G).*Ms(G) - Pgs.*Mgs)./Psg; % KPM 
      
   % (3) compute game to performance messages
   vgt = 1 + sum(1./Psg, 2);
