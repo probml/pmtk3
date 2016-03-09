@@ -5,7 +5,9 @@ import os
 import scipy.io as sio
 import numpy as np
 import glob
-
+#from demos import linreg_1d_batch_demo 
+#import demos.linreg_1d_batch_demo
+#from demos.linreg_1d_batch_demo import main
 
 def nsubplots(n):
     '''Returns [ynum, xnum], which  how many plots in the y and x directions to
@@ -162,6 +164,9 @@ def generate_rst():
                     f.write(".. image:: " + img_name + "\n")
                 f.write(".. literalinclude:: " + script_name + "\n")
 
-if __name__ == '__main__':
-    generate_rst()
-    print("Finished generate chX.rst!")
+#if __name__ == '__main__':
+    #generate_rst()
+    #print("Finished generate chX.rst!")
+    #demos.linreg_1d_batch_demo.main()
+    #linreg_1d_batch_demo.main()
+    #main()
