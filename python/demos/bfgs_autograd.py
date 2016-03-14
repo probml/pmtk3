@@ -4,7 +4,7 @@ from scipy.optimize import minimize
 
 def squared_loss(y_pred, y):
     N = y.shape[0]
-    return sum(np.square(y - y_pred))/N
+    return 0.5*sum(np.square(y - y_pred))/N
 
 def gradient(params, X, y):
     obj_fun = lambda params: squared_loss(np.dot(X, params),  y) 
