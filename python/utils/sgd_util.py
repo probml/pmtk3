@@ -78,29 +78,28 @@ if False:
 
 ######
 # Learning rate functions
-
     
 #https://www.tensorflow.org/versions/r0.7/api_docs/python/train.html#exponential_decay
 #decayed_learning_rate = learning_rate *
 #                        decay_rate ^ (global_step / decay_steps)
-def get_learning_rate_exp_decay(global_step, base_lr=0.01, decay_rate=0.9, decay_steps=2, staircase=True):
+def lr_exp_decay(t, base_lr=0.001, decay_rate=0.9, decay_steps=2, staircase=True):
     if staircase:
-        exponent = global_step / decay_steps # integer division
+        exponent = t / decay_steps # integer division
     else:
-        exponent = global_step / np.float(decay_steps) 
+        exponent = t / np.float(decay_steps) 
     return base_lr * np.power(decay_rate, exponent)
    
    
 # http://scikit-learn.org/stable/modules/generated/sklearn.linear_model.SGDRegressor.html                                                                            
 # eta = eta0 / pow(t, power_t) [default]
-def get_learning_rate_inv_scaling(t, base_lr=0.01, power_t=0.25):
+def lr_inv_scaling(t, base_lr=0.001, power_t=0.25):
    return base_lr / np.power(t+1, power_t)
 
 def plot_lr_trace():
     lr_trace = []
     for iter in range(10):
-        #lr = learning_rate_inv_scaling(iter)
-        lr = get_learning_rate_exp_decay(iter, 0.01, 1)
+        #lr = lr_inv_scaling(iter)
+        lr = lr_exp_decay(iter, 0.01, 1)
         lr_trace.append(lr)
     fig = plt.figure()
     ax = fig.add_subplot(111)
@@ -111,23 +110,61 @@ def plot_lr_trace():
 
 #######
 
+class SGDUpdater(object):
+    '''Class to update parameters in stochastic gradient descent.
+    Several algorithms are supported.
+    SGD with momentum:
+        vel_t = mom_decay * vel_{t-1} + lr_t * g_t 
+        delta_t = - vel_t
+    RMSprop is this algorithm:    
+        mean_square_t = rms_decay * mean_square_{t-1} + (1-rms_decay) * g_t ** 2
+        vel_t = mom_decay * vel_{t-1} + lr_t * g_t / sqrt(mean_square + epsilon)
+        delta_t = -vel_t
+    See http://www.cs.toronto.edu/~tijmen/csc321/slides/lecture_slides_lec6.pdf.
+    '''  
+    def __init__(self, lr_fun, momentum_decay, rms_decay):
+        '''lr_fun(iter, epoch) computes learning rate.
+        Set rms_decay=0 to use standard SGD with momentum.
+        Set momentum_decay=0 to use standard SGD.'''
+        self.lr_fun = lr_fun
+        self.momentum_decay = momentum_decay
+        self.rms_decay = rms_decay
+        self.velocity = []
+        self.mean_squared_gradients = []
+        self.iter = 0
+        
+    def init(self, params):
+        D = len(params)
+        self.velocity = np.zeros(D)
+        self.mean_squared_gradients = np.zeros(D)
+        
+    def update(self, params, obj_value, gradient_vec, epoch):
+        self.iter = self.iter + 1
+        lr = self.lr_fun(self.iter, epoch)
+        if self.rms_decay > 0:
+            self.mean_squared_gradients = self.rms_decay * self.mean_squared_gradients + (1-self.rms_decay)*np.square(gradient_vec)
+            eps = 1e-10
+            denominator = np.sqrt(self.mean_squared_gradients + eps)
+        else:
+            denominator = 1
+        self.velocity = self.momentum_decay * self.velocity + lr * gradient_vec / denominator
+        params = params - self.velocity
+        return params
+
+              
 def sgd_minimize(params, obj_fun, grad_fun, X, y, batch_size, num_epochs, 
-       lr_fun, momentum, callback=None):                                                                                                                                                                                                   
-    D = params.shape[0]
-    velocity = np.zeros(D)
+       param_updater, callback_fun=None): 
+    param_updater.init(params)                                                                                                                                                                                                
     N = X.shape[0]
-    X, y = shuffle_data(X, y) 
     batch_indices = make_batches(N, batch_size)
-    batch_counter = 0
     for epoch in range(num_epochs):
+        X, y = shuffle_data(X, y) 
         for batch_num, batch_idx in enumerate(batch_indices):
             X_batch, y_batch = X[batch_idx], y[batch_idx]
             obj_value = obj_fun(params, X_batch, y_batch)
             gradient_vec = grad_fun(params, X_batch, y_batch)
-            lr = lr_fun(batch_counter)
-            velocity = momentum * velocity + lr * gradient_vec
-            params = params - velocity
-            if callback is not None:
-                callback(params, obj_value, gradient_vec, epoch, batch_num)  
-            batch_counter = batch_counter + 1
+            params = param_updater.update(params, obj_value, gradient_vec, epoch)
+            if callback_fun is not None:
+                callback_fun(params, obj_value, gradient_vec, epoch, batch_num)  
     return params, obj_value 
+

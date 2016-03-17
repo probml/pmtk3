@@ -30,15 +30,16 @@ def make_expt_config(N):
     
 def config_to_str(config):
     if config['optimizer'] == 'BFGS':
-        cstr = 'truth-{}-model-{}-BFGS'.format(config['data_generator'],
+        cstr = '{}-{}-BFGS'.format(config['data_generator'],
                     config['model'])
     else:
         if config['batch_size'] == config['N']:
             batch_str = 'N'
         else:
             batch_str = '{}'.format(config['batch_size'])
-        cstr = 'truth-{}-model-{}-batch{}-LR{:0.3f}-LRdecay{:0.3f}-Mom{}'.format(config['data_generator'],
-                    config['model'], batch_str, config['init_lr'], config['lr_decay'], config['momentum'])
+        cstr = '{}-{}-batch{}-LR{:0.3f}-LRdecay{:0.3f}-Mom{}-RMS{:0.3f}'.format(config['data_generator'],
+                    config['model'], batch_str, config['init_lr'], config['lr_decay'],
+                    config['momentum'], config['rms_decay'])
     return cstr
             
 def main():
@@ -46,31 +47,29 @@ def main():
     folder = 'figures/linreg-sgd'
     
     N = 50
-    init_lr = 0.1
-    num_epochs = 30
+    init_lr = 0.05
+    num_epochs = 50
     #fun_type = 'linear'
     fun_type = 'sine'
     #model_type = 'linear'
-    model_type = 'mlp'
-    nhidden = 10
+    model_type = 'mlp:1-10-1'
                 
     configs = []
     # BFGS has to be the first config, in order to compute loss_opt
     configs.append({'data_generator': fun_type, 'N': N, 'model': model_type, 
                     'optimizer': 'BFGS'})
     configs.append({'data_generator': fun_type, 'N': N, 'model': model_type,  
-                    'optimizer': 'SGD', 'batch_size': N, 'lr_decay': 0.99,
-                    'momentum': 0, 'init_lr': init_lr, 'num_epochs': num_epochs})
-    configs.append({'data_generator': fun_type, 'N': N, 'model': model_type, 
-                    'optimizer': 'SGD', 'batch_size': 10, 'lr_decay': 0.99,
-                    'momentum': 0, 'init_lr': init_lr, 'num_epochs': num_epochs})
+                    'optimizer': 'SGD', 'batch_size': 10,  'num_epochs': num_epochs, 
+                    'init_lr': init_lr, 'lr_decay': 0.9,
+                    'rms_decay': 0, 
+                    'momentum': 0.9})
     configs.append({'data_generator': fun_type, 'N': N, 'model': model_type,  
-                    'optimizer': 'SGD', 'batch_size': N, 'lr_decay': 0.99,
-                    'momentum': 0.9, 'init_lr': init_lr, 'num_epochs': num_epochs})
-    configs.append({'data_generator': fun_type, 'N': N, 'model': model_type, 
-                    'optimizer': 'SGD', 'batch_size': 10, 'lr_decay': 0.99,
-                    'momentum': 0.9, 'init_lr': init_lr, 'num_epochs': num_epochs})
- 
+                    'optimizer': 'SGD', 'batch_size': 10,  'num_epochs': num_epochs, 
+                    'init_lr': init_lr, 'lr_decay': 0.9,
+                    'rms_decay': 0.9, 
+                    'momentum': 0.9})
+    params_opt = None
+    loss_opt = None
     for expt_num, config in enumerate(configs):
         np.random.seed(1)
         ttl = config_to_str(config)
@@ -83,12 +82,13 @@ def main():
         if model_type == 'linear':
             model = LinregModel(data_dim, add_ones=True)
             params_opt, loss_opt = model.ols_fit(Xtrain, ytrain)
-        else:  
-
-            model = MLP([data_dim, nhidden, 1], output_is_classifier=False, L2_reg=0.001) 
-            params_opt = None
-            loss_opt = None
-            
+        elif model_type[0:3] == 'mlp':
+            _, layer_sizes = model_type.split(':')
+            layer_sizes = [int(n) for n in layer_sizes.split('-')]
+            model = MLP(layer_sizes, output_is_classifier=False, L2_reg=0.001) 
+        else:
+             raise ValueError('unknown model type {}'.format(model_type))
+                
         initial_params = model.init_params() 
         obj_fun = model.objective
         grad_fun = autograd.grad(obj_fun)
@@ -111,12 +111,12 @@ def main():
                 loss_opt = loss
                 
         if config['optimizer'] == 'SGD':
-            logger = sgd.SGDLogger(print_freq=1, store_params=True)
-            lr_fun = lambda(iter): sgd.get_learning_rate_exp_decay(iter,
-                    config['init_lr'], config['lr_decay']) 
+            logger = sgd.SGDLogger(print_freq=10, store_params=True)
+            lr_fun = lambda iter, epoch: sgd.lr_exp_decay(iter, config['init_lr'], config['lr_decay']) 
+            sgd_updater = sgd.SGDUpdater(lr_fun, config['momentum'], config['rms_decay'])
             params, loss_on_batch = sgd.sgd_minimize(initial_params, obj_fun, grad_fun,
-                Xtrain, ytrain, config['batch_size'], config['num_epochs'], lr_fun, config['momentum'],
-                callback=logger.update)
+                Xtrain, ytrain, config['batch_size'], config['num_epochs'], 
+                sgd_updater, logger.update)
                         
                    
         fig = plt.figure()

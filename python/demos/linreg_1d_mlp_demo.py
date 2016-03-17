@@ -14,14 +14,13 @@ from utils.mlp_model import MLP
 def main():
     np.random.seed(1)
     N = 50
-    use_linear = False
-    xtrain, Xtrain, ytrain, params_true, true_fun, fun_name = make_data_linreg_1d(N, use_linear)
+    xtrain, Xtrain, ytrain, params_true, true_fun, fun_name = make_data_linreg_1d(N, 'sine')
     D = 1
     layer_sizes = [D, 1] # 1-dim  input, 1d output,  no hidden layers
     
     model = MLP(layer_sizes, False, 0)
     params_init = model.init_params() # W, b
-    logger = MinimizeLogger(model.objective, (Xtrain, ytrain), print_freq=10)
+    logger = MinimizeLogger(model.objective, autograd.grad(model.objective), (Xtrain, ytrain), print_freq=10)
     
     # Check that OLS and BFGS give same result
     linear_model = LinregModel(D, True)

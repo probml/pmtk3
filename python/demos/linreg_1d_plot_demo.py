@@ -57,10 +57,10 @@ def plot_data_and_predictions(xtrain, ytrain, true_fun, pred_fun, ax=None):
     return ax
     
 def main():
-    for linear_fun in [True,False]:
+    for fun_type in ['linear', 'sine']:
         np.random.seed(1)
         N = 50
-        xtrain, Xtrain, ytrain, params_true, true_fun, ttl = make_data_linreg_1d(N, linear_fun)
+        xtrain, Xtrain, ytrain, params_true, true_fun, ttl = make_data_linreg_1d(N, fun_type)
         model = LinregModel(1, True)
         params_ols, loss_ols = model.ols_fit(Xtrain, ytrain)
         
@@ -71,7 +71,7 @@ def main():
         
         # Plot error surface
         loss_fun = lambda w0, w1: model.objective([w0, w1], xtrain, ytrain)
-        ax  = plot_error_surface(loss_fun, params_ols)
+        ax  = plot_error_surface(loss_fun, params_ols, params_true)
         ax.set_title(ttl)
     plt.show()
     
