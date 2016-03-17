@@ -1,23 +1,27 @@
 # Functions related to stochastic gradient descent (SGD)
-#import numpy as np
-import autograd
-import autograd.numpy as np
+
+import numpy as np
 import matplotlib.pyplot as plt
-from collections import namedtuple
+#from collections import namedtuple
 
 # Class to create a stateful callback function for sgd
 class SGDLogger(object):
-    def __init__(self, print_freq=0):
+    def __init__(self, print_freq=0, store_params=False):
         self.param_trace = []
+        self.grad_norm_trace = []
         self.obj_trace = []
         self.iter = 0
-        self.print_freq = 0
+        self.print_freq = print_freq
+        self.store_params = store_params
         
-    def update(self, params, obj, gradient):
+    def update(self, params, obj, gradient, epoch, batch_num):
         self.obj_trace.append(obj)
-        self.param_trace.append(params) # could take a lot of space
-        if (self.print_freq > 0) and (iter % self.print_freq == 0):
-            print "iteration {0}, objective {0:2.3f}".format(iter, obj)
+        self.grad_norm_trace.append(np.linalg.norm(gradient))
+        if self.store_params:
+            self.param_trace.append(params) 
+        if (self.print_freq > 0) and (self.iter % self.print_freq == 0):
+            print "epoch {}, batch num {}, iteration {}, objective {:2.3f}".format(
+                epoch, batch_num, self.iter, obj)
         self.iter += 1
     
 
@@ -35,7 +39,7 @@ def shuffle_data(X, y):
 def make_batches(N_data, batch_size):
     return [slice(i, min(i+batch_size, N_data))
             for i in range(0, N_data, batch_size)]
-            
+                        
 # Batchifier class based on
 #https://tensorflow.googlesource.com/tensorflow/+/master/tensorflow/examples/tutorials/mnist/input_data.py
 
@@ -106,31 +110,24 @@ def plot_lr_trace():
 
 
 #######
-  
-        
-def sgd_minimize(params, obj_fun, grad_fun, batchifier, training_steps,
-       lr_fun, momentum, use_autograd, callback=None):
-    '''Returns a struct just like scipy's minimize'''                                                                                                                                                                                                   
-    D = params.shape[0]
-    params_avg = params
-    velocity = np.zeros(D)
-    for iter in range(training_steps):
-        X_batch, y_batch = batchifier.next_batch()
-        obj_value = obj_fun(params, X_batch, y_batch)
-        if use_autograd:
-            gradient_fun = autograd.grad(obj_fun)
-            gradient_vec = gradient_fun(params, X_batch, y_batch)
-            #gradient_fun = autograd.grad(obj_fun, (X_batch, y_batch))
-            #gradient_vec = gradient_fun(params)
-            #gradient_vec = gradient_fun(params, X_batch, y_batch)
-        else:
-            gradient_vec = grad_fun(params, X_batch, y_batch)
-        lr = lr_fun(iter)
-        velocity = momentum * velocity + lr * gradient_vec
-        params = params - velocity
-        params_avg = (iter*params_avg + params)/(iter+1) 
-        if callback is not None:
-            callback(params, obj_value, gradient_vec)  
-    Result = namedtuple('Result', 'x xavg fun nit')
-    return Result(params, params_avg, obj_value, iter)  
 
+def sgd_minimize(params, obj_fun, grad_fun, X, y, batch_size, num_epochs, 
+       lr_fun, momentum, callback=None):                                                                                                                                                                                                   
+    D = params.shape[0]
+    velocity = np.zeros(D)
+    N = X.shape[0]
+    X, y = shuffle_data(X, y) 
+    batch_indices = make_batches(N, batch_size)
+    batch_counter = 0
+    for epoch in range(num_epochs):
+        for batch_num, batch_idx in enumerate(batch_indices):
+            X_batch, y_batch = X[batch_idx], y[batch_idx]
+            obj_value = obj_fun(params, X_batch, y_batch)
+            gradient_vec = grad_fun(params, X_batch, y_batch)
+            lr = lr_fun(batch_counter)
+            velocity = momentum * velocity + lr * gradient_vec
+            params = params - velocity
+            if callback is not None:
+                callback(params, obj_value, gradient_vec, epoch, batch_num)  
+            batch_counter = batch_counter + 1
+    return params, obj_value 
