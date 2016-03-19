@@ -1,4 +1,5 @@
 # Functions related to stochastic gradient descent (SGD)
+# See also https://github.com/HIPS/autograd/blob/master/examples/optimizers.py
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -109,28 +110,38 @@ def plot_lr_trace():
 
 
 #######
+# Summary of these algorithms can be found here
+#http://sebastianruder.com/optimizing-gradient-descent/index.html
 
-class SGDUpdater(object):
-    '''Class to update parameters in stochastic gradient descent.
-    Several algorithms are supported.
-    SGD with momentum:
-        vel_t = mom_decay * vel_{t-1} + lr_t * g_t 
-        delta_t = - vel_t
-    RMSprop is this algorithm:    
-        mean_square_t = rms_decay * mean_square_{t-1} + (1-rms_decay) * g_t ** 2
-        vel_t = mom_decay * vel_{t-1} + lr_t * g_t / sqrt(mean_square + epsilon)
-        delta_t = -vel_t
-    See http://www.cs.toronto.edu/~tijmen/csc321/slides/lecture_slides_lec6.pdf.
-    '''  
-    def __init__(self, lr_fun, momentum_decay, rms_decay):
-        '''lr_fun(iter, epoch) computes learning rate.
-        Set rms_decay=0 to use standard SGD with momentum.
-        Set momentum_decay=0 to use standard SGD.'''
+def sgd_minimize(params, obj_fun, grad_fun, X, y, batch_size, num_epochs, 
+       param_updater, callback_fun=None): 
+    param_updater.init(params)                                                                                                                                                                                                
+    N = X.shape[0]
+    batch_indices = make_batches(N, batch_size)
+    D = len(params)
+    params_avg = np.zeros(D)
+    decay = 0.999
+    iter = 0
+    for epoch in range(num_epochs):
+        X, y = shuffle_data(X, y) 
+        for batch_num, batch_idx in enumerate(batch_indices):
+            iter = iter + 1
+            X_batch, y_batch = X[batch_idx], y[batch_idx]
+            obj_value = obj_fun(params, X_batch, y_batch)
+            gradient_vec = grad_fun(params, X_batch, y_batch)
+            params = param_updater.update(params, obj_value, gradient_vec, epoch)
+            params_avg = decay * params_avg + (1-decay) * params
+            params_avg_unbiased = params_avg / (1 - (decay**iter))
+            if callback_fun is not None:
+                callback_fun(params, obj_value, gradient_vec, epoch, batch_num)  
+    return params, params_avg_unbiased, obj_value
+
+
+class SGDMomentum(object):
+    def __init__(self, lr_fun, mass=0.9):
         self.lr_fun = lr_fun
-        self.momentum_decay = momentum_decay
-        self.rms_decay = rms_decay
+        self.mass = mass # gamma
         self.velocity = []
-        self.mean_squared_gradients = []
         self.iter = 0
         
     def init(self, params):
@@ -141,30 +152,55 @@ class SGDUpdater(object):
     def update(self, params, obj_value, gradient_vec, epoch):
         self.iter = self.iter + 1
         lr = self.lr_fun(self.iter, epoch)
-        if self.rms_decay > 0:
-            self.mean_squared_gradients = self.rms_decay * self.mean_squared_gradients + (1-self.rms_decay)*np.square(gradient_vec)
-            eps = 1e-10
-            denominator = np.sqrt(self.mean_squared_gradients + eps)
-        else:
-            denominator = 1
-        self.velocity = self.momentum_decay * self.velocity + lr * gradient_vec / denominator
+        self.velocity = self.mass * self.velocity + lr * gradient_vec 
         params = params - self.velocity
         return params
 
-              
-def sgd_minimize(params, obj_fun, grad_fun, X, y, batch_size, num_epochs, 
-       param_updater, callback_fun=None): 
-    param_updater.init(params)                                                                                                                                                                                                
-    N = X.shape[0]
-    batch_indices = make_batches(N, batch_size)
-    for epoch in range(num_epochs):
-        X, y = shuffle_data(X, y) 
-        for batch_num, batch_idx in enumerate(batch_indices):
-            X_batch, y_batch = X[batch_idx], y[batch_idx]
-            obj_value = obj_fun(params, X_batch, y_batch)
-            gradient_vec = grad_fun(params, X_batch, y_batch)
-            params = param_updater.update(params, obj_value, gradient_vec, epoch)
-            if callback_fun is not None:
-                callback_fun(params, obj_value, gradient_vec, epoch, batch_num)  
-    return params, obj_value 
+class RMSprop(object):
+    def __init__(self, lr_fun, grad_sq_decay=0.9):
+        self.lr_fun = lr_fun
+        self.grad_sq_decay = grad_sq_decay
+        self.mean_sq_gradients = []
+        self.iter = 0
+        
+    def init(self, params):
+        D = len(params)
+        self.mean_sq_gradients = np.zeros(D)
+        
+    def update(self, params, obj_value, gradient_vec, epoch):
+        self.iter = self.iter + 1
+        lr = self.lr_fun(self.iter, epoch)
+        self.mean_sq_gradients = self.grad_sq_decay * self.mean_sq_gradients + \
+            (1-self.grad_sq_decay) * np.square(gradient_vec)
+        eps = 1e-8
+        denominator = np.sqrt(self.mean_sq_gradients) + eps
+        params = params -  lr * gradient_vec / denominator
+        return params
 
+            
+class ADAM(object):
+    def __init__(self, lr, grad_decay=0.9, grad_sq_decay=0.999):
+        self.lr = lr # alpha
+        self.grad_decay = grad_decay # beta1
+        self.grad_sq_decay = grad_sq_decay # beta2
+        self.mean_gradients = [] # m
+        self.mean_sq_gradients = [] # v
+        self.iter = 0
+        
+    def init(self, params):
+        D = len(params)
+        self.mean_gradients = np.zeros(D)
+        self.mean_sq_gradients = np.zeros(D)
+        
+    def update(self, params, obj_value, gradient_vec, epoch):
+        self.iter = self.iter + 1
+        self.mean_gradients = self.grad_decay * self.mean_gradients + \
+            (1-self.grad_decay) * gradient_vec
+        self.mean_sq_gradients = self.grad_sq_decay * self.mean_sq_gradients + \
+            (1-self.grad_sq_decay) * np.square(gradient_vec)
+        eps = 1e-8
+        mean_grad = self.mean_gradients / (1 - self.grad_decay**self.iter)
+        mean_sq_grad = self.mean_sq_gradients / (1 - self.grad_sq_decay**self.iter)
+        denominator = np.sqrt(mean_sq_grad) + eps
+        params = params -  self.lr * mean_grad / denominator
+        return params

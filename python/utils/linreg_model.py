@@ -5,6 +5,7 @@ import autograd.numpy as np  # Thinly-wrapped numpy
 def squared_loss(y_pred, y):
     N = y.shape[0]
     return 0.5*np.sum(np.square(y - y_pred))/N
+    #return np.sum(np.square(y - y_pred))
 
 class LinregModel(object):
     def __init__(self, ninputs, add_ones=False):

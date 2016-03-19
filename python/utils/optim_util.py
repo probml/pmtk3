@@ -13,9 +13,9 @@ def plot_loss_trace(losses, loss_min=None, ax=None):
         ax = fig.add_subplot(111)
     #ax.plot(range(0, training_steps), losses, 'o-')
     # Skip the first step, which usually has very high loss
-    ax.plot(range(1, training_steps), losses[1:], 'o-')
+    ax.plot(range(1, training_steps), losses[1:], '-')
     if loss_min is not None:
-        ax.axhline(loss_min, 0, training_steps)
+        ax.axhline(loss_min, 0, training_steps, color='r')
         # Make sure horizontal line is visible by changing yscale
         ylim = ax.get_ylim()
         ax.set_ylim([0.9*loss_min, ylim[1]])

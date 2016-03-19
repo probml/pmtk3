@@ -4,21 +4,25 @@
 import autograd.numpy as np  # Thinly-wrapped numpy
 from autograd.scipy.misc import logsumexp
 
+def relu(x):
+    np.maximum(0, x)
+
 class MLP(object):
-    def __init__(self, layer_sizes, output_is_classifier, L2_reg):
+    def __init__(self, layer_sizes, output_type='regression', L2_reg=0.001, activation_type='tanh'):
         self.shapes = zip(layer_sizes[:-1], layer_sizes[1:])
         self.nparams = sum((m+1)*n for m, n in self.shapes)
         self.L2_reg = L2_reg
-        self.output_is_classifier = output_is_classifier
+        self.output_type = output_type
+        self.activation_type = activation_type
 
     def objective(self, W_vect, X, Y):
-        if self.output_is_classifier:
+        if self.output_type == 'classification':
             return self.log_loss_classif(W_vect, X, Y)
         else:
             return self.log_loss_regression(W_vect, X, Y)
             
     def prediction(self, W_vect, X):
-        if self.output_is_classifier:
+        if self.output_type == 'classification':
             return np.exp(self.predicted_class_logprobs(W_vect, X))
         else:
             return self.predicted_regression(W_vect, X)
@@ -37,7 +41,12 @@ class MLP(object):
     def predicted_class_logprobs(self, W_vect, inputs):
         for W, b in self.unpack_layers(W_vect):
             outputs = np.dot(inputs, W) + b
-            inputs = np.tanh(outputs)
+            if self.activation_type == 'tanh':
+                inputs = np.tanh(outputs)
+            elif self.activation_type == 'relu':
+                inputs = relu(outputs)
+            else:
+                raise ValueException('unknown activation_type {}'.format(self.activation_type))
         return outputs - logsumexp(outputs, axis=1, keepdims=True)
         
     def predicted_regression(self, W_vect, inputs):
