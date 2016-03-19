@@ -58,8 +58,8 @@ def main():
     num_epochs = 50
    
     #fun_type = 'linear'
-    fun_type = 'sine'
-    #fun_type = 'quad'
+    #fun_type = 'sine'
+    fun_type = 'quad'
     
     #model_type = 'linear'
     model_type = 'mlp:1-10-1'
@@ -82,7 +82,7 @@ def main():
                     'method': 'RMSprop', 'grad_sq_decay': 0.9})
     configs.append({'data_generator': fun_type, 'N': N, 'model': model_type,  
                     'optimizer': 'SGD', 'batch_size': 10,  'num_epochs': num_epochs, 
-                    'init_lr': init_lr, 'lr_decay': 0.9,
+                    'init_lr': init_lr, 'lr_decay': 0, 
                     'method': 'ADAM', 'grad_decay': 0.9, 'grad_sq_decay': 0.999})
   
     params_opt = None
@@ -123,6 +123,7 @@ def main():
         if config['optimizer'] == 'BFGS':
             logger = MinimizeLogger(obj_fun, grad_fun, (Xtrain, ytrain), print_freq=1, store_params=True)
             params, loss = bfgs_fit(initial_params, obj_fun, grad_fun, (Xtrain, ytrain), logger.update) 
+            loss_avg = loss
             if params_opt is None:
                 params_opt = params
                 loss_opt = loss
@@ -130,22 +131,25 @@ def main():
         if config['optimizer'] == 'SGD':
             logger = sgd.SGDLogger(print_freq=20, store_params=True)
             lr_fun = lambda iter, epoch: sgd.lr_exp_decay(iter, config['init_lr'], config['lr_decay']) 
+            
             if config['method'] == 'momentum':
                 sgd_updater = sgd.SGDMomentum(lr_fun, config['mass'])
             if config['method'] == 'RMSprop':
                 sgd_updater = sgd.RMSprop(lr_fun, config['grad_sq_decay'])
             if config['method'] == 'ADAM':
-                sgd_updater = sgd.ADAM(lr_fun, config['grad_decay'], config['grad_sq_decay'])
-            params, loss_on_batch = sgd.sgd_minimize(initial_params, obj_fun, grad_fun,
+                sgd_updater = sgd.ADAM(config['init_lr'], config['grad_decay'], config['grad_sq_decay'])
+                
+            params, params_avg, loss_on_batch = sgd.sgd_minimize(initial_params, obj_fun, grad_fun,
                 Xtrain, ytrain, config['batch_size'], config['num_epochs'], 
                 sgd_updater, logger.update)
             loss = obj_fun(params, Xtrain, ytrain)
+            loss_avg = obj_fun(params_avg, Xtrain, ytrain)
                         
                    
         fig = plt.figure()
         ax = fig.add_subplot(plot_rows, plot_cols, 1)
         plot_loss_trace(logger.obj_trace, loss_opt, ax)
-        ax.set_title('final objective {:0.3f}'.format(loss))
+        ax.set_title('final objective {:0.3f}, {:0.3f}'.format(loss, loss_avg))
         
         ax = fig.add_subplot(plot_rows, plot_cols, 2)
         ax.plot(logger.grad_norm_trace)
