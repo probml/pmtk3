@@ -37,9 +37,16 @@ def config_to_str(config):
             batch_str = 'N'
         else:
             batch_str = '{}'.format(config['batch_size'])
-        cstr = '{}-{}-batch{}-LR{:0.3f}-LRdecay{:0.3f}-Mom{}-RMS{:0.3f}'.format(config['data_generator'],
-                    config['model'], batch_str, config['init_lr'], config['lr_decay'],
-                    config['momentum'], config['rms_decay'])
+        cstr1 = '{}-{}-batch{}-LR{:0.3f}-LRdecay{:0.3f}'.format(config['data_generator'],
+                    config['model'], batch_str, config['init_lr'], config['lr_decay'])
+        cstr2 = ''
+        if config['method'] == 'momentum':
+            cstr2 = 'mom{}'.format(config['mass'])
+        if config['method'] == 'RMSprop':
+            cstr2 = 'RMS{:0.3f}'.format(config['grad_sq_decay'])
+        if config['method'] == 'ADAM':
+            cstr2 = 'ADAM-{:0.3f}-{:0.3f}'.format(config['grad_decay'], config['grad_sq_decay'])
+        cstr = cstr1 + '-' + cstr2
     return cstr
             
 def main():
@@ -49,8 +56,11 @@ def main():
     N = 50
     init_lr = 0.05
     num_epochs = 50
+   
     #fun_type = 'linear'
     fun_type = 'sine'
+    #fun_type = 'quad'
+    
     #model_type = 'linear'
     model_type = 'mlp:1-10-1'
                 
@@ -61,13 +71,20 @@ def main():
     configs.append({'data_generator': fun_type, 'N': N, 'model': model_type,  
                     'optimizer': 'SGD', 'batch_size': 10,  'num_epochs': num_epochs, 
                     'init_lr': init_lr, 'lr_decay': 0.9,
-                    'rms_decay': 0, 
-                    'momentum': 0.9})
+                    'method': 'momentum', 'mass': 0})                  
     configs.append({'data_generator': fun_type, 'N': N, 'model': model_type,  
                     'optimizer': 'SGD', 'batch_size': 10,  'num_epochs': num_epochs, 
                     'init_lr': init_lr, 'lr_decay': 0.9,
-                    'rms_decay': 0.9, 
-                    'momentum': 0.9})
+                    'method': 'momentum', 'mass': 0.9})  
+    configs.append({'data_generator': fun_type, 'N': N, 'model': model_type,  
+                    'optimizer': 'SGD', 'batch_size': 10,  'num_epochs': num_epochs, 
+                    'init_lr': init_lr, 'lr_decay': 0.9,
+                    'method': 'RMSprop', 'grad_sq_decay': 0.9})
+    configs.append({'data_generator': fun_type, 'N': N, 'model': model_type,  
+                    'optimizer': 'SGD', 'batch_size': 10,  'num_epochs': num_epochs, 
+                    'init_lr': init_lr, 'lr_decay': 0.9,
+                    'method': 'ADAM', 'grad_decay': 0.9, 'grad_sq_decay': 0.999})
+  
     params_opt = None
     loss_opt = None
     for expt_num, config in enumerate(configs):
@@ -85,7 +102,7 @@ def main():
         elif model_type[0:3] == 'mlp':
             _, layer_sizes = model_type.split(':')
             layer_sizes = [int(n) for n in layer_sizes.split('-')]
-            model = MLP(layer_sizes, output_is_classifier=False, L2_reg=0.001) 
+            model = MLP(layer_sizes, 'regression', L2_reg=0.001) 
         else:
              raise ValueError('unknown model type {}'.format(model_type))
                 
@@ -111,18 +128,24 @@ def main():
                 loss_opt = loss
                 
         if config['optimizer'] == 'SGD':
-            logger = sgd.SGDLogger(print_freq=10, store_params=True)
+            logger = sgd.SGDLogger(print_freq=20, store_params=True)
             lr_fun = lambda iter, epoch: sgd.lr_exp_decay(iter, config['init_lr'], config['lr_decay']) 
-            sgd_updater = sgd.SGDUpdater(lr_fun, config['momentum'], config['rms_decay'])
+            if config['method'] == 'momentum':
+                sgd_updater = sgd.SGDMomentum(lr_fun, config['mass'])
+            if config['method'] == 'RMSprop':
+                sgd_updater = sgd.RMSprop(lr_fun, config['grad_sq_decay'])
+            if config['method'] == 'ADAM':
+                sgd_updater = sgd.ADAM(lr_fun, config['grad_decay'], config['grad_sq_decay'])
             params, loss_on_batch = sgd.sgd_minimize(initial_params, obj_fun, grad_fun,
                 Xtrain, ytrain, config['batch_size'], config['num_epochs'], 
                 sgd_updater, logger.update)
+            loss = obj_fun(params, Xtrain, ytrain)
                         
                    
         fig = plt.figure()
         ax = fig.add_subplot(plot_rows, plot_cols, 1)
         plot_loss_trace(logger.obj_trace, loss_opt, ax)
-        ax.set_title('objective vs num updates')
+        ax.set_title('final objective {:0.3f}'.format(loss))
         
         ax = fig.add_subplot(plot_rows, plot_cols, 2)
         ax.plot(logger.grad_norm_trace)
@@ -136,7 +159,7 @@ def main():
         if plot_params:
             ax = fig.add_subplot(plot_rows, plot_cols, 4)
             loss_fun = lambda w0, w1: model.objective([w0, w1], xtrain, ytrain)
-            plot_error_surface(loss_fun, params_opt, params_true, ax)
+            plot_error_surface(loss_fun, params_opt, params_true, fun_type, ax)
             plot_param_trace(logger.param_trace, ax)        
          
         fig.suptitle(ttl)        

@@ -7,33 +7,60 @@ from utils.linreg_model import LinregModel
 
 def make_fun_1d(fun_type):
     if fun_type == 'linear':
-        params_true = np.array([0.1, -1.5])
+        params_true = np.array([1, 1])
         true_fun = lambda x: params_true[1] + params_true[0]*x
         ttl = 'w*x + b'
     if fun_type == 'sine':
-        params_true = np.array([1, -1.5])
+        params_true = np.array([1, 1])
         true_fun = lambda x: params_true[1] + params_true[0]*np.sin(x)
         ttl = 'w*sin(x) + b' 
+    if fun_type == 'quad':
+        # 'thibaux' parameters from here:
+        #https://github.com/probml/pmtk3/blob/master/matlabTools/stats/polyDataMake.m
+         #w = [-1.5; 1/9];
+        #fun = @(x) w(1)*x + w(2)*x.^2;
+        params_true = np.array([1, 1])
+        true_fun = lambda x: params_true[0]*x + params_true[1]*np.square(x)
+        ttl = 'w*x^2 + b' 
     return params_true, true_fun, ttl
         
 # Sample (x,y) pairs from a noisy function 
-def make_data_linreg_1d(N, fun_type):
+def make_data_linreg_1d(N, fun_type, matlab_hack=False):
     params_true, true_fun, fun_name = make_fun_1d(fun_type) 
-    xtrain = np.linspace(0, 20, N)
+    #xtrain = np.linspace(0, 20, N)
+    xtrain = np.random.normal(0, 3, N)
     ytrain_clean = true_fun(xtrain) 
-    sigma2 = 0.5
+    sigma2 = 1
     noise = np.random.normal(0, 1, xtrain.shape) * np.sqrt(sigma2)
     ytrain_noisy = ytrain_clean + noise   
     Xtrain = np.reshape(xtrain, (N, 1))
+    if matlab_hack:
+        # Match matlab's https://github.com/probml/pmtk3/blob/master/demos/contoursSSEdemo.m
+        ytrain_noisy = np.array([3.560, 1.831, 0.924, 1.475, 0.531, 0.686, 2.720, 3.061, -1.233, 1.369, 2.990, 1.546, 3.425,
+        1.406, 3.306, 0.729, 4.050, 1.879, 0.313, 0.369])
+        xtrain = np.array([1.749, 0.133, 0.325, -0.794, 0.315, -0.527, 0.932, 1.165, -2.046, -0.644, 1.741, 0.487, 1.049, 
+        1.489, 1.271, -1.856, 2.134, 1.436, -0.917, -1.106])
+        N = len(xtrain)
+        Xtrain = np.reshape(xtrain, [N,1])
     return xtrain, Xtrain, ytrain_noisy, params_true, true_fun, fun_name
 
 # Plot 2d error surface around model's parameter vaulues
-def plot_error_surface(loss_fun, params_opt, params_true, ax=None):
+def plot_error_surface(loss_fun, params_opt, params_true, fun_type, ax=None):
     if ax is None:
         fig = plt.figure()
         ax = fig.add_subplot(111) 
-    w1s = np.linspace(-2, 1.5, 100)
-    w0s = np.linspace(-1, 1, 100)
+    # Choose the range to make a pretty plot
+    if fun_type == 'quad':
+        w0_range = [-1, 2] 
+        w1_range = [-1, 6] 
+    elif fun_type == 'sine':
+        w0_range = [-3, 3] 
+        w1_range = [-1, 3] 
+    else:
+        w0_range = [-1, 3] 
+        w1_range = [-1, 3] 
+    w0s = np.linspace(w0_range[0], w0_range[1], 100)
+    w1s = np.linspace(w1_range[0], w1_range[1], 100)
     w0_grid, w1_grid = np.meshgrid(w0s, w1s)
     lossvec = np.vectorize(loss_fun)
     z = lossvec(w1_grid, w0_grid)
@@ -57,12 +84,15 @@ def plot_data_and_predictions(xtrain, ytrain, true_fun, pred_fun, ax=None):
     return ax
     
 def main():
-    for fun_type in ['linear', 'sine']:
+    for fun_type in ['linear', 'quad', 'sine']:
         np.random.seed(1)
-        N = 50
+        N = 20
         xtrain, Xtrain, ytrain, params_true, true_fun, ttl = make_data_linreg_1d(N, fun_type)
+    
         model = LinregModel(1, True)
         params_ols, loss_ols = model.ols_fit(Xtrain, ytrain)
+        print(ttl)
+        print params_ols
         
         # Plot data
         predict_fun = lambda x: model.prediction(params_ols, x)
@@ -71,7 +101,7 @@ def main():
         
         # Plot error surface
         loss_fun = lambda w0, w1: model.objective([w0, w1], xtrain, ytrain)
-        ax  = plot_error_surface(loss_fun, params_ols, params_true)
+        ax  = plot_error_surface(loss_fun, params_ols, params_true, fun_type)
         ax.set_title(ttl)
     plt.show()
     
