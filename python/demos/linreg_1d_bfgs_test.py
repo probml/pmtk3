@@ -11,7 +11,7 @@ from utils.linreg_model import LinregModel
     
 def main():
     np.random.seed(1)
-    xtrain, Xtrain, ytrain, params_true, true_fun, ttl = make_data_linreg_1d(21, 'linear')
+    Xtrain, ytrain, params_true, true_fun, ttl = make_data_linreg_1d(21, 'linear')
     
     model = LinregModel(1, True)
     params_init = model.init_params()
@@ -28,7 +28,7 @@ def main():
     # Check that analytic gradient and automatic gradient give same result
     # when evaluated on training data
     grad_fun = autograd.grad(obj_fun)
-    grad_auto = grad_fun(params_init, xtrain, ytrain)
+    grad_auto = grad_fun(params_init, Xtrain, ytrain)
     grad_finite_diff = autograd.util.nd(lambda p : obj_fun(p, Xtrain, ytrain), params_init)[0]
     grad_analytic = model.gradient(params_init, Xtrain, ytrain)
     assert(np.allclose(grad_auto, grad_finite_diff))
