@@ -52,10 +52,7 @@ def config_to_str(config):
 def main():
     np.random.seed(1)
     folder = 'figures/linreg-sgd'
-    if not os.path.exists(folder):
-      os.mkdir('figures')
-      os.mkdir('figures/linreg-sgd')
-
+    
     N = 50
     init_lr = 0.05
     num_epochs = 50
@@ -69,55 +66,24 @@ def main():
                 
     configs = []
     # BFGS has to be the first config, in order to compute loss_opt
-    configs.append({'data_generator': fun_type,
-                    'N': N,
-                    'model': model_type,
+    configs.append({'data_generator': fun_type, 'N': N, 'model': model_type, 
                     'optimizer': 'BFGS'})
-
-    configs.append({'data_generator': fun_type,
-                    'N': N,
-                    'model': model_type,
-                    'optimizer': 'SGD',
-                    'batch_size': 10,
-                    'num_epochs': num_epochs,
-                    'init_lr': init_lr,
-                    'lr_decay': 0.9,
-                    'method': 'momentum',
-                    'mass': 0})
-
-    configs.append({'data_generator': fun_type,
-                    'N': N,
-                    'model': model_type,
-                    'optimizer': 'SGD',
-                    'batch_size': 10,
-                    'num_epochs': num_epochs,
-                    'init_lr': init_lr,
-                    'lr_decay': 0.9,
-                    'method': 'momentum',
-                    'mass': 0.9})
-
-    configs.append({'data_generator': fun_type,
-                    'N': N,
-                    'model': model_type,
-                    'optimizer': 'SGD',
-                    'batch_size': 10,
-                    'num_epochs': num_epochs,
-                    'init_lr': init_lr,
-                    'lr_decay': 0.9,
-                    'method': 'RMSprop',
-                    'grad_sq_decay': 0.9})
-
-    configs.append({'data_generator': fun_type,
-                    'N': N,
-                    'model': model_type,
-                    'optimizer': 'SGD',
-                    'batch_size': 10,
-                    'num_epochs': num_epochs,
-                    'init_lr': init_lr,
-                    'lr_decay': 0,
-                    'method': 'ADAM',
-                    'grad_decay': 0.9,
-                    'grad_sq_decay': 0.999})
+    configs.append({'data_generator': fun_type, 'N': N, 'model': model_type,  
+                    'optimizer': 'SGD', 'batch_size': 10,  'num_epochs': num_epochs, 
+                    'init_lr': init_lr, 'lr_decay': 0.9,
+                    'method': 'momentum', 'mass': 0})                  
+    configs.append({'data_generator': fun_type, 'N': N, 'model': model_type,  
+                    'optimizer': 'SGD', 'batch_size': 10,  'num_epochs': num_epochs, 
+                    'init_lr': init_lr, 'lr_decay': 0.9,
+                    'method': 'momentum', 'mass': 0.9})  
+    configs.append({'data_generator': fun_type, 'N': N, 'model': model_type,  
+                    'optimizer': 'SGD', 'batch_size': 10,  'num_epochs': num_epochs, 
+                    'init_lr': init_lr, 'lr_decay': 0.9,
+                    'method': 'RMSprop', 'grad_sq_decay': 0.9})
+    configs.append({'data_generator': fun_type, 'N': N, 'model': model_type,  
+                    'optimizer': 'SGD', 'batch_size': 10,  'num_epochs': num_epochs, 
+                    'init_lr': init_lr, 'lr_decay': 0, 
+                    'method': 'ADAM', 'grad_decay': 0.9, 'grad_sq_decay': 0.999})
   
     params_opt = None
     loss_opt = None
@@ -200,7 +166,7 @@ def main():
             plot_error_surface(loss_fun, params_opt, params_true, fun_type, ax)
             plot_param_trace(logger.param_trace, ax)        
          
-        fig.suptitle(ttl)
+        fig.suptitle(ttl)        
         fname = os.path.join(folder, 'linreg_1d_sgd_{}.png'.format(ttl))
         plt.savefig(fname)
     
