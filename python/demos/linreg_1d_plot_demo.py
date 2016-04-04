@@ -28,8 +28,6 @@ def make_fun_1d(fun_type):
 def make_data_linreg_1d(N, fun_type, matlab_hack=False):
     if '-' in fun_type:
         parts = fun_type.split('-')
-        print 'make 1d'
-        print parts
         fun_type = parts[0]
         centered = (parts[1] == 'centered')
     else:
