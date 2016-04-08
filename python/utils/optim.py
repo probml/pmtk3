@@ -16,7 +16,7 @@ def plot_loss_trace(losses, loss_min=None, ax=None):
         ax.axhline(loss_min, 0, len(losses), color='r')
         # Make sure horizontal line is visible by changing yscale
         ylim = ax.get_ylim()
-        ax.set_ylim([0.9*loss_min, ylim[1]])
+        ax.set_ylim([0.9*loss_min, 1.1*ylim[1]])
     return ax
     
 
@@ -130,12 +130,14 @@ def get_ith_minibatch_ixs(i, num_datapoints, batch_size):
     return slice(start, stop)
 
 def build_batched_grad(grad, batch_size, inputs, targets):
-    '''Grad has signature(weights, inputs, targets).
+    '''Grad has signature(weights, inputs, targets, N).
     Returns batched_grad with signature (weights, iter), applied to a
-    minibatch.'''
+    minibatch. We pass in the overall dataset size, N, to act as 
+    scaling factor.'''
+    N = inputs.shape[0]
     def batched_grad(weights, i):
         cur_idxs = get_ith_minibatch_ixs(i, len(targets), batch_size)
-        return grad(weights, inputs[cur_idxs], targets[cur_idxs])
+        return grad(weights, inputs[cur_idxs], targets[cur_idxs], N)
     return batched_grad
     
 ######
@@ -158,10 +160,11 @@ def autosgd(tuning_fun, tuning_method, obj_fun, grad_fun, x0, max_iters=100,
     return x, val, lr
 
 def sgd(obj_fun, grad_fun, x0, max_iters=100, callback=None,
-        lr_fun=const_lr(0.01), mass=0.9, update='regular'):
+        lr_fun=const_lr(0.01), mass=0.9, update='regular', avgdecay=0.99):
     '''Stochastic gradient descent with momentum.
     See eg http://caffe.berkeleyvision.org/tutorial/solver.html'''
     x = np.copy(x0)
+    xavg = x
     if callback is not None: callback(x)
     velocity = np.zeros(len(x))
     grad_fun = maybe_add_iter_arg_to_fun(grad_fun)
@@ -181,7 +184,13 @@ def sgd(obj_fun, grad_fun, x0, max_iters=100, callback=None,
         x  = x + velocity
         if callback is not None: callback(x)
     val = obj_fun(x)
-    return x, val
+    val_avg = obj_fun(xavg)
+    print 'sgd: val {:0.4g}, val_avg {:0.4g}'.format(val, val_avg)
+    if val < val_avg:
+        return x, val
+    else:
+        return xavg, val_avg
+
 
 def autoadam(tuning_fun, tuning_method, obj_fun, grad_fun, x0, max_iters=100,
             callback=None, b1=0.9, b2=0.999, eps=10**-8):
@@ -192,10 +201,11 @@ def autoadam(tuning_fun, tuning_method, obj_fun, grad_fun, x0, max_iters=100,
     return x, val, lr
 
 def adam(obj_fun, grad_fun, x0, max_iters=100, callback=None,
-         lr_fun=const_lr(0.01), b1=0.9, b2=0.999, eps=10**-8):
+         lr_fun=const_lr(0.01), b1=0.9, b2=0.999, eps=10**-8, avgdecay=0.99):
     """Adam as described in http://arxiv.org/pdf/1412.6980.pdf.
     It's basically RMSprop with momentum and some correction terms."""
     x = np.copy(x0)
+    xavg = x
     if callback is not None: callback(x)
     m = np.zeros(len(x))
     v = np.zeros(len(x))
@@ -209,9 +219,16 @@ def adam(obj_fun, grad_fun, x0, max_iters=100, callback=None,
         step_size = lr_fun(i)
         x -= step_size*mhat/(np.sqrt(vhat) + eps)
         if callback: callback(x)
+        # Polyak iterate averaging
+        xavg = (1-avgdecay)*x + avgdecay*xavg
     val = obj_fun(x)
-    return x, val
-
+    val_avg = obj_fun(xavg)
+    print 'adam: val {:0.4g}, val_avg {:0.4g}'.format(val, val_avg)
+    if val < val_avg:
+        return x, val
+    else:
+        return xavg, val_avg
+        
 def rmsprop(obj_fun, grad_fun, x0, max_iters=100,  callback=None,
             lr_fun=const_lr(0.01), gamma=0.9, eps = 10**-8):
     """Root mean squared prop: See Adagrad paper for details."""

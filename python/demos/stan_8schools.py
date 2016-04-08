@@ -22,6 +22,7 @@ transformed parameters {
         theta[j] <- mu + tau * eta[j];
 }
 model {
+    # priot on tau is implicitly U[0,infty]
     eta ~ normal(0, 1);
     #y ~ normal(theta, sigma)
     for (j in 1:J)

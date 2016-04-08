@@ -59,7 +59,7 @@ def run_expt(config, loss_opt=0):
     elif model_type[0:3] == 'mlp':
         _, layer_sizes = model_type.split(':')
         layer_sizes = [int(n) for n in layer_sizes.split('-')]
-        model = MLP(layer_sizes, 'regression', L2_reg=0.001, Ntrain=N) 
+        model = MLP(layer_sizes, 'regression', L2_reg=0.001) 
     else:
         raise ValueError('unknown model type {}'.format(model_type))
             
@@ -112,13 +112,13 @@ def run_expt(config, loss_opt=0):
                             max_iters, logger.callback, lr_fun)
     
     training_loss = model.PNLL(params, Xtrain, Ytrain)
-    print 'finished fitting, training loss {:0.3f}, {} obj calls, {} grad calls'.\
+    print 'finished fitting, training loss {:0.3g}, {} obj calls, {} grad calls'.\
         format(training_loss, model.num_obj_fun_calls, model.num_grad_fun_calls)
     
     fig = plt.figure()
     ax = fig.add_subplot(plot_rows, plot_cols, 1)
     opt.plot_loss_trace(logger.eval_trace, loss_opt, ax)
-    ax.set_title('final objective {:0.3f}'.format(training_loss))
+    ax.set_title('final objective {:0.3g}'.format(training_loss))
     ax.set_xlabel('epochs')
     
     if plot_data:
@@ -141,14 +141,12 @@ def run_expt(config, loss_opt=0):
   
         
               
-def demo_2d_linreg():
-    N = 50
+def demo_linreg():
+    N = 100
     num_epochs = 5
    
-    fun_type = 'linear-centered'
-    #fun_type = 'linear-uncentered'
-    #fun_type = 'sine'
-    #fun_type = 'quad'
+    #fun_type = 'linear-centered'
+    fun_type = 'linear-uncentered'
     
     model_type = 'mlp:1-1'
                 
@@ -159,42 +157,76 @@ def demo_2d_linreg():
            
     configs = []                                                                                    
 
-    configs.append({'fun_type': fun_type, 'N': N, 'model_type': model_type,  
-                'optimizer': 'SGD', 'batch_size': 10,  'num_epochs': num_epochs,  
-                'sgd_fun': opt.sgd,  'lr_tune': False,
-                'lr_init': 0.001, 'lr_decay': 0.9, 'lr_step': 100,
-                'name': 'sgd-mom', 'store_freq':1})
-
+    # LMS algorithm = SGD with batch size 1.
+    def sgd_fun_vanilla_nobatch(obj_fun, grad_fun, x0, max_iters, callback, lr_fun):
+                    return opt.sgd(obj_fun, grad_fun, x0, max_iters, callback,
+                        lr_fun, mass=0, update='regular', avgdecay=0)
     configs.append({'fun_type': fun_type, 'N': N, 'model_type': model_type,  
                 'optimizer': 'SGD', 'batch_size': 1,  'num_epochs': num_epochs,  
-                'sgd_fun': opt.sgd,  'lr_tune': False,
+                'sgd_fun': sgd_fun_vanilla_nobatch,  'lr_tune': False,
                 'lr_init': 0.001, 'lr_decay': 0.9, 'lr_step': 100,
-                'name': 'sgd-mom', 'store_freq':1})
+                'name': 'sgd-vanilla-nobatch', 'store_freq':1})
 
-    def sgd_fun(obj_fun, grad_fun, x0, max_iters, callback, lr_fun):
-                    return opt.sgd(obj_fun, grad_fun, x0, max_iters, callback,
-                    lr_fun, mass=0.9, update='regular')
+    # Need to set learning rate carefully!
+    configs.append({'fun_type': fun_type, 'N': N, 'model_type': model_type,  
+                'optimizer': 'SGD', 'batch_size': 1,  'num_epochs': num_epochs,  
+                'sgd_fun': sgd_fun_vanilla_nobatch,  'lr_tune': False,
+                'lr_init': 0.01, 'lr_decay': 0.9, 'lr_step': 100,
+                'name': 'sgd-vanilla-nobatch', 'store_freq':1})
+
+    # LR tuning
+    configs.append({'fun_type': fun_type, 'N': N, 'model_type': model_type,  
+                'optimizer': 'SGD', 'batch_size': 1,  'num_epochs': num_epochs,  
+                'sgd_fun': sgd_fun_vanilla_nobatch,  'lr_tune': True,
+                'lr_init': 0.01, 'lr_decay': 0.9, 'lr_step': 100,
+                'name': 'sgd-vanilla-tuned', 'store_freq':1})
+                
+     # Minibatch helps
     configs.append({'fun_type': fun_type, 'N': N, 'model_type': model_type,  
                 'optimizer': 'SGD', 'batch_size': 10,  'num_epochs': num_epochs,  
-                'sgd_fun': sgd_fun,  'lr_tune': True,
+                'sgd_fun': sgd_fun_vanilla_nobatch,  'lr_tune': True,
+                'lr_init': 0.01, 'lr_decay': 0.9, 'lr_step': 100,
+                'name': 'sgd-vanilla-tuned-minibatch', 'store_freq':1})
+       
+    # Momentum helps         
+    def sgd_fun_mom(obj_fun, grad_fun, x0, max_iters, callback, lr_fun):
+                    return opt.sgd(obj_fun, grad_fun, x0, max_iters, callback,
+                    lr_fun, mass=0.9, update='regular', avgdecay=0)
+    configs.append({'fun_type': fun_type, 'N': N, 'model_type': model_type,  
+                'optimizer': 'SGD', 'batch_size': 10,  'num_epochs': num_epochs,  
+                'sgd_fun': sgd_fun_mom,  'lr_tune': True,
                 'lr_init': 0, 'lr_decay': 0.9, 'lr_step': 100,
                 'name': 'sgd-mom', 'store_freq':1})
                 
-    def sgd_fun2(obj_fun, grad_fun, x0, max_iters, callback, lr_fun):
+    # Nesterov helps
+    def sgd_fun_nesterov(obj_fun, grad_fun, x0, max_iters, callback, lr_fun):
                     return opt.sgd(obj_fun, grad_fun, x0, max_iters, callback,
-                    lr_fun, mass=0.9, update='nesterov')
+                    lr_fun, mass=0.9, update='nesterov', avgdecay=0)
     configs.append({'fun_type': fun_type, 'N': N, 'model_type': model_type,  
                 'optimizer': 'SGD', 'batch_size': 10,  'num_epochs': num_epochs,  
-                'sgd_fun': sgd_fun2,  'lr_tune': True,
+                'sgd_fun': sgd_fun_nesterov,  'lr_tune': True,
                 'lr_init': 0, 'lr_decay': 0.9, 'lr_step': 100,
                 'name': 'sgd-mom-nesterov', 'store_freq':1})
-                
-                    
+                         
+    # Adam is often more robust  
+    def sgd_fun_adam(obj_fun, grad_fun, x0, max_iters, callback, lr_fun):
+                    return opt.adam(obj_fun, grad_fun, x0, max_iters, callback,
+                    lr_fun,  avgdecay=0)
     configs.append({'fun_type': fun_type, 'N': N, 'model_type': model_type,  
                 'optimizer': 'SGD', 'batch_size': 10,  'num_epochs': num_epochs,  
-                'sgd_fun': opt.adam,  'lr_tune': True,
+                'sgd_fun': sgd_fun_adam,  'lr_tune': True,
                 'lr_init': 0, 'lr_decay': 0.9, 'lr_step': 100,
                 'name': 'adam', 'store_freq':1})
+                
+    # Averaging can help
+    def sgd_fun_adam_avg(obj_fun, grad_fun, x0, max_iters, callback, lr_fun):
+                    return opt.adam(obj_fun, grad_fun, x0, max_iters, callback,
+                    lr_fun,  avgdecay=0.99)
+    configs.append({'fun_type': fun_type, 'N': N, 'model_type': model_type,  
+                'optimizer': 'SGD', 'batch_size': 10,  'num_epochs': num_epochs,  
+                'sgd_fun': sgd_fun_adam_avg,  'lr_tune': True,
+                'lr_init': 0, 'lr_decay': 0.9, 'lr_step': 100,
+                'name': 'adam-avg', 'store_freq':1})
 
                 
     for expt_num, config in enumerate(configs):
@@ -204,8 +236,76 @@ def demo_2d_linreg():
     plt.show()
 
 
+
+def demo_quad():
+    N = 100
+    num_epochs = 10
+   
+    fun_type = 'quad'
+    
+    model_type = 'mlp:1-10-10-1'
+                
+    bfgs_config = {'fun_type': fun_type, 'N': N, 'model_type': model_type, 
+                    'optimizer': 'BFGS', 'num_epochs': num_epochs}
+    np.random.seed(1)           
+    loss_opt = run_expt(bfgs_config)
+           
+    configs = []                                                                                    
+
+
+    # Momentum helps         
+    def sgd_fun_mom(obj_fun, grad_fun, x0, max_iters, callback, lr_fun):
+                    return opt.sgd(obj_fun, grad_fun, x0, max_iters, callback,
+                    lr_fun, mass=0.9, update='regular', avgdecay=0)
+    configs.append({'fun_type': fun_type, 'N': N, 'model_type': model_type,  
+                'optimizer': 'SGD', 'batch_size': 10,  'num_epochs': num_epochs,  
+                'sgd_fun': sgd_fun_mom,  'lr_tune': True,
+                'lr_init': 0, 'lr_decay': 0.9, 'lr_step': 100,
+                'name': 'sgd-mom', 'store_freq':1})
+                
+    # Nesterov helps
+    def sgd_fun_nesterov(obj_fun, grad_fun, x0, max_iters, callback, lr_fun):
+                    return opt.sgd(obj_fun, grad_fun, x0, max_iters, callback,
+                    lr_fun, mass=0.9, update='nesterov', avgdecay=0)
+    configs.append({'fun_type': fun_type, 'N': N, 'model_type': model_type,  
+                'optimizer': 'SGD', 'batch_size': 10,  'num_epochs': num_epochs,  
+                'sgd_fun': sgd_fun_nesterov,  'lr_tune': True,
+                'lr_init': 0, 'lr_decay': 0.9, 'lr_step': 100,
+                'name': 'sgd-mom-nesterov', 'store_freq':1})
+                         
+    # Adam is often more robust  
+    def sgd_fun_adam(obj_fun, grad_fun, x0, max_iters, callback, lr_fun):
+                    return opt.adam(obj_fun, grad_fun, x0, max_iters, callback,
+                    lr_fun,  avgdecay=0)
+    configs.append({'fun_type': fun_type, 'N': N, 'model_type': model_type,  
+                'optimizer': 'SGD', 'batch_size': 10,  'num_epochs': num_epochs,  
+                'sgd_fun': sgd_fun_adam,  'lr_tune': True,
+                'lr_init': 0, 'lr_decay': 0.9, 'lr_step': 100,
+                'name': 'adam', 'store_freq':1})
+                
+    # Averaging can help
+    def sgd_fun_adam_avg(obj_fun, grad_fun, x0, max_iters, callback, lr_fun):
+                    return opt.adam(obj_fun, grad_fun, x0, max_iters, callback,
+                    lr_fun,  avgdecay=0.99)
+    configs.append({'fun_type': fun_type, 'N': N, 'model_type': model_type,  
+                'optimizer': 'SGD', 'batch_size': 10,  'num_epochs': num_epochs,  
+                'sgd_fun': sgd_fun_adam_avg,  'lr_tune': True,
+                'lr_init': 0, 'lr_decay': 0.9, 'lr_step': 100,
+                'name': 'adam-avg', 'store_freq':1})
+
+                
+    for expt_num, config in enumerate(configs):
+        np.random.seed(1)
+        run_expt(config, loss_opt)
+      
+    plt.show()
+
+
+
+
 def main():
-    demo_2d_linreg()
+    demo_linreg()
+    #demo_quad()
 
 if __name__ == "__main__":
     main()

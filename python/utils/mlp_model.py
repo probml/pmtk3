@@ -10,7 +10,8 @@ def relu(x):
     np.maximum(0, x)
       
 class MLP(object):
-    def __init__(self, layer_sizes, output_type='regression', L2_reg=0.001, Ntrain=1, nonlinearity=np.tanh):
+    def __init__(self, layer_sizes, output_type='regression', L2_reg=0.001,
+                nonlinearity=np.tanh):
         self.shapes = zip(layer_sizes[:-1], layer_sizes[1:])
         self.nparams = sum((m+1)*n for m, n in self.shapes)
         self.L2_reg = L2_reg
@@ -18,7 +19,6 @@ class MLP(object):
         self.nonlinearity = nonlinearity
         self.num_obj_fun_calls = 0
         self.num_grad_fun_calls = 0
-        self.Ntrain = 1
         
     def init_params(self):
         param_scale = 0.1
@@ -44,7 +44,7 @@ class MLP(object):
             logprobs = outputs - logsumexp(outputs, axis=1, keepdims=True)
             return logprobs
     
-    def NLL(self, W_vect, X, Y):
+    def NLL(self, W_vect, X, Y, N=None):
         '''Negative log likelihood.
         For classification, we assume Y is a N*C one-hot matrix.'''
         if self.output_type == 'classification':
@@ -55,20 +55,22 @@ class MLP(object):
             Y = np.ravel(Y)
             Yhat = np.ravel(Yhat) 
             log_lik = -0.5*np.sum(np.square(Y - Yhat))
-        B = X.shape[0] # batch size
-        log_lik = (log_lik / B ) * self.Ntrain
+        if N is not None:
+            # Compensate for this being a minibatch
+            B = X.shape[0] # batch size
+            log_lik = (log_lik / B ) * N
         return -log_lik 
         
-    def PNLL(self, W_vect, X, Y):
+    def PNLL(self, W_vect, X, Y, N=None):
         '''Penalized negative log likelihood.'''
         self.num_obj_fun_calls += 1
         log_prior = -self.L2_reg * np.dot(W_vect, W_vect)        
-        log_lik = -self.NLL(W_vect, X, Y)
+        log_lik = -self.NLL(W_vect, X, Y, N)
         return -(log_lik + log_prior)
             
-    def gradient(self, W_vect, X, Y):
+    def gradient(self, W_vect, X, Y, N=None):
         self.num_grad_fun_calls += 1
         g = autograd.grad(self.PNLL)
-        return g(W_vect, X, Y)
+        return g(W_vect, X, Y, N)
 
     

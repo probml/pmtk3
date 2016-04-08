@@ -16,7 +16,7 @@ with Model() as schools:
     print 'building model...'
     eta = Normal('eta', 0, 1, shape=J)
     mu = Normal('mu', 0, sd=1e6)
-    tau = HalfCauchy('tau', 25) # not in original model
+    tau = HalfCauchy('tau', 25) # original model uses U[0,infty]
     theta = mu + tau*eta
     obs = Normal('obs', theta, sd=sigma, observed=y)
     
