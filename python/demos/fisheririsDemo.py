@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 
+# Pairwise scatterplots of Fisher Iris features. The diagonal plots contain
+# the marginal histograms of the features, while the off diagonals contain
+# pairs of features.
+
 from sklearn.datasets import load_iris
 from matplotlib import pylab as pl
 from itertools import permutations
-
 
 data = load_iris()
 features = data['data']
