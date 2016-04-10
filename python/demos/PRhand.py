@@ -4,7 +4,7 @@
 # A is better than B. 
 
 import numpy as np
-import matplotlib.pylab as pl
+import matplotlib.pyplot as pl
 
 fA = np.vectorize(lambda x: 1 - x**3)
 fB = np.vectorize(lambda x: 1 - x**(3/2))

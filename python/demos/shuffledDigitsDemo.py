@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
-from utils import load_mat
-from matplotlib import pylab as pl
+import utils as utils.util
+import matplotlib.pyplot as pl
 import numpy as np
 
 
-data = load_mat('mnistAll')
+data = util.load_mat('mnistAll')
 mnist = data['mnist']
 train_images = mnist['train_images'][0][0]  # 28*28*60000
 train_labels = mnist['train_labels'][0][0]  # 60000*1

@@ -3,7 +3,7 @@
 from numpy import tanh
 from scipy.special import expit 
 import numpy as np
-import matplotlib.pylab as pl
+import matplotlib.pyplot as pl
 
 relu = lambda x: x * (x > 0)
 funs = [tanh, expit, relu]
