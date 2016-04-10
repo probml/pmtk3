@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+# Plots the binomial distribution.
+
 from scipy.stats import binom
 import numpy as np
 import matplotlib.pylab as pl

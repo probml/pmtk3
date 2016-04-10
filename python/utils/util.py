@@ -5,6 +5,7 @@ import os
 import scipy.io as sio
 import numpy as np
 import glob
+from init_pmtk3 import DATA_DIR
 #from demos import linreg_1d_batch_demo 
 #import demos.linreg_1d_batch_demo
 #from demos.linreg_1d_batch_demo import main

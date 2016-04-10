@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+# Plots categorical distributions.
+
 import numpy as np
 import matplotlib.pylab as pl
 
