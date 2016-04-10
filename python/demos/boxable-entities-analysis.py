@@ -1,8 +1,8 @@
 #data analysis on boxable-entities-v3.csv
 
-import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 
 fname = '/Users/kpmurphy/github/pmtk3/data/boxable-entities-v3.csv'
 

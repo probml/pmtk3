@@ -1,8 +1,8 @@
 # 1d linear regression.
 # Make the data and plot it.
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 from utils.linreg_model import LinregModel
 
 def make_fun_1d(fun_type):

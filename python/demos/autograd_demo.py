@@ -1,4 +1,6 @@
-# example from https://github.com/HIPS/autograd
+#!/usr/bin/env python
+
+# Example from https://github.com/HIPS/autograd.
 
 import autograd
 import autograd.numpy as np  # Thinly-wrapped numpy

@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
-from utils import load_mat
-import pylab as pl
+import matplotlib.pyplot as pl
 import numpy as np
+import utils.util as util
 from sklearn.cluster import KMeans
 
-data = load_mat('heightWeight')
+data = util.load_mat('heightWeight')
 data = data['heightWeightData']
 markers = 'Dox'
 colors = 'rgb'

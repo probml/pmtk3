@@ -2,10 +2,9 @@
 
 # Plots 2D gaussian contours.
 
+import matplotlib.pyplot as pl
 import numpy as np
-import matplotlib.pylab as pl
 from mpl_toolkits.mplot3d import Axes3D
-
 
 def mvn2d(x, y, sigma):
     xx, yy = np.meshgrid(x, y)

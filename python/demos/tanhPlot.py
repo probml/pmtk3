@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
+import matplotlib.pyplot as pl
+import numpy as np
 from numpy import tanh
 from scipy.special import expit 
-import numpy as np
-import matplotlib.pyplot as pl
 
 relu = lambda x: x * (x > 0)
 funs = [tanh, expit, relu]

@@ -2,8 +2,8 @@
 
 # Plots 0-1, hinge and log loss.
 
+import matplotlib.pyplot as pl
 import numpy as np
-import matplotlib.pylab as pl
 
 zeroOne = np.vectorize(lambda x: 1 * (x <= 0))
 hinge = np.vectorize(lambda x: max(0, 1-x))

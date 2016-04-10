@@ -3,8 +3,8 @@
 # Plot Linear Gaussian CPD p(y|x) = N(Y|a + bx, sigma) 
 # Here a is the offset and b is the slope. 
 
+import matplotlib.pyplot as pl
 import numpy as np
-import pylab as pl
 import sklearn
 import utils.util as util
 from matplotlib import cm

@@ -4,8 +4,8 @@
 # A is better than B. Plots true positive rate, (tpr) vs false positive
 # rate, (fpr).
 
+import matplotlib.pyplot as pl
 import numpy as np
-import matplotlib.pylab as pl
 
 fA = np.vectorize(lambda x: x**(1.0/3))
 fB = np.vectorize(lambda x: x**(2.0/3))

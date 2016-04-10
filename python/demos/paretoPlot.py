@@ -2,9 +2,9 @@
 
 # Plots Pareto distribution
 
-from scipy.stats import pareto
+import matplotlib.pyplot as pl
 import numpy as np
-import matplotlib.pylab as pl
+from scipy.stats import pareto
 
 params = [(1, 3), (1, 2), (1, 1), (0.001, 1)]
 styles = ['b-', 'r:', 'k-.', 'g--']

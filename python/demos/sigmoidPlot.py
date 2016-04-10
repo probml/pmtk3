@@ -2,8 +2,8 @@
 
 # Plots the sigmoid function.
 
+import matplotlib.pyplot as pl
 import numpy as np
-import matplotlib.pylab as pl
 
 e = np.exp(1)
 x = np.linspace(-10, 10, 1000)

@@ -9,13 +9,13 @@
 #           based on code code by Romain Thibaux
 #           (Lecture 2 from http://www.cs.berkeley.edu/~asimma/294-fall06/)
 
-from utils import preprocessor_create
-from utils import poly_data_make
+import numpy as np
+import matplotlib.pyplot as pl
+from utils.util import preprocessor_create
+from utils.util import poly_data_make
 from SupervisedModels.linearRegression import linreg_fit
 from SupervisedModels.linearRegression import linreg_fit_bayes
 from SupervisedModels.linearRegression import linreg_predict
-import numpy as np
-import pylab as pl
 
 N = 21
 xtrain, ytrain, xtest, _, ytest, _ = poly_data_make(sampling='thibaux', n=N)

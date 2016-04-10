@@ -2,8 +2,8 @@
 
 # Plots L2, L1 and Huber losses.
 
+import matplotlib.pyplot as pl
 import numpy as np
-import matplotlib.pylab as pl
 
 delta = 1.5
 huber = lambda x: (x**2/2) * (x <= delta) + (delta * abs(x) - delta**2/2) * (x > delta)

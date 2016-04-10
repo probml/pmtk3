@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
+import matplotlib.pyplot as pl
 import numpy as np
-import matplotlib.pylab as pl
 from sklearn.lda import LDA
 from sklearn.qda import QDA
 

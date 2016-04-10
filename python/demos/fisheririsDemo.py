@@ -4,9 +4,9 @@
 # the marginal histograms of the features, while the off diagonals contain
 # pairs of features.
 
-from sklearn.datasets import load_iris
-from matplotlib import pylab as pl
+import matplotlib.pyplot as pl
 from itertools import permutations
+from sklearn.datasets import load_iris
 
 data = load_iris()
 features = data['data']

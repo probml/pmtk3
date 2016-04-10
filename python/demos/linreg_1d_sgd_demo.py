@@ -5,9 +5,9 @@ import autograd
 import autograd.numpy as np
 import matplotlib.pyplot as plt
 import os
-from demos.linreg_1d_plot_demo import plot_error_surface, make_data_linreg_1d, plot_data_and_predictions
 import utils.util as util
 import utils.sgd_util as sgd
+from demos.linreg_1d_plot_demo import plot_error_surface, make_data_linreg_1d, plot_data_and_predictions
 from utils.optim_util import plot_loss_trace, plot_param_trace, bfgs_fit, MinimizeLogger
 from utils.linreg_model import LinregModel
 from utils.mlp_model import MLP

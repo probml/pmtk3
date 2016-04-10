@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
-from utils import load_mat
+import matplotlib.pyplot as pl
 import numpy as np
-import matplotlib.pylab as pl
+import utils.util as util
 from matplotlib.patches import Ellipse
 
-data = load_mat('heightWeight')
+data = util.load_mat('heightWeight')
 data = data['heightWeightData']
 sex = data[:, 0]
 x = data[:, 1]

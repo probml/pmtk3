@@ -1,9 +1,9 @@
 """
 Demo of scatter plot with varying marker colors and sizes.
 """
-import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.cbook as cbook
+import numpy as np
 
 # Load a numpy record array from yahoo csv data with fields date,
 # open, close, volume, adj_close from the mpl-data/example directory.

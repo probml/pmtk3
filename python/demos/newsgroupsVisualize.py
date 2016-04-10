@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
-from utils import load_mat
 import numpy as np
-import matplotlib.pylab as pl
+import matplotlib.pyplot as pl
+import utils.util as util
 from scipy import ndimage
 
-data = load_mat('20news_w100')
+data = util.load_mat('20news_w100')
 documents = data['documents']
 documents = documents.toarray().T
 newsgroups = data['newsgroups'][0]

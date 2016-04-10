@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
-from utils import DATA_DIR
 import os
+import matplotlib.pyplot as pl
 import numpy as np
-import matplotlib.pylab as pl
 from sklearn.neighbors import KNeighborsClassifier as KNN
 from sklearn.cross_validation import cross_val_score
+from utils.util import DATA_DIR
 
 
 def load_data():

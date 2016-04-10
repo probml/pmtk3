@@ -2,8 +2,8 @@
 
 # Plots categorical distributions.
 
+import matplotlib.pyplot as pl
 import numpy as np
-import matplotlib.pylab as pl
 
 pl.bar(np.arange(4) + 0.5, [0.25] * 4)
 pl.axis([0, 5, 0, 1])

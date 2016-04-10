@@ -5,8 +5,8 @@
 # The original code uses the default one-vs-rest method (and liblinear solver).
 # We change it to softmax loss (and LBFGS solver).
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 from sklearn import linear_model, datasets
 
 # import the data 

@@ -1,8 +1,9 @@
 # adpated from http://docs.scipy.org/doc/scipy-0.15.1/reference/generated/scipy.signal.correlate2d.html
+
+import matplotlib.pyplot as plt
 import numpy as np
 from scipy import signal
 from scipy import misc
-import matplotlib.pyplot as plt
 
 
 lena = misc.lena() - misc.lena().mean()

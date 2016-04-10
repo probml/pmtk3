@@ -3,7 +3,7 @@
 # Fit linear and quadratic surfaces to data
 # Based on code by Romain Thibaux <thibaux@eecs.berkeley.edu>
 
-import matplotlib.pylab as pl
+import matplotlib.pyplot as pl
 import numpy as np
 import utils.util as util
 from mpl_toolkits.mplot3d import Axes3D

@@ -1,23 +1,16 @@
 #!/usr/bin/env python3
 
+import csv
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import sklearn
 from itertools import chain, combinations
 from scipy.stats import linregress
-import sklearn
 from sklearn.cross_validation import cross_val_score
 from sklearn.linear_model import LassoCV, LinearRegression, RidgeCV
 from sklearn.metrics import mean_squared_error
 from sklearn.preprocessing import scale
-
-import matplotlib.pyplot as plt
-
-from sys import path
-path.append('..') # add parent directory
-#from utils import load_mat
-
-import csv
-import numpy as np
-#import urllib2
-import pandas as pd
 
 pd.set_option('display.max_columns', 160)
 pd.set_option('display.width', 1000)
@@ -163,5 +156,3 @@ ax = plt.gca()
 ax.set_xticklabels(method_names)
 #fname = '/Users/kpmurphy/GDrive/Backup/MLbook/book2.0/Figures/pdfFigures/prostateBoxplot.pdf'
 #plt.savefig(fname, bbox_inches='tight')
-
-
