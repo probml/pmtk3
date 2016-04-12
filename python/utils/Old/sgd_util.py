@@ -1,9 +1,11 @@
 # Functions related to stochastic gradient descent (SGD)
-# See also https://github.com/HIPS/autograd/blob/master/examples/optimizers.py
+# DEPRECATED
+# Use optim_util.py instead
 
 import numpy as np
 import matplotlib.pyplot as plt
 #from collections import namedtuple
+from scipy.optimize import minimize
 
 # Class to create a stateful callback function for sgd
 class SGDLogger(object):
@@ -25,6 +27,39 @@ class SGDLogger(object):
                 epoch, batch_num, self.iter, obj)
         self.iter += 1
     
+class MinimizeLogger(object):
+    '''Class to create a stateful callback function for scipy's minimize'''
+    def __init__(self, obj_fun, grad_fun, args, print_freq=0, store_params=False):
+        self.args = args
+        self.param_trace = []
+        self.obj_trace = []
+        self.iter = 0
+        self.print_freq = 0
+        self.obj_fun = obj_fun
+        self.grad_fun = grad_fun
+        self.grad_norm_trace = []
+        self.store_params = store_params
+        
+    def update(self, params):
+        obj = self.obj_fun(params, *self.args)
+        self.obj_trace.append(obj)
+        gradient = self.grad_fun(params, *self.args)
+        self.grad_norm_trace.append(np.linalg.norm(gradient))
+        if self.store_params:
+            self.param_trace.append(params) 
+        if (self.print_freq > 0) and (self.iter % self.print_freq == 0):
+            print "iteration {}, objective {:2.3f}".format(self.iter, obj)
+        self.iter += 1
+
+
+def bfgs_fit(params, obj_fun, grad_fun, args=None, callback_fun=None, num_iters=100):
+    result = minimize(obj_fun, params, args, method='BFGS', jac=grad_fun,
+            callback=callback_fun,
+            options = {'maxiter':num_iters, 'disp':True})
+    print 'finished bfgs_fit after {} iterations, {} fun evals, {} grad evals'.format(result.nit, result.nfev, result.njev)
+    #n_fun_evals = result.nfev + result.njev # function plus gradient
+    n_fun_evals = result.nfev 
+    return result.x, result.fun, n_fun_evals
 
     
 #########
@@ -77,6 +112,8 @@ if False:
         print Xb
 
 
+
+
 ######
 # Learning rate functions
     
@@ -95,6 +132,12 @@ def lr_exp_decay(t, base_lr=0.001, decay_rate=0.9, decay_steps=2, staircase=True
 # eta = eta0 / pow(t, power_t) [default]
 def lr_inv_scaling(t, base_lr=0.001, power_t=0.25):
    return base_lr / np.power(t+1, power_t)
+   
+
+#http://leon.bottou.org/projects/sgd
+def lr_bottou(t, base_lr=0.001, power_t=0.75, lam=1):
+   return base_lr / np.power(1 + lam*base_lr*t, power_t)
+
 
 def plot_lr_trace():
     lr_trace = []
@@ -120,7 +163,7 @@ def sgd_minimize(params, obj_fun, grad_fun, X, y, batch_size, num_epochs,
     batch_indices = make_batches(N, batch_size)
     D = len(params)
     params_avg = np.zeros(D)
-    decay = 0.999
+    decay = 0.99
     iter = 0
     for epoch in range(num_epochs):
         X, y = shuffle_data(X, y) 
@@ -133,10 +176,57 @@ def sgd_minimize(params, obj_fun, grad_fun, X, y, batch_size, num_epochs,
             params_avg = decay * params_avg + (1-decay) * params
             params_avg_unbiased = params_avg / (1 - (decay**iter))
             if callback_fun is not None:
-                callback_fun(params, obj_value, gradient_vec, epoch, batch_num)  
-    return params, params_avg_unbiased, obj_value
+                callback_fun(params, obj_value, gradient_vec, epoch, batch_num) 
+    print 'finished sgd, after {} minibatch updates'.format(iter) 
+    loss = obj_fun(params, X, y)
+    loss_avg = obj_fun(params_avg, X, y)
+    return params, loss, iter, params_avg, loss_avg
 
+##########
 
+  
+class Rprop(object):
+    def __init__(self, eta_plus = 1.2, eta_minus = 0.5, delta_min = 0, delta_max = 50, delta_zero = 0.5, improved_Rprop=True):
+        self.eta_plus = eta_plus
+        self.eta_minus = eta_minus
+        self.delta_min = delta_min
+        self.delta_max = delta_max
+        self.delta_init = delta_zero
+        self.improved_Rprop = improved_Rprop
+        self.iter = 0
+
+    def init(self, params):
+        D = len(params)
+        self.old_delta = self.delta_init * np.ones(D)
+        self.old_gradient = np.zeros(D)
+        self.old_delta_params = np.zeros(D)
+        self.old_objective = 0
+        
+    def update(self, params, obj_value, grad, epoch):
+        if self.iter == 0:
+            ip = np.ones(len(params))
+            delta = self.delta_init
+        else:
+            ip = self.old_gradient * grad
+            delta = np.minimum(self.old_delta * self.eta_plus, self.delta_max) * (ip > 0) + \
+                np.maximum(self.old_delta * self.eta_minus, self.delta_min) * (ip < 0) + \
+                self.old_delta * (ip == 0)
+        delta_params = np.zeros(len(params))
+        delta_params = -np.sign(grad) * delta * (ip > 0) + -np.sign(grad) * delta * (ip == 0) 
+        if self.improved_Rprop:
+            if (obj_value > self.old_objective): 
+                delta_params[ip < 0] = -self.old_delta_params[ip < 0] # conditionally backtrack
+        else:
+            delta_params[ip < 0] = -self.old_delta_params[ip < 0] # backtrack
+        params = params + delta_params
+        self.old_delta = delta
+        self.old_gradient = grad
+        self.old_gradient[ip < 0] = 0 # just changed sign, reset counter to 0 
+        self.old_objective = obj_value
+        self.old_delta_params = delta_params
+        return params
+
+        
 class SGDMomentum(object):
     def __init__(self, lr_fun, mass=0.9):
         self.lr_fun = lr_fun
@@ -179,8 +269,8 @@ class RMSprop(object):
 
             
 class ADAM(object):
-    def __init__(self, lr, grad_decay=0.9, grad_sq_decay=0.999):
-        self.lr = lr # alpha
+    def __init__(self, lr_fun, grad_decay=0.9, grad_sq_decay=0.999):
+        self.lr_fun = lr_fun # alpha
         self.grad_decay = grad_decay # beta1
         self.grad_sq_decay = grad_sq_decay # beta2
         self.mean_gradients = [] # m
@@ -194,6 +284,7 @@ class ADAM(object):
         
     def update(self, params, obj_value, gradient_vec, epoch):
         self.iter = self.iter + 1
+        lr = self.lr_fun(self.iter, epoch)
         self.mean_gradients = self.grad_decay * self.mean_gradients + \
             (1-self.grad_decay) * gradient_vec
         self.mean_sq_gradients = self.grad_sq_decay * self.mean_sq_gradients + \
@@ -202,5 +293,5 @@ class ADAM(object):
         mean_grad = self.mean_gradients / (1 - self.grad_decay**self.iter)
         mean_sq_grad = self.mean_sq_gradients / (1 - self.grad_sq_decay**self.iter)
         denominator = np.sqrt(mean_sq_grad) + eps
-        params = params -  self.lr * mean_grad / denominator
+        params = params -  lr * mean_grad / denominator
         return params
