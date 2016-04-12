@@ -9,17 +9,17 @@ from utils.util import DATA_DIR
 
 
 def load_data():
-    """Since the knnClassify3c.mat is the matlab v7.3 or later file
-    we have to load data from txt"""
-    train_file = os.path.join(DATA_DIR, 'knnClassify3cTrain.txt')
-    test_file = os.path.join(DATA_DIR, 'knnClassify3cTest.txt')
-    train = np.loadtxt(train_file,
-                       dtype=[('x_train', ('f8', 2)),
-                              ('y_train', ('f8', 1))])
-    test = np.loadtxt(test_file,
-                      dtype=[('x_test', ('f8', 2)),
-                             ('y_test', ('f8', 1))])
-    return train['x_train'], train['y_train'], test['x_test'], test['y_test']
+  """Since the knnClassify3c.mat is the matlab v7.3 or later file
+  we have to load data from txt"""
+  train_file = os.path.join(DATA_DIR, 'knnClassify3cTrain.txt')
+  test_file = os.path.join(DATA_DIR, 'knnClassify3cTest.txt')
+  train = np.loadtxt(train_file,
+                     dtype=[('x_train', ('f8', 2)),
+                            ('y_train', ('f8', 1))])
+  test = np.loadtxt(test_file,
+                    dtype=[('x_test', ('f8', 2)),
+                           ('y_test', ('f8', 1))])
+  return train['x_train'], train['y_train'], test['x_test'], test['y_test']
 
 x_train, y_train, x_test, y_test = load_data()
 
@@ -29,19 +29,19 @@ y_unique = np.unique(y_train)
 markers = '*x+'
 colors = 'bgr'
 for i in range(len(y_unique)):
-    pl.scatter(x_train[y_train == y_unique[i], 0],
-               x_train[y_train == y_unique[i], 1],
-               marker=markers[i],
-               c=colors[i])
+  pl.scatter(x_train[y_train == y_unique[i], 0],
+             x_train[y_train == y_unique[i], 1],
+             marker=markers[i],
+             c=colors[i])
 pl.savefig('knnClassifyDemo_1.png')
 
 #plot test fig
 pl.figure()
 for i in range(len(y_unique)):
-    pl.scatter(x_test[y_test == y_unique[i], 0],
-               x_test[y_test == y_unique[i], 1],
-               marker=markers[i],
-               c=colors[i])
+  pl.scatter(x_test[y_test == y_unique[i], 0],
+             x_test[y_test == y_unique[i], 1],
+             marker=markers[i],
+             c=colors[i])
 pl.savefig('knnClassifyDemo_2.png')
 
 x = np.linspace(np.min(x_test[:, 0]), np.max(x_test[:, 0]), 200)
@@ -51,23 +51,23 @@ xy = np.c_[xx.ravel(), yy.ravel()]
 
 # use the knn model to predict
 for k in [1, 5, 10]:
-    knn = KNN(n_neighbors=k)
-    knn.fit(x_train, y_train)
-    pl.figure()
-    y_predicted = knn.predict(xy)
-    pl.pcolormesh(y_predicted.reshape(200, 200))
-    pl.title('k=%s' % (k))
-    pl.savefig('knnClassifyDemo_k%s.png' % (k))
+  knn = KNN(n_neighbors=k)
+  knn.fit(x_train, y_train)
+  pl.figure()
+  y_predicted = knn.predict(xy)
+  pl.pcolormesh(y_predicted.reshape(200, 200))
+  pl.title('k=%s' % (k))
+  pl.savefig('knnClassifyDemo_k%s.png' % (k))
 
 #plot train err and test err with different k
 ks = [1, 5, 10, 20, 50, 100, 120]
 train_errs = []
 test_errs = []
 for k in ks:
-    knn = KNN(n_neighbors=k)
-    knn.fit(x_train, y_train)
-    train_errs.append(1 - knn.score(x_train, y_train))
-    test_errs.append(1 - knn.score(x_test, y_test))
+  knn = KNN(n_neighbors=k)
+  knn.fit(x_train, y_train)
+  train_errs.append(1 - knn.score(x_train, y_train))
+  test_errs.append(1 - knn.score(x_test, y_test))
 pl.figure()
 pl.plot(ks, train_errs, 'bs:', label='train')
 pl.plot(ks, test_errs, 'rx-', label='test')
