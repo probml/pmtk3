@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+# Plots 2D gaussian contours.
+
 import numpy as np
 import matplotlib.pylab as pl
 from mpl_toolkits.mplot3d import Axes3D

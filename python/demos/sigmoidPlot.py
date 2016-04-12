@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+# Plots the sigmoid function.
+
 import numpy as np
 import matplotlib.pylab as pl
 

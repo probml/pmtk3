@@ -1,15 +1,6 @@
 #!/usr/bin/env python3
 #
-#       Author:    Srinivas Vasudevan
-#       E-mail:    srvasude@google.com
-#
-#       File Name: betaBinomPostPredDemo.py
-#       Description:
-#           plot the beta binomial distribution
-#
-#       Last Modified:
-#           2015-11-16
-
+# Plots the posterior and plugin predictives for the Beta-Binomial distribution.
 
 from scipy.misc import comb
 from scipy.special import beta

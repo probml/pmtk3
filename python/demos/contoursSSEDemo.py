@@ -1,24 +1,16 @@
 #!/usr/bin/env python3
-#
-#       Author:    Srinivas Vasudevan
-#       E-mail:    srvasude@google.com
-#
-#       File Name: contoursSSEDemo.py
-#       Description:
-#           Error surface for linear regression model.
-#
-#       Last Modified:
-#           2015-11-28
+
+# Error surface for linear regression model.
 
 import matplotlib.pyplot as pl
-from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
-from utils import poly_data_make
+import utils.util as util
+from mpl_toolkits.mplot3d import Axes3D
 
 def contoursSSEDemo():
   N = 21
-  x,y,_,_,_,_ = poly_data_make(sampling='thibaux', n=N)
-  X = np.concatenate((np.ones((N,1)), x.reshape(N,1)), axis=1)
+  x,y,_,_,_,_ = util.poly_data_make(sampling='thibaux', n=N)
+  X = util.add_ones(x)
 
   return X,y
 
