@@ -2,7 +2,7 @@
 
 from scipy.stats import beta
 import numpy as np
-import matplotlib.pylab as pl
+import matplotlib.pyplot as pl
 
 x = np.linspace(0, 1, 100)
 aa = [0.1, 1., 2., 8.]

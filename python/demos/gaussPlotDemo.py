@@ -2,9 +2,9 @@
 
 # Plot the standard gaussian distribution.
 
-from scipy.stats import norm
-import matplotlib.pylab as pl
+import matplotlib.pyplot as pl
 import numpy as np
+from scipy.stats import norm
 
 x = np.linspace(-3, 3, 100)
 y = norm.pdf(x)

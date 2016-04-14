@@ -3,8 +3,8 @@
 # Precision-recall curve for two hypothetical classifications systems.
 # A is better than B. 
 
+import matplotlib.pyplot as pl
 import numpy as np
-import matplotlib.pylab as pl
 
 fA = np.vectorize(lambda x: 1 - x**3)
 fB = np.vectorize(lambda x: 1 - x**(3/2))

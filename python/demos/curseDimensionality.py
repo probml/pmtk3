@@ -2,8 +2,8 @@
 
 # Show the curse of dimensionality.
 
+import matplotlib.pyplot as pl
 import numpy as np
-import matplotlib.pylab as pl
 
 ds = [1., 3., 5., 7., 10.]  # element is float, to make python2 work
 s = np.linspace(0, 1, 100)

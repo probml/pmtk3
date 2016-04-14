@@ -2,10 +2,10 @@
 
 # Plots Sigmoid vs. Probit.
 
+import matplotlib.pyplot as pl
+import numpy as np
 from scipy.special import expit
 from scipy.stats import norm
-import numpy as np
-import matplotlib.pylab as pl
 
 x = np.arange(-6, 6, 0.1)
 l = np.sqrt(np.pi/8); 

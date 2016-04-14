@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 
-from scipy.stats import gamma
+# Plot the gamma distribution
+
+import matplotlib.pyplot as pl
 import numpy as np
-import matplotlib.pylab as pl
+from scipy.stats import gamma
 
 x = np.linspace(0, 7, 100)
 for a in [1, 1.5, 2]:

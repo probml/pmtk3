@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
+import matplotlib.pyplot as pl
+import numpy as np
 from scipy.stats import gaussian_kde
 from scipy.stats import norm
-import matplotlib.pylab as pl
-import numpy as np
 
 x = np.arange(0.5, 2.5, 0.01)
 for size in [10, 100, 1000]:

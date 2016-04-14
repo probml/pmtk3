@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-from scipy.spatial import KDTree, Voronoi, voronoi_plot_2d
-import matplotlib.pylab as pl
+import matplotlib.pyplot as pl
 import numpy as np
+from scipy.spatial import KDTree, Voronoi, voronoi_plot_2d
 
 data = np.random.rand(25, 2)
 tree = KDTree(data)

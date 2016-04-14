@@ -2,7 +2,7 @@
 
 # Plots Beta-Binomial distribution along with the prior and likelihood.
 
-import matplotlib.pylab as pl
+import matplotlib.pyplot as pl
 import numpy as np
 import scipy
 from scipy.stats import beta

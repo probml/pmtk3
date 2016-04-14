@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
-from sklearn.naive_bayes import MultinomialNB
-from utils import load_mat
+import matplotlib.pyplot as pl
 import numpy as np
-import matplotlib.pylab as pl
+import utils.util as util
+from sklearn.naive_bayes import MultinomialNB
 
-data = load_mat('XwindowsDocData')
+data = util.load_mat('XwindowsDocData')
 xtrain = data['xtrain']
 ytrain = data['ytrain']
 

@@ -3,11 +3,11 @@
 # Plots Negative Binomial distribution, using a custom
 # negative binomial distribution.
 
+import matplotlib.pyplot as pl
+import numpy as np
+import sympy
 from scipy.stats import binom
 from scipy.special import gammaln
-import numpy as np
-import matplotlib.pylab as pl
-import sympy
 
 # We use our own version of negative binomial here for two reasons:
 # 1) scipy.stats.negbinom does not support real valued failures 

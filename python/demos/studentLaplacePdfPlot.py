@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-from scipy.stats import t, laplace, norm
 import numpy as np
-import matplotlib.pylab as pl
+import matplotlib.pyplot as pl
+from scipy.stats import t, laplace, norm
 
 x = np.linspace(-4, 4, 100)
 n = norm.pdf(x, loc=0, scale=1)

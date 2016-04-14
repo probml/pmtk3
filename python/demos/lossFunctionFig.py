@@ -2,9 +2,9 @@
 
 # Plots loss functions of form |x|**q
 
-from scipy.stats import t, laplace, norm
+import matplotlib.pyplot as pl
 import numpy as np
-import matplotlib.pylab as pl
+from scipy.stats import t, laplace, norm
 
 x = np.linspace(-4, 4, 100)
 pl.title('|x|^0.2')

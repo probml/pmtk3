@@ -2,10 +2,10 @@
 #https://github.com/justmarkham/gadsdc1/blob/master/logistic_assignment/kevin_logistic_sklearn.ipynb
 
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import statsmodels.api as sm
-import matplotlib.pyplot as plt
 from patsy import dmatrices
 from sklearn.linear_model import LogisticRegression
 from sklearn.cross_validation import train_test_split

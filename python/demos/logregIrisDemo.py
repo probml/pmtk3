@@ -1,21 +1,18 @@
+#!/usr/bin/env python
+
 # 3-class Logistic regression on Iris data
 # Modified from http://scikit-learn.org/stable/auto_examples/linear_model/plot_iris_logistic.html
 # The original code uses the default one-vs-rest method (and liblinear solver).
 # We change it to softmax loss (and LBFGS solver).
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 from sklearn import linear_model, datasets
 
 # import the data 
 iris = datasets.load_iris()
 X = iris.data[:, :2]  # we only take the first two features.
 Y = iris.target
-
-#logreg = linear_model.LogisticRegression(C=1e5)
-
-#(penalty='l2', dual=False, tol=0.0001, C=1.0, fit_intercept=True, intercept_scaling=1, class_weight=None,#
-#random_state=None, solver='liblinear', max_iter=100, multi_class='ovr', verbose=0, warm_start=False, n_jos=1)
 
 logreg = linear_model.LogisticRegression(C=1e5, multi_class='multinomial', 
     solver='lbfgs')
@@ -41,8 +38,6 @@ plt.ylim(yy.min(), yy.max())
 plt.xticks(())
 plt.yticks(())
 plt.title('Iris dataset')
-
-#http://matplotlib.org/1.4.2/examples/pylab_examples/scatter_demo2.html
 
 # Plot also the training points
 markers = ['o', 'x', 's'];

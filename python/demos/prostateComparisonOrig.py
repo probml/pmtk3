@@ -1,21 +1,15 @@
 #!/usr/bin/env python3
 
+import csv
+import numpy as np
+import pandas as pd
+import sklearn
 from itertools import chain, combinations
 from scipy.stats import linregress
-import sklearn
 from sklearn.cross_validation import cross_val_score
 from sklearn.linear_model import LassoCV, LinearRegression, RidgeCV
 from sklearn.metrics import mean_squared_error
 from sklearn.preprocessing import scale
-
-from sys import path
-path.append('..') # add parent directory
-from utils import load_mat
-
-import csv
-import numpy as np
-#import urllib2
-import pandas as pd
 
 pd.set_option('display.max_columns', 160)
 pd.set_option('display.width', 1000)
@@ -70,7 +64,7 @@ Xtest = Xscaled[istest, :]
 ytrain = y[istrain]
 ytest = y[istest]
 
-#X = load_mat('prostate')
+#X = util.load_mat('prostate')
 # Hack to use the correct dataset.
 #X['Xtest'][8][1] = 3.804438
 # Rescale all data at once.

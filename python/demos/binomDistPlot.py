@@ -2,9 +2,9 @@
 
 # Plots the binomial distribution.
 
-from scipy.stats import binom
+import matplotlib.pyplot as pl
 import numpy as np
-import matplotlib.pylab as pl
+from scipy.stats import binom
 
 for p in [0.25, 0.9]:
     pl.figure()

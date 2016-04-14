@@ -1,7 +1,7 @@
 # 1d linear regression using SGD
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 import os
 from linreg_1d_batch_demo import *
 from utils import *

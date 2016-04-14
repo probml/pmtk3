@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-from scipy.stats import poisson
+import matplotlib.pyplot as pl
 import numpy as np
-import matplotlib.pylab as pl
+from scipy.stats import poisson
 
 for l in [1.0, 10.0]:
     pl.figure()

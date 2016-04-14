@@ -1,8 +1,8 @@
 # linear regression for prostate cancer dataset
 
-import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 import sklearn.datasets
 import sklearn.cross_validation as cv
 import sklearn.linear_model as lm

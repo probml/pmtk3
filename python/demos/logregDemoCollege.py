@@ -5,10 +5,10 @@
 # https://github.com/justmarkham/gadsdc1/blob/master/logistic_assignment/kevin_logistic_sklearn.ipynb
 # For details on how to do this analysis in R, see http://www.ats.ucla.edu/stat/r/dae/logit.htm
 
+import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import statsmodels.api as sm
-import numpy as np
-import matplotlib.pyplot as plt
 from patsy import dmatrices
 from sklearn.linear_model import LogisticRegression
 from sklearn.cross_validation import train_test_split, cross_val_score

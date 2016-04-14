@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
+import matplotlib.pyplot as pl
 import numpy as np
-import matplotlib.pylab as pl
 
 p = np.random.rand(5000, 2) * 4 - 2
 inner = np.sum(p ** 2, axis=1) <= 4

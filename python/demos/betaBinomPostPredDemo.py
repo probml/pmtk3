@@ -5,7 +5,7 @@
 from scipy.misc import comb
 from scipy.special import beta
 from scipy.stats import binom
-import matplotlib.pylab as pl
+import matplotlib.pyplot as pl
 import numpy as np
 
 N = 10

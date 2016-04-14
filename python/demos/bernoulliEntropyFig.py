@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
-import numpy as np
-import matplotlib.pylab as pl
+# Plot the bernoulli entropy.
 
+import matplotlib.pyplot as pl
+import numpy as np
 
 def entropy(p):
     """calculate the entropy"""
