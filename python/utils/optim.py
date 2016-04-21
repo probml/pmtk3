@@ -275,7 +275,40 @@ def bfgs_hips(obj_and_grad, x,  num_iters=100, callback=None):
     return res.x
 """  
 
-
+def branin(x):
+    """Branin function.
+    
+    This function is widely used to evaluate nonconvex optimization methods.
+    It is typically evaluated over the range -5 <= x1 <= 10, 0 <= x2 <= 15.
+    
+    This function has 3 global minima, at 
+    x_global_min = [np.pi, 2.275];
+    x_global_min = [-np.pi, 12.275]
+    x_global_min = [9.42478, 2.475]
+    The objective function at these points has value 0.397887
+    
+    Args:
+        x: N*2 array of points (N = num. points to evaluate)
+    
+    Returns:
+        f: N*1 function values at each x
+        df: N*2 gradient vector at each x
+    """
+    a = 1
+    b = 5.1 / (4 * np.pi**2)
+    c = 5. / np.pi
+    r = 6.
+    s = 10.
+    t = 1. / (8 * np.pi)
+    x1 = x[:, 0]
+    x2 = x[:, 1]
+    z = x2 - b * np.square(x1) + c * x1 - r
+    f = a * np.square(z) + s * (1 - t) * np.cos(x1) + 10
+    df0 = 2 * a * np.inner(-2 * b * x1 + c, z) - s * (1-t) * np.sin(x1)
+    df1 = 2 * a * z
+    df = np.array([df0, df1]) 
+    return f, df
+    
 ######    
 def main():
     plot_lr_trace()
