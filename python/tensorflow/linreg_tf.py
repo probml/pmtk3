@@ -1,57 +1,68 @@
 # 1d linear regression in TF
-# Builds on linreg_1d_sgd_demo
+#http://cs224d.stanford.edu/lectures/CS224d-Lecture7.pdf
 
 import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.optimize import minimize
-import os
+from tensorflow.python.framework import random_seed
 
+seed = 42
+random_seed.set_random_seed(seed)
 
+# Define input data
+X_data = np.arange(100, step=.1)
+y_data = X_data + 20 * np.sin(X_data/10)
+# Plot input data
+plt.scatter(X_data, y_data)
 
-'''
-losses = [] # store loss at each iteration
-training_steps = 50
-lr = 0.002
+# Define data size and batch size
+n_samples = 1000
+batch_size = 100
+X_data = np.reshape(X_data, (n_samples,1))
+y_data = np.reshape(y_data, (n_samples,1))
 
+# OLS solution
+X1 = np.c_[X_data, np.ones(n_samples)]
+w_ols = np.linalg.lstsq(X1, y_data)[0]
+print 'OLS {}'.format(w_ols)
 
-with tf.Session() as sess:
-  #X = tf.constant(x_with_bias, name="input")
-  #ytrue = tf.constant(np.transpose([y]).astype(np.float32), name="target")
-  X  = tf.placeholder(tf.float32, [None, D])
-  ytrue = tf.placeholder(tf.float32, [None, 1])
-  weights = tf.Variable(tf.random_normal([2, 1], 0, 0.1), name="weights")
+g = tf.Graph() 
+with g.as_default():
+    
+    # Define placeholders for input
+    X = tf.placeholder(tf.float32, shape=(None, 1))
+    y = tf.placeholder(tf.float32, shape=(None, 1)) 
+    
+    # Define model
+    with tf.variable_scope("linear-regression"):
+        W = tf.get_variable("weights", (1, 1), initializer=tf.random_normal_initializer())
+        b = tf.get_variable("bias", (1,), initializer=tf.constant_initializer(0.0))
+        y_pred = tf.matmul(X, W) + b
+        loss = tf.reduce_sum((y - y_pred)**2/n_samples)
+            
+    # Add train and initialize ops
+    opt_operation = tf.train.AdamOptimizer(0.1).minimize(loss)
+    init_op = tf.initialize_all_variables()
 
-  tf.initialize_all_variables().run()
- 
-  yhat = tf.matmul(input, weights)
-  yerror = tf.sub(yhat, ytrue)
-  
-  loss = 0.5 * tf.reduce_sum(tf.mul(yerror, yerror))
-  #loss = tf.reduce_mean(tf.nn.l2_loss(yerror))
-  
-  # gradient = sum_n x(:,n) * yerr(n)
-  # input is N*D, yerror is N*1
-  # tf.mul(input, yerror) is ELEMENTWISE multiplication. TF broadcasts yerror
-  # to shape N*D first. We then transpose this to D*N, and sum along the N axis,
-  # to give a D*1 vector.
-  gradient = tf.reduce_sum(tf.transpose(tf.mul(X, yerror)), 1, keep_dims=True)
-  #gradient = tf.gradients(loss, weights)
-  update_weights = tf.assign_sub(weights, lr * gradient)
-  #update_weights =  tf.GradientDescent(weights, gradient, lr)  
-  #update_weights = tf.train.GradientDescentOptimizer(learning_rate).minimize(loss)
-  #update_weights = tf.train.AdamOptimizer(lr).minimize(loss)
-  
-  # Repeatedly run the graph
-  iter = 0
-  for _ in range(training_steps):
-    sess.run(update_weights, {X: x_with_bias, ytrue: y})
-    if iter % 10 == 0:
-      print "iteration {1} loss {2}".format(iter, loss.eval())
-    losses.append(loss.eval())
+# Fit
+sess = tf.Session(graph=g)
 
-print "Finished {} iterations".format(training_steps)
-coef = weights.eval()
-plot_data_and_pred(x, y, coef)
-plot_loss(losses)
-'''
+sess.run(init_op)
+# Fit with SGD
+n_epochs = 200
+for _ in range(n_epochs):
+    indices = np.random.choice(n_samples, batch_size)
+    X_batch, y_batch = X_data[indices], y_data[indices]
+    _, loss_val = sess.run([opt_operation, loss], feed_dict={X: X_batch, y: y_batch})
+
+weights = sess.run("linear-regression/weights:0")
+bias = sess.run("linear-regression/bias:0")
+print('weights {}, bias {}'.format(weights, bias))
+
+# Eval            
+y_pred = sess.run(y_pred, feed_dict={X: X_data})
+sess.close()
+
+plt.plot(X_data, y_pred, '-')
+plt.show()
+
