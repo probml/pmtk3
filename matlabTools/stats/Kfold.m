@@ -20,10 +20,6 @@ function  [trainfolds, testfolds] = Kfold(N, K, randomize)
 
 if nargin < 3, randomize = 0; end
 if randomize
-  S = rand('state');
-  rand('state',0);
-  rand('state',S)
-  %setSeed(0);
   perm = randperm(N);
 else
     perm = 1:N;
@@ -48,10 +44,6 @@ for i=1:K
     testfolds{i} = perm(testfolds{i});
     trainfolds{i} = perm(trainfolds{i});
     ndx = ndx+Nbin(i);
-end
-
-if randomize
-    restoreSeed;
 end
 
 end
