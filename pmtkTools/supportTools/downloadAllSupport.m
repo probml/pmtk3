@@ -6,30 +6,18 @@ function downloadAllSupport(destnRoot, quiet)
 
 SetDefaultValue(1, 'destnRoot', fullfile(pmtk3Root(), 'pmtksupportCopy'));
 SetDefaultValue(2, 'quiet', false);
-googleRoot = ' http://pmtksupport.googlecode.com/svn/trunk';
-%packages = scrapePmtkSupport();
-exclude = {'readme.txt', 'pmtkSupportRoot.m', 'meta', 'docs', 'tmp'};
-packages = scrapePmtkSupport([], exclude);
-maxLen = max(cellfun(@numel, packages));
-fprintf('downloading %d packages to pmtk3/pmtksupportCopy from pmtksupport.googlecode.com - this may take a few minutes\n',...
-    numel(packages));
-for i=1:numel(packages)
-    package = packages{i};
-    if ~quiet, fprintf('downloading %s%s', package, dots(maxLen+3-length(package))); end
-    source = sprintf('%s/%s/%s.zip', googleRoot, package, package);
-    dest   = fullfile(destnRoot, [package, '.zip']);
-    ok     = downloadFile(source, dest);
-    if ok
-        try
-            unzip(dest, fileparts(dest));
-            delete(dest);
-            if ~quiet, fprintf('done\n'); end
-        catch %#ok
-            if ~quiet, fprintf(2, 'failed to unzip\n');  end
-        end
-    else
-        if ~quiet, fprintf(2, 'failed to download\n');  end
-    end
+
+fprintf('downloading packages to pmtk3/pmtksupportCopy from github - this may take a few minutes\n');
+githubUrl = 'https://github.com/probml/pmtksupport/archive/master.zip';
+temporaryZipFile = strcat(destnRoot, 'temp.zip');
+[f, success] = urlwrite(githubUrl, temporaryZipFile);
+if success
+    unzip(temporaryZipFile, destnRoot);
+    delete(temporaryZipFile);
+    movefile(strcat(destnRoot, '/pmtksupport-master/*'), destnRoot);
+    rmdir(strcat(destnRoot, '/pmtksupport-master'));
+elseif ~quiet 
+    fprintf(2, 'failed to download\n');  
 end
 
 addpath(genpath(destnRoot)); % using genpathPMTK here causes problems for Octave
