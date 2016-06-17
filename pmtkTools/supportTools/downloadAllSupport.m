@@ -11,6 +11,7 @@ fprintf('downloading packages to pmtk3/pmtksupportCopy from github - this may ta
 githubUrl = 'https://github.com/probml/pmtksupport/archive/master.zip';
 temporaryZipFile = strcat(destnRoot, 'temp.zip');
 [f, success] = urlwrite(githubUrl, temporaryZipFile);
+if ~quiet & ~success, fprintf(2, 'failed to download\n');  end
 unzip(temporaryZipFile, destnRoot);
 delete(temporaryZipFile);
 movefile(strcat(destnRoot, '/pmtksupport-master/*'), destnRoot);
