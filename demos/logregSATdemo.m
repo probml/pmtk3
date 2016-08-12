@@ -40,3 +40,16 @@ title(sprintf('Logistic regression on SAT data, threshold = %2.1f', xstar));
 
 printPmtkFigure('logregSATdemo')
 
+%% Linear regression
+model_lin = linregFit(X, y, 'preproc', pp);
+[yhat_lin] = linregPredict(model, X);
+figure;
+plot(X, y, 'ko', 'linewidth', 2, 'MarkerSize', 7, 'markerfacecolor', 'k');
+hold on
+plot(X, yhat_lin)
+axis_pct
+xlabel('SAT score', 'fontsize', fs);
+ylabel('Predicted output', 'fontsize', fs)
+title(sprintf('Linear regression on SAT data'));
+printPmtkFigure('linregSATdemo')
+
