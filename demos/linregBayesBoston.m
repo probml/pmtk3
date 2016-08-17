@@ -8,14 +8,15 @@
 %http://www.kellogg.northwestern.edu/faculty/weber/emba/_session_3/boston.htm
 
 requireStatsToolbox
-fname = '/Users/kpmurphy/github/pmtkdata/bostonHousing/boston.mat';
-load(fname)
+%fname = '/Users/kpmurphy/github/pmtkdata/bostonHousing/boston.mat';
+%load(fname)
+loadData('boston')
 nameCell = {};
 for i=1:size(names,1)
     nameCell{i} = names(i,:);
 end
 y = y(:);
-X = standardize(X);
+%X = standardize(X);
 [n,d] = size(X);
 
 

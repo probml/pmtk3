@@ -32,7 +32,7 @@ what = X\y
 
 [w, f, exitflag, output] = stochgradSimple(funObjXy, w0, options, X, y);
 trace = output.trace; 
-[fvalTraceAvg, fvalTrace] = stochgradTracePostprocess(trace, funObjXy, X, y);
+[fvalTrace, fvalTraceAvg] = stochgradTracePostprocess(trace, funObjXy, X, y);
  
 contoursSSEdemo;
 whist2 = trace.params';
