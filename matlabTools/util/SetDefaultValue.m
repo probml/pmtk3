@@ -21,6 +21,7 @@ function SetDefaultValue(position, argName, defaultValue)
 % This file is from pmtk3.googlecode.com
 
 if evalin('caller', 'nargin') < position || ...
+      ~evalin('caller', ['exist(''' argName ''', ''var'')']) || ...
       isempty(evalin('caller', argName))
    assignin('caller', argName, defaultValue);
 end
