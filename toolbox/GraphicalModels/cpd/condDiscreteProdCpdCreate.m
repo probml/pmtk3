@@ -41,15 +41,17 @@ function CPD = condDiscreteProdCpdFit(CPD, Z, Y)
 %%
 nstates = CPD.nstates;
 nObsStates = CPD.nObsStates; 
-T = CPD.T;
 if isempty(CPD.prior)
     alpha = 1;
 else
     alpha = CPD.prior.alpha;
 end
+T = zeros(size(CPD.T));
 for k = 1:nstates
-   T(k, :, :) = normalize(histc(Y(Z==k, :) + alpha - 1, 1:nObsStates), 2); 
+    obsCounts = histc(Y(Z==k, :), 1:nObsStates, 1) + alpha - 1;
+    T(k, :, :) = normalize(obsCounts, 1); 
 end
+CPD.T = T;
 end
 
 function ess = condDiscreteProdCpdComputeEss(cpd, data, weights, B)
