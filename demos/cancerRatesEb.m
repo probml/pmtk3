@@ -27,6 +27,7 @@ for i=1:d
     post.mediantheta(i) = betainvPMTK(0.5, aPost(i), bPost(i));
 end
 thetaPooledMLE = sum(data.y)/sum(data.n)
+popMean = a/(a+b)
 %% Plot
 figure;
 subplot(4,1,1); bar(data.y); 
@@ -39,13 +40,15 @@ title('pop of city (truncated at 2000)', 'fontsize', fs);
 set(gca,'ylim',[0 2000])
 
 subplot(4,1,3); bar(thetaMLE);
-title('MLE', 'fontsize', fs);
+title('MLE (red line = pooled MLE)', 'fontsize', fs);
+hold on;h=line([0 20], [thetaPooledMLE thetaPooledMLE]);
+set(h,'color','r','linewidth',2)
 set(gca,'ylim',[0 0.006])
 
 subplot(4,1,4); bar(post.meantheta);
-title('posterior mean (red line=pooled MLE)', 'fontsize', fs)
+title('posterior mean (red line=population mean)', 'fontsize', fs)
 set(gca,'ylim',[0 0.006])
-hold on;h=line([0 20], [thetaPooledMLE thetaPooledMLE]);
+hold on;h=line([0 20], [popMean popMean]);
 set(h,'color','r','linewidth',2)
 
 printPmtkFigure('cancerRatesEb');

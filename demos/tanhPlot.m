@@ -21,3 +21,20 @@ end
 legend(names, 'location', 'northwest');
 set(gca,'ylim',[-1 2]);
 printPmtkFigure('tanhPlot')
+
+
+[styles, colors, symbols, str] =  plotColors();
+xs = -3:0.1:3;
+names = {'tanh', 'sigmoid', 'ReLU'};
+curves = {};
+curves{end+1} = tanh(xs);
+curves{end+1} = 1./(1+exp(-xs));
+curves{end+1} = max(0, xs);
+figure;
+hold on
+for i=1:numel(curves)
+plot(xs, curves{i}, str{i}, 'linewidth', 3);
+end
+legend(names, 'location', 'northwest');
+set(gca,'ylim',[-1 2]);
+printPmtkFigure('reluPlot')

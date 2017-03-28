@@ -5,7 +5,9 @@
 
 % This file is from pmtk3.googlecode.com
 
-function [X, y, ws, perm] = logregGradeMH()
+function [X, y, ws] = logregSatMhDemo(doPlot)
+
+if nargin < 1, doPlot = 1; end
 
 [X,y] = satDataLoad;
 model = logregBinaryFitL2IRLS(X, y, 1e-8, false);
@@ -43,7 +45,9 @@ sigmaMH = 2.38^2/2;
 %[ws, naccept] = metropolisHastings(@logpost, @proposal, xinit,...
 %    Nsamples, targetArgs, proposalArgs);
 
-  [ws, naccept] = metropolisHastings(@target, @proposal, xinit, Nsamples);
+[ws, naccept] = metropolisHastings(@target, @proposal, xinit, Nsamples);
+
+if doPlot == 0, return; end
 
 % trace plots
 figure
