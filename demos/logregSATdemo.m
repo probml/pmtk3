@@ -1,3 +1,4 @@
+
 %% Binary Logistic Regression on SAT data
 % Example from Johnson and Albert p87
 %% Load data
@@ -42,7 +43,7 @@ printPmtkFigure('logregSATdemo')
 
 %% Linear regression
 model_lin = linregFit(X, y, 'preproc', pp);
-[yhat_lin] = linregPredict(model, X);
+[yhat_lin] = linregPredict(model_lin, X)
 figure;
 plot(X, y, 'ko', 'linewidth', 2, 'MarkerSize', 7, 'markerfacecolor', 'k');
 hold on
