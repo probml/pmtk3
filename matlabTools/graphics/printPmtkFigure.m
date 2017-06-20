@@ -3,14 +3,15 @@ function printPmtkFigure(filename, format, printFolder) %#ok
 
 % This file is from pmtk3.googlecode.com
 
-return; % uncomment this to enable printing
+%return; % uncomment this to enable printing
 
 if nargin <2, format = 'pdf'; end
 if nargin < 3, printFolder = []; end
 if isempty(printFolder)
   if ismac
     %printFolder = '/Users/kpmurphy/Dropbox/MLbook/Figures/pdfFigures';
-    printFolder = '/Users/kpmurphy/GDrive/Backup/MLbook/book2.0/Figures/pdfFigures';
+    %printFolder = '/Users/kpmurphy/GDrive/Backup/MLbook/book2.0/Figures/pdfFigures';
+    printFolder = '/Users/kpmurphy/github/pmtk3/figures';
   else
     error('need to specify printFolder')
   end
