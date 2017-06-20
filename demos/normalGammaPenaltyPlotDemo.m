@@ -36,19 +36,20 @@ end
 
 if 1
 figure; hold on
-bs = [0.01, 0.1, 1];
+%bs = [0.01, 0.1, 1];
+bs = [0.01,  1];
 for i=1:length(bs)
   a = 1; b = bs(i);
    pen = @(X) generalizedStudentNeglogpdf(X, a, b);
   Z=pen(X(:)) + pen(Y(:)) - pen(1) - pen(pas);
   str{i} = sprintf('a=1, b=%3.2f', b);
-  cout = contour(X, Y, reshape(Z, size(X)), [0 0], styles{i}, ...
+  cout = contour(X, Y, reshape(Z, size(X)), [0 0], styles{1}, ...
     'color', colors(i),   'linewidth', 3, 'displayname', str{i}); % 'name', str{i});
   %set(h(i), 'color', colors(i));
-  h(i) = plot(0, 0, [styles{i}, colors(i)], 'linewidth', 3); 
+  h(i) = plot(0, 0, [styles{1}, colors(i)], 'linewidth', 3); 
 end
 legend(h, str)
-axis square
+%axis square
 title('HAL')
 printPmtkFigure('HALpenalty')
 end

@@ -5,10 +5,18 @@
 
 % This file is from pmtk3.googlecode.com
 
+
 function normalGammaThresholdPlotDemo()
 %z=-10:.1:10;
 z=-10:0.5:10;
 x=-10.005:.05:10;
+
+
+function out=generalizedStudentPenalty(w,a,b)
+%out = -log(a) + log(2*b) + (a+1)*log(abs(w)/b + 1);
+out = (a+1)*log(abs(w)/b + 1);
+end
+
 for k=1:length(z)
     %% laplace
     c=1;
@@ -19,11 +27,12 @@ for k=1:length(z)
     
     
     %% Hierarchical adaptive lasso
-    bs = [0.01, 0.1,  1];
+    %bs = [0.01, 0.1,  1];
+    bs = [0.01,  1];
     a = 1;
     for i=1:length(bs)
         [temp outHAL{i}(k)] = ...
-            min(.5*(z(k)-x).^2 + generalizedStudentNeglogpdf(x, a, bs(i)));
+            min(.5*(z(k)-x).^2 + generalizedStudentPenalty(x, a, bs(i)));
     end
     
     %% NG
@@ -86,15 +95,35 @@ printPmtkFigure('NJthreshold')
 figure();
 hold on
 for i=1:length(bs)
-    plot(z, x(outHAL{i}), [styles{i+1}, colors(i+2)], 'linewidth', 3);
-    str{i} = sprintf('%s = %5.3f, a=1', 'b', bs(i));
+    plot(z, x(outHAL{i}), [styles{1}, colors(i)], 'linewidth', 3);
+    str{i} = sprintf('a=1, b=%5.3f', bs(i));
 end
+plot(z, z, [styles{1}, colors(length(bs)+1)], 'linewidth', 3)
+str{end+1}='';
 legend(str, 'location', 'southeast')
-plot(z, z, [styles{2}, colors(2)], 'linewidth', 3)
 title('HAL', 'fontsize', fs)
 xlabel('w^{MLE}', 'fontsize', fs)
 ylabel('w^{MAP}', 'fontsize', fs)
 printPmtkFigure('HALthreshold')
+%%
+
+figure();
+hold on
+str = {};
+for i=1:2
+    plot(z, x(outHAL{i}), [styles{1}, colors(i)], 'linewidth', 3);
+    str{i} = sprintf('a=1, b=%5.3f', bs(i));
+end
+plot(z, x(outNJ), [styles{1}, colors(3)], 'linewidth', 3);
+str{3}='NJ';
+plot(z, z, [styles{1}, colors(4)], 'linewidth', 3)
+str{4}='';
+legend(str, 'location', 'southeast')
+title('HAL', 'fontsize', fs)
+xlabel('w^{MLE}', 'fontsize', fs)
+ylabel('w^{MAP}', 'fontsize', fs)
+printPmtkFigure('HALNJthreshold')
+
 %%
 %{
 figure();
