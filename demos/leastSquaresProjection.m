@@ -11,8 +11,8 @@ n = 3;
 d = 2;
 W = 0.05*[1; 1];
 %X = 0.1*randn(n,d);
-X = [1 1 1; 2 -2 2]';
-y = X*W + 1*randn(n,1);
+X = [1 1 1; 2 -2 2]'
+y = X*W + 1*randn(n,1)
 wHat = X \ y;
 yHat =  X*wHat;
 
@@ -46,7 +46,7 @@ plotPoints(Xnorm, ynorm, yHatNorm);
 labelPoints(Xnorm, ynorm, yHatNorm);
 
 
-printPmtkFigure leastSquaresProjAB
+printPmtkFigure('leastSquaresProjAB.png')
   function plotLines(X, y, yHat)
     prefs = {'Color','g','LineStyle','--','LineWidth',2};
     line(X(1,:), X(2,:), X(3,:), prefs{:});
