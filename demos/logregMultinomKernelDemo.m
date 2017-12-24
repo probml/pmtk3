@@ -6,7 +6,7 @@
 
 % This file is from pmtk3.googlecode.com
 
-function logregMultinomKernelDemo()
+%function logregMultinomKernelDemo()
 %% Setup Data
 %{
 setSeed(0);
@@ -27,19 +27,22 @@ modelLinear = logregFit(X, y, 'lambda', lambda);
 % Kernelized
 fitkern = @(k, p)logregFit(X, y, 'lambda', lambda, ...
     'preproc', struct('kernelFn', @(X1, X2)k(X1, X2, p))); 
+
+%{
 % Polynomial
 polyOrder = 2;
 modelPoly = fitkern(@kernelPoly, polyOrder); 
 % RBF
 rbfScale  = 1;
 modelRBF = fitkern(@kernelRbfSigma, rbfScale); 
-
+%}
   
 %% Compute training errors
 [yhat, prob] = logregPredict(modelLinear, X); %#ok
 trainErr_linear = mean(y~=yhat);
 fprintf('Training error with raw features: %2.f%%\n', trainErr_linear*100);
 
+%{
 [yhat, prob] = logregPredict(modelPoly, X); %#ok
 trainErr_poly = mean(y~=yhat);
 fprintf('Training error using a polynomial kernal of degree %d: %2.f%%\n', polyOrder,  trainErr_poly*100);
@@ -47,23 +50,27 @@ fprintf('Training error using a polynomial kernal of degree %d: %2.f%%\n', polyO
 [yhat] = logregPredict(modelRBF, X);
 trainErr_rbf = mean(y~=yhat);
 fprintf('Training error using an RBF kernel with scale %d: %2.f%%\n', rbfScale, trainErr_rbf*100);
-
+%}
 
 
 %% Plot decision boundaries
 plotDecisionBoundary(X, y, @(X)logregPredict(modelLinear, X));
 title('Linear Multinomial Logistic Regression');
-printPmtkFigure('logregMultinomLinearBoundary');
+%printPmtkFigure('logregMultinomLinearBoundary');
+printPmtkFigure('logregMultinom3classLinear');
 
+%{
 predictFcn = @(Xtest) logregPredict(modelPoly, Xtest); 
 plotDecisionBoundary(X, y, predictFcn);
-title('Quadratic Multinomial Logistic Regression');
-printPmtkFigure('logregMultinomQuadraticBoundary');
+title('Quadratic kernel');
+%printPmtkFigure('logregMultinomQuadraticBoundary');
+printPmtkFigure('logregMultinom3classQuad');
 
 predictFcn = @(Xtest) logregPredict(modelRBF, Xtest); 
 plotDecisionBoundary(X, y, predictFcn);
-title('Kernel-RBF Multinomial Logistic Regression');
+title('RBF Kernel');
+printPmtkFigure('logregMultinom3classRBF');
+%}
 
 
-
-end
+%end

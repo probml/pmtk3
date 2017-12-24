@@ -27,6 +27,7 @@ title('noisy binary data')
 printPmtkFigure('binaryPCAinput');
 
 figure; imagesc(dataClean); colormap(gray); title('hidden truth')
+printPmtkFigure('binaryPCAhidden');
 
 % Fit model
 [model, loglikHist] = binaryFAfit(dataNoisy, 2, 'maxIter', 10, 'verbose', true);
@@ -42,12 +43,18 @@ for k=1:K
   hold on
 end
 title('latent embedding')
-printPmtkFigure('binaryPCAoutput')
+printPmtkFigure('binaryPCAembedding')
 
 % Denoising
 [postPred] = binaryFApredictMissing(model, dataNoisy);
 yhat = postPred > 0.5;
-figure; imagesc(yhat); colormap(gray); title('prediciton given noisy')
+figure; imagesc(postPred); colormap(gray); title('Posterior predictive')
+printPmtkFigure('binaryPCApostpred')
+
+figure; imagesc(yhat); colormap(gray); title('Reconstruction')
+printPmtkFigure('binaryPCArecon')
+
+
 
 % Imputation
 [postPred] = binaryFApredictMissing(model, dataMissing);

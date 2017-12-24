@@ -17,7 +17,8 @@ L = spdiags(ones(D-2,1) * [-1 2 -1], [0 1 2], D-2, D);
 % prior precicion lambda it only affects the variance,
 % not the mean, so we pick a value that results in a pretty plot
 lambdas = [30, 0.1];
-names = { '30', '0p1'};
+filenames = { '30', '0p1'};
+names = { '30', '0.1'};
 for trial=1:numel(lambdas)
     %names{trial} = sprintf('%4.3f', lambdas(trial));
     lambda = lambdas(trial);
@@ -77,6 +78,6 @@ for i=1:3
   plot(xs, fs, 'k-', 'linewidth', 1)
 end
 
-printPmtkFigure(sprintf('gaussInterpDemo%s', names{trial}))
+printPmtkFigure(sprintf('gaussInterpDemo%s', filenames{trial}))
 
 end % next trial

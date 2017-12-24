@@ -48,6 +48,9 @@ for i=1:length(as)
     plot(xs , ps, styles{i}, 'color', colors(i), 'linewidth', 3);
     hold on
     legendStr{i} = sprintf('a=%2.1f,b=%2.1f', a, b);
+    hold on
+    p1 = exp(gammaLogprob(model, 1));
+    h=line([1, 1], [0 p1], 'linewidth', 3, 'color', 'r');
     axis tight; 
 end
 printPmtkFigure('gammaDist1'); 

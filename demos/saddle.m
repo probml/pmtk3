@@ -4,7 +4,7 @@
 
 % This file is from pmtk3.googlecode.com
 
-function saddle()
+
 
 
 
@@ -23,8 +23,8 @@ colormap([0.35 0.6 0.9]);
 view([23.5 22]);
 box on;
 set(gca, 'XTick', [], 'YTick', [], 'ZTick', []);
-placeFigures('square', false);
-leg = legend([p2,p3], {'f(x)', 'g(z)'}, 'FontSize', 22);
+%placeFigures('square', false);
+leg = legend([p2,p3], {'max_y f(x,y)', 'min_x f(x,y)'}, 'FontSize', 22);
 set(leg, 'Position', [0.3762 0.7655 0.07324 0.09367]);
 
 annotation(gcf,'textbox',[0.6012 0.06965 0.05947 0.06468], ...
@@ -34,7 +34,7 @@ annotation(gcf,'textbox',[0.6012 0.06965 0.05947 0.06468], ...
     'LineStyle'    , 'none' );
 
 annotation(gcf, 'textbox', [0.7198 0.08458 0.05947 0.09194], ...
-    'String', {'z'},...
+    'String', {'y'},...
     'FontSize', 28,...
     'FitBoxToText', 'off',...
     'LineStyle','none');
@@ -44,4 +44,3 @@ printPmtkFigure saddle;
 
 
 
-end

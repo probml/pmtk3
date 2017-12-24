@@ -26,7 +26,7 @@ printPmtkFigure('nllLoss')
 
 figure; hold on
 plot(z, L01, 'k-', 'linewidth', 3);
-plot(z, Lhinge, 'b:', 'linewidth', 3);
+plot(z, Lhinge+0.02, 'b:', 'linewidth', 3);
 plot(z, Lnll, 'r--', 'linewidth', 3);
 %plot(z, Lse, 'g-.x');
 h=legend('0-1','hinge','logloss');

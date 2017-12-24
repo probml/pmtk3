@@ -50,6 +50,8 @@ end
 figure
 imagesc(Models');
 colormap gray
+yticklabels([])
+title('Bit patterns for each model')
 printPmtkFigure('grayCodeModelsGray')
 
 figure

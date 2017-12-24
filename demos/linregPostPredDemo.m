@@ -8,7 +8,15 @@
 setSeed(1);
 [xtrain, ytrain, xtest, ytestNoisefree, ytest, sigma2] = ...
   polyDataMake('sampling', 'sparse', 'deg', 2);
+
+deg = 1;
+suffix = 'Linear';
+%{
 deg = 2;
+suffix = 'Quad';
+%}
+name = sprintf('linregPostPred%s', suffix);
+
 addOnes = false;
 Xtrain = degexpand(xtrain, deg, addOnes);
 Xtest  = degexpand(xtest, deg, addOnes);
@@ -31,7 +39,7 @@ h=legend('location', 'northwest');
 set(h, 'fontsize', fs); 
 errorbar(xtest(ndx), mu(ndx), sigma(ndx));
 title('plugin approximation (MLE)', 'fontsize', fs);
-printPmtkFigure('linregPostPredPlugin')
+printPmtkFigure(sprintf('%sPlugin', name))
 
 
 %% Bayes
@@ -51,7 +59,7 @@ h=legend('location', 'northwest');
 set(h,'fontsize', fs); 
 errorbar(xtest(ndx), mu(ndx), sigma(ndx));
 title('Posterior predictive (known variance)', 'fontsize', fs);
-printPmtkFigure('linregPostPredBayes')
+printPmtkFigure(sprintf('%sBayes', name))
 
 %% Plot samples from posterior predictive
 S = 10;
@@ -64,9 +72,9 @@ for s=1:S
   tmp = modelMLE;  tmp.w = ws(s,:)';
   [mu] = linregPredict(tmp, Xtest);
   plot(xtest, mu, 'k-', 'linewidth', 2);
-end
+  end9
 title('functions sampled from posterior', 'fontsize', fs)
-printPmtkFigure('linregPostPredSamples')
+printPmtkFigure(sprintf('%sSamplesBayes', name))
 
 %% Plot samples from  plug posterior predictive
 S = 10;
@@ -79,5 +87,5 @@ for s=1:S
   plot(xtest, mu, 'k-', 'linewidth', 2);
 end
 title('functions sampled from plugin approximation to posterior', 'fontsize', fs)
-printPmtkFigure('linregPostPredSamplesPlugin')
+printPmtkFigure(sprintf('%sSamplesPlugin', name))
 

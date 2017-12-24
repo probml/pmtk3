@@ -24,6 +24,7 @@ axis square
 axis([-3 3 -3 3 -2 2])
 set(h,'PaperPosition', [0.25 2.5 8 8])
 grid off
+printPmtkFigure('GPARD', 'png')
 %print -depsc ard1.eps
 
 
@@ -32,8 +33,11 @@ clf
 set(gca,'FontSize',24);
 randn('seed',34)
 Q = zeros(n,n);
-Q = Q + (repmat(x(:,1),1,n)-repmat(x(:,1)',n,1)).^2;
-Q = Q + (repmat(x(:,2),1,n)-repmat(x(:,2)',n,1)).^2/9;
+L1 = 1; L2 = 5;
+%Q = Q + (repmat(x(:,1),1,n)-repmat(x(:,1)',n,1)).^(2);
+Q = Q + (repmat(x(:,1),1,n)-repmat(x(:,1)',n,1)).^(2) / (L1^2);
+%Q = Q + (repmat(x(:,2),1,n)-repmat(x(:,2)',n,1)).^2/9;
+Q = Q + (repmat(x(:,2),1,n)-repmat(x(:,2)',n,1)).^2 /(L2^2);
 Q = exp(-0.5*Q);
 y = chol(Q+1e-9*eye(n))'*randn(n,1);
 mesh(x1,x2,reshape(y,sqrt(n),sqrt(n)));
@@ -44,6 +48,7 @@ axis square
 axis([-3 3 -3 3 -2 2])
 set(h,'PaperPosition', [0.25 2.5 8 8])
 grid off
+printPmtkFigure('GPARD2', 'png')
 %print -depsc ard2.eps
 
 
@@ -68,5 +73,6 @@ axis square
 axis([-3 3 -3 3 -2 2])
 set(h,'PaperPosition', [0.25 2.5 8 8])
 grid off
+printPmtkFigure('GPARDFA', 'png')
 %print -depsc ard3.eps
 
