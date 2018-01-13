@@ -20,7 +20,7 @@ plot(z, Lnll, 'r--', 'linewidth', 3);
 h=legend('0-1','logloss');
 set(h,'fontsize', 12)
 axis_pct
-xlabel('\eta')
+xlabel('z')
 ylabel('loss')
 printPmtkFigure('nllLoss')
 
@@ -32,7 +32,7 @@ plot(z, Lnll, 'r--', 'linewidth', 3);
 h=legend('0-1','hinge','logloss');
 set(h,'fontsize', 12)
 axis_pct
-xlabel('\eta')
+xlabel('z')
 ylabel('loss')
 printPmtkFigure('hingeLoss')
 
@@ -45,7 +45,7 @@ plot(z, Lexp, 'r--', 'linewidth', 3);
 h=legend('0-1','logloss','exp');
 set(h,'fontsize', 12)
 axis_pct
-xlabel('y^{-} f')
+xlabel('z')
 ylabel('loss')
 printPmtkFigure('expLoss')
 

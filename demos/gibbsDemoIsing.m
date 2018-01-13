@@ -8,17 +8,19 @@ function gibbsDemoIsing()
 pixelX = 100;
 pixelY = 100;
 
-Xsamp = zeros(pixelX, pixelY, 3, 3);
 
+
+%{
 temps = [5 2.5 0.1];
 seeds = 1;
+Xsamp = zeros(pixelX, pixelY, length(seeds), length(temps));
 for t=1:length(temps)
   T= temps(t);
   J = 1/T;
   for trial=1:length(seeds)
     seed  = seeds(trial);
     rand('state', seed);
-    figure(1);clf
+    figure(1);clf;
     Xsamp(:,:,trial,t) = gibbs(pixelX, pixelY, J);
   end
 end
@@ -31,7 +33,33 @@ for t=1:length(temps)
      title(sprintf('trial %d temp %3.2f', trial, temps(t)))
   end
 end
+%}
 
+%Js = [1.42, 1.44, 1.46];
+Js = [0.5, 1.44, 5];
+seeds = [1,2];
+Xsamp = zeros(pixelX, pixelY, length(seeds), length(Js));
+for t=1:length(Js)
+  J = Js(t);
+  for trial=1:length(seeds)
+    seed  = seeds(trial);
+    rand('state', seed);
+    figure(1);clf;
+    Xsamp(:,:,trial,t) = gibbs(pixelX, pixelY, J);
+  end
+end
+
+figure(2);clf
+for t=1:length(Js)
+  for trial=1:length(seeds)
+    subplot2(length(seeds),length(Js),trial,t)
+    imagesc(Xsamp(:,:,trial,t)); colormap(gray); axis off
+    J = Js(t);
+    title(sprintf('J=%3.2f',  J))
+    fname = sprintf('gibbsDemoIsing-J%d-trial%d.mat', J*100, trial);
+    printPmtkFigure(fname);
+  end
+end
 
 %%%%%%%%%%%
 
