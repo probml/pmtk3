@@ -1,10 +1,9 @@
-%% Ridge regression: visualize effect of changing lambda and selecting it with CV and EB
+%% Choose the right lambda for ridge  regression
+% We use CV and empirical bayes
 %
-%%
+% This is a simplified version of linregPolyVsRegDemo.m
 
 
-%ns = [21 50];
-%for n=ns(:)'
   n = 21;
 setSeed(0);
 [xtrain, ytrain, xtest, ytestNoisefree, ytest, sigma2] =...
@@ -34,21 +33,11 @@ else
   pp = preprocessorCreate('rescaleX', true, 'poly', deg, 'addOnes', addOnes);
 end
 
-
-%% Fit model by MLE and plot
-model = linregFit(Xtrain, ytrain, 'preproc', pp);
-for i=1:14, fprintf('%5.3f, ', model.w(i)); end
-[ypredTest] = linregPredict(model, Xtest);
-figure;
-scatter(xtrain, ytrain,'b','filled'); hold on;
-plot(xtest, ypredTest, 'k', 'linewidth', 3);
-
-
-%% compute train/test error for each  lambda using ridge
-lambdas = logspace(-10,1.3,10);
+%lambdas = logspace(-10,1.3,10);
+lambdas = logspace(-10,2.5,15);
 NL = length(lambdas);
-%printNdx = round(linspace(2, NL-1, 3));
-printNdx = [2 6];
+
+%% Plot error vs lambda
 testMse = zeros(1,NL); trainMse = zeros(1,NL);
 for k=1:NL
   lambda = lambdas(k);
@@ -69,47 +58,7 @@ xlabel('log lambda')
 title('mean squared error')
 % Indicate which lambda values were chosen for plotting
 %for i=printNdx(:)',  plot(ndx(i), 0, '*', 'markersize', 12, 'linewidth', 2); end
-printPmtkFigure(sprintf('linregPolyVsRegTestErrN%d', n))
-
-%% print fitted function for certain chosen lambdas
-for k=printNdx
-  lambda = lambdas(k)
-  [model] = linregFit(Xtrain, ytrain, 'lambda', lambda, 'preproc', pp);
-  for i=1:14, fprintf('%5.3f, ', model.w(i)); end
-  [ypredTest, s2] = linregPredict(model, Xtest);
-  ypredTrain = linregPredict(model, Xtrain);
-  sig = sqrt(s2);
-  figure;
-  scatter(xtrain, ytrain,'b','filled');
-  hold on;
-  plot(xtest, ypredTest, 'k', 'linewidth', 3);
-  plot(xtest, ypredTest + sig, 'b:');
-  plot(xtest, ypredTest - sig, 'b:');
-  title(sprintf('ln lambda %5.3f', log(lambda)))
-  printPmtkFigure(sprintf('linregPolyVsRegFitK%dN%d', k, n))
-end
-
-keyboard
-
-
-%% print fitted function for certain chosen lambdas using lasso
-for k=printNdx
-  lambda = lambdas(k);
-  fprintf('lasso %f\n', lambda);
-  [model] = linregFit(Xtrain, ytrain, 'regtype', 'l1', 'lambda', lambda, 'preproc', pp);
-  for i=1:14, fprintf('%5.3f, ', model.w(i)); end
-  [ypredTest, s2] = linregPredict(model, Xtest);
-  ypredTrain = linregPredict(model, Xtrain);
-  sig = sqrt(s2);
-  figure;
-  scatter(xtrain, ytrain,'b','filled');
-  hold on;
-  plot(xtest, ypredTest, 'k', 'linewidth', 3);
-  plot(xtest, ypredTest + sig, 'b:');
-  plot(xtest, ypredTest - sig, 'b:');
-  title(sprintf('ln lambda %5.3f', log(lambda)))
-  printPmtkFigure(sprintf('linregPolyVsRegFitLassoK%dN%d', k, n))
-end
+printPmtkFigure(sprintf('polyfitRidgeModelSelUcurve'))
 
 
 
@@ -152,7 +101,7 @@ else
   idx_opt = oneStdErrorRule(mu, se, dof);
 end
 verticalLine(ndx(idx_opt), 'color','b', 'linewidth',2);
-printPmtkFigure(sprintf('linregPolyVsRegCvN%d', n))
+printPmtkFigure(sprintf('polyfitRidgeModelSelCV'))
 
 % do it again using fitCV
 fitFn2 = @(Xtr,ytr,lam) linregFit(Xtr, ytr, 'lambda', lam, 'preproc', pp);
@@ -176,7 +125,7 @@ end
 
 %% Bayes
 % We  compute log evidence for each value of alpha
-% to see how it compares to test error
+% to see how it compares to test error.
 % To simplify things, we use the known noise variance
 beta = 1/sigma2;
 alphas = beta * lambdas;
@@ -204,26 +153,16 @@ legend('train mse', 'test mse', 'location', 'northwest')
 xlabel('log alpha')
 title('mean squared error')
 
-
-% Log evidence vs alpha
 figLogev = figure;
-plot(log(alphas), logev, 'k-', 'linewidth', 2, 'markersize', 12);
+plot(log(alphas), logev, 'k-o', 'linewidth', 2, 'markersize', 12);
 xlabel('log alpha')
 title('log evidence')
-
-% Plot p(m|D) vs alpha
-figure;
-prob = exp(normalizeLogspace(logev));
-bar(log(alphas), prob);
-xlabel('log alpha')
-title('p(alpha|data)')
 
 %% Now optimize alpha and beta using empirical Bayes
 [modelEB, logevEB] = linregFitBayes(Xtrain, ytrain, 'preproc', pp, 'prior', 'eb');
 alphaEB = modelEB.netlab.alpha;
 figure(figLogev);
 verticalLine(log(alphaEB), 'linewidth', 3, 'color', 'r');
-printPmtkFigure(sprintf('linregPolyVsRegTestEbN%d', n))
 
 
 %% Now infer alpha and beta using VB
@@ -231,6 +170,8 @@ printPmtkFigure(sprintf('linregPolyVsRegTestEbN%d', n))
 alphaVB = modelVB.expectAlpha;
 figure(figLogev);
 verticalLine(log(alphaVB), 'linewidth', 3, 'color', 'b');
+
+printPmtkFigure(sprintf('polyfitRidgeModelSelVB'))
 
 
 % Make figure containing both EB and CV
@@ -244,6 +185,5 @@ plot(log(alphas), cvErr, 'bx:','linewidth', 2, 'markersize', 12 );
 xlabel('log lambda')
 legend('negative log marg. likelihood', 'CV estimate of MSE')
 set(gca, 'xlim', [-20 5])
-printPmtkFigure(sprintf('linregPolyVsRegCvEvidence'))
+printPmtkFigure(sprintf('polyfitRidgeModelSelCVEB'))
 
-%end % for n
