@@ -5,10 +5,11 @@
 % This file is from pmtk3.googlecode.com
 
 figure; hold on;
-%ks = [0.1 0.5 1 1];
-ks = [3 2 1 1];
-%ms = [0.001 0.001 0.001 1];
-ms = [1 1 1 0.001];
+%ks = [3 2 1 1];
+%ms = [1 1 1 0.001];
+
+ks = [1 2 3 3];
+ms = [0.001 0.001 0.001 0.1];
 [styles, colors] = plotColors();
 xs = 0.01:0.01:2;
 nk = length(ks); 
@@ -22,35 +23,35 @@ for i=1:nk
 end
 legend(legendStr)
 title('Pareto distribution', 'fontsize', 15)
-%set(gca, 'xlim', [1 5]);
-set(gca, 'ylim', [-0.1 3.0])
+set(gca, 'xlim', [-0.01 0.5]);
+set(gca, 'ylim', [-0.01 0.5])
 printPmtkFigure pareto-pdf;
 
 
 %% Plot on a log log scale
-%{
 copyobj(gca, figure());
 set(gca, 'xscale', 'log', 'yscale', 'log');
 %figure;
 %axis(exp([0 1.5 -6 2]));
 %set(gca, 'XTick', 1:0.5:5);
 %set(gca, 'YTick', [0 0.5 1 2 3]);
+legend(legendStr, 'location', 'southwest')
+title('Pareto(m,k) on log scale', 'fontsize', 15)
 legend(legendStr)
-title('Pareto(m=1, k) on log scale', 'fontsize', 15)
 printPmtkFigure pareto-log-pdf;
-%}
-%{
+
+
 figure; hold on;
 for i=1:nk
   model.K = ks(i);
   model.m = ms(i);
   logp = paretoLogprob(model, xs);
   plot(log(xs), logp, styles{i}, 'color', colors(i), 'linewidth', 3);
-  legendStr{i} = sprintf('m=%3.2f, k=%3.2f', ms(i), ks(i));
+  legendStr{i} = sprintf('m=%3.2f, k=%3.2f', model.m, model.K);
 end
-legend(legendStr)
+legend(legendStr, 'location', 'southeast')
 title('Log pdf of pareto distribution')
 %set(gca, 'xlim', [1 5]);
 %set(gca, 'ylim', [-0.1 2.1])
-printPmtkFigure pareto-pdf;
-%}
+printPmtkFigure pareto-log-pdf2;
+
