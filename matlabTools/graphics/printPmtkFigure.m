@@ -13,13 +13,21 @@ if isempty(printFolder)
     %printFolder = '/Users/kpmurphy/GDrive/Backup/MLbook/book2.0/Figures/pdfFigures';
     printFolder = '/Users/kpmurphy/github/pmtk3/figures';
   else
-    error('need to specify printFolder')
+    %error('need to specify printFolder')
+    if exist('default_print_folder', 'dir')~=7
+      mkdir 'default_print_folder';
+    end
+    printFolder = fullfile(pwd, 'default_print_folder');
   end
 end
+
 if strcmpi(format, 'pdf')
   pdfcrop(gcf, 0, 0);
 end
-fname = sprintf('%s/%s.%s', printFolder, filename, format);
+
+complete_filename = sprintf('%s.%s', filename, format);
+fname = fullfile(printFolder, complete_filename);
+
 fprintf('printing to %s\n', fname);
 if exist(fname,'file'), delete(fname); end % prevent export_fig from appending
 if 0
@@ -37,4 +45,3 @@ if 1
 end
 
 end
-
