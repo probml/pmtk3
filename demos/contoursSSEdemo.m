@@ -1,5 +1,7 @@
 %% Error surface for linear regression model
 % Based on code by John D'errico
+%https://www.mathworks.com/matlabcentral/fileexchange/8553-optimization-tips-and-tricks?s_tid=prof_contriblnk
+
 
 % This file is from pmtk3.googlecode.com
 
@@ -24,6 +26,7 @@ else
 end
 n = length(x);
 wtrue = [1 1];
+%wtrue = [1.45 0.93];
 sigma = 1;
 y = wtrue(1) + wtrue(2)*x + sigma*randn(n,1);
 
@@ -31,8 +34,8 @@ y = wtrue(1) + wtrue(2)*x + sigma*randn(n,1);
 X = [ones(n,1),x];
 w = X\y; % least squares soln
 
-v = -1:.1:3;
-%v = -5:.5:5;
+%v = -1:.1:3;
+v = -5:.5:5;
 nv = length(v);
 [w0,w1] = meshgrid(v);
 w0=w0(:)';
