@@ -13,7 +13,8 @@ if isempty(printFolder)
     %printFolder = '/Users/kpmurphy/GDrive/Backup/MLbook/book2.0/Figures/pdfFigures';
     printFolder = '/Users/kpmurphy/github/pmtk3/figures';
   else
-    error('need to specify printFolder')
+    printFolder = '/home/kpmurphy/github/pmtk3/figures';
+    %error('need to specify printFolder')
   end
 end
 if strcmpi(format, 'pdf')

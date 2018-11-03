@@ -12,26 +12,33 @@ XS = standardize(X);
 Sigma = cov(X);
 mu = mean(X);
 n = size(X,1);
-[U,D] = eig(Sigma);
-A = sqrt(inv(D))*U';
-XW = X'; % each column is a case
-XW = A*(XW-repmat(mu(:),1,n));
-XW = XW'; % reach row is a case
+[E,D] = eig(Sigma);
+Wpca = sqrt(inv(D))*E';
+Xt = X'; % each column is a case
+XW = Wpca*(Xt-repmat(mu(:),1,n));
+XWpca = XW'; % reach row is a case
+
+Wzca = E * sqrt(inv(D)) *E';
+XW = Wzca*(Xt-repmat(mu(:),1,n));
+XWzca = XW'; % reach row is a case
+
 
 % Plot data
-XX = {X, XS, XW};
-ttl = {'raw', 'standarized', 'whitened'};
+XX = {X, XS, XWpca, XWzca};
+ttl = {'raw', 'standarized', 'PCA whitened', 'ZCA whitened'};
 figure
 for j=1:length(XX)
   X = XX{j};
   % plot identity of each male
-  subplot(1,3,j)
+  subplot(2,2,j)
   N = size(X,1);
   for i=1:N
     plot(X(i,1), X(i,2));
     hold on
-    str = sprintf('%d', i);
-    text(X(i,1), X(i,2), str);
+    if i<5
+        str = sprintf('%d', i);
+        text(X(i,1), X(i,2), str);
+    end
   end
   hold on
   mu = mean(X); Sigma = cov(X);
@@ -40,3 +47,4 @@ for j=1:length(XX)
   title(ttl{j});
 end
 
+printPmtkFigure('heightWeightWhitenZCA')
