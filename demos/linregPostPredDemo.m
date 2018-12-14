@@ -72,7 +72,7 @@ for s=1:S
   tmp = modelMLE;  tmp.w = ws(s,:)';
   [mu] = linregPredict(tmp, Xtest);
   plot(xtest, mu, 'k-', 'linewidth', 2);
-  end9
+end
 title('functions sampled from posterior', 'fontsize', fs)
 printPmtkFigure(sprintf('%sSamplesBayes', name))
 
