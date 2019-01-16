@@ -129,28 +129,20 @@ end
 
   
 
-    function CPTs = makeCodePriors(L, A, code)
-        % CPTs{i} = p(ci) = prior over code letter i
-        % set code(i)  = 0 if unknown (uniform prior for ci)
-        % set code(i) in {1,..,A} to use delta function for that slot
-        CPTs = cell(1, L);
-        for i=1:L
-            if code(i) > 0
-                % delta function
-                CPTs{i} = zeros(1, A);
-                CPTs{i}(code(i)) = 1.0;
-            else
-                CPTs{i} = normalize(ones(1,A)); % uniform prior
-            end
-        end
-    end
-
-function model = makePriorBayesNet(L, A, codeCPTs)
+function model = makePriorBayesNet(L, A, code)
+    % set code(i)  = 0 if unknown (uniform prior for ci)
+    % set code(i) in {1,..,A} to use delta function for that slot
     [G, cnodes, xnodes, dnodes, ynode] = makePriorGraph(L);
     nnodes = size(G,1);
     CPTs = cell(1, nnodes);
     for i=1:L
-        CPTs{cnodes(i)} = codeCPTs{i};
+        if code(i) > 0
+            % cheat by encoding delta function on true code
+            CPTs{cnodes(i)} = zeros(1, A);
+            CPTs{cnodes(i)}(code(i)) = 1.0;
+        else
+            CPTs{cnodes(i)} = normalize(ones(1,A)); % uniform prior
+        end
         CPTs{xnodes(i)} = normalize(ones(1,A)); % will always be clamped
         CPTs{dnodes(i)} = makeDiffCPT(A);
     end
@@ -167,12 +159,6 @@ end
         clamped = zeros(1, model.nnodes);
         clamped(model.xnodes) = x;
         bel = dgmInferQuery(model.pgm, [model.ynode], 'clamped', clamped);
-    end
-
-    function postPgm = bayesianUpdate(model, x, y)
-        clamped = zeros(1, model.nnodes);
-        clamped(model.xnodes) = x;
-        clamped(model.ynode) = y;
     end
 
     function CPT = probY(model)
@@ -231,7 +217,7 @@ end
     end
 
 
-    function post = bayesianUpdateFlat(prior, x, y)
+    function post = bayesianUpdate(prior, x, y)
         L = length(x);
         lik = zeros(1, L+1);
         lik(y+1) = 1.0;
@@ -242,8 +228,6 @@ end
         post = reshape(postFlat, [A*ones(1,L), L+1]);
     end
 
-   
-
 
 L = 3;
 A = 4;
@@ -253,8 +237,7 @@ A = 4;
 
 %%
 % First we use an oracle prior that has access to the true code.
-codePriors = makeCodePriors(L, A, [1,1,1]);
-priorPgm = makePriorBayesNet(L, A, codePriors);
+priorPgm = makePriorBayesNet(L, A, [1,1,1]);
 priorYflat = probY(priorPgm);
 priorY = reshape(priorYflat, [A*ones(1,L), L+1]);
 %dispcpt(priorY)
@@ -274,8 +257,7 @@ dispStrings(bestStr, bestVals)
 %%
 % Now we use a semi- oracle prior that has access to the true code
 % for bits 1:2. So there are only 4 possible prior codes.
-codePriors = makeCodePriors(L, A, [1,1,0]);
-priorPgm = makePriorBayesNet(L, A, codePriors);
+priorPgm = makePriorBayesNet(L, A, [1,1,0]);
 priorYflat = probY(priorPgm);
 priorY = reshape(priorYflat, [A*ones(1,L), L+1]);
 %dispcpt(priorY)
@@ -321,8 +303,7 @@ end
 %%
 % Now we use a semi- oracle prior that has access to the true code
 % for bits 1. So there are  16 possible prior codes.
-codePriors = makeCodePriors(L, A, [1,0,0]);
-priorPgm = makePriorBayesNet(L, A, codePriors);
+priorPgm = makePriorBayesNet(L, A, [1,0,0]);
 priorYflat = probY(priorPgm);
 priorY = reshape(priorYflat, [A*ones(1,L), L+1]);
 

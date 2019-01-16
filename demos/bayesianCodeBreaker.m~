@@ -172,7 +172,6 @@ end
     function postPgm = bayesianUpdate(model, x, y)
         clamped = zeros(1, model.nnodes);
         clamped(model.xnodes) = x;
-        clamped(model.ynode) = y;
     end
 
     function CPT = probY(model)
