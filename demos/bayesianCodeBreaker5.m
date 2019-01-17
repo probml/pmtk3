@@ -202,7 +202,21 @@ end
         e = sum(prob(ndx, :) .* Fmodel.Frange);
  end
 
-  
+    function e = expectedValuesAllX(Fmodel)
+        L = Fmodel.L; A = Fmodel.A; 
+        xs = ind2subv(A*ones(1,L), 1:A^L);
+        e = zeros(1, A^L);
+        for i=1:A^L
+            e(i) = expectedValueGivenX(Fmodel, xs(i,:));
+        end
+        function v=foo(x)
+            v = expectedValueGivenX(Fmodel, x);
+        end
+        e2 = applyFun(xs, @foo);
+        assert(approxeq(e, e2))
+    end
+
+ 
 
     function [ndx, vals] = argminima(scores)
         m = min(scores);
@@ -219,7 +233,6 @@ end
 % For debugging purposes, we check that the prior over f(x) has
 % the expected values.
 
-    function dispMinima(Fmode
     function testOracle3()
         L = 3; A = 4;
     % First we use an oracle prior that has access to the true code.
