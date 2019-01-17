@@ -63,8 +63,8 @@ obtained so far. The agent can use this to decide what strings to query next
   xt = argmax_{x in A^L} at(x)
 We will use expected improvement, which is given by the following
 (for some  threshold tau, eg the value of the incumbent):
-  EIt(x; tau) = E_y [(y - tau) * ind(y > tau)] 
-    = sum_{v=0}^L pt(y=v|x) * (v-tau) * ind(v > tau)
+  EIt(x; tau) = E_y [(tau - y) * ind(y < tau)] 
+    = sum_{v=0}^L pt(y=v|x) * (tau-v) * ind(v < tau)
 where pt(y|x) is the posterior predictive over outcomes.
 
 Let bt be the best string seen so far (the incumbent).
@@ -209,27 +209,43 @@ end
     end
 
 
- function e = expectedValueGivenX(Fmodel, x)
-        L = Fmodel.L; A = Fmodel.A; prob = Fmodel.Fprob;
-        assert(L == length(x));
-        ndx = subv2ind(A*ones(1,L), x);
-        prob = reshape(prob, [A^L, length(Fmodel.Frange)]);
-        e = sum(prob(ndx, :) .* Fmodel.Frange);
- end
+     function e = expectedValue(Fmodel, x)
+            L = Fmodel.L; A = Fmodel.A; prob = Fmodel.Fprob;
+            assert(L == length(x));
+            ndx = subv2ind(A*ones(1,L), x);
+            prob = reshape(prob, [A^L, length(Fmodel.Frange)]);
+            e = sum(prob(ndx, :) .* Fmodel.Frange);
+     end
 
 
-    function dispMinimaSurrogate(Fmodel)
-        disp(['best strings for surrogate | expected score | true score'])
-        function v=foo(x)
-                v = expectedValueGivenX(Fmodel, x);
+    function dispSurrogate(Fmodel, trueCode, varargin)
+        [str, doPlot] = process_options(varargin, 'str', '', 'doPlot', true);
+        L = Fmodel.L;
+    xs = Fmodel.Fdomain;
+    e = applyFun(xs, @(x) expectedValue(Fmodel, x));
+    o = applyFun(xs, @(x) hammingDistance(x, trueCode));
+   [ndx, evals] = argminima(e); ovals = o(ndx);
+    nmin = length(ndx);
+    
+    if doPlot
+        Nstr = length(e); 
+        figure; plot(1:Nstr, e, 'r-', 1:Nstr, o, 'b:', 'linewidth', 2);
+        set(gca, 'ylim', [-0.1 L+0.1]);
+        legend('expected', 'true')
+        title(str);
+        set(gca, 'xtick', ndx);
+        args = cell(1, nmin);
+        for i=1:nmin
+            args{i} = num2str(xs(ndx(i),:));
         end
-        e = applyFun(Fmodel.Fdomain, @foo);
-        o = applyFun(Fmodel.Fdomain, @blackboxObjective);
-        [ndx, evals] = argminima(e);  ovals = o(ndx);
-        nminima = length(ndx);
-        separator = repmat('|', nminima, 1);
-        disp([num2str(Fmodel.Fdomain(ndx,:)), separator, num2str(evals(:)), ...
+        xticklabelRot(args, 45, 8);
+    end
+
+    separator = repmat('|', nmin, 1);
+    disp(str)
+    disp([num2str(xs(ndx,:)), separator, num2str(evals(:)), ...
             separator, num2str(ovals(:))])
+     
     end
 
 
@@ -256,10 +272,7 @@ end
         h = sum(x ~= c);
     end
 
-   trueCode = [1,1,1];
-   function h = blackboxObjective(x)
-        h = hammingDistance(x, trueCode);
-    end
+ 
 
 %% Testing code
 
@@ -276,16 +289,16 @@ end
     assert(approxeq(squeeze(priorY(2,1,1,:)), [0 1 0 0]')) % 1 bits away 
     assert(approxeq(squeeze(priorY(2,2,1,:)), [0 0 1 0]')) % 2 bits away 
     assert(approxeq(squeeze(priorY(2,2,2,:)), [0 0 0 1]')) % 3 bits away   
-    assert(expectedValueGivenX(Fmodel, [1,1,1]) == 0)
-    assert(expectedValueGivenX(Fmodel, [2,1,1]) == 1)
-    disp(['oracle prior 3'])
-    dispMinimaSurrogate(Fmodel)
+    assert(expectedValue(Fmodel, [1,1,1]) == 0)
+    assert(expectedValue(Fmodel, [2,1,1]) == 1)
+    dispSurrogate(Fmodel, code, 'str', 'oracle3', 'doPlot', false);
     end
 
     function testOraclePrior2()
         L = 3; A = 4;
     % We use a semi-oracle prior that has access to the true code
     % for bits 1:2. So there are only 4 possible prior codes.
+    code = [1,1,1];
     codePrior = [1,1,0];
     codePriors = makeCodePriors(L, A, codePrior);
     priorPgm = makeBayesNet(L, A, codePriors);
@@ -302,24 +315,25 @@ end
     assert(approxeq(squeeze(priorY(1,1,1,:)), [0.25 0.75 0 0]')) 
     assert(approxeq(squeeze(priorY(2,1,1,:)), [0 0.25 0.75 0]')) 
     assert(approxeq(squeeze(priorY(2,2,1,:)), [0 0 0.25 0.75]')) 
-    assert(expectedValueGivenX(Fmodel, [1,1,1]) == 0.25*0 + 0.75*1)
-    assert(expectedValueGivenX(Fmodel, [2,1,1]) == 0.25*1 + 0.75*2)
-    assert(expectedValueGivenX(Fmodel, [2,2,1]) == 0.25*2 + 0.75*3)
-    disp(['oracle2 prior'])
-    dispMinimaSurrogate(Fmodel)
+    assert(expectedValue(Fmodel, [1,1,1]) == 0.25*0 + 0.75*1)
+    assert(expectedValue(Fmodel, [2,1,1]) == 0.25*1 + 0.75*2)
+    assert(expectedValue(Fmodel, [2,2,1]) == 0.25*2 + 0.75*3)
     
-    % The best strings are 111, 112, 113, 114
-    % They all have the same expected value of 0.75
-    % If we query 111, we discover f(111)=0 so the posterior collapses
-    % to p(c=[111]) and hence x*=111.
-    % If we query 112, 113 or 114, we discover f(q) > 0
-    % so we are left with 3 candidates.
-    x=[1,1,1]; y = blackboxObjective(x);
+    % The prior says that the only optima can be 111, 112, 113, or 114.
+    dispSurrogate(Fmodel, code, 'str', 'oracle2', 'doPlot', true)
+    
+  
+    % If we query 112, we discover f(112)=1, so we still have 3 candidates
+    x=[1,1,2]; y = hammingDistance(x, code);
     postPgm = bayesianUpdate(priorPgm, x, y);
     Fmodel = makeSurrogateFromPgm(postPgm);
-    disp(['oracle2 prior, then query f(111)'])
-    dispMinimaSurrogate(Fmodel)
-
+    dispSurrogate(Fmodel, code, 'str', 'oracle2+f(112)', 'doPlot', true)
+    
+      % If we query 111, we discover f(111)=0 and we're done!
+    x=[1,1,1]; y = hammingDistance(x, code);
+    postPgm = bayesianUpdate(priorPgm, x, y);
+    Fmodel = makeSurrogateFromPgm(postPgm);
+    dispSurrogate(Fmodel, code, 'str', 'oracle2+f(111)', 'doPlot', true)
     end
 
 
@@ -327,19 +341,32 @@ end
         L = 3; A = 4;
     % Now we use a semi- oracle prior that has access to the true code
     % for bits 1. So there are  16 possible prior codes.
+    code = [1,1,1];
     codePrior = [1,0,0];
     codePriors = makeCodePriors(L, A, codePrior);
     priorPgm = makeBayesNet(L, A, codePriors);
     Fmodel = makeSurrogateFromPgm(priorPgm);
-    disp(['oracle1 prior'])
-    dispMinimaSurrogate(Fmodel)
+    dispSurrogate(Fmodel, code, 'str', 'oracle1')
 
+    % The prior allows for 4^2=16 possible codes
+
+    % If we query 112, we discover f(112)=1, so we still have 15 candidates
+    x=[1,1,2]; y = hammingDistance(x, code);
+    postPgm = bayesianUpdate(priorPgm, x, y);
+    Fmodel = makeSurrogateFromPgm(postPgm);
+    dispSurrogate(Fmodel, code, 'str', 'oracle1+f(112)', 'doPlot', true)
+    
+      % If we query 111, we discover f(111)=0 and we're done!
+    x=[1,1,1]; y = hammingDistance(x, code);
+    postPgm = bayesianUpdate(priorPgm, x, y);
+    Fmodel = makeSurrogateFromPgm(postPgm);
+    dispSurrogate(Fmodel, code, 'str', 'oracle1+f(111)', 'doPlot', true)
     end
 
 %% Main
 
-testOraclePrior3()
-testOraclePrior2()
-%testOraclePrior1()
+%testOraclePrior3()
+%testOraclePrior2()
+testOraclePrior1()
 
 end
