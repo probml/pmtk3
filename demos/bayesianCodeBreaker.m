@@ -78,8 +78,14 @@ We plot f*(bt) vs time t for different algorithms:
 function bayesianCodeBreaker()
 
 
-
- function [G, cnodes, xnodes, dnodes, ynode] = makePriorGraph(L)
+%% Bayes net code
+ function [G, cnodes, xnodes, dnodes, ynode] = makeBayesNetGraph(L)
+     %{
+     for L=3
+     c1[1] c2[2] c3[3]  x1[4] x2[5] x3[6] 
+         d1[7] d2[8] d3[9]
+             y[9]
+     %}
     cnodes = (1:L);
     xnodes = (L+1):(2*L);
     dnodes = (2*L + 1):(3*L);
@@ -143,8 +149,8 @@ end
         end
     end
 
-function model = makePriorBayesNet(L, A, codeCPTs)
-    [G, cnodes, xnodes, dnodes, ynode] = makePriorGraph(L);
+function pgm = makeBayesNet(L, A, codeCPTs)
+    [G, cnodes, xnodes, dnodes, ynode] = makeBayesNetGraph(L);
     nnodes = size(G,1);
     CPTs = cell(1, nnodes);
     for i=1:L
@@ -154,45 +160,54 @@ function model = makePriorBayesNet(L, A, codeCPTs)
     end
     CPTs{ynode} = makeSumCPT(L);
     nyvals = L+1;
-    pgm = dgmCreate(G, CPTs);
+    dgm = dgmCreate(G, CPTs);
     nnodes = size(G, 1);
-    model = structure(pgm, nnodes, cnodes, xnodes, dnodes, ynode, L, A, nyvals);
+    pgm = structure(dgm, nnodes, cnodes, xnodes, dnodes, ynode, L, A, nyvals);
 end
 
- function postPgm = bayesianUpdate(model, x, y)
-        clamped = zeros(1, model.nnodes);
-        clamped(model.xnodes) = x;
-        clamped(model.ynode) = y;
-        % UNFINISHED
+ function pgm = bayesianUpdate(pgm, x, y)
+     L  = pgm.L; A = pgm.A; 
+        clamped = zeros(1, pgm.nnodes);
+        clamped(pgm.xnodes) = x;
+        clamped(pgm.ynode) = y+1; % since domain is {1,2,...,K}
+        nodeBels = dgmInferNodes(pgm.dgm, 'clamped', clamped);
+        codeBel = nodeBels(pgm.cnodes);
+        codeCPT = cell(1,L);
+        for i=1:L
+            codeCPT{i} = codeBel{i}.T;
+        end
+        pgm = makeBayesNet(L, A, codeCPT);
     end
 
-    function bel = probYGivenX(x, model)
+    function bel = probYGivenX(pgm, x)
         % bel(y) = p(y | x)
-        clamped = zeros(1, model.nnodes);
-        clamped(model.xnodes) = x;
-        bel = dgmInferQuery(model.pgm, [model.ynode], 'clamped', clamped);
+        clamped = zeros(1, pgm.nnodes);
+        clamped(pgm.xnodes) = x;
+        bel = dgmInferQuery(pgm.dgm, [pgm.ynode], 'clamped', clamped);
     end
 
 
-    function CPT = probY(model)
-        A = model.A; L = model.L; K = model.nyvals;
+    function CPT = probYGivenAllX(pgm)
+        A = pgm.A; L = pgm.L; K = pgm.nyvals;
         xs = ind2subv(A*ones(1,L), 1:(A^L)); % all possible queries
         CPT = zeros(A^L, K);
         for i=1:A^L
-            bel = probYGivenX(xs(i,:), model);
+            bel = probYGivenX(pgm, xs(i,:));
             CPT(i, :) = bel.T(:);
         end
     end
         
-    function vals = applyFun(args, fn)
-        % vals(i) = fn(args(i,:))
-        nrows = size(args, 1);
-        vals = zeros(1, nrows);
-        for i=1:nrows
-            vals(i) = fn(args(i,:));
-        end
+%% Surrogate function code
+
+
+    function Fmodel = makeSurrogateFromPgm(pgm)
+        L = pgm.L; A = pgm.A;
+        priorYflat = probYGivenAllX(pgm);
+        Fprob = reshape(priorYflat, [A*ones(1,L), L+1]);
+        Fdomain = ind2subv(A*ones(1,L), 1:A^L); Frange = 0:L;
+        Fmodel = structure(Fprob, L, A, Fdomain, Frange);
     end
-        
+
 
  function e = expectedValueGivenX(Fmodel, x)
         L = Fmodel.L; A = Fmodel.A; prob = Fmodel.Fprob;
@@ -202,7 +217,33 @@ end
         e = sum(prob(ndx, :) .* Fmodel.Frange);
  end
 
-  
+
+    function dispMinimaSurrogate(Fmodel)
+        disp(['best strings for surrogate | expected score | true score'])
+        function v=foo(x)
+                v = expectedValueGivenX(Fmodel, x);
+        end
+        e = applyFun(Fmodel.Fdomain, @foo);
+        o = applyFun(Fmodel.Fdomain, @blackboxObjective);
+        [ndx, evals] = argminima(e);  ovals = o(ndx);
+        nminima = length(ndx);
+        separator = repmat('|', nminima, 1);
+        disp([num2str(Fmodel.Fdomain(ndx,:)), separator, num2str(evals(:)), ...
+            separator, num2str(ovals(:))])
+    end
+
+
+
+%% Generic code
+    function vals = applyFun(args, fn)
+        % vals(i) = fn(args(i,:))
+        nrows = size(args, 1);
+        vals = zeros(1, nrows);
+        for i=1:nrows
+            vals(i) = fn(args(i,:));
+        end
+    end
+        
 
     function [ndx, vals] = argminima(scores)
         m = min(scores);
@@ -215,56 +256,41 @@ end
         h = sum(x ~= c);
     end
 
-
-% For debugging purposes, we check that the prior over f(x) has
-% the expected values.
-
-    function dispMinima(Fmodel, code)
-        function v=foo(x)
-                v = expectedValueGivenX(Fmodel, x);
-        end
-        e = applyFun(Fmodel.Fdomain, @foo);
-        function v=bar(x)
-                v = hammingDistance(x, code);
-        end
-        o = applyFun(Fmodel.Fdomain, @bar);
-        [ndx, evals] = argminima(e);  ovals = o(ndx);
-        disp([Fmodel.Fdomain(ndx,:), evals(:), ovals(:)])
+   trueCode = [1,1,1];
+   function h = blackboxObjective(x)
+        h = hammingDistance(x, trueCode);
     end
 
-    function testOracle3()
+%% Testing code
+
+    function testOraclePrior3()
         L = 3; A = 4;
     % First we use an oracle prior that has access to the true code.
     code = [1,1,1];
     codePrior = [1,1,1];
     codePriors = makeCodePriors(L, A, codePrior);
-    priorPgm = makePriorBayesNet(L, A, codePriors);
-    priorYflat = probY(priorPgm);
-    priorY = reshape(priorYflat, [A*ones(1,L), L+1]);
+    priorPgm = makeBayesNet(L, A, codePriors);
+    Fmodel = makeSurrogateFromPgm(priorPgm);
+    priorY = Fmodel.Fprob;
     assert(approxeq(squeeze(priorY(1,1,1,:)), [1 0 0 0]')) % 0 bits away 
     assert(approxeq(squeeze(priorY(2,1,1,:)), [0 1 0 0]')) % 1 bits away 
     assert(approxeq(squeeze(priorY(2,2,1,:)), [0 0 1 0]')) % 2 bits away 
-    assert(approxeq(squeeze(priorY(2,2,2,:)), [0 0 0 1]')) % 3 bits away 
-
-    Fprob = priorY; Fdomain = ind2subv(A*ones(1,L), 1:A^L); Frange = 0:L;
-    Fmodel = structure(Fprob, L, A, Fdomain, Frange);
+    assert(approxeq(squeeze(priorY(2,2,2,:)), [0 0 0 1]')) % 3 bits away   
     assert(expectedValueGivenX(Fmodel, [1,1,1]) == 0)
     assert(expectedValueGivenX(Fmodel, [2,1,1]) == 1)
-  
-    disp(['best strings for oracle prior, expected, oracle'])
-    dispMinima(Fmodel, code)
+    disp(['oracle prior 3'])
+    dispMinimaSurrogate(Fmodel)
     end
 
-    function testOracle2()
+    function testOraclePrior2()
         L = 3; A = 4;
     % We use a semi-oracle prior that has access to the true code
     % for bits 1:2. So there are only 4 possible prior codes.
-    code = [1,1,1];
     codePrior = [1,1,0];
     codePriors = makeCodePriors(L, A, codePrior);
-    priorPgm = makePriorBayesNet(L, A, codePriors);
-    priorYflat = probY(priorPgm);
-    priorY = reshape(priorYflat, [A*ones(1,L), L+1]);
+    priorPgm = makeBayesNet(L, A, codePriors);
+    Fmodel = makeSurrogateFromPgm(priorPgm);
+    priorY = Fmodel.Fprob;
     %dispcpt(priorY)
     %{
     c*   x=111 211  221
@@ -276,53 +302,44 @@ end
     assert(approxeq(squeeze(priorY(1,1,1,:)), [0.25 0.75 0 0]')) 
     assert(approxeq(squeeze(priorY(2,1,1,:)), [0 0.25 0.75 0]')) 
     assert(approxeq(squeeze(priorY(2,2,1,:)), [0 0 0.25 0.75]')) 
-
-    
-    Fprob = priorY; Fdomain = ind2subv(A*ones(1,L), 1:A^L); Frange = 0:L;
-    Fmodel = structure(Fprob, L, A, Fdomain, Frange);
-    
     assert(expectedValueGivenX(Fmodel, [1,1,1]) == 0.25*0 + 0.75*1)
     assert(expectedValueGivenX(Fmodel, [2,1,1]) == 0.25*1 + 0.75*2)
     assert(expectedValueGivenX(Fmodel, [2,2,1]) == 0.25*2 + 0.75*3)
-
+    disp(['oracle2 prior'])
+    dispMinimaSurrogate(Fmodel)
     
-    disp(['best strings for oracle2 prior, expected, oracle'])
-    dispMinima(Fmodel, code)
     % The best strings are 111, 112, 113, 114
     % They all have the same expected value of 0.75
     % If we query 111, we discover f(111)=0 so the posterior collapses
     % to p(c=[111]) and hence x*=111.
     % If we query 112, 113 or 114, we discover f(q) > 0
     % so we are left with 3 candidates.
-
- 
+    x=[1,1,1]; y = blackboxObjective(x);
+    postPgm = bayesianUpdate(priorPgm, x, y);
+    Fmodel = makeSurrogateFromPgm(postPgm);
+    disp(['oracle2 prior, then query f(111)'])
+    dispMinimaSurrogate(Fmodel)
 
     end
 
 
-    function testOracle1()
+    function testOraclePrior1()
         L = 3; A = 4;
     % Now we use a semi- oracle prior that has access to the true code
     % for bits 1. So there are  16 possible prior codes.
-    code = [1,1,1];
     codePrior = [1,0,0];
     codePriors = makeCodePriors(L, A, codePrior);
-    priorPgm = makePriorBayesNet(L, A, codePriors);
-    priorYflat = probY(priorPgm);
-    priorY = reshape(priorYflat, [A*ones(1,L), L+1]);
-    
-    Fprob = priorY; Fdomain = ind2subv(A*ones(1,L), 1:A^L); Frange = 0:L;
-    Fmodel = structure(Fprob, L, A, Fdomain, Frange);
-
-    disp(['best strings for oracle1 prior, expected, oracle'])
-    dispMinima(Fmodel, code)
+    priorPgm = makeBayesNet(L, A, codePriors);
+    Fmodel = makeSurrogateFromPgm(priorPgm);
+    disp(['oracle1 prior'])
+    dispMinimaSurrogate(Fmodel)
 
     end
 
 %% Main
 
-testOracle3()
-testOracle2()
-testOracle1()
+testOraclePrior3()
+testOraclePrior2()
+%testOraclePrior1()
 
 end
