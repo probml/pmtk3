@@ -364,7 +364,16 @@ end
     dispSurrogate(Fmodel, code, 'str', 'oracle1+f(111)', 'doPlot', false)
     end
 
+    function saveFigure(fname)
+         printFolder = '/home/kpmurphy/github/pmtk3/figures';
+         format = 'png';
+         fname = sprintf('%s/%s.%s', printFolder, fname, format);
+        fprintf('printing to %s\n', fname);
+         print(gcf, '-dpng', fname);
+    end
+
  function testUnifPrior()
+   
         L = 3; A = 4;
     % Uniform prior means 4^3=64 codes.
     code = [1,1,1];
@@ -375,6 +384,7 @@ end
     incumbentVal = max(Fmodel.Frange);
     dispSurrogate(Fmodel, code, 'str', 'unif', 'incumbentVal', ...
         incumbentVal, 'drawLines', false)
+    saveFigure('codeBreaker1');
 
     % If we query 112, we discover f(112)=1, 
     % so the posterior is 1 away from 112 and has 9 strings,
@@ -386,7 +396,8 @@ end
     [postPgm, postCodes] = bayesianUpdate(priorPgm, x, y);
     Fmodel = makeSurrogateFromPgm(postPgm);
     dispSurrogate(Fmodel, code, 'str', 'f(112)', 'incumbentVal', ...
-        incumbentVal, 'drawLines', false)
+        incumbentVal, 'drawLines', false);
+    saveFigure('codeBreaker2');
  
     % If we now query 114, we discover f(114)=1, 
     % so the posterior is 1 away from 112 and 114 and has 2 strings,
@@ -398,14 +409,16 @@ end
     [postPgm, postCodes] = bayesianUpdate(postPgm, x, y);
     Fmodel = makeSurrogateFromPgm(postPgm);
     dispSurrogate(Fmodel, code, 'str', 'f(112),f(114)', 'incumbentVal', ...
-        incumbentVal, 'drawLines', false)
+        incumbentVal, 'drawLines', false);
+    saveFigure('codeBreaker3');
     
     x=[1,1,3]; y = hammingDistance(x, code);
     incumbentVal = min(y, incumbentVal);
     [postPgm, postCodes] = bayesianUpdate(postPgm, x, y);
     Fmodel = makeSurrogateFromPgm(postPgm);
     dispSurrogate(Fmodel, code, 'str', 'f(112),f(114),f(113)', 'incumbentVal', ...
-        incumbentVal, 'drawLines', false)
+        incumbentVal, 'drawLines', false);
+    saveFigure('codeBreaker4');
  
     end
 
