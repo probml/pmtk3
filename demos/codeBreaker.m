@@ -1,22 +1,7 @@
 % demo of Bayesian optimization for "code breaking"
 
 
-
-
-
-function bayesianBreaker()
-
-
-%% Bayes net code
- function [G, cnode, xnodes, ynode] = makeBayesNetGraph(L)
-    xnodes = (1:L);
-    cnode = L+1;
-    ynode = L+2;
-    nnodes = L+2;
-    G = zeros(nnodes, nnodes);
-    G(xnodes, ynode) = 1;
-    G(cnode, ynode) = 1;
- end
+function bayesianCodeBreakerSimple()
 
 
 
@@ -51,60 +36,7 @@ function CPT = makeLikelihoodCPT(L, A)
         end
 end
 
-    function CPT = makeHammingCPT(L, A)
-        % CPT(x1,...,xL,c,y)
-        sz = A*ones(1, L);
-        nstr = A^L;
-        CPT = makeLikelihoodCPT(L, A);
-        CPT = reshape(CPT, [sz nstr L+1]);
-    end
-
-function pgm = makeBayesNet(L, A, codePrior)
-    [G, cnode, xnodes, ynode] = makeBayesNetGraph(L);
-    nnodes = size(G,1);
-    CPTs = cell(1, nnodes);
-    CPTs{cnode} = codePrior;
-    for i=1:L
-        CPTs{xnodes(i)} = normalize(ones(1,A)); % will always be clamped
-    end
-    CPTs{ynode} = makeHammingCPT(L, A);
-    nyvals = L+1;
-    dgm = dgmCreate(G, CPTs);
-    nnodes = size(G, 1);
-    pgm = structure(dgm, nnodes, cnode, xnodes, ynode, L, A, nyvals);
-end
-
- function [pgm, codePost] = bayesianUpdate(pgm, x, y)
-     L  = pgm.L; A = pgm.A; 
-        clamped = zeros(1, pgm.nnodes);
-        clamped(pgm.xnodes) = x;
-        clamped(pgm.ynode) = y+1; % since domain is {1,2,...,K}
-        nodeBels = dgmInferNodes(pgm.dgm, 'clamped', clamped);
-        codeBel = nodeBels(pgm.cnode);
-        codePost = codeBel{1}.T(:)';
-        pgm = makeBayesNet(L, A, codePost);
-    end
-
-    function bel = probYGivenX(pgm, x)
-        % bel(y) = p(y | x)
-        clamped = zeros(1, pgm.nnodes);
-        clamped(pgm.xnodes) = x;
-        bel = dgmInferQuery(pgm.dgm, [pgm.ynode], 'clamped', clamped);
-    end
-
-
-    function CPT = probYGivenAllX(pgm)
-        A = pgm.A; L = pgm.L; K = pgm.nyvals;
-        xs = ind2subv(A*ones(1,L), 1:(A^L)); % all possible queries
-        CPT = zeros(A^L, K);
-        for i=1:A^L
-            bel = probYGivenX(pgm, xs(i,:));
-            CPT(i, :) = bel.T(:);
-        end
-    end
-
  
-%% Surrogate function code
 
     function Fmodel = makeSurrogate(L, A, likelihoodCPT, codePrior)
         % likelihoodCPT(x, c, y) = p(y| c, x)
@@ -133,15 +65,6 @@ end
 
 
 
-    function Fmodel = makeSurrogateFromPgm(pgm)
-        L = pgm.L; A = pgm.A;
-        priorYflat = probYGivenAllX(pgm);
-        Fprob = reshape(priorYflat, [A*ones(1,L), L+1]);
-        Fdomain = ind2subv(A*ones(1,L), 1:A^L); Frange = 0:L;
-        Fmodel = structure(Fprob, L, A, Fdomain, Frange);
-    end
-
-
      function e = expectedValue(Fmodel, x)
             L = Fmodel.L; A = Fmodel.A; 
             assert(L == length(x));
@@ -166,7 +89,7 @@ end
 
     function dispSurrogate(Fmodel, trueCode, varargin)
         [str, doPlot, drawLines, incumbentVal, showAll] = process_options(varargin, ...
-            'str', '', 'doPlot', true, 'drawLines', true, ...
+            'str', '', 'doPlot', true, 'drawLines',false, ...
             'incumbentVal', 0, 'showAll', false);
         L = Fmodel.L; A = Fmodel.A;
     xs = Fmodel.Fdomain;
@@ -194,6 +117,7 @@ end
         xticklabelRot(args, 45, 8);
     end
 
+    %{
     if showAll
         ndx = 1:length(o);
     else
@@ -206,6 +130,7 @@ end
     evals = e(ndx); eicvals = eic(ndx); ovals = o(ndx);
     disp([num2str(xs(ndx,:)), separator, num2str(evals(:)), ...
             separator, num2str(eicvals(:)), separator, num2str(ovals(:))])
+    %}
      
     end
 
@@ -250,23 +175,40 @@ end
 
 %% Testing code
 
+    function test()
+ L = 2; A =3;
+        code = [1,2];
+    codePriorHint = [0,2];
+    codePrior = makeCodePrior(L, A, codePriorHint);
+    dispcpt(codePrior)
+    keyboard
+    end
+
     function testSurrogate()
         L = 3; A =4;
+        code = [1,1,1];
     codePriorHint = [0,0,0];
     codePrior = makeCodePrior(L, A, codePriorHint);
-    priorPgm = makeBayesNet(L, A, codePrior);
-    Fmodel = makeSurrogateFromPgm(priorPgm);
+    
     likCPT = makeLikelihoodCPT(L, A);
     surrogate = makeSurrogate(L, A, likCPT, codePrior);
-    assert(approxeq(Fmodel.Fprob, surrogate.Fprob))
+    incumbentVal = max(surrogate.Frange);
+    dispSurrogate(surrogate, code, 'str', 'unif', 'incumbentVal', incumbentVal)
+  
+    x=[1,1,2]; y = hammingDistance(x, code);
+    incumbentVal = min(y, incumbentVal);
+    surrogate = updateSurrogate(surrogate, x, y);
+    dispSurrogate(surrogate, code, 'str', 'unif+f(112)', 'incumbentVal', incumbentVal)
     
-    code = [1,1,1];
-    x=[1,2,2]; y = hammingDistance(x, code);
-    postPgm = bayesianUpdate(priorPgm, x, y);
-    FmodelPost = makeSurrogateFromPgm(postPgm);
-    surrogatePost = updateSurrogate(surrogate, x, y);
-    assert(approxeq(FmodelPost.Fprob, surrogatePost.Fprob));
+    x=[1,1,4]; y = hammingDistance(x, code);
+    incumbentVal = min(y, incumbentVal);
+    surrogate = updateSurrogate(surrogate, x, y);
+    dispSurrogate(surrogate, code, 'str', 'unif+f(112)+f(114)', 'incumbentVal', incumbentVal)
     
+    x=[1,1,3]; y = hammingDistance(x, code);
+    incumbentVal = min(y, incumbentVal);
+    surrogate = updateSurrogate(surrogate, x, y);
+    dispSurrogate(surrogate, code, 'str', 'unif+f(112)+f(114)+f(113)', 'incumbentVal', incumbentVal)
     end
 
    
@@ -274,7 +216,8 @@ end
 
 %% Main
 
-testSurrogate()
+test()
+%testSurrogate()
 
 
 end
