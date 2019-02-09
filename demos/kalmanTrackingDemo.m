@@ -7,6 +7,7 @@
 
 % This file is from pmtk3.googlecode.com
 
+
 ss = 4; % state size
 os = 2; % observation size
 F = [1 0 1 0; 0 1 0 1; 0 0 1 0; 0 0 0 1]; 
@@ -46,6 +47,7 @@ mse_smooth = sqrt(sum(sum(dsmooth.^2)))
 figure;
 %subplot(2,1,1)
 hold on
+
 plot(y(1,:), y(2,:), 'go',  'linewidth', 3, 'markersize', 12);
 plot(x(1,:), x(2,:), 'ks-', 'linewidth', 3, 'markersize', 12);
 legend('observed', 'truth')
