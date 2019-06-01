@@ -2,7 +2,7 @@
 % Code from https://github.com/duvenaud/phd-thesis/tree/master/code
 % Modified by Kevin Murphy
 
-function plot_structure_examples(seed)
+function gpKernelPlot(seed)
 
 % A script to make a series of plots demonstrating how structure can be
 % reflected in a kernel.
@@ -17,7 +17,7 @@ randn('state',seed);
 rand('state',seed);
 
 savefigs = true;
-figpath = '../figures/grammar/structure_examples/';
+%figpath = '../figures/grammar/structure_examples/';
 
 %addpath(genpath('utils'))
 
@@ -125,11 +125,15 @@ kernel_names = {'se_kernel', 'lin_kernel', 'per_kernel', 'longse_kernel', ...
             'longse_times_per', 'longse_plus_per', 'longse_times_lin', ...
             'rq_kernel','c_kernel'};
 end
+if 0
 kernel_names = { 'lin_kernel', 'quad_kernel', ...
     'se_kernel', 'rq_kernel',...
     'per_kernel', 'cos_kernel', 'wn_kernel'};
+end
 
-kernel_names = {'lin_kernel', 'poly_lin_kernel'};
+kernel_names = { 'lin_kernel', 'quad_kernel', 'poly_lin_kernel', ...
+    'longse_kernel', 'medse_kernel', 'shortse_kernel', ...
+    'per_kernel', 'cos_kernel'};
 
 
 % Automatically build kernel functions from function names.
@@ -140,7 +144,7 @@ end
 %color_ixs = [ 1, 2, 3, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 4 ]; 
 color_ixs = repmat(10, 1, numel(kernels));
 
-if 1
+if 0
 % plot the kernels.
 for k = 1:numel(kernels)
     %figure(k); clf;
@@ -169,7 +173,7 @@ for k = 1:numel(kernels)
     samples_plot( xrange, samples, [1:n_samples] );
     title(safeStr(kernel_names{k}), 'fontsize', 10)
     if savefigs
-        printPmtkFigure(sprintf('GP%sSamples', kernel_names{k}), 'png');
+        printPmtkFigure(sprintf('GP%s_Samples', kernel_names{k}), 'pdf');
         %save2pdf([ figpath, kernel_names{k} '_draws_s', int2str(seed), '.pdf'], gcf, 600, true);
     end
     pause(0.01);
@@ -288,4 +292,62 @@ function posterior_plot( xrange, f, v, X, y )
     ylim([-5, 5])
     
     set_fig_units_cm( 4,3 );
+end
+
+
+function c = colorbrew( i, flag, N )
+%
+% Nice colors taken from 
+% http://colorbrewer2.org/
+%
+% David Duvenaud
+% March 2012
+
+if nargin < 2; flag = 'qual'; end
+
+switch flag
+    case 'qual'
+        c_array(1, :) = [ 228, 26, 28 ];   % red
+        c_array(2, :) = [ 55, 126, 184 ];  % blue
+        c_array(3, :) = [ 77, 175, 74 ];   % green
+        c_array(4, :) = [ 152, 78, 163 ];  % purple
+        c_array(5, :) = [ 255, 127, 0 ];   % orange
+        c_array(6, :) = [ 255, 255, 51 ];  % yellow
+        c_array(7, :) = [ 166, 86, 40 ];   % brown
+        c_array(8, :) = [ 247, 129, 191 ]; % pink
+        c_array(9, :) = [ 153, 153, 153];  % grey
+        c_array(10, :) = [ 0, 0, 0];  % black
+        
+        % Wrap around to the end.
+        c = c_array( mod(i - 1, 10) + 1, : ) ./ 255;
+        
+    case 'seq'
+        
+        c_array_d = [254, 196, 79;
+        254, 153, 41;
+        236, 112, 20;
+        204, 76, 2;
+        153, 52, 4;
+        102, 37, 6];
+    
+        d = size(c_array_d, 1);  
+        c_array = interp1((1:d)', c_array_d, linspace(1, d, N)'); 
+        c = c_array( i, : ) ./ 255;
+        
+    case 'div'
+        
+        c_array_d = [158, 1, 66;
+        213, 62, 79;
+        244, 109, 67;
+        253, 174, 97;
+        171, 221, 164;
+        102, 194, 165;
+        50, 136, 189;
+        94, 79, 162];
+    
+        d = size(c_array_d, 1);
+        c_array = interp1((1:d)', c_array_d, linspace(1, d, N)');
+        c = c_array( i, : ) ./ 255;
+end
+
 end
