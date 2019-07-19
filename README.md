@@ -1,3 +1,10 @@
+**Note: as of 2019, PMTK is no longer supported - use at your own risk.**
+The new version of my book (which is in progress) now uses the Python code available from
+https://github.com/probml/pyprobml/.
+
+
+
+
 PMTK is a collection of Matlab/Octave functions, written by Matt Dunham, Kevin Murphy and
 <a href="https://github.com/probml/pmtk3/wiki/contributingAuthors">various other people</a>. The toolkit is primarily designed to accompany Kevin Murphy's textbook
 <a href="http://people.cs.ubc.ca/~murphyk/MLbook">
@@ -13,6 +20,9 @@ Bayesian inference (including dynamic programming,
 variational Bayes and MCMC) and MAP/ML estimation (including EM, 
 conjugate and projected gradient methods, etc.)
 
+To get the code, click on the "Download zip" button on the right hand side of github, or just clone this repository.
+
+
 PMTK builds on top of several existing packages, available from
 <a href="https://github.com/probml/pmtksupport">pmtksupport</a>,
 and provides a unified interface to them. In addition, it provides readable "reference" implementations of many common machine learning techniques. The vast majority of the code is written in Matlab.
@@ -20,15 +30,8 @@ and provides a unified interface to them. In addition, it provides readable "ref
 <a href="https://github.com/probml/pmtk3/wiki/WhyMatlab">here</a>.
 Most of the code also runs on
 <a href="https://github.com/ubcmatlabguide/ubcmatlabguide/wiki/Octave">Octave</a>
-an open-source Matlab clone.) However, in a few cases we also provide wrappers to implementations written in C,  for speed reasons. PMTK currently (October 2010) has over 67,000 lines.
+an open-source Matlab clone.) However, in a few cases we also provide wrappers to implementations written in C,  for speed reasons. PMTK  has over 67,000 lines.
 
-PMTK contains many demos of different methods applied to  many different kinds of data sets. The demos are listed <a href="https://github.com/probml/pmtk3/wiki/Demos">here</a>.
-
-To get the code, click on the "Download zip" button on the right hand side of github, or just clone this repository.
-<a href="https://github.com/probml/pmtk3/wiki/pmtk3Documentation">Click here</a> for information on how to use the toolbox.
-If you want to contribute code, please follow the guidelines
-<a href = "https://github.com/probml/pmtk3/wiki/GuidelinesForContributors">here</a>,
-and issue a Pull Request.
 
 
 As you can tell by the name, PMTK3 is the third version of PMTK. Older versions are obsolete, but are briefly described
