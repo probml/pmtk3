@@ -5,6 +5,7 @@
 
 %ns = [21 50];
 %for n=ns(:)'
+clear all
   n = 21;
 setSeed(0);
 [xtrain, ytrain, xtest, ytestNoisefree, ytest, sigma2] =...
@@ -39,16 +40,16 @@ end
 model = linregFit(Xtrain, ytrain, 'preproc', pp);
 for i=1:14, fprintf('%5.3f, ', model.w(i)); end
 [ypredTest] = linregPredict(model, Xtest);
-figure;
-scatter(xtrain, ytrain,'b','filled'); hold on;
-plot(xtest, ypredTest, 'k', 'linewidth', 3);
+%figure;
+%scatter(xtrain, ytrain,'b','filled'); hold on;
+%plot(xtest, ypredTest, 'k', 'linewidth', 3);
 
 
 %% compute train/test error for each  lambda using ridge
 lambdas = logspace(-10,1.3,10);
+%lambdas = logspace(-8,2,15);
 NL = length(lambdas);
 %printNdx = round(linspace(2, NL-1, 3));
-printNdx = [2 6];
 testMse = zeros(1,NL); trainMse = zeros(1,NL);
 for k=1:NL
   lambda = lambdas(k);
@@ -61,9 +62,10 @@ end
 
 
 hlam=figure; hold on
-ndx =  log(lambdas); % 1:length(lambdas);
+ndx = lambdas; % log(lambdas); % 1:length(lambdas);
 plot(ndx, trainMse, 'bs:', 'linewidth', 2, 'markersize', 12);
 plot(ndx, testMse, 'rx-', 'linewidth', 2, 'markersize', 12);
+set(gca, 'xscale', 'log')
 legend('train mse', 'test mse', 'location', 'northwest')
 xlabel('log lambda')
 title('mean squared error')
@@ -72,6 +74,7 @@ title('mean squared error')
 printPmtkFigure(sprintf('linregPolyVsRegTestErrN%d', n))
 
 %% print fitted function for certain chosen lambdas
+printNdx = []; %[2 6];
 for k=printNdx
   lambda = lambdas(k)
   [model] = linregFit(Xtrain, ytrain, 'lambda', lambda, 'preproc', pp);
@@ -89,10 +92,11 @@ for k=printNdx
   printPmtkFigure(sprintf('linregPolyVsRegFitK%dN%d', k, n))
 end
 
-keyboard
 
 
-%% print fitted function for certain chosen lambdas using lasso
+
+%% print fitted function for certain chosen lambdas using lassok
+%{
 for k=printNdx
   lambda = lambdas(k);
   fprintf('lasso %f\n', lambda);
@@ -110,7 +114,7 @@ for k=printNdx
   title(sprintf('ln lambda %5.3f', log(lambda)))
   printPmtkFigure(sprintf('linregPolyVsRegFitLassoK%dN%d', k, n))
 end
-
+%}
 
 
 %% Cross validation
@@ -129,10 +133,11 @@ for k=1:NL
 end
 
 figure; hold on
-ndx =  log(lambdas); % 1:length(lambdas);
+ndx =  lambdas; %%log(lambdas); % 1:length(lambdas);
 xlabel('log lambda')
 ylabel('mse')
 errorbar(ndx, mu, se, 'ko-','linewidth', 2, 'markersize', 12 );
+set(gca, 'xscale', 'log') %%%% new
 title(sprintf('%d-fold cross validation, ntrain = %d', nfolds, N))
 if n <= 21
   % When N is small, CV massively over-estimates error for small 
@@ -197,32 +202,60 @@ assert(approxeq(trainMseB, trainMse))
 
 % Error vs alpha - should be same as error vs lambda
 figure; hold on
-ndx =  log(alphas);
+ndx =  lambdas; % log(alphas);
 plot(ndx, trainMseB, 'bs:', 'linewidth', 2, 'markersize', 12);
 plot(ndx, testMseB, 'rx-', 'linewidth', 2, 'markersize', 12);
+set(gca, 'xscale', 'log')
 legend('train mse', 'test mse', 'location', 'northwest')
 xlabel('log alpha')
 title('mean squared error')
 
 
-% Log evidence vs alpha
-figLogev = figure;
-plot(log(alphas), logev, 'k-', 'linewidth', 2, 'markersize', 12);
-xlabel('log alpha')
-title('log evidence')
 
-% Plot p(m|D) vs alpha
-figure;
-prob = exp(normalizeLogspace(logev));
-bar(log(alphas), prob);
-xlabel('log alpha')
-title('p(alpha|data)')
+%%
+% Make figure containing both EB and CV
+% We need to rescale the vertical axes
+figLogevCv = figure;
+logevErr = -logev; logevErr = logevErr/max(logevErr);
+plot(log(alphas), logevErr, 'k-o', 'linewidth', 2, 'markersize', 12);
+hold on
+cvErr = log(mu); cvErr = cvErr/max(cvErr); 
+plot(log(alphas), cvErr, 'rx:','linewidth', 2, 'markersize', 12 );
+xlabel('log lambda')
+legend('negative log marg. likelihood', 'CV estimate of MSE')
+%set(gca, 'xlim', [-20 5])
+printPmtkFigure(sprintf('linregPolyVsRegCvEvidence'))
+
+% Redo with error bars
+figLogevCv2 = figure;
+plot(lambdas, logevErr, 'k-o', 'linewidth', 2, 'markersize', 12);
+hold on 
+cvErr = log(mu); cvErr = cvErr/max(cvErr); 
+cvSE = log(se);
+cvSE = cvSE/max(cvSE); 
+cvSE = cvSE/2;
+errorbar(lambdas, cvErr, cvSE, 'rx-','linewidth', 2, 'markersize', 12 );
+set(gca, 'xscale', 'log')  
+%set(gca, 'yscale', 'log')
+xlabel('log lambda')
+legend('negative log marg. likelihood', 'CV estimate of MSE')
+%set(gca, 'xlim', [-20 5])
+printPmtkFigure(sprintf('linregPolyVsRegCvEvidence2'))
 
 %% Now optimize alpha and beta using empirical Bayes
 [modelEB, logevEB] = linregFitBayes(Xtrain, ytrain, 'preproc', pp, 'prior', 'eb');
 alphaEB = modelEB.netlab.alpha;
+
+% Log evidence vs alpha
+figLogev = figure;
+plot(alphas, logev, 'k-', 'linewidth', 2, 'markersize', 12);
+set(gca, 'xscale', 'log')
+xlabel('log alpha')
+title('log evidence')
+
 figure(figLogev);
-verticalLine(log(alphaEB), 'linewidth', 3, 'color', 'r');
+%verticalLine(log(alphaEB), 'linewidth', 3, 'color', 'r');
+verticalLine(alphaEB, 'linewidth', 3, 'color', 'r');
 printPmtkFigure(sprintf('linregPolyVsRegTestEbN%d', n))
 
 
@@ -230,20 +263,9 @@ printPmtkFigure(sprintf('linregPolyVsRegTestEbN%d', n))
 [modelVB, logevVB] = linregFitBayes(Xtrain, ytrain, 'preproc', pp, 'prior', 'vb');
 alphaVB = modelVB.expectAlpha;
 figure(figLogev);
-verticalLine(log(alphaVB), 'linewidth', 3, 'color', 'b');
+%verticalLine(log(alphaVB), 'linewidth', 3, 'color', 'b');
+verticalLine(alphaVB, 'linewidth', 3, 'color', 'b');
 
 
-% Make figure containing both EB and CV
-% We need to rescale the vertical axes
-figLogevCv = figure;
-logevErr = -logev; logevErr = logevErr/max(logevErr);
-plot(log(alphas), logevErr, 'k-', 'linewidth', 2, 'markersize', 12);
-hold on
-cvErr = log(mu); cvErr = cvErr/max(cvErr); 
-plot(log(alphas), cvErr, 'bx:','linewidth', 2, 'markersize', 12 );
-xlabel('log lambda')
-legend('negative log marg. likelihood', 'CV estimate of MSE')
-set(gca, 'xlim', [-20 5])
-printPmtkFigure(sprintf('linregPolyVsRegCvEvidence'))
 
 %end % for n
