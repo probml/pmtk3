@@ -1,4 +1,5 @@
 %% Kernel pca demo
+% Based on code by Laurens van der Maaten
 
 %{ 
 setSeed(0);
