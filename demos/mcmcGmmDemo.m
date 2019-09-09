@@ -1,6 +1,7 @@
 %% MH Sampling from a mixture of two 1d Gaussians 
 % using a 1d Gaussian proposal with different sigma.
 
+% Based on code by Christophe Andrieu and Nando de Freitas.
 % This file is from pmtk3.googlecode.com
 
 function mcmcGmmDemo()
