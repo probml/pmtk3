@@ -1,7 +1,7 @@
 
 %% Fit a mixture of Gaussians using variational Bayes
 % Reproduce Bishop fig 10.6
-%%
+% Based on code by Emtiyaz Khan.
 
 % This file is from pmtk3.googlecode.com
 
