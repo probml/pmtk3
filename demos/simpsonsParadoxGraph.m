@@ -8,7 +8,7 @@ function simpsonsParadoxGraph
     xlim([0,10]);
     ylim([0,10]);
     set(gca, 'XTick', [], 'YTick', []);
-    xlabel('x', 'FontSize', 24, 'FontWeight', 'bold');
-    ylabel('y', 'FontSize', 24, 'FontWeight', 'bold');
+    %xlabel('x', 'FontSize', 24, 'FontWeight', 'bold');
+    %ylabel('y', 'FontSize', 24, 'FontWeight', 'bold');
     hold off;
 end
