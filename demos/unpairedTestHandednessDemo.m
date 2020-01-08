@@ -10,14 +10,25 @@ y1 = 9; n1 = 52; y2 = 4; n2 = 48;
 %sf=1;
 %y1 = 1*sf; n1 = 50*sf; y2 = 25*sf; n2 = 50*sf;
 [deltas, post, thetas] = contingencyTableUnpairedDiffPostMc(n1,y1,n2,y2);
-figure; plot(deltas, post, 'linewidth', 3, 'color', 'k');
-xlabel('\delta'); ylabel('pdf')
 diff = thetas(:,1)-thetas(:,2);
 q = quantilePMTK(diff, [0.025 0.5 0.975]); 
+
+figure; plot(deltas, post, 'linewidth', 3, 'color', 'k');
+xlabel('\delta'); ylabel('pdf')
 hold on
 verticalLine(q(1), 'linewidth', 3);
 verticalLine(q(3), 'linewidth', 3);
-printPmtkFigure('unpairedTestHandednessDemo')
+printPmtkFigure('bayesChiSquaredHandednessPostCI')
+%printPmtkFigure('unpairedTestHandednessDemo')
+
+
+figure; plot(deltas, post, 'linewidth', 3, 'color', 'k');
+xlabel('\delta'); ylabel('pdf')
+hold on
+rope = [-0.1 0.1];
+verticalLine(rope(1), 'linewidth', 3);
+verticalLine(rope(2), 'linewidth', 3);
+printPmtkFigure('bayesChiSquaredHandednessPostROPE')
 %%
 pgreaterMC = mean(thetas(:,1)>thetas(:,2));
 %% numerical integration
