@@ -43,6 +43,8 @@ else
   end
 end
 
+name = sprintf('groupLasso%d', signal_type);
+
 % measurement matrix
 R = randn(k,n);
 
@@ -124,9 +126,9 @@ for debiased=1:1
   
 nr = 4; nc = 1;
 figure
-scrsz = get(0,'ScreenSize');
-set(gcf,'Position',[10 scrsz(4)*0.1 0.9*scrsz(3)/2 3*scrsz(4)/4])
-subplot(nr,nc,1)
+%scrsz = get(0,'ScreenSize');
+%set(gcf,'Position',[10 scrsz(4)*0.1 0.9*scrsz(3)/2 3*scrsz(4)/4])
+%subplot(nr,nc,1)
 plot(f,'LineWidth',1.1)
 top = max(f(:));
 bottom = min(f(:));
@@ -136,10 +138,10 @@ set(gca,'FontSize',14)
 title(sprintf('Original (D = %g, number groups = %g, active groups = %g)',...
   n,n_groups,n_active))
 axis(v);
-
-
+printPmtkFigure(sprintf('%s-orig', name))
   
-subplot(nr, nc, 2)
+%subplot(nr, nc, 2)
+figure
 plot(x_L1,'LineWidth',1.1)
 set(gca,'FontName','Times')
 set(gca,'FontSize',14)
@@ -150,25 +152,28 @@ axis(v)
 title(sprintf(...
     'Standard L1 (debiased %d, tau = %5.3g, MSE = %0.4g)',...
     debiased, L1_tau, (1/n)*norm(x_L1-f)^2));
+printPmtkFigure(sprintf('%s-L1', name))
 
-  
-subplot(nr, nc, 3)
+%subplot(nr, nc, 3)
+figure
 plot(x_L12,'LineWidth',1.1)
 set(gca,'FontName','Times')
 set(gca,'FontSize',14)
 axis(v)
 title(sprintf('Block-L2 (debiased %d, tau = %5.3g, MSE = %5.3g)',...
     debiased, L12_tau, (1/n)*norm(x_L12-f)^2));
-
+printPmtkFigure(sprintf('%s-blockL2', name))
 
   
-subplot(nr, nc, 4)
+%subplot(nr, nc, 4)
+figure
 plot(x_Linf,'LineWidth',1.1)
 set(gca,'FontName','Times')
 set(gca,'FontSize',14)
 axis(v)
 title(sprintf('Block-Linf (debiased %d, tau = %5.3g, MSE = %5.3g)',...
     debiased, Linf_tau, (1/n)*norm(x_Linf-f)^2));
+printPmtkFigure(sprintf('%s-blockLinf', name))
 
   drawnow
 
