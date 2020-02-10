@@ -56,17 +56,23 @@ yobs = [1 0 0]+1;
 
 % marginal MAP
 mmap = zeros(1,3);
+pmap = zeros(2,3);
 for i=1:3
   p = tabularFactorCondition(joint, xs(i), sparsevec(ys, yobs));
+  pmap(:,i) = p.T;
   fprintf('p(x%d=1|y)=%5.3f\n', i, p.T(2))
   mmap(i) = argmax(p.T)-1;
 end
-mmap
+disp(mmap)
+figure;
+bar(pmap(2,:))
+title('p(xi=1|y=1,0,0)')
+printPmtkFigure('errorCorrectingCodePostMarginals')
 
 % find joint modes of posterior
 pCond = tabularFactorCondition(joint, xs, sparsevec(ys, yobs));
 pmax = max(pCond.T(:));
-ndx = find(pCond.T == pmax)
+ndx = find(pCond.T == pmax);
 modes = ind2subv(2*ones(1,3), ndx)-1
 
 
@@ -78,5 +84,5 @@ figure;
 bar(pCond.T(:))
 set(gca,'xtick',1:K);
 xticklabelRot(lab, 90, 10, 0.01)
-title('p(x|y=1,0,0) for error correcting code network')
+title('p(x|y=1,0,0)')
 printPmtkFigure('errorCorrectingCodePost')
