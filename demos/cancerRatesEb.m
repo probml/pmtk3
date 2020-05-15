@@ -4,7 +4,7 @@
 %% Setup Data
 
 % This file is from pmtk3.googlecode.com
-
+clear data
 data.y = [0 0 2 0 1 1 0 2 1 3 0 1 1 1 54 0 0 1 3 0];
 data.n = [1083 855 3461 657 1208 1025 527 1668 583 582 917 857 ...
     680 917 53637 874 395 581 588 383];
@@ -64,3 +64,18 @@ for i=1:d
 end
 title('95% credible interval on theta, *=median', 'fontsize', fs)
 printPmtkFigure('cancerRatesCredibleEb');
+
+figure; hold on;
+yticks = [];
+for i=1:d
+    height = d-i+1;
+    yticks[i] = height;
+    q = post.CItheta(i,1:2);
+    h = line([q(1) q(2)], [height height]);
+    median = post.mediantheta(i);
+    h=plot(median, height, '*');
+end
+ylim([0 21])
+title('95% credible interval on theta, *=median', 'fontsize', fs)
+printPmtkFigure('cancerRatesCredibleEbInverted');
+
