@@ -66,15 +66,14 @@ title('95% credible interval on theta, *=median', 'fontsize', fs)
 printPmtkFigure('cancerRatesCredibleEb');
 
 figure; hold on;
-yticks = [];
 for i=1:d
     height = d-i+1;
-    yticks[i] = height;
     q = post.CItheta(i,1:2);
     h = line([q(1) q(2)], [height height]);
     median = post.mediantheta(i);
     h=plot(median, height, '*');
 end
+yticks(1:20); yticklabels(20:-1:1)
 ylim([0 21])
 title('95% credible interval on theta, *=median', 'fontsize', fs)
 printPmtkFigure('cancerRatesCredibleEbInverted');
