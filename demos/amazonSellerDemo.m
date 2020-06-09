@@ -16,10 +16,17 @@ xlabel('\delta'); ylabel('pdf')
 diff = thetas(:,1)-thetas(:,2);
 q = quantilePMTK(diff, [0.025 0.5 0.975]); 
 hold on
-verticalLine(q(1), 'linewidth', 3);
-verticalLine(q(3), 'linewidth', 3);
-printPmtkFigure('unpairedTestHandednessDemo')
-%%
+%verticalLine(q(1), 'linewidth', 3);
+%verticalLine(q(3), 'linewidth', 3);
+
+
+R = [-0.1 0.1]; % ROPE
+verticalLine(R(1), 'linewidth', 3);
+verticalLine(R(2), 'linewidth', 3);
+printPmtkFigure('amazonSellersDeltaROPE')
+
+
+
 pgreaterMC = mean(thetas(:,1)>thetas(:,2));
 %% numerical integration
 pgreaterExact = dblquad(@(t1,t2) betaProb(t1, y1+1, n1-y1+1) .* ...
@@ -28,7 +35,6 @@ pgreaterExact = dblquad(@(t1,t2) betaProb(t1, y1+1, n1-y1+1) .* ...
 fprintf('prob(theta1 > theta2 | data): MC= %5.3f, exact=%5.3f\n', ...
   pgreaterMC, pgreaterExact);
 
-printPmtkFigure('amazonSellersDelta')
 
 figure;
 xs = linspace(0.001, 0.999, 40);
