@@ -1,5 +1,5 @@
 % Infer 1d function from observing its average value over various intervals
-function gauss_impute_1d_sum()
+function gauss_infer_1d_function_from_avg()
 
 Bs = [1, 5, 10, 20]; % bucket width
 sigmas = [1e-3, 1e-1];
@@ -89,7 +89,6 @@ title(sprintf('lambda=%5.3f', lambda))
 
 
 fname = sprintf('gauss_impute_1d_sum_B%d_sigma%d', B, int32(sigma*1000));
-print(fname)
 printPmtkFigure(fname);
 
 end % run demo
