@@ -29,10 +29,10 @@ L = L*lambda;
 
 L1 = L(:, hidNdx);
 L2 = L(:, obsNdx);
-lam11 = L1'*L1;
-lam12 = L1'*L2;
-postDist.Sigma = inv(lam11);
-postDist.mu = -inv(lam11)*lam12*xobs;
+B11 = L1'*L1;
+B12 = L1'*L2;
+postDist.Sigma = inv(B11);
+postDist.mu = -inv(B11)*B12*xobs;
 
 
 %% Naive Numerically unstable method
@@ -45,11 +45,13 @@ postDist =  gaussCondition(jointDist, obsNdx, xobs);
 %}
 
 %% Plot
+%{
 figure;
 plot(xs(hidNdx), postDist.mu, 'linewidth', 2);
 hold on;
 plot(xs(obsNdx), xobs, 'ro', 'markersize', 12);
 title(sprintf('%s=%s', '\lambda', names{trial}));
+%}
 
 xbar = zeros(D, 1);
 xbar(hidNdx) = postDist.mu;
