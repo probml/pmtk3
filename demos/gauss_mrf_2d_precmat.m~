@@ -26,15 +26,15 @@ cols = [cols;Ineigh(:)];
 vals = [vals;ones(n*(n-1),1)];
 
 % Upper neighbors of each pixel
-Icurr = I(2:n,:); % was 2:n-1 in book
+Icurr = I(2:n-1,:);
 Ineigh = I(1:n-1,:);
 rows = [rows;Icurr(:)];
 cols = [cols;Ineigh(:)];
 vals = [vals;ones(n*(n-1),1)];
 
 % Lower neighbors of each pixel
-Icurr = I(1:n-1,:);
-Ineigh = I(2:n,:);
+
+
 rows = [rows;Icurr(:)];
 cols = [cols;Ineigh(:)];
 vals = [vals;ones(n*(n-1),1)];

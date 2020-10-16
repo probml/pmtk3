@@ -44,13 +44,6 @@ STDsurf(I1) = STDs;
 figure;
 surfl(reshape(STDsurf,n,n))
 shading flat, colormap(gray)
-xlabel('x')
-ylabel('y')
-hold on
-%plot3(15,15,0, 'ko', 'MarkerFaceColor','k');
-%plot3(25,15,0, 'ko', 'MarkerFaceColor','k');
-%plot3(40,15,0, 'ko', 'MarkerFaceColor','k');
-%plot3(25,35,0, 'ko', 'MarkerFaceColor','k');
 printPmtkFigure('gauss_mrf_2d_noiseless_var.pdf')
 
 
@@ -71,7 +64,8 @@ plot(15,15, 'ko', 'MarkerFaceColor','k');
 plot(15,25, 'wo', 'MarkerFaceColor','w');
 plot(15,40, 'ko', 'MarkerFaceColor','k');
 plot(35,25, 'ko', 'MarkerFaceColor','k');
-printPmtkFigure(sprintf('gauss_mrf_2d_noiseless_sample%d.pdf', j))
+printPmtkFigure(sprintf('gauss_mrf_2d_noiseless_sample%d.pdf')
+
 end
 
 

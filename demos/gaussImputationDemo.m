@@ -49,7 +49,7 @@ end
 printPmtkFigure('gaussImputationLollipop');
 
 
-if 0
+if 1
   
 ndx = 1:n; % just plot first n rows
 figure;
@@ -71,7 +71,7 @@ figure; hintonDiagram(Xfull(ndx,:) - XimputeOracle(ndx,:)); title('error');
 printPmtkFigure('mvnImputeError');
 end
 
-if 0
+if 1
 % Scatter plots
 doPlot(Xmiss, Xfull, XimputeOracle, 'imputation with true params', 'mvnImputeScatterOracle')
 %doPlot(Xmiss, Xfull, XimputeEM, 'imputation with em', 'mvnImputeScatterEm')
