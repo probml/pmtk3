@@ -9,14 +9,13 @@ demo(0.1)
 demo(0.01)
 end
 
-
 function demo(priorVar)
-setSeed(1);
-n = 150;
-m = 10;
 
-Nobs = m;
-D = n+1; % numnber of variables
+setSeed(1);
+Nobs = 10;
+D = 150; % numnber of variables
+
+
 Nhid = D-Nobs;
 xs = linspace(0, 1, D);
 perm = randperm(D);
@@ -29,9 +28,9 @@ xobs = randn(Nobs, 1);
 obsNoiseVar = 1;
 y = xobs + sqrt(obsNoiseVar)*randn(Nobs, 1);
 
+%{
 % Make a (n-1) * (n+1) tridiagonal matrix
-L = 0.5*spdiags(ones(n-1,1) * [-1 2 -1], [0 1 2], n-1, n+1);
-
+%L = 0.5*spdiags(ones(n-1,1) * [-1 2 -1], [0 1 2], n-1, n+1);
 
 lambda = 1/priorVar; % precision
 L = L*lambda;
@@ -40,13 +39,38 @@ L2 = L(:, obsNdx);
 B11 = L1'*L1;
 B12 = L1'*L2;
 B21 = B12';
+%}
 
+% We compute the L maatrix using the 1d version of
+% gauss_mrf_2d_precmat.
+% Set L=I-A for 1d adjacency matriix A 
+I = 1:D;
+% Right neighbors of each pixel
+Icurr = I(1:D-1);
+Ineigh = I(2:D);
+rows = Icurr(:);
+cols = Ineigh(:);
+vals = ones((D-1),1);
+% Left neighbors of each pixel
+Icurr = I(2:D);
+Ineigh = I(1:D-1);
+rows = [rows;Icurr(:)];
+cols = [cols;Ineigh(:)];
+vals = [vals;ones((D-1),1)];
+% matrix 
+A = 1/2*sparse(rows, cols, vals);
+L = speye(D) - A;
 
-%% Noise-free observations
-% posterior on the Nhid hidden variables
-postDist.mu = -inv(B11)*B12*xobs;
+lambda = 1/priorVar; % precision
+L = L*lambda;
+
+I1=hidNdx; I2=obsNdx;
+B = L'*L;
+B11=B(I1,I1); B12=B(I1,I2); B21 = B12';
+
+% posterior on D-N hidden variables
+postDist.mu = -B11 \ (B12 * xobs);
 postDist.Sigma = inv(B11);
-
 
 % posterior on all D variables
 mu = zeros(D,1);
@@ -59,7 +83,7 @@ postDist.Sigma = Sigma;
 
 str = sprintf('obsVar=0, priorVar=%3.2f', priorVar);
 makePlots(postDist, xs, xobs, xobs, hidNdx, obsNdx, str);
-fname = sprintf('gaussInterpNoisyDemoStable_obsVar%s_priorVar%s', ...
+fname = sprintf('gaussInterp1d_obsVar%s_priorVar%s', ...
     int2str(round(100*0)), int2str(round(100*priorVar)));
 disp(fname)
 printPmtkFigure(fname)
@@ -75,7 +99,7 @@ postDist.mu = Gamma * x;
 
 str = sprintf('obsVar=%2.1f, priorVar=%3.2f', obsNoiseVar, priorVar);
 makePlots(postDist, xs, xobs, y, hidNdx, obsNdx, str);
-fname = sprintf('gaussInterpNoisyDemoStable_obsVar%s_priorVar%s', ...
+fname = sprintf('gaussInterp1d_obsVar%s_priorVar%s', ...
     int2str(round(100*obsNoiseVar)), int2str(round(100*priorVar)));
 disp(fname)
 printPmtkFigure(fname)

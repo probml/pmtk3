@@ -1,9 +1,9 @@
-%% Empirical Bayes Missouri Cancer Example
-% Johnson and Albert  p67, p24
-% See also cancerRatesMh
-%% Setup Data
+%% Empirical Bayes for hierarchical Binomial model
 
-% This file is from pmtk3.googlecode.com
+% Based on 
+#https://docs.pymc.io/notebooks/GLM-hierarchical-binominal-model.html
+
+
 clear data
 data.y = [0 0 2 0 1 1 0 2 1 3 0 1 1 1 54 0 0 1 3 0];
 data.n = [1083 855 3461 657 1208 1025 527 1668 583 582 917 857 ...
@@ -11,6 +11,8 @@ data.n = [1083 855 3461 657 1208 1025 527 1668 583 582 917 857 ...
 
 data.y = [1,    0,    3,    0,   1,    5,     11];
 data.n = [1083, 855, 3461, 657, 1208, 5000, 10000];
+
+
 
 %% Fit Distribution using Tom Minka's fixed point method
 X = [data.y(:) data.n(:)-data.y(:)];

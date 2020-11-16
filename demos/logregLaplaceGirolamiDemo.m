@@ -4,6 +4,7 @@
 
 % This file is from pmtk3.googlecode.com
 
+clear all
 setSeed(0);
 fs = 14;
 
@@ -18,7 +19,7 @@ class1_std = 1;
 class2_std = 1.1;
 X = [class1_std*randn(N,2)+mu1;2*class2_std*randn(N,2)+mu2];
 t = [ones(N,1);zeros(N,1)];
-alpha=100; %Variance of prior (alpha=1/lambda)
+alpha=100; %alpha=100; %Variance of prior (alpha=1/lambda)
 
 % Limits and grid size for contour plotting
 Range= 8;
@@ -37,7 +38,10 @@ title('data', 'fontsize', fs)
 % Plot predictions for certain chosen valyes of w
 Xgrid = W; % grid of x1, x2 valyes
 ws = [3 1; 4 2; 5 3; 7 3];
+%eps=0.2;
+%ws = [2 1; 4+eps 2+eps; 3 1; 6+eps 2+eps; 1.5 1; 1 1];
 [styles, colors, symbols, str] =  plotColors();
+%styles = {':', '-.', ':', '-.', ':', '-.', ':', '-.', ':', '-.'};
 for ii=1:size(ws,1)
   w = ws(ii,:)';
   pred = 1./(1+exp(-Xgrid*w));
@@ -45,6 +49,11 @@ for ii=1:size(ws,1)
   set(h, 'linestyle', styles{ii}, 'linecolor', colors(ii), 'linewidth', 2);
 end
 printPmtkFigure('logregLaplaceGirolamiData')
+
+for ii=1:size(ws,1)
+  w = ws(ii,:)';
+  disp(norm(w))
+end
 
 %% Plot prior, likelihood, posterior
 f=W*X';
@@ -74,6 +83,8 @@ wmle(1)/wmle(2)
 %plot(wmle(1), wmle(2),'.','MarkerSize',40);
 line([0 wmle(1)], [0 wmle(2)], 'linewidth', 2);
 printPmtkFigure('logregLaplaceGirolamiNLL')
+
+dbstop
 
 figure;
 contour(w1,w2,reshape(-Log_Joint,[n,n]),30);

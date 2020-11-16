@@ -31,7 +31,7 @@ plot3(15,15,x2(1), 'ko', 'MarkerFaceColor','k');
 plot3(25,15,x2(2), 'ko', 'MarkerFaceColor','k');
 plot3(40,15,x2(3), 'ko', 'MarkerFaceColor','k');
 plot3(25,35,x2(4), 'ko', 'MarkerFaceColor','k');
-printPmtkFigure('gauss_mrf_2d_noiseless_mean.pdf')
+printPmtkFigure('gauss_mrf_2d_noiseless_mean')
 
 % Plotting the standard deviation surface
 STDs = zeros(length(I1),1);
@@ -51,7 +51,7 @@ hold on
 %plot3(25,15,0, 'ko', 'MarkerFaceColor','k');
 %plot3(40,15,0, 'ko', 'MarkerFaceColor','k');
 %plot3(25,35,0, 'ko', 'MarkerFaceColor','k');
-printPmtkFigure('gauss_mrf_2d_noiseless_var.pdf')
+printPmtkFigure('gauss_mrf_2d_noiseless_var')
 
 
 % Generate a few random draws from the distribution
@@ -71,7 +71,7 @@ plot(15,15, 'ko', 'MarkerFaceColor','k');
 plot(15,25, 'wo', 'MarkerFaceColor','w');
 plot(15,40, 'ko', 'MarkerFaceColor','k');
 plot(35,25, 'ko', 'MarkerFaceColor','k');
-printPmtkFigure(sprintf('gauss_mrf_2d_noiseless_sample%d.pdf', j))
+printPmtkFigure(sprintf('gauss_mrf_2d_noiseless_sample%d', j))
 end
 
 
