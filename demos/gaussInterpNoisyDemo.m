@@ -34,9 +34,9 @@ lambdas = [30, 0.1];
 names = { '30', '0.1'};
 filenames = { '30', '0p1'};
 
-lambdas = [1/60];
-names = {'1/60'};
-filenames = {'1d60'};
+%lambdas = [1/60];
+%names = {'1/60'};
+%filenames = {'1d60'};
 
 for trial=1:numel(lambdas)
     %names{trial} = sprintf('%4.3f', lambdas(trial));
@@ -68,7 +68,7 @@ B21 = B12';
 C = obsNoiseVar * eye(Nobs, Nobs);
 GammaInv = [B11, B12;
         B21, B21 * inv(B11) * B12 + inv(C)];
-Gamma = inv(Gamma);   
+Gamma = inv(GammaInv);   
 postDist.Sigma = GammaInv;
 x  = [zeros(D-Nobs,1); y];
 postDist.mu = Gamma * x;

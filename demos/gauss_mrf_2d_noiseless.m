@@ -34,6 +34,7 @@ plot3(25,35,x2(4), 'ko', 'MarkerFaceColor','k');
 printPmtkFigure('gauss_mrf_2d_noiseless_mean')
 
 % Plotting the standard deviation surface
+R = chol(B11); % Whitening matrix
 STDs = zeros(length(I1),1);
 for j = 1:length(I1)
 ej = zeros(length(I1),1); ej(j)=1;
@@ -55,7 +56,6 @@ printPmtkFigure('gauss_mrf_2d_noiseless_var')
 
 
 % Generate a few random draws from the distribution
-R = chol(B11); % Whitening matrix
 ndraws = 2;
 rng('default');
 for j = 1:ndraws

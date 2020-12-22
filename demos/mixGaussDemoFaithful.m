@@ -10,6 +10,7 @@ setSeed(0);
 K = 2;
 
 dataset = 'heightWeight';
+dataset = 'faithful';
 
 if strcmp(dataset, 'faithful')
     X = loadData('faithful');

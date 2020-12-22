@@ -13,9 +13,8 @@ aw2s = [1 10 1 1];
 ab2s = [1 1 1 1];
 end
 
-% inverse variance of Gaussian for weights and bias in each layer 
-params0 = [0.01 0.1 1 1]; % aw1 ab1 aw2 ab2 % book1
-
+% inv
+params0 = [0.01 0.1 1 1]; % aw1 ab1 aw2 ab2
 
 % params(trial, param number)
 params = repmat(params0, 5, 1);
@@ -65,9 +64,8 @@ for t=1:ntrials
   
   ttl{t} = sprintf('aw1=%5.3f, ab1=%5.3f, aw2=%5.3f, ab2=%5.3f', ...
     aw1, ab1, aw2, ab2);
-  ttl2{t} = sprintf('%s=%5.3f, %s=%5.3f, %s=%5.3f, %s=%5.3f', ...
-    '\sigma_1', 1/sqrt(aw1), '\tau_1', 1/sqrt(ab1), ...
-    '\sigma_2', 1/sqrt(aw2), '\tau_2', 1/sqrt(ab2));
+  ttl{t} = sprintf('1=%5.3f, ab1=%5.3f, aw2=%5.3f, ab2=%5.3f', ...
+    aw1, ab1, aw2, ab2);
   title(ttl{t})
   printPmtkFigure(sprintf('mlpPriorsDemo%d', t))
 end

@@ -30,9 +30,9 @@ L = spdiags(ones(D-2,1) * [-1 2 -1], [0 1 2], D-2, D);
 % lamba is the prior precision and should be related to
 % the obs noise; it affects the posterior mean 
 lambdas = [30, 0.1];
-%names = { '1', '0p1'};
+names = { '30', '0p1'};
 for trial=1:numel(lambdas)
-    names{trial} = sprintf('%4.3f', lambdas(trial));
+    %names{trial} = sprintf('%4.3f', lambdas(trial))
     lambda = lambdas(trial);
 L = L*lambda;
 

@@ -47,12 +47,15 @@ end
 
 figure;
 plot(X, y, 'o', 'markersize', 6); hold on
-ndx = 1:4:numel(xtest);
+ndx = 1:numel(xtest);
 h(1)=plot(xtest(ndx), mu(ndx), 'rx', 'linewidth', 2);
 title(sprintf('prediction'))
 h(2)=plot(xtest(ndx), yhat(ndx), 'ks', 'linewidth', 2);
 legend(h,'mean', 'mode', 'location','northwest')
 printPmtkFigure(sprintf('mixexpOneManyMu'))
+
+
+
 
 
 

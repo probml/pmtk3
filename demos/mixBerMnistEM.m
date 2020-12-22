@@ -9,13 +9,13 @@ binary     = true;
 keepSparse = false; 
 Ntest      = 1000;
 
-if 1
-    Ntrain  = 1000;
-    Kvalues = [2, 10]; 
-else
-    Ntrain  = 1000;
-    Kvalues = 2:15;
-end
+
+Ntrain  = 1000;
+%   Kvalues = [2, 10]; 
+Kvalues = 2:15;
+Kvalues = [20];
+
+
 [Xtrain, ytrain, Xtest, ytest] = setupMnist('binary', binary, 'ntrain',...
     Ntrain,'ntest', Ntest,'keepSparse', keepSparse);
 Xtrain = Xtrain + 1; % convert from 0:1 to 1:2
@@ -49,7 +49,7 @@ for i=1:NK
         subplot(ynum, xnum, j);
         imagesc(reshape(TK(j, 2, :), 28, 28)); 
         colormap('gray');
-        title(sprintf('%1.2f', mixweightK(j)), 'fontsize', 30);
+        title(sprintf('%1.2f', mixweightK(j)), 'fontsize', 12);
         axis off
     end
     
