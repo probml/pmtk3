@@ -61,7 +61,7 @@ end
 subDisplay = false;
 type = 'Discriminative L1: L1-L2';
 edgePenaltyType = 'L1-L2'; % Train with L1 regularization on the edges
-adjInit = fullAdjMatrix(nNodes);
+adjInit = setdiag(ones(nNodes, nNodes), 0);
 example_UGMlearnSub % script computes adjFinal, nodeWeights, edgeWeights
 
 %% PMTK interface
