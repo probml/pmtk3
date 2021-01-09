@@ -18,7 +18,7 @@ X2 = 0:h:M;
 tree = zeros(length(X1),length(X2));
 
 % The five regions - manually assign values
-% not that the inequalities revere because of how the vectorized logical conditions compare.
+% note that the inequalities are reversed because of how the vectorized logical conditions compare.
 tree(X1 <= x11, X2 <= x21) = r(1);
 tree(X1 > x11, X2 <= x22) = r(2);
 tree(X1 > x11, X2 > x22) = r(3);
