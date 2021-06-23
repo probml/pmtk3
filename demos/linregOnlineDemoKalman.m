@@ -21,7 +21,8 @@ sigma2 = 1;
 for i=1:N
     A = eye(2); C = [1 xtrain(i,:)]; Q = zeros(2,2); R = sigma2;
     y = ytrain(i);
-    [w(:,i+1), V] = kalmanSmoother(y, A, C, Q, R, w(:,i), V);
+    %[w(:,i+1), V] = kalmanSmoother(y, A, C, Q, R, w(:,i), V);
+    [w(:,i+1), V] = kalmanFilter(y, A, C, Q, R, w(:,i), V);
     stderr(:,i+1) = [sqrt(V(1,1)); sqrt(V(2,2))];
 end
 figure; hold on

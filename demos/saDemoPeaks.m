@@ -113,12 +113,7 @@ for i=1:length(Ns)
     printPmtkFigure(sprintf('SApeaksImagesc%d', i));
     end
 end
-%{
-figure;
-surf(XX,YY,Z);
-xlabel('x');ylabel('y')
-title('energy function')
-%}
+
 
 
 %%

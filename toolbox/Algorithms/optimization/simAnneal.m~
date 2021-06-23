@@ -66,11 +66,11 @@ while ~converged
             break
         end
     end
-    % alpha = pnew/pold = exp(-energyNew)/exp(-energyOld)
+    % alphapnew/pold
     alpha = exp((energyOld - energyNew)/T);
     r = min(1, alpha);
     u = rand(1,1);
-    if u < r
+    if u > r
         x = xprime;
         naccept = naccept + 1;
         energyOld = energyNew;
